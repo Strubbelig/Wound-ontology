@@ -132,6 +132,8 @@ class BaseHierarchy(ABC):
         """Set df[specific][general] = 1.0, expanding index/columns as needed."""
         specific = specific.strip().title()
         general  = general.strip().title()
+        if specific == general:
+            return  # skip self-loops
         if general not in self._df.columns:
             self._df[general] = 0.0
         if specific not in self._df.index:
