@@ -1,3 +1,4 @@
-from wound_ontology.fca.concept_analysis import ConceptAnalysis
+from wound_ontology.fca.context_matrix import ContextMatrix
+from wound_ontology.fca.concept_lattice import ConceptLattice
 
-__all__ = ["ConceptAnalysis"]
+__all__ = ["ContextMatrix", "ConceptLattice"]

@@ -1,0 +1,42 @@
+name: first_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  # Data & numerics
+  - numpy
+  - pandas
+  - scipy
+  - statsmodels
+  # Visualisation
+  - matplotlib
+  - seaborn
+  - tabulate
+  - adjusttext
+  - xlsxwriter
+  # Bayesian modelling
+  - pymc
+  - arviz
+  - jax
+  - jaxlib
+  - numpyro
+  - blackjax
+  # Ontology
+  - owlready2
+  # Bioinformatics
+  - biopython
+  # Async & utilities
+  - nest-asyncio
+  - requests
+  - pydantic
+  - python-dotenv
+  # Notebook
+  - ipython
+  - pip
+  - pip:
+    # LLM / Google AI (conda-forge not available)
+    - google-genai
+    - google-api-core
+    # FCA library (pip only)
+    - concepts

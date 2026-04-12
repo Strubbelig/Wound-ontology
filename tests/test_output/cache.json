@@ -1,0 +1,298 @@
+{
+  "41962601": {
+    "entities": {
+      "Diabetic Wound": {
+        "is_a: material entity": 1.0,
+        "has_quality: chronic": 1.0,
+        "has_quality: non-healing": 1.0,
+        "caused_by: mitochondrial dysfunction": 1.0,
+        "caused_by: metabolic dysfunction": 1.0,
+        "part_of: material entity": 0.0,
+        "is_a: process": 0.0
+      },
+      "Echinacoside": {
+        "is_a: material entity": 1.0,
+        "has_quality: antioxidant": 1.0,
+        "has_quality: anti-inflammatory": 1.0,
+        "has_quality: pro-angiogenic": 1.0,
+        "is_treatment_for: diabetic wound": 1.0,
+        "is_a: process": 0.0,
+        "part_of: material entity": 0.0
+      },
+      "Mitophagy": {
+        "is_a: process": 1.0,
+        "has_quality: regulator": 1.0,
+        "part_of: energy balance": 1.0,
+        "is_a: material entity": 0.0,
+        "part_of: process": 0.0
+      },
+      "Mitochondrial Dysfunction": {
+        "is_a: disposition": 1.0,
+        "occurs_in: diabetic wound": 1.0,
+        "is_a: material entity": 0.0
+      },
+      "HUVECs": {
+        "is_a: material entity": 1.0,
+        "occurs_in: human umbilical vein": 1.0,
+        "is_a: process": 0.0
+      },
+      "Oxidative Stress": {
+        "is_a: process": 1.0,
+        "caused_by: H2O2": 1.0,
+        "occurs_in: diabetic wound": 1.0,
+        "is_a: material entity": 0.0
+      },
+      "USP35": {
+        "is_a: material entity": 1.0,
+        "part_of: mitophagy regulation": 1.0,
+        "is_a: process": 0.0
+      },
+      "Cyclosporin A": {
+        "is_a: material entity": 1.0,
+        "has_quality: inhibitor": 1.0,
+        "is_a: process": 0.0
+      },
+      "Neovascularization": {
+        "is_a: process": 1.0,
+        "occurs_in: wound site": 1.0,
+        "is_a: material entity": 0.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260411_1926"
+  },
+  "41963695": {
+    "entities": {
+      "Tethered cord release (TCR)": {
+        "is_a: process": 1.0,
+        "is_treatment_for: complex spinal lipoma": 1.0,
+        "is_treatment_for: retethering": 1.0,
+        "part_of: process": 0.0,
+        "is_a: material entity": 0.0
+      },
+      "Cerebrospinal fluid (CSF) leak": {
+        "is_a: disposition": 1.0,
+        "occurs_in: postoperative period": 1.0,
+        "caused_by: Nurolon suture": 1.0,
+        "is_a: material entity": 0.0,
+        "caused_by: Lying flat postoperatively": 0.0
+      },
+      "Complex spinal lipoma": {
+        "is_a: material entity": 1.0,
+        "has_quality: spinal condition": 1.0,
+        "part_of: material entity": 0.0,
+        "is_a: process": 0.0
+      },
+      "Nurolon suture": {
+        "is_a: material entity": 1.0,
+        "part_of: dural closure": 1.0,
+        "is_a: dural closure": 0.0,
+        "is_a: process": 0.0
+      },
+      "Prolene suture": {
+        "is_a: material entity": 1.0,
+        "part_of: dural closure": 1.0,
+        "is_a: dural closure": 0.0,
+        "is_a: process": 0.0
+      },
+      "Retethering": {
+        "is_a: disposition": 1.0,
+        "caused_by: Cerebrospinal fluid (CSF) leak": 1.0,
+        "is_a: material entity": 0.0,
+        "part_of: disposition": 0.0
+      },
+      "Wound infection": {
+        "is_a: disposition": 1.0,
+        "occurs_in: surgical site": 1.0,
+        "is_a: material entity": 0.0,
+        "part_of: disposition": 0.0
+      },
+      "Dural closure": {
+        "is_a: process": 1.0,
+        "part_of: Tethered cord release (TCR)": 1.0,
+        "is_a: Tethered cord release (TCR)": 0.0,
+        "is_a: material entity": 0.0
+      },
+      "Lying flat postoperatively": {
+        "is_a: process": 1.0,
+        "has_quality: postoperative management": 1.0,
+        "is_a: material entity": 0.0,
+        "caused_by: Cerebrospinal fluid (CSF) leak": 0.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260411_1926"
+  },
+  "41962723": {
+    "entities": {
+      "Chronic Wound": {
+        "is_a: material entity": 1.0,
+        "has_quality: chronic": 1.0,
+        "occurs_in: diabetic patient": 1.0,
+        "is_a: process": 0.0,
+        "part_of: diabetic patient": 0.0
+      },
+      "Infected Wound": {
+        "is_a: material entity": 1.0,
+        "has_quality: infected": 1.0,
+        "caused_by: bacterial colonization": 1.0,
+        "is_a: quality": 0.0,
+        "part_of: bacterial colonization": 0.0
+      },
+      "Biodegradable Hydrogel": {
+        "is_a: material entity": 1.0,
+        "has_quality: biodegradable": 1.0,
+        "has_quality: porous": 1.0,
+        "is_treatment_for: chronic wound": 1.0,
+        "is_treatment_for: infected wound": 1.0,
+        "is_a: process": 0.0,
+        "part_of: chronic wound": 0.0
+      },
+      "Copper Core-Shell Nanoparticle": {
+        "is_a: material entity": 1.0,
+        "part_of: biodegradable hydrogel": 1.0,
+        "has_quality: antimicrobial": 1.0,
+        "is_a: process": 0.0,
+        "is_a: biodegradable hydrogel": 0.0
+      },
+      "Chitosan": {
+        "is_a: material entity": 1.0,
+        "part_of: biodegradable hydrogel": 1.0,
+        "is_a: process": 0.0,
+        "is_a: biodegradable hydrogel": 0.0
+      },
+      "Starch": {
+        "is_a: material entity": 1.0,
+        "part_of: biodegradable hydrogel": 1.0,
+        "is_a: process": 0.0,
+        "is_a: biodegradable hydrogel": 0.0
+      },
+      "Genipin-Mediated Crosslinking": {
+        "is_a: process": 1.0,
+        "is_a: material entity": 0.0
+      },
+      "Wound Closure": {
+        "is_a: process": 1.0,
+        "has_quality: accelerated": 1.0,
+        "is_a: material entity": 0.0
+      },
+      "Re-epithelialization": {
+        "is_a: process": 1.0,
+        "has_quality: improved": 1.0,
+        "is_a: material entity": 0.0
+      },
+      "Collagen Deposition": {
+        "is_a: process": 1.0,
+        "has_quality: enhanced": 1.0,
+        "is_a: material entity": 0.0
+      },
+      "Diabetic Patient": {
+        "is_a: material entity": 1.0,
+        "has_quality: diabetic": 1.0,
+        "is_a: process": 0.0
+      },
+      "Human Dermal Fibroblast": {
+        "is_a: material entity": 1.0,
+        "has_quality: viable": 1.0,
+        "is_a: process": 0.0
+      },
+      "Staphylococcus aureus": {
+        "is_a: material entity": 1.0,
+        "is_a: process": 0.0
+      },
+      "Bacterial Colonization": {
+        "is_a: process": 1.0,
+        "is_a: material entity": 0.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260411_1926"
+  },
+  "41963244": {
+    "entities": {
+      "Infectious Complication": {
+        "is_a: process": 1.0,
+        "occurs_in: patient": 1.0,
+        "caused_by: emergency colectomy": 1.0,
+        "part_of: process": 0.0,
+        "is_a: material entity": 0.0
+      },
+      "Surgical Site Infection": {
+        "is_a: Infectious Complication": 1.0,
+        "occurs_in: surgical site": 1.0,
+        "part_of: Infectious Complication": 0.0
+      },
+      "Sepsis": {
+        "is_a: Infectious Complication": 1.0,
+        "part_of: Infectious Complication": 0.0
+      },
+      "Septic Shock": {
+        "is_a: Infectious Complication": 1.0,
+        "part_of: Infectious Complication": 0.0
+      },
+      "Pneumonia": {
+        "is_a: Infectious Complication": 1.0,
+        "part_of: Infectious Complication": 0.0
+      },
+      "Urinary Tract Infection": {
+        "is_a: Infectious Complication": 1.0,
+        "part_of: Infectious Complication": 0.0
+      },
+      "Emergency Colectomy": {
+        "is_a: process": 1.0,
+        "part_of: process": 0.0
+      },
+      "Dirty Wound Class": {
+        "is_a: quality": 1.0,
+        "occurs_in: surgical site": 1.0,
+        "part_of: quality": 0.0
+      },
+      "Chronic Obstructive Pulmonary Disease": {
+        "is_a: disposition": 1.0,
+        "part_of: disposition": 0.0
+      },
+      "Bleeding Disorder": {
+        "is_a: disposition": 1.0,
+        "part_of: disposition": 0.0
+      },
+      "Ascites": {
+        "is_a: quality": 1.0,
+        "part_of: quality": 0.0
+      },
+      "Smoking": {
+        "is_a: process": 1.0,
+        "part_of: process": 0.0
+      },
+      "Body Mass Index >= 30": {
+        "is_a: quality": 1.0,
+        "part_of: quality": 0.0
+      },
+      "Open Surgical Procedure": {
+        "is_a: process": 1.0,
+        "part_of: process": 0.0
+      },
+      "Delayed Surgical Procedure": {
+        "is_a: process": 1.0,
+        "part_of: process": 0.0
+      },
+      "Prolonged Surgical Procedure": {
+        "is_a: process": 1.0,
+        "part_of: process": 0.0
+      },
+      "Albumin <= 3 g/dL": {
+        "is_a: quality": 1.0,
+        "part_of: quality": 0.0
+      },
+      "Blood Urea Nitrogen >= 20 mg/dL": {
+        "is_a: quality": 1.0,
+        "part_of: quality": 0.0
+      },
+      "American Society of Anesthesiologists >= 3": {
+        "is_a: quality": 1.0,
+        "part_of: quality": 0.0
+      },
+      "Dependent Functional Status": {
+        "is_a: quality": 1.0,
+        "part_of: quality": 0.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260411_1926"
+  }
+}
