@@ -201,7 +201,7 @@ class OWLEnricher:
     # ── Private ───────────────────────────────────────────────────────────────
 
     def _next_id(self) -> str:
-        id_str = f"{self.id_prefix}_{self._counter:07d}"
+        id_str = f"{self._counter:07d}"
         self._counter += 1
         return id_str
 
