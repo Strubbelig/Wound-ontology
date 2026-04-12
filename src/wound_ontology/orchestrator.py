@@ -4,7 +4,7 @@ import os
 import pandas as pd
 from dotenv import load_dotenv
 from wound_ontology.data_manager.data_manager import DataManager
-from wound_ontology.llm.llm_client import LLMClient
+from wound_ontology.llm.llm_client import GeminiClient, AnthropicClient, OpenAIClient
 from wound_ontology.connectors.pubmed_connector import PubmedConnector
 from wound_ontology.connectors.bfo_connector import BFOConnector
 from wound_ontology.cache.concept_store import ConceptStore
@@ -33,16 +33,29 @@ class Orchestrator:
     def __init__(
         self,
         google_api_key: str = None,
+        anthropic_api_key: str = None,
+        openai_api_key: str = None,
         entrez_email: str = None,
         allowed_predicates: list = None,
         base_path=None,
     ):
-        google_api_key     = google_api_key     or os.getenv("GOOGLE_API_KEY", "")
-        entrez_email       = entrez_email       or os.getenv("ENTREZ_EMAIL", "")
+        google_api_key    = google_api_key    or os.getenv("GOOGLE_API_KEY", "")
+        anthropic_api_key = anthropic_api_key or os.getenv("ANTHROPIC_API_KEY", "")
+        openai_api_key    = openai_api_key    or os.getenv("OPENAI_API_KEY", "")
+        entrez_email      = entrez_email      or os.getenv("ENTREZ_EMAIL", "")
         allowed_predicates = allowed_predicates or _DEFAULT_ALLOWED_PREDICATES
 
         self.dm = DataManager(**({"base_path": base_path} if base_path else {}))
-        self.llm = LLMClient(google_api_key)
+
+        # Tiered LLM clients — each optimised for its task
+        self.extract_llm = GeminiClient(google_api_key)               # extraction + NaN fill
+        self.naming_llm  = (AnthropicClient(anthropic_api_key)        # FCA concept naming
+                            if anthropic_api_key else self.extract_llm)
+        self.norm_llm    = (OpenAIClient(openai_api_key)              # term normalization
+                            if openai_api_key else self.extract_llm)
+
+        # Keep self.llm as alias to extract_llm for any external callers
+        self.llm = self.extract_llm
 
         self.pubcon        = PubmedConnector(self.dm, entrez_email)
         self.bfo           = BFOConnector(self.dm)
@@ -84,7 +97,7 @@ class Orchestrator:
             print(f"Using BFO anchor classes as is_a target candidates: {bfo_anchors}")
         print("Starting LLM Extraction...")
         self._run_sync(self.store.add_llm_extracts(
-            self.pubcon.database, self.llm, self.allowed_predicates, batch_size,
+            self.pubcon.database, self.extract_llm, self.allowed_predicates, batch_size,
             extra_targets=bfo_anchors,
             predicate_definitions=_PREDICATE_DEFINITIONS,
         ))
@@ -114,7 +127,7 @@ class Orchestrator:
                     if ":" in triple
                 ]
             })
-            self._run_sync(self.term_mapper.get_data(all_terms, self.llm))
+            self._run_sync(self.term_mapper.get_data(all_terms, self.norm_llm))
             self.store.normalize(self.term_mapper)
 
         self.class_hier.get_data(self.store)
@@ -152,7 +165,7 @@ class Orchestrator:
 
         async def _internal():
             self.lattice.get_data_and_run_fca()
-            await self.lattice.create_superclass_names(self.llm, batch_size=batch_size)
+            await self.lattice.create_superclass_names(self.naming_llm, batch_size=batch_size)
 
         self._run_sync(_internal())
 
@@ -185,7 +198,7 @@ class Orchestrator:
 
     def run_matrix_nan_fill(self, batch_size=15):
         print(f"Evaluating missing relations (Parallel Waves of {batch_size})...")
-        self._run_sync(self.context_matrix.fill_nan(self.llm, batch_size=batch_size))
+        self._run_sync(self.context_matrix.fill_nan(self.extract_llm, batch_size=batch_size))
 
     # ── Export ─────────────────────────────────────────────────────────────────
 
