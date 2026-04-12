@@ -7,6 +7,8 @@ from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.llm.llm_client import LLMClient
 from wound_ontology.connectors.pubmed_connector import PubmedConnector
 from wound_ontology.connectors.bfo_connector import BFOConnector
+from wound_ontology.connectors.ro_connector import ROConnector
+from wound_ontology.connectors.obi_connector import OBIConnector
 from wound_ontology.cache.concept_store import ConceptStore
 from wound_ontology.hierarchies.class_hierarchy import ClassHierarchy
 from wound_ontology.hierarchies.mereological_hierarchy import MereologicalHierarchy
@@ -15,6 +17,7 @@ from wound_ontology.fca.context_matrix import ContextMatrix
 from wound_ontology.fca.concept_lattice import ConceptLattice
 from wound_ontology.mappers.normalization_mapper import TermMapper
 from wound_ontology.export.owl_exporter import OWLExporter
+from wound_ontology.export.owl_enricher import OWLEnricher
 
 load_dotenv()
 
@@ -50,6 +53,8 @@ class Orchestrator:
 
         self.pubcon        = PubmedConnector(self.dm, entrez_email)
         self.bfo           = BFOConnector(self.dm)
+        self.ro            = ROConnector(self.dm)
+        self.obi           = OBIConnector(self.dm)
         self.store         = ConceptStore(self.dm, "concept_store")
         self.class_hier    = ClassHierarchy(self.dm)
         self.mere_hier     = MereologicalHierarchy(self.dm)
@@ -63,6 +68,7 @@ class Orchestrator:
             mereological_hierarchy=self.mere_hier,
             fca_hierarchy=self.fca_hier,
         )
+        self.enricher      = OWLEnricher()
         self.allowed_predicates = allowed_predicates
 
     def _run_sync(self, coroutine):
@@ -193,8 +199,39 @@ class Orchestrator:
 
     # ── Export ─────────────────────────────────────────────────────────────────
 
-    def export_to_owl(self):
-        self.exporter.create_owl()
+    def export_to_owl(self, output_file=None):
+        self.exporter.create_owl(**({"output_file": output_file} if output_file else {}))
+
+    def run_enrich_owl(
+        self,
+        input_file: str,
+        output_file: str,
+        import_bfo: bool = True,
+        import_ro: bool = True,
+        import_obi: bool = False,
+        run_reasoner: bool = False,
+    ) -> None:
+        """
+        Post-process an OWL file: assign proper ontology IRIs (WOND_NNNNNNN),
+        add rdfs:labels, import BFO/RO/OBI via connectors, and optionally run
+        the reasoner.
+        """
+        self.enricher.load(input_file)
+
+        connectors = []
+        if import_bfo:
+            connectors.append(self.bfo)
+        if import_ro:
+            connectors.append(self.ro)
+        if import_obi:
+            connectors.append(self.obi)
+        if connectors:
+            self.enricher.import_connector(*connectors)
+
+        self.enricher.rename_iris()
+        if run_reasoner:
+            self.enricher.run_reasoner()
+        self.enricher.save(output_file)
 
     # ── Full pipeline ──────────────────────────────────────────────────────────
 

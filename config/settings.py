@@ -17,7 +17,14 @@ PUBMED_SEARCH_TERMS = [
 
 # External ontology URLs
 BFO_OWL_URL = "http://purl.obolibrary.org/obo/bfo.owl"
-RO_OWL_URL = "http://purl.obolibrary.org/obo/ro.owl"
+RO_OWL_URL  = "http://purl.obolibrary.org/obo/ro.owl"
+OBI_OWL_URL = "http://purl.obolibrary.org/obo/obi.owl"
+
+# Output ontology identity
+# Change these to your own IRI/CURIE when publishing.
+ONTOLOGY_BASE_IRI = "http://purl.obolibrary.org/obo/WOND_"  # base for class IRIs
+ONTOLOGY_ID_PREFIX = "WOND"                                  # CURIE prefix
+ONTOLOGY_ID_START  = 1                                       # first numeric ID
 
 # PubMed / NCBI
 ENTREZ_EMAIL = os.getenv("ENTREZ_EMAIL", "")

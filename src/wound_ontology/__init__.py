@@ -6,6 +6,7 @@ from wound_ontology.fca import ContextMatrix, ConceptLattice
 from wound_ontology.mappers import BaseMapper, NormalizationMapper, TermMapper
 from wound_ontology.hierarchies import BaseHierarchy, ClassHierarchy, MereologicalHierarchy, FCAHierarchy
 from wound_ontology.export.owl_exporter import OWLExporter
+from wound_ontology.export.owl_enricher import OWLEnricher
 from wound_ontology.orchestrator import Orchestrator
 
 __all__ = [
@@ -16,6 +17,6 @@ __all__ = [
     "ContextMatrix", "ConceptLattice",
     "BaseMapper", "NormalizationMapper", "TermMapper",
     "BaseHierarchy", "ClassHierarchy", "MereologicalHierarchy", "FCAHierarchy",
-    "OWLExporter",
+    "OWLExporter", "OWLEnricher",
     "Orchestrator",
 ]
