@@ -54,7 +54,7 @@ class BaseLLMClient(ABC):
 class GeminiClient(BaseLLMClient):
     """Handles extraction and NaN filling via Gemini Flash."""
 
-    def __init__(self, api_key: str, model_id: str = "gemini-2.0-flash"):
+    def __init__(self, api_key: str, model_id: str = "gemini-3-flash-preview"):
         self.client   = genai.Client(api_key=api_key)
         self.model_id = model_id
 
