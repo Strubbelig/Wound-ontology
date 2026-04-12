@@ -170,6 +170,10 @@ class Orchestrator:
                 name = getattr(concept, 'name', None)
                 if not isinstance(name, str) or not name:
                     continue
+                # Normalise casing to match BaseHierarchy convention
+                if hasattr(concept, 'name'):
+                    concept.name = name.strip().title()
+                    name = concept.name
                 for entity in concept.extent:
                     self.class_hier._set_edge(str(entity), name)
                     added += 1

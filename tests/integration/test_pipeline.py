@@ -130,8 +130,10 @@ def test_fca_on_subtree(pipeline, tmp_data_dir):
             getattr(c, 'name', None) for c in lattice
             if isinstance(getattr(c, 'name', None), str)
         ]
-        print(f"\nFCA superclass names: {fca_names}")
-        for name in fca_names:
+        # _set_edge Title-cases names, so normalise before checking
+        fca_names_title = [n.strip().title() for n in fca_names]
+        print(f"\nFCA superclass names: {fca_names_title}")
+        for name in fca_names_title:
             assert name in pipeline.class_hier.concepts, \
                 f"FCA superclass '{name}' not found in ClassHierarchy"
 
@@ -142,7 +144,7 @@ def test_fca_on_subtree(pipeline, tmp_data_dir):
     content = owl_out.read_text()
 
     if lattice is not None:
-        for name in fca_names:
+        for name in fca_names_title:
             safe = name.strip().replace(" ", "_")
             assert safe in content, f"FCA superclass '{safe}' not found in OWL"
     print(f"\nOWL with FCA → {owl_out} ({owl_out.stat().st_size} bytes)")
