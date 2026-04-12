@@ -275,8 +275,44 @@ class OpenAIClient(BaseLLMClient):
         raise NotImplementedError("Use GeminiClient for NaN filling.")
 
 
-# ── Backwards-compatible alias ────────────────────────────────────────────────
+# ── Router ────────────────────────────────────────────────────────────────────
 
-class LLMClient(GeminiClient):
-    """Alias kept for compatibility — defaults to Gemini Flash."""
-    pass
+class LLMClient(BaseLLMClient):
+    """
+    Single LLM interface for the whole pipeline.
+
+    Internally routes each task to the most suitable provider:
+      - extraction + NaN fill → Gemini Flash  (fast, cheap, high volume)
+      - normalization         → GPT-4o mini   (consistent synonym collapse)
+      - FCA concept naming    → Claude Sonnet (highest quality, low volume)
+
+    Falls back to Gemini for any task whose provider key is missing.
+    """
+
+    def __init__(
+        self,
+        google_api_key: str = "",
+        anthropic_api_key: str = "",
+        openai_api_key: str = "",
+    ):
+        self._gemini    = GeminiClient(google_api_key)
+        self._anthropic = AnthropicClient(anthropic_api_key) if anthropic_api_key else None
+        self._openai    = OpenAIClient(openai_api_key)       if openai_api_key    else None
+
+    # ── Task routing ──────────────────────────────────────────────────────────
+
+    async def extract_entities(self, text, predicates, targets, attributes, predicate_definitions=None):
+        return await self._gemini.extract_entities(
+            text, predicates, targets, attributes, predicate_definitions
+        )
+
+    async def create_normalization_mapping(self, terms, standards) -> dict:
+        client = self._openai or self._gemini
+        return await client.create_normalization_mapping(terms, standards)
+
+    async def fill_nan(self, object_name: str, attributes: list[str]) -> list[str]:
+        return await self._gemini.fill_nan(object_name, attributes)
+
+    async def generate_semantic_name(self, intent_attributes, superclass_names) -> str:
+        client = self._anthropic or self._gemini
+        return await client.generate_semantic_name(intent_attributes, superclass_names)
