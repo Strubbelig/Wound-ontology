@@ -44,7 +44,8 @@ class OWLExporter:
                 for parent in hierarchy.df.columns:
                     if hierarchy.df.at[child, parent] == 1.0:
                         if self._safe_name(child) == self._safe_name(parent):
-                            continue  # skip self-loops
+                            self._get_or_create_cls(cls_reg, child)  # entity exists as owl:Thing
+                            continue
                         child_cls  = self._get_or_create_cls(cls_reg, child)
                         parent_cls = self._get_or_create_cls(cls_reg, parent)
                         if parent_cls not in child_cls.is_a:

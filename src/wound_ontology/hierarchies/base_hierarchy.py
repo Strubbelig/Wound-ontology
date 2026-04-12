@@ -132,8 +132,7 @@ class BaseHierarchy(ABC):
         """Set df[specific][general] = 1.0, expanding index/columns as needed."""
         specific = specific.strip().title()
         general  = general.strip().title()
-        if specific == general:
-            return  # skip self-loops
+        # Always register both concepts so the entity exists even without a valid parent
         if general not in self._df.columns:
             self._df[general] = 0.0
         if specific not in self._df.index:
@@ -143,4 +142,6 @@ class BaseHierarchy(ABC):
                 columns=self._df.columns,
             )
             self._df = pd.concat([self._df, new_row])
+        if specific == general:
+            return  # self-loop: entity registered but no edge written
         self._df.at[specific, general] = 1.0
