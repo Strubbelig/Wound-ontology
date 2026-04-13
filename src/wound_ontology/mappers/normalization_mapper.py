@@ -31,10 +31,12 @@ class NormalizationMapper(BaseMapper):
         """Apply the mapping to both index and columns (unmapped entries kept as-is)."""
         return df.rename(index=self._mapping, columns=self._mapping)
 
-    async def get_data(self, terms: list[str], llm, batch_size=5):
+    async def get_data(self, terms: list[str], llm, batch_size=10, chunk_size=50):
         """
         Normalizes medical terms in parallel waves.
-        batch_size: How many chunks of 30 to process simultaneously.
+
+        batch_size  – concurrent LLM calls in flight at once.
+        chunk_size  – terms per LLM call (larger = fewer calls).
         """
         terms_to_map = [t for t in terms if t not in self.originals]
 
@@ -42,25 +44,32 @@ class NormalizationMapper(BaseMapper):
             print(f"[{self.name}] All {len(terms)} terms found in cache.")
             return self.mapping
 
-        chunks = [terms_to_map[i:i + 30] for i in range(0, len(terms_to_map), 30)]
-        print(f"[{self.name}] Found {len(terms_to_map)} new terms. Processing {len(chunks)} async chunks...")
+        chunks = [terms_to_map[i:i + chunk_size] for i in range(0, len(terms_to_map), chunk_size)]
+        print(f"[{self.name}] Found {len(terms_to_map)} new terms → "
+              f"{len(chunks)} chunks (size={chunk_size}, concurrency={batch_size})...")
 
         sem = asyncio.Semaphore(batch_size)
 
         async def process_chunk(chunk, chunk_id):
             async with sem:
                 results = await llm.create_normalization_mapping(chunk, self.standards)
-                print(f"[{self.name}] Chunk {chunk_id+1} complete.")
+                print(f"[{self.name}] Chunk {chunk_id + 1}/{len(chunks)} complete.")
                 return results
 
         tasks = [process_chunk(chunk, i) for i, chunk in enumerate(chunks)]
+        all_results = await asyncio.gather(*tasks, return_exceptions=True)
 
-        for f in asyncio.as_completed(tasks):
-            try:
-                batch_results = await f
-                self.mapping = batch_results
-            except Exception as e:
-                print(f"[{self.name}] Chunk failed ({type(e).__name__}): {e} — skipping.")
+        # Merge all results in memory, then save once
+        accumulated = {}
+        for i, result in enumerate(all_results):
+            if isinstance(result, Exception):
+                print(f"[{self.name}] Chunk {i + 1} failed ({type(result).__name__}): {result} — skipping.")
+            else:
+                accumulated.update(result)
+
+        if accumulated:
+            self._mapping.update(accumulated)
+            self.save()
 
         print(f"[{self.name}] Normalization complete. Total terms in cache: {len(self.originals)}")
         return self.mapping

@@ -32,5 +32,13 @@ class FillNanResponse(BaseModel):
     confirmed_attributes: list[str]
 
 
+class FillNanEntityResult(BaseModel):
+    object_name: str
+    confirmed_attributes: list[str]
+
+class FillNanBatchResponse(BaseModel):
+    results: list[FillNanEntityResult]
+
+
 class SemanticNameResponse(BaseModel):
     superclass_name: str

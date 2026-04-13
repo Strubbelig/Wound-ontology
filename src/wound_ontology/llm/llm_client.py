@@ -10,7 +10,8 @@ import anthropic as anthropic_sdk
 import openai as openai_sdk
 
 from wound_ontology.llm.schemas import (
-    ExtractResponse, NormalizationResponse, FillNanResponse, SemanticNameResponse
+    ExtractResponse, NormalizationResponse, FillNanResponse,
+    FillNanBatchResponse, SemanticNameResponse
 )
 
 
@@ -42,6 +43,10 @@ class BaseLLMClient(ABC):
 
     @abstractmethod
     async def fill_nan(self, object_name: str, attributes: list[str]) -> list[str]:
+        ...
+
+    @abstractmethod
+    async def fill_nan_batch(self, entity_attrs: dict[str, list[str]]) -> dict[str, list[str]]:
         ...
 
     @abstractmethod
@@ -161,6 +166,28 @@ class GeminiClient(BaseLLMClient):
         response = await self._execute_with_retry(self._call, prompt, FillNanResponse, temperature=0.0)
         return response.parsed.confirmed_attributes
 
+    async def fill_nan_batch(self, entity_attrs: dict[str, list[str]]) -> dict[str, list[str]]:
+        """
+        Evaluate NaN attributes for multiple entities in a single LLM call.
+        entity_attrs: {entity_name: [missing_attr, ...]}
+        Returns:      {entity_name: [confirmed_attr, ...]}
+        """
+        if not entity_attrs:
+            return {}
+        lines = []
+        for entity, attrs in entity_attrs.items():
+            lines.append(f'Entity: "{entity}"\nCandidate attributes: {attrs}')
+        body = "\n\n".join(lines)
+        prompt = f"""
+        Act as a clinical ontologist. For each entity below, return ONLY the candidate attributes
+        that are FACTUALLY and CLINICALLY true. Exclude attributes that are incorrect, uncertain,
+        or not defining characteristics. Return results for every entity listed.
+
+        {body}
+        """
+        response = await self._execute_with_retry(self._call, prompt, FillNanBatchResponse, temperature=0.0)
+        return {r.object_name: r.confirmed_attributes for r in response.parsed.results}
+
     async def generate_semantic_name(self, intent_attributes, superclass_names) -> str:
         prompt = f"""
         These medical attributes describe a class: {list(intent_attributes)}
@@ -226,6 +253,9 @@ class AnthropicClient(BaseLLMClient):
     async def fill_nan(self, *a, **kw):
         raise NotImplementedError("Use GeminiClient for NaN filling.")
 
+    async def fill_nan_batch(self, *a, **kw):
+        raise NotImplementedError("Use GeminiClient for NaN filling.")
+
 
 # ── OpenAI ────────────────────────────────────────────────────────────────────
 
@@ -274,6 +304,9 @@ class OpenAIClient(BaseLLMClient):
     async def fill_nan(self, *a, **kw):
         raise NotImplementedError("Use GeminiClient for NaN filling.")
 
+    async def fill_nan_batch(self, *a, **kw):
+        raise NotImplementedError("Use GeminiClient for NaN filling.")
+
 
 # ── Router ────────────────────────────────────────────────────────────────────
 
@@ -312,6 +345,9 @@ class LLMClient(BaseLLMClient):
 
     async def fill_nan(self, object_name: str, attributes: list[str]) -> list[str]:
         return await self._gemini.fill_nan(object_name, attributes)
+
+    async def fill_nan_batch(self, entity_attrs: dict[str, list[str]]) -> dict[str, list[str]]:
+        return await self._gemini.fill_nan_batch(entity_attrs)
 
     async def generate_semantic_name(self, intent_attributes, superclass_names) -> str:
         client = self._anthropic or self._gemini

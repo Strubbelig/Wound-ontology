@@ -130,8 +130,13 @@ class ContextMatrix:
 
         print(f"FCA matrix built: {len(new_data)} entities × {len(new_data.columns)} triples.")
 
-    async def fill_nan(self, llm, batch_size=10):
-        """Evaluates all NaNs in parallel waves."""
+    async def fill_nan(self, llm, batch_size=20, entity_batch=5):
+        """
+        Evaluates all NaNs using batched LLM calls.
+
+        batch_size   – concurrent LLM calls in flight at once.
+        entity_batch – entities grouped into a single LLM call (reduces total calls ~entity_batch×).
+        """
         valid_attributes = self.attributes
         total_nan = self.df[valid_attributes].isna().sum().sum()
 
@@ -139,29 +144,46 @@ class ContextMatrix:
             print("No medical NaNs found.")
             return self.df
 
-        print(f"Starting parallel scrutiny for {total_nan} NaNs across {len(self.df)} objects...")
+        # Pre-filter: only rows that actually have NaNs
+        nan_entities = [
+            obj for obj in self.df.index
+            if self.df.loc[obj, valid_attributes].isna().any()
+        ]
+        print(f"Starting batched scrutiny: {total_nan} NaNs across "
+              f"{len(nan_entities)} entities (batch={entity_batch}, concurrency={batch_size})...")
+
+        # Build per-entity missing attribute lists
+        entity_missing: dict[str, list[str]] = {
+            obj: self.df.loc[obj, valid_attributes][self.df.loc[obj, valid_attributes].isna()].index.tolist()
+            for obj in nan_entities
+        }
+
+        # Group entities into chunks for batched LLM calls
+        chunks = [
+            dict(list(entity_missing.items())[i:i + entity_batch])
+            for i in range(0, len(entity_missing), entity_batch)
+        ]
 
         sem = asyncio.Semaphore(batch_size)
 
-        async def process_row(object_name):
+        async def process_chunk(chunk: dict[str, list[str]], chunk_id: int):
             async with sem:
-                row = self.df.loc[object_name, valid_attributes]
-                missing = row[row.isna()].index.tolist()
-                if not missing:
-                    return object_name, [], []
-                confirmed = await llm.fill_nan(object_name, missing)
-                return object_name, confirmed, missing
+                result = await llm.fill_nan_batch(chunk)
+                print(f"  Chunk {chunk_id + 1}/{len(chunks)} done ({len(chunk)} entities).")
+                return result
 
-        tasks = [process_row(obj) for obj in self.df.index]
-        results = await asyncio.gather(*tasks)
+        tasks = [process_chunk(chunk, i) for i, chunk in enumerate(chunks)]
+        batch_results = await asyncio.gather(*tasks)
 
         current_df = self.df.copy()
-        for res in results:
-            if res is None:
+        for batch in batch_results:
+            if not batch:
                 continue
-            obj_name, confirmed_list, original_missing = res
-            for attr in original_missing:
-                current_df.at[obj_name, attr] = 1 if attr in confirmed_list else 0
+            for obj_name, confirmed_list in batch.items():
+                if obj_name not in entity_missing:
+                    continue
+                for attr in entity_missing[obj_name]:
+                    current_df.at[obj_name, attr] = 1 if attr in confirmed_list else 0
 
         meta_col, meta_id = self.dm.get_meta_stamp("llm_fill_nan")
         current_df[meta_col] = meta_id

@@ -223,6 +223,86 @@ class ConceptStore:
 
         print(f"Batch extraction complete. {len(to_process)} abstracts processed.")
 
+    async def fill_missing_attributes(self, llm, batch_size: int = 20, entity_batch: int = 5) -> None:
+        """
+        For each unique entity, evaluate attributes that are not yet in its record.
+
+        After normalize(), the store may have entity X with some attributes from
+        one PMID but missing others that exist for different entities.  This step
+        asks the LLM to confirm/deny every unseen (pred: target) pair so the store
+        is fully populated before ContextMatrix and FCA run.
+
+        batch_size   – concurrent LLM calls in flight.
+        entity_batch – entities grouped into one LLM call (reduces total calls).
+        """
+        all_attrs = self.attributes  # all known pred:target pairs across the store
+
+        if not all_attrs:
+            print("[ConceptStore] No attributes found — skipping fill.")
+            return
+
+        # Build flat merged view: entity → {attr: value} across all PMIDs
+        flat: dict[str, dict[str, float]] = {}
+        for pmid_data in self._dict.values():
+            for entity, attrs in pmid_data.get("entities", {}).items():
+                merged = flat.setdefault(entity, {})
+                for attr, val in attrs.items():
+                    merged[attr] = max(merged.get(attr, 0.0), float(val))
+
+        # Identify missing (never evaluated) attributes per entity
+        entity_missing: dict[str, list[str]] = {
+            entity: [a for a in all_attrs if a not in known_attrs]
+            for entity, known_attrs in flat.items()
+        }
+        entity_missing = {e: m for e, m in entity_missing.items() if m}
+
+        total_missing = sum(len(m) for m in entity_missing.values())
+        if total_missing == 0:
+            print("[ConceptStore] All entity–attribute pairs already evaluated.")
+            return
+
+        print(f"[ConceptStore] Filling {total_missing} missing pairs across "
+              f"{len(entity_missing)} entities "
+              f"(batch={entity_batch}, concurrency={batch_size})...")
+
+        chunks = [
+            dict(list(entity_missing.items())[i:i + entity_batch])
+            for i in range(0, len(entity_missing), entity_batch)
+        ]
+        sem = asyncio.Semaphore(batch_size)
+
+        async def process_chunk(chunk: dict[str, list[str]], chunk_id: int):
+            async with sem:
+                result = await llm.fill_nan_batch(chunk)
+                print(f"  Chunk {chunk_id + 1}/{len(chunks)} done ({len(chunk)} entities).")
+                return result
+
+        tasks = [process_chunk(chunk, i) for i, chunk in enumerate(chunks)]
+        batch_results = await asyncio.gather(*tasks)
+
+        # Write confirmed → 1.0, unconfirmed → 0.0 back into the store
+        # We add a synthetic "fill" key so provenance is clear
+        fill_entities: dict[str, dict] = {}
+        for batch in batch_results:
+            if not batch:
+                continue
+            for entity, confirmed_list in batch.items():
+                if entity not in entity_missing:
+                    continue
+                attr_dict = fill_entities.setdefault(entity, {})
+                for attr in entity_missing[entity]:
+                    attr_dict[attr] = 1.0 if attr in confirmed_list else 0.0
+
+        if fill_entities:
+            meta_col, meta_id = self.dm.get_meta_stamp("llm_fill")
+            self._dict["llm_fill"] = {"entities": fill_entities, "meta_stamp": meta_id}
+            self.save()
+            confirmed_total = sum(
+                sum(1 for v in d.values() if v == 1.0) for d in fill_entities.values()
+            )
+            print(f"[ConceptStore] Fill complete — {confirmed_total} new confirmed attributes. "
+                  f"Stamp: {meta_id}")
+
     # ── Persistence ───────────────────────────────────────────────────────────
 
     def save(self) -> None:

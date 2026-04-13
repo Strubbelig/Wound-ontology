@@ -205,9 +205,18 @@ class Orchestrator:
         else:
             print("FCAHierarchy          : skipped (empty lattice).")
 
-    def run_matrix_nan_fill(self, batch_size=15):
-        print(f"Evaluating missing relations (Parallel Waves of {batch_size})...")
-        self._run_sync(self.context_matrix.fill_nan(self.llm, batch_size=batch_size))
+    def run_store_fill(self, batch_size: int = 20, entity_batch: int = 5) -> None:
+        """
+        Fill every missing attribute for each entity in the ConceptStore via LLM.
+        Run this AFTER normalize() and BEFORE FCA so enrichment flows everywhere.
+        """
+        print(f"Filling missing store attributes (concurrency={batch_size}, entity_batch={entity_batch})...")
+        self._run_sync(self.store.fill_missing_attributes(self.llm, batch_size=batch_size, entity_batch=entity_batch))
+
+    def run_matrix_nan_fill(self, batch_size=20, entity_batch=5):
+        """Fallback: fill NaNs directly on the FCA context matrix (post-FCA)."""
+        print(f"Evaluating missing relations (concurrency={batch_size}, entity_batch={entity_batch})...")
+        self._run_sync(self.context_matrix.fill_nan(self.llm, batch_size=batch_size, entity_batch=entity_batch))
 
     # ── Export ─────────────────────────────────────────────────────────────────
 
