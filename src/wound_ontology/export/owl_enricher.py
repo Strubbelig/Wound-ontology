@@ -1,7 +1,7 @@
 from __future__ import annotations
 import re
 from pathlib import Path
-from owlready2 import World, sync_reasoner
+from owlready2 import World, sync_reasoner, destroy_entity
 
 try:
     from config.settings import (
@@ -115,6 +115,68 @@ class OWLEnricher:
     def import_obi(self) -> "OWLEnricher":
         return self.import_external(_OBI_URL)
 
+    # ── External class resolution ──────────────────────────────────────────────
+
+    def resolve_external_classes(self) -> "OWLEnricher":
+        """
+        Replace local classes that shadow an already-imported external class
+        (BFO, RO, OBI…) with the real external class.
+
+        For each local class whose rdfs:label (or formatted name) matches a
+        class in any imported ontology:
+          1. All subClassOf edges pointing to the local class are rewired to
+             the matching external class.
+          2. The redundant local class is destroyed.
+
+        Call this AFTER import_connector() / import_external() and BEFORE
+        rename_iris() so shadowed concepts never receive a WOND_ IRI.
+        """
+        # Build label → external class from all imported ontologies
+        label_map: dict[str, object] = {}
+        for imported_onto in self._onto.imported_ontologies:
+            for cls in imported_onto.classes():
+                for lbl in cls.label:
+                    label_map[str(lbl).lower().strip()] = cls
+                # Also index by formatted class name as fallback
+                name_key = cls.name.lower().replace("_", " ").strip()
+                if name_key not in label_map:
+                    label_map[name_key] = cls
+
+        if not label_map:
+            print("[OWLEnricher] No imported ontologies to resolve against — skipping.")
+            return self
+
+        resolved = 0
+        with self._onto:
+            for local_cls in list(self._onto.classes()):
+                if not self._is_local(local_cls):
+                    continue
+                # Determine lookup key from existing label or formatted name
+                if local_cls.label:
+                    key = str(local_cls.label.first()).lower().strip()
+                else:
+                    key = local_cls.name.lower().replace("_", " ").strip()
+
+                ext_cls = label_map.get(key)
+                if ext_cls is None:
+                    continue
+
+                # Rewire all local subClasses that list local_cls as a parent
+                for other in list(self._onto.classes()):
+                    if local_cls in other.is_a:
+                        other.is_a.remove(local_cls)
+                        if ext_cls not in other.is_a:
+                            other.is_a.append(ext_cls)
+
+                try:
+                    destroy_entity(local_cls)
+                    resolved += 1
+                except Exception as exc:
+                    print(f"[OWLEnricher] Could not destroy '{local_cls.name}': {exc}")
+
+        print(f"[OWLEnricher] Resolved {resolved} local classes to external IRIs.")
+        return self
+
     # ── IRI renaming + labeling ────────────────────────────────────────────────
 
     def rename_iris(self) -> "OWLEnricher":
@@ -193,6 +255,7 @@ class OWLEnricher:
             self.import_ro()
         if import_obi:
             self.import_obi()
+        self.resolve_external_classes()
         self.rename_iris()
         if run_reasoner:
             self.run_reasoner()

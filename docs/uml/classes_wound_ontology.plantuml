@@ -1,0 +1,304 @@
+@startuml classes_wound_ontology
+set namespaceSeparator none
+class "AnthropicClient" as wound_ontology.llm.llm_client.AnthropicClient #coral {
+  client
+  model_id : str
+  {abstract}create_normalization_mapping()
+  {abstract}extract_entities()
+  {abstract}fill_nan()
+  generate_semantic_name(intent_attributes, superclass_names) -> str
+}
+class "BFOConnector" as wound_ontology.connectors.bfo_connector.BFOConnector #aquamarine {
+  BFO_ANCHOR_CLASSES : list
+  label_list : list
+  fetch_labels()
+  get_anchor_names() -> list[str]
+  get_hierarchy_df() -> pd.DataFrame
+}
+class "BaseConnector" as wound_ontology.connectors.base_connector.BaseConnector #aquamarine {
+  dm
+  file_name : str
+  source_name : str
+  {abstract}connect()
+  {abstract}get_data(query)
+  {abstract}save()
+}
+class "BaseHierarchy" as wound_ontology.hierarchies.base_hierarchy.BaseHierarchy #chocolate {
+  concepts
+  df
+  dm : str
+  file_name
+  roots
+  children_of(concept: str) -> list
+  get_data(store) -> None
+  parents_of(concept: str) -> list
+  save() -> None
+  subtree_of(root: str) -> set
+}
+class "BaseLLMClient" as wound_ontology.llm.llm_client.BaseLLMClient #coral {
+  {abstract}create_normalization_mapping(terms, standards) -> dict
+  {abstract}extract_entities(text, predicates, targets, attributes, predicate_definitions)
+  {abstract}fill_nan(object_name: str, attributes: list[str]) -> list[str]
+  {abstract}generate_semantic_name(intent_attributes, superclass_names) -> str
+}
+class "BaseMapper" as wound_ontology.mappers.base_mapper.BaseMapper #cornflowerblue {
+  dm
+  file_name : str
+  mapping
+  name : str
+  save()
+}
+class "ClassHierarchy" as wound_ontology.hierarchies.class_hierarchy.ClassHierarchy #chocolate {
+  file_name : str
+}
+class "ConceptLattice" as wound_ontology.fca.concept_lattice.ConceptLattice #chartreuse {
+  dm
+  file_name : str
+  lattice
+  lattice
+  matrix
+  semantic_superclass_names
+  create_superclass_names(llm, min_objects, batch_size)
+  get_data_and_run_fca()
+  save()
+}
+class "ConceptStore" as wound_ontology.cache.concept_store.ConceptStore #antiquewhite {
+  attributes
+  dict
+  dm
+  file_name : str
+  predicates
+  targets
+  add_llm_extracts(df_pubmed, llm, allowed_predicates, batch_size: int, extra_targets, predicate_definitions) -> None
+  get_data(source, child_col: str, parent_col: str) -> None
+  normalize(mapper) -> None
+  save() -> None
+}
+class "ContextMatrix" as wound_ontology.fca.context_matrix.ContextMatrix #chartreuse {
+  attributes
+  bool_tuples
+  df
+  df : NoneType
+  dm
+  file_name
+  objects
+  predicates
+  targets
+  fill_nan(llm, batch_size)
+  get_data(store, entities: set, predicates: list) -> None
+  merge(df: pd.DataFrame) -> pd.DataFrame
+  save()
+}
+class "DataManager" as wound_ontology.data_manager.data_manager.DataManager #burlywood {
+  base_path : Path
+  file_name : str
+  meta_id_dict
+  reference_path
+  get_meta_stamp(workflow_prefix: str)
+  load_latest_csv(prefix: str)
+  load_latest_json(prefix: str)
+  load_latest_pickle(prefix: str)
+  load_reference_csv(filename: str) -> pd.DataFrame | None
+  purge_by_prefix(prefix: str, confirm: bool)
+  save_as_csv(df, filename_prefix)
+  save_as_json(data_list, filename_prefix)
+  save_as_pickle(obj, filename_prefix)
+  save_reference_csv(df: pd.DataFrame, filename: str) -> str
+}
+class "Entity" as wound_ontology.llm.schemas.Entity #coral {
+  false_attributes : list[FCAAttribute]
+  object : str
+  true_attributes : list[FCAAttribute]
+}
+class "ExtractResponse" as wound_ontology.llm.schemas.ExtractResponse #coral {
+  entities : list[Entity]
+}
+class "ExtractionCache" as wound_ontology.cache.extraction_cache.ExtractionCache #antiquewhite {
+  attributes
+  dict
+  dm
+  file_name
+  predicates
+  targets
+  add_llm_extracts(df_pubmed, llm, allowed_predicates, batch_size, extra_targets, predicate_definitions)
+  save()
+}
+class "FCAAttribute" as wound_ontology.llm.schemas.FCAAttribute #coral {
+  predicate : str
+  target : str
+}
+class "FCAHierarchy" as wound_ontology.hierarchies.fca_hierarchy.FCAHierarchy #chocolate {
+  file_name : str
+  get_data(lattice) -> None
+}
+class "FillNanResponse" as wound_ontology.llm.schemas.FillNanResponse #coral {
+  confirmed_attributes : list[str]
+}
+class "GeminiClient" as wound_ontology.llm.llm_client.GeminiClient #coral {
+  client
+  model_id : str
+  create_normalization_mapping(terms, standards) -> dict
+  extract_entities(text, predicates, targets, attributes, predicate_definitions)
+  fill_nan(object_name: str, attributes: list[str]) -> list[str]
+  generate_semantic_name(intent_attributes, superclass_names) -> str
+}
+class "LLMClient" as wound_ontology.llm.llm_client.LLMClient #coral {
+  create_normalization_mapping(terms, standards) -> dict
+  extract_entities(text, predicates, targets, attributes, predicate_definitions)
+  fill_nan(object_name: str, attributes: list[str]) -> list[str]
+  generate_semantic_name(intent_attributes, superclass_names) -> str
+}
+class "MereologicalHierarchy" as wound_ontology.hierarchies.mereological_hierarchy.MereologicalHierarchy #chocolate {
+  file_name : str
+}
+class "NormalizationEntry" as wound_ontology.llm.schemas.NormalizationEntry #coral {
+  original : str
+  standard : str
+}
+class "NormalizationMapper" as wound_ontology.mappers.normalization_mapper.NormalizationMapper #cornflowerblue {
+  mapping
+  originals
+  standards
+  apply(df: pd.DataFrame) -> pd.DataFrame
+  get_data(terms: list[str], llm, batch_size)
+  map(term: str) -> str
+}
+class "NormalizationResponse" as wound_ontology.llm.schemas.NormalizationResponse #coral {
+  mappings : list[NormalizationEntry]
+}
+class "OBIConnector" as wound_ontology.connectors.obi_connector.OBIConnector #aquamarine {
+  label_list : list
+  fetch_labels()
+}
+class "OWLEnricher" as wound_ontology.export.owl_enricher.OWLEnricher #cadetblue {
+  base_iri : str
+  id_prefix : str
+  enrich(input_file: str, output_file: str, import_bfo: bool, import_ro: bool, import_obi: bool, run_reasoner: bool) -> None
+  import_bfo() -> 'OWLEnricher'
+  import_connector() -> 'OWLEnricher'
+  import_external() -> 'OWLEnricher'
+  import_obi() -> 'OWLEnricher'
+  import_ro() -> 'OWLEnricher'
+  load(owl_file: str) -> 'OWLEnricher'
+  rename_iris() -> 'OWLEnricher'
+  resolve_external_classes() -> 'OWLEnricher'
+  run_reasoner(infer_property_values: bool) -> 'OWLEnricher'
+  save(output_file: str) -> None
+}
+class "OWLExporter" as wound_ontology.export.owl_exporter.OWLExporter #cadetblue {
+  class_hier : NoneType
+  dm
+  fca_hier : NoneType
+  mere_hier : NoneType
+  onto : Ontology
+  create_owl(output_file) -> None
+}
+class "OntoConnector" as wound_ontology.connectors.onto_connector.OntoConnector #aquamarine {
+  iri_to_label : dict
+  label_list
+  label_to_iri : dict
+  onto : NoneType, Ontology
+  onto_url
+  connect()
+  {abstract}fetch_labels()
+  get_data(query)
+  save()
+}
+class "OpenAIClient" as wound_ontology.llm.llm_client.OpenAIClient #coral {
+  client
+  model_id : str
+  create_normalization_mapping(terms, standards) -> dict
+  {abstract}extract_entities()
+  {abstract}fill_nan()
+  {abstract}generate_semantic_name()
+}
+class "Orchestrator" as wound_ontology.orchestrator.Orchestrator #aliceblue {
+  allowed_predicates : list
+  bfo
+  class_hier
+  context_matrix
+  dm
+  enricher
+  exporter
+  fca_hier
+  lattice
+  llm
+  mere_hier
+  obi
+  pubcon
+  ro
+  store
+  term_mapper
+  export_to_owl(output_file)
+  run_build_hierarchies(predefined_df: pd.DataFrame, normalize: bool) -> None
+  run_enrich_owl(input_file: str, output_file: str, import_bfo: bool, import_ro: bool, import_obi: bool, run_reasoner: bool) -> None
+  run_extract_to_store(batch_size, use_bfo_attributes)
+  run_fca(subtree_root: str, hierarchy, predicates: list, batch_size: int) -> None
+  run_full_pipeline(query, max_results, predefined_df)
+  run_matrix_nan_fill(batch_size)
+  run_pubmed_search(queries: str | list[str], max_results_per_query: int)
+}
+class "PubmedConnector" as wound_ontology.connectors.pubmed_connector.PubmedConnector #aquamarine {
+  database
+  database : DataFrame
+  email
+  connect()
+  get_data(queries: str | list[str], max_abstracts_per_query: int)
+  save()
+}
+class "ROConnector" as wound_ontology.connectors.ro_connector.ROConnector #aquamarine {
+  label_list : list
+  fetch_bfo_relations()
+  fetch_labels()
+}
+class "SemanticNameResponse" as wound_ontology.llm.schemas.SemanticNameResponse #coral {
+  superclass_name : str
+}
+class "TermMapper" as wound_ontology.mappers.normalization_mapper.TermMapper #cornflowerblue {
+}
+class "UMLSConnector" as wound_ontology.connectors.umls_connector.UMLSConnector #aquamarine {
+  api_key
+  base_url : str
+  delay : float
+  list_of_labels
+  list_of_labels : list
+  connect()
+  get_data(term)
+  save()
+}
+wound_ontology.connectors.bfo_connector.BFOConnector --|> wound_ontology.connectors.onto_connector.OntoConnector
+wound_ontology.connectors.obi_connector.OBIConnector --|> wound_ontology.connectors.onto_connector.OntoConnector
+wound_ontology.connectors.onto_connector.OntoConnector --|> wound_ontology.connectors.base_connector.BaseConnector
+wound_ontology.connectors.pubmed_connector.PubmedConnector --|> wound_ontology.connectors.base_connector.BaseConnector
+wound_ontology.connectors.ro_connector.ROConnector --|> wound_ontology.connectors.onto_connector.OntoConnector
+wound_ontology.connectors.umls_connector.UMLSConnector --|> wound_ontology.connectors.base_connector.BaseConnector
+wound_ontology.hierarchies.class_hierarchy.ClassHierarchy --|> wound_ontology.hierarchies.base_hierarchy.BaseHierarchy
+wound_ontology.hierarchies.fca_hierarchy.FCAHierarchy --|> wound_ontology.hierarchies.base_hierarchy.BaseHierarchy
+wound_ontology.hierarchies.mereological_hierarchy.MereologicalHierarchy --|> wound_ontology.hierarchies.base_hierarchy.BaseHierarchy
+wound_ontology.llm.llm_client.AnthropicClient --|> wound_ontology.llm.llm_client.BaseLLMClient
+wound_ontology.llm.llm_client.GeminiClient --|> wound_ontology.llm.llm_client.BaseLLMClient
+wound_ontology.llm.llm_client.LLMClient --|> wound_ontology.llm.llm_client.BaseLLMClient
+wound_ontology.llm.llm_client.OpenAIClient --|> wound_ontology.llm.llm_client.BaseLLMClient
+wound_ontology.mappers.normalization_mapper.NormalizationMapper --|> wound_ontology.mappers.base_mapper.BaseMapper
+wound_ontology.mappers.normalization_mapper.TermMapper --|> wound_ontology.mappers.normalization_mapper.NormalizationMapper
+wound_ontology.cache.concept_store.ConceptStore --* wound_ontology.orchestrator.Orchestrator : store
+wound_ontology.connectors.bfo_connector.BFOConnector --* wound_ontology.orchestrator.Orchestrator : bfo
+wound_ontology.connectors.obi_connector.OBIConnector --* wound_ontology.orchestrator.Orchestrator : obi
+wound_ontology.connectors.pubmed_connector.PubmedConnector --* wound_ontology.orchestrator.Orchestrator : pubcon
+wound_ontology.connectors.ro_connector.ROConnector --* wound_ontology.orchestrator.Orchestrator : ro
+wound_ontology.data_manager.data_manager.DataManager --* wound_ontology.orchestrator.Orchestrator : dm
+wound_ontology.export.owl_enricher.OWLEnricher --* wound_ontology.orchestrator.Orchestrator : enricher
+wound_ontology.export.owl_exporter.OWLExporter --* wound_ontology.orchestrator.Orchestrator : exporter
+wound_ontology.fca.concept_lattice.ConceptLattice --* wound_ontology.orchestrator.Orchestrator : lattice
+wound_ontology.fca.context_matrix.ContextMatrix --* wound_ontology.orchestrator.Orchestrator : context_matrix
+wound_ontology.hierarchies.class_hierarchy.ClassHierarchy --* wound_ontology.orchestrator.Orchestrator : class_hier
+wound_ontology.hierarchies.fca_hierarchy.FCAHierarchy --* wound_ontology.orchestrator.Orchestrator : fca_hier
+wound_ontology.hierarchies.mereological_hierarchy.MereologicalHierarchy --* wound_ontology.orchestrator.Orchestrator : mere_hier
+wound_ontology.llm.llm_client.GeminiClient --* wound_ontology.llm.llm_client.LLMClient : _gemini
+wound_ontology.llm.llm_client.LLMClient --* wound_ontology.orchestrator.Orchestrator : llm
+wound_ontology.mappers.normalization_mapper.TermMapper --* wound_ontology.orchestrator.Orchestrator : term_mapper
+wound_ontology.data_manager.data_manager.DataManager --o wound_ontology.cache.concept_store.ConceptStore : dm
+wound_ontology.data_manager.data_manager.DataManager --o wound_ontology.connectors.base_connector.BaseConnector : dm
+wound_ontology.data_manager.data_manager.DataManager --o wound_ontology.mappers.base_mapper.BaseMapper : dm
+wound_ontology.fca.context_matrix.ContextMatrix --o wound_ontology.fca.concept_lattice.ConceptLattice : matrix
+@enduml

@@ -171,6 +171,30 @@ def test_enrich_no_imports(tmp_path):
     assert "ENC_" in content
 
 
+def test_existing_label_not_overwritten(tmp_path):
+    """
+    If a class already carries an rdfs:label (set by OWLExporter),
+    rename_iris() must keep it rather than replacing it with _name_to_label().
+    """
+    owl_path = tmp_path / "prelabelled.owl"
+    onto = get_ontology("http://test.org/prelabelled/")
+    with onto:
+        cls = python_types.new_class("Hsgi_Hydrogel", (Thing,))
+        cls.label = ["HSGI Hydrogel"]   # original casing, set by exporter
+    onto.save(file=str(owl_path), format="rdfxml")
+
+    e = _enricher(base_iri="http://example.org/PLB_", prefix="PLB")
+    e.load(str(owl_path))
+    e.rename_iris()
+
+    renamed = list(e._onto.classes())
+    assert renamed, "No classes found after rename"
+    label_val = renamed[0].label.first()
+    assert label_val == "HSGI Hydrogel", (
+        f"Pre-set label was overwritten; got '{label_val}'"
+    )
+
+
 def test_enriched_owl_differs_from_source(tmp_path):
     """The enriched file must differ from the original (IRIs were changed)."""
     owl_in  = _make_minimal_owl(tmp_path, "diff_test")

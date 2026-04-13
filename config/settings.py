@@ -7,6 +7,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 # Paths
 BASE_PATH = PROJECT_ROOT / "data" / "cache"
 OWL_OUTPUT_FILE = PROJECT_ROOT / "output" / "owl" / "ontology_classes.owl"
+PREDEFINED_HIERARCHY_FILE = PROJECT_ROOT / "data" / "raw" / "predefined_concept_hierarchy.csv"
 
 # Search terms
 PUBMED_SEARCH_TERMS = [

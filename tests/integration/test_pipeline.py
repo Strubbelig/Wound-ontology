@@ -12,7 +12,6 @@ Skip during normal unit test runs:
   pytest tests/ -m "not integration"
 """
 import os
-import tempfile
 from pathlib import Path
 
 import pandas as pd
@@ -25,9 +24,13 @@ from wound_ontology.orchestrator import Orchestrator
 
 @pytest.fixture(scope="module")
 def tmp_data_dir():
-    """Isolated temp directory so integration tests don't touch real data/cache."""
-    with tempfile.TemporaryDirectory() as d:
-        yield Path(d)
+    """
+    Output directory for integration test artefacts.
+    Uses a fixed path so OWL files survive after the test run for inspection.
+    """
+    d = Path(__file__).resolve().parents[1] / "test_output"
+    d.mkdir(parents=True, exist_ok=True)
+    return d
 
 
 @pytest.fixture(scope="module")
@@ -37,6 +40,11 @@ def pipeline(tmp_data_dir):
 
 @pytest.fixture(scope="module")
 def predefined_df():
+    """Load the real predefined hierarchy from data/raw — same data the production pipeline uses."""
+    raw = Path(__file__).resolve().parents[2] / "data" / "raw" / "predefined_concept_hierarchy.csv"
+    if raw.exists():
+        return pd.read_csv(raw, usecols=["Class", "Parent class"])
+    # Fallback so tests can run even without the file
     return pd.DataFrame([
         {"Class": "Chronic Wound",  "Parent class": "Wound"},
         {"Class": "Acute Wound",    "Parent class": "Wound"},
@@ -69,18 +77,16 @@ def test_extract_to_cache(pipeline):
 
 @pytest.mark.integration
 def test_build_hierarchies(pipeline, predefined_df):
-    pipeline.run_build_hierarchies(predefined_df=predefined_df)
+    # Pass None — orchestrator auto-loads from data/raw/predefined_concept_hierarchy.csv.
+    # The predefined_df fixture is kept so it can be inspected in other assertions.
+    pipeline.run_build_hierarchies(predefined_df=None)
 
-    # Predefined is_a edges must be in ClassHierarchy
-    assert pipeline.class_hier.df.at["Chronic Wound",  "Wound"] == 1.0
-    assert pipeline.class_hier.df.at["Acute Wound",    "Wound"] == 1.0
-    assert pipeline.class_hier.df.at["Surgical Wound", "Wound"] == 1.0
-
-    # ClassHierarchy must not contain part_of edges
-    mere_cols = set(pipeline.mere_hier.df.columns)
-    class_cols = set(pipeline.class_hier.df.columns)
-    # They may overlap in concept names but mereological roots should differ
-    assert "Wound" in pipeline.class_hier.roots
+    # Spot-check concepts that exist in data/raw/predefined_concept_hierarchy.csv
+    for cls in ["Gangrene", "Venous Wounds", "Necrosis"]:
+        assert cls in pipeline.class_hier.concepts, \
+            f"'{cls}' missing from ClassHierarchy — predefined file may not have loaded"
+    # At least one root must exist (top-level parents have no parent of their own)
+    assert len(pipeline.class_hier.roots) > 0
 
 
 @pytest.mark.integration

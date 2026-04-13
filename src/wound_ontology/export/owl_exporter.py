@@ -26,12 +26,26 @@ class OWLExporter:
 
     @staticmethod
     def _safe_name(name: str) -> str:
-        return name.strip().replace(" ", "_").replace("(", "").replace(")", "")
+        """Produce a valid XML/IRI local name from a human-readable label."""
+        import re as _re
+        safe = name.strip()
+        # Replace characters that are invalid in XML names / IRIs
+        safe = safe.replace(" ", "_")
+        safe = _re.sub(r'[()"/\\:<>\'&@#%?=+,;|]', "", safe)
+        # Collapse multiple underscores
+        safe = _re.sub(r'_+', "_", safe).strip("_")
+        return safe or "Unknown"
 
     def _get_or_create_cls(self, cls_reg: dict, name: str):
         safe = self._safe_name(name)
         if safe not in cls_reg:
-            cls_reg[safe] = python_types.new_class(safe, (Thing,))
+            with self.onto:
+                cls = python_types.new_class(safe, (Thing,))
+                # Preserve the original human-readable label before owlready2
+                # lowercases the class name — OWLEnricher will prefer this label.
+                if not cls.label:
+                    cls.label = [name.strip()]
+            cls_reg[safe] = cls
         return cls_reg[safe]
 
     def _export_hierarchy(self, cls_reg: dict, hierarchy, label: str) -> None:
@@ -49,7 +63,12 @@ class OWLExporter:
                         child_cls  = self._get_or_create_cls(cls_reg, child)
                         parent_cls = self._get_or_create_cls(cls_reg, parent)
                         if parent_cls not in child_cls.is_a:
-                            child_cls.is_a.append(parent_cls)
+                            try:
+                                child_cls.is_a.append(parent_cls)
+                            except TypeError:
+                                # owlready2 rejects edges that would create an
+                                # inheritance cycle (transitive, not just direct)
+                                print(f"[OWLExporter] Skipped cycle: {child} → {parent}")
         print(f"{label} exported: {len(hierarchy.df.index)} concepts.")
 
     def _export_mereological_hierarchy(self, cls_reg: dict) -> None:

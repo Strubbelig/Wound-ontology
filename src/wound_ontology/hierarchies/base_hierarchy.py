@@ -80,7 +80,9 @@ class BaseHierarchy(ABC):
     # ── Public methods ─────────────────────────────────────────────────────────
 
     def get_data(self, store) -> None:
-        """Populate the hierarchy from a ConceptStore (already normalized)."""
+        """Populate the hierarchy from a ConceptStore (already normalized).
+        Always rebuilds from scratch so stale persisted data does not bleed in."""
+        self._df = pd.DataFrame(dtype=float)  # reset before rebuild
         added = 0
         for pmid_data in store.dict.values():
             for entity, attrs in pmid_data.get("entities", {}).items():

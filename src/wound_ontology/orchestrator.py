@@ -22,9 +22,13 @@ from wound_ontology.export.owl_enricher import OWLEnricher
 load_dotenv()
 
 try:
-    from config.settings import PREDICATE_DEFINITIONS as _PREDICATE_DEFINITIONS
+    from config.settings import (
+        PREDICATE_DEFINITIONS as _PREDICATE_DEFINITIONS,
+        PREDEFINED_HIERARCHY_FILE as _PREDEFINED_HIERARCHY_FILE,
+    )
 except ImportError:
     _PREDICATE_DEFINITIONS = {}
+    _PREDEFINED_HIERARCHY_FILE = None
 
 _DEFAULT_ALLOWED_PREDICATES = [
     "is_a", "part_of", "has_quality", "occurs_in",
@@ -105,11 +109,19 @@ class Orchestrator:
         """
         Build ClassHierarchy and MereologicalHierarchy from the ConceptStore.
 
-        predefined_df – optional DataFrame with 'Class' and 'Parent class' columns.
-                        Ingested into the store as is_a triples before normalization.
+        predefined_df – DataFrame with 'Class' and 'Parent class' columns.
+                        When None, automatically loads from PREDEFINED_HIERARCHY_FILE
+                        (data/raw/predefined_concept_hierarchy.csv) if it exists.
         normalize     – if True, build LLM-based term normalization mapping and
                         apply it to the whole store before reading hierarchies.
         """
+        if predefined_df is None and _PREDEFINED_HIERARCHY_FILE is not None:
+            from pathlib import Path as _Path
+            p = _Path(_PREDEFINED_HIERARCHY_FILE)
+            if p.exists():
+                predefined_df = pd.read_csv(p, usecols=["Class", "Parent class"])
+                print(f"[Orchestrator] Loaded {len(predefined_df)} predefined edges from {p.name}")
+
         if predefined_df is not None:
             self.store.get_data(predefined_df)
 
@@ -228,6 +240,7 @@ class Orchestrator:
         if connectors:
             self.enricher.import_connector(*connectors)
 
+        self.enricher.resolve_external_classes()
         self.enricher.rename_iris()
         if run_reasoner:
             self.enricher.run_reasoner()

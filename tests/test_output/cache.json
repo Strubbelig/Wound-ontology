@@ -1,298 +1,216 @@
 {
-  "41962601": {
-    "entities": {
-      "Diabetic Wound": {
-        "is_a: material entity": 1.0,
-        "has_quality: chronic": 1.0,
-        "has_quality: non-healing": 1.0,
-        "caused_by: mitochondrial dysfunction": 1.0,
-        "caused_by: metabolic dysfunction": 1.0,
-        "part_of: material entity": 0.0,
-        "is_a: process": 0.0
-      },
-      "Echinacoside": {
-        "is_a: material entity": 1.0,
-        "has_quality: antioxidant": 1.0,
-        "has_quality: anti-inflammatory": 1.0,
-        "has_quality: pro-angiogenic": 1.0,
-        "is_treatment_for: diabetic wound": 1.0,
-        "is_a: process": 0.0,
-        "part_of: material entity": 0.0
-      },
-      "Mitophagy": {
-        "is_a: process": 1.0,
-        "has_quality: regulator": 1.0,
-        "part_of: energy balance": 1.0,
-        "is_a: material entity": 0.0,
-        "part_of: process": 0.0
-      },
-      "Mitochondrial Dysfunction": {
-        "is_a: disposition": 1.0,
-        "occurs_in: diabetic wound": 1.0,
-        "is_a: material entity": 0.0
-      },
-      "HUVECs": {
-        "is_a: material entity": 1.0,
-        "occurs_in: human umbilical vein": 1.0,
-        "is_a: process": 0.0
-      },
-      "Oxidative Stress": {
-        "is_a: process": 1.0,
-        "caused_by: H2O2": 1.0,
-        "occurs_in: diabetic wound": 1.0,
-        "is_a: material entity": 0.0
-      },
-      "USP35": {
-        "is_a: material entity": 1.0,
-        "part_of: mitophagy regulation": 1.0,
-        "is_a: process": 0.0
-      },
-      "Cyclosporin A": {
-        "is_a: material entity": 1.0,
-        "has_quality: inhibitor": 1.0,
-        "is_a: process": 0.0
-      },
-      "Neovascularization": {
-        "is_a: process": 1.0,
-        "occurs_in: wound site": 1.0,
-        "is_a: material entity": 0.0
-      }
-    },
-    "meta_stamp": "llm_extract_1_20260411_1926"
-  },
-  "41963695": {
-    "entities": {
-      "Tethered cord release (TCR)": {
-        "is_a: process": 1.0,
-        "is_treatment_for: complex spinal lipoma": 1.0,
-        "is_treatment_for: retethering": 1.0,
-        "part_of: process": 0.0,
-        "is_a: material entity": 0.0
-      },
-      "Cerebrospinal fluid (CSF) leak": {
-        "is_a: disposition": 1.0,
-        "occurs_in: postoperative period": 1.0,
-        "caused_by: Nurolon suture": 1.0,
-        "is_a: material entity": 0.0,
-        "caused_by: Lying flat postoperatively": 0.0
-      },
-      "Complex spinal lipoma": {
-        "is_a: material entity": 1.0,
-        "has_quality: spinal condition": 1.0,
-        "part_of: material entity": 0.0,
-        "is_a: process": 0.0
-      },
-      "Nurolon suture": {
-        "is_a: material entity": 1.0,
-        "part_of: dural closure": 1.0,
-        "is_a: dural closure": 0.0,
-        "is_a: process": 0.0
-      },
-      "Prolene suture": {
-        "is_a: material entity": 1.0,
-        "part_of: dural closure": 1.0,
-        "is_a: dural closure": 0.0,
-        "is_a: process": 0.0
-      },
-      "Retethering": {
-        "is_a: disposition": 1.0,
-        "caused_by: Cerebrospinal fluid (CSF) leak": 1.0,
-        "is_a: material entity": 0.0,
-        "part_of: disposition": 0.0
-      },
-      "Wound infection": {
-        "is_a: disposition": 1.0,
-        "occurs_in: surgical site": 1.0,
-        "is_a: material entity": 0.0,
-        "part_of: disposition": 0.0
-      },
-      "Dural closure": {
-        "is_a: process": 1.0,
-        "part_of: Tethered cord release (TCR)": 1.0,
-        "is_a: Tethered cord release (TCR)": 0.0,
-        "is_a: material entity": 0.0
-      },
-      "Lying flat postoperatively": {
-        "is_a: process": 1.0,
-        "has_quality: postoperative management": 1.0,
-        "is_a: material entity": 0.0,
-        "caused_by: Cerebrospinal fluid (CSF) leak": 0.0
-      }
-    },
-    "meta_stamp": "llm_extract_1_20260411_1926"
-  },
-  "41962723": {
+  "41968061": {
     "entities": {
       "Chronic Wound": {
         "is_a: material entity": 1.0,
-        "has_quality: chronic": 1.0,
-        "occurs_in: diabetic patient": 1.0,
-        "is_a: process": 0.0,
-        "part_of: diabetic patient": 0.0
+        "has_quality: impaired healing": 1.0,
+        "has_quality: persistent inflammation": 1.0,
+        "is_a: acute wound": 0.0
       },
-      "Infected Wound": {
-        "is_a: material entity": 1.0,
-        "has_quality: infected": 1.0,
-        "caused_by: bacterial colonization": 1.0,
-        "is_a: quality": 0.0,
-        "part_of: bacterial colonization": 0.0
+      "Diabetic Foot Ulcer": {
+        "is_a: Chronic Wound": 1.0,
+        "occurs_in: Foot": 1.0,
+        "part_of: Chronic Wound": 0.0
       },
-      "Biodegradable Hydrogel": {
-        "is_a: material entity": 1.0,
-        "has_quality: biodegradable": 1.0,
-        "has_quality: porous": 1.0,
-        "is_treatment_for: chronic wound": 1.0,
-        "is_treatment_for: infected wound": 1.0,
-        "is_a: process": 0.0,
-        "part_of: chronic wound": 0.0
+      "Venous Leg Ulcer": {
+        "is_a: Chronic Wound": 1.0,
+        "occurs_in: Leg": 1.0,
+        "part_of: Chronic Wound": 0.0
       },
-      "Copper Core-Shell Nanoparticle": {
-        "is_a: material entity": 1.0,
-        "part_of: biodegradable hydrogel": 1.0,
-        "has_quality: antimicrobial": 1.0,
-        "is_a: process": 0.0,
-        "is_a: biodegradable hydrogel": 0.0
+      "Pressure Ulcer": {
+        "is_a: Chronic Wound": 1.0,
+        "part_of: Chronic Wound": 0.0
       },
-      "Chitosan": {
-        "is_a: material entity": 1.0,
-        "part_of: biodegradable hydrogel": 1.0,
-        "is_a: process": 0.0,
-        "is_a: biodegradable hydrogel": 0.0
-      },
-      "Starch": {
-        "is_a: material entity": 1.0,
-        "part_of: biodegradable hydrogel": 1.0,
-        "is_a: process": 0.0,
-        "is_a: biodegradable hydrogel": 0.0
-      },
-      "Genipin-Mediated Crosslinking": {
+      "Cellular Senescence": {
         "is_a: process": 1.0,
+        "has_quality: irreversible growth arrest": 1.0,
+        "occurs_in: Chronic Wound": 1.0,
+        "caused_by: oxidative stress": 1.0,
+        "caused_by: hyperglycemia": 1.0,
+        "caused_by: ischemia-reperfusion injury": 1.0,
+        "has_quality: transient": 0.0
+      },
+      "Senescence-associated secretory phenotype": {
+        "is_a: quality": 1.0,
+        "part_of: Cellular Senescence": 1.0,
+        "has_quality: pro-inflammatory": 1.0,
         "is_a: material entity": 0.0
       },
-      "Wound Closure": {
-        "is_a: process": 1.0,
-        "has_quality: accelerated": 1.0,
-        "is_a: material entity": 0.0
-      },
-      "Re-epithelialization": {
-        "is_a: process": 1.0,
-        "has_quality: improved": 1.0,
-        "is_a: material entity": 0.0
-      },
-      "Collagen Deposition": {
-        "is_a: process": 1.0,
-        "has_quality: enhanced": 1.0,
-        "is_a: material entity": 0.0
-      },
-      "Diabetic Patient": {
+      "Senescent Cell": {
         "is_a: material entity": 1.0,
-        "has_quality: diabetic": 1.0,
+        "occurs_in: Chronic Wound": 1.0,
+        "has_quality: pro-inflammatory secretory phenotype": 1.0,
         "is_a: process": 0.0
       },
-      "Human Dermal Fibroblast": {
-        "is_a: material entity": 1.0,
-        "has_quality: viable": 1.0,
-        "is_a: process": 0.0
-      },
-      "Staphylococcus aureus": {
-        "is_a: material entity": 1.0,
-        "is_a: process": 0.0
-      },
-      "Bacterial Colonization": {
+      "Therapeutic strategies targeting senescent cells": {
         "is_a: process": 1.0,
-        "is_a: material entity": 0.0
+        "is_treatment_for: delayed wound healing": 1.0,
+        "is_a: disposition": 0.0
+      },
+      "p21": {
+        "is_a: material entity": 1.0,
+        "has_quality: nonspecific marker": 1.0,
+        "has_quality: specific marker": 0.0
+      },
+      "SA-beta-gal": {
+        "is_a: material entity": 1.0,
+        "has_quality: nonspecific marker": 1.0,
+        "has_quality: specific marker": 0.0
       }
     },
-    "meta_stamp": "llm_extract_1_20260411_1926"
+    "meta_stamp": "llm_extract_1_20260413_1130"
   },
-  "41963244": {
+  "41965154": {
     "entities": {
-      "Infectious Complication": {
+      "Diabetic Foot Attack": {
+        "is_a: Acute deep infection": 1.0,
+        "is_a: Surgical emergency": 1.0,
+        "occurs_in: Diabetes-related foot ulcer": 1.0,
+        "occurs_in: Foot": 1.0,
+        "occurs_in: Limb": 1.0,
+        "has_quality: Deep": 1.0,
+        "has_quality: Rapidly spreading": 1.0,
+        "has_quality: Limb-threatening": 1.0,
+        "has_quality: Life-threatening": 1.0,
+        "part_of: Acute deep infection": 0.0,
+        "is_a: Chronic condition": 0.0
+      },
+      "Emergency Surgery": {
         "is_a: process": 1.0,
-        "occurs_in: patient": 1.0,
-        "caused_by: emergency colectomy": 1.0,
-        "part_of: process": 0.0,
-        "is_a: material entity": 0.0
+        "is_treatment_for: Diabetic Foot Attack": 1.0,
+        "is_a: material entity": 0.0,
+        "part_of: Diabetic Foot Attack": 0.0
       },
-      "Surgical Site Infection": {
-        "is_a: Infectious Complication": 1.0,
-        "occurs_in: surgical site": 1.0,
-        "part_of: Infectious Complication": 0.0
+      "Diabetes-related Foot Ulcer": {
+        "is_a: immaterial continuant": 1.0,
+        "occurs_in: Foot": 1.0,
+        "is_a: material entity": 0.0,
+        "part_of: Foot": 0.0
       },
-      "Sepsis": {
-        "is_a: Infectious Complication": 1.0,
-        "part_of: Infectious Complication": 0.0
-      },
-      "Septic Shock": {
-        "is_a: Infectious Complication": 1.0,
-        "part_of: Infectious Complication": 0.0
-      },
-      "Pneumonia": {
-        "is_a: Infectious Complication": 1.0,
-        "part_of: Infectious Complication": 0.0
-      },
-      "Urinary Tract Infection": {
-        "is_a: Infectious Complication": 1.0,
-        "part_of: Infectious Complication": 0.0
-      },
-      "Emergency Colectomy": {
+      "Major Amputation": {
         "is_a: process": 1.0,
-        "part_of: process": 0.0
+        "occurs_in: Limb": 1.0,
+        "is_treatment_for: Healthy limb": 0.0
       },
-      "Dirty Wound Class": {
-        "is_a: quality": 1.0,
-        "occurs_in: surgical site": 1.0,
-        "part_of: quality": 0.0
-      },
-      "Chronic Obstructive Pulmonary Disease": {
-        "is_a: disposition": 1.0,
-        "part_of: disposition": 0.0
-      },
-      "Bleeding Disorder": {
-        "is_a: disposition": 1.0,
-        "part_of: disposition": 0.0
-      },
-      "Ascites": {
-        "is_a: quality": 1.0,
-        "part_of: quality": 0.0
-      },
-      "Smoking": {
-        "is_a: process": 1.0,
-        "part_of: process": 0.0
-      },
-      "Body Mass Index >= 30": {
-        "is_a: quality": 1.0,
-        "part_of: quality": 0.0
-      },
-      "Open Surgical Procedure": {
-        "is_a: process": 1.0,
-        "part_of: process": 0.0
-      },
-      "Delayed Surgical Procedure": {
-        "is_a: process": 1.0,
-        "part_of: process": 0.0
-      },
-      "Prolonged Surgical Procedure": {
-        "is_a: process": 1.0,
-        "part_of: process": 0.0
-      },
-      "Albumin <= 3 g/dL": {
-        "is_a: quality": 1.0,
-        "part_of: quality": 0.0
-      },
-      "Blood Urea Nitrogen >= 20 mg/dL": {
-        "is_a: quality": 1.0,
-        "part_of: quality": 0.0
-      },
-      "American Society of Anesthesiologists >= 3": {
-        "is_a: quality": 1.0,
-        "part_of: quality": 0.0
-      },
-      "Dependent Functional Status": {
-        "is_a: quality": 1.0,
-        "part_of: quality": 0.0
+      "Foot": {
+        "is_a: material entity": 1.0,
+        "part_of: Limb": 1.0,
+        "is_a: Limb": 0.0
       }
     },
-    "meta_stamp": "llm_extract_1_20260411_1926"
+    "meta_stamp": "llm_extract_1_20260413_1130"
+  },
+  "41965214": {
+    "entities": {
+      "Robotic Abdominal Wall Reconstruction": {
+        "is_a: Surgical Procedure": 1.0,
+        "is_treatment_for: Abdominal Wall Hernia": 1.0,
+        "has_quality: Minimally Invasive": 1.0,
+        "has_quality: Safe": 1.0,
+        "is_a: Medication": 0.0,
+        "part_of: Surgical Procedure": 0.0
+      },
+      "Abdominal Wall Hernia": {
+        "is_a: Hernia": 1.0,
+        "occurs_in: Abdominal Wall": 1.0,
+        "part_of: Abdominal Wall": 0.0,
+        "is_treatment_for: Robotic Abdominal Wall Reconstruction": 0.0
+      },
+      "Solid Organ Transplant Recipient": {
+        "is_a: Patient": 1.0,
+        "has_quality: High-risk": 1.0,
+        "is_a: Surgical Procedure": 0.0
+      },
+      "Chronic Immunosuppression": {
+        "is_a: Condition": 1.0,
+        "caused_by: Immunosuppressant": 1.0,
+        "is_treatment_for: Abdominal Wall Hernia": 0.0
+      },
+      "Impaired Wound Healing": {
+        "is_a: Process": 1.0,
+        "occurs_in: Solid Organ Transplant Recipient": 1.0,
+        "is_treatment_for: Abdominal Wall Hernia": 0.0
+      },
+      "Surgical Site Occurrence": {
+        "is_a: Postoperative Complication": 1.0,
+        "occurs_in: Surgical Site": 1.0,
+        "is_a: Surgical Procedure": 0.0
+      },
+      "Myofascial Release": {
+        "part_of: Robotic Abdominal Wall Reconstruction": 1.0,
+        "is_a: Surgical Approach": 1.0,
+        "is_a: Robotic Abdominal Wall Reconstruction": 0.0
+      },
+      "Antiplatelet Therapy": {
+        "is_a: Treatment": 1.0,
+        "occurs_in: Surgical Site": 0.0
+      },
+      "Clavien-Dindo >=3": {
+        "is_a: Major Complication": 1.0,
+        "is_a: Surgical Procedure": 0.0
+      },
+      "Recurrence": {
+        "is_a: Postoperative Complication": 1.0,
+        "occurs_in: Postoperative Period": 1.0,
+        "is_treatment_for: Abdominal Wall Hernia": 0.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260413_1130"
+  },
+  "41967734": {
+    "entities": {
+      "chronic limb-threatening ischemia": {
+        "is_a: disease": 1.0,
+        "has_quality: chronic": 1.0,
+        "occurs_in: limb": 1.0,
+        "is_a: surgical procedure": 0.0
+      },
+      "WIfI stage 3-4": {
+        "is_a: chronic limb-threatening ischemia": 1.0,
+        "has_quality: high-risk": 1.0,
+        "has_quality: low-risk": 0.0
+      },
+      "revascularization": {
+        "is_a: surgical treatment": 1.0,
+        "is_treatment_for: chronic limb-threatening ischemia": 1.0,
+        "is_a: medication": 0.0
+      },
+      "endovascular approach": {
+        "is_a: revascularization": 1.0,
+        "is_a: wound care": 0.0
+      },
+      "wound healing": {
+        "is_a: process": 1.0,
+        "occurs_in: wound": 1.0,
+        "caused_by: revascularization": 1.0,
+        "is_a: material entity": 0.0
+      },
+      "complete epithelialization": {
+        "is_a: process": 1.0,
+        "part_of: wound healing": 1.0,
+        "is_a: surgical procedure": 0.0
+      },
+      "wound-care-only strategy": {
+        "is_a: treatment modality": 1.0,
+        "is_treatment_for: chronic limb-threatening ischemia": 1.0,
+        "is_a: revascularization": 0.0
+      },
+      "major amputation": {
+        "is_a: surgical procedure": 1.0,
+        "occurs_in: limb": 1.0,
+        "is_treatment_for: wound healing": 0.0
+      },
+      "obesity": {
+        "is_a: quality": 1.0,
+        "has_quality: pro-healing": 1.0,
+        "is_a: process": 0.0
+      },
+      "wound recurrence": {
+        "is_a: process": 1.0,
+        "occurs_in: healed limb": 1.0,
+        "is_treatment_for: chronic limb-threatening ischemia": 0.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260413_1130"
   }
 }
