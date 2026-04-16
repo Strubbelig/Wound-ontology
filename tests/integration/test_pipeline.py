@@ -99,7 +99,28 @@ def test_mereological_hierarchy_populated(pipeline):
     ).all(), "MereologicalHierarchy df must be numeric"
 
 
-# ── Step 4: OWL export ────────────────────────────────────────────────────────
+# ── Step 4: Store attribute fill ─────────────────────────────────────────────
+
+@pytest.mark.integration
+def test_store_fill(pipeline):
+    """run_store_fill evaluates missing entity–attribute pairs in the ConceptStore."""
+    attrs_before = len(pipeline.store.attributes)
+    pipeline.run_store_fill(batch_size=2, entity_batch=3, max_entities=5, max_attrs_per_entity=20)
+
+    # A "llm_fill" key should appear in the store (unless all pairs were already known)
+    store_keys = list(pipeline.store.dict.keys())
+    if "llm_fill" in store_keys:
+        fill_entities = pipeline.store.dict["llm_fill"].get("entities", {})
+        # Every filled entity must only contain 0.0 / 1.0 values
+        for entity, attrs in fill_entities.items():
+            for val in attrs.values():
+                assert val in (0.0, 1.0), f"Unexpected fill value {val} for {entity}"
+
+    # Attribute count must not shrink
+    assert len(pipeline.store.attributes) >= attrs_before
+
+
+# ── Step 6: OWL export ────────────────────────────────────────────────────────
 
 @pytest.mark.integration
 def test_export_to_owl(pipeline, tmp_data_dir):
@@ -111,7 +132,7 @@ def test_export_to_owl(pipeline, tmp_data_dir):
     assert "owl" in content.lower()
 
 
-# ── Step 5: FCA on subtree ────────────────────────────────────────────────────
+# ── Step 7: FCA on subtree ────────────────────────────────────────────────────
 
 @pytest.mark.integration
 def test_fca_on_subtree(pipeline, tmp_data_dir):
@@ -160,7 +181,17 @@ def test_fca_on_subtree(pipeline, tmp_data_dir):
     print(f"\nOWL with FCA → {owl_out} ({owl_out.stat().st_size} bytes)")
 
 
-# ── Step 6: OWL enrichment (IRI rename + BFO/RO import) ──────────────────────
+# ── Step 7b: lattice.summary() ───────────────────────────────────────────────
+
+@pytest.mark.integration
+def test_lattice_summary(pipeline, capsys):
+    """lattice.summary() must run without error and print named concepts."""
+    pipeline.lattice.summary(max_display=10)
+    captured = capsys.readouterr()
+    assert "named superclasses displayed" in captured.out
+
+
+# ── Step 8: OWL enrichment (IRI rename + BFO/RO import) ──────────────────────
 
 @pytest.mark.integration
 def test_enrich_owl(pipeline, tmp_data_dir):

@@ -9,7 +9,7 @@ from wound_ontology.connectors.pubmed_connector import PubmedConnector
 from wound_ontology.connectors.bfo_connector import BFOConnector
 from wound_ontology.connectors.ro_connector import ROConnector
 from wound_ontology.connectors.obi_connector import OBIConnector
-from wound_ontology.cache.concept_store import ConceptStore
+from wound_ontology.store.concept_store import ConceptStore
 from wound_ontology.hierarchies.class_hierarchy import ClassHierarchy
 from wound_ontology.hierarchies.mereological_hierarchy import MereologicalHierarchy
 from wound_ontology.hierarchies.fca_hierarchy import FCAHierarchy
@@ -39,11 +39,11 @@ _DEFAULT_ALLOWED_PREDICATES = [
 class Orchestrator:
     def __init__(
         self,
-        google_api_key: str = None,
-        anthropic_api_key: str = None,
-        openai_api_key: str = None,
-        entrez_email: str = None,
-        allowed_predicates: list = None,
+        google_api_key: str | None = None,
+        anthropic_api_key: str | None = None,
+        openai_api_key: str | None = None,
+        entrez_email: str | None = None,
+        allowed_predicates: list | None = None,
         base_path=None,
     ):
         google_api_key    = google_api_key    or os.getenv("GOOGLE_API_KEY", "")
@@ -105,7 +105,7 @@ class Orchestrator:
 
     # ── Hierarchies ────────────────────────────────────────────────────────────
 
-    def run_build_hierarchies(self, predefined_df: pd.DataFrame = None, normalize: bool = True) -> None:
+    def run_build_hierarchies(self, predefined_df: pd.DataFrame | None = None, normalize: bool = True) -> None:
         """
         Build ClassHierarchy and MereologicalHierarchy from the ConceptStore.
 
@@ -154,9 +154,9 @@ class Orchestrator:
 
     def run_fca(
         self,
-        subtree_root: str = None,
+        subtree_root: str | None = None,
         hierarchy=None,
-        predicates: list = None,
+        predicates: list | None = None,
         batch_size: int = 10,
     ) -> None:
         """
@@ -205,13 +205,16 @@ class Orchestrator:
         else:
             print("FCAHierarchy          : skipped (empty lattice).")
 
-    def run_store_fill(self, batch_size: int = 20, entity_batch: int = 5) -> None:
+    def run_store_fill(self, batch_size: int = 20, entity_batch: int = 5, max_entities: int | None = None, max_attrs_per_entity: int = 80) -> None:
         """
         Fill every missing attribute for each entity in the ConceptStore via LLM.
         Run this AFTER normalize() and BEFORE FCA so enrichment flows everywhere.
         """
         print(f"Filling missing store attributes (concurrency={batch_size}, entity_batch={entity_batch})...")
-        self._run_sync(self.store.fill_missing_attributes(self.llm, batch_size=batch_size, entity_batch=entity_batch))
+        self._run_sync(self.store.fill_missing_attributes(
+            self.llm, batch_size=batch_size, entity_batch=entity_batch,
+            max_entities=max_entities, max_attrs_per_entity=max_attrs_per_entity,
+        ))
 
     def run_matrix_nan_fill(self, batch_size=20, entity_batch=5):
         """Fallback: fill NaNs directly on the FCA context matrix (post-FCA)."""

@@ -88,8 +88,8 @@ class ContextMatrix:
     def get_data(
         self,
         store,
-        entities: set = None,
-        predicates: list = None,
+        entities: set | None = None,
+        predicates: list | None = None,
     ) -> None:
         """
         Build the FCA context matrix from a ConceptStore (already normalized).

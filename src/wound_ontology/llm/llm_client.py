@@ -185,7 +185,7 @@ class GeminiClient(BaseLLMClient):
 
         {body}
         """
-        response = await self._execute_with_retry(self._call, prompt, FillNanBatchResponse, temperature=0.0)
+        response = await self._execute_with_retry(self._call, prompt, FillNanBatchResponse, temperature=0.0, timeout=120)
         return {r.object_name: r.confirmed_attributes for r in response.parsed.results}
 
     async def generate_semantic_name(self, intent_attributes, superclass_names) -> str:

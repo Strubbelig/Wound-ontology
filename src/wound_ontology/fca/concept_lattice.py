@@ -62,6 +62,27 @@ class ConceptLattice:
         self.lattice = ctx.lattice
         return self._lattice
 
+    def summary(self, max_display: int = 50) -> None:
+        """Print named lattice concepts with extent size and intent preview."""
+        if not self.lattice:
+            print("No lattice available.")
+            return
+        named_count = 0
+        for i, concept in enumerate(self.lattice):
+            name = getattr(concept, 'name', None)
+            if not name:
+                continue
+            intent_preview = ", ".join(list(concept.intent)[:3])
+            print(f"[{i}] {name}")
+            print(f"    └─ {len(concept.extent)} objects | {intent_preview}...")
+            named_count += 1
+            if named_count >= max_display:
+                remaining = sum(1 for c in self.lattice if getattr(c, 'name', None)) - named_count
+                if remaining:
+                    print(f"\n... and {remaining} more.")
+                break
+        print(f"\n{named_count} named superclasses displayed.")
+
     async def create_superclass_names(self, llm, min_objects=2, batch_size=10):
         """Name each lattice concept using the LLM (parallel waves)."""
         if not self.lattice:
