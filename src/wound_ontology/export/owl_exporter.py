@@ -42,7 +42,7 @@ class OWLExporter:
             with self.onto:
                 cls = python_types.new_class(safe, (Thing,))
                 # Preserve the original human-readable label before owlready2
-                # lowercases the class name — OWLEnricher will prefer this label.
+                # lowercases the class name — OWLCurator will prefer this label.
                 if not cls.label:
                     cls.label = [name.strip()]
             cls_reg[safe] = cls

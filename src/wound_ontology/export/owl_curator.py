@@ -1,7 +1,7 @@
 from __future__ import annotations
 import re
 from pathlib import Path
-from owlready2 import World, sync_reasoner, destroy_entity, AnnotationProperty
+from owlready2 import World, destroy_entity, AnnotationProperty
 
 try:
     from config.settings import (
@@ -34,27 +34,32 @@ def _name_to_label(name: str) -> str:
     return (label[0].upper() + label[1:].lower()) if label else label
 
 
-class OWLEnricher:
+class OWLCurator:
     """
-    Post-processes the OWL file produced by OWLExporter:
+    Curates the OWL file produced by OWLExporter into a publication-ready ontology:
 
       1. Load the generated OWL into a fresh owlready2 World
       2. Optionally import BFO, RO, OBI (or any custom URL)
-      3. Rename local IRIs to proper ontology IRIs  (e.g. WOND_0000001)
-         and assign rdfs:label from the original class name
-      4. Optionally run the Pellet/HermiT reasoner (requires Java)
-      5. Save the enriched OWL
+      3. Resolve local classes that shadow external ones — rewire and destroy duplicates
+      4. Assign proper ontology IRIs (e.g. WOND_0000001) and rdfs:labels
+      5. Optionally annotate classes with UMLS cross-references (hasUMLSSynonym)
+      6. Save the curated OWL
+
+    Distinct from OWLExporter (which builds OWL from scratch) and OWLReasoner
+    (which materialises inferences). OWLCurator sits between them: it takes a
+    raw export and prepares it for distribution and reasoning.
 
     Usage — fluent API:
-        OWLEnricher(base_iri="http://purl.obolibrary.org/obo/WOND_")
+        OWLCurator(base_iri="http://purl.obolibrary.org/obo/WOND_")
             .load("output/ontology.owl")
             .import_bfo()
             .import_ro()
+            .resolve_external_classes()
             .rename_iris()
             .save("output/wound_ontology.owl")
 
     Or as a one-shot call via the orchestrator:
-        pipeline.run_enrich_owl(input_file=..., output_file=...)
+        pipeline.run_curate_owl(input_file=..., output_file=...)
     """
 
     def __init__(
@@ -71,53 +76,53 @@ class OWLEnricher:
 
     # ── Lifecycle ──────────────────────────────────────────────────────────────
 
-    def load(self, owl_file: str) -> "OWLEnricher":
+    def load(self, owl_file: str) -> "OWLCurator":
         """Load an OWL/RDF-XML file into a fresh owlready2 World."""
         path = Path(owl_file).resolve()
         self._world = World()
         self._onto  = self._world.get_ontology(f"file://{path}").load()
-        print(f"[OWLEnricher] Loaded: {path}")
+        print(f"[OWLCurator] Loaded: {path}")
         return self
 
     # ── External imports ───────────────────────────────────────────────────────
 
-    def import_connector(self, *connectors) -> "OWLEnricher":
+    def import_connector(self, *connectors) -> "OWLCurator":
         """
         Import ontologies already loaded by OntoConnector instances (BFO, RO, OBI…).
         Reuses the connector's loaded owlready2 ontology object — no second download.
         """
         for connector in connectors:
             if connector.onto is None:
-                print(f"[OWLEnricher] {connector.source_name} not loaded — skipping.")
+                print(f"[OWLCurator] {connector.source_name} not loaded — skipping.")
                 continue
             # Adopt the connector's ontology into our world, then import it
             ext = self._world.get_ontology(connector.onto_url).load()
             if ext not in self._onto.imported_ontologies:
                 self._onto.imported_ontologies.append(ext)
-                print(f"[OWLEnricher] Imported via connector: {connector.source_name}")
+                print(f"[OWLCurator] Imported via connector: {connector.source_name}")
         return self
 
-    def import_external(self, *urls: str) -> "OWLEnricher":
+    def import_external(self, *urls: str) -> "OWLCurator":
         """Append one or more external ontology imports by URL (fallback without connectors)."""
         for url in urls:
             ext = self._world.get_ontology(url).load()
             if ext not in self._onto.imported_ontologies:
                 self._onto.imported_ontologies.append(ext)
-                print(f"[OWLEnricher] Imported: {url}")
+                print(f"[OWLCurator] Imported: {url}")
         return self
 
-    def import_bfo(self) -> "OWLEnricher":
+    def import_bfo(self) -> "OWLCurator":
         return self.import_external(_BFO_URL)
 
-    def import_ro(self) -> "OWLEnricher":
+    def import_ro(self) -> "OWLCurator":
         return self.import_external(_RO_URL)
 
-    def import_obi(self) -> "OWLEnricher":
+    def import_obi(self) -> "OWLCurator":
         return self.import_external(_OBI_URL)
 
     # ── External class resolution ──────────────────────────────────────────────
 
-    def resolve_external_classes(self) -> "OWLEnricher":
+    def resolve_external_classes(self) -> "OWLCurator":
         """
         Replace local classes that shadow an already-imported external class
         (BFO, RO, OBI…) with the real external class.
@@ -143,7 +148,7 @@ class OWLEnricher:
                     label_map[name_key] = cls
 
         if not label_map:
-            print("[OWLEnricher] No imported ontologies to resolve against — skipping.")
+            print("[OWLCurator] No imported ontologies to resolve against — skipping.")
             return self
 
         resolved = 0
@@ -172,14 +177,14 @@ class OWLEnricher:
                     destroy_entity(local_cls)
                     resolved += 1
                 except Exception as exc:
-                    print(f"[OWLEnricher] Could not destroy '{local_cls.name}': {exc}")
+                    print(f"[OWLCurator] Could not destroy '{local_cls.name}': {exc}")
 
-        print(f"[OWLEnricher] Resolved {resolved} local classes to external IRIs.")
+        print(f"[OWLCurator] Resolved {resolved} local classes to external IRIs.")
         return self
 
     # ── IRI renaming + labeling ────────────────────────────────────────────────
 
-    def rename_iris(self) -> "OWLEnricher":
+    def rename_iris(self) -> "OWLCurator":
         """
         Assign proper ontology IRIs to all local classes, object properties,
         data properties, and individuals.
@@ -211,13 +216,13 @@ class OWLEnricher:
                         entity.iri = new_iri
                         renamed += 1
                     except Exception as e:
-                        print(f"[OWLEnricher] IRI rename failed for '{original_name}': {e}")
-        print(f"[OWLEnricher] Renamed {renamed} local entities.")
+                        print(f"[OWLCurator] IRI rename failed for '{original_name}': {e}")
+        print(f"[OWLCurator] Renamed {renamed} local entities.")
         return self
 
     # ── UMLS mapping ──────────────────────────────────────────────────────────
 
-    def umls_mapping(self, umls_connector, max_results: int = 3) -> "OWLEnricher":
+    def umls_mapping(self, umls_connector, max_results: int = 3) -> "OWLCurator":
         """
         For each local WOND class, search UMLS for matching concepts and annotate
         the class with hasUMLSSynonym (CUI + preferred name).
@@ -235,11 +240,11 @@ class OWLEnricher:
 
         local_classes = [c for c in self._onto.classes() if self._is_local(c)]
         if not local_classes:
-            print("[OWLEnricher] No local classes to map — skipping UMLS mapping.")
+            print("[OWLCurator] No local classes to map — skipping UMLS mapping.")
             return self
 
         mapped = 0
-        print(f"[OWLEnricher] UMLS mapping for {len(local_classes)} classes...")
+        print(f"[OWLCurator] UMLS mapping for {len(local_classes)} classes...")
         for cls in local_classes:
             label = str(cls.label.first()) if cls.label else cls.name
             hits = umls_connector.lookup(label, max_results=max_results)
@@ -252,42 +257,29 @@ class OWLEnricher:
                         cls.hasUMLSSynonym.append(annotation)
             mapped += 1
 
-        print(f"[OWLEnricher] UMLS synonyms added to {mapped}/{len(local_classes)} classes.")
-        return self
-
-    # ── Reasoning ─────────────────────────────────────────────────────────────
-
-    def run_reasoner(self, infer_property_values: bool = True) -> "OWLEnricher":
-        """
-        Run the Pellet/HermiT reasoner to infer new axioms.
-        Requires Java and JPype to be installed.
-        """
-        with self._onto:
-            sync_reasoner(infer_property_values=infer_property_values)
-        print("[OWLEnricher] Reasoning complete.")
+        print(f"[OWLCurator] UMLS synonyms added to {mapped}/{len(local_classes)} classes.")
         return self
 
     # ── Save ──────────────────────────────────────────────────────────────────
 
     def save(self, output_file: str) -> None:
-        """Save the enriched ontology as RDF/XML."""
+        """Save the curated ontology as RDF/XML."""
         out = Path(output_file)
         out.parent.mkdir(parents=True, exist_ok=True)
         self._onto.save(file=str(out), format="rdfxml")
-        print(f"[OWLEnricher] Saved → {out}  ({out.stat().st_size:,} bytes)")
+        print(f"[OWLCurator] Saved → {out}  ({out.stat().st_size:,} bytes)")
 
     # ── Convenience ───────────────────────────────────────────────────────────
 
-    def enrich(
+    def curate(
         self,
         input_file: str,
         output_file: str,
         import_bfo: bool = True,
         import_ro: bool = True,
         import_obi: bool = False,
-        run_reasoner: bool = False,
     ) -> None:
-        """One-shot enrichment: load → import → rename → (reason) → save."""
+        """One-shot curation: load → import → resolve → rename → save."""
         self.load(input_file)
         if import_bfo:
             self.import_bfo()
@@ -297,8 +289,6 @@ class OWLEnricher:
             self.import_obi()
         self.resolve_external_classes()
         self.rename_iris()
-        if run_reasoner:
-            self.run_reasoner()
         self.save(output_file)
 
     # ── Private ───────────────────────────────────────────────────────────────

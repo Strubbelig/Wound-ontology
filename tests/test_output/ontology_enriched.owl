@@ -1,0 +1,2085 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xml:base="http://example.org/ontology"
+         xmlns="http://example.org/ontology#">
+
+<owl:Ontology rdf:about="http://example.org/ontology">
+  <owl:imports rdf:resource="http://purl.obolibrary.org/obo/bfo.owl"/>
+  <owl:imports rdf:resource="http://purl.obolibrary.org/obo/ro.owl"/>
+</owl:Ontology>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000001">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000002"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Low-Vacuum Drain</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000002">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000003"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Active Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000003">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000004">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000002"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">High-Vacuum Drains</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000005">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000006"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ethanol</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000006">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000007"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Alcohols</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000007">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antiseptic Agents For Wound Treatment</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000008">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000006"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Isopropanol</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000009">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000006"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">N-Propanol</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000010">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000011"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Venous Ulcer</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000011">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000012"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Angiopathic Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000012">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000268"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Mechanism</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000013">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000011"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Arterial Wounds</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000014">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000011"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mixed Venous-Arterial Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000015">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000011"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microangiopathic Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000016">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000011"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vasculitis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000017">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000018"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Systemic Antibiotic Therapy</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000018">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antibiotic Therapy</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000019">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000268"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Treatment</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000020">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000018"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Topical Antibiotic Therapy</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000021">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000007"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Quaternary Ammonium Compounds</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000022">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000007"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Halogens And Halogen-Releasing Compounds</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000023">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000007"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biguanide</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000024">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000007"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Phenols And Phenol Derivatives</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000025">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000007"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Metals And Metal Salts</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000026">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000007"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dyes</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000027">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000007"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hypochlorous Acid</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000028">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000029"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Primary Healing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000029">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000030"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Types Of Wound Healing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000030">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000268"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Healing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000031">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000029"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Secondary Healing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000032">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000029"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Tertiary Healing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000033">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000029"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Regenerative Healing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000034">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000013"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Arterial Leg Ulcer</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000035">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000036"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hand Disinfection</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000036">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Aseptic Cuticles</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000037">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000036"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sterile Gloves</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000038">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000036"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surface Disinfection</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000039">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000040"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">T-Drainage:</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000040">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Abdominal Drains</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000041">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000023"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Polihexanide</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000042">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000023"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chlorhexidine</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000043">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000044"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biobag Debridement</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000044">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000045"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biosurgical Debridement</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000045">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000075"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Debridement</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000046">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000047"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cat Bite Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000047">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000048"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bite Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000048">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000012"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Traumatic Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000049">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000047"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dog Bite Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000050">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000047"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Human Bite Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000051">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pemphigus Vulgaris</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000052">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000053"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blistering Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000053">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000268"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Type</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000054">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bullous Pemphigoid</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000055">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dermatitis Herpetiformis Duhring</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000056">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mucous Membrane Pemphigoid</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000057">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Linear Iga Dermatosis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000058">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Herpes Zoster (Shingles)</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000059">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chickenpox (Varicella)</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000060">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Herpes Simplex (E.G. Cold Sores)</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000061">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bullous Impetigo</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000062">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hand-Foot-And-Mouth Disease</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000063">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Epidermolysis Bullosa</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000064">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2Nd Degree Burn</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000065">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Friction Bubble</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000066">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Allergic Contact Dermatitis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000067">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stevens-Johnson Syndrome/Toxic Epidermal Necrolysis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000068">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fixed Drug Exanthema</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000069">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Porphyria Cutanea Tarda</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000070">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000052"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bullosis Diabeticorum</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000071">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000072"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Area</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000072">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000012"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000073">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000072"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Management</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000074">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000045"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Debridement</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000075">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Cleansing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000076">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000045"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Enzymatic Debridement</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000077">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000045"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Autolytic Debridement</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000078">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000045"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mechanical Debridement</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000079">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000045"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ultrasound-Assisted Wound Debridement</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000080">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000045"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Water-Jet Assisted Wound Cleansing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000081">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000003"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Passive Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000082">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000003"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Drainage System Type</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000083">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000003"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Drains Classified According To Application</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000084">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000083"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound And Soft Tissue Drains</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000085">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000083"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Abdominal Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000086">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000083"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chest Drains</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000087">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000083"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ventricular Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000088">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000083"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Tympanic Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000089">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000082"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Open Drainage Systems</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000090">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000082"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Semi-Open Drainage Systems</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000091">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000082"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Closed Wound Drainage System</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000092">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000093"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Grade I According To Shea</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000093">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000012"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pressure Ulcer</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000094">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000093"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Grade Ii According To Shea</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000095">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000093"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shea Grade Iii</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000096">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000093"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Shea Grade Iv</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000097">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000076"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bromelain</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000098">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000099"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Proteins</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000099">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Nutrition</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000100">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000099"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vitamins</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000101">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000099"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Trace Elements</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000102">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000103"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Coagulation Phase</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000103">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000104"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Exudation Phase</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000104">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000030"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Healing Phases</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000105">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000103"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hemostasis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000106">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000103"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Inflammation</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000107">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000103"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vasoconstriction</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000108">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000103"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vasodilation</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000109">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000110">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000111"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Suture Size</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000111">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000132"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Thread Material</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000112">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Suture Size 4</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000113">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000114">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000115">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Classification Stage 1</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000116">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000117">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1-0</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000118">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Suture Size 2-0</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000119">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Suture Size 3-0</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000120">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4-0</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000121">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5-0</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000122">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Suture Size 6-0</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000123">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">7-0</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000124">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">8-0</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000125">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">9-0</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000126">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">10-0</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000127">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">11-0</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000128">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">12-0</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000129">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">13-0</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000130">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000110"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Measurement System</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000131">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000111"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Resorbable Thread Material</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000132">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Closure</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000133">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000111"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Non-Absorbable Thread Material</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000134">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000111"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Monofilament Suture Material</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000135">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000111"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Polyfiles Thread Material</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000136">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000137"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Crystal Violet / Gentian Violet</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000137">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Colorants</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000138">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000139"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Plaster</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000139">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000140"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fixing Bandage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000140">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Association</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000141">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000139"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Gauze Bandage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000142">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000139"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Elastic Bandage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000143">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000139"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Net Association</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000144">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000014"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ulcus Cruris Mixtum</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000145">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000146"/>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000147"/>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000148"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Grade I</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000146">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000149"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Grading Of Thermal Or Cauterizing Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000147">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000150"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Classification According To Tscherne And Oestern</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000148">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000150"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Gustilo-Anderson Classification</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000149">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000012"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Thermal Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000150">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000048"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound With Accompanying Fracture</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000151">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000146"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Grade Iia</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000152">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000146"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Grade Iib</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000153">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000146"/>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000147"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Grade Iii</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000154">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000146"/>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000147"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Grade Iv</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000155">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000156"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetesmellitus</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000156">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000157"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Underlying Disease</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000157">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Healing Disorder</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000158">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000156"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pad</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000159">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000022"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Povidone-Iodine</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000160">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000161"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Split-Thickness Skin Graft</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000161">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin Grafting</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000162">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000161"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Full-Thickness Skin Graft</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000163">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000164"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Redness</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000164">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin Discoloration</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000165">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000268"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Diagnostics</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000166">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000164"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pallor</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000167">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000164"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cyanosis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000168">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000169"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Easy-Flow Drain</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000169">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000081"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Capillary Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000170">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000169"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Penrose Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000171">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000172"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Staphylococcus Aureus</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000172">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Germ Spectrum</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000173">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000172"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pseudomonas Aeruginosa</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000174">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000172"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Escherichia Coli</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000175">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000172"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Streptococci</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000176">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000172"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Methicillin-Resistant Staphylococcus Aureus</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000177">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000148"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ii</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000178">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000148"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Grade Iiia</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000179">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000148"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Iiib</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000180">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000148"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Classification Stage 3C</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000181">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000147"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Grade Ii</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000182">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000183"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Urge Scale</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000183">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Classification System</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000184">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000183"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Asepsis Score</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000185">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000130"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">United States Pharmacopeia</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000186">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000130"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">European Pharmacopoeia</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000187">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000078"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Compress Debridement</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000188">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000078"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Excision With The Scalpel</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000189">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000190"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Manuka Honey</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000190">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Medicinal Honey</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000191">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000025"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Silver</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000192">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000025"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bismuth Iii Bromide</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000193">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000025"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zinc</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000194">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000025"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Copper</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000195">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000015"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetic Foot Syndrome (Dfs)</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000196">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000015"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ulcus Hypertonicus Martorell</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000197">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000015"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Livedoid Vasculopathy</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000198">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000199"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hydrocolloids</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000199">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000200"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Modern Wound Dressing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000200">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Dressing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000201">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000199"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hydrogel Dressing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000202">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000199"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Alginates</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000203">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000199"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Foams</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000204">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000199"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound-Integrating Wound Dressings</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000205">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000199"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Transparent Polyurethane Film</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000206">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000199"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Silver-Containing Overlay</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000207">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000199"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biosynthetic Cellulose</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000208">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000199"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Activated Carbon Layer</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000209">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000199"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hydrofibers</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000210">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000199"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Spacer Grid</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000211">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000199"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Composite Dressing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000212">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000213"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Single Button Seam</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000213">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000132"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Seam Technology</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000214">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000213"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Continuous Seam</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000215">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000213"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Intracutaneous Suture</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000216">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000213"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Backstitch Seam</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000217">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000218"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Moist Necrosis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000218">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Necrosis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000219">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000268"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Complication</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000220">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000218"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dry Necrosis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000221">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000218"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Gangrene</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000222">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000223"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Marjolin Ulcer</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000223">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000012"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Neoplastic Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000224">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000001"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Jackson-Pratt Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000225">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000001"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Blake Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000226">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000227"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Redon Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000227">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">High-Vacuum Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000228">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000071"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Incision</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000229">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000071"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Excision</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000230">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000071"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Anastomosis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000231">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000081"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Gravity Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000232">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000081"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pigtail Catheter</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000233">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000104"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Proliferation Phase Of Wound Healing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000234">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000104"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Regeneration Phase</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000235">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000104"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Remodeling Phase</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000236">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000024"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Triclosan</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000237">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000024"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Phenoxyethanol</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000238">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000233"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Granulation</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000239">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000233"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Angiogenesis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000240">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000233"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Epithelialization</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000241">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000242"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Expert Standard</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000242">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000243"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Quality Assurance</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000243">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000268"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Documentation</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000244">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000021"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Benzalkonium Chloride</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000245">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000021"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Octenidine</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000246">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000234"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Repair Phase</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000247">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000234"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Scarring</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000248">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000249"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clean Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000249">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000053"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cleaning Class</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000250">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000249"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clean Contaminated Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000251">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000249"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Contaminated Wound Op</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000252">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000249"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Manifest-Infected Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000253">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000231"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Robinson Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000254">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000255"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Adhesive Silicone Grid</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000255">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000256"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Silicone Spacer Grid</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000256">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000200"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Traditional Wound Dressing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000257">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000255"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cellulose Acetate Mesh Impregnated With A Special Petrolatum Emulsion</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000258">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000259"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Overheating</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000259">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Temperature</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000260">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000259"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hypothermia</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000261">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000086"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bülau Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000262">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000086"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Monaldi Drainage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000263">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000256"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Paraffin Gauze</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000264">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000048"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Scratch Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000265">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000079"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cusa(R) Debridement</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000266">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000010"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ulcus Cruris Venosum ("Open Leg")</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000267">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000140"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Secondary Dressing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000268">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000269">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antiseptic</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000270">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Edge Protection</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000271">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Topical Wound Medication</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000272">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Compression Therapy</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000273">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Negative Pressure Wound Therapy</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000274">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hyperbaric Oxygen Therapy</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000275">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Carbon Dioxide Bath</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000276">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Flapplasty</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000277">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Patient Education</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000278">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dressing Change</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000279">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pain Management</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000280">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Aseptic Conditions</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000281">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Perioperative Antimicrobial Prophylaxis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000282">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Therapeutic Agent</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000283">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cold Plasma</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000284">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Local Anesthesia</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000285">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Incision Foil</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000286">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000019"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antiseptic Active Ingredients For Wound Treatment</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000287">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000288"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Expert</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000288">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Care Personnel</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000289">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000288"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Manager</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000290">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000288"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Doctor</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000291">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000288"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Caregiver</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000292">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000293"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Suture Insufficiency</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000293">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Dehiscence</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000294">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000293"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Belly</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000295">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Assessment</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000296">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Medical History</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000297">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinical Inspection</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000298">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Palpation</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000299">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Swab</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000300">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biopsy</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000301">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000300"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Histopathological Examination Of Wound Material</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000302">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Doppler Sonography</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000303">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Size Measurement</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000304">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sore Odor</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000305">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Exudate</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000306">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fibrin Coating</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000307">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Edge</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000308">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Bed</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000309">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Postoperative Wound Monitoring</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000310">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Swelling</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000311">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Functional Restriction</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000312">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000165"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antimicrobial Susceptibility Test</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000313">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000243"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Photo Documentation</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000314">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000305"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Serous Exudate</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000315">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000305"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sanguineous Exudate</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000316">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000305"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Serosanguineous Exudate</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000317">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000305"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Purulent Exudate</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000318">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000271"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Polihexanide Gel</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000319">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000271"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Octenidine Gel</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000320">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000271"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Iodine Ointment</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000321">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000271"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Flaminal</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000322">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000271"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bepanthen Ointment</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000323">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000271"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diclofenac Gel</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000324">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000303"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Planimetry</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000325">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000303"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Depth Measurement</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000326">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000303"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Volumetrics</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000327">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000308"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Granulating Wound Primer</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000328">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000308"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Necrotic Wound Bed</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000329">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000308"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fibrinous Wound Bed</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000330">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000308"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Epithelializing Wound Bed</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000331">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000030"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Contraction</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000332">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000157"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Immunosuppression</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000333">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000157"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Malnutrition</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000334">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000157"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Smoking</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000335">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000157"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Obesity</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000336">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000157"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Advanced Age</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000337">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000204"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Polylactide Membrane</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000338">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000204"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Polyurethane Foam</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000339">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000204"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bovine Collagen</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000340">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Infection</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000341">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000340"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Erysipelas</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000342">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000340"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Phlegmon</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000343">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000340"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fournier'S Gangrene</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000344">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000340"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Necrotizing Fasciitis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000345">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Seroma</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000346">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lymphatic Fistula</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000347">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lymphocele</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000348">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hematoma</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000349">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fistula</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000350">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Abscess</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000351">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hypertrophic Scar</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000352">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Keloid</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000353">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Edge Maceration</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000354">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Pocket Formation</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000355">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hypergranulation</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000356">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Pain</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000357">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Stress Bubble</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000358">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000219"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biofilm</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000359">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000012"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cauterizing Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000360">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000012"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Autoimmune Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000361">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000012"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetic Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000362">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000307"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Intact Wound Margin</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000363">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000307"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Livider Wound Margin</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000364">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000307"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Reddened Wound Edge</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000365">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000307"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Macerated Wound Edge</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000366">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000307"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Undermined Wound Margin</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000367">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000270"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin Protection Films (Barrier Films)</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000368">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000270"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pastes (E.G. Zinc Paste)</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000369">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000270"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin Protection Creams And Ointments</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000370">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000270"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hydrocolloids (Thin)</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000371">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000270"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Silicone Wound Spacer</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000372">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000075"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Irrigation</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000373">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000075"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Irrigation Solution</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000374">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000075"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lavage</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000375">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000373"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Serasept</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000376">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000373"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Normal Saline 0.9%</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000377">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000373"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Nacl 10%</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000378">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000373"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ringer Solution</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000379">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000373"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Lavasept</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000380">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000373"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antiseptic Solution</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000381">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000282"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Medicinalhoney</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000382">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000053"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Aseptic Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000383">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000053"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Contaminated Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000384">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000053"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Colonized Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000385">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000053"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Infected Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000386">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000053"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Primary Intention Healing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000387">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000053"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Secondary Intention Wound Healing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000388">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000053"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Tertiary Healing Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000389">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000053"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Regenerative Wound Healing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000390">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000053"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Acute Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000391">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000053"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chronic Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000392">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000132"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Primary Seam</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000393">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000132"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Secondary Seam</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000394">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000132"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin Staples</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000395">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000132"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Staple Plaster</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000396">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000132"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Adhesive Tape</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000397">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000183"/>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000053"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Classification According To Wagner And Anderson</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000398">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1A</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000399">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1B</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000400">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1C</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000401">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1D</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000402">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Grade 2A</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000403">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2B</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000404">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Classification Stage 2C</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000405">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Classification Stage 2D</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000406">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3A</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000407">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3B</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000408">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3C</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000409">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3D</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000410">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4A</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000411">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4B</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000412">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4C</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="http://purl.obolibrary.org/obo/WOND_0000413">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/WOND_0000397"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4D</rdfs:label>
+</owl:Class>
+
+
+</rdf:RDF>

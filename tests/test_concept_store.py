@@ -1,5 +1,5 @@
 import pytest
-from wound_ontology.cache.concept_store import ConceptStore
+from wound_ontology.store.concept_store import ConceptStore
 import pandas as pd
 
 

@@ -1,6 +1,6 @@
 import pytest
 from wound_ontology.fca.context_matrix import ContextMatrix
-from wound_ontology.cache.concept_store import ConceptStore
+from wound_ontology.store.concept_store import ConceptStore
 
 
 class MockDM:

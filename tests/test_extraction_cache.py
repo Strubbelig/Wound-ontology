@@ -1,5 +1,5 @@
 import pytest
-from wound_ontology.cache.extraction_cache import ExtractionCache
+from wound_ontology.store.extraction_cache import ExtractionCache
 
 
 class MockDM:

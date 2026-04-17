@@ -17,7 +17,10 @@ from wound_ontology.fca.context_matrix import ContextMatrix
 from wound_ontology.fca.concept_lattice import ConceptLattice
 from wound_ontology.mappers.normalization_mapper import TermMapper
 from wound_ontology.export.owl_exporter import OWLExporter
-from wound_ontology.export.owl_enricher import OWLEnricher
+from wound_ontology.export.owl_curator import OWLCurator
+from wound_ontology.export.owl_reasoner import OWLReasoner
+from wound_ontology.export.gexf_exporter import GEXFExporter
+from wound_ontology.graph.knowledge_graph import KnowledgeGraph
 
 load_dotenv()
 
@@ -72,7 +75,9 @@ class Orchestrator:
             mereological_hierarchy=self.mere_hier,
             fca_hierarchy=self.fca_hier,
         )
-        self.enricher      = OWLEnricher()
+        self.curator       = OWLCurator()
+        self.reasoner      = OWLReasoner()
+        self.gexf          = GEXFExporter()
         self.allowed_predicates = allowed_predicates
 
     def _run_sync(self, coroutine):
@@ -227,23 +232,24 @@ class Orchestrator:
     def export_to_owl(self, output_file=None):
         self.exporter.create_owl(**({"output_file": output_file} if output_file else {}))
 
-    def run_enrich_owl(
+    def run_curate_owl(
         self,
         input_file: str,
         output_file: str,
         import_bfo: bool = True,
         import_ro: bool = True,
         import_obi: bool = False,
-        run_reasoner: bool = False,
         umls_api_key: str | None = None,
         umls_max_results: int = 3,
     ) -> None:
         """
-        Post-process an OWL file: assign proper ontology IRIs (WOND_NNNNNNN),
-        add rdfs:labels, import BFO/RO/OBI via connectors, and optionally run
-        the reasoner.
+        Curate an OWL file: assign proper ontology IRIs (WOND_NNNNNNN),
+        add rdfs:labels, import BFO/RO/OBI via connectors, and optionally
+        annotate with UMLS cross-references.
+
+        For reasoning over the curated file use run_reason_owl().
         """
-        self.enricher.load(input_file)
+        self.curator.load(input_file)
 
         connectors = []
         if import_bfo:
@@ -253,17 +259,80 @@ class Orchestrator:
         if import_obi:
             connectors.append(self.obi)
         if connectors:
-            self.enricher.import_connector(*connectors)
+            self.curator.import_connector(*connectors)
 
-        self.enricher.resolve_external_classes()
-        self.enricher.rename_iris()
+        self.curator.resolve_external_classes()
+        self.curator.rename_iris()
         if umls_api_key:
             from wound_ontology.connectors.umls_connector import UMLSConnector
             umls = UMLSConnector(self.dm, api_key=umls_api_key)
-            self.enricher.umls_mapping(umls, max_results=umls_max_results)
-        if run_reasoner:
-            self.enricher.run_reasoner()
-        self.enricher.save(output_file)
+            self.curator.umls_mapping(umls, max_results=umls_max_results)
+        self.curator.save(output_file)
+
+    def run_reason_owl(
+        self,
+        input_file: str,
+        output_file: str,
+        infer_property_values: bool = True,
+    ) -> None:
+        """
+        Run the Pellet/HermiT reasoner over an enriched OWL file and save
+        the result with materialised inferences.
+
+        Requires Java and JPype. Call AFTER run_curate_owl().
+        """
+        self.reasoner.reason(
+            input_file,
+            output_file,
+            infer_property_values=infer_property_values,
+        )
+
+    def export_to_gexf(
+        self,
+        output_file: str,
+        input_owl: str | None = None,
+    ) -> None:
+        """
+        Export the wound ontology as a GEXF file for Gephi / Cytoscape.
+
+        Two modes:
+          input_owl=None   — build the KnowledgeGraph from the in-memory
+                             ConceptStore + class/mereological/FCA hierarchies.
+                             Use this right after run_build_hierarchies() /
+                             run_fca(), without needing an OWL file.
+
+          input_owl="path" — parse the given OWL/RDF file with rdflib. Use
+                             this after export_to_owl() or run_curate_owl()
+                             to get the fully enriched graph with WOND IRIs.
+
+        The resulting GEXF encodes node attributes (label, iri, node_type,
+        namespace) and edge attributes (predicate) so Gephi can colour and
+        filter by relationship type and ontology namespace.
+        """
+        if input_owl:
+            self.gexf.export_owl(input_owl, output_file)
+        else:
+            self.gexf.export_store(
+                self.store,
+                self.class_hier,
+                self.mere_hier,
+                self.fca_hier,
+                output_file=output_file,
+            )
+
+    def build_knowledge_graph(self, input_owl: str | None = None) -> KnowledgeGraph:
+        """
+        Build and return a KnowledgeGraph for programmatic use (SPARQL,
+        subgraph extraction, neighbourhood inspection).
+
+        input_owl=None  — from in-memory store + hierarchies.
+        input_owl="…"   — from an OWL/RDF file (supports SPARQL).
+        """
+        if input_owl:
+            return KnowledgeGraph().from_owl(input_owl)
+        return KnowledgeGraph().from_store(
+            self.store, self.class_hier, self.mere_hier, self.fca_hier
+        )
 
     # ── Full pipeline ──────────────────────────────────────────────────────────
 
