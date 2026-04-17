@@ -16,8 +16,7 @@ from wound_ontology.hierarchies.fca_hierarchy import FCAHierarchy
 from wound_ontology.fca.context_matrix import ContextMatrix
 from wound_ontology.fca.concept_lattice import ConceptLattice
 from wound_ontology.mappers.normalization_mapper import TermMapper
-from wound_ontology.export.owl_exporter import OWLExporter
-from wound_ontology.export.owl_curator import OWLCurator
+from wound_ontology.export.owl_ontology import OWLOntology
 from wound_ontology.export.owl_reasoner import OWLReasoner
 from wound_ontology.export.gexf_exporter import GEXFExporter
 from wound_ontology.graph.knowledge_graph import KnowledgeGraph
@@ -69,13 +68,6 @@ class Orchestrator:
         self.context_matrix = ContextMatrix(self.dm, "context_matrix")
         self.lattice       = ConceptLattice(self.dm, self.context_matrix)
         self.term_mapper   = TermMapper(self.dm)
-        self.exporter      = OWLExporter(
-            self.dm,
-            class_hierarchy=self.class_hier,
-            mereological_hierarchy=self.mere_hier,
-            fca_hierarchy=self.fca_hier,
-        )
-        self.curator       = OWLCurator()
         self.reasoner      = OWLReasoner()
         self.gexf          = GEXFExporter()
         self.allowed_predicates = allowed_predicates
@@ -230,7 +222,9 @@ class Orchestrator:
     # ── Export ─────────────────────────────────────────────────────────────────
 
     def export_to_owl(self, output_file=None):
-        self.exporter.create_owl(**({"output_file": output_file} if output_file else {}))
+        onto = OWLOntology()
+        onto.get_data(self.class_hier, self.mere_hier, self.fca_hier)
+        onto.save(output_file)
 
     def run_curate_owl(
         self,
@@ -249,7 +243,7 @@ class Orchestrator:
 
         For reasoning over the curated file use run_reason_owl().
         """
-        self.curator.load(input_file)
+        onto = OWLOntology().load(input_file)
 
         connectors = []
         if import_bfo:
@@ -259,15 +253,16 @@ class Orchestrator:
         if import_obi:
             connectors.append(self.obi)
         if connectors:
-            self.curator.import_connector(*connectors)
+            onto.import_connector(*connectors)
 
-        self.curator.resolve_external_classes()
-        self.curator.rename_iris()
+        onto.resolve_external_classes()
+        onto.normalize_label_language(target_lang="en")
+        onto.rename_iris()
         if umls_api_key:
             from wound_ontology.connectors.umls_connector import UMLSConnector
             umls = UMLSConnector(self.dm, api_key=umls_api_key)
-            self.curator.umls_mapping(umls, max_results=umls_max_results)
-        self.curator.save(output_file)
+            onto.umls_mapping(umls, max_results=umls_max_results)
+        onto.save(output_file)
 
     def run_reason_owl(
         self,

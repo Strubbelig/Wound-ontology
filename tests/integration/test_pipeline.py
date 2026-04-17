@@ -129,7 +129,7 @@ def test_store_fill(pipeline):
 @pytest.mark.integration
 def test_export_to_owl(pipeline, tmp_data_dir):
     owl_file = tmp_data_dir / "test_ontology.owl"
-    pipeline.exporter.create_owl(output_file=str(owl_file))
+    pipeline.export_to_owl(output_file=str(owl_file))
     assert owl_file.exists()
     assert owl_file.stat().st_size > 0
     content = owl_file.read_text()
@@ -174,7 +174,7 @@ def test_fca_on_subtree(pipeline, tmp_data_dir):
 
     # Re-export OWL with FCA results merged in and verify FCA names appear
     owl_out = tmp_data_dir / "ontology_with_fca.owl"
-    pipeline.exporter.create_owl(output_file=str(owl_out))
+    pipeline.export_to_owl(output_file=str(owl_out))
     assert owl_out.exists()
     content = owl_out.read_text()
 
@@ -250,9 +250,8 @@ def test_enrich_owl(pipeline, tmp_data_dir):
     print(f"Size delta: +{enriched_owl.stat().st_size - plain_owl.stat().st_size:,} bytes")
 
     # Print first class with a WOND_ IRI so we can visually verify
-    from wound_ontology.export.owl_curator import OWLCurator
-    verifier = OWLCurator()
-    verifier.load(str(enriched_owl))
+    from wound_ontology.export.owl_ontology import OWLOntology
+    verifier = OWLOntology().load(str(enriched_owl))
     sample = [(cls.iri, cls.label.first() if cls.label else None)
               for cls in verifier._onto.classes()
               if ONTOLOGY_ID_PREFIX + "_" in cls.iri][:5]

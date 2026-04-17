@@ -1,10 +1,14 @@
 from __future__ import annotations
 import re
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import networkx as nx
 import rdflib
 from rdflib.namespace import RDF, RDFS, OWL
+
+if TYPE_CHECKING:
+    from wound_ontology.graph.sparql_helper import SPARQLHelper
 
 # ── RDF namespace shorthands ──────────────────────────────────────────────────
 _OBO  = "http://purl.obolibrary.org/obo/"
@@ -226,30 +230,6 @@ class KnowledgeGraph:
               f"{self._graph.number_of_edges()} edges")
         return self
 
-    # ── SPARQL ────────────────────────────────────────────────────────────────
-
-    def sparql(self, query: str):
-        """
-        Execute a SPARQL SELECT query against the rdflib graph (requires from_owl()).
-
-        Returns an rdflib.query.Result iterable of result rows.
-
-        Example:
-            results = kg.sparql('''
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                SELECT ?cls ?label
-                WHERE { ?cls rdfs:subClassOf* <http://example.org/Wound> .
-                        ?cls rdfs:label ?label . }
-            ''')
-            for row in results:
-                print(row.cls, row.label)
-        """
-        if self._rdf_graph is None:
-            raise RuntimeError(
-                "No rdflib graph available — call from_owl() before sparql()."
-            )
-        return self._rdf_graph.query(query)
-
     # ── Filtering ─────────────────────────────────────────────────────────────
 
     def filter_by_namespace(self, prefix: str) -> "KnowledgeGraph":
@@ -342,6 +322,15 @@ class KnowledgeGraph:
         print(f"  Edge types : {s['edge_types']}")
 
     # ── Properties ────────────────────────────────────────────────────────────
+
+    @property
+    def sparql(self) -> "SPARQLHelper":
+        """
+        Returns a SPARQLHelper bound to this graph's rdflib graph.
+        Requires from_owl() to have been called first.
+        """
+        from wound_ontology.graph.sparql_helper import SPARQLHelper
+        return SPARQLHelper(self)
 
     @property
     def graph(self) -> nx.DiGraph:

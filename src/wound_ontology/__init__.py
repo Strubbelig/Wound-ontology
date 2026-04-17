@@ -5,11 +5,11 @@ from wound_ontology.store import ConceptStore
 from wound_ontology.fca import ContextMatrix, ConceptLattice
 from wound_ontology.mappers import BaseMapper, NormalizationMapper, TermMapper
 from wound_ontology.hierarchies import BaseHierarchy, ClassHierarchy, MereologicalHierarchy, FCAHierarchy
-from wound_ontology.export.owl_exporter import OWLExporter
-from wound_ontology.export.owl_curator import OWLCurator
+from wound_ontology.export.owl_ontology import OWLOntology
 from wound_ontology.export.owl_reasoner import OWLReasoner
 from wound_ontology.export.gexf_exporter import GEXFExporter
 from wound_ontology.graph.knowledge_graph import KnowledgeGraph
+from wound_ontology.graph.sparql_helper import SPARQLHelper
 from wound_ontology.orchestrator import Orchestrator
 
 __all__ = [
@@ -20,7 +20,7 @@ __all__ = [
     "ContextMatrix", "ConceptLattice",
     "BaseMapper", "NormalizationMapper", "TermMapper",
     "BaseHierarchy", "ClassHierarchy", "MereologicalHierarchy", "FCAHierarchy",
-    "OWLExporter", "OWLCurator", "OWLReasoner", "GEXFExporter",
-    "KnowledgeGraph",
+    "OWLOntology", "OWLReasoner", "GEXFExporter",
+    "KnowledgeGraph", "SPARQLHelper",
     "Orchestrator",
 ]
