@@ -37,6 +37,20 @@ class UMLSConnector(BaseConnector):
         self._list_of_labels = list(set(combined))
         self.save()
 
+    def lookup(self, term: str, max_results: int = 3) -> list[tuple[str, str]]:
+        """
+        Return up to max_results (CUI, preferred_name) pairs for a single term.
+        Results are not cached — intended for targeted per-class UMLS lookups.
+        """
+        cuis = self._get_cui_paginated(term)[:max_results]
+        results = []
+        for cui in cuis:
+            label = self._get_label_from_cui(cui)
+            if label:
+                results.append((cui, label))
+            time.sleep(self.delay)
+        return results
+
     def get_data(self, term):
         """
         Fetches new labels for a term and adds them to the existing collection

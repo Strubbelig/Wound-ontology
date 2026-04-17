@@ -82,23 +82,42 @@ class BaseHierarchy(ABC):
     def get_data(self, store) -> None:
         """Populate the hierarchy from a ConceptStore (already normalized).
         Always rebuilds from scratch so stale persisted data does not bleed in."""
-        self._df = pd.DataFrame(dtype=float)  # reset before rebuild
-        added = 0
+        edges: list[tuple[str, str]] = []
+
         for pmid_data in store.dict.values():
             for entity, attrs in pmid_data.get("entities", {}).items():
                 for triple, value in attrs.items():
                     if value != 1.0 or ":" not in triple:
                         continue
                     pred, target = triple.split(":", 1)
-                    pred   = pred.strip().lower().replace(" ", "_")
+                    pred = pred.strip().lower().replace(" ", "_")
                     target = target.strip()
                     if pred in self._direct_predicates:
-                        self._set_edge(entity, target)
-                        added += 1
+                        edges.append((
+                            entity.strip().title(),
+                            target.strip().title(),
+                        ))
                     elif pred in self._inverse_predicates:
-                        self._set_edge(target, entity)
-                        added += 1
-        print(f"[{self.__class__.__name__}] {added} edges added from store.")
+                        edges.append((
+                            target.strip().title(),
+                            entity.strip().title(),
+                        ))
+
+        if not edges:
+            self._df = pd.DataFrame(dtype=float)
+            print(f"[{self.__class__.__name__}] 0 edges added from store.")
+            return
+
+        # Build the full index/column sets first, then allocate once
+        rows = sorted({s for s, _ in edges})
+        cols = sorted({g for _, g in edges})
+        df = pd.DataFrame(0.0, index=rows, columns=cols)
+        for specific, general in edges:
+            if specific != general:
+                df.at[specific, general] = 1.0
+
+        self._df = df
+        print(f"[{self.__class__.__name__}] {len(edges)} edges added from store.")
 
     def parents_of(self, concept: str) -> list:
         """Direct general concepts of `concept` (its row)."""
@@ -136,7 +155,10 @@ class BaseHierarchy(ABC):
         general  = general.strip().title()
         # Always register both concepts so the entity exists even without a valid parent
         if general not in self._df.columns:
-            self._df[general] = 0.0
+            new_col = pd.DataFrame(
+                {general: 0.0}, index=self._df.index if not self._df.empty else pd.Index([])
+            )
+            self._df = pd.concat([self._df, new_col], axis=1)
         if specific not in self._df.index:
             new_row = pd.DataFrame(
                 [[0.0] * len(self._df.columns)],

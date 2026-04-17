@@ -200,6 +200,7 @@ class Orchestrator:
                     self.class_hier._set_edge(str(entity), name)
                     added += 1
             if added:
+                self.class_hier._df = self.class_hier._df.copy()  # defragment
                 self.class_hier.save()
                 print(f"FCA → ClassHierarchy  : {added} extent→superclass edges merged.")
         else:
@@ -234,6 +235,8 @@ class Orchestrator:
         import_ro: bool = True,
         import_obi: bool = False,
         run_reasoner: bool = False,
+        umls_api_key: str | None = None,
+        umls_max_results: int = 3,
     ) -> None:
         """
         Post-process an OWL file: assign proper ontology IRIs (WOND_NNNNNNN),
@@ -254,6 +257,10 @@ class Orchestrator:
 
         self.enricher.resolve_external_classes()
         self.enricher.rename_iris()
+        if umls_api_key:
+            from wound_ontology.connectors.umls_connector import UMLSConnector
+            umls = UMLSConnector(self.dm, api_key=umls_api_key)
+            self.enricher.umls_mapping(umls, max_results=umls_max_results)
         if run_reasoner:
             self.enricher.run_reasoner()
         self.enricher.save(output_file)

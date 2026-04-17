@@ -1,7 +1,7 @@
 from __future__ import annotations
 import re
 from pathlib import Path
-from owlready2 import World, sync_reasoner, destroy_entity
+from owlready2 import World, sync_reasoner, destroy_entity, AnnotationProperty
 
 try:
     from config.settings import (
@@ -213,6 +213,46 @@ class OWLEnricher:
                     except Exception as e:
                         print(f"[OWLEnricher] IRI rename failed for '{original_name}': {e}")
         print(f"[OWLEnricher] Renamed {renamed} local entities.")
+        return self
+
+    # ── UMLS mapping ──────────────────────────────────────────────────────────
+
+    def umls_mapping(self, umls_connector, max_results: int = 3) -> "OWLEnricher":
+        """
+        For each local WOND class, search UMLS for matching concepts and annotate
+        the class with hasUMLSSynonym (CUI + preferred name).
+
+        WOND classes are NOT replaced — the annotation is additive only.
+        Call this AFTER rename_iris() so labels are already set.
+
+        umls_connector – a connected UMLSConnector instance.
+        max_results    – max UMLS hits per class (default 3).
+        """
+        with self._onto:
+            # Declare annotation property once in this ontology
+            class hasUMLSSynonym(AnnotationProperty):
+                namespace = self._onto
+
+        local_classes = [c for c in self._onto.classes() if self._is_local(c)]
+        if not local_classes:
+            print("[OWLEnricher] No local classes to map — skipping UMLS mapping.")
+            return self
+
+        mapped = 0
+        print(f"[OWLEnricher] UMLS mapping for {len(local_classes)} classes...")
+        for cls in local_classes:
+            label = str(cls.label.first()) if cls.label else cls.name
+            hits = umls_connector.lookup(label, max_results=max_results)
+            if not hits:
+                continue
+            with self._onto:
+                for cui, preferred_name in hits:
+                    annotation = f"{preferred_name} (UMLS:{cui})"
+                    if annotation not in cls.hasUMLSSynonym:
+                        cls.hasUMLSSynonym.append(annotation)
+            mapped += 1
+
+        print(f"[OWLEnricher] UMLS synonyms added to {mapped}/{len(local_classes)} classes.")
         return self
 
     # ── Reasoning ─────────────────────────────────────────────────────────────
