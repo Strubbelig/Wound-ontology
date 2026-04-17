@@ -65,6 +65,9 @@ class OWLExporter:
                         if parent_cls not in child_cls.is_a:
                             try:
                                 child_cls.is_a.append(parent_cls)
+                                # Remove the implicit owl:Thing now that a real parent exists
+                                if Thing in child_cls.is_a:
+                                    child_cls.is_a.remove(Thing)
                             except TypeError:
                                 # owlready2 rejects edges that would create an
                                 # inheritance cycle (transitive, not just direct)
