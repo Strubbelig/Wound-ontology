@@ -304,6 +304,168 @@ def test_existing_label_not_overwritten(tmp_path):
     assert renamed[0].label.first() == "HSGI Hydrogel"
 
 
+# ── rdf_graph property ────────────────────────────────────────────────────────
+
+def test_rdf_graph_populated_after_load(tmp_path):
+    from rdflib import Graph
+    owl = _make_minimal_owl(tmp_path, "rdf_graph")
+    onto = _onto("rdf_graph")
+    onto.load(str(owl))
+    g = onto.rdf_graph
+    assert isinstance(g, Graph)
+    assert len(g) > 0
+
+
+def test_rdf_graph_lazy_from_get_data(class_hier):
+    from rdflib import Graph
+    onto = _onto("lazy_rdf")
+    onto.get_data(class_hier)
+    g = onto.rdf_graph
+    assert isinstance(g, Graph)
+    assert len(g) > 0
+
+
+# ── sparql property ───────────────────────────────────────────────────────────
+
+def test_sparql_returns_helper(tmp_path):
+    from wound_ontology.graph.sparql_helper import SPARQLHelper
+    owl = _make_minimal_owl(tmp_path, "sparql_helper")
+    onto = _onto("sparql_helper")
+    onto.load(str(owl))
+    assert isinstance(onto.sparql, SPARQLHelper)
+
+
+def test_sparql_cached(tmp_path):
+    owl = _make_minimal_owl(tmp_path, "sparql_cached")
+    onto = _onto("sparql_cached")
+    onto.load(str(owl))
+    assert onto.sparql is onto.sparql
+
+
+def test_sparql_can_query_classes(tmp_path):
+    owl = _make_minimal_owl(tmp_path, "sparql_query")
+    onto = _onto("sparql_query")
+    onto.load(str(owl))
+    results = onto.sparql.all_classes()
+    # The minimal OWL has 3 local classes
+    assert len(results) >= 3
+
+
+# ── label_of ──────────────────────────────────────────────────────────────────
+
+def test_label_of_returns_label(tmp_path):
+    from rdflib import URIRef
+    owl = _make_minimal_owl(tmp_path, "label_of")
+    onto = _onto("label_of")
+    onto.load(str(owl))
+    classes = onto.sparql.all_classes()
+    assert classes, "No classes found"
+    first_iri = classes[0]["iri"]
+    lbl = onto.label_of(first_iri)
+    # owlready2 may or may not add labels; at minimum no exception
+    assert lbl is None or isinstance(lbl, str)
+
+
+def test_label_of_known_label(tmp_path):
+    """Classes created by owlready2 in _make_minimal_owl have name-derived labels."""
+    from rdflib import URIRef
+    owl_path = tmp_path / "labelled_onto.owl"
+    from owlready2 import get_ontology, Thing, locstr
+    import types as python_types
+    local_onto = get_ontology("http://test.org/labelled_onto/")
+    with local_onto:
+        cls = python_types.new_class("Test_Class", (Thing,))
+        cls.label = [locstr("Test Class", "en")]
+    local_onto.save(file=str(owl_path), format="rdfxml")
+
+    onto = _onto("label_of_known")
+    onto.load(str(owl_path))
+    lbl = onto.label_of("http://test.org/labelled_onto/Test_Class")
+    assert lbl == "Test Class"
+
+
+# ── iri_of_label ──────────────────────────────────────────────────────────────
+
+def test_iri_of_label_reverse_lookup(tmp_path):
+    from rdflib import URIRef
+    from owlready2 import get_ontology, Thing, locstr
+    import types as python_types
+    owl_path = tmp_path / "reverse_onto.owl"
+    local_onto = get_ontology("http://test.org/reverse_onto/")
+    with local_onto:
+        cls = python_types.new_class("Wound_Entity", (Thing,))
+        cls.label = [locstr("Wound Entity", "en")]
+    local_onto.save(file=str(owl_path), format="rdfxml")
+
+    onto = _onto("reverse_lookup")
+    onto.load(str(owl_path))
+    found = onto.iri_of_label("Wound Entity")
+    assert found is not None
+    assert "Wound_Entity" in str(found)
+
+
+def test_iri_of_label_case_insensitive(tmp_path):
+    from owlready2 import get_ontology, Thing, locstr
+    import types as python_types
+    owl_path = tmp_path / "case_onto.owl"
+    local_onto = get_ontology("http://test.org/case_onto/")
+    with local_onto:
+        cls = python_types.new_class("CWound", (Thing,))
+        cls.label = [locstr("Chronic Wound", "en")]
+    local_onto.save(file=str(owl_path), format="rdfxml")
+
+    onto = _onto("case_insensitive")
+    onto.load(str(owl_path))
+    assert onto.iri_of_label("CHRONIC WOUND") is not None
+    assert onto.iri_of_label("chronic wound") is not None
+
+
+def test_iri_of_label_missing_returns_none(tmp_path):
+    owl = _make_minimal_owl(tmp_path, "missing_label")
+    onto = _onto("missing_label")
+    onto.load(str(owl))
+    assert onto.iri_of_label("Nonexistent Concept XYZ") is None
+
+
+# ── normalize_labels ──────────────────────────────────────────────────────────
+
+def test_normalize_labels_strips_whitespace(tmp_path):
+    from owlready2 import get_ontology, Thing, locstr
+    import types as python_types
+    owl_path = tmp_path / "whitespace_onto.owl"
+    local_onto = get_ontology("http://test.org/whitespace_onto/")
+    with local_onto:
+        cls = python_types.new_class("SpaceWound", (Thing,))
+        cls.label = [locstr("  Chronic   Wound  ", "en")]
+    local_onto.save(file=str(owl_path), format="rdfxml")
+
+    onto = _onto("normalize_ws")
+    onto.load(str(owl_path))
+    onto.normalize_labels(strip_whitespace=True)
+
+    found = onto.iri_of_label("Chronic Wound")
+    assert found is not None
+
+
+def test_normalize_labels_invalidates_sparql_cache(tmp_path):
+    owl = _make_minimal_owl(tmp_path, "cache_inval")
+    onto = _onto("cache_inval")
+    onto.load(str(owl))
+    _ = onto.sparql  # populate cache
+    onto.normalize_labels()
+    assert onto._sparql_helper is None  # cache cleared
+
+
+def test_normalize_labels_returns_self(tmp_path):
+    owl = _make_minimal_owl(tmp_path, "nl_self")
+    onto = _onto("nl_self")
+    onto.load(str(owl))
+    result = onto.normalize_labels()
+    assert result is onto
+
+
+# ── (existing tests continue) ─────────────────────────────────────────────────
+
 def test_curated_owl_differs_from_source(tmp_path):
     owl_in  = _make_minimal_owl(tmp_path, "diff_test")
     owl_out = tmp_path / "diff_out.owl"

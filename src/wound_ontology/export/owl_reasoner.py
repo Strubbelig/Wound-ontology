@@ -1,6 +1,7 @@
 from __future__ import annotations
 from pathlib import Path
 from owlready2 import World, sync_reasoner
+from rdflib import Graph, RDF, OWL
 
 
 class OWLReasoner:
@@ -73,3 +74,72 @@ class OWLReasoner:
         self.load(input_file)
         self.run(infer_property_values=infer_property_values)
         self.save(output_file)
+
+    # ── OWL RL (rdflib-based, no Java required) ────────────────────────────────
+
+    def expand_owlrl(
+        self,
+        tbox_file: str,
+        abox_file: str,
+        output_file: str,
+        check_consistency: bool = True,
+    ) -> bool:
+        """
+        Load TBox + ABox, run OWL RL materialisation via ``owlrl``, and save
+        the fully expanded graph as RDF/XML.  Does not require Java or JPype.
+
+        Parameters
+        ----------
+        tbox_file : str
+            Path to the TBox OWL file.
+        abox_file : str
+            Path to the ABox OWL file.
+        output_file : str
+            Destination for the merged + inferred OWL file.
+        check_consistency : bool
+            If True (default), report whether any individual is typed
+            ``owl:Nothing`` (indicates inconsistency).
+
+        Returns
+        -------
+        bool
+            True if consistent (or check skipped), False if inconsistent.
+        """
+        try:
+            import owlrl
+        except ImportError as exc:
+            raise ImportError(
+                "owlrl is required for expand_owlrl(). "
+                "Install it with: pip install owlrl"
+            ) from exc
+
+        g = Graph()
+        print(f"[OWLReasoner] Loading TBox: {tbox_file}", flush=True)
+        g.parse(tbox_file, format="xml")
+        t = len(g)
+        print(f"  {t:,} triples")
+
+        print(f"[OWLReasoner] Loading ABox: {abox_file}", flush=True)
+        g.parse(abox_file, format="xml")
+        print(f"  +{len(g) - t:,} triples (total {len(g):,})")
+
+        print("[OWLReasoner] Running OWL RL reasoning …", flush=True)
+        owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(g)
+        print(f"  After reasoning: {len(g):,} triples")
+
+        consistent = True
+        if check_consistency:
+            incon = list(g.subjects(RDF.type, OWL.Nothing))
+            if incon:
+                print(f"[OWLReasoner] INCONSISTENCY: {len(incon)} individual(s) typed owl:Nothing")
+                for ind in incon[:5]:
+                    print(f"  {ind}")
+                consistent = False
+            else:
+                print("[OWLReasoner] CONSISTENT — no owl:Nothing individuals.")
+
+        out = Path(output_file)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        g.serialize(destination=str(out), format="xml")
+        print(f"[OWLReasoner] Saved → {out}  ({out.stat().st_size / 1e6:.1f} MB)")
+        return consistent

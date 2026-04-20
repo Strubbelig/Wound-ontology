@@ -1,8 +1,10 @@
 from __future__ import annotations
 import re
+import tempfile
 import types as python_types
 from pathlib import Path
 
+from rdflib import Graph, URIRef, RDFS
 from owlready2 import (
     World, Thing, ObjectProperty, TransitiveProperty,
     AnnotationProperty, destroy_entity, locstr,
@@ -105,6 +107,8 @@ class OWLOntology:
         self._counter  = id_start
         self._world    = World()
         self._onto     = self._world.get_ontology(iri)
+        self._rg: Graph | None = None          # rdflib graph (lazy / populated by load)
+        self._sparql_helper = None             # SPARQLHelper cache
 
     # ── Construction from hierarchies ─────────────────────────────────────────
 
@@ -139,10 +143,13 @@ class OWLOntology:
     # ── Load from file ─────────────────────────────────────────────────────────
 
     def load(self, owl_file: str) -> "OWLOntology":
-        """Load an OWL/RDF-XML file into a fresh owlready2 World."""
+        """Load an OWL/RDF-XML file into a fresh owlready2 World and rdflib Graph."""
         path = Path(owl_file).resolve()
         self._world = World()
         self._onto  = self._world.get_ontology(f"file://{path}").load()
+        self._rg    = Graph()
+        self._rg.parse(str(path), format="xml")
+        self._sparql_helper = None
         print(f"[OWLOntology] Loaded: {path}")
         return self
 
@@ -332,6 +339,123 @@ class OWLOntology:
 
         print(f"[OWLOntology] UMLS synonyms added to {mapped}/{len(local_classes)} classes.")
         return self
+
+    # ── Label normalization ───────────────────────────────────────────────────
+
+    def normalize_labels(
+        self,
+        strip_whitespace: bool = True,
+        title_case: bool = False,
+    ) -> "OWLOntology":
+        """
+        Normalize ``rdfs:label`` values on all classes and individuals.
+
+        strip_whitespace
+            Collapse internal runs of whitespace to a single space and remove
+            leading/trailing whitespace (default: True).
+        title_case
+            Apply Python ``str.title()`` after whitespace normalization
+            (default: False).
+
+        Invalidates the cached rdflib graph and SPARQLHelper so subsequent
+        calls to ``rdf_graph`` / ``sparql`` reflect the updated labels.
+        """
+        if self._onto is None:
+            return self
+        changed = 0
+        with self._onto:
+            entities = list(self._onto.classes()) + list(self._onto.individuals())
+            for entity in entities:
+                new_labels, was_changed = [], False
+                for lbl in list(entity.label):
+                    s = str(lbl)
+                    norm = re.sub(r"\s+", " ", s).strip() if strip_whitespace else s
+                    if title_case:
+                        norm = norm.title()
+                    lang = getattr(lbl, "lang", None)
+                    if norm != s:
+                        new_labels.append(locstr(norm, lang or "en"))
+                        was_changed = True
+                    else:
+                        new_labels.append(lbl)
+                if was_changed:
+                    entity.label = new_labels
+                    changed += 1
+        self._rg = None
+        self._sparql_helper = None
+        print(f"[OWLOntology] normalize_labels: {changed} entities updated.")
+        return self
+
+    # ── Lookup ────────────────────────────────────────────────────────────────
+
+    def label_of(self, iri: str | URIRef, lang: str = "en") -> str | None:
+        """
+        Return the ``rdfs:label`` of *iri* from the rdflib graph.
+
+        Tries the requested language tag first, then falls back to any label.
+        Returns ``None`` when no label is present.
+        """
+        g = self.rdf_graph
+        iri_ref = URIRef(str(iri))
+        for lbl in g.objects(iri_ref, RDFS.label):
+            if getattr(lbl, "language", None) == lang:
+                return str(lbl)
+        lbl = next(g.objects(iri_ref, RDFS.label), None)
+        return str(lbl) if lbl else None
+
+    def iri_of_label(
+        self, label: str, lang: str | None = None
+    ) -> URIRef | None:
+        """
+        Reverse label lookup — return the first subject IRI whose
+        ``rdfs:label`` matches *label* (case-insensitive).
+
+        lang
+            If given, only labels with this language tag are considered.
+            ``None`` (default) matches any language tag.
+        """
+        target = label.lower().strip()
+        for subj, _, obj in self.rdf_graph.triples((None, RDFS.label, None)):
+            if str(obj).lower().strip() != target:
+                continue
+            if lang is not None and getattr(obj, "language", None) != lang:
+                continue
+            return subj
+        return None
+
+    # ── rdflib graph / SPARQL ─────────────────────────────────────────────────
+
+    @property
+    def rdf_graph(self) -> Graph:
+        """
+        rdflib.Graph representation of this ontology.
+
+        When the ontology was created via ``load()``, the graph is already
+        populated.  When created via ``get_data()`` (owlready2 construction
+        path), the graph is lazily serialized from the owlready2 world on
+        first access.
+        """
+        if self._rg is None:
+            tmp = Path(tempfile.mkstemp(suffix=".owl")[1])
+            try:
+                self._onto.save(file=str(tmp), format="rdfxml")
+                self._rg = Graph()
+                self._rg.parse(str(tmp), format="xml")
+            finally:
+                tmp.unlink(missing_ok=True)
+        return self._rg
+
+    @property
+    def sparql(self):
+        """
+        :class:`~wound_ontology.graph.sparql_helper.SPARQLHelper` wrapping
+        the rdflib graph.  Cached — invalidated by ``normalize_labels()`` and
+        re-populated on next access.
+        """
+        if self._sparql_helper is None:
+            from wound_ontology.graph.sparql_helper import SPARQLHelper
+            self._sparql_helper = SPARQLHelper(self.rdf_graph)
+        return self._sparql_helper
 
     # ── Save ──────────────────────────────────────────────────────────────────
 
