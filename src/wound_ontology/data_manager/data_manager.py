@@ -73,6 +73,15 @@ class DataManager:
         return str(full_path)
 
 
+    def save_owl(self, graph, filename_prefix: str) -> str:
+        """Saves an rdflib.Graph as a timestamped OWL/RDF-XML file."""
+        filename = self._get_timestamped_name(filename_prefix, "owl")
+        full_path = self.base_path / filename
+        graph.serialize(destination=str(full_path), format="xml")
+        self._cleanup_old_files(filename_prefix)
+        print(f"[DataManager] Saved OWL → {full_path.name}  ({full_path.stat().st_size:,} bytes)")
+        return str(full_path)
+
     def save_as_pickle(self, obj, filename_prefix):
         filename = self._get_timestamped_name(filename_prefix, "pkl")
         full_path = self.base_path / filename
@@ -94,6 +103,16 @@ class DataManager:
 
         # Standard sort puts the latest YYYY-MM-DD_HH-MM at the end [-1]
         return sorted(files)[-1]
+
+    @validate_call(config=ConfigDict(extra='forbid', arbitrary_types_allowed=True))
+    def load_latest_owl(self, prefix: str) -> str | None:
+        """Returns the path to the most recent OWL file matching prefix (does not parse)."""
+        path = self._find_latest_path(prefix, "owl")
+        if path:
+            print(f"[DataManager] Latest OWL: {os.path.basename(path)}")
+            return path
+        print(f"[DataManager] No OWL found for prefix: {prefix}")
+        return None
 
     @validate_call(config=ConfigDict(extra='forbid', arbitrary_types_allowed=True))
     def load_latest_csv(self, prefix: str):

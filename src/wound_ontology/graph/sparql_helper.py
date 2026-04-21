@@ -263,6 +263,47 @@ class SPARQLHelper:
         """)
         return [_row_to_dict(r, ["property", "label"]) for r in rows]
 
+    # ── Label / IRI lookup ────────────────────────────────────────────────────
+
+    def label_of(self, iri: str, lang: str = "en") -> str | None:
+        """
+        Return the ``rdfs:label`` of *iri*.
+
+        Prefers the label tagged with *lang*; falls back to any label when no
+        language-tagged match is found.  Returns ``None`` when no label exists.
+        """
+        rows = list(self.query(f"""
+            SELECT ?label WHERE {{
+                <{iri}> rdfs:label ?label .
+            }}
+        """))
+        for row in rows:
+            if getattr(row.label, "language", None) == lang:
+                return str(row.label)
+        return str(rows[0].label) if rows else None
+
+    def iri_of_label(self, label: str, lang: str | None = None) -> str | None:
+        """
+        Reverse label lookup — return the IRI string of the first subject whose
+        ``rdfs:label`` matches *label* (case-insensitive).
+
+        lang
+            When given, only labels with this language tag are considered.
+            ``None`` (default) matches any language tag.
+        Returns ``None`` when no match is found.
+        """
+        escaped = label.replace("\\", "\\\\").replace('"', '\\"')
+        lang_filter = f'FILTER(LANG(?label_val) = "{lang}")' if lang else ""
+        rows = list(self.query(f"""
+            SELECT ?iri WHERE {{
+                ?iri rdfs:label ?label_val .
+                FILTER(LCASE(STR(?label_val)) = LCASE("{escaped}"))
+                {lang_filter}
+            }}
+            LIMIT 1
+        """))
+        return str(rows[0].iri) if rows else None
+
     # ── Citations ─────────────────────────────────────────────────────────────
 
     def citations(self, class_iri: str | None = None) -> list[dict]:

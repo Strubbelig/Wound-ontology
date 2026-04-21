@@ -66,6 +66,7 @@ class OWLGenerator(ABC):
     ):
         self._g: Graph = graph if graph is not None else Graph()
         self._onto = ontology  # OWLOntology | None
+        self._sparql = None    # SPARQLHelper | None, lazy over _g
 
     # ── Public interface ───────────────────────────────────────────────────────
 
@@ -86,17 +87,16 @@ class OWLGenerator(ABC):
         Return the rdfs:label for *iri*.
 
         Checks the associated OWLOntology first (if any), then falls back to
-        querying this generator's own graph.
+        querying this generator's own graph via a cached SPARQLHelper.
         """
         if self._onto is not None:
             lbl = self._onto.label_of(iri, lang=lang)
             if lbl is not None:
                 return lbl
-        for obj in self._g.objects(iri, RDFS.label):
-            if getattr(obj, "language", None) == lang:
-                return str(obj)
-        lbl = next(self._g.objects(iri, RDFS.label), None)
-        return str(lbl) if lbl else None
+        if self._sparql is None:
+            from wound_ontology.graph.sparql_helper import SPARQLHelper
+            self._sparql = SPARQLHelper(self._g)
+        return self._sparql.label_of(str(iri), lang=lang)
 
     # ── Shared low-level primitives ────────────────────────────────────────────
 

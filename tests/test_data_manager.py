@@ -129,3 +129,40 @@ def test_purge_short_prefix_rejected(dm):
     dm.purge_by_prefix("ab", confirm=True)          # prefix too short — aborted
     remaining = list(dm.base_path.glob("ab_*"))
     assert len(remaining) == 1
+
+
+# ── OWL round-trip ────────────────────────────────────────────────────────────
+
+def test_save_owl_creates_file(dm):
+    from rdflib import Graph, URIRef, RDF, OWL
+    g = Graph()
+    g.add((URIRef("http://ex.org/Wound"), RDF.type, OWL.Class))
+    path = dm.save_owl(g, "test_owl")
+    from pathlib import Path
+    assert Path(path).exists()
+    assert Path(path).stat().st_size > 0
+
+
+def test_save_owl_is_valid_rdf(dm):
+    from rdflib import Graph, URIRef, RDF, OWL
+    g = Graph()
+    g.add((URIRef("http://ex.org/Wound"), RDF.type, OWL.Class))
+    path = dm.save_owl(g, "test_owl_valid")
+    g2 = Graph()
+    g2.parse(path, format="xml")
+    assert len(g2) > 0
+
+
+def test_load_latest_owl_returns_path(dm):
+    from rdflib import Graph, URIRef, RDF, OWL
+    g = Graph()
+    g.add((URIRef("http://ex.org/Wound"), RDF.type, OWL.Class))
+    dm.save_owl(g, "test_owl_load")
+    result = dm.load_latest_owl("test_owl_load")
+    assert result is not None
+    from pathlib import Path
+    assert Path(result).exists()
+
+
+def test_load_latest_owl_missing_returns_none(dm):
+    assert dm.load_latest_owl("nonexistent_owl") is None

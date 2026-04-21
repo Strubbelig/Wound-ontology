@@ -390,38 +390,22 @@ class OWLOntology:
 
     def label_of(self, iri: str | URIRef, lang: str = "en") -> str | None:
         """
-        Return the ``rdfs:label`` of *iri* from the rdflib graph.
+        Return the ``rdfs:label`` of *iri*.
 
-        Tries the requested language tag first, then falls back to any label.
-        Returns ``None`` when no label is present.
+        Delegates to :attr:`sparql` — prefers *lang*-tagged label, falls back
+        to any label, returns ``None`` when absent.
         """
-        g = self.rdf_graph
-        iri_ref = URIRef(str(iri))
-        for lbl in g.objects(iri_ref, RDFS.label):
-            if getattr(lbl, "language", None) == lang:
-                return str(lbl)
-        lbl = next(g.objects(iri_ref, RDFS.label), None)
-        return str(lbl) if lbl else None
+        return self.sparql.label_of(str(iri), lang=lang)
 
     def iri_of_label(
         self, label: str, lang: str | None = None
     ) -> URIRef | None:
         """
-        Reverse label lookup — return the first subject IRI whose
-        ``rdfs:label`` matches *label* (case-insensitive).
-
-        lang
-            If given, only labels with this language tag are considered.
-            ``None`` (default) matches any language tag.
+        Reverse label lookup — first IRI whose ``rdfs:label`` matches *label*
+        (case-insensitive).  Delegates to :attr:`sparql`.
         """
-        target = label.lower().strip()
-        for subj, _, obj in self.rdf_graph.triples((None, RDFS.label, None)):
-            if str(obj).lower().strip() != target:
-                continue
-            if lang is not None and getattr(obj, "language", None) != lang:
-                continue
-            return subj
-        return None
+        result = self.sparql.iri_of_label(label, lang=lang)
+        return URIRef(result) if result else None
 
     # ── rdflib graph / SPARQL ─────────────────────────────────────────────────
 
