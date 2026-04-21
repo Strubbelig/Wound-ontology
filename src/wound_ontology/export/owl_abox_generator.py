@@ -6,24 +6,28 @@ the complete variety expressible by an OFL TBox.
 
 Architecture
 ------------
-This class uses:
-
 * ``OWLOntology`` for loading the TBox and resolving labels/IRIs via SPARQL.
 * ``ABoxGenerator`` for writing all individual and property-assertion triples.
+* Only **leaf classes under OFLID10098** ("Flaps classified by region of
+  origin") are instantiated — classification axes (Mathes & Nahai, blood
+  supply, etc.) are intentionally excluded.
 
-Strategy
---------
-Phase 1 — "rich" instances
-    For every flap class that has compositional ``hasPart`` axioms, generate
-    one individual per combination of:
-        laterality (2) × survival outcome (5) × pre-harvest modification (2)
-    = 20 base combinations; multiplied by ``patients_per_combination``.
+BFO/OBI/RO alignment
+---------------------
+Every generated ABox imports BFO, OBI, and RO so the OWL RL reasoner can
+close over the full property hierarchy.  The individual structure follows the
+reference template ``flap_onto_corrected_and_inferred_22.owl``:
 
-Phase 2 — "typed" instances
-    For every remaining named flap class (no compositional axioms), generate
-    one individual per combination of:
-        laterality (2) × survival outcome (3 main)
-    = 6 base combinations; multiplied by ``patients_per_combination``.
+  FlapHarvestProcess has_specified_output Flap
+  Flap              is_specified_output_of FlapHarvestProcess
+  CompleteFlapOp    has_part  FlapHarvestProcess + FlapTransferProcess
+  CompleteFlapOp    has_participant  Flap, Patient
+  ConcretizedPlan   concretizes  SurgeryPlan
+  Pedicle           has_function  BloodSupplyFunction
+
+A plan (BFO:0000031 / OFLID10507) is *not* a process; it is an information
+content entity.  The flap therefore has *no* direct connection to the plan —
+that relation goes through the process.
 
 Usage (fluent API)
 ------------------
@@ -56,25 +60,25 @@ OBO     = Namespace("http://purl.obolibrary.org/obo/")
 FMA     = Namespace("http://purl.obolibrary.org/obo/FMA_")
 DCTERMS = Namespace("http://purl.org/dc/terms/")
 
-# ── Fixed OFL/OBO IRIs ────────────────────────────────────────────────────────
-FLAP_ROOT       = OFL.OFLID10002
-HAS_PART        = OFL.OFLID13296
-PART_OF         = OFL.OFLID13297
-HAS_ORIGIN      = OFL.OFLID12003
-HAS_QUALITY     = OBO.RO_0000086
-REALIZED_IN     = OBO.RO_0002488
-IS_OUTPUT_OF    = OBO.OBI_0000312
-HAS_SPEC_INPUT  = OBO.RO_0002583
+# ── Ontology roots ────────────────────────────────────────────────────────────
+FLAP_ROOT   = OFL.OFLID10002   # top-level flap class
+ORIGIN_ROOT = OFL.OFLID10098   # Flaps classified by region of origin
 
-FREE_TRANSFER    = OFL.OFLID1000137
-PEDICLED_TRANSFER= OFL.OFLID1000138
+# ── OFL object properties ─────────────────────────────────────────────────────
+HAS_PART  = OFL.OFLID13296
+PART_OF   = OFL.OFLID13297
+HAS_ORIGIN = OFL.OFLID12003
 
-LOCAL_FLAP    = OFL.OFLID10134
-REGIONAL_FLAP = OFL.OFLID10140
-DISTANT_FLAP  = OFL.OFLID10085
+# ── RO / OBI properties ───────────────────────────────────────────────────────
+HAS_PARTICIPANT = OBO.RO_0000057   # has participant
+CONCRETIZES     = OBO.RO_0000059   # concretizes (sdc concretizes gdc)
+HAS_FUNCTION    = OBO.RO_0000085   # has function
+HAS_QUALITY     = OBO.RO_0000086   # has quality
+IS_OUTPUT_OF    = OBO.OBI_0000312  # is specified output of
 
-MOD_NO  = OFL.OFLID10130
-MOD_YES = OFL.OFLID10131
+# ── Flap classification types (typed onto individuals) ────────────────────────
+MOD_NO  = OFL.OFLID10130   # without preharvest modification
+MOD_YES = OFL.OFLID10131   # with preharvest modification
 
 SURVIVAL_NO_LOSS  = OFL.OFLID10184
 SURVIVAL_APEX     = OFL.OFLID10179
@@ -85,6 +89,32 @@ SURVIVAL_VENOUS   = OFL.OFLID10181
 LEAF_SURVIVAL = [SURVIVAL_NO_LOSS, SURVIVAL_APEX, SURVIVAL_TOTAL,
                  SURVIVAL_ARTERIAL, SURVIVAL_VENOUS]
 MAIN_SURVIVAL = [SURVIVAL_NO_LOSS, SURVIVAL_APEX, SURVIVAL_TOTAL]
+
+LOCAL_FLAP    = OFL.OFLID10134
+REGIONAL_FLAP = OFL.OFLID10140
+DISTANT_FLAP  = OFL.OFLID10085
+
+FREE_TRANSFER    = OFL.OFLID1000137   # Free transfer process
+PEDICLED_TRANSFER = OFL.OFLID1000138  # Pedicled transfer process
+
+# ── Process / plan class IRIs ─────────────────────────────────────────────────
+FLAP_HARVEST_PROCESS    = OFL.OFLID1000132   # Flap harvest process
+COMPLETE_OPERATION      = OFL.OFLID1000128   # Complete flap operation process
+FLAP_SURGERY_PLAN       = OFL.OFLID10507     # Flap surgery plan (gdc)
+
+# ── BFO / PATO / NCBITaxon types ─────────────────────────────────────────────
+CONC_PLAN_TYPE = OBO.BFO_0000020      # specifically dependent continuant
+PATIENT_TYPE   = OBO.NCBITaxon_9606   # Homo sapiens
+VOL_TYPE       = OBO.PATO_0001679     # volume
+
+# ── Flap quality / role / function types ─────────────────────────────────────
+ROLE_TYPE = OFL.OFLID106000   # Wound coverage role
+FUNC_TYPE = OFL.OFLID106029   # Oxygenated blood supply to flap function
+
+# ── External ontology import URLs ────────────────────────────────────────────
+_BFO_URL = "http://purl.obolibrary.org/obo/bfo.owl"
+_RO_URL  = "http://purl.obolibrary.org/obo/ro.owl"
+_OBI_URL = "http://purl.obolibrary.org/obo/obi.owl"
 
 
 class _IDCounter:
@@ -139,8 +169,12 @@ class OWLABoxGenerator:
 
         onto_iri = URIRef("https://purl.bioontology.org/ontology/OFL/abox")
         out.add((onto_iri, RDF.type, OWL.Ontology))
+        # Import TBox and foundational ontologies for correct OWL RL reasoning
         out.add((onto_iri, OWL.imports,
                  URIRef("https://purl.bioontology.org/ontology/OFL")))
+        out.add((onto_iri, OWL.imports, URIRef(_BFO_URL)))
+        out.add((onto_iri, OWL.imports, URIRef(_RO_URL)))
+        out.add((onto_iri, OWL.imports, URIRef(_OBI_URL)))
 
         self._gen = ABoxGenerator(graph=out)
         counter   = _IDCounter(self._id_start)
@@ -154,7 +188,7 @@ class OWLABoxGenerator:
         flap_count = 0
         patient_n  = 1
 
-        # Phase 1 — rich instances
+        # Phase 1 — rich instances (variant leaves with explicit hasPart)
         for flap_iri, flap_info in parts_map.items():
             flap_label = flap_info["label"]
             parts      = flap_info["parts"]
@@ -178,7 +212,7 @@ class OWLABoxGenerator:
                     flap_count += 1
                     patient_n  += 1
 
-        # Phase 2 — typed instances
+        # Phase 2 — typed instances (origin leaves without explicit hasPart)
         for flap_iri, flap_label in all_named:
             if flap_iri in rich_iris:
                 continue
@@ -240,7 +274,11 @@ class OWLABoxGenerator:
     # ── TBox extraction via OWLOntology.sparql ─────────────────────────────────
 
     def _extract_tbox_info(self) -> dict:
-        """Use the OWLOntology's SPARQL helper to extract generation metadata."""
+        """Use the OWLOntology's SPARQL helper to extract generation metadata.
+
+        Only leaf classes under ORIGIN_ROOT are returned so that classification
+        axes (Mathes & Nahai, blood supply, etc.) are never instantiated.
+        """
         g = self._tbox_onto.rdf_graph
 
         P = ("PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
@@ -249,14 +287,20 @@ class OWLABoxGenerator:
              "PREFIX ofl:  <https://purl.bioontology.org/ontology/OFL/>")
 
         parts_map: dict[str, dict] = {}
-        for row in g.query(P + """
-            SELECT DISTINCT ?flap ?flapLabel ?partBN WHERE {
-              ?flap rdfs:subClassOf* ofl:OFLID10002 .
+        for row in g.query(P + f"""
+            SELECT DISTINCT ?flap ?flapLabel ?partBN WHERE {{
+              ?flap rdfs:subClassOf* ofl:OFLID10098 .
               ?flap rdfs:subClassOf ?r .
               ?r a owl:Restriction ; owl:onProperty ofl:OFLID13296 ;
                  owl:someValuesFrom ?partBN .
               ?flap rdfs:label ?flapLabel .
-            }"""):
+              FILTER(!isBlank(?flap))
+              FILTER NOT EXISTS {{
+                ?sub rdfs:subClassOf ?flap .
+                FILTER(!isBlank(?sub))
+                FILTER(isIRI(?sub))
+              }}
+            }}"""):
             iri, lbl = str(row.flap), str(row.flapLabel)
             named = [str(p) for p in _resolve_filler(g, row.partBN)
                      if isinstance(p, URIRef)]
@@ -269,7 +313,7 @@ class OWLABoxGenerator:
         origin_map: dict[str, str] = {}
         for row in g.query(P + """
             SELECT DISTINCT ?flap ?origin WHERE {
-              ?flap rdfs:subClassOf* ofl:OFLID10002 .
+              ?flap rdfs:subClassOf* ofl:OFLID10098 .
               ?flap rdfs:subClassOf ?r .
               ?r a owl:Restriction ; owl:onProperty ofl:OFLID12003 ;
                  owl:someValuesFrom ?origin .
@@ -299,22 +343,28 @@ class OWLABoxGenerator:
                 if v not in pedicle_map[frag]["vessels"]:
                     pedicle_map[frag]["vessels"].append(v)
 
+        # Leaf classes under ORIGIN_ROOT only (no named subclasses in OFL ns)
         all_named = [
             (str(r.flap), str(r.flapLabel))
-            for r in g.query(P + """
-            SELECT DISTINCT ?flap ?flapLabel WHERE {
-              ?flap rdfs:subClassOf* ofl:OFLID10002 .
+            for r in g.query(P + f"""
+            SELECT DISTINCT ?flap ?flapLabel WHERE {{
+              ?flap rdfs:subClassOf* ofl:OFLID10098 .
               ?flap rdfs:label ?flapLabel .
               FILTER(!isBlank(?flap))
               FILTER(STRSTARTS(STR(?flap),
                      "https://purl.bioontology.org/ontology/OFL/"))
-            }""")
+              FILTER NOT EXISTS {{
+                ?sub rdfs:subClassOf ?flap .
+                FILTER(!isBlank(?sub))
+                FILTER(isIRI(?sub))
+              }}
+            }}""")
         ]
 
         print(
             f"[OWLABoxGenerator] TBox: {len(parts_map)} rich flaps, "
             f"{len(origin_map)} with origin, {len(pedicle_map)} pedicles, "
-            f"{len(all_named)} total named flap classes"
+            f"{len(all_named)} total origin-leaf flap classes"
         )
         return dict(
             parts_map=parts_map,
@@ -341,24 +391,30 @@ class OWLABoxGenerator:
         distance_cls: URIRef,
         side: str,
     ) -> None:
-        sp = f"{side.capitalize()} " if side else ""
+        sp  = f"{side.capitalize()} " if side else ""
         gen = self._gen
 
-        patient_id = counter.next()
-        flap_id    = counter.next()
-        proc_id    = counter.next()
-        plan_id    = counter.next()
-        cplan_id   = counter.next()
-        vol_id     = counter.next()
-        role_id    = counter.next()
-        func_id    = counter.next()
-        pedicle_id = counter.next() if pedicle_cls else None
-        part_ids   = [counter.next() for _ in parts]
+        # Pre-allocate IRIs
+        patient_id  = counter.next()
+        flap_id     = counter.next()
+        harvest_id  = counter.next()
+        transfer_id = counter.next()
+        op_id       = counter.next()
+        plan_id     = counter.next()
+        cplan_id    = counter.next()
+        vol_id      = counter.next()
+        role_id     = counter.next()
+        pedicle_id  = counter.next() if pedicle_cls else None
+        func_id     = counter.next() if pedicle_cls else None
+        part_ids    = [counter.next() for _ in parts]
 
         f_label = f"{sp}{flap_label} of patient {patient_n}"
+        prefix  = "Free" if transfer_cls == FREE_TRANSFER else "Pedicled"
 
-        gen.add_individual(patient_id, f"Patient {patient_n}")
+        # ── Patient ────────────────────────────────────────────────────────────
+        gen.add_individual(patient_id, f"Patient {patient_n}", PATIENT_TYPE)
 
+        # ── Anatomical part individuals ────────────────────────────────────────
         for comp_id, fma_iri in zip(part_ids, parts):
             short = fma_iri.rstrip("/").rsplit("_", 1)[-1]
             lbl   = self._tbox_onto.label_of(URIRef(fma_iri)) or f"structure {short}"
@@ -369,12 +425,16 @@ class OWLABoxGenerator:
             )
             gen.add_object_property(comp_id, PART_OF, flap_id)
 
+        # ── Pedicle ────────────────────────────────────────────────────────────
         if pedicle_id and pedicle_cls:
             gen.add_individual(
                 pedicle_id,
                 f"Flap pedicle of {f_label}",
                 URIRef(pedicle_cls),
             )
+            gen.add_object_property(pedicle_id, PART_OF, flap_id)
+
+            # Vessels within pedicle
             for v_iri in pedicle_vessels[:2]:
                 v_id  = counter.next()
                 short = v_iri.rstrip("/").rsplit("_", 1)[-1]
@@ -386,26 +446,55 @@ class OWLABoxGenerator:
                 )
                 gen.add_object_property(pedicle_id, HAS_PART, v_id)
 
-        prefix = "Free" if transfer_cls == FREE_TRANSFER else "Pedicled"
-        gen.add_individual(
-            proc_id,
-            f"{prefix} flap operation of {f_label}",
-            transfer_cls,
-        )
-        gen.add_individual(plan_id,  f"Flap surgery plan for {flap_label}")
-        gen.add_individual(cplan_id, f"Concretized surgery plan of {f_label}")
-        gen.add_individual(vol_id,   f"Volume of {f_label}")
-        gen.add_individual(role_id,  f"Wound coverage role of {f_label}")
-        gen.add_individual(func_id,  f"Oxygenated blood supply function of {f_label}")
+            # Blood supply function inheres in the pedicle
+            gen.add_individual(func_id, f"Oxygenated blood supply to {f_label} function",
+                               FUNC_TYPE)
+            gen.add_object_property(pedicle_id, HAS_FUNCTION, func_id)
 
+        # ── Quality (volume) ───────────────────────────────────────────────────
+        gen.add_individual(vol_id, f"Volume of {f_label}", VOL_TYPE)
+
+        # ── Role ───────────────────────────────────────────────────────────────
+        gen.add_individual(role_id, f"Wound coverage role of {f_label}", ROLE_TYPE)
+
+        # ── Surgery plan (generically dependent continuant) ───────────────────
+        gen.add_individual(plan_id, f"Flap surgery plan for {flap_label}",
+                           FLAP_SURGERY_PLAN)
+
+        # ── Concretized surgery plan (specifically dependent continuant) ───────
+        gen.add_individual(cplan_id,
+                           f"Concretized surgery plan of {f_label}",
+                           CONC_PLAN_TYPE)
+        gen.add_object_property(cplan_id, CONCRETIZES, plan_id)
+
+        # ── Flap harvest process — the flap exists from the end of this ────────
+        gen.add_individual(harvest_id,
+                           f"Flap harvest process of {f_label}",
+                           FLAP_HARVEST_PROCESS)
+
+        # ── Transfer process ───────────────────────────────────────────────────
+        gen.add_individual(transfer_id,
+                           f"{prefix} flap transfer process of {f_label}",
+                           transfer_cls)
+
+        # ── Complete flap operation ────────────────────────────────────────────
+        gen.add_individual(op_id,
+                           f"{prefix} flap operation of {f_label}",
+                           COMPLETE_OPERATION)
+        gen.add_object_property(op_id, HAS_PARTICIPANT, flap_id)
+        gen.add_object_property(op_id, HAS_PARTICIPANT, patient_id)
+        gen.add_object_property(op_id, HAS_PART, harvest_id)
+        gen.add_object_property(op_id, HAS_PART, transfer_id)
+
+        # ── Flap ───────────────────────────────────────────────────────────────
         gen.add_individual(
             flap_id, f_label,
             URIRef(flap_iri), survival_cls, modification_cls, distance_cls,
         )
-        gen.add_object_property(flap_id, HAS_QUALITY,    vol_id)
-        gen.add_object_property(flap_id, REALIZED_IN,    proc_id)
-        gen.add_object_property(flap_id, IS_OUTPUT_OF,   proc_id)
-        gen.add_object_property(flap_id, HAS_SPEC_INPUT, plan_id)
+        # Flap comes into existence at the end of the harvest process
+        gen.add_object_property(flap_id, IS_OUTPUT_OF, harvest_id)
+        gen.add_object_property(flap_id, HAS_QUALITY,  vol_id)
+
         if origin_iri:
             gen.add_object_property(flap_id, HAS_ORIGIN, URIRef(origin_iri))
         for comp_id in part_ids:

@@ -146,7 +146,12 @@ class OWLOntology:
         """Load an OWL/RDF-XML file into a fresh owlready2 World and rdflib Graph."""
         path = Path(owl_file).resolve()
         self._world = World()
-        self._onto  = self._world.get_ontology(f"file://{path}").load()
+        try:
+            self._onto = self._world.get_ontology(f"file://{path}").load()
+        except Exception as exc:
+            print(f"[OWLOntology] owlready2 import warning ({exc.__class__.__name__}) "
+                  f"— using rdflib-only mode for {path.name}")
+            self._onto = self._world.get_ontology(f"file://{path}")
         self._rg    = Graph()
         self._rg.parse(str(path), format="xml")
         self._sparql_helper = None

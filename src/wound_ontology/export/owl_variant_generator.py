@@ -61,6 +61,11 @@ class OWLVariantGenerator:
         FMA ontology for resolving labels of FMA IRIs.
     flap_root : URIRef
         IRI of the top-level flap class (default: OFL:OFLID10002).
+    origin_root : URIRef
+        Only leaf classes under this subtree are expanded (default:
+        OFL:OFLID10098 — "Flaps classified by region of origin").
+        Restricts variant generation to anatomically named flap classes and
+        prevents accidentally exploding classification axes (e.g. Mathes & Nahai).
     has_part : URIRef
         IRI of the hasPart property (default: OFL:OFLID13296).
     """
@@ -70,12 +75,14 @@ class OWLVariantGenerator:
         tbox_onto,
         fma_onto=None,
         flap_root: URIRef = OFL["OFLID10002"],
+        origin_root: URIRef = OFL["OFLID10098"],
         has_part: URIRef = HAS_PART,
     ):
-        self._tbox_onto = tbox_onto
-        self._fma_onto  = fma_onto
-        self._flap_root = flap_root
-        self._has_part  = has_part
+        self._tbox_onto  = tbox_onto
+        self._fma_onto   = fma_onto
+        self._flap_root  = flap_root
+        self._origin_root = origin_root
+        self._has_part   = has_part
         self._next_id: list[int] = [0]
         self._created: list[dict] = []
         self._gen: TBoxGenerator | None = None
@@ -133,6 +140,7 @@ class OWLVariantGenerator:
         output_file: str,
         fma_file: str | None = None,
         flap_root: URIRef = OFL["OFLID10002"],
+        origin_root: URIRef = OFL["OFLID10098"],
         has_part: URIRef = HAS_PART,
     ) -> "OWLVariantGenerator":
         """
@@ -144,7 +152,8 @@ class OWLVariantGenerator:
         from wound_ontology.export.owl_ontology import OWLOntology
         tbox_onto = OWLOntology().load(tbox_file)
         fma_onto  = OWLOntology().load(fma_file) if fma_file else None
-        gen = cls(tbox_onto, fma_onto, flap_root=flap_root, has_part=has_part)
+        gen = cls(tbox_onto, fma_onto, flap_root=flap_root,
+                  origin_root=origin_root, has_part=has_part)
         gen.generate()
         gen.save(output_file)
         return gen
@@ -217,12 +226,18 @@ class OWLVariantGenerator:
         PREFIX owl:  <http://www.w3.org/2002/07/owl#>
         SELECT DISTINCT ?flap ?flapLabel ?restr ?filler
         WHERE {{
-          ?flap rdfs:subClassOf* <{self._flap_root}> .
+          ?flap rdfs:subClassOf* <{self._origin_root}> .
           ?flap rdfs:subClassOf ?restr .
           ?restr a owl:Restriction ;
                  owl:onProperty <{self._has_part}> ;
                  owl:someValuesFrom ?filler .
           OPTIONAL {{ ?flap rdfs:label ?flapLabel }}
+          FILTER(!isBlank(?flap))
+          FILTER NOT EXISTS {{
+            ?sub rdfs:subClassOf ?flap .
+            FILTER(!isBlank(?sub))
+            FILTER(isIRI(?sub))
+          }}
         }}
         """
         rows = []
