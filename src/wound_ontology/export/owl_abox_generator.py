@@ -290,15 +290,23 @@ class OWLABoxGenerator:
         for row in g.query(P + f"""
             SELECT DISTINCT ?flap ?flapLabel ?partBN WHERE {{
               ?flap rdfs:subClassOf* ofl:OFLID10098 .
-              ?flap rdfs:subClassOf ?r .
-              ?r a owl:Restriction ; owl:onProperty ofl:OFLID13296 ;
-                 owl:someValuesFrom ?partBN .
               ?flap rdfs:label ?flapLabel .
               FILTER(!isBlank(?flap))
               FILTER NOT EXISTS {{
                 ?sub rdfs:subClassOf ?flap .
                 FILTER(!isBlank(?sub))
                 FILTER(isIRI(?sub))
+              }}
+              {{
+                ?flap rdfs:subClassOf ?r .
+                ?r a owl:Restriction ; owl:onProperty ofl:OFLID13296 ;
+                   owl:someValuesFrom ?partBN .
+              }} UNION {{
+                ?flap owl:equivalentClass ?eq .
+                ?eq owl:intersectionOf ?list .
+                ?list rdf:rest*/rdf:first ?r .
+                ?r a owl:Restriction ; owl:onProperty ofl:OFLID13296 ;
+                   owl:someValuesFrom ?partBN .
               }}
             }}"""):
             iri, lbl = str(row.flap), str(row.flapLabel)

@@ -251,6 +251,38 @@ class TBoxGenerator(OWLGenerator):
         self._g.add((class_iri, RDFS.subClassOf, r))
         return r
 
+    def add_defined_class(
+        self,
+        iri: URIRef,
+        label: str,
+        parent: URIRef,
+        prop: URIRef,
+        filler: URIRef,
+        lang: str = "en",
+    ) -> URIRef:
+        """
+        Declare a fully *defined* OWL class (necessary and sufficient conditions)::
+
+            C ≡ parent ⊓ ∃prop.filler
+
+        Generates::
+
+            C  rdf:type          owl:Class
+            C  rdfs:label        label
+            C  owl:equivalentClass  [ owl:intersectionOf ( parent  restr ) ]
+
+        where ``restr`` is ``owl:someValuesFrom filler`` on ``prop``.
+        """
+        self._g.add((iri, RDF.type, OWL.Class))
+        self._add_label(iri, label, lang)
+        restr = self._make_restriction(prop, filler, OWL.someValuesFrom)
+        inter = BNode()
+        self._g.add((inter, OWL.intersectionOf, self._make_rdf_list([parent, restr])))
+        self._g.add((iri, OWL.equivalentClass, inter))
+        # Assert subClassOf explicitly so non-reasoning tools can traverse the hierarchy
+        self._g.add((iri, RDFS.subClassOf, parent))
+        return iri
+
 
 class ABoxGenerator(OWLGenerator):
     """

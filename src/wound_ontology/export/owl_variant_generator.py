@@ -104,13 +104,19 @@ class OWLVariantGenerator:
         self._created = []
         for flap_iri, flap_label, restr_node, filler in union_rows:
             members = self._union_members(g, filler)
+            flap_base = re.sub(r"\s+flap$", "", flap_label, flags=re.IGNORECASE).strip().lower()
             for comp_iri in members:
-                comp_label    = self._label_of(comp_iri)
+                comp_label = self._label_of(comp_iri)
+                # Skip redundant variants where the component IS the flap's own tissue
+                if comp_label.lower() == flap_base:
+                    continue
                 variant_iri   = self._new_iri()
                 variant_label = self._make_label(flap_label, comp_label)
 
-                self._gen.add_class(variant_iri, variant_label, parent=flap_iri)
-                self._gen.add_some_values_from(variant_iri, self._has_part, comp_iri)
+                # Defined class: C ≡ parent ⊓ ∃hasPart.component
+                self._gen.add_defined_class(
+                    variant_iri, variant_label, flap_iri, self._has_part, comp_iri
+                )
 
                 self._created.append({
                     "iri": str(variant_iri),
@@ -233,11 +239,6 @@ class OWLVariantGenerator:
                  owl:someValuesFrom ?filler .
           OPTIONAL {{ ?flap rdfs:label ?flapLabel }}
           FILTER(!isBlank(?flap))
-          FILTER NOT EXISTS {{
-            ?sub rdfs:subClassOf ?flap .
-            FILTER(!isBlank(?sub))
-            FILTER(isIRI(?sub))
-          }}
         }}
         """
         rows = []
