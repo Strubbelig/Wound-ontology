@@ -7,11 +7,9 @@ from pathlib import Path
 from rdflib import Graph, URIRef, Literal, RDF, RDFS, OWL
 from rdflib.namespace import XSD
 
-from wound_ontology.export.owl_generator import (
-    TBoxGenerator,
-    ABoxGenerator,
-    OWLGenerator,
-)
+from wound_ontology.export.owl_generator import OWLGenerator
+from wound_ontology.export.tbox_generator import TBoxGenerator
+from wound_ontology.export.abox_generator import ABoxGenerator
 
 EX = "http://example.org/test/"
 

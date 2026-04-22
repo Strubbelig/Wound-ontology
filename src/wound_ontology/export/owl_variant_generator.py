@@ -41,12 +41,10 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from rdflib import Graph, Namespace, URIRef, Literal, RDF, RDFS, OWL, BNode
+from rdflib import Graph, URIRef, RDF, RDFS, OWL
 
-from wound_ontology.export.owl_generator import TBoxGenerator
-
-OFL      = Namespace("https://purl.bioontology.org/ontology/OFL/")
-HAS_PART = OFL["OFLID13296"]
+from wound_ontology.export.tbox_generator import TBoxGenerator
+from config.ofl_constants import OFL, HAS_PART, FLAP_ROOT, ORIGIN_ROOT
 
 
 class OWLVariantGenerator:
@@ -74,8 +72,8 @@ class OWLVariantGenerator:
         self,
         tbox_onto,
         fma_onto=None,
-        flap_root: URIRef = OFL["OFLID10002"],
-        origin_root: URIRef = OFL["OFLID10098"],
+        flap_root: URIRef = FLAP_ROOT,
+        origin_root: URIRef = ORIGIN_ROOT,
         has_part: URIRef = HAS_PART,
     ):
         self._tbox_onto  = tbox_onto
@@ -145,8 +143,8 @@ class OWLVariantGenerator:
         tbox_file: str,
         output_file: str,
         fma_file: str | None = None,
-        flap_root: URIRef = OFL["OFLID10002"],
-        origin_root: URIRef = OFL["OFLID10098"],
+        flap_root: URIRef = FLAP_ROOT,
+        origin_root: URIRef = ORIGIN_ROOT,
         has_part: URIRef = HAS_PART,
     ) -> "OWLVariantGenerator":
         """
