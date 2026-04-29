@@ -42,3 +42,7 @@ class FillNanBatchResponse(BaseModel):
 
 class SemanticNameResponse(BaseModel):
     superclass_name: str
+
+
+class ScopeCheckResponse(BaseModel):
+    inappropriate: list[str]  # entity names from the input that are out of scope

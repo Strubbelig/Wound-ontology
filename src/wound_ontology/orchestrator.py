@@ -10,6 +10,7 @@ from wound_ontology.connectors.bfo_connector import BFOConnector
 from wound_ontology.connectors.ro_connector import ROConnector
 from wound_ontology.connectors.obi_connector import OBIConnector
 from wound_ontology.store.concept_store import ConceptStore
+from wound_ontology.store.store_cleaner import StoreCleaner
 from wound_ontology.hierarchies.class_hierarchy import ClassHierarchy
 from wound_ontology.hierarchies.mereological_hierarchy import MereologicalHierarchy
 from wound_ontology.hierarchies.fca_hierarchy import FCAHierarchy
@@ -41,21 +42,25 @@ _DEFAULT_ALLOWED_PREDICATES = [
 class Orchestrator:
     def __init__(
         self,
-        google_api_key: str | None = None,
-        anthropic_api_key: str | None = None,
-        openai_api_key: str | None = None,
+        openrouter_api_key: str | None = None,
+        openrouter_model: str | None = None,
         entrez_email: str | None = None,
         allowed_predicates: list | None = None,
         base_path=None,
+        # Legacy keyword args kept for backwards compatibility — ignored.
+        google_api_key: str | None = None,
+        anthropic_api_key: str | None = None,
+        openai_api_key: str | None = None,
     ):
-        google_api_key    = google_api_key    or os.getenv("GOOGLE_API_KEY", "")
-        anthropic_api_key = anthropic_api_key or os.getenv("ANTHROPIC_API_KEY", "")
-        openai_api_key    = openai_api_key    or os.getenv("OPENAI_API_KEY", "")
-        entrez_email      = entrez_email      or os.getenv("ENTREZ_EMAIL", "")
+        openrouter_api_key = openrouter_api_key or os.getenv("OPENROUTER_API_KEY", "")
+        entrez_email       = entrez_email       or os.getenv("ENTREZ_EMAIL", "")
         allowed_predicates = allowed_predicates or _DEFAULT_ALLOWED_PREDICATES
 
         self.dm  = DataManager(**({"base_path": base_path} if base_path else {}))
-        self.llm = LLMClient(google_api_key, anthropic_api_key, openai_api_key)
+        llm_kwargs = {"api_key": openrouter_api_key}
+        if openrouter_model:
+            llm_kwargs["model_id"] = openrouter_model
+        self.llm = LLMClient(**llm_kwargs)
 
         self.pubcon        = PubmedConnector(self.dm, entrez_email)
         self.bfo           = BFOConnector(self.dm)
@@ -78,17 +83,55 @@ class Orchestrator:
 
     # ── Extraction ─────────────────────────────────────────────────────────────
 
-    def run_pubmed_search(self, queries: str | list[str], max_results_per_query: int = 50):
+    def run_pubmed_search(self, queries: str | list[str], max_results_per_query: int = 200):
         """Fetch abstracts for one or more PubMed queries, merging into one database."""
         self.pubcon.get_data(queries, max_results_per_query)
 
-    def run_extract_to_store(self, batch_size=10, use_bfo_attributes=True):
+    async def _normalization_milestone(self, store) -> None:
+        """
+        Periodic callback: clean junk, normalize new terms, apply mapping, refresh hints.
+        Safe to await mid-extraction because _dict writes only happen in the calling loop.
+        """
+        # 1. Remove blocklisted entities and rogue predicates
+        cleaner = StoreCleaner(self.allowed_predicates)
+        report = cleaner.clean(store)
+        StoreCleaner.print_report(report)
+
+        # 2. Collect all terms not yet in the mapping (entities + attribute targets)
+        all_terms = list({
+            term
+            for pmid_data in store.dict.values()
+            for entity, attrs in pmid_data.get("entities", {}).items()
+            for term in [entity] + [
+                triple.split(":", 1)[1].strip()
+                for triple in attrs.keys()
+                if ":" in triple
+            ]
+        })
+
+        # 3. Normalize only the new ones (TermMapper skips known terms automatically)
+        await self.term_mapper.get_data(all_terms, self.llm)
+
+        # 4. Apply updated mapping to the full store
+        store.normalize(self.term_mapper)
+
+    def run_extract_to_store(self, batch_size=10, use_bfo_attributes=True,
+                             max_consecutive_failures=20, max_vocab_hints=300,
+                             clean_after: bool = True,
+                             normalize_every: int = 1000):
         """
         Extract entities from PubMed abstracts → ConceptStore.
 
-        use_bfo_attributes – if True, BFO anchor classes are passed to the LLM
-                             as candidate is_a targets so every entity gets
-                             classified against them.
+        use_bfo_attributes       – if True, BFO anchor classes are passed to the LLM
+                                   as candidate is_a targets so every entity gets
+                                   classified against them.
+        max_consecutive_failures – circuit breaker: abort if this many results in a row
+                                   are permanent failures (all retries exhausted).
+        max_vocab_hints          – cap on targets/attributes sent per prompt (most frequent).
+        clean_after              – if True, run StoreCleaner immediately after extraction.
+        normalize_every          – run clean+normalize+apply every N new entity mentions
+                                   during extraction so vocab hints stay compact.
+                                   0 = disable mid-extraction normalization.
         """
         bfo_anchors = self.bfo.get_anchor_names() if use_bfo_attributes else []
         if bfo_anchors:
@@ -98,7 +141,35 @@ class Orchestrator:
             self.pubcon.database, self.llm, self.allowed_predicates, batch_size,
             extra_targets=bfo_anchors,
             predicate_definitions=_PREDICATE_DEFINITIONS,
+            max_consecutive_failures=max_consecutive_failures,
+            max_vocab_hints=max_vocab_hints,
+            milestone_every=normalize_every,
+            on_milestone=self._normalization_milestone if normalize_every > 0 else None,
         ))
+        if clean_after:
+            print("\n[Orchestrator] Running post-extraction store clean...")
+            self.run_clean_store()
+
+    def run_clean_store(self, extra_blocked_entities: set[str] | None = None) -> None:
+        """Remove out-of-scope entities and invalid predicates from the ConceptStore."""
+        cleaner = StoreCleaner(self.allowed_predicates, extra_blocked_entities)
+        report = cleaner.clean(self.store)
+        StoreCleaner.print_report(report)
+
+    def scan_store_candidates(
+        self,
+        llm_batch_size: int = 150,
+        display_batch_size: int = 500,
+        threshold_pct: float = 20.0,
+    ) -> None:
+        """LLM-powered scan of out-of-scope entities for user review."""
+        cleaner = StoreCleaner(self.allowed_predicates)
+        cleaner.scan_candidates(
+            self.store, self.llm,
+            llm_batch_size=llm_batch_size,
+            display_batch_size=display_batch_size,
+            threshold_pct=threshold_pct,
+        )
 
     # ── Hierarchies ────────────────────────────────────────────────────────────
 

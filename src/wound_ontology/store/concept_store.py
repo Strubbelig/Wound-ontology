@@ -3,6 +3,7 @@ import asyncio
 import pandas as pd
 from pydantic import validate_call, ConfigDict
 from wound_ontology.data_manager.data_manager import DataManager
+from wound_ontology.store.store_cleaner import _METHODOLOGY_BLOCKLIST
 
 
 class ConceptStore:
@@ -49,6 +50,17 @@ class ConceptStore:
             for attr_dict in pmid_data.get("entities", {}).values():
                 all_attrs.update(attr_dict.keys())
         return sorted([a for a in all_attrs if not a.startswith("meta_")])
+
+    def top_attributes(self, n: int) -> list[str]:
+        """Return the n most frequently occurring predicate:target strings (by entity count)."""
+        from collections import Counter
+        counts: Counter = Counter()
+        for pmid_data in self.dict.values():
+            for attr_dict in pmid_data.get("entities", {}).values():
+                for attr, val in attr_dict.items():
+                    if not attr.startswith("meta_") and val == 1.0:
+                        counts[attr] += 1
+        return [attr for attr, _ in counts.most_common(n)]
 
     @property
     def predicates(self) -> list[str]:
@@ -150,15 +162,30 @@ class ConceptStore:
         batch_size: int = 10,
         extra_targets=None,
         predicate_definitions=None,
+        max_consecutive_failures: int = 20,
+        max_vocab_hints: int = 300,
+        milestone_every: int = 0,
+        on_milestone=None,
     ) -> None:
         """
         Extract entities from PubMed abstracts in parallel waves and store results.
 
-        extra_targets – additional target candidates (e.g. BFO anchor names) passed
-                        to the LLM alongside already-known targets.
+        extra_targets            – additional target candidates (e.g. BFO anchor names) passed
+                                   to the LLM alongside already-known targets.
+        max_consecutive_failures – circuit breaker: abort and raise if this many results in a
+                                   row are permanent failures (all retries exhausted).
+        max_vocab_hints          – cap on how many targets/attributes are sent per prompt.
+                                   Uses the most frequent entries to keep prompt size bounded.
+        milestone_every          – trigger on_milestone after every N new entity mentions.
+                                   0 = disabled.
+        on_milestone             – async callable(store) invoked at each milestone.
+                                   Safe to call: _dict writes only happen in this loop,
+                                   which is paused during the await.
         """
         meta_col, meta_id = self.dm.get_meta_stamp("llm_extract")
-        combined_targets = self.targets + (list(extra_targets) if extra_targets else [])
+        top_attrs = self.top_attributes(max_vocab_hints)
+        top_targets = list({a.split(':', 1)[1].strip() for a in top_attrs if ':' in a})
+        combined_targets = top_targets + (list(extra_targets) if extra_targets else [])
         current = self.dict
 
         to_process = [
@@ -172,28 +199,41 @@ class ConceptStore:
 
         print(f"Parallel Extraction: {len(to_process)} new abstracts in waves of {batch_size}...")
         sem = asyncio.Semaphore(batch_size)
+        abort = asyncio.Event()
+        llm.abort_event = abort
+        llm._consec_errors = 0
+        llm._max_consec_errors = max_consecutive_failures
 
         async def extract_one(row):
+            if abort.is_set():
+                return str(int(row['pmid'])), None
             async with sem:
+                if abort.is_set():
+                    return str(int(row['pmid'])), None
                 pmid = str(int(row['pmid']))
                 try:
                     extracted = await llm.extract_entities(
                         row['abstract'],
                         allowed_predicates,
                         combined_targets,
-                        self.attributes,
+                        top_attrs,
                         predicate_definitions=predicate_definitions,
                     )
 
+                    allowed_set = set(allowed_predicates)
                     entities_map: dict[str, dict] = {}
                     for ent in extracted:
+                        if ent.object.strip().lower() in _METHODOLOGY_BLOCKLIST:
+                            continue
                         attr_logic: dict[str, float] = {}
                         for a in ent.true_attributes:
-                            attr_logic[f"{a.predicate}: {a.target}"] = 1.0
+                            if a.predicate in allowed_set:
+                                attr_logic[f"{a.predicate}: {a.target}"] = 1.0
                         for a in ent.false_attributes:
-                            triple = f"{a.predicate}: {a.target}"
-                            if triple not in attr_logic:
-                                attr_logic[triple] = 0.0
+                            if a.predicate in allowed_set:
+                                triple = f"{a.predicate}: {a.target}"
+                                if triple not in attr_logic:
+                                    attr_logic[triple] = 0.0
 
                         # Semantic guard: is_a and part_of are mutually exclusive for the same target
                         is_a_targets = {
@@ -214,14 +254,43 @@ class ConceptStore:
                     print(f"Failed PMID {pmid}: {e}")
                     return pmid, None
 
-        for f in asyncio.as_completed([extract_one(row) for row in to_process]):
-            pmid, result = await f
-            if result:
-                self._dict[pmid] = result
-                self.save()
-                print(f"Cached PMID {pmid}")
+        tasks = [asyncio.create_task(extract_one(row)) for row in to_process]
+        succeeded = 0
+        entities_since_milestone = 0
 
-        print(f"Batch extraction complete. {len(to_process)} abstracts processed.")
+        try:
+            for f in asyncio.as_completed(tasks):
+                pmid, result = await f
+                if result:
+                    self._dict[pmid] = result
+                    self.save()
+                    print(f"Cached PMID {pmid}")
+                    succeeded += 1
+                    if milestone_every > 0 and on_milestone:
+                        entities_since_milestone += len(result.get("entities", {}))
+                        if entities_since_milestone >= milestone_every:
+                            print(f"\n[ConceptStore] Milestone: ~{entities_since_milestone} new entities "
+                                  f"({succeeded}/{len(to_process)} PMIDs). Running normalization...")
+                            await on_milestone(self)
+                            entities_since_milestone = 0
+                            # Refresh vocab hints so subsequent extractions use updated terms
+                            top_attrs[:] = self.top_attributes(max_vocab_hints)
+                            top_targets[:] = list({a.split(':', 1)[1].strip() for a in top_attrs if ':' in a})
+                            combined_targets[:] = top_targets + (list(extra_targets) if extra_targets else [])
+                            print("[ConceptStore] Vocab hints refreshed. Resuming extraction.\n")
+                if abort.is_set():
+                    for t in tasks:
+                        t.cancel()
+                    await asyncio.gather(*tasks, return_exceptions=True)
+                    raise RuntimeError(
+                        f"[Circuit breaker] Aborted after {llm._consec_errors} consecutive failures. "
+                        f"{succeeded}/{len(to_process)} abstracts saved."
+                    )
+        finally:
+            llm.abort_event = None
+            llm._max_consec_errors = 0
+
+        print(f"Batch extraction complete. {succeeded}/{len(to_process)} abstracts processed.")
 
     async def fill_missing_attributes(
         self,
