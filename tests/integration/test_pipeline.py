@@ -219,7 +219,6 @@ def test_enrich_owl(pipeline, tmp_data_dir):
         import_bfo=True,
         import_ro=True,
         import_obi=False,
-        run_reasoner=False,
     )
 
     assert enriched_owl.exists()

@@ -1,0 +1,710 @@
+[
+  {
+    "original_query": "((\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot ulcer\"[MeSH Terms] OR \"leg ulcer\"[MeSH Terms] OR \"burn\"[MeSH Terms] OR \"surgical wound\"[MeSH Terms] OR \"traumatic wound\"[tiab] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab]) AND (classification OR taxonomy OR \"wound type\" OR assessment OR staging)) AND (\"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot ulcer\"[MeSH Terms] OR \"leg ulcer\"[MeSH Terms] OR \"burn\"[MeSH Terms] OR \"surgical wound\"[MeSH Terms] OR \"traumatic wound\"[tiab] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab]) AND (classification OR taxonomy OR \"wound type\" OR assessment OR staging)) AND (\"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot ulcer\"[MeSH Terms] OR \"leg ulcer\"[MeSH Terms] OR \"burn\"[MeSH Terms] OR \"surgical wound\"[MeSH Terms] OR \"traumatic wound\"[tiab] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab]) AND (classification OR taxonomy OR \"wound type\" OR assessment OR staging)) AND (\"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All five abstracts are squarely within scope, focusing on wound classification systems, assessment tools, and management of clinically relevant wound types in human patients.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"skin ulcer\"[MeSH Terms] OR \"chronic wound\"[tiab]) AND (classification OR staging OR grading OR etiology OR epidemiology) AND (\"humans\"[MeSH Terms])) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"skin ulcer\"[MeSH Terms] OR \"chronic wound\"[tiab]) AND (classification OR staging OR grading OR etiology OR epidemiology) AND (\"humans\"[MeSH Terms])) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"skin ulcer\"[MeSH Terms] OR \"chronic wound\"[tiab]) AND (classification OR staging OR grading OR etiology OR epidemiology) AND (\"humans\"[MeSH Terms])) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are clearly on-scope, covering pressure ulcers, diabetic foot ulcers, wound classification systems, and wound assessment in human patients with appropriate clinical focus.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"pressure ulcer\"[MeSH Terms] OR \"pressure injury\"[tiab]) AND (staging OR classification OR \"NPUAP\" OR \"EPUAP\" OR \"NPIAP\" OR \"deep tissue\" OR management OR prevention OR treatment OR risk) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"pressure ulcer\"[MeSH Terms] OR \"pressure injury\"[tiab]) AND (staging OR classification OR \"NPUAP\" OR \"EPUAP\" OR \"NPIAP\" OR \"deep tissue\" OR management OR prevention OR treatment OR risk) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"pressure ulcer\"[MeSH Terms] OR \"pressure injury\"[tiab]) AND (staging OR classification OR \"NPUAP\" OR \"EPUAP\" OR \"NPIAP\" OR \"deep tissue\" OR management OR prevention OR treatment OR risk) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are clearly within scope, focusing on pressure injury/ulcer pathophysiology, risk factors, classification, prevention, and management in human patients with clinical applications.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"pressure ulcer\"[MeSH Terms]) AND (\"risk factors\"[MeSH Terms] OR incidence OR prevalence OR repositioning OR \"pressure redistribution\" OR \"support surface\") AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"pressure ulcer\"[MeSH Terms]) AND (\"risk factors\"[MeSH Terms] OR incidence OR prevalence OR repositioning OR \"pressure redistribution\" OR \"support surface\") AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"pressure ulcer\"[MeSH Terms]) AND (\"risk factors\"[MeSH Terms] OR incidence OR prevalence OR repositioning OR \"pressure redistribution\" OR \"support surface\") AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are directly on-scope, focusing on pressure injury/ulcer prevalence, incidence, risk factors, prevention strategies, and clinical guidelines in human patients across various healthcare settings.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"diabetic foot\"[MeSH Terms] OR \"diabetic foot ulcer\"[tiab]) AND (classification OR \"Wagner\" OR \"PEDIS\" OR \"Texas classification\" OR \"WIfI\" OR staging OR grading OR depth OR management) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"diabetic foot\"[MeSH Terms] OR \"diabetic foot ulcer\"[tiab]) AND (classification OR \"Wagner\" OR \"PEDIS\" OR \"Texas classification\" OR \"WIfI\" OR staging OR grading OR depth OR management) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"diabetic foot\"[MeSH Terms] OR \"diabetic foot ulcer\"[tiab]) AND (classification OR \"Wagner\" OR \"PEDIS\" OR \"Texas classification\" OR \"WIfI\" OR staging OR grading OR depth OR management) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 4,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "Query effectively retrieves abstracts on diabetic foot ulcer classification, management, and clinical guidelines; all 4 results are clearly in-scope with appropriate inclusion/exclusion filters.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"diabetic foot\"[MeSH Terms]) AND (neuropathy OR ischemia OR \"peripheral arterial disease\" OR infection OR \"offloading\" OR amputation OR revascularization OR debridement OR outcome) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"diabetic foot\"[MeSH Terms]) AND (neuropathy OR ischemia OR \"peripheral arterial disease\" OR infection OR \"offloading\" OR amputation OR revascularization OR debridement OR outcome) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"diabetic foot\"[MeSH Terms]) AND (neuropathy OR ischemia OR \"peripheral arterial disease\" OR infection OR \"offloading\" OR amputation OR revascularization OR debridement OR outcome) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are directly about diabetic foot ulcers/infections in humans, covering wound types, etiology, management strategies, and outcomes within scope.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"varicose ulcer\"[MeSH Terms] OR \"venous leg ulcer\"[tiab] OR \"venous ulcer\"[tiab]) AND (pathophysiology OR \"venous hypertension\" OR compression OR treatment OR \"four-layer bandage\" OR \"multilayer compression\" OR care) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"varicose ulcer\"[MeSH Terms] OR \"venous leg ulcer\"[tiab] OR \"venous ulcer\"[tiab]) AND (pathophysiology OR \"venous hypertension\" OR compression OR treatment OR \"four-layer bandage\" OR \"multilayer compression\" OR care) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"varicose ulcer\"[MeSH Terms] OR \"venous leg ulcer\"[tiab] OR \"venous ulcer\"[tiab]) AND (pathophysiology OR \"venous hypertension\" OR compression OR treatment OR \"four-layer bandage\" OR \"multilayer compression\" OR care) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 4,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All four abstracts are highly relevant to venous leg ulcer wound management, covering treatment (compression), pathophysiology, and clinical outcomes with appropriate human patient focus.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"peripheral arterial disease\"[MeSH Terms] OR \"arterial ulcer\"[tiab] OR \"ischemic ulcer\"[tiab] OR \"critical limb ischemia\"[tiab]) AND (\"ulcer\"[tiab] OR \"wound\"[tiab] OR \"ulceration\"[tiab]) AND (\"wound assessment\"[tiab] OR \"wound management\"[tiab] OR \"wound healing\"[tiab] OR debridement[tiab] OR dressing*[tiab] OR \"exudate\"[tiab] OR \"granulation tissue\"[tiab] OR \"wound bed\"[tiab] OR \"antimicrobial\"[tiab] OR \"skin substitute*\"[tiab] OR NPWT[tiab] OR \"negative pressure\"[tiab] OR amputation[tiab] OR \"healing rate\"[tiab] OR \"wound care\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"peripheral arterial disease\"[MeSH Terms] OR \"arterial ulcer\"[tiab] OR \"ischemic ulcer\"[tiab] OR \"critical limb ischemia\"[tiab]) AND (\"ulcer\"[tiab] OR \"wound\"[tiab] OR \"ulceration\"[tiab]) AND (\"wound assessment\"[tiab] OR \"wound management\"[tiab] OR \"wound healing\"[tiab] OR debridement[tiab] OR dressing*[tiab] OR \"exudate\"[tiab] OR \"granulation tissue\"[tiab] OR \"wound bed\"[tiab] OR \"antimicrobial\"[tiab] OR \"skin substitute*\"[tiab] OR NPWT[tiab] OR \"negative pressure\"[tiab] OR amputation[tiab] OR \"healing rate\"[tiab] OR \"wound care\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"peripheral arterial disease\"[MeSH Terms] OR \"arterial ulcer\"[tiab] OR \"ischemic ulcer\"[tiab] OR \"critical limb ischemia\"[tiab]) AND (\"ulcer\"[tiab] OR \"wound\"[tiab] OR \"ulceration\"[tiab]) AND (\"wound assessment\"[tiab] OR \"wound management\"[tiab] OR \"wound healing\"[tiab] OR debridement[tiab] OR dressing*[tiab] OR \"exudate\"[tiab] OR \"granulation tissue\"[tiab] OR \"wound bed\"[tiab] OR \"antimicrobial\"[tiab] OR \"skin substitute*\"[tiab] OR NPWT[tiab] OR \"negative pressure\"[tiab] OR amputation[tiab] OR \"healing rate\"[tiab] OR \"wound care\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "Query reliably retrieves abstracts focused on ischemic/arterial ulcer management in humans with strong emphasis on wound assessment, management strategies, and clinical outcomes.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"surgical wound infection\"[MeSH Terms] OR \"surgical wound dehiscence\"[MeSH Terms] OR \"surgical site infection\"[tiab]) AND (classification OR \"CDC criteria\" OR management OR incidence OR risk OR treatment OR prevention OR reoperation) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"surgical wound infection\"[MeSH Terms] OR \"surgical wound dehiscence\"[MeSH Terms] OR \"surgical site infection\"[tiab]) AND (\"wound management\"[MeSH Terms] OR \"wound healing\"[MeSH Terms] OR dressing*[tiab] OR debridement[tiab] OR \"wound bed\"[tiab] OR \"granulation tissue\"[tiab] OR exudate[tiab] OR eschar[tiab] OR slough[tiab] OR \"periwound skin\"[tiab] OR \"wound assessment\"[tiab] OR \"wound classification\"[tiab] OR \"wound care\"[tiab] OR antimicrobial*[tiab] OR \"negative pressure\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"surgical wound infection\"[MeSH Terms] OR \"surgical wound dehiscence\"[MeSH Terms] OR \"surgical site infection\"[tiab]) AND (classification OR \"CDC criteria\" OR management OR incidence OR risk OR treatment OR prevention OR reoperation) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "FAIL",
+        "score": 4,
+        "reason": "Query retrieves many out-of-scope results including general surgical complications, transplantation outcomes, and vascular infections unrelated to wound management.",
+        "problem": "The query is too broad and lacks wound-specific terminology. It captures surgical site infections generically without limiting to wound assessment, wound bed characteristics, or wound management interventions. MeSH terms for 'surgical wound infection' and 'surgical wound dehiscence' are appropriate, but the keyword filters (classification, management, incidence, risk, treatment, prevention) are too general and retrieve general surgical outcome papers. Only abstracts [4] and partially [5] are clearly in-scope; [1], [2], and [3] address general surgical complications, transplantation, and sepsis management rather than wound ontology. The query needs to add wound-specific terms (dressing, debridement, healing, wound bed, exudate, granulation tissue, etc.) to exclude non-wound-focused surgical literature."
+      },
+      {
+        "query": "((\"surgical wound infection\"[MeSH Terms] OR \"surgical wound dehiscence\"[MeSH Terms] OR \"surgical site infection\"[tiab]) AND (\"wound management\"[MeSH Terms] OR \"wound healing\"[MeSH Terms] OR dressing*[tiab] OR debridement[tiab] OR \"wound bed\"[tiab] OR \"granulation tissue\"[tiab] OR exudate[tiab] OR eschar[tiab] OR slough[tiab] OR \"periwound skin\"[tiab] OR \"wound assessment\"[tiab] OR \"wound classification\"[tiab] OR \"wound care\"[tiab] OR antimicrobial*[tiab] OR \"negative pressure\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "Query reliably captures surgical wound complications and management, with all 5 samples directly addressing wound infection, dehiscence, healing, or care—though abstract [2] is borderline for including anastomosis focus.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"Wound Healing\"[MeSH Terms] OR \"Surgical Wound Infection\"[MeSH Terms] OR \"Wounds and Injuries\"[MeSH Terms]) AND (wound OR dehiscence OR \"wound breakdown\" OR \"surgical site infection\") AND (management OR treatment OR care OR prevention OR classification) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"Wound Healing\"[MeSH Terms] OR \"Surgical Wound Infection\"[MeSH Terms] OR \"Wounds and Injuries\"[MeSH Terms]) AND (wound OR dehiscence OR \"wound breakdown\" OR \"surgical site infection\") AND (management OR treatment OR care OR prevention OR classification) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"Wound Healing\"[MeSH Terms] OR \"Surgical Wound Infection\"[MeSH Terms] OR \"Wounds and Injuries\"[MeSH Terms]) AND (wound OR dehiscence OR \"wound breakdown\" OR \"surgical site infection\") AND (management OR treatment OR care OR prevention OR classification) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "Query effectively retrieves wound management and assessment abstracts relevant to the ontology scope, with 4/5 samples clearly on-topic (abstracts 2, 3, 4, 5); abstract 1 is an outlier on pelvic trauma classification unrelated to wound care.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"burns\"[MeSH Terms]) AND (classification OR depth OR \"superficial\" OR \"partial thickness\" OR \"full thickness\" OR \"TBSA\" OR assessment OR first-aid OR \"burn center\") AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"burns\"[MeSH Terms]) AND (classification OR depth OR \"superficial\" OR \"partial thickness\" OR \"full thickness\" OR \"TBSA\" OR assessment OR first-aid OR \"burn center\") AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"burns\"[MeSH Terms]) AND (classification OR depth OR \"superficial\" OR \"partial thickness\" OR \"full thickness\" OR \"TBSA\" OR assessment OR first-aid OR \"burn center\") AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 4,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 4 abstracts are firmly in-scope, focusing on burn assessment, classification, depth, first-aid management, and clinical outcomes in human patients with appropriate exclusion of animal-only and in vitro studies.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"burns\"[MeSH Terms]) AND (management OR treatment OR \"burn wound\" OR \"skin grafting\" OR \"escharotomy\" OR \"fluid resuscitation\" OR rehabilitation OR scar OR \"hypertrophic scar\") AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"burns\"[MeSH Terms]) AND (management OR treatment OR \"burn wound\" OR \"skin grafting\" OR \"escharotomy\" OR \"fluid resuscitation\" OR rehabilitation OR scar OR \"hypertrophic scar\") AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"burns\"[MeSH Terms]) AND (management OR treatment OR \"burn wound\" OR \"skin grafting\" OR \"escharotomy\" OR \"fluid resuscitation\" OR rehabilitation OR scar OR \"hypertrophic scar\") AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are clearly within scope, focusing on burn wound management, scar outcomes, and clinical rehabilitation in human patients.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"lacerations\"[MeSH Terms] OR \"abrasions\"[tiab] OR \"puncture wound\"[tiab] OR \"bite wound\"[tiab] OR \"avulsion\"[tiab] OR \"degloving\"[tiab]) AND (management OR treatment OR closure OR infection OR classification OR care) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"lacerations\"[MeSH Terms] OR \"abrasions\"[tiab] OR \"puncture wound\"[tiab] OR \"bite wound\"[tiab] OR \"avulsion\"[tiab] OR \"degloving\"[tiab]) AND (management OR treatment OR closure OR infection OR classification OR care) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"lacerations\"[MeSH Terms] OR \"abrasions\"[tiab] OR \"puncture wound\"[tiab] OR \"bite wound\"[tiab] OR \"avulsion\"[tiab] OR \"degloving\"[tiab]) AND (management OR treatment OR closure OR infection OR classification OR care) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts address traumatic wound types (lacerations, abrasions, bite wounds) in human patients with clinical management focus including closure techniques, infection prevention, dressings, and outcomes—core within-scope topics.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"fasciitis, necrotizing\"[MeSH Terms] OR \"necrotizing fasciitis\"[tiab] OR \"gas gangrene\"[MeSH Terms] OR \"Fournier gangrene\"[tiab]) AND (diagnosis OR classification OR management OR treatment OR debridement OR mortality OR complication) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"fasciitis, necrotizing\"[MeSH Terms] OR \"necrotizing fasciitis\"[tiab] OR \"gas gangrene\"[MeSH Terms] OR \"Fournier gangrene\"[tiab]) AND (diagnosis OR classification OR management OR treatment OR debridement OR mortality OR complication) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"fasciitis, necrotizing\"[MeSH Terms] OR \"necrotizing fasciitis\"[tiab] OR \"gas gangrene\"[MeSH Terms] OR \"Fournier gangrene\"[tiab]) AND (diagnosis OR classification OR management OR treatment OR debridement OR mortality OR complication) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 4,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All four abstracts focus on necrotizing soft tissue infections (a wound type) in human patients, discussing diagnosis, classification, management, debridement, and mortality outcomes—all within scope.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((wound OR ulcer) AND (\"wound bed\"[tiab] OR \"granulation tissue\" OR \"epithelialization\" OR \"wound edge\"[tiab] OR \"periwound skin\"[tiab] OR eschar OR slough OR exudate OR \"wound margins\") AND (assessment OR management OR treatment OR definition OR characteristics) AND (\"humans\"[MeSH Terms]) AND (clinical[tiab] OR patient*[tiab] OR observational[tiab] OR \"case report\"[tiab] OR \"case series\"[tiab] OR trial[tiab] OR cohort[tiab] OR \"tissue biopsy\"[tiab] OR \"clinical sample\"[tiab])) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab] OR \"ex vivo\"[tiab] OR mechanistic[tiab])",
+    "final_query": "((wound OR ulcer) AND (\"wound bed\"[tiab] OR \"granulation tissue\" OR \"epithelialization\" OR \"wound edge\"[tiab] OR \"periwound skin\"[tiab] OR eschar OR slough OR exudate OR \"wound margins\") AND (assessment OR management OR treatment OR definition OR characteristics) AND (\"humans\"[MeSH Terms]) AND (clinical[tiab] OR patient*[tiab] OR observational[tiab] OR \"case report\"[tiab] OR \"case series\"[tiab] OR trial[tiab] OR cohort[tiab] OR \"tissue biopsy\"[tiab] OR \"clinical sample\"[tiab])) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab] OR \"ex vivo\"[tiab] OR mechanistic[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((wound OR ulcer) AND (\"wound bed\"[tiab] OR \"granulation tissue\" OR \"epithelialization\" OR \"wound edge\"[tiab] OR \"periwound skin\"[tiab] OR eschar OR slough OR exudate OR \"wound margins\") AND (assessment OR management OR treatment OR definition OR characteristics) AND (\"humans\"[MeSH Terms]) AND (clinical[tiab] OR patient*[tiab] OR observational[tiab] OR \"case report\"[tiab] OR \"case series\"[tiab] OR trial[tiab] OR cohort[tiab] OR \"tissue biopsy\"[tiab] OR \"clinical sample\"[tiab])) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab] OR \"ex vivo\"[tiab] OR mechanistic[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are clearly on-scope, covering wound assessment, management, characteristics, and outcomes in clinical/patient contexts with appropriate wound types and anatomical components.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((wound OR ulcer OR \"pressure injury\" OR \"pressure ulcer\" OR \"diabetic foot ulcer\" OR \"venous ulcer\" OR \"surgical wound\" OR burn OR \"traumatic wound\") AND (depth OR staging OR classification OR \"tissue layer\" OR anatomy OR assessment OR evaluation) AND (skin OR dermis OR epidermis OR \"subcutaneous tissue\" OR fascia OR muscle OR bone) AND (management OR treatment OR care OR debridement OR dressing OR healing OR clinical OR patient* OR assessment)) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab] OR \"basic science\") NOT (tendon OR tendinopathy OR \"muscle injury\" OR \"orthopedic\" OR \"sports medicine\" OR reconstruction OR cosmetic OR \"aging skin\" OR retinoid)",
+    "final_query": "((wound OR ulcer OR \"pressure injury\" OR \"pressure ulcer\" OR \"diabetic foot ulcer\" OR \"venous ulcer\" OR \"surgical wound\" OR burn OR \"traumatic wound\") AND (depth OR staging OR classification OR \"tissue layer\" OR anatomy OR assessment OR evaluation) AND (skin OR dermis OR epidermis OR \"subcutaneous tissue\" OR fascia OR muscle OR bone) AND (management OR treatment OR care OR debridement OR dressing OR healing OR clinical OR patient* OR assessment)) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab] OR \"basic science\") NOT (tendon OR tendinopathy OR \"muscle injury\" OR \"orthopedic\" OR \"sports medicine\" OR reconstruction OR cosmetic OR \"aging skin\" OR retinoid)",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((wound OR ulcer OR \"pressure injury\" OR \"pressure ulcer\" OR \"diabetic foot ulcer\" OR \"venous ulcer\" OR \"surgical wound\" OR burn OR \"traumatic wound\") AND (depth OR staging OR classification OR \"tissue layer\" OR anatomy OR assessment OR evaluation) AND (skin OR dermis OR epidermis OR \"subcutaneous tissue\" OR fascia OR muscle OR bone) AND (management OR treatment OR care OR debridement OR dressing OR healing OR clinical OR patient* OR assessment)) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab] OR \"basic science\") NOT (tendon OR tendinopathy OR \"muscle injury\" OR \"orthopedic\" OR \"sports medicine\" OR reconstruction OR cosmetic OR \"aging skin\" OR retinoid)",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are clearly within scope, focusing on wound types, assessment tools, management strategies, and clinical outcomes in human patients.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((wound OR ulcer) AND (\"wound exudate\" OR \"wound odour\" OR \"wound odor\" OR \"wound size\" OR \"wound area\" OR \"wound depth\" OR \"wound volume\" OR \"wound pain\" OR \"wound temperature\" OR \"wound colour\" OR \"wound color\") AND (assessment OR classification OR measurement OR documentation) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((wound OR ulcer) AND (\"wound exudate\" OR \"wound odour\" OR \"wound odor\" OR \"wound size\" OR \"wound area\" OR \"wound depth\" OR \"wound volume\" OR \"wound pain\" OR \"wound temperature\" OR \"wound colour\" OR \"wound color\") AND (assessment OR classification OR measurement OR documentation) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((wound OR ulcer) AND (\"wound exudate\" OR \"wound odour\" OR \"wound odor\" OR \"wound size\" OR \"wound area\" OR \"wound depth\" OR \"wound volume\" OR \"wound pain\" OR \"wound temperature\" OR \"wound colour\" OR \"wound color\") AND (assessment OR classification OR measurement OR documentation) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are clearly within scope, focusing on wound characteristics (exudate, size, depth), assessment/documentation, and clinical management in human patients with chronic wounds.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((wound OR ulcer) AND (\"TIME framework\"[tiab] OR \"wound bed preparation\"[tiab] OR \"Tissue, Infection, Moisture, Edge\"[tiab] OR \"wound classification\"[tiab] OR \"wound scoring\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((wound OR ulcer) AND (\"TIME framework\"[tiab] OR \"wound bed preparation\"[tiab] OR \"Tissue, Infection, Moisture, Edge\"[tiab] OR \"wound classification\"[tiab] OR \"wound scoring\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((wound OR ulcer) AND (\"TIME framework\"[tiab] OR \"wound bed preparation\"[tiab] OR \"Tissue, Infection, Moisture, Edge\"[tiab] OR \"wound classification\"[tiab] OR \"wound scoring\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "Query effectively targets wound assessment, classification, and bed preparation frameworks in clinical contexts; 5/5 abstracts are on-scope, though abstract [4] on zinc pharmacology is borderline as it discusses mechanism without strong clinical wound endpoint data.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"wound infection\"[MeSH Terms] OR \"biofilms\"[MeSH Terms]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot\"[MeSH Terms] OR \"venous ulcer\"[MeSH Terms] OR \"surgical wound infection\"[MeSH Terms] OR \"burn wounds\"[MeSH Terms] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab] OR \"traumatic wound\"[tiab]) AND (diagnosis OR \"wound culture\"[tiab] OR \"critical colonization\"[tiab] OR treatment OR antimicrobial OR antiseptic OR antibiotic OR debridement OR dressing) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab]) NOT (fracture OR dental OR endodontic OR implant OR prosthetic OR orthopedic NOT wound)",
+    "final_query": "((\"wound infection\"[MeSH Terms] OR \"biofilms\"[MeSH Terms]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot\"[MeSH Terms] OR \"venous ulcer\"[MeSH Terms] OR \"surgical wound infection\"[MeSH Terms] OR \"burn wounds\"[MeSH Terms] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab] OR \"traumatic wound\"[tiab]) AND (diagnosis OR \"wound culture\"[tiab] OR \"critical colonization\"[tiab] OR treatment OR antimicrobial OR antiseptic OR antibiotic OR debridement OR dressing) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab]) NOT (fracture OR dental OR endodontic OR implant OR prosthetic OR orthopedic NOT wound)",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"wound infection\"[MeSH Terms] OR \"biofilms\"[MeSH Terms]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot\"[MeSH Terms] OR \"venous ulcer\"[MeSH Terms] OR \"surgical wound infection\"[MeSH Terms] OR \"burn wounds\"[MeSH Terms] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab] OR \"traumatic wound\"[tiab]) AND (diagnosis OR \"wound culture\"[tiab] OR \"critical colonization\"[tiab] OR treatment OR antimicrobial OR antiseptic OR antibiotic OR debridement OR dressing) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab]) NOT (fracture OR dental OR endodontic OR implant OR prosthetic OR orthopedic NOT wound)",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "Query effectively retrieves wound care abstracts focused on infection, wound types, and management strategies with strong clinical relevance.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((wound OR ulcer) AND (\"MRSA\" OR \"Pseudomonas\" OR \"Staphylococcus aureus\"[MeSH Terms] OR \"polymicrobial\" OR \"anaerobic\" OR fungal OR \"Candida\"[MeSH Terms]) AND (wound OR infection OR colonization OR treatment OR management OR outcome) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((wound OR ulcer) AND (\"MRSA\" OR \"Pseudomonas\" OR \"Staphylococcus aureus\"[MeSH Terms] OR \"polymicrobial\" OR \"anaerobic\" OR fungal OR \"Candida\"[MeSH Terms]) AND (wound OR infection OR colonization OR treatment OR management OR outcome) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((wound OR ulcer) AND (\"MRSA\" OR \"Pseudomonas\" OR \"Staphylococcus aureus\"[MeSH Terms] OR \"polymicrobial\" OR \"anaerobic\" OR fungal OR \"Candida\"[MeSH Terms]) AND (wound OR infection OR colonization OR treatment OR management OR outcome) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "Query reliably retrieves wound infection and microbiology abstracts within scope; 4 of 5 samples are clearly on-topic (wound types, infection management, outcomes), with only abstract [4] marginally tangential as it focuses on Mucorales outbreaks with limited clinical wound context.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"wound assessment\"[tiab] OR \"wound documentation\"[tiab] OR \"wound measurement\"[tiab]) AND (tool OR scale OR score OR instrument OR \"BWAT\" OR \"PUSH tool\" OR \"Bates-Jensen\" OR \"wound photography\" OR \"planimetry\" OR reliability OR validity OR accuracy) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"wound assessment\"[tiab] OR \"wound documentation\"[tiab] OR \"wound measurement\"[tiab]) AND (tool OR scale OR score OR instrument OR \"BWAT\" OR \"PUSH tool\" OR \"Bates-Jensen\" OR \"wound photography\" OR \"planimetry\" OR reliability OR validity OR accuracy) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"wound assessment\"[tiab] OR \"wound documentation\"[tiab] OR \"wound measurement\"[tiab]) AND (tool OR scale OR score OR instrument OR \"BWAT\" OR \"PUSH tool\" OR \"Bates-Jensen\" OR \"wound photography\" OR \"planimetry\" OR reliability OR validity OR accuracy) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All five abstracts are clearly on-scope, focusing on wound assessment tools, documentation, and measurement in clinical practice—core to the wound ontology.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"debridement\"[MeSH Terms]) AND (wound OR ulcer OR \"necrotic tissue\" OR eschar OR slough OR biofilm) AND (surgical OR enzymatic OR autolytic OR mechanical OR biological OR \"larval therapy\" OR \"maggot therapy\" OR ultrasonic OR hydrosurgery OR \"sharp debridement\" OR outcome OR comparison) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"debridement\"[MeSH Terms]) AND (wound OR ulcer OR \"necrotic tissue\" OR eschar OR slough OR biofilm) AND (surgical OR enzymatic OR autolytic OR mechanical OR biological OR \"larval therapy\" OR \"maggot therapy\" OR ultrasonic OR hydrosurgery OR \"sharp debridement\" OR outcome OR comparison) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"debridement\"[MeSH Terms]) AND (wound OR ulcer OR \"necrotic tissue\" OR eschar OR slough OR biofilm) AND (surgical OR enzymatic OR autolytic OR mechanical OR biological OR \"larval therapy\" OR \"maggot therapy\" OR ultrasonic OR hydrosurgery OR \"sharp debridement\" OR outcome OR comparison) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are within scope, focusing on wound management, debridement, assessment, antimicrobials, and biofilm management in human patients with clear clinical relevance.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"wound dressing\"[MeSH Terms] OR \"bandages\"[MeSH Terms]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot\"[MeSH Terms] OR \"varicose ulcer\"[MeSH Terms] OR \"leg ulcer\"[MeSH Terms] OR \"burns\"[MeSH Terms] OR \"chronic wound\"[tiab] OR \"surgical wound\"[tiab]) AND (\"hydrocolloid\" OR \"foam dressing\" OR alginate OR hydrofiber OR hydrogel OR \"silver dressing\" OR \"antimicrobial dressing\" OR \"silicone dressing\" OR \"honey dressing\" OR \"DACC\" OR \"superabsorbent\") AND (\"clinical trial\"[pt] OR \"randomized controlled trial\"[pt] OR \"comparative study\"[pt] OR \"multicenter study\"[pt] OR \"cohort study\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"wound dressing\"[MeSH Terms] OR \"bandages\"[MeSH Terms]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot\"[MeSH Terms] OR \"varicose ulcer\"[MeSH Terms] OR \"leg ulcer\"[MeSH Terms] OR \"burns\"[MeSH Terms] OR \"chronic wound\"[tiab] OR \"surgical wound\"[tiab]) AND (\"hydrocolloid\" OR \"foam dressing\" OR alginate OR hydrofiber OR hydrogel OR \"silver dressing\" OR \"antimicrobial dressing\" OR \"silicone dressing\" OR \"honey dressing\" OR \"DACC\" OR \"superabsorbent\") AND (\"clinical trial\"[pt] OR \"randomized controlled trial\"[pt] OR \"comparative study\"[pt] OR \"multicenter study\"[pt] OR \"cohort study\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"wound dressing\"[MeSH Terms] OR \"bandages\"[MeSH Terms]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot\"[MeSH Terms] OR \"varicose ulcer\"[MeSH Terms] OR \"leg ulcer\"[MeSH Terms] OR \"burns\"[MeSH Terms] OR \"chronic wound\"[tiab] OR \"surgical wound\"[tiab]) AND (\"hydrocolloid\" OR \"foam dressing\" OR alginate OR hydrofiber OR hydrogel OR \"silver dressing\" OR \"antimicrobial dressing\" OR \"silicone dressing\" OR \"honey dressing\" OR \"DACC\" OR \"superabsorbent\") AND (\"clinical trial\"[pt] OR \"randomized controlled trial\"[pt] OR \"comparative study\"[pt] OR \"multicenter study\"[pt] OR \"cohort study\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are clearly on-scope clinical studies evaluating specific wound dressings for pressure ulcers and diabetic foot ulcers with appropriate study designs and clinical outcomes.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"iodine\"[tiab] OR \"silver sulfadiazine\"[tiab] OR \"cadexomer\"[tiab] OR \"medical grade honey\"[tiab] OR \"polyhexamethylene biguanide\"[tiab] OR \"PHMB\"[tiab] OR \"chlorhexidine\"[tiab] OR \"povidone iodine\"[tiab]) AND (\"wound healing\"[MeSH Terms] OR \"wound care\"[tiab] OR \"ulcer\"[MeSH Terms] OR \"diabetic foot\"[MeSH Terms] OR \"pressure injury\"[MeSH Terms] OR \"venous ulcer\"[tiab] OR \"chronic wound\"[tiab] OR \"burn wound\"[tiab]) AND (treatment[tiab] OR management[tiab] OR efficacy[tiab] OR outcome[tiab] OR dressing[tiab]) NOT (\"surgical site infection\"[tiab] OR \"antisepsis\"[tiab] OR \"preoperative\"[tiab] OR \"ophthalmology\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"iodine\"[tiab] OR \"silver sulfadiazine\"[tiab] OR \"cadexomer\"[tiab] OR \"medical grade honey\"[tiab] OR \"polyhexamethylene biguanide\"[tiab] OR \"PHMB\"[tiab] OR \"chlorhexidine\"[tiab] OR \"povidone iodine\"[tiab]) AND (\"wound healing\"[MeSH Terms] OR \"wound care\"[tiab] OR \"ulcer\"[MeSH Terms] OR \"diabetic foot\"[MeSH Terms] OR \"pressure injury\"[MeSH Terms] OR \"venous ulcer\"[tiab] OR \"chronic wound\"[tiab] OR \"burn wound\"[tiab]) AND (treatment[tiab] OR management[tiab] OR efficacy[tiab] OR outcome[tiab] OR dressing[tiab]) NOT (\"surgical site infection\"[tiab] OR \"antisepsis\"[tiab] OR \"preoperative\"[tiab] OR \"ophthalmology\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"iodine\"[tiab] OR \"silver sulfadiazine\"[tiab] OR \"cadexomer\"[tiab] OR \"medical grade honey\"[tiab] OR \"polyhexamethylene biguanide\"[tiab] OR \"PHMB\"[tiab] OR \"chlorhexidine\"[tiab] OR \"povidone iodine\"[tiab]) AND (\"wound healing\"[MeSH Terms] OR \"wound care\"[tiab] OR \"ulcer\"[MeSH Terms] OR \"diabetic foot\"[MeSH Terms] OR \"pressure injury\"[MeSH Terms] OR \"venous ulcer\"[tiab] OR \"chronic wound\"[tiab] OR \"burn wound\"[tiab]) AND (treatment[tiab] OR management[tiab] OR efficacy[tiab] OR outcome[tiab] OR dressing[tiab]) NOT (\"surgical site infection\"[tiab] OR \"antisepsis\"[tiab] OR \"preoperative\"[tiab] OR \"ophthalmology\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are on-scope, focusing on antimicrobial/antiseptic wound management agents (iodine, silver, honey, chlorhexidine, PHMB) in clinical wound populations with treatment efficacy and healing outcomes as endpoints.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"negative-pressure wound therapy\"[MeSH Terms] OR \"NPWT\"[tiab] OR \"vacuum-assisted closure\"[tiab] OR \"VAC therapy\"[tiab] OR \"topical negative pressure\"[tiab]) AND (wound OR ulcer OR dehiscence OR \"open abdomen\" OR \"sternal wound\" OR diabetic OR pressure OR outcome OR complication OR indication) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"negative-pressure wound therapy\"[MeSH Terms] OR \"NPWT\"[tiab] OR \"vacuum-assisted closure\"[tiab] OR \"VAC therapy\"[tiab] OR \"topical negative pressure\"[tiab]) AND (wound OR ulcer OR dehiscence OR \"open abdomen\" OR \"sternal wound\" OR diabetic OR pressure OR outcome OR complication OR indication) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"negative-pressure wound therapy\"[MeSH Terms] OR \"NPWT\"[tiab] OR \"vacuum-assisted closure\"[tiab] OR \"VAC therapy\"[tiab] OR \"topical negative pressure\"[tiab]) AND (wound OR ulcer OR dehiscence OR \"open abdomen\" OR \"sternal wound\" OR diabetic OR pressure OR outcome OR complication OR indication) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are highly relevant clinical wound management studies focused on NPWT efficacy, outcomes, and applications across multiple wound types in human patients.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"platelet-rich plasma\"[MeSH Terms] OR \"becaplermin\"[MeSH Terms] OR \"epidermal growth factor\"[MeSH Terms] OR \"fibroblast growth factors\"[MeSH Terms] OR \"vascular endothelial growth factors\"[MeSH Terms] OR \"PRP\"[tiab]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot\"[MeSH Terms] OR \"varicose ulcer\"[MeSH Terms] OR \"leg ulcer\"[MeSH Terms] OR \"burns\"[MeSH Terms] OR \"chronic wound\"[tiab]) AND (\"clinical trial\"[pt] OR \"randomized controlled trial\"[pt] OR \"observational study\"[pt] OR \"comparative study\"[pt]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"platelet-rich plasma\"[MeSH Terms] OR \"becaplermin\"[MeSH Terms] OR \"epidermal growth factor\"[MeSH Terms] OR \"fibroblast growth factors\"[MeSH Terms] OR \"vascular endothelial growth factors\"[MeSH Terms] OR \"PRP\"[tiab]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot\"[MeSH Terms] OR \"varicose ulcer\"[MeSH Terms] OR \"leg ulcer\"[MeSH Terms] OR \"burns\"[MeSH Terms] OR \"chronic wound\"[tiab]) AND (\"clinical trial\"[pt] OR \"randomized controlled trial\"[pt] OR \"observational study\"[pt] OR \"comparative study\"[pt]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"platelet-rich plasma\"[MeSH Terms] OR \"becaplermin\"[MeSH Terms] OR \"epidermal growth factor\"[MeSH Terms] OR \"fibroblast growth factors\"[MeSH Terms] OR \"vascular endothelial growth factors\"[MeSH Terms] OR \"PRP\"[tiab]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot\"[MeSH Terms] OR \"varicose ulcer\"[MeSH Terms] OR \"leg ulcer\"[MeSH Terms] OR \"burns\"[MeSH Terms] OR \"chronic wound\"[tiab]) AND (\"clinical trial\"[pt] OR \"randomized controlled trial\"[pt] OR \"observational study\"[pt] OR \"comparative study\"[pt]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "Query effectively retrieves clinical wound studies on advanced therapies (growth factors, PRP) for diabetic foot ulcers and pressure injuries with appropriate study design filters and human subjects requirement.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"skin, artificial\"[MeSH Terms] OR \"skin substitute\"[tiab] OR \"bioengineered skin\"[tiab] OR \"acellular dermal matrix\"[tiab] OR \"ADM\"[tiab] OR \"split-thickness skin graft\"[tiab] OR \"tissue-engineered\"[tiab]) AND (wound OR ulcer OR healing OR burn OR coverage) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"skin, artificial\"[MeSH Terms] OR \"skin substitute\"[tiab] OR \"bioengineered skin\"[tiab] OR \"acellular dermal matrix\"[tiab] OR \"ADM\"[tiab] OR \"split-thickness skin graft\"[tiab] OR \"tissue-engineered\"[tiab]) AND (wound OR ulcer OR healing OR burn OR coverage) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"skin, artificial\"[MeSH Terms] OR \"skin substitute\"[tiab] OR \"bioengineered skin\"[tiab] OR \"acellular dermal matrix\"[tiab] OR \"ADM\"[tiab] OR \"split-thickness skin graft\"[tiab] OR \"tissue-engineered\"[tiab]) AND (wound OR ulcer OR healing OR burn OR coverage) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "Query effectively retrieves clinical wound management abstracts focused on skin substitutes and advanced therapies, with all 5 samples directly addressing wound types, treatments, and clinical applications within scope.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"hyperbaric oxygenation\"[MeSH Terms] OR \"hyperbaric oxygen\"[tiab] OR \"HBO\"[tiab] OR \"photobiomodulation\"[tiab] OR \"low-level laser\"[tiab] OR \"electrical stimulation\"[tiab] OR \"ultrasound therapy\"[tiab]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot ulcer\"[tiab] OR \"venous ulcer\"[tiab] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab] OR \"burn\"[MeSH Terms] OR \"surgical wound infection\"[tiab] OR \"wound healing\"[MeSH Terms] OR \"ulcer\"[MeSH Terms]) AND (clinical OR patient OR outcome OR randomized OR trial) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab]) NOT (\"hernia\"[tiab] OR \"mesh\"[tiab] OR \"reconstruction\"[tiab])",
+    "final_query": "((\"hyperbaric oxygenation\"[MeSH Terms] OR \"hyperbaric oxygen\"[tiab] OR \"HBO\"[tiab] OR \"photobiomodulation\"[tiab] OR \"low-level laser\"[tiab] OR \"electrical stimulation\"[tiab] OR \"ultrasound therapy\"[tiab]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot ulcer\"[tiab] OR \"venous ulcer\"[tiab] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab] OR \"burn\"[MeSH Terms] OR \"surgical wound infection\"[tiab] OR \"wound healing\"[MeSH Terms] OR \"ulcer\"[MeSH Terms]) AND (clinical OR patient OR outcome OR randomized OR trial) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab]) NOT (\"hernia\"[tiab] OR \"mesh\"[tiab] OR \"reconstruction\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"hyperbaric oxygenation\"[MeSH Terms] OR \"hyperbaric oxygen\"[tiab] OR \"HBO\"[tiab] OR \"photobiomodulation\"[tiab] OR \"low-level laser\"[tiab] OR \"electrical stimulation\"[tiab] OR \"ultrasound therapy\"[tiab]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot ulcer\"[tiab] OR \"venous ulcer\"[tiab] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab] OR \"burn\"[MeSH Terms] OR \"surgical wound infection\"[tiab] OR \"wound healing\"[MeSH Terms] OR \"ulcer\"[MeSH Terms]) AND (clinical OR patient OR outcome OR randomized OR trial) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab]) NOT (\"hernia\"[tiab] OR \"mesh\"[tiab] OR \"reconstruction\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are clearly within scope, focusing on clinical wound management using advanced therapies (HBO, photobiomodulation, electrical stimulation, ultrasound) in patients with pressure ulcers, diabetic foot ulcers, and chronic wounds.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"wound healing\"[MeSH Terms]) AND (\"inflammatory phase\" OR \"proliferative phase\" OR remodeling OR \"epithelialization\" OR angiogenesis OR \"granulation tissue\" OR fibroblast OR collagen OR \"scar formation\" OR \"keloid\"[MeSH Terms] OR \"hypertrophic scar\"[tiab]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot ulcer\"[MeSH Terms] OR \"venous ulcer\"[tiab] OR \"surgical wound\"[tiab] OR burn[MeSH Terms] OR \"traumatic wound\"[tiab] OR \"chronic wound\"[tiab]) AND (\"healing rate\"[tiab] OR wound closure[tiab] OR infection[tiab] OR \"clinical trial\"[PT] OR observational[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"wound healing\"[MeSH Terms]) AND (\"inflammatory phase\" OR \"proliferative phase\" OR remodeling OR \"epithelialization\" OR angiogenesis OR \"granulation tissue\" OR fibroblast OR collagen OR \"scar formation\" OR \"keloid\"[MeSH Terms] OR \"hypertrophic scar\"[tiab]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot ulcer\"[MeSH Terms] OR \"venous ulcer\"[tiab] OR \"surgical wound\"[tiab] OR burn[MeSH Terms] OR \"traumatic wound\"[tiab] OR \"chronic wound\"[tiab]) AND (\"healing rate\"[tiab] OR wound closure[tiab] OR infection[tiab] OR \"clinical trial\"[PT] OR observational[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"wound healing\"[MeSH Terms]) AND (\"inflammatory phase\" OR \"proliferative phase\" OR remodeling OR \"epithelialization\" OR angiogenesis OR \"granulation tissue\" OR fibroblast OR collagen OR \"scar formation\" OR \"keloid\"[MeSH Terms] OR \"hypertrophic scar\"[tiab]) AND (\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot ulcer\"[MeSH Terms] OR \"venous ulcer\"[tiab] OR \"surgical wound\"[tiab] OR burn[MeSH Terms] OR \"traumatic wound\"[tiab] OR \"chronic wound\"[tiab]) AND (\"healing rate\"[tiab] OR wound closure[tiab] OR infection[tiab] OR \"clinical trial\"[PT] OR observational[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are clearly on-scope, covering wound types, healing biology in clinical context, wound management interventions, and clinical outcomes in human patients.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot ulcer\"[tiab] OR \"venous ulcer\"[tiab] OR \"venous leg ulcer\"[tiab] OR \"surgical wound\"[tiab] OR \"burn wound\"[tiab] OR \"traumatic wound\"[tiab] OR \"chronic wound\"[tiab] OR \"leg ulcer\"[MeSH Terms] OR \"foot ulcer\"[MeSH Terms]) AND (impaired OR delayed OR stalled OR biofilm OR proteases OR \"matrix metalloproteinase\" OR senescent OR ischemia) AND (\"clinical trial\"[Publication Type] OR \"observational study\"[Publication Type] OR \"comparative study\"[Publication Type] OR \"patient cohort\"[tiab] OR \"wound biopsy\"[tiab] OR \"tissue biopsy\"[tiab] OR \"case series\"[Publication Type] OR \"case reports\"[Publication Type]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab]) NOT (\"dental\"[tiab] OR \"oral\"[tiab] OR \"periodontal\"[tiab] OR \"implant\"[tiab] OR \"acne\"[tiab] OR \"scar\"[tiab])",
+    "final_query": "((\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot ulcer\"[tiab] OR \"venous ulcer\"[tiab] OR \"venous leg ulcer\"[tiab] OR \"surgical wound\"[tiab] OR \"burn wound\"[tiab] OR \"traumatic wound\"[tiab] OR \"chronic wound\"[tiab] OR \"leg ulcer\"[MeSH Terms] OR \"foot ulcer\"[MeSH Terms]) AND (impaired OR delayed OR stalled OR biofilm OR proteases OR \"matrix metalloproteinase\" OR senescent OR ischemia) AND (\"clinical trial\"[Publication Type] OR \"observational study\"[Publication Type] OR \"comparative study\"[Publication Type] OR \"patient cohort\"[tiab] OR \"wound biopsy\"[tiab] OR \"tissue biopsy\"[tiab] OR \"case series\"[Publication Type] OR \"case reports\"[Publication Type]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab]) NOT (\"dental\"[tiab] OR \"oral\"[tiab] OR \"periodontal\"[tiab] OR \"implant\"[tiab] OR \"acne\"[tiab] OR \"scar\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot ulcer\"[tiab] OR \"venous ulcer\"[tiab] OR \"venous leg ulcer\"[tiab] OR \"surgical wound\"[tiab] OR \"burn wound\"[tiab] OR \"traumatic wound\"[tiab] OR \"chronic wound\"[tiab] OR \"leg ulcer\"[MeSH Terms] OR \"foot ulcer\"[MeSH Terms]) AND (impaired OR delayed OR stalled OR biofilm OR proteases OR \"matrix metalloproteinase\" OR senescent OR ischemia) AND (\"clinical trial\"[Publication Type] OR \"observational study\"[Publication Type] OR \"comparative study\"[Publication Type] OR \"patient cohort\"[tiab] OR \"wound biopsy\"[tiab] OR \"tissue biopsy\"[tiab] OR \"case series\"[Publication Type] OR \"case reports\"[Publication Type]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab]) NOT (\"dental\"[tiab] OR \"oral\"[tiab] OR \"periodontal\"[tiab] OR \"implant\"[tiab] OR \"acne\"[tiab] OR \"scar\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 8,
+        "reason": "Query successfully retrieves clinically-focused wound abstracts on pressure ulcers, diabetic foot ulcers, and wound management, with appropriate exclusions for animal studies and in vitro work.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((wound OR ulcer) AND (\"risk factors\"[MeSH Terms]) AND (diabetes[tiab] OR ischemia[tiab] OR neuropathy[tiab] OR malnutrition[tiab] OR obesity[tiab] OR immunosuppression[tiab] OR smoking[tiab] OR \"corticosteroids\"[tiab] OR radiation[tiab] OR age[tiab] OR mobility[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((wound OR ulcer) AND (\"risk factors\"[MeSH Terms]) AND (diabetes[tiab] OR ischemia[tiab] OR neuropathy[tiab] OR malnutrition[tiab] OR obesity[tiab] OR immunosuppression[tiab] OR smoking[tiab] OR \"corticosteroids\"[tiab] OR radiation[tiab] OR age[tiab] OR mobility[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((wound OR ulcer) AND (\"risk factors\"[MeSH Terms]) AND (diabetes[tiab] OR ischemia[tiab] OR neuropathy[tiab] OR malnutrition[tiab] OR obesity[tiab] OR immunosuppression[tiab] OR smoking[tiab] OR \"corticosteroids\"[tiab] OR radiation[tiab] OR age[tiab] OR mobility[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 8,
+        "reason": "Query reliably retrieves wound-related abstracts focused on etiology and risk factors in human patients, with 4 of 5 results clearly in-scope and 1 tangentially related.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"pressure ulcer\"[MeSH Terms] OR \"chronic wound\"[tiab]) AND (elderly OR \"older adult\" OR \"nursing home\" OR \"long-term care\" OR \"spinal cord injury\"[MeSH Terms] OR \"intensive care unit\"[tiab]) AND (management OR prevention OR treatment OR outcome OR care) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"pressure ulcer\"[MeSH Terms] OR \"chronic wound\"[tiab]) AND (elderly OR \"older adult\" OR \"nursing home\" OR \"long-term care\" OR \"spinal cord injury\"[MeSH Terms] OR \"intensive care unit\"[tiab]) AND (management OR prevention OR treatment OR outcome OR care) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"pressure ulcer\"[MeSH Terms] OR \"chronic wound\"[tiab]) AND (elderly OR \"older adult\" OR \"nursing home\" OR \"long-term care\" OR \"spinal cord injury\"[MeSH Terms] OR \"intensive care unit\"[tiab]) AND (management OR prevention OR treatment OR outcome OR care) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All five abstracts are clearly within scope, focusing on pressure ulcer/chronic wound management, prevention, and assessment in elderly and long-term care populations.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "(((\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot\"[tiab] OR \"venous ulcer\"[tiab] OR \"surgical wound\"[tiab] OR \"traumatic wound\"[tiab] OR \"burn wound\"[tiab] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab]) OR (\"wound\"[tiab] AND (\"debridement\"[tiab] OR \"dressing\"[tiab] OR \"wound healing\"[MeSH Terms] OR \"wound care\"[tiab] OR \"wound management\"[tiab] OR \"negative pressure\"[tiab] OR \"granulation tissue\"[tiab]))) AND (\"immunocompromised\"[tiab] OR \"immunosuppressed\"[tiab] OR \"cancer patient\"[tiab] OR \"chemotherapy\"[MeSH Terms] OR \"radiation therapy\"[MeSH Terms] OR \"transplant recipient\"[tiab] OR \"HIV infection\"[MeSH Terms] OR \"corticosteroid\"[tiab])) NOT (\"mucosal\"[tiab] OR \"oral ulcer\"[tiab] OR \"mouth ulcer\"[tiab] OR \"peptic ulcer\"[tiab] OR \"ocular\"[tiab] OR \"corneal\"[tiab] OR \"conjunctival\"[tiab] OR \"gastrointestinal ulcer\"[tiab]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "(((\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot\"[tiab] OR \"venous ulcer\"[tiab] OR \"surgical wound\"[tiab] OR \"traumatic wound\"[tiab] OR \"burn wound\"[tiab] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab]) OR (\"wound\"[tiab] AND (\"debridement\"[tiab] OR \"dressing\"[tiab] OR \"wound healing\"[MeSH Terms] OR \"wound care\"[tiab] OR \"wound management\"[tiab] OR \"negative pressure\"[tiab] OR \"granulation tissue\"[tiab]))) AND (\"immunocompromised\"[tiab] OR \"immunosuppressed\"[tiab] OR \"cancer patient\"[tiab] OR \"chemotherapy\"[MeSH Terms] OR \"radiation therapy\"[MeSH Terms] OR \"transplant recipient\"[tiab] OR \"HIV infection\"[MeSH Terms] OR \"corticosteroid\"[tiab])) NOT (\"mucosal\"[tiab] OR \"oral ulcer\"[tiab] OR \"mouth ulcer\"[tiab] OR \"peptic ulcer\"[tiab] OR \"ocular\"[tiab] OR \"corneal\"[tiab] OR \"conjunctival\"[tiab] OR \"gastrointestinal ulcer\"[tiab]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "(((\"pressure ulcer\"[MeSH Terms] OR \"diabetic foot\"[tiab] OR \"venous ulcer\"[tiab] OR \"surgical wound\"[tiab] OR \"traumatic wound\"[tiab] OR \"burn wound\"[tiab] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab]) OR (\"wound\"[tiab] AND (\"debridement\"[tiab] OR \"dressing\"[tiab] OR \"wound healing\"[MeSH Terms] OR \"wound care\"[tiab] OR \"wound management\"[tiab] OR \"negative pressure\"[tiab] OR \"granulation tissue\"[tiab]))) AND (\"immunocompromised\"[tiab] OR \"immunosuppressed\"[tiab] OR \"cancer patient\"[tiab] OR \"chemotherapy\"[MeSH Terms] OR \"radiation therapy\"[MeSH Terms] OR \"transplant recipient\"[tiab] OR \"HIV infection\"[MeSH Terms] OR \"corticosteroid\"[tiab])) NOT (\"mucosal\"[tiab] OR \"oral ulcer\"[tiab] OR \"mouth ulcer\"[tiab] OR \"peptic ulcer\"[tiab] OR \"ocular\"[tiab] OR \"corneal\"[tiab] OR \"conjunctival\"[tiab] OR \"gastrointestinal ulcer\"[tiab]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "Query successfully retrieves clinically relevant wound management abstracts focused on wound types, healing biology in patients, risk factors, and management strategies in immunocompromised populations.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((wound OR ulcer) AND (\"time to healing\"[tiab] OR \"healing rate\"[tiab] OR \"wound closure\"[tiab] OR \"wound recurrence\"[tiab] OR \"quality of life\"[MeSH Terms] OR \"pain\"[MeSH Terms] OR \"cost\" OR hospitalization OR amputation OR mortality) AND (\"clinical trial\"[pt] OR \"systematic review\"[pt] OR \"randomized controlled trial\"[pt]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((wound OR ulcer) AND (\"time to healing\"[tiab] OR \"healing rate\"[tiab] OR \"wound closure\"[tiab] OR \"wound recurrence\"[tiab] OR \"quality of life\"[MeSH Terms] OR \"pain\"[MeSH Terms] OR \"cost\" OR hospitalization OR amputation OR mortality) AND (\"clinical trial\"[pt] OR \"systematic review\"[pt] OR \"randomized controlled trial\"[pt]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((wound OR ulcer) AND (\"time to healing\"[tiab] OR \"healing rate\"[tiab] OR \"wound closure\"[tiab] OR \"wound recurrence\"[tiab] OR \"quality of life\"[MeSH Terms] OR \"pain\"[MeSH Terms] OR \"cost\" OR hospitalization OR amputation OR mortality) AND (\"clinical trial\"[pt] OR \"systematic review\"[pt] OR \"randomized controlled trial\"[pt]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are clearly on-scope systematic reviews/meta-analyses of wound management outcomes (healing rate, amputation, QoL, cost) in human patients with chronic wounds or diabetic foot ulcers.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((wound[tiab] OR \"wound care\"[tiab] OR \"pressure injury\"[tiab] OR \"pressure ulcer\"[tiab] OR \"diabetic foot ulcer\"[tiab] OR \"venous ulcer\"[tiab] OR \"surgical wound\"[tiab] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab] OR \"skin ulcer\"[tiab]) AND (guideline[pt] OR \"practice guideline\"[pt] OR \"clinical pathway\"[tiab] OR \"care bundle\"[tiab] OR consensus OR recommendation OR protocol) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((wound[tiab] OR \"wound care\"[tiab] OR \"pressure injury\"[tiab] OR \"pressure ulcer\"[tiab] OR \"diabetic foot ulcer\"[tiab] OR \"venous ulcer\"[tiab] OR \"surgical wound\"[tiab] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab] OR \"skin ulcer\"[tiab]) AND (guideline[pt] OR \"practice guideline\"[pt] OR \"clinical pathway\"[tiab] OR \"care bundle\"[tiab] OR consensus OR recommendation OR protocol) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((wound[tiab] OR \"wound care\"[tiab] OR \"pressure injury\"[tiab] OR \"pressure ulcer\"[tiab] OR \"diabetic foot ulcer\"[tiab] OR \"venous ulcer\"[tiab] OR \"surgical wound\"[tiab] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab] OR \"skin ulcer\"[tiab]) AND (guideline[pt] OR \"practice guideline\"[pt] OR \"clinical pathway\"[tiab] OR \"care bundle\"[tiab] OR consensus OR recommendation OR protocol) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "Query reliably retrieves wound-related clinical guidelines and care standards; 4 of 5 abstracts are clearly in-scope, with only 1 tangential result (botulism guideline) that has minimal wound relevance.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((wound OR ulcer OR \"skin lesion\") AND (sacrum OR heel OR \"lower extremity\" OR foot OR leg OR abdomen OR \"sternal wound\" OR scalp OR perineum OR trochanter) AND (classification OR staging OR management OR anatomy OR depth OR \"tissue involvement\") AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((wound OR ulcer OR \"pressure injury\" OR \"pressure ulcer\" OR \"diabetic foot ulcer\" OR \"venous ulcer\" OR \"surgical wound\" OR eschar OR slough OR \"granulation tissue\" OR debridement OR dressing OR \"wound healing\" OR \"wound management\" OR \"wound assessment\") AND (sacrum OR heel OR \"lower extremity\" OR foot OR leg OR abdomen OR \"sternal wound\" OR scalp OR perineum OR trochanter) AND (classification OR staging OR management OR anatomy OR depth OR \"tissue involvement\" OR assessment OR healing OR treatment)) AND \"humans\"[MeSH Terms] NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((wound OR ulcer OR \"skin lesion\") AND (sacrum OR heel OR \"lower extremity\" OR foot OR leg OR abdomen OR \"sternal wound\" OR scalp OR perineum OR trochanter) AND (classification OR staging OR management OR anatomy OR depth OR \"tissue involvement\") AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "FAIL",
+        "score": 2,
+        "reason": "The query retrieved 5 abstracts, of which only 1 (abstract 3) is clearly in scope; the others focus on non-wound pathologies (heel pain biomechanics, fracture management, athletic injuries) rather than wound types, assessment, or management.",
+        "problem": "The query is too broad and lacks specificity for wound-related content. Terms like 'heel pain' and 'lacerations' without wound-specific qualifiers retrieve general musculoskeletal and orthopedic content. The query needs to explicitly include wound-focused MeSH terms (e.g., 'Wounds and Injuries', 'Pressure Ulcer', 'Foot Ulcer') or clinical wound descriptors (e.g., 'healing', 'debridement', 'dressing', 'ulcer') to filter out non-wound acute injury and pain management literature."
+      },
+      {
+        "query": "((wound OR ulcer OR \"pressure injury\" OR \"pressure ulcer\" OR \"diabetic foot ulcer\" OR \"venous ulcer\" OR \"surgical wound\" OR eschar OR slough OR \"granulation tissue\" OR debridement OR dressing OR \"wound healing\" OR \"wound management\" OR \"wound assessment\") AND (sacrum OR heel OR \"lower extremity\" OR foot OR leg OR abdomen OR \"sternal wound\" OR scalp OR perineum OR trochanter) AND (classification OR staging OR management OR anatomy OR depth OR \"tissue involvement\" OR assessment OR healing OR treatment)) AND \"humans\"[MeSH Terms] NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are clearly on-scope, covering diabetic foot ulcers, wound dressings, debridement techniques, chronic wound management, and heel pain wound assessment; the query successfully retrieves clinically-focused wound care content.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"risk assessment\"[MeSH Terms] OR \"Braden scale\"[tiab] OR \"Norton scale\"[tiab] OR \"Waterlow score\"[tiab]) AND (\"pressure ulcer\"[MeSH Terms] OR \"pressure injury\"[tiab]) AND (prevention OR screening OR \"risk stratification\" OR reliability OR validity OR sensitivity OR specificity) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"risk assessment\"[MeSH Terms] OR \"Braden scale\"[tiab] OR \"Norton scale\"[tiab] OR \"Waterlow score\"[tiab]) AND (\"pressure ulcer\"[MeSH Terms] OR \"pressure injury\"[tiab]) AND (prevention OR screening OR \"risk stratification\" OR reliability OR validity OR sensitivity OR specificity) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"risk assessment\"[MeSH Terms] OR \"Braden scale\"[tiab] OR \"Norton scale\"[tiab] OR \"Waterlow score\"[tiab]) AND (\"pressure ulcer\"[MeSH Terms] OR \"pressure injury\"[tiab]) AND (prevention OR screening OR \"risk stratification\" OR reliability OR validity OR sensitivity OR specificity) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are highly relevant to pressure injury risk assessment tools and prevention strategies in clinical populations, directly matching the query intent.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"diabetic foot\"[MeSH Terms]) AND (prevention OR \"foot care\" OR \"footwear\" OR \"offloading\" OR \"total contact cast\" OR \"therapeutic shoe\" OR \"insole\" OR \"monofilament\" OR \"vibration perception\" OR \"foot screening\") AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"diabetic foot\"[MeSH Terms]) AND (prevention OR \"foot care\" OR \"footwear\" OR \"offloading\" OR \"total contact cast\" OR \"therapeutic shoe\" OR \"insole\" OR \"monofilament\" OR \"vibration perception\" OR \"foot screening\") AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"diabetic foot\"[MeSH Terms]) AND (prevention OR \"foot care\" OR \"footwear\" OR \"offloading\" OR \"total contact cast\" OR \"therapeutic shoe\" OR \"insole\" OR \"monofilament\" OR \"vibration perception\" OR \"foot screening\") AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are highly relevant to diabetic foot ulcer prevention, assessment, and management—core wound ontology topics including risk factors, screening tools, offloading strategies, and clinical guidelines.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((wound OR ulcer OR \"diabetic foot\" OR \"leg ulcer\") AND (\"ankle brachial index\"[tiab] OR \"ABPI\"[tiab] OR \"ABI\"[tiab] OR \"duplex ultrasound\"[tiab] OR \"transcutaneous oxygen\"[tiab] OR \"TcPO2\"[tiab] OR \"wound photography\"[tiab] OR \"thermography\"[tiab] OR \"MRI\"[tiab] OR \"wound imaging\"[tiab]) AND (assessment OR diagnosis OR \"differential diagnosis\" OR classification OR accuracy OR reliability OR outcome) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((wound OR ulcer OR \"diabetic foot\" OR \"leg ulcer\") AND (\"ankle brachial index\"[tiab] OR \"ABPI\"[tiab] OR \"ABI\"[tiab] OR \"duplex ultrasound\"[tiab] OR \"transcutaneous oxygen\"[tiab] OR \"TcPO2\"[tiab] OR \"wound photography\"[tiab] OR \"thermography\"[tiab] OR \"MRI\"[tiab] OR \"wound imaging\"[tiab]) AND (assessment OR diagnosis OR \"differential diagnosis\" OR classification OR accuracy OR reliability OR outcome) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((wound OR ulcer OR \"diabetic foot\" OR \"leg ulcer\") AND (\"ankle brachial index\"[tiab] OR \"ABPI\"[tiab] OR \"ABI\"[tiab] OR \"duplex ultrasound\"[tiab] OR \"transcutaneous oxygen\"[tiab] OR \"TcPO2\"[tiab] OR \"wound photography\"[tiab] OR \"thermography\"[tiab] OR \"MRI\"[tiab] OR \"wound imaging\"[tiab]) AND (assessment OR diagnosis OR \"differential diagnosis\" OR classification OR accuracy OR reliability OR outcome) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 4,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "Query effectively retrieves clinical wound assessment abstracts focused on diagnostic tools, imaging modalities, and classification systems for wound evaluation in human patients.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((wound OR ulcer OR \"pressure injury\" OR \"diabetic foot\") AND (\"malnutrition\"[MeSH Terms] OR \"nutritional support\"[MeSH Terms] OR \"protein\"[tiab] OR \"albumin\"[tiab] OR \"arginine\"[tiab] OR \"zinc\"[tiab] OR \"vitamin C\"[tiab] OR \"ascorbic acid\"[MeSH Terms] OR \"omega-3\"[tiab] OR \"enteral nutrition\"[MeSH Terms]) AND (\"wound healing\"[MeSH Terms] OR \"healing rate\"[tiab] OR \"wound closure\"[tiab] OR outcome OR intervention OR supplementation) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((wound OR ulcer OR \"pressure injury\" OR \"diabetic foot\") AND (\"malnutrition\"[MeSH Terms] OR \"nutritional support\"[MeSH Terms] OR \"protein\"[tiab] OR \"albumin\"[tiab] OR \"arginine\"[tiab] OR \"zinc\"[tiab] OR \"vitamin C\"[tiab] OR \"ascorbic acid\"[MeSH Terms] OR \"omega-3\"[tiab] OR \"enteral nutrition\"[MeSH Terms]) AND (\"wound healing\"[MeSH Terms] OR \"healing rate\"[tiab] OR \"wound closure\"[tiab] OR outcome OR intervention OR supplementation) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((wound OR ulcer OR \"pressure injury\" OR \"diabetic foot\") AND (\"malnutrition\"[MeSH Terms] OR \"nutritional support\"[MeSH Terms] OR \"protein\"[tiab] OR \"albumin\"[tiab] OR \"arginine\"[tiab] OR \"zinc\"[tiab] OR \"vitamin C\"[tiab] OR \"ascorbic acid\"[MeSH Terms] OR \"omega-3\"[tiab] OR \"enteral nutrition\"[MeSH Terms]) AND (\"wound healing\"[MeSH Terms] OR \"healing rate\"[tiab] OR \"wound closure\"[tiab] OR outcome OR intervention OR supplementation) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "Query effectively retrieves clinical wound nutrition studies with appropriate specificity; 4 of 5 results are clearly in scope, with 1 minor off-scope inclusion.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"keloid\"[MeSH Terms] OR \"hypertrophic scar\"[tiab] OR \"cicatrix, hypertrophic\"[MeSH Terms] OR \"scar management\"[tiab]) AND (\"Vancouver scar scale\"[tiab] OR \"POSAS\"[tiab] OR \"scar assessment\"[tiab] OR \"silicone gel\"[tiab] OR \"pressure garment\"[tiab] OR \"laser therapy\"[tiab] OR \"intralesional\"[tiab] OR \"corticosteroid injection\"[tiab] OR \"scar treatment\"[tiab] OR \"scar prevention\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"surgical wound\"[tiab] OR \"surgical site infection\"[tiab] OR \"wound healing\"[tiab] OR \"traumatic wound\"[tiab] OR \"burn wound\"[tiab]) AND (\"scar formation\"[tiab] OR \"scar tissue\"[tiab] OR \"hypertrophic scar\"[tiab] OR \"keloid\"[tiab]) AND (\"assessment\"[tiab] OR \"prevention\"[tiab] OR \"management\"[tiab] OR \"treatment\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"keloid\"[MeSH Terms] OR \"hypertrophic scar\"[tiab] OR \"cicatrix, hypertrophic\"[MeSH Terms] OR \"scar management\"[tiab]) AND (\"Vancouver scar scale\"[tiab] OR \"POSAS\"[tiab] OR \"scar assessment\"[tiab] OR \"silicone gel\"[tiab] OR \"pressure garment\"[tiab] OR \"laser therapy\"[tiab] OR \"intralesional\"[tiab] OR \"corticosteroid injection\"[tiab] OR \"scar treatment\"[tiab] OR \"scar prevention\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "FAIL",
+        "score": 3,
+        "reason": "The query retrieves abstracts on keloid and hypertrophic scar management, which are pathological scars outside the defined wound ontology scope that focuses on acute/chronic wounds (pressure injury, diabetic ulcer, venous ulcer, surgical wounds, burns, traumatic wounds) and their healing biology.",
+        "problem": "Keloids and hypertrophic scars are fundamentally different from the wound types specified in scope—they are post-healing pathological tissue conditions rather than wounds themselves. The query lacks wound-type specificity and retrieves material on scar cosmesis and appearance rather than wound assessment, healing characteristics, and management of acute/chronic wounds as defined in the ontology scope."
+      },
+      {
+        "query": "((\"surgical wound\"[tiab] OR \"surgical site infection\"[tiab] OR \"wound healing\"[tiab] OR \"traumatic wound\"[tiab] OR \"burn wound\"[tiab]) AND (\"scar formation\"[tiab] OR \"scar tissue\"[tiab] OR \"hypertrophic scar\"[tiab] OR \"keloid\"[tiab]) AND (\"assessment\"[tiab] OR \"prevention\"[tiab] OR \"management\"[tiab] OR \"treatment\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts directly address wound-related scar formation/management in human patients, covering assessment, prevention, and treatment of abnormal scarring outcomes.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"fungating wound\"[tiab] OR \"malignant wound\"[tiab] OR \"neoplastic wound\"[tiab] OR \"tumor wound\"[tiab] OR \"palliative wound care\"[tiab] OR \"end-of-life wound\"[tiab]) AND (management OR treatment OR dressing OR odour OR odor OR exudate OR bleeding OR \"symptom control\" OR comfort OR care OR outcome) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"fungating wound\"[tiab] OR \"malignant wound\"[tiab] OR \"neoplastic wound\"[tiab] OR \"tumor wound\"[tiab] OR \"palliative wound care\"[tiab] OR \"end-of-life wound\"[tiab]) AND (management OR treatment OR dressing OR odour OR odor OR exudate OR bleeding OR \"symptom control\" OR comfort OR care OR outcome OR assessment OR evaluation) AND (\"humans\"[MeSH Terms] OR \"clinical trial\"[Publication Type] OR \"observational study\"[tiab] OR \"case report\"[Publication Type] OR \"case series\"[Publication Type])) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab]) NOT (apoptosis[tiab] OR \"cell death\"[tiab] OR \"molecular mechanism\"[tiab] OR \"signaling pathway\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"fungating wound\"[tiab] OR \"malignant wound\"[tiab] OR \"neoplastic wound\"[tiab] OR \"tumor wound\"[tiab] OR \"palliative wound care\"[tiab] OR \"end-of-life wound\"[tiab]) AND (management OR treatment OR dressing OR odour OR odor OR exudate OR bleeding OR \"symptom control\" OR comfort OR care OR outcome) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "FAIL",
+        "score": 6,
+        "reason": "Query successfully retrieves fungating/malignant wound management abstracts (3/5 on-scope), but Abstract 5 on efferocytosis is a basic science review with no clinical wound endpoint, indicating insufficient filtering for clinical relevance.",
+        "problem": "The query lacks exclusion terms for basic science/mechanism-only papers. Adding NOT ('apoptosis'[tiab] OR 'cell death'[tiab] OR 'molecular mechanism'[tiab]) OR clinical study filters, and more restrictive wound-specific MeSH terms would improve precision. The broad 'management OR treatment' terms without clinical outcome requirements allow mechanistic reviews to pass through."
+      },
+      {
+        "query": "((\"fungating wound\"[tiab] OR \"malignant wound\"[tiab] OR \"neoplastic wound\"[tiab] OR \"tumor wound\"[tiab] OR \"palliative wound care\"[tiab] OR \"end-of-life wound\"[tiab]) AND (management OR treatment OR dressing OR odour OR odor OR exudate OR bleeding OR \"symptom control\" OR comfort OR care OR outcome OR assessment OR evaluation) AND (\"humans\"[MeSH Terms] OR \"clinical trial\"[Publication Type] OR \"observational study\"[tiab] OR \"case report\"[Publication Type] OR \"case series\"[Publication Type])) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab]) NOT (apoptosis[tiab] OR \"cell death\"[tiab] OR \"molecular mechanism\"[tiab] OR \"signaling pathway\"[tiab] OR mechanism[tiab] only NOT patient*)",
+        "n_fetched": 5,
+        "verdict": "FAIL",
+        "score": 6,
+        "reason": "Query retrieves mostly on-scope results (4/5) but abstract [5] on efferocytosis mechanisms was not adequately filtered despite exclusion attempts, indicating the NOT clause for mechanism studies needs strengthening.",
+        "problem": "The exclusion logic 'NOT (apoptosis[tiab] OR \"cell death\"[tiab] OR \"molecular mechanism\"[tiab] OR \"signaling pathway\"[tiab] OR mechanism[tiab] only NOT patient*)' is malformed and ineffective; the final 'only NOT patient*' phrase does not properly exclude mechanism-focused abstracts. Recommend simplifying to: NOT (apoptosis[tiab] OR \"cell death\"[tiab] OR \"molecular mechanism\"[tiab] OR \"signaling pathway\"[tiab]) to cleanly remove basic science mechanistic studies."
+      },
+      {
+        "query": "((\"fungating wound\"[tiab] OR \"malignant wound\"[tiab] OR \"neoplastic wound\"[tiab] OR \"tumor wound\"[tiab] OR \"palliative wound care\"[tiab] OR \"end-of-life wound\"[tiab]) AND (management OR treatment OR dressing OR odour OR odor OR exudate OR bleeding OR \"symptom control\" OR comfort OR care OR outcome OR assessment OR evaluation) AND (\"humans\"[MeSH Terms] OR \"clinical trial\"[Publication Type] OR \"observational study\"[tiab] OR \"case report\"[Publication Type] OR \"case series\"[Publication Type])) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab]) NOT (apoptosis[tiab] OR \"cell death\"[tiab] OR \"molecular mechanism\"[tiab] OR \"signaling pathway\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All 5 abstracts are within scope, addressing palliative/fungating wound management, characteristics (pain, odor, exudate, bleeding), assessment, dressings, and clinical outcomes in human patients with malignant or chronic wounds.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((\"osteomyelitis\"[MeSH Terms]) AND (\"diabetic foot\"[MeSH Terms] OR \"pressure ulcer\"[MeSH Terms] OR \"chronic wound\"[tiab] OR \"foot ulcer\"[MeSH Terms] OR \"wound infection\"[MeSH Terms]) AND (diagnosis OR \"probe-to-bone\"[tiab] OR \"bone biopsy\"[tiab] OR \"MRI\"[tiab] OR treatment OR \"antibiotic\"[tiab] OR \"surgical debridement\"[tiab] OR amputation OR outcome OR \"conservative treatment\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "((\"osteomyelitis\"[MeSH Terms]) AND (\"diabetic foot\"[MeSH Terms] OR \"pressure ulcer\"[MeSH Terms] OR \"chronic wound\"[tiab] OR \"foot ulcer\"[MeSH Terms] OR \"wound infection\"[MeSH Terms]) AND (diagnosis OR \"probe-to-bone\"[tiab] OR \"bone biopsy\"[tiab] OR \"MRI\"[tiab] OR treatment OR \"antibiotic\"[tiab] OR \"surgical debridement\"[tiab] OR amputation OR outcome OR \"conservative treatment\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((\"osteomyelitis\"[MeSH Terms]) AND (\"diabetic foot\"[MeSH Terms] OR \"pressure ulcer\"[MeSH Terms] OR \"chronic wound\"[tiab] OR \"foot ulcer\"[MeSH Terms] OR \"wound infection\"[MeSH Terms]) AND (diagnosis OR \"probe-to-bone\"[tiab] OR \"bone biopsy\"[tiab] OR \"MRI\"[tiab] OR treatment OR \"antibiotic\"[tiab] OR \"surgical debridement\"[tiab] OR amputation OR outcome OR \"conservative treatment\"[tiab]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 4,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All four abstracts focus on diabetic foot osteomyelitis diagnosis and treatment in humans, covering wound infection, debridement, antimicrobials, amputation outcomes, and clinical assessment—all core scope topics.",
+        "problem": null
+      }
+    ]
+  },
+  {
+    "original_query": "((wound OR ulcer OR \"pressure injury\" OR \"diabetic foot\" OR \"venous ulcer\" OR \"surgical wound\") AND (\"wound recurrence\"[tiab] OR \"ulcer recurrence\"[tiab] OR \"recurrence rate\"[tiab] OR \"long-term follow-up\"[tiab] OR \"durable closure\"[tiab] OR \"maintained healing\"[tiab] OR \"secondary prevention\"[tiab] OR \"prevention of recurrence\"[tiab]) AND (\"clinical trial\"[pt] OR \"cohort study\"[tiab] OR \"systematic review\"[pt] OR \"randomized controlled trial\"[pt]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_query": "(((\"pressure ulcer\"[MeSH Terms] OR \"foot ulcer\"[MeSH Terms] OR \"varicose ulcer\"[MeSH Terms] OR \"surgical wound\"[MeSH Terms] OR \"burns\"[MeSH Terms] OR \"traumatic wound\"[tiab] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab]) AND (\"recurrence\"[tiab] OR \"reulceration\"[tiab] OR \"wound healing\"[MeSH Terms] OR \"long-term follow-up\"[tiab] OR \"durable healing\"[tiab] OR \"maintained closure\"[tiab] OR \"secondary prevention\"[tiab] OR \"prevention of recurrence\"[tiab])) OR (\"diabetic foot ulcer\"[MeSH Terms] AND (\"recurrence\"[tiab] OR \"reulceration\"[tiab] OR \"long-term outcome\"[tiab]))) AND (\"clinical trial\"[pt] OR \"cohort study\"[tiab] OR \"systematic review\"[pt] OR \"randomized controlled trial\"[pt] OR \"prospective study\"[tiab] OR \"observational study\"[tiab]) AND \"humans\"[MeSH Terms] NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+    "final_verdict": "PASS",
+    "attempts": [
+      {
+        "query": "((wound OR ulcer OR \"pressure injury\" OR \"diabetic foot\" OR \"venous ulcer\" OR \"surgical wound\") AND (\"wound recurrence\"[tiab] OR \"ulcer recurrence\"[tiab] OR \"recurrence rate\"[tiab] OR \"long-term follow-up\"[tiab] OR \"durable closure\"[tiab] OR \"maintained healing\"[tiab] OR \"secondary prevention\"[tiab] OR \"prevention of recurrence\"[tiab]) AND (\"clinical trial\"[pt] OR \"cohort study\"[tiab] OR \"systematic review\"[pt] OR \"randomized controlled trial\"[pt]) AND \"humans\"[MeSH Terms]) NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "FAIL",
+        "score": 3,
+        "reason": "Query retrieved only 1 of 5 abstracts (20%) that are clearly in-scope; 4 abstracts are out-of-scope (ankle injuries/fractures are not wound-related topics).",
+        "problem": "The query lacks specificity and is retrieving non-wound musculoskeletal injury literature. The search strategy does not adequately filter for wound-specific conditions. Abstract [2] and [5] are about ankle sprains/fractures (not wounds), [1] is tangentially relevant (diabetic foot prevention guidelines but not specifically about wound recurrence management), and only [3] and [4] are clearly within scope (chronic wound dressings and diabetic foot ulcer treatment). The query needs stronger wound-specific MeSH terms or keyword combinations to exclude orthopedic injury literature."
+      },
+      {
+        "query": "(((\"pressure ulcer\"[MeSH Terms] OR \"foot ulcer\"[MeSH Terms] OR \"varicose ulcer\"[MeSH Terms] OR \"surgical wound\"[MeSH Terms] OR \"burns\"[MeSH Terms] OR \"traumatic wound\"[tiab] OR \"chronic wound\"[tiab] OR \"acute wound\"[tiab]) AND (\"recurrence\"[tiab] OR \"reulceration\"[tiab] OR \"wound healing\"[MeSH Terms] OR \"long-term follow-up\"[tiab] OR \"durable healing\"[tiab] OR \"maintained closure\"[tiab] OR \"secondary prevention\"[tiab] OR \"prevention of recurrence\"[tiab])) OR (\"diabetic foot ulcer\"[MeSH Terms] AND (\"recurrence\"[tiab] OR \"reulceration\"[tiab] OR \"long-term outcome\"[tiab]))) AND (\"clinical trial\"[pt] OR \"cohort study\"[tiab] OR \"systematic review\"[pt] OR \"randomized controlled trial\"[pt] OR \"prospective study\"[tiab] OR \"observational study\"[tiab]) AND \"humans\"[MeSH Terms] NOT (\"animals\"[MeSH Terms] NOT \"humans\"[MeSH Terms]) NOT (\"in vitro\"[tiab] OR \"cell line\"[tiab] OR \"cell culture\"[tiab])",
+        "n_fetched": 5,
+        "verdict": "PASS",
+        "score": 9,
+        "reason": "All five abstracts are solidly within scope, addressing wound types, management strategies, healing outcomes, and recurrence prevention in clinical populations with appropriate study designs.",
+        "problem": null
+      }
+    ]
+  }
+]

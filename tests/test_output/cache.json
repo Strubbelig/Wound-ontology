@@ -1,0 +1,340 @@
+{
+  "42053819": {
+    "entities": {
+      "Open Fracture": {
+        "is_a: Fracture": 1.0,
+        "has_quality: Open": 1.0,
+        "occurs_in: Lower Extremity": 1.0
+      },
+      "Gustilo-Anderson Classification": {
+        "is_a: Classification": 1.0,
+        "part_of: Open Fracture": 1.0
+      },
+      "Surgical Site Infection": {
+        "is_a: Infectious Complication": 1.0,
+        "occurs_in: Surgical Site": 1.0,
+        "caused_by: Bacterial Colonization": 1.0
+      },
+      "Osteomyelitis": {
+        "is_a: Infectious Complication": 1.0,
+        "occurs_in: Bone": 1.0
+      },
+      "Sepsis": {
+        "is_a: Infectious Complication": 1.0,
+        "occurs_in: Bloodstream": 1.0
+      },
+      "Nonunion": {
+        "is_a: Fracture Healing Complication": 1.0,
+        "occurs_in: Bone": 1.0
+      },
+      "Malunion": {
+        "is_a: Fracture Healing Complication": 1.0,
+        "occurs_in: Bone": 1.0
+      },
+      "Thromboembolic Event": {
+        "is_a: Vascular Complication": 1.0,
+        "occurs_in: Blood Vessel": 1.0
+      },
+      "Acute Kidney Injury": {
+        "is_a: Renal Complication": 1.0,
+        "occurs_in: Kidney": 1.0
+      },
+      "Reoperation": {
+        "is_a: Surgical Procedure": 1.0,
+        "is_treatment_for: Postoperative Complication": 1.0
+      },
+      "Implant Removal": {
+        "is_a: Surgical Procedure": 1.0,
+        "is_treatment_for: Implant Complication": 1.0
+      },
+      "Cefazolin": {
+        "is_a: Antibiotic": 1.0,
+        "is_treatment_for: Bacterial Infection": 1.0
+      },
+      "Piperacillin-Tazobactam": {
+        "is_a: Antibiotic": 1.0,
+        "is_treatment_for: Bacterial Infection": 1.0
+      },
+      "Mortality": {
+        "is_a: Outcome": 1.0,
+        "occurs_in: Patient": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260429_1849"
+  },
+  "42052713": {
+    "entities": {
+      "Chronic Diabetic Foot Ulcer": {
+        "is_a: Chronic Wound": 1.0,
+        "has_quality: Chronic": 1.0,
+        "occurs_in: Diabetic Foot": 1.0
+      },
+      "Microbial Colonization": {
+        "is_a: Biological Process": 1.0,
+        "occurs_in: Chronic Diabetic Foot Ulcer": 1.0
+      },
+      "Polymicrobial Infection": {
+        "is_a: Infectious Process": 1.0,
+        "occurs_in: Chronic Diabetic Foot Ulcer": 1.0,
+        "caused_by: Microbial Colonization": 1.0
+      },
+      "Biofilm Formation": {
+        "is_a: Biological Process": 1.0,
+        "occurs_in: Chronic Diabetic Foot Ulcer": 1.0,
+        "caused_by: Polymicrobial Infection": 1.0
+      },
+      "Photodynamic Therapy": {
+        "is_a: Therapeutic Intervention": 1.0,
+        "is_treatment_for: Polymicrobial Infection": 1.0
+      },
+      "Triphenylamine-based Organic Silver Photosensitizer": {
+        "is_a: Photosensitizer": 1.0,
+        "has_quality: Antimicrobial": 1.0
+      },
+      "T-DAla-Ag": {
+        "is_a: Triphenylamine-based Organic Silver Photosensitizer": 1.0,
+        "has_quality: D-amino-acid-functionalized": 1.0
+      },
+      "Dissolvable Microneedle Platform": {
+        "is_a: Drug Delivery System": 1.0,
+        "part_of: Photodynamic Therapy": 1.0
+      },
+      "Ag(+) Release": {
+        "is_a: Process": 1.0,
+        "caused_by: Light Activation": 1.0
+      },
+      "Antimicrobial Activity": {
+        "is_a: Biological Process": 1.0,
+        "caused_by: Reactive Oxygen Species": 1.0,
+        "caused_by: Ag(+) Release": 1.0
+      },
+      "Pathogen Burden": {
+        "is_a: Quality": 1.0,
+        "occurs_in: Chronic Diabetic Foot Ulcer": 1.0
+      },
+      "Inflammation": {
+        "is_a: Biological Process": 1.0,
+        "occurs_in: Chronic Diabetic Foot Ulcer": 1.0
+      },
+      "Wound Healing": {
+        "is_a: Biological Process": 1.0,
+        "occurs_in: Skin": 1.0
+      },
+      "Staphylococcus aureus": {
+        "is_a: Gram-positive Bacteria": 1.0
+      },
+      "Pseudomonas aeruginosa": {
+        "is_a: Gram-negative Bacteria": 1.0
+      },
+      "Candida albicans": {
+        "is_a: Fungus": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260429_1849"
+  },
+  "42052918": {
+    "entities": {
+      "Fibrosis": {
+        "is_a: compromised wound-healing process": 1.0,
+        "caused_by: dysregulated lipid metabolism": 1.0,
+        "has_quality: excessive accumulation of extracellular matrix": 1.0,
+        "occurs_in: organ systems": 1.0
+      },
+      "Inflammation": {
+        "caused_by: lipids": 1.0
+      },
+      "Myofibroblast": {
+        "is_a: scar-forming cell": 1.0,
+        "caused_by: lipid-influenced cell conversion": 1.0
+      },
+      "Lipid": {
+        "has_quality: inert building blocks or fuel": 1.0,
+        "has_quality: regulator of fibrotic signaling": 1.0
+      },
+      "Transforming Growth Factor-beta": {
+        "is_a: fibrotic signaling pathway driver": 1.0
+      },
+      "Wnt/beta-catenin": {
+        "is_a: fibrotic signaling pathway driver": 1.0
+      },
+      "Nuclear Factor Kappa-B": {
+        "is_a: fibrotic signaling pathway driver": 1.0
+      },
+      "Sphingosine-1-phosphate": {
+        "is_a: fibrotic signaling pathway driver": 1.0
+      },
+      "Organ Failure": {
+        "caused_by: excessive accumulation of extracellular matrix": 1.0
+      },
+      "Dysregulated Lipid Synthesis": {
+        "is_a: dysregulated lipid metabolism": 1.0,
+        "part_of: fibrotic metabolic milieu": 1.0
+      },
+      "Lipid-derived Mediator": {
+        "caused_by: lipid metabolism": 1.0,
+        "has_quality: profibrotic transcriptional program combiner": 1.0
+      },
+      "Antifibrotic Intervention": {
+        "is_treatment_for: fibrosis": 1.0
+      },
+      "Biomarker": {
+        "part_of: lipid-fibrosis axis": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260429_1849"
+  },
+  "42052368": {
+    "entities": {
+      "Surgical Site Infection": {
+        "is_a: Infectious Complication": 1.0,
+        "occurs_in: Surgical Site": 1.0,
+        "caused_by: Staphylococcus aureus": 1.0,
+        "part_of: Infectious Complication": 0.0
+      },
+      "Staphylococcus aureus": {
+        "is_a: Bacterial Pathogen": 1.0,
+        "caused_by: Patient's Own Colonising Flora": 1.0
+      },
+      "Inadequate Preoperative Skin Preparation": {
+        "is_a: Risk Factor": 1.0,
+        "caused_by: Surgical Site Infection": 1.0
+      },
+      "Intraoperative Fluid Leakage": {
+        "is_a: Risk Factor": 1.0,
+        "caused_by: Surgical Site Infection": 1.0
+      },
+      "Prolonged Operative Time": {
+        "is_a: Risk Factor": 1.0,
+        "caused_by: Surgical Site Infection": 1.0
+      },
+      "Failure of Postoperative Wound Care": {
+        "is_a: Risk Factor": 1.0,
+        "caused_by: Surgical Site Infection": 1.0
+      },
+      "Endoscopic Debridement": {
+        "is_treatment_for: Surgical Site Infection": 1.0
+      },
+      "Targeted Antibiotic Therapy": {
+        "is_treatment_for: Surgical Site Infection": 1.0
+      },
+      "Nurse-led Preoperative Skin Cleansing": {
+        "is_treatment_for: Surgical Site Infection": 1.0
+      },
+      "Increased Surgical Draping Layers": {
+        "is_treatment_for: Surgical Site Infection": 1.0
+      },
+      "Physician-performed Postoperative Dressings": {
+        "is_treatment_for: Surgical Site Infection": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260429_1849"
+  },
+  "42053128": {
+    "entities": {
+      "Diabetic Foot Ulcer": {
+        "is_a: Chronic Wound": 1.0,
+        "occurs_in: Foot": 1.0,
+        "caused_by: Diabetes Mellitus": 1.0,
+        "has_quality: Chronic": 1.0,
+        "is_a: Acute Wound": 0.0
+      },
+      "Diabetes Mellitus": {
+        "is_a: Metabolic Disease": 1.0
+      },
+      "Kidney Disease": {
+        "is_a: Comorbidity": 1.0,
+        "occurs_in: Kidney": 1.0
+      },
+      "Cardiovascular Disease": {
+        "is_a: Comorbidity": 1.0,
+        "occurs_in: Cardiovascular System": 1.0
+      },
+      "Bone Infection": {
+        "is_a: Infectious Complication": 1.0,
+        "occurs_in: Bone": 1.0
+      },
+      "Surgical Debridement": {
+        "is_a: Surgical Procedure": 1.0,
+        "is_treatment_for: Diabetic Foot Ulcer": 1.0
+      },
+      "Lower-Extremity Amputation": {
+        "is_a: Surgical Procedure": 1.0,
+        "is_treatment_for: Diabetic Foot Ulcer": 1.0,
+        "occurs_in: Lower Extremity": 1.0
+      },
+      "Tobacco Use": {
+        "is_a: Risk Factor": 1.0
+      },
+      "Drug Use Disorder": {
+        "is_a: Mental Health Condition": 1.0
+      },
+      "Bipolar Disorder": {
+        "is_a: Mental Health Condition": 1.0
+      },
+      "Hospital Readmission": {
+        "occurs_in: Postoperative Period": 1.0,
+        "caused_by: Systemic Medical Instability": 1.0,
+        "caused_by: Recurrent Local Infection": 0.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260429_1849"
+  },
+  "42052118": {
+    "entities": {
+      "Chronic Lower-Extremity Ulcer": {
+        "is_a: Chronic Wound": 1.0,
+        "has_quality: Chronic": 1.0,
+        "occurs_in: Lower Extremity": 1.0
+      },
+      "Edelweiss Callus Culture Extract-Derived Exosome": {
+        "is_a: Exosome": 1.0,
+        "part_of: Topical Therapy": 1.0,
+        "is_treatment_for: Chronic Lower-Extremity Ulcer": 1.0
+      },
+      "Standard Wound Care": {
+        "is_a: Wound Care": 1.0
+      },
+      "Wound Cleansing": {
+        "part_of: Standard Wound Care": 1.0
+      },
+      "Debridement": {
+        "part_of: Standard Wound Care": 1.0
+      },
+      "Granulation": {
+        "occurs_in: Chronic Lower-Extremity Ulcer": 1.0,
+        "is_a: Wound Healing Process": 1.0
+      },
+      "Re-epithelialisation": {
+        "occurs_in: Chronic Lower-Extremity Ulcer": 1.0,
+        "is_a: Wound Healing Process": 1.0
+      },
+      "Post-infective Ulcer": {
+        "is_a: Chronic Lower-Extremity Ulcer": 1.0,
+        "caused_by: Infection": 1.0
+      },
+      "Amputation": {
+        "is_treatment_for: Post-infective Ulcer": 1.0
+      },
+      "Topical Exosome Therapy": {
+        "is_a: Topical Therapy": 1.0,
+        "is_treatment_for: Chronic Lower-Extremity Ulcer": 1.0
+      },
+      "Doppler Ultrasonography": {
+        "is_a: Diagnostic Procedure": 1.0
+      },
+      "Resistive Index": {
+        "is_a: Vascular Parameter": 1.0,
+        "has_quality: Reduced": 1.0
+      },
+      "Venous Reflux Time": {
+        "is_a: Vascular Parameter": 1.0,
+        "has_quality: Reduced": 1.0
+      },
+      "Peak Systolic Velocity": {
+        "is_a: Vascular Parameter": 1.0,
+        "has_quality: Increased": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260429_1849"
+  }
+}

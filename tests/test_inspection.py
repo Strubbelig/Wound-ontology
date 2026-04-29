@@ -107,7 +107,7 @@ def test_fca_and_dump(pipeline):
 @pytest.mark.integration
 def test_export_owl_and_dump(pipeline):
     owl_out = OUTPUT_DIR / "ontology.owl"
-    pipeline.exporter.create_owl(output_file=owl_out)
+    pipeline.export_to_owl(output_file=owl_out)
     assert owl_out.exists()
     print(f"\nOWL               → {owl_out}  ({owl_out.stat().st_size} bytes)")
     # Print a short snippet so it's visible in -s output

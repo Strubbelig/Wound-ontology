@@ -1,4 +1,203 @@
 {
+    "42054442": {
+        "entities": {
+            "Epithelial Tissue": {
+                "is_a: tissue": 1.0,
+                "has_quality: mechanically arrested": 1.0,
+                "has_quality: disordered": 1.0,
+                "has_quality: solid-like": 1.0,
+                "has_quality: complex fluid": 1.0,
+                "has_quality: stress-driven fluidity": 1.0,
+                "has_quality: hidden fluidity": 1.0,
+                "has_quality: caging behavior": 0.0
+            },
+            "Cell": {
+                "part_of: Epithelial Tissue": 1.0,
+                "has_quality: subdiffusive creep": 1.0,
+                "has_quality: Fickian yet non-Gaussian dynamics": 1.0,
+                "has_quality: compressed exponential relaxation": 1.0,
+                "has_quality: fast-moving": 1.0
+            },
+            "Cell Division": {
+                "occurs_in: Epithelial Tissue": 1.0,
+                "caused_by: stress-driven fluidity": 0.0
+            },
+            "Cell Extrusion": {
+                "occurs_in: Epithelial Tissue": 1.0,
+                "caused_by: stress-driven fluidity": 0.0
+            },
+            "Wound Healing": {
+                "occurs_in: Epithelial Tissue": 1.0,
+                "has_quality: remodeling": 1.0
+            },
+            "Tumor Invasion": {
+                "occurs_in: Epithelial Tissue": 1.0,
+                "has_quality: early": 1.0
+            },
+            "Morphogenesis": {
+                "occurs_in: Epithelial Tissue": 1.0
+            },
+            "Collective Anisotropic Cluster": {
+                "part_of: Epithelial Tissue": 1.0,
+                "has_quality: fast-moving": 1.0,
+                "has_quality: anisotropic": 1.0
+            },
+            "Local Structural Entropy": {
+                "occurs_in: Epithelial Tissue": 1.0,
+                "has_quality: spatial heterogeneity": 1.0
+            },
+            "Soft Vibrational Mode": {
+                "occurs_in: Epithelial Tissue": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260429_1847"
+    },
+    "42054707": {
+        "entities": {
+            "Diabetes Mellitus": {
+                "caused_by: systemic immunosuppression": 1.0
+            },
+            "Systemic Immunosuppression": {
+                "occurs_in: Diabetes Mellitus": 1.0
+            },
+            "Persistent Infection": {
+                "caused_by: Systemic Immunosuppression": 1.0
+            },
+            "Multidrug-resistant (MDR) Pathogen": {
+                "is_a: pathogen": 1.0
+            },
+            "Methicillin-resistant Staphylococcus aureus (MRSA)": {
+                "is_a: Multidrug-resistant (MDR) Pathogen": 1.0
+            },
+            "Peroxidase (POD)-like Nanoassembly (DC/Cu)": {
+                "has_quality: antibacterial": 1.0,
+                "has_quality: anti-inflammatory": 1.0,
+                "has_quality: tissue-reparative": 1.0,
+                "is_treatment_for: MDR bacteria-induced diabetic infection": 1.0
+            },
+            "Copper-coordinated Self-assembly": {
+                "part_of: Peroxidase (POD)-like Nanoassembly (DC/Cu)": 1.0
+            },
+            "Epsilon-poly(L-lysine)-derived Carbon Dot (CD)": {
+                "part_of: Peroxidase (POD)-like Nanoassembly (DC/Cu)": 1.0
+            },
+            "Diclofenac Sodium (DS)": {
+                "part_of: Peroxidase (POD)-like Nanoassembly (DC/Cu)": 1.0
+            },
+            "Cationic DC/Cu": {
+                "has_quality: cationic": 1.0,
+                "occurs_in: bacterial membrane": 1.0
+            },
+            "Bacterial Membrane": {
+                "part_of: bacterium": 1.0
+            },
+            "Microenvironment-responsive Spatiotemporal Drug Release": {
+                "occurs_in: Cationic DC/Cu": 1.0
+            },
+            "POD-like Activity": {
+                "has_quality: catalytic": 1.0,
+                "occurs_in: Carbon Dot (CD)": 1.0
+            },
+            "Membrane Lipid Peroxidation": {
+                "caused_by: POD-like Activity": 1.0
+            },
+            "Copper Influx": {
+                "caused_by: Membrane Lipid Peroxidation": 1.0
+            },
+            "Intracellular Copper Overload": {
+                "occurs_in: MRSA": 1.0,
+                "caused_by: Copper Influx": 1.0
+            },
+            "Cuproptosis-like Death Pathway": {
+                "caused_by: Intracellular Copper Overload": 1.0
+            },
+            "Inflammatory Response": {
+                "occurs_in: diabetic infection": 1.0
+            },
+            "Tissue Regeneration": {
+                "caused_by: Cu(2+)": 1.0
+            },
+            "MRSA-infected Diabetic Foot Ulcer": {
+                "is_a: diabetic wound": 1.0,
+                "occurs_in: foot": 1.0
+            },
+            "Diabetic MRSA Keratitis": {
+                "is_a: diabetic infection": 1.0,
+                "occurs_in: cornea": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260429_1847"
+    },
+    "42054286": {
+        "entities": {
+            "Bacterial Infection": {
+                "is_a: Infectious Complication": 1.0,
+                "occurs_in: Wound": 1.0
+            },
+            "Biofilm": {
+                "is_a: Bacterial Community": 1.0,
+                "occurs_in: Wound": 1.0
+            },
+            "Impaired Wound Healing": {
+                "is_a: Wound Healing Disorder": 1.0,
+                "occurs_in: Wound": 1.0
+            },
+            "ZnO Nanoparticle": {
+                "is_a: Nanoparticle": 1.0,
+                "has_quality: Antimicrobial": 1.0
+            },
+            "PEG": {
+                "is_a: Polymer": 1.0,
+                "has_quality: Biocompatible": 1.0
+            },
+            "Nisin": {
+                "is_a: Antimicrobial Peptide": 1.0
+            },
+            "Lysozyme": {
+                "is_a: Enzyme": 1.0,
+                "has_quality: Antimicrobial": 1.0
+            },
+            "Nisin-PEG-ZnO Nanoconjugate": {
+                "is_a: Nanoconjugate": 1.0,
+                "has_quality: Antimicrobial": 1.0,
+                "has_quality: Antibiofilm": 1.0,
+                "is_treatment_for: Wound Infection": 1.0
+            },
+            "Lysozyme-PEG-ZnO Nanoconjugate": {
+                "is_a: Nanoconjugate": 1.0,
+                "has_quality: Antimicrobial": 1.0,
+                "is_treatment_for: Wound Infection": 1.0
+            },
+            "Escherichia coli": {
+                "is_a: Bacterium": 1.0
+            },
+            "Staphylococcus epidermidis": {
+                "is_a: Bacterium": 1.0
+            },
+            "Wound Infection": {
+                "is_a: Infectious Complication": 1.0,
+                "occurs_in: Wound": 1.0,
+                "caused_by: Bacterial Colonization": 1.0
+            },
+            "Rat Excision Wound Model": {
+                "is_a: Wound Model": 1.0,
+                "occurs_in: Rat": 1.0
+            },
+            "Wound Closure": {
+                "is_a: Healing Process": 1.0,
+                "occurs_in: Wound": 1.0
+            },
+            "Tissue Regeneration": {
+                "is_a: Biological Process": 1.0,
+                "occurs_in: Wound": 1.0
+            },
+            "Inflammation": {
+                "is_a: Biological Process": 1.0,
+                "occurs_in: Wound": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260429_1847"
+    },
     "predefined": {
         "entities": {
             "Low-vacuum drains": {
@@ -845,25 +1044,25 @@
                 "is_a: Wound documentation": 1.0
             },
             "Wound type": {
-                "is_a: Wound": 1.0
+                "is_a: material entity": 1.0
             },
             "Wound healing": {
-                "is_a: Wound": 1.0
+                "is_a: process": 1.0
             },
             "Wound complication": {
-                "is_a: Wound": 1.0
+                "is_a: Thing": 1.0
             },
-            "Wound diagnostics": {
-                "is_a: Wound": 1.0
+            "Wound diagnostic process": {
+                "is_a: process": 1.0
             },
             "Wound treatment": {
-                "is_a: Wound": 1.0
+                "is_a: process": 1.0
             },
-            "Wound documentation": {
-                "is_a: Wound": 1.0
+            "Wound documentation process": {
+                "is_a: process": 1.0
             },
             "Wound mechanism": {
-                "is_a: Wound": 1.0
+                "is_a: process": 1.0
             },
             "Classification according to Gustilo and Anderson": {
                 "is_a: Wound with accompanying fracture": 1.0
@@ -1172,7 +1371,7 @@
                 "is_a: Wound closure": 1.0
             },
             "Wound": {
-                "is_a: Wound": 1.0
+                "is_a: Thing": 1.0
             },
             "Wound classification according to Wagner and Anderson": {
                 "is_a: Classification systems": 1.0,

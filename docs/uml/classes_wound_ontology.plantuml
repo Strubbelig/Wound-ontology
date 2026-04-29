@@ -55,14 +55,13 @@ class "ConceptLattice" as wound_ontology.fca.concept_lattice.ConceptLattice #cha
   dm
   file_name : str
   lattice
-  lattice
   matrix
   semantic_superclass_names
   create_superclass_names(llm, min_objects, batch_size)
   get_data_and_run_fca()
   save()
 }
-class "ConceptStore" as wound_ontology.cache.concept_store.ConceptStore #antiquewhite {
+class "ConceptStore" as wound_ontology.store.concept_store.ConceptStore #antiquewhite {
   attributes
   dict
   dm
@@ -78,7 +77,6 @@ class "ContextMatrix" as wound_ontology.fca.context_matrix.ContextMatrix #chartr
   attributes
   bool_tuples
   df
-  df : NoneType
   dm
   file_name
   objects
@@ -113,16 +111,6 @@ class "Entity" as wound_ontology.llm.schemas.Entity #coral {
 class "ExtractResponse" as wound_ontology.llm.schemas.ExtractResponse #coral {
   entities : list[Entity]
 }
-class "ExtractionCache" as wound_ontology.cache.extraction_cache.ExtractionCache #antiquewhite {
-  attributes
-  dict
-  dm
-  file_name
-  predicates
-  targets
-  add_llm_extracts(df_pubmed, llm, allowed_predicates, batch_size, extra_targets, predicate_definitions)
-  save()
-}
 class "FCAAttribute" as wound_ontology.llm.schemas.FCAAttribute #coral {
   predicate : str
   target : str
@@ -134,6 +122,11 @@ class "FCAHierarchy" as wound_ontology.hierarchies.fca_hierarchy.FCAHierarchy #c
 class "FillNanResponse" as wound_ontology.llm.schemas.FillNanResponse #coral {
   confirmed_attributes : list[str]
 }
+class "GEXFExporter" as wound_ontology.export.gexf_exporter.GEXFExporter #cadetblue {
+  export(kg: KnowledgeGraph, output_file: str) -> None
+  export_owl(owl_file: str, output_file: str) -> None
+  export_store(store, *hierarchies, output_file: str) -> None
+}
 class "GeminiClient" as wound_ontology.llm.llm_client.GeminiClient #coral {
   client
   model_id : str
@@ -141,6 +134,20 @@ class "GeminiClient" as wound_ontology.llm.llm_client.GeminiClient #coral {
   extract_entities(text, predicates, targets, attributes, predicate_definitions)
   fill_nan(object_name: str, attributes: list[str]) -> list[str]
   generate_semantic_name(intent_attributes, superclass_names) -> str
+}
+class "KnowledgeGraph" as wound_ontology.graph.knowledge_graph.KnowledgeGraph #lightsteelblue {
+  edges
+  graph : DiGraph
+  nodes
+  sparql : SPARQLHelper
+  filter_by_namespace(prefix: str) -> KnowledgeGraph
+  find(label: str) -> list[tuple]
+  from_owl(owl_file: str) -> KnowledgeGraph
+  from_store(store, *hierarchies) -> KnowledgeGraph
+  neighbours(node_id: str) -> dict
+  print_stats() -> None
+  stats() -> dict
+  subgraph(root_label: str) -> KnowledgeGraph
 }
 class "LLMClient" as wound_ontology.llm.llm_client.LLMClient #coral {
   create_normalization_mapping(terms, standards) -> dict
@@ -170,28 +177,31 @@ class "OBIConnector" as wound_ontology.connectors.obi_connector.OBIConnector #aq
   label_list : list
   fetch_labels()
 }
-class "OWLEnricher" as wound_ontology.export.owl_enricher.OWLEnricher #cadetblue {
+class "OWLOntology" as wound_ontology.export.owl_ontology.OWLOntology #cadetblue {
   base_iri : str
   id_prefix : str
-  enrich(input_file: str, output_file: str, import_bfo: bool, import_ro: bool, import_obi: bool, run_reasoner: bool) -> None
-  import_bfo() -> 'OWLEnricher'
-  import_connector() -> 'OWLEnricher'
-  import_external() -> 'OWLEnricher'
-  import_obi() -> 'OWLEnricher'
-  import_ro() -> 'OWLEnricher'
-  load(owl_file: str) -> 'OWLEnricher'
-  rename_iris() -> 'OWLEnricher'
-  resolve_external_classes() -> 'OWLEnricher'
-  run_reasoner(infer_property_values: bool) -> 'OWLEnricher'
-  save(output_file: str) -> None
-}
-class "OWLExporter" as wound_ontology.export.owl_exporter.OWLExporter #cadetblue {
-  class_hier : NoneType
-  dm
-  fca_hier : NoneType
-  mere_hier : NoneType
   onto : Ontology
-  create_owl(output_file) -> None
+  world : World
+  get_data(class_hierarchy, mereological_hierarchy, fca_hierarchy) -> OWLOntology
+  import_bfo() -> OWLOntology
+  import_connector(*connectors) -> OWLOntology
+  import_external(*urls) -> OWLOntology
+  import_obi() -> OWLOntology
+  import_ro() -> OWLOntology
+  is_local(entity) -> bool
+  load(owl_file: str) -> OWLOntology
+  normalize_label_language(target_lang: str, source_lang: str) -> OWLOntology
+  rename_iris() -> OWLOntology
+  resolve_external_classes() -> OWLOntology
+  {static} safe_name(name: str) -> str
+  save(output_file) -> None
+  umls_mapping(umls_connector, max_results: int) -> OWLOntology
+}
+class "OWLReasoner" as wound_ontology.export.owl_reasoner.OWLReasoner #cadetblue {
+  load(owl_file: str) -> OWLReasoner
+  reason(input_file: str, output_file: str, infer_property_values: bool) -> None
+  run(infer_property_values: bool) -> OWLReasoner
+  save(output_file: str) -> None
 }
 class "OntoConnector" as wound_ontology.connectors.onto_connector.OntoConnector #aquamarine {
   iri_to_label : dict
@@ -218,29 +228,32 @@ class "Orchestrator" as wound_ontology.orchestrator.Orchestrator #aliceblue {
   class_hier
   context_matrix
   dm
-  enricher
-  exporter
   fca_hier
+  gexf
   lattice
   llm
   mere_hier
   obi
   pubcon
+  reasoner
   ro
   store
   term_mapper
+  build_knowledge_graph(input_owl: str) -> KnowledgeGraph
+  export_to_gexf(output_file: str, input_owl: str) -> None
   export_to_owl(output_file)
   run_build_hierarchies(predefined_df: pd.DataFrame, normalize: bool) -> None
-  run_enrich_owl(input_file: str, output_file: str, import_bfo: bool, import_ro: bool, import_obi: bool, run_reasoner: bool) -> None
+  run_curate_owl(input_file: str, output_file: str, import_bfo: bool, import_ro: bool, import_obi: bool, umls_api_key: str) -> None
   run_extract_to_store(batch_size, use_bfo_attributes)
   run_fca(subtree_root: str, hierarchy, predicates: list, batch_size: int) -> None
   run_full_pipeline(query, max_results, predefined_df)
   run_matrix_nan_fill(batch_size)
   run_pubmed_search(queries: str | list[str], max_results_per_query: int)
+  run_reason_owl(input_file: str, output_file: str, infer_property_values: bool) -> None
+  run_store_fill(batch_size: int, entity_batch: int, max_entities: int) -> None
 }
 class "PubmedConnector" as wound_ontology.connectors.pubmed_connector.PubmedConnector #aquamarine {
   database
-  database : DataFrame
   email
   connect()
   get_data(queries: str | list[str], max_abstracts_per_query: int)
@@ -251,6 +264,20 @@ class "ROConnector" as wound_ontology.connectors.ro_connector.ROConnector #aquam
   fetch_bfo_relations()
   fetch_labels()
 }
+class "SPARQLHelper" as wound_ontology.graph.sparql_helper.SPARQLHelper #lightsteelblue {
+  add_prefix(alias: str, iri: str) -> SPARQLHelper
+  all_classes() -> list[dict]
+  citations(class_iri: str) -> list[dict]
+  classes_in_namespace(prefix: str) -> list[dict]
+  classes_with_restriction(property_iri: str) -> list[dict]
+  find_by_label(text: str) -> list[dict]
+  query(sparql: str) -> Result
+  restrictions_on(class_iri: str) -> list[dict]
+  subclasses_of(class_iri: str, direct: bool) -> list[dict]
+  subjects_of_property(property_iri: str) -> list[dict]
+  superclasses_of(class_iri: str) -> list[dict]
+  used_properties() -> list[dict]
+}
 class "SemanticNameResponse" as wound_ontology.llm.schemas.SemanticNameResponse #coral {
   superclass_name : str
 }
@@ -260,7 +287,6 @@ class "UMLSConnector" as wound_ontology.connectors.umls_connector.UMLSConnector 
   api_key
   base_url : str
   delay : float
-  list_of_labels
   list_of_labels : list
   connect()
   get_data(term)
@@ -281,14 +307,14 @@ wound_ontology.llm.llm_client.LLMClient --|> wound_ontology.llm.llm_client.BaseL
 wound_ontology.llm.llm_client.OpenAIClient --|> wound_ontology.llm.llm_client.BaseLLMClient
 wound_ontology.mappers.normalization_mapper.NormalizationMapper --|> wound_ontology.mappers.base_mapper.BaseMapper
 wound_ontology.mappers.normalization_mapper.TermMapper --|> wound_ontology.mappers.normalization_mapper.NormalizationMapper
-wound_ontology.cache.concept_store.ConceptStore --* wound_ontology.orchestrator.Orchestrator : store
+wound_ontology.store.concept_store.ConceptStore --* wound_ontology.orchestrator.Orchestrator : store
 wound_ontology.connectors.bfo_connector.BFOConnector --* wound_ontology.orchestrator.Orchestrator : bfo
 wound_ontology.connectors.obi_connector.OBIConnector --* wound_ontology.orchestrator.Orchestrator : obi
 wound_ontology.connectors.pubmed_connector.PubmedConnector --* wound_ontology.orchestrator.Orchestrator : pubcon
 wound_ontology.connectors.ro_connector.ROConnector --* wound_ontology.orchestrator.Orchestrator : ro
 wound_ontology.data_manager.data_manager.DataManager --* wound_ontology.orchestrator.Orchestrator : dm
-wound_ontology.export.owl_enricher.OWLEnricher --* wound_ontology.orchestrator.Orchestrator : enricher
-wound_ontology.export.owl_exporter.OWLExporter --* wound_ontology.orchestrator.Orchestrator : exporter
+wound_ontology.export.gexf_exporter.GEXFExporter --* wound_ontology.orchestrator.Orchestrator : gexf
+wound_ontology.export.owl_reasoner.OWLReasoner --* wound_ontology.orchestrator.Orchestrator : reasoner
 wound_ontology.fca.concept_lattice.ConceptLattice --* wound_ontology.orchestrator.Orchestrator : lattice
 wound_ontology.fca.context_matrix.ContextMatrix --* wound_ontology.orchestrator.Orchestrator : context_matrix
 wound_ontology.hierarchies.class_hierarchy.ClassHierarchy --* wound_ontology.orchestrator.Orchestrator : class_hier
@@ -297,8 +323,10 @@ wound_ontology.hierarchies.mereological_hierarchy.MereologicalHierarchy --* woun
 wound_ontology.llm.llm_client.GeminiClient --* wound_ontology.llm.llm_client.LLMClient : _gemini
 wound_ontology.llm.llm_client.LLMClient --* wound_ontology.orchestrator.Orchestrator : llm
 wound_ontology.mappers.normalization_mapper.TermMapper --* wound_ontology.orchestrator.Orchestrator : term_mapper
-wound_ontology.data_manager.data_manager.DataManager --o wound_ontology.cache.concept_store.ConceptStore : dm
+wound_ontology.data_manager.data_manager.DataManager --o wound_ontology.store.concept_store.ConceptStore : dm
 wound_ontology.data_manager.data_manager.DataManager --o wound_ontology.connectors.base_connector.BaseConnector : dm
 wound_ontology.data_manager.data_manager.DataManager --o wound_ontology.mappers.base_mapper.BaseMapper : dm
 wound_ontology.fca.context_matrix.ContextMatrix --o wound_ontology.fca.concept_lattice.ConceptLattice : matrix
+wound_ontology.graph.knowledge_graph.KnowledgeGraph --o wound_ontology.graph.sparql_helper.SPARQLHelper : _rdf_graph
+wound_ontology.graph.knowledge_graph.KnowledgeGraph --o wound_ontology.export.gexf_exporter.GEXFExporter : uses
 @enduml

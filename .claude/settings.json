@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m pytest tests/test_inspection.py -x -q --no-header)",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}

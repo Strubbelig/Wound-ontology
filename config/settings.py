@@ -9,12 +9,8 @@ BASE_PATH = PROJECT_ROOT / "data" / "cache"
 OWL_OUTPUT_FILE = PROJECT_ROOT / "output" / "owl" / "ontology_classes.owl"
 PREDEFINED_HIERARCHY_FILE = PROJECT_ROOT / "data" / "raw" / "predefined_concept_hierarchy.csv"
 
-# Search terms
-PUBMED_SEARCH_TERMS = [
-    "wound healing",
-    "chronic wound",
-    "wound care",
-]
+# Search terms — canonical list lives in pubmed_search.py
+from config.pubmed_search import PUBMED_SEARCH as PUBMED_SEARCH_TERMS
 
 # External ontology URLs
 BFO_OWL_URL = "http://purl.obolibrary.org/obo/bfo.owl"
@@ -35,7 +31,7 @@ NCBI_API_KEY = os.getenv("NCBI_API_KEY", "")
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
 
 # Pipeline
-BATCH_SIZE = 10
+BATCH_SIZE = 40
 CACHE_MAX_FILES_PER_PREFIX = 10
 
 # Ontology predicates
