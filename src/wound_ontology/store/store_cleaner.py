@@ -249,26 +249,24 @@ class StoreCleaner:
             pipeline.run_clean_store(extra_blocked_entities={"term1", "term2", ...})
         """
         # Collect all entities sorted by frequency descending
-        ranked_raw = self._collect_ranked(store)  # sorted by (score desc, freq desc)
-        # Re-sort purely by frequency for top_n selection
+        ranked_raw = self._collect_ranked(store)
         by_freq = sorted(ranked_raw, key=lambda x: -x[1])
         total_entities = len(by_freq)
 
-        top = by_freq[:top_n]
-        rest = by_freq[top_n:]
+        # Separate blocked from non-blocked before selecting top_n
+        # so the top_n quota is filled exclusively by non-blocked entities
+        pre_blocked = [r for r in by_freq if r[2] == 100.0]
+        non_blocked = [r for r in by_freq if r[2] < 100.0]
 
-        print(f"[StoreCleaner] Evaluating top {len(top)} most frequent entities "
-              f"(of {total_entities} total) via LLM (batches of {llm_batch_size})...")
+        candidates = non_blocked[:top_n]
+        rest       = non_blocked[top_n:]
 
-        # Split top_n into pre-blocked vs candidates
-        pre_blocked: list[tuple] = []
-        candidates:  list[tuple] = []
-        for row in top:
-            (pre_blocked if row[2] == 100.0 else candidates).append(row)
-
-        print(f"  Pre-blocked (in blocklist)  : {len(pre_blocked)}")
-        print(f"  Sending to LLM              : {len(candidates)}")
-        print(f"  Below top {top_n} (not evaluated): {len(rest)}")
+        print(f"[StoreCleaner] Evaluating top {len(candidates)} most frequent "
+              f"non-blocked entities (of {total_entities} total) via LLM "
+              f"(batches of {llm_batch_size})...")
+        print(f"  Pre-blocked (in blocklist)      : {len(pre_blocked)}")
+        print(f"  Sending to LLM                  : {len(candidates)}")
+        print(f"  Below top {top_n}, not evaluated: {len(rest)}")
 
         # Load cached eval if available
         llm_flagged: set[str] = set()
