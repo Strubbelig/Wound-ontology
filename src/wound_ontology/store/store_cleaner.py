@@ -229,15 +229,17 @@ class StoreCleaner:
         self,
         store,
         llm,
+        top_n: int = 1000,
         llm_batch_size: int = 150,
         display_batch_size: int = 500,
         threshold_pct: float = 20.0,
     ) -> None:
         """
-        Use the LLM to rank entities by how inappropriate they are for a wound ontology,
-        then print results in batches of ``display_batch_size`` for user review.
+        Use the LLM to evaluate the ``top_n`` most frequent entities and flag those
+        inappropriate for a wound ontology.
 
-        The LLM evaluates all unique entities in ``llm_batch_size`` chunks.
+        Only the top_n entities by PMID frequency are sent to the LLM — this focuses
+        evaluation on the terms that have the most impact on the ontology.
         Entities already in the blocklist are pre-flagged without an LLM call.
         If more than ``threshold_pct`` % of a display batch are flagged, the next
         batch is shown automatically.
@@ -246,30 +248,27 @@ class StoreCleaner:
 
             pipeline.run_clean_store(extra_blocked_entities={"term1", "term2", ...})
         """
-        ranked_raw = self._collect_ranked(store)
-        total_entities = len(ranked_raw)
-        print(f"[StoreCleaner] Scoring {total_entities} unique entities via LLM "
-              f"(batches of {llm_batch_size})...")
+        # Collect all entities sorted by frequency descending
+        ranked_raw = self._collect_ranked(store)  # sorted by (score desc, freq desc)
+        # Re-sort purely by frequency for top_n selection
+        by_freq = sorted(ranked_raw, key=lambda x: -x[1])
+        total_entities = len(by_freq)
 
-        # Split into three tiers:
-        #   pre_blocked  — score=100, already in blocklist, no LLM call needed
-        #   suspicious   — score>0, keyword hits, send to LLM for confirmation
-        #   clean        — score=0, no keyword hits, assumed appropriate
+        top = by_freq[:top_n]
+        rest = by_freq[top_n:]
+
+        print(f"[StoreCleaner] Evaluating top {len(top)} most frequent entities "
+              f"(of {total_entities} total) via LLM (batches of {llm_batch_size})...")
+
+        # Split top_n into pre-blocked vs candidates
         pre_blocked: list[tuple] = []
-        suspicious:  list[tuple] = []
-        clean_tier:  list[tuple] = []
-        for row in ranked_raw:
-            if row[2] == 100.0:
-                pre_blocked.append(row)
-            elif row[2] > 0.0:
-                suspicious.append(row)
-            else:
-                clean_tier.append(row)
+        candidates:  list[tuple] = []
+        for row in top:
+            (pre_blocked if row[2] == 100.0 else candidates).append(row)
 
         print(f"  Pre-blocked (in blocklist)  : {len(pre_blocked)}")
-        print(f"  Suspicious (keyword hits)   : {len(suspicious)}  → sending to LLM")
-        print(f"  Clean (no keyword hits)     : {len(clean_tier)}  → skipped")
-        candidates = suspicious
+        print(f"  Sending to LLM              : {len(candidates)}")
+        print(f"  Below top {top_n} (not evaluated): {len(rest)}")
 
         # Load cached eval if available
         llm_flagged: set[str] = set()
@@ -315,13 +314,13 @@ class StoreCleaner:
 
         # Build final ranked list:
         #   tier0 — blocklist hits (definitely out)
-        #   tier1 — LLM-confirmed inappropriate from suspicious set
-        #   tier2 — LLM-cleared suspicious (keyword hit but LLM said OK)
-        #   tier3 — clean (no keyword hits, not evaluated)
+        #   tier1 — LLM-confirmed inappropriate from top_n
+        #   tier2 — LLM-cleared from top_n (evaluated, passed)
+        #   tier3 — below top_n (not evaluated)
         tier0 = sorted(pre_blocked,                                      key=lambda x: -x[1])
         tier1 = sorted([r for r in candidates if r[0] in llm_flagged],  key=lambda x: -x[1])
         tier2 = sorted([r for r in candidates if r[0] not in llm_flagged], key=lambda x: -x[1])
-        tier3 = sorted(clean_tier,                                       key=lambda x: -x[1])
+        tier3 = sorted(rest,                                             key=lambda x: -x[1])
         ranked = tier0 + tier1 + tier2 + tier3
 
         flagged_total = len(tier0) + len(tier1)

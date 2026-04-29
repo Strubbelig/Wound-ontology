@@ -158,14 +158,16 @@ class Orchestrator:
 
     def scan_store_candidates(
         self,
+        top_n: int = 1000,
         llm_batch_size: int = 150,
         display_batch_size: int = 500,
         threshold_pct: float = 20.0,
     ) -> None:
-        """LLM-powered scan of out-of-scope entities for user review."""
+        """LLM-powered scan of the top_n most frequent entities for user review."""
         cleaner = StoreCleaner(self.allowed_predicates)
         cleaner.scan_candidates(
             self.store, self.llm,
+            top_n=top_n,
             llm_batch_size=llm_batch_size,
             display_batch_size=display_batch_size,
             threshold_pct=threshold_pct,
