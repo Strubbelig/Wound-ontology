@@ -1,207 +1,172 @@
 {
-    "42054442": {
+    "42066317": {
         "entities": {
-            "Epithelial Tissue": {
-                "is_a: Tissue": 1.0,
-                "has_quality: Mechanically Arrested": 1.0,
-                "has_quality: Disordered": 1.0,
-                "has_quality: Solid-Like": 1.0,
-                "has_quality: Complex Fluid": 1.0,
-                "has_quality: Stress-Driven Fluidity": 1.0,
-                "has_quality: Hidden Fluidity": 1.0,
-                "has_quality: Caging Behavior": 0.0
-            },
-            "Cell": {
-                "part_of: Epithelial Tissue": 1.0,
-                "has_quality: Subdiffusive Creep": 1.0,
-                "has_quality: Fickian Yet Non-Gaussian Dynamics": 1.0,
-                "has_quality: Compressed Exponential Relaxation": 1.0,
-                "has_quality: Fast-Moving": 1.0
-            },
-            "Cell Division": {
-                "occurs_in: Epithelial Tissue": 1.0,
-                "caused_by: Stress-Driven Fluidity": 0.0
-            },
-            "Cell Extrusion": {
-                "occurs_in: Epithelial Tissue": 1.0,
-                "caused_by: Stress-Driven Fluidity": 0.0
-            },
-            "Wound Healing": {
-                "occurs_in: Epithelial Tissue": 1.0,
-                "has_quality: Remodeling": 1.0
-            },
-            "Tumor Invasion": {
-                "occurs_in: Epithelial Tissue": 1.0,
-                "has_quality: Early": 1.0
-            },
-            "Morphogenesis": {
-                "occurs_in: Epithelial Tissue": 1.0
-            },
-            "Collective Anisotropic Cluster": {
-                "part_of: Epithelial Tissue": 1.0,
-                "has_quality: Fast-Moving": 1.0,
-                "has_quality: Anisotropic": 1.0
-            },
-            "Local Structural Entropy": {
-                "occurs_in: Epithelial Tissue": 1.0,
-                "has_quality: Spatial Heterogeneity": 1.0
-            },
-            "Soft Vibrational Mode": {
-                "occurs_in: Epithelial Tissue": 1.0
-            }
-        },
-        "meta_stamp": "llm_extract_1_20260429_1847"
-    },
-    "42054707": {
-        "entities": {
-            "Diabetes Mellitus": {
-                "caused_by: Systemic Immunosuppression": 1.0
-            },
-            "Systemic Immunosuppression": {
-                "occurs_in: Diabetes Mellitus": 1.0
-            },
-            "Persistent Infection": {
-                "caused_by: Systemic Immunosuppression": 1.0
-            },
-            "Multidrug-Resistant (Mdr) Pathogen": {
-                "is_a: Pathogen": 1.0
-            },
-            "Methicillin-Resistant Staphylococcus Aureus (Mrsa)": {
-                "is_a: Multidrug-Resistant (Mdr) Pathogen": 1.0
-            },
-            "Peroxidase-Like Nanoassembly": {
-                "has_quality: Antibacterial": 1.0,
-                "has_quality: Anti-Inflammatory": 1.0,
-                "has_quality: Tissue Repair": 1.0,
-                "is_treatment_for: Diabetic Wound": 1.0
-            },
-            "Copper-Coordinated Self-Assembly": {
-                "part_of: Peroxidase-Like Nanoassembly": 1.0
-            },
-            "Epsilon-Poly(L-Lysine)-Derived Carbon Dot (Cd)": {
-                "part_of: Peroxidase-Like Nanoassembly": 1.0
-            },
-            "Diclofenac Sodium (Ds)": {
-                "part_of: Peroxidase-Like Nanoassembly": 1.0
-            },
-            "Copper": {
-                "has_quality: Cationic": 1.0,
-                "occurs_in: Bacterial Membrane": 1.0,
-                "occurs_in: Mrsa": 1.0,
-                "caused_by: Copper Influx": 1.0
-            },
-            "Bacterial Membrane": {
-                "part_of: Bacterium": 1.0
-            },
-            "Microenvironment-Responsive Spatiotemporal Drug Release": {
-                "occurs_in: Copper": 1.0
-            },
-            "Pod-Like Activity": {
-                "has_quality: Catalytic": 1.0,
-                "occurs_in: Carbon Dot (Cd)": 1.0
-            },
-            "Membrane Lipid Peroxidation": {
-                "caused_by: Pod-Like Activity": 1.0
-            },
-            "Copper Influx": {
-                "caused_by: Membrane Lipid Peroxidation": 1.0
-            },
-            "Cuproptosis-Like Death Pathway": {
-                "caused_by: Copper": 1.0
-            },
-            "Inflammatory Response": {
-                "occurs_in: Diabetic Infection": 1.0
-            },
-            "Tissue Regeneration": {
-                "caused_by: Cu2+": 1.0
-            },
-            "Mrsa-Infected Diabetic Foot Ulcer": {
-                "is_a: Diabetic Wound": 1.0,
-                "occurs_in: Foot": 1.0
-            },
-            "Diabetic Mrsa Keratitis": {
-                "is_a: Diabetic Infection": 1.0,
-                "occurs_in: Cornea": 1.0
-            }
-        },
-        "meta_stamp": "llm_extract_1_20260429_1847"
-    },
-    "42054286": {
-        "entities": {
-            "Bacterial Infection": {
-                "is_a: Infectious Complication": 1.0,
-                "occurs_in: Wound": 1.0
-            },
-            "Biofilm": {
-                "is_a: Bacterial Community": 1.0,
-                "occurs_in: Wound": 1.0
-            },
-            "Impaired Wound Healing": {
-                "is_a: Wound Healing Disorder": 1.0,
-                "occurs_in: Wound": 1.0
-            },
-            "Zno Nanoparticle": {
-                "is_a: Nanoparticle": 1.0,
-                "has_quality: Antimicrobial": 1.0
-            },
-            "Peg": {
-                "is_a: Polymer": 1.0,
-                "has_quality: Biocompatible": 1.0
-            },
-            "Nisin": {
-                "is_a: Antimicrobial Peptide": 1.0
-            },
-            "Lysozyme": {
-                "is_a: Enzyme": 1.0,
-                "has_quality: Antimicrobial": 1.0
-            },
-            "Nisin-Peg-Zno Nanoconjugate": {
-                "is_a: Nanoconjugate": 1.0,
-                "has_quality: Antimicrobial": 1.0,
-                "has_quality: Antibiofilm": 1.0,
-                "is_treatment_for: Wound Infection": 1.0
-            },
-            "Lysozyme-Peg-Zno Nanoconjugate": {
-                "is_a: Nanoconjugate": 1.0,
-                "has_quality: Antimicrobial": 1.0,
-                "is_treatment_for: Wound Infection": 1.0
-            },
-            "Escherichia Coli": {
-                "is_a: Bacterium": 1.0
-            },
-            "Staphylococcus Epidermidis": {
-                "is_a: Bacterium": 1.0
-            },
-            "Wound Infection": {
-                "is_a: Infectious Complication": 1.0,
-                "occurs_in: Wound": 1.0,
-                "caused_by: Bacterial Colonization": 1.0
-            },
-            "Rat Excision Wound Model": {
-                "is_a: Wound Model": 1.0,
-                "occurs_in: Rat": 1.0
+            "Wound": {
+                "occurs_in: Epithelial Cells": 1.0,
+                "occurs_in: Living Tissue": 1.0
             },
             "Wound Closure": {
-                "is_a: Healing Process": 1.0,
+                "is_a: Process": 1.0,
                 "occurs_in: Wound": 1.0
             },
-            "Tissue Regeneration": {
-                "is_a: Biological Process": 1.0,
-                "occurs_in: Wound": 1.0
+            "Reepithelialization": {
+                "is_a: Process": 1.0,
+                "occurs_in: Epithelial Cells": 1.0
             },
-            "Inflammation": {
-                "is_a: Biological Process": 1.0,
-                "occurs_in: Wound": 1.0
+            "Active Stresses": {
+                "occurs_in: Tissue": 1.0,
+                "caused_by: Contractile Active Stresses": 1.0
+            },
+            "Contractile Active Stresses": {
+                "is_a: Active Stresses": 1.0,
+                "has_quality: Contractile": 1.0
+            },
+            "Extensile Active Stresses": {
+                "is_a: Active Stresses": 1.0,
+                "has_quality: Extensile": 1.0
+            },
+            "Topological Defects": {
+                "occurs_in: Wound Boundary": 1.0
+            },
+            "Nematic Order": {
+                "has_quality: Parallel Anchored": 1.0,
+                "occurs_in: Wound Boundary": 1.0
             }
         },
-        "meta_stamp": "llm_extract_1_20260429_1847"
+        "meta_stamp": "llm_extract_1_20260501_1915"
+    },
+    "42066239": {
+        "entities": {
+            "Exosomes Derived From Bone Marrow Mesenchymal Stem Cells (Bmsc-Exos)": {
+                "is_a: Therapeutic Modality": 1.0,
+                "has_quality: Immunomodulatory": 1.0,
+                "has_quality: Tissue Repair": 1.0
+            },
+            "Tim4@Mgo Magnetic Bead System": {
+                "is_a: Magnetic Bead System": 1.0,
+                "has_quality: High-Performance": 1.0,
+                "has_quality: Reusable": 1.0,
+                "has_quality: High-Efficiency": 1.0,
+                "has_quality: High Purity": 1.0
+            },
+            "Tim4": {
+                "part_of: Tim4@Mgo Magnetic Bead System": 1.0,
+                "has_quality: Immobilization Technique": 1.0
+            },
+            "Magnetic Graphene Oxide": {
+                "part_of: Tim4@Mgo Magnetic Bead System": 1.0,
+                "has_quality: Large Specific Surface Area": 1.0
+            },
+            "Phosphatidylserine": {
+                "occurs_in: Exosomal Membrane": 1.0
+            },
+            "Tim4-Ps Interaction": {
+                "caused_by: Ca2+": 1.0,
+                "has_quality: Reversible": 1.0
+            },
+            "Edta": {
+                "caused_by: Chelation": 1.0
+            },
+            "Bmsc-Exos Isolated Via Tim4@Mgo": {
+                "is_treatment_for: L929 Cell Proliferation": 1.0,
+                "is_treatment_for: Wound Healing": 1.0,
+                "has_quality: Enriched In Proteins For Extracellular Matrix Remodeling": 1.0,
+                "has_quality: Enriched In Proteins For Tnf Signaling Pathway": 1.0
+            },
+            "L929 Cell Proliferation": {
+                "occurs_in: In Vitro": 1.0
+            },
+            "Wound Healing": {
+                "occurs_in: In Vitro": 1.0
+            },
+            "Mouse Pulmonary Fibrosis Model": {
+                "is_a: Disease Model": 1.0,
+                "occurs_in: Mouse": 1.0
+            },
+            "Lung Tissue Structural Damage": {
+                "occurs_in: Mouse Pulmonary Fibrosis Model": 1.0
+            },
+            "Fibrotic Progression": {
+                "occurs_in: Mouse Pulmonary Fibrosis Model": 1.0
+            },
+            "Tim4@Mgo-Isolated Bmsc-Exos": {
+                "is_treatment_for: Lung Tissue Structural Damage": 1.0,
+                "is_treatment_for: Fibrotic Progression": 1.0,
+                "has_quality: Superior Therapeutic Efficacy": 1.0
+            },
+            "Exosome Isolation": {
+                "is_a: Technique": 1.0,
+                "has_quality: High-Efficiency": 1.0,
+                "has_quality: High Purity": 1.0,
+                "has_quality: Reusable": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260501_1915"
+    },
+    "42065809": {
+        "entities": {
+            "Diabetic Foot Ulcer": {
+                "is_a: Complication": 1.0,
+                "occurs_in: Diabetes Mellitus": 1.0,
+                "has_quality: Chronic": 1.0
+            },
+            "Mettl14": {
+                "is_a: Regulator": 1.0,
+                "occurs_in: Autophagy": 1.0,
+                "occurs_in: Pyroptosis": 1.0,
+                "caused_by: M6A Modification": 1.0
+            },
+            "Autophagy": {
+                "is_a: Biological Process": 1.0,
+                "occurs_in: Diabetic Foot Ulcer": 1.0
+            },
+            "Pyroptosis": {
+                "is_a: Biological Process": 1.0,
+                "occurs_in: Diabetic Foot Ulcer": 1.0
+            },
+            "Simiao Yong'An Decoction": {
+                "is_a: Herbal Decoction": 1.0,
+                "is_treatment_for: Diabetic Foot Ulcer": 1.0,
+                "is_treatment_for: Skin Wound": 1.0
+            },
+            "Skin Wound": {
+                "is_a: Wound": 1.0,
+                "occurs_in: Skin": 1.0
+            },
+            "Wound Healing": {
+                "is_a: Biological Process": 1.0,
+                "occurs_in: Diabetic Foot Ulcer": 1.0,
+                "occurs_in: Skin": 1.0
+            },
+            "Becn1": {
+                "is_a: Protein": 1.0,
+                "part_of: Autophagy": 1.0
+            },
+            "Angiogenesis": {
+                "is_a: Biological Process": 1.0,
+                "occurs_in: Diabetic Foot Ulcer": 1.0
+            },
+            "High Glucose": {
+                "is_a: Chemical Entity": 1.0,
+                "caused_by: Diabetes Mellitus": 1.0
+            },
+            "M6A Modification": {
+                "is_a: Epigenetic Modification": 1.0,
+                "occurs_in: Becn1 Mrna": 1.0
+            },
+            "Becn1 Mrna": {
+                "is_a: Mrna": 1.0,
+                "part_of: Becn1": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260501_1915"
     },
     "predefined": {
         "entities": {
             "Low-Vacuum Drains": {
                 "is_a: Active Drainage": 1.0
             },
-            "High-Vacuum Drains": {
+            "High-Vacuum Drain": {
                 "is_a: Active Drainage": 1.0
             },
             "Ethanol": {
@@ -237,7 +202,7 @@
             "Quaternary Ammonium Compounds": {
                 "is_a: Antiseptic Agents For Wound Treatment": 1.0
             },
-            "Halogens And Halogen-Releasing Compounds": {
+            "Halogen Antiseptics": {
                 "is_a: Antiseptic Agents For Wound Treatment": 1.0
             },
             "Biguanide": {
@@ -246,7 +211,7 @@
             "Alcohols": {
                 "is_a: Antiseptic Agents For Wound Treatment": 1.0
             },
-            "Phenols And Phenol Derivatives": {
+            "Phenols": {
                 "is_a: Antiseptic Agents For Wound Treatment": 1.0
             },
             "Metals And Metal Salts": {
@@ -258,13 +223,13 @@
             "Hypochlorous Acid": {
                 "is_a: Antiseptic Agents For Wound Treatment": 1.0
             },
-            "Primary Wound Healing": {
+            "Primary Healing": {
                 "is_a: Types Of Wound Healing": 1.0
             },
-            "Secondary Healing": {
+            "Secondary Intention Healing": {
                 "is_a: Types Of Wound Healing": 1.0
             },
-            "Tertiary Wound Healing": {
+            "Tertiary Intention Healing": {
                 "is_a: Types Of Wound Healing": 1.0
             },
             "Regenerative Healing": {
@@ -274,15 +239,15 @@
                 "is_a: Arterial Wounds": 1.0
             },
             "Hand Disinfection": {
-                "is_a: Aseptic Cuticles": 1.0
+                "is_a: Aseptic Technique": 1.0
             },
             "Sterile Gloves": {
-                "is_a: Aseptic Cuticles": 1.0
+                "is_a: Aseptic Technique": 1.0
             },
             "Surface Disinfection": {
-                "is_a: Aseptic Cuticles": 1.0
+                "is_a: Aseptic Technique": 1.0
             },
-            "T-Drainage": {
+            "T-Tube Drainage": {
                 "is_a: Abdominal Drains": 1.0
             },
             "Polyhexanide": {
@@ -297,9 +262,8 @@
             "Cat Bite Wound": {
                 "is_a: Bite Wound": 1.0
             },
-            "Bite Wound": {
-                "is_a: Bite Wound": 1.0,
-                "is_a: Traumatic Wound": 1.0
+            "Dog Bite Wound": {
+                "is_a: Bite Wound": 1.0
             },
             "Human Bite Wound": {
                 "is_a: Bite Wound": 1.0
@@ -310,7 +274,7 @@
             "Bullous Pemphigoid": {
                 "is_a: Blistering Wound": 1.0
             },
-            "Dermatitis Herpetiformis": {
+            "Dermatitis Herpetiformis Duhring": {
                 "is_a: Blistering Wound": 1.0
             },
             "Mucous Membrane Pemphigoid": {
@@ -319,10 +283,10 @@
             "Linear Iga Dermatosis": {
                 "is_a: Blistering Wound": 1.0
             },
-            "Herpes Zoster": {
+            "Herpes Zoster (Shingles)": {
                 "is_a: Blistering Wound": 1.0
             },
-            "Varicella": {
+            "Chickenpox (Varicella)": {
                 "is_a: Blistering Wound": 1.0
             },
             "Herpes Simplex": {
@@ -337,7 +301,7 @@
             "Epidermolysis Bullosa": {
                 "is_a: Blistering Wound": 1.0
             },
-            "Second Degree Burn": {
+            "Second-Degree Burn": {
                 "is_a: Blistering Wound": 1.0
             },
             "Friction Blister": {
@@ -346,7 +310,7 @@
             "Allergic Contact Dermatitis": {
                 "is_a: Blistering Wound": 1.0
             },
-            "Stevens-Johnson Syndrome / Toxic Epidermal Necrolysis": {
+            "Stevens-Johnson Syndrome (Sjs) / Ten": {
                 "is_a: Blistering Wound": 1.0
             },
             "Fixed Drug Exanthema": {
@@ -358,7 +322,7 @@
             "Bullosis Diabeticorum": {
                 "is_a: Blistering Wound": 1.0
             },
-            "Surgical Area": {
+            "Surgical Site": {
                 "is_a: Surgical Wound": 1.0
             },
             "Wound Management": {
@@ -382,7 +346,7 @@
             "Ultrasound-Assisted Wound Cleaning": {
                 "is_a: Debridement": 1.0
             },
-            "Water-Jet Assisted Wound Cleansing": {
+            "Water-Jet Wound Cleansing": {
                 "is_a: Debridement": 1.0
             },
             "Passive Drainage": {
@@ -392,58 +356,52 @@
                 "is_a: Drainage": 1.0
             },
             "Drainage System Type": {
-                "is_a: Drainage": 1.0
-            },
-            "Drains Classified According To Application": {
-                "is_a: Drainage": 1.0
+                "is_a: Drainage": 1.0,
+                "is_a: Drainage System Type": 1.0,
+                "is_a: Chest Drains": 1.0
             },
             "Wound And Soft Tissue Drains": {
-                "is_a: Drains Classified According To Application": 1.0
+                "is_a: Drainage System Type": 1.0
             },
             "Abdominal Drainage": {
-                "is_a: Drains Classified According To Application": 1.0
+                "is_a: Drainage System Type": 1.0
             },
             "Chest Drains": {
-                "is_a: Drains Classified According To Application": 1.0
-            },
-            "Ventricular Drainage": {
-                "is_a: Drains Classified According To Application": 1.0
-            },
-            "Tympanic Drainage": {
-                "is_a: Drains Classified According To Application": 1.0
+                "is_a: Drainage System Type": 1.0
             },
             "Open Drainage Systems": {
                 "is_a: Drainage System Type": 1.0
             },
-            "Semi-Open Drainage Systems": {
+            "Semi-Open Drainage": {
                 "is_a: Drainage System Type": 1.0
             },
-            "Closed Drainage System": {
+            "Closed Drainage Systems": {
                 "is_a: Drainage System Type": 1.0
             },
-            "Shea Classification": {
+            "Grade I According To Shea": {
                 "is_a: Pressure Ulcer": 1.0
             },
-            "Grade Ii (Shea)": {
+            "Shea Grade Ii": {
                 "is_a: Pressure Ulcer": 1.0
             },
-            "Grade Iii According To Shea": {
+            "Shea Classification Grade Iii": {
                 "is_a: Pressure Ulcer": 1.0
             },
-            "Shea Grade Iv": {
+            "Grade Iv (Shea)": {
                 "is_a: Pressure Ulcer": 1.0
             },
             "Bromelain": {
                 "is_a: Enzymatic Debridement": 1.0
             },
-            "Proteins": {
+            "Protein": {
                 "is_a: Nutrition": 1.0
             },
             "Vitamins": {
                 "is_a: Nutrition": 1.0
             },
             "Trace Elements": {
-                "is_a: Nutrition": 1.0
+                "is_a: Nutrition": 1.0,
+                "is_a: Metals And Metal Salts": 1.0
             },
             "Coagulation Phase": {
                 "is_a: Exudation Phase": 1.0
@@ -463,8 +421,12 @@
             "5": {
                 "is_a: Thread Size": 1.0
             },
-            "4": {
-                "is_a: Thread Size": 1.0
+            "Wound Classification According To Wagner And Anderson": {
+                "is_a: Thread Size": 1.0,
+                "is_a: Gustilo-Anderson Classification": 1.0,
+                "is_a: Classification Systems": 1.0,
+                "is_a: Wound Classification": 1.0,
+                "is_a: Wound Classification According To Wagner And Anderson": 1.0
             },
             "3": {
                 "is_a: Thread Size": 1.0
@@ -493,13 +455,13 @@
             "5-0": {
                 "is_a: Thread Size": 1.0
             },
-            "6-0 Suture": {
+            "6-0": {
                 "is_a: Thread Size": 1.0
             },
             "7-0": {
                 "is_a: Thread Size": 1.0
             },
-            "8-0": {
+            "Suture Size": {
                 "is_a: Thread Size": 1.0
             },
             "9-0": {
@@ -511,22 +473,22 @@
             "11-0": {
                 "is_a: Thread Size": 1.0
             },
-            "12-0": {
+            "12-0 Suture": {
                 "is_a: Thread Size": 1.0
             },
-            "13-0": {
+            "13-0 Suture": {
                 "is_a: Thread Size": 1.0
             },
             "Measurement System": {
                 "is_a: Thread Size": 1.0
             },
-            "Resorbable Thread Material": {
+            "Resorbable Suture Material": {
                 "is_a: Thread Material": 1.0
             },
-            "Non-Absorbable Suture": {
+            "Nonabsorbable Suture": {
                 "is_a: Thread Material": 1.0
             },
-            "Monofilament Suture Material": {
+            "Monofilament Thread Material": {
                 "is_a: Thread Material": 1.0
             },
             "Polyfiles Thread Material": {
@@ -535,7 +497,7 @@
             "Thread Size": {
                 "is_a: Thread Material": 1.0
             },
-            "Gentian Violet": {
+            "Crystal Violet / Gentian Violet": {
                 "is_a: Colorants": 1.0
             },
             "Plaster": {
@@ -550,43 +512,41 @@
             "Net Association": {
                 "is_a: Fixing Bandage": 1.0
             },
-            "Mixed Leg Ulcer": {
+            "Ulcus Cruris Mixtum": {
                 "is_a: Mixed Veno-Arterial Wounds": 1.0
             },
             "Grade I": {
-                "is_a: Grading Of The Thermal Or Cauterizing Wound": 1.0,
-                "is_a: Classification According To Tscherne And Oestern": 1.0
+                "is_a: Grading Of Thermal Or Cauterizing Wound": 1.0,
+                "is_a: Tscherne And Oestern Classification": 1.0
             },
             "Grade Iia": {
-                "is_a: Grading Of The Thermal Or Cauterizing Wound": 1.0
+                "is_a: Grading Of Thermal Or Cauterizing Wound": 1.0
             },
-            "Grade Ii": {
-                "is_a: Grading Of The Thermal Or Cauterizing Wound": 1.0,
-                "is_a: Gustilo-Anderson Classification": 1.0,
-                "is_a: Classification According To Tscherne And Oestern": 1.0
+            "Grade Iib": {
+                "is_a: Grading Of Thermal Or Cauterizing Wound": 1.0
             },
             "Grade Iii": {
-                "is_a: Grading Of The Thermal Or Cauterizing Wound": 1.0,
-                "is_a: Classification According To Tscherne And Oestern": 1.0
+                "is_a: Grading Of Thermal Or Cauterizing Wound": 1.0,
+                "is_a: Tscherne And Oestern Classification": 1.0
             },
             "Grade Iv": {
-                "is_a: Grading Of The Thermal Or Cauterizing Wound": 1.0,
-                "is_a: Classification According To Tscherne And Oestern": 1.0
+                "is_a: Grading Of Thermal Or Cauterizing Wound": 1.0,
+                "is_a: Tscherne And Oestern Classification": 1.0
             },
             "Diabetes Mellitus": {
                 "is_a: Underlying Disease": 1.0
             },
-            "Peripheral Arterial Disease": {
+            "Pad": {
                 "is_a: Underlying Disease": 1.0
             },
             "Povidone-Iodine": {
-                "is_a: Halogens And Halogen-Releasing Compounds": 1.0
+                "is_a: Halogen Antiseptics": 1.0
             },
             "Split-Thickness Skin Graft": {
-                "is_a: Skin Graft": 1.0
+                "is_a: Skin Grafting": 1.0
             },
             "Full-Thickness Skin Graft": {
-                "is_a: Skin Graft": 1.0
+                "is_a: Skin Grafting": 1.0
             },
             "Redness": {
                 "is_a: Skin Discoloration": 1.0
@@ -612,10 +572,10 @@
             "Escherichia Coli": {
                 "is_a: Microbial Spectrum": 1.0
             },
-            "Streptococcus": {
+            "Streptococci": {
                 "is_a: Microbial Spectrum": 1.0
             },
-            "Mrsa": {
+            "Methicillin-Resistant Staphylococcus Aureus": {
                 "is_a: Microbial Spectrum": 1.0
             },
             "I": {
@@ -629,6 +589,9 @@
             },
             "Iiic": {
                 "is_a: Gustilo-Anderson Classification": 1.0
+            },
+            "Grade Ii": {
+                "is_a: Tscherne And Oestern Classification": 1.0
             },
             "Urge Scale": {
                 "is_a: Classification System": 1.0
@@ -645,9 +608,8 @@
             "Compress Debridement": {
                 "is_a: Mechanical Debridement": 1.0
             },
-            "Excision": {
-                "is_a: Mechanical Debridement": 1.0,
-                "is_a: Surgical Area": 1.0
+            "Scalpel Excision": {
+                "is_a: Mechanical Debridement": 1.0
             },
             "Manuka Honey": {
                 "is_a: Medicinal Honey": 1.0
@@ -655,26 +617,24 @@
             "Silver": {
                 "is_a: Metals And Metal Salts": 1.0
             },
-            "Bismuth Iii Bromide": {
+            "Bismuth Tribromide": {
                 "is_a: Metals And Metal Salts": 1.0
             },
             "Zinc": {
                 "is_a: Metals And Metal Salts": 1.0
             },
-            "Copper": {
-                "is_a: Metals And Metal Salts": 1.0
-            },
             "Diabetic Foot Syndrome": {
                 "is_a: Microangiopathic Wounds": 1.0
             },
-            "Martorell Hypertensive Ulcer": {
+            "Ulcus Hypertonicus Martorell": {
                 "is_a: Microangiopathic Wounds": 1.0
             },
             "Livedovasculopathy": {
                 "is_a: Microangiopathic Wounds": 1.0
             },
             "Hydrocolloids": {
-                "is_a: Modern Wound Dressing": 1.0
+                "is_a: Modern Wound Dressing": 1.0,
+                "is_a: Wound Edge Protection": 1.0
             },
             "Hydrogels": {
                 "is_a: Modern Wound Dressing": 1.0
@@ -709,10 +669,10 @@
             "Composite Dressing": {
                 "is_a: Modern Wound Dressing": 1.0
             },
-            "Single Button Seam": {
+            "Single Button Suture": {
                 "is_a: Seam Technology": 1.0
             },
-            "Continuous Suture": {
+            "Continuous Seam": {
                 "is_a: Seam Technology": 1.0
             },
             "Intracutaneous Suture": {
@@ -730,23 +690,26 @@
             "Gangrene": {
                 "is_a: Necrosis": 1.0
             },
-            "Marjolin Ulcer": {
+            "Marjolin'S Ulcer": {
                 "is_a: Neoplastic Wound": 1.0
             },
-            "Jackson-Pratt Drainage": {
+            "Jackson-Pratt Drain": {
                 "is_a: Low-Vacuum Drains": 1.0
             },
             "Blake Drainage": {
                 "is_a: Low-Vacuum Drains": 1.0
             },
-            "Redon Drainage": {
-                "is_a: Low-Vacuum Drains": 1.0
+            "Redon Drain": {
+                "is_a: Ochvacuum Drains": 1.0
             },
             "Incision": {
-                "is_a: Surgical Area": 1.0
+                "is_a: Surgical Site": 1.0
+            },
+            "Excision": {
+                "is_a: Surgical Site": 1.0
             },
             "Anastomosis": {
-                "is_a: Surgical Area": 1.0
+                "is_a: Surgical Site": 1.0
             },
             "Gravity Drainage": {
                 "is_a: Passive Drainage": 1.0
@@ -770,12 +733,12 @@
                 "is_a: Phases Of Wound Healing": 1.0
             },
             "Triclosan": {
-                "is_a: Phenols And Phenol Derivatives": 1.0
+                "is_a: Phenols": 1.0
             },
             "Phenoxyethanol": {
-                "is_a: Phenols And Phenol Derivatives": 1.0
+                "is_a: Phenols": 1.0
             },
-            "Granulation": {
+            "Granulation Tissue": {
                 "is_a: Proliferation Phase": 1.0
             },
             "Angiogenesis": {
@@ -796,21 +759,20 @@
             "Repair Phase": {
                 "is_a: Regeneration Phase": 1.0
             },
-            "Scarring": {
+            "Scar Formation": {
                 "is_a: Regeneration Phase": 1.0
             },
             "Clean Wound": {
-                "is_a: Cleaning Class": 1.0
+                "is_a: Wound Cleansing Classification": 1.0
             },
             "Clean Contaminated Wound": {
-                "is_a: Cleaning Class": 1.0
+                "is_a: Wound Cleansing Classification": 1.0
             },
-            "Contaminated Wound": {
-                "is_a: Cleaning Class": 1.0,
-                "is_a: Wound Type": 1.0
+            "Contaminated Wound Op": {
+                "is_a: Wound Cleansing Classification": 1.0
             },
             "Manifest-Infected Wound": {
-                "is_a: Cleaning Class": 1.0
+                "is_a: Wound Cleansing Classification": 1.0
             },
             "Robinson Drainage": {
                 "is_a: Gravity Drainage": 1.0
@@ -827,14 +789,8 @@
             "Hypothermia": {
                 "is_a: Temperature": 1.0
             },
-            "Grading Of The Thermal Or Cauterizing Wound": {
+            "Grading Of Thermal Or Cauterizing Wound": {
                 "is_a: Thermal Wound": 1.0
-            },
-            "B\u00fclau Drainage": {
-                "is_a: Chest Drains": 1.0
-            },
-            "Monaldi Drainage": {
-                "is_a: Chest Drains": 1.0
             },
             "Fat Gauze": {
                 "is_a: Traditional Wound Dressing": 1.0
@@ -845,13 +801,16 @@
             "Wound With Accompanying Fracture": {
                 "is_a: Traumatic Wound": 1.0
             },
+            "Bite Wound": {
+                "is_a: Traumatic Wound": 1.0
+            },
             "Scratch Wound": {
                 "is_a: Traumatic Wound": 1.0
             },
-            "Cusa Debridement": {
+            "Cusa(R) Debridement": {
                 "is_a: Ultrasound-Assisted Wound Cleaning": 1.0
             },
-            "Ulcus Cruris Venosum": {
+            "Venous Leg Ulcer": {
                 "is_a: Venous Wounds": 1.0
             },
             "Secondary Dressing": {
@@ -881,28 +840,25 @@
             "Wound Dressing": {
                 "is_a: Wound Treatment": 1.0
             },
-            "Wound Gel/Ointment/Cream": {
-                "is_a: Wound Treatment": 1.0
-            },
             "Association": {
                 "is_a: Wound Treatment": 1.0
             },
             "Compression Therapy": {
                 "is_a: Wound Treatment": 1.0
             },
-            "Vacuum Therapy": {
+            "Negative Pressure Wound Therapy": {
                 "is_a: Wound Treatment": 1.0
             },
-            "Hyperbaric Oxygen Therapy": {
+            "Hyperbaric O2 Therapy": {
                 "is_a: Wound Treatment": 1.0
             },
             "Co2 Bath": {
                 "is_a: Wound Treatment": 1.0
             },
-            "Skin Graft": {
+            "Skin Grafting": {
                 "is_a: Wound Treatment": 1.0
             },
-            "Flapplasty": {
+            "Flap Surgery": {
                 "is_a: Wound Treatment": 1.0
             },
             "Drainage": {
@@ -920,10 +876,10 @@
             "Nutrition": {
                 "is_a: Wound Treatment": 1.0
             },
-            "Aseptic Conditions": {
+            "Aseptic Technique": {
                 "is_a: Wound Treatment": 1.0
             },
-            "Perioperative Antimicrobial Prophylaxis": {
+            "Perioperative Antibiotic Prophylaxis": {
                 "is_a: Wound Treatment": 1.0
             },
             "Antibiotic Therapy": {
@@ -950,7 +906,7 @@
             "Wound Manager": {
                 "is_a: People In Wound Treatment": 1.0
             },
-            "Physician": {
+            "Doctor": {
                 "is_a: People In Wound Treatment": 1.0
             },
             "Carer": {
@@ -959,11 +915,12 @@
             "Suture Insufficiency": {
                 "is_a: Wound Dehiscence": 1.0
             },
-            "Abdomen": {
+            "Belly": {
                 "is_a: Wound Dehiscence": 1.0
             },
             "Wound Assessment": {
-                "is_a: Wound Diagnostics": 1.0
+                "is_a: Wound Diagnostics": 1.0,
+                "is_a: Process": 1.0
             },
             "Medical History": {
                 "is_a: Wound Diagnostics": 1.0
@@ -1002,10 +959,9 @@
                 "is_a: Wound Diagnostics": 1.0
             },
             "Wound Edge": {
-                "is_a: Wound Diagnostics": 1.0,
-                "is_a: Wound Edge": 1.0
+                "is_a: Wound Diagnostics": 1.0
             },
-            "Wound Base": {
+            "Wound Bed": {
                 "is_a: Wound Diagnostics": 1.0
             },
             "Postoperative Wound Control": {
@@ -1029,13 +985,13 @@
             "Resistogram": {
                 "is_a: Wound Diagnostics": 1.0
             },
-            "Photo Documentation": {
+            "Photographic Documentation": {
                 "is_a: Wound Documentation": 1.0
             },
             "Quality Assurance": {
                 "is_a: Wound Documentation": 1.0
             },
-            "Wound Type": {
+            "Wound Classification": {
                 "is_a: Material Entity": 1.0
             },
             "Wound Healing": {
@@ -1044,12 +1000,8 @@
             "Wound Complication": {
                 "is_a: Thing": 1.0
             },
-            "Wound Diagnostic Process": {
-                "is_a: Process": 1.0
-            },
             "Wound Treatment": {
-                "is_a: Process": 1.0,
-                "is_a: Wound Mechanism": 1.0
+                "is_a: Process": 1.0
             },
             "Wound Documentation Process": {
                 "is_a: Process": 1.0
@@ -1060,13 +1012,13 @@
             "Gustilo-Anderson Classification": {
                 "is_a: Wound With Accompanying Fracture": 1.0
             },
-            "Classification According To Tscherne And Oestern": {
+            "Tscherne And Oestern Classification": {
                 "is_a: Wound With Accompanying Fracture": 1.0
             },
             "Serous Exudate": {
                 "is_a: Wound Exudate": 1.0
             },
-            "Sanguineous Exudate": {
+            "Sanguine Exudate": {
                 "is_a: Wound Exudate": 1.0
             },
             "Serosanguineous Exudate": {
@@ -1076,22 +1028,22 @@
                 "is_a: Wound Exudate": 1.0
             },
             "Polihexanide Gel": {
-                "is_a: Wound Gel/Ointment/Cream": 1.0
+                "is_a: Wound Dressing": 1.0
             },
             "Octenidine Gel": {
-                "is_a: Wound Gel/Ointment/Cream": 1.0
+                "is_a: Wound Dressing": 1.0
             },
             "Iodine Ointment": {
-                "is_a: Wound Gel/Ointment/Cream": 1.0
+                "is_a: Wound Dressing": 1.0
             },
             "Flaminal": {
-                "is_a: Wound Gel/Ointment/Cream": 1.0
+                "is_a: Wound Dressing": 1.0
             },
             "Bepanthen Ointment": {
-                "is_a: Wound Gel/Ointment/Cream": 1.0
+                "is_a: Wound Dressing": 1.0
             },
-            "Voltaren Gel": {
-                "is_a: Wound Gel/Ointment/Cream": 1.0
+            "Diclofenac Gel": {
+                "is_a: Wound Dressing": 1.0
             },
             "Planimetry": {
                 "is_a: Wound Size Measurement": 1.0
@@ -1103,16 +1055,16 @@
                 "is_a: Wound Size Measurement": 1.0
             },
             "Granulating Wound Primer": {
-                "is_a: Wound Base": 1.0
+                "is_a: Wound Bed": 1.0
             },
             "Necrotic Wound Bed": {
-                "is_a: Wound Base": 1.0
+                "is_a: Wound Bed": 1.0
             },
             "Fibrin-Covered Wound Bed": {
-                "is_a: Wound Base": 1.0
+                "is_a: Wound Bed": 1.0
             },
             "Epithelializing Wound Bed": {
-                "is_a: Wound Base": 1.0
+                "is_a: Wound Bed": 1.0
             },
             "Phases Of Wound Healing": {
                 "is_a: Wound Healing": 1.0
@@ -1168,7 +1120,7 @@
             "Wound Dehiscence": {
                 "is_a: Wound Complication": 1.0
             },
-            "Serom": {
+            "Seroma": {
                 "is_a: Wound Complication": 1.0
             },
             "Lymphatic Fistula": {
@@ -1207,7 +1159,7 @@
             "Wound Pain": {
                 "is_a: Wound Complication": 1.0
             },
-            "Stress Bubble": {
+            "Stress Blister": {
                 "is_a: Wound Complication": 1.0
             },
             "Wound Healing Disorder": {
@@ -1220,6 +1172,9 @@
                 "is_a: Wound Mechanism": 1.0
             },
             "Thermal Wound": {
+                "is_a: Wound Mechanism": 1.0
+            },
+            "Wound Cauterization": {
                 "is_a: Wound Mechanism": 1.0
             },
             "Traumatic Wound": {
@@ -1240,28 +1195,28 @@
             "Diabetic Wound": {
                 "is_a: Wound Mechanism": 1.0
             },
-            "Intact Wound Margin": {
+            "Intact Wound Edge": {
                 "is_a: Wound Edge": 1.0
             },
-            "Livider Wound Margin": {
+            "Livid Wound Margin": {
                 "is_a: Wound Edge": 1.0
             },
             "Reddened Wound Edge": {
                 "is_a: Wound Edge": 1.0
             },
+            "Softened Wound Edge": {
+                "is_a: Wound Edge": 1.0
+            },
             "Undermined Wound Margin": {
                 "is_a: Wound Edge": 1.0
             },
-            "Skin Protection Films": {
+            "Skin Protection Films (Barrier Films)": {
                 "is_a: Wound Edge Protection": 1.0
             },
-            "Pastes (E.G. Zinc Paste)": {
+            "Pastes": {
                 "is_a: Wound Edge Protection": 1.0
             },
-            "Skin Protection Creams & Ointments": {
-                "is_a: Wound Edge Protection": 1.0
-            },
-            "Hydrocolloids (Thin)": {
+            "Skin Barrier Products": {
                 "is_a: Wound Edge Protection": 1.0
             },
             "Silicone Wound Spacer": {
@@ -1282,7 +1237,7 @@
             "Serasept": {
                 "is_a: Wound Irrigation Solution": 1.0
             },
-            "Sodium Chloride 0.9%": {
+            "Nacl 0.9%": {
                 "is_a: Wound Irrigation Solution": 1.0
             },
             "Nacl 10%": {
@@ -1297,46 +1252,49 @@
             "Antiseptic Solution": {
                 "is_a: Wound Irrigation Solution": 1.0
             },
-            "Medicinal Honey": {
+            "Medicinalhoney": {
                 "is_a: Wound Therapeutic Agent": 1.0
             },
             "Aseptic Wound": {
-                "is_a: Wound Type": 1.0
+                "is_a: Wound Classification": 1.0
+            },
+            "Contaminated Wound": {
+                "is_a: Wound Classification": 1.0
             },
             "Blistering Wound": {
-                "is_a: Wound Type": 1.0
+                "is_a: Wound Classification": 1.0
             },
             "Colonized Wound": {
-                "is_a: Wound Type": 1.0
+                "is_a: Wound Classification": 1.0
             },
             "Infected Wound": {
-                "is_a: Wound Type": 1.0
+                "is_a: Wound Classification": 1.0
             },
             "Primary Healing Wound": {
-                "is_a: Wound Type": 1.0
+                "is_a: Wound Classification": 1.0
             },
             "Secondary Healing Wound": {
-                "is_a: Wound Type": 1.0
+                "is_a: Wound Classification": 1.0
             },
             "Tertiary Healing Wound": {
-                "is_a: Wound Type": 1.0
+                "is_a: Wound Classification": 1.0
             },
-            "Regenerative Wound Healing": {
-                "is_a: Wound Type": 1.0
+            "Regenerative Healing Wound": {
+                "is_a: Wound Classification": 1.0
             },
             "Acute Wound": {
-                "is_a: Wound Type": 1.0
+                "is_a: Wound Classification": 1.0
             },
             "Chronic Wound": {
-                "is_a: Wound Type": 1.0
+                "is_a: Wound Classification": 1.0
             },
-            "Cleaning Class": {
-                "is_a: Wound Type": 1.0
+            "Wound Cleansing Classification": {
+                "is_a: Wound Classification": 1.0
             },
             "Primary Seam": {
                 "is_a: Wound Closure": 1.0
             },
-            "Secondary Seam": {
+            "Secondary Suture": {
                 "is_a: Wound Closure": 1.0
             },
             "Skin Staples": {
@@ -1357,17 +1315,13 @@
             "Wound": {
                 "is_a: Thing": 1.0
             },
-            "Wound Classification According To Wagner And Anderson": {
-                "is_a: Classification Systems": 1.0,
-                "is_a: Wound Type": 1.0
-            },
             "1A": {
                 "is_a: Wound Classification According To Wagner And Anderson": 1.0
             },
             "1B": {
                 "is_a: Wound Classification According To Wagner And Anderson": 1.0
             },
-            "Grade 1C": {
+            "1C": {
                 "is_a: Wound Classification According To Wagner And Anderson": 1.0
             },
             "1D": {
@@ -1382,22 +1336,16 @@
             "2C": {
                 "is_a: Wound Classification According To Wagner And Anderson": 1.0
             },
-            "2D": {
+            "Two-Dimensional": {
                 "is_a: Wound Classification According To Wagner And Anderson": 1.0
             },
             "3A": {
-                "is_a: Wound Classification According To Wagner And Anderson": 1.0
-            },
-            "3B": {
                 "is_a: Wound Classification According To Wagner And Anderson": 1.0
             },
             "3C": {
                 "is_a: Wound Classification According To Wagner And Anderson": 1.0
             },
             "3D": {
-                "is_a: Wound Classification According To Wagner And Anderson": 1.0
-            },
-            "Grade 4A": {
                 "is_a: Wound Classification According To Wagner And Anderson": 1.0
             },
             "4B": {
@@ -1414,117 +1362,117 @@
     },
     "llm_fill": {
         "entities": {
-            "Epithelial Tissue": {
-                "caused_by: Bacterial Colonization": 0.0,
-                "caused_by: Copper": 0.0,
-                "caused_by: Copper Influx": 0.0,
-                "caused_by: Cu2+": 0.0,
-                "caused_by: Membrane Lipid Peroxidation": 0.0,
-                "caused_by: Pod-Like Activity": 0.0,
-                "caused_by: Stress-Driven Fluidity": 0.0,
-                "caused_by: Systemic Immunosuppression": 0.0,
-                "has_quality: Anisotropic": 0.0,
-                "has_quality: Anti-Inflammatory": 0.0,
-                "has_quality: Antibacterial": 0.0,
-                "has_quality: Antibiofilm": 0.0,
-                "has_quality: Antimicrobial": 0.0,
-                "has_quality: Biocompatible": 0.0,
-                "has_quality: Catalytic": 0.0,
-                "has_quality: Cationic": 0.0,
-                "has_quality: Compressed Exponential Relaxation": 0.0,
-                "has_quality: Early": 0.0,
-                "has_quality: Fast-Moving": 0.0,
-                "has_quality: Fickian Yet Non-Gaussian Dynamics": 0.0
+            "Wound": {
+                "caused_by: Ca2+": 0.0,
+                "caused_by: Chelation": 0.0,
+                "caused_by: Contractile Active Stresses": 0.0,
+                "caused_by: Diabetes Mellitus": 1.0,
+                "caused_by: M6A Modification": 0.0,
+                "has_quality: Chronic": 1.0,
+                "has_quality: Contractile": 0.0,
+                "has_quality: Enriched In Proteins For Extracellular Matrix Remodeling": 0.0,
+                "has_quality: Enriched In Proteins For Tnf Signaling Pathway": 0.0,
+                "has_quality: Extensile": 0.0,
+                "has_quality: High Purity": 0.0,
+                "has_quality: High-Efficiency": 0.0,
+                "has_quality: High-Performance": 0.0,
+                "has_quality: Immobilization Technique": 0.0,
+                "has_quality: Immunomodulatory": 0.0,
+                "has_quality: Large Specific Surface Area": 0.0,
+                "has_quality: Parallel Anchored": 0.0,
+                "has_quality: Reusable": 0.0,
+                "has_quality: Reversible": 0.0,
+                "has_quality: Superior Therapeutic Efficacy": 0.0
             },
-            "Cell": {
-                "caused_by: Bacterial Colonization": 0.0,
-                "caused_by: Copper": 0.0,
-                "caused_by: Copper Influx": 0.0,
-                "caused_by: Cu2+": 0.0,
-                "caused_by: Membrane Lipid Peroxidation": 0.0,
-                "caused_by: Pod-Like Activity": 0.0,
-                "caused_by: Stress-Driven Fluidity": 0.0,
-                "caused_by: Systemic Immunosuppression": 0.0,
-                "has_quality: Anisotropic": 0.0,
-                "has_quality: Anti-Inflammatory": 0.0,
-                "has_quality: Antibacterial": 0.0,
-                "has_quality: Antibiofilm": 0.0,
-                "has_quality: Antimicrobial": 0.0,
-                "has_quality: Biocompatible": 0.0,
-                "has_quality: Caging Behavior": 0.0,
-                "has_quality: Catalytic": 0.0,
-                "has_quality: Cationic": 0.0,
-                "has_quality: Complex Fluid": 0.0,
-                "has_quality: Disordered": 0.0,
-                "has_quality: Early": 0.0
+            "Wound Closure": {
+                "caused_by: Ca2+": 0.0,
+                "caused_by: Chelation": 0.0,
+                "caused_by: Contractile Active Stresses": 0.0,
+                "caused_by: Diabetes Mellitus": 1.0,
+                "caused_by: M6A Modification": 0.0,
+                "has_quality: Chronic": 1.0,
+                "has_quality: Contractile": 0.0,
+                "has_quality: Enriched In Proteins For Extracellular Matrix Remodeling": 0.0,
+                "has_quality: Enriched In Proteins For Tnf Signaling Pathway": 0.0,
+                "has_quality: Extensile": 0.0,
+                "has_quality: High Purity": 0.0,
+                "has_quality: High-Efficiency": 0.0,
+                "has_quality: High-Performance": 0.0,
+                "has_quality: Immobilization Technique": 0.0,
+                "has_quality: Immunomodulatory": 0.0,
+                "has_quality: Large Specific Surface Area": 0.0,
+                "has_quality: Parallel Anchored": 0.0,
+                "has_quality: Reusable": 0.0,
+                "has_quality: Reversible": 0.0,
+                "has_quality: Superior Therapeutic Efficacy": 0.0
             },
-            "Cell Division": {
-                "caused_by: Bacterial Colonization": 0.0,
-                "caused_by: Copper": 0.0,
-                "caused_by: Copper Influx": 0.0,
-                "caused_by: Cu2+": 0.0,
-                "caused_by: Membrane Lipid Peroxidation": 0.0,
-                "caused_by: Pod-Like Activity": 0.0,
-                "caused_by: Systemic Immunosuppression": 0.0,
-                "has_quality: Anisotropic": 0.0,
-                "has_quality: Anti-Inflammatory": 0.0,
-                "has_quality: Antibacterial": 0.0,
-                "has_quality: Antibiofilm": 0.0,
-                "has_quality: Antimicrobial": 0.0,
-                "has_quality: Biocompatible": 0.0,
-                "has_quality: Caging Behavior": 0.0,
-                "has_quality: Catalytic": 0.0,
-                "has_quality: Cationic": 0.0,
-                "has_quality: Complex Fluid": 0.0,
-                "has_quality: Compressed Exponential Relaxation": 0.0,
-                "has_quality: Disordered": 0.0,
-                "has_quality: Early": 0.0
+            "Reepithelialization": {
+                "caused_by: Ca2+": 0.0,
+                "caused_by: Chelation": 0.0,
+                "caused_by: Contractile Active Stresses": 0.0,
+                "caused_by: Diabetes Mellitus": 1.0,
+                "caused_by: M6A Modification": 0.0,
+                "has_quality: Chronic": 1.0,
+                "has_quality: Contractile": 0.0,
+                "has_quality: Enriched In Proteins For Extracellular Matrix Remodeling": 0.0,
+                "has_quality: Enriched In Proteins For Tnf Signaling Pathway": 0.0,
+                "has_quality: Extensile": 0.0,
+                "has_quality: High Purity": 0.0,
+                "has_quality: High-Efficiency": 0.0,
+                "has_quality: High-Performance": 0.0,
+                "has_quality: Immobilization Technique": 0.0,
+                "has_quality: Immunomodulatory": 0.0,
+                "has_quality: Large Specific Surface Area": 0.0,
+                "has_quality: Parallel Anchored": 0.0,
+                "has_quality: Reusable": 0.0,
+                "has_quality: Reversible": 0.0,
+                "has_quality: Superior Therapeutic Efficacy": 0.0
             },
-            "Cell Extrusion": {
-                "caused_by: Bacterial Colonization": 0.0,
-                "caused_by: Copper": 0.0,
-                "caused_by: Copper Influx": 0.0,
-                "caused_by: Cu2+": 0.0,
-                "caused_by: Membrane Lipid Peroxidation": 0.0,
-                "caused_by: Pod-Like Activity": 0.0,
-                "caused_by: Systemic Immunosuppression": 0.0,
-                "has_quality: Anisotropic": 0.0,
-                "has_quality: Anti-Inflammatory": 0.0,
-                "has_quality: Antibacterial": 0.0,
-                "has_quality: Antibiofilm": 0.0,
-                "has_quality: Antimicrobial": 0.0,
-                "has_quality: Biocompatible": 0.0,
-                "has_quality: Caging Behavior": 0.0,
-                "has_quality: Catalytic": 0.0,
-                "has_quality: Cationic": 0.0,
-                "has_quality: Complex Fluid": 0.0,
-                "has_quality: Compressed Exponential Relaxation": 0.0,
-                "has_quality: Disordered": 0.0,
-                "has_quality: Early": 0.0
+            "Active Stresses": {
+                "caused_by: Ca2+": 0.0,
+                "caused_by: Chelation": 0.0,
+                "caused_by: Diabetes Mellitus": 0.0,
+                "caused_by: M6A Modification": 0.0,
+                "has_quality: Chronic": 0.0,
+                "has_quality: Contractile": 0.0,
+                "has_quality: Enriched In Proteins For Extracellular Matrix Remodeling": 0.0,
+                "has_quality: Enriched In Proteins For Tnf Signaling Pathway": 0.0,
+                "has_quality: Extensile": 0.0,
+                "has_quality: High Purity": 0.0,
+                "has_quality: High-Efficiency": 0.0,
+                "has_quality: High-Performance": 0.0,
+                "has_quality: Immobilization Technique": 0.0,
+                "has_quality: Immunomodulatory": 0.0,
+                "has_quality: Large Specific Surface Area": 0.0,
+                "has_quality: Parallel Anchored": 0.0,
+                "has_quality: Reusable": 0.0,
+                "has_quality: Reversible": 0.0,
+                "has_quality: Superior Therapeutic Efficacy": 0.0,
+                "has_quality: Tissue Repair": 0.0
             },
-            "Wound Healing": {
-                "caused_by: Bacterial Colonization": 0.0,
-                "caused_by: Copper": 0.0,
-                "caused_by: Copper Influx": 0.0,
-                "caused_by: Cu2+": 0.0,
-                "caused_by: Membrane Lipid Peroxidation": 0.0,
-                "caused_by: Pod-Like Activity": 0.0,
-                "caused_by: Stress-Driven Fluidity": 0.0,
-                "caused_by: Systemic Immunosuppression": 0.0,
-                "has_quality: Anisotropic": 0.0,
-                "has_quality: Anti-Inflammatory": 0.0,
-                "has_quality: Antibacterial": 0.0,
-                "has_quality: Antibiofilm": 0.0,
-                "has_quality: Antimicrobial": 0.0,
-                "has_quality: Biocompatible": 0.0,
-                "has_quality: Caging Behavior": 0.0,
-                "has_quality: Catalytic": 0.0,
-                "has_quality: Cationic": 0.0,
-                "has_quality: Complex Fluid": 0.0,
-                "has_quality: Compressed Exponential Relaxation": 0.0,
-                "has_quality: Disordered": 0.0
+            "Contractile Active Stresses": {
+                "caused_by: Ca2+": 0.0,
+                "caused_by: Chelation": 0.0,
+                "caused_by: Contractile Active Stresses": 0.0,
+                "caused_by: Diabetes Mellitus": 0.0,
+                "caused_by: M6A Modification": 0.0,
+                "has_quality: Chronic": 0.0,
+                "has_quality: Enriched In Proteins For Extracellular Matrix Remodeling": 0.0,
+                "has_quality: Enriched In Proteins For Tnf Signaling Pathway": 0.0,
+                "has_quality: Extensile": 0.0,
+                "has_quality: High Purity": 0.0,
+                "has_quality: High-Efficiency": 0.0,
+                "has_quality: High-Performance": 0.0,
+                "has_quality: Immobilization Technique": 0.0,
+                "has_quality: Immunomodulatory": 0.0,
+                "has_quality: Large Specific Surface Area": 0.0,
+                "has_quality: Parallel Anchored": 0.0,
+                "has_quality: Reusable": 0.0,
+                "has_quality: Reversible": 0.0,
+                "has_quality: Superior Therapeutic Efficacy": 0.0,
+                "has_quality: Tissue Repair": 0.0
             }
         },
-        "meta_stamp": "llm_fill_1_20260429_1851"
+        "meta_stamp": "llm_fill_1_20260501_1918"
     }
 }

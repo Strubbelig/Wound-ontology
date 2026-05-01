@@ -2,8 +2,8 @@
 Integration tests for NormalizationMapper.get_data.
 
 Requirements:
-  - GOOGLE_API_KEY set in .env or environment
-  - Network access to Google Gemini API
+  - OPENROUTER_API_KEY set in .env or environment
+  - Network access to OpenRouter API
 
 Run with:
   pytest tests/integration/test_normalization_mapper.py -m integration -v
@@ -53,7 +53,7 @@ def tmp_data_dir():
 
 @pytest.fixture(scope="module")
 def llm():
-    return LLMClient(os.getenv("GOOGLE_API_KEY", ""))
+    return LLMClient(os.getenv("OPENROUTER_API_KEY", ""))
 
 
 @pytest.fixture(scope="module")

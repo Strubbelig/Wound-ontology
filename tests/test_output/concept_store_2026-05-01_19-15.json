@@ -1,0 +1,38 @@
+{
+    "42066317": {
+        "entities": {
+            "Wound": {
+                "occurs_in: Epithelial Cells": 1.0,
+                "occurs_in: Living Tissue": 1.0
+            },
+            "Wound Closure": {
+                "is_a: Process": 1.0,
+                "occurs_in: Wound": 1.0
+            },
+            "Reepithelialization": {
+                "is_a: Process": 1.0,
+                "occurs_in: Epithelial Cells": 1.0
+            },
+            "Active Stresses": {
+                "occurs_in: Tissue": 1.0,
+                "caused_by: Contractile Active Stresses": 1.0
+            },
+            "Contractile Active Stresses": {
+                "is_a: Active Stresses": 1.0,
+                "has_quality: Contractile": 1.0
+            },
+            "Extensile Active Stresses": {
+                "is_a: Active Stresses": 1.0,
+                "has_quality: Extensile": 1.0
+            },
+            "Topological Defects": {
+                "occurs_in: Wound Boundary": 1.0
+            },
+            "Nematic Order": {
+                "has_quality: Parallel Anchored": 1.0,
+                "occurs_in: Wound Boundary": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260501_1915"
+    }
+}

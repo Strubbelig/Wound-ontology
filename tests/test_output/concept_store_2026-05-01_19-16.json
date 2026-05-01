@@ -1,202 +1,165 @@
 {
-    "42054442": {
+    "42066317": {
         "entities": {
-            "Epithelial Tissue": {
-                "is_a: tissue": 1.0,
-                "has_quality: mechanically arrested": 1.0,
-                "has_quality: disordered": 1.0,
-                "has_quality: solid-like": 1.0,
-                "has_quality: complex fluid": 1.0,
-                "has_quality: stress-driven fluidity": 1.0,
-                "has_quality: hidden fluidity": 1.0,
-                "has_quality: caging behavior": 0.0
-            },
-            "Cell": {
-                "part_of: Epithelial Tissue": 1.0,
-                "has_quality: subdiffusive creep": 1.0,
-                "has_quality: Fickian yet non-Gaussian dynamics": 1.0,
-                "has_quality: compressed exponential relaxation": 1.0,
-                "has_quality: fast-moving": 1.0
-            },
-            "Cell Division": {
-                "occurs_in: Epithelial Tissue": 1.0,
-                "caused_by: stress-driven fluidity": 0.0
-            },
-            "Cell Extrusion": {
-                "occurs_in: Epithelial Tissue": 1.0,
-                "caused_by: stress-driven fluidity": 0.0
-            },
-            "Wound Healing": {
-                "occurs_in: Epithelial Tissue": 1.0,
-                "has_quality: remodeling": 1.0
-            },
-            "Tumor Invasion": {
-                "occurs_in: Epithelial Tissue": 1.0,
-                "has_quality: early": 1.0
-            },
-            "Morphogenesis": {
-                "occurs_in: Epithelial Tissue": 1.0
-            },
-            "Collective Anisotropic Cluster": {
-                "part_of: Epithelial Tissue": 1.0,
-                "has_quality: fast-moving": 1.0,
-                "has_quality: anisotropic": 1.0
-            },
-            "Local Structural Entropy": {
-                "occurs_in: Epithelial Tissue": 1.0,
-                "has_quality: spatial heterogeneity": 1.0
-            },
-            "Soft Vibrational Mode": {
-                "occurs_in: Epithelial Tissue": 1.0
-            }
-        },
-        "meta_stamp": "llm_extract_1_20260429_1847"
-    },
-    "42054707": {
-        "entities": {
-            "Diabetes Mellitus": {
-                "caused_by: systemic immunosuppression": 1.0
-            },
-            "Systemic Immunosuppression": {
-                "occurs_in: Diabetes Mellitus": 1.0
-            },
-            "Persistent Infection": {
-                "caused_by: Systemic Immunosuppression": 1.0
-            },
-            "Multidrug-resistant (MDR) Pathogen": {
-                "is_a: pathogen": 1.0
-            },
-            "Methicillin-resistant Staphylococcus aureus (MRSA)": {
-                "is_a: Multidrug-resistant (MDR) Pathogen": 1.0
-            },
-            "Peroxidase (POD)-like Nanoassembly (DC/Cu)": {
-                "has_quality: antibacterial": 1.0,
-                "has_quality: anti-inflammatory": 1.0,
-                "has_quality: tissue-reparative": 1.0,
-                "is_treatment_for: MDR bacteria-induced diabetic infection": 1.0
-            },
-            "Copper-coordinated Self-assembly": {
-                "part_of: Peroxidase (POD)-like Nanoassembly (DC/Cu)": 1.0
-            },
-            "Epsilon-poly(L-lysine)-derived Carbon Dot (CD)": {
-                "part_of: Peroxidase (POD)-like Nanoassembly (DC/Cu)": 1.0
-            },
-            "Diclofenac Sodium (DS)": {
-                "part_of: Peroxidase (POD)-like Nanoassembly (DC/Cu)": 1.0
-            },
-            "Cationic DC/Cu": {
-                "has_quality: cationic": 1.0,
-                "occurs_in: bacterial membrane": 1.0
-            },
-            "Bacterial Membrane": {
-                "part_of: bacterium": 1.0
-            },
-            "Microenvironment-responsive Spatiotemporal Drug Release": {
-                "occurs_in: Cationic DC/Cu": 1.0
-            },
-            "POD-like Activity": {
-                "has_quality: catalytic": 1.0,
-                "occurs_in: Carbon Dot (CD)": 1.0
-            },
-            "Membrane Lipid Peroxidation": {
-                "caused_by: POD-like Activity": 1.0
-            },
-            "Copper Influx": {
-                "caused_by: Membrane Lipid Peroxidation": 1.0
-            },
-            "Intracellular Copper Overload": {
-                "occurs_in: MRSA": 1.0,
-                "caused_by: Copper Influx": 1.0
-            },
-            "Cuproptosis-like Death Pathway": {
-                "caused_by: Intracellular Copper Overload": 1.0
-            },
-            "Inflammatory Response": {
-                "occurs_in: diabetic infection": 1.0
-            },
-            "Tissue Regeneration": {
-                "caused_by: Cu(2+)": 1.0
-            },
-            "MRSA-infected Diabetic Foot Ulcer": {
-                "is_a: diabetic wound": 1.0,
-                "occurs_in: foot": 1.0
-            },
-            "Diabetic MRSA Keratitis": {
-                "is_a: diabetic infection": 1.0,
-                "occurs_in: cornea": 1.0
-            }
-        },
-        "meta_stamp": "llm_extract_1_20260429_1847"
-    },
-    "42054286": {
-        "entities": {
-            "Bacterial Infection": {
-                "is_a: Infectious Complication": 1.0,
-                "occurs_in: Wound": 1.0
-            },
-            "Biofilm": {
-                "is_a: Bacterial Community": 1.0,
-                "occurs_in: Wound": 1.0
-            },
-            "Impaired Wound Healing": {
-                "is_a: Wound Healing Disorder": 1.0,
-                "occurs_in: Wound": 1.0
-            },
-            "ZnO Nanoparticle": {
-                "is_a: Nanoparticle": 1.0,
-                "has_quality: Antimicrobial": 1.0
-            },
-            "PEG": {
-                "is_a: Polymer": 1.0,
-                "has_quality: Biocompatible": 1.0
-            },
-            "Nisin": {
-                "is_a: Antimicrobial Peptide": 1.0
-            },
-            "Lysozyme": {
-                "is_a: Enzyme": 1.0,
-                "has_quality: Antimicrobial": 1.0
-            },
-            "Nisin-PEG-ZnO Nanoconjugate": {
-                "is_a: Nanoconjugate": 1.0,
-                "has_quality: Antimicrobial": 1.0,
-                "has_quality: Antibiofilm": 1.0,
-                "is_treatment_for: Wound Infection": 1.0
-            },
-            "Lysozyme-PEG-ZnO Nanoconjugate": {
-                "is_a: Nanoconjugate": 1.0,
-                "has_quality: Antimicrobial": 1.0,
-                "is_treatment_for: Wound Infection": 1.0
-            },
-            "Escherichia coli": {
-                "is_a: Bacterium": 1.0
-            },
-            "Staphylococcus epidermidis": {
-                "is_a: Bacterium": 1.0
-            },
-            "Wound Infection": {
-                "is_a: Infectious Complication": 1.0,
-                "occurs_in: Wound": 1.0,
-                "caused_by: Bacterial Colonization": 1.0
-            },
-            "Rat Excision Wound Model": {
-                "is_a: Wound Model": 1.0,
-                "occurs_in: Rat": 1.0
+            "Wound": {
+                "occurs_in: Epithelial Cells": 1.0,
+                "occurs_in: Living Tissue": 1.0
             },
             "Wound Closure": {
-                "is_a: Healing Process": 1.0,
+                "is_a: Process": 1.0,
                 "occurs_in: Wound": 1.0
             },
-            "Tissue Regeneration": {
-                "is_a: Biological Process": 1.0,
-                "occurs_in: Wound": 1.0
+            "Reepithelialization": {
+                "is_a: Process": 1.0,
+                "occurs_in: Epithelial Cells": 1.0
             },
-            "Inflammation": {
-                "is_a: Biological Process": 1.0,
-                "occurs_in: Wound": 1.0
+            "Active Stresses": {
+                "occurs_in: Tissue": 1.0,
+                "caused_by: Contractile Active Stresses": 1.0
+            },
+            "Contractile Active Stresses": {
+                "is_a: Active Stresses": 1.0,
+                "has_quality: Contractile": 1.0
+            },
+            "Extensile Active Stresses": {
+                "is_a: Active Stresses": 1.0,
+                "has_quality: Extensile": 1.0
+            },
+            "Topological Defects": {
+                "occurs_in: Wound Boundary": 1.0
+            },
+            "Nematic Order": {
+                "has_quality: Parallel Anchored": 1.0,
+                "occurs_in: Wound Boundary": 1.0
             }
         },
-        "meta_stamp": "llm_extract_1_20260429_1847"
+        "meta_stamp": "llm_extract_1_20260501_1915"
+    },
+    "42066239": {
+        "entities": {
+            "Exosomes derived from bone marrow mesenchymal stem cells (BMSC-Exos)": {
+                "is_a: therapeutic modality": 1.0,
+                "has_quality: immunomodulatory": 1.0,
+                "has_quality: tissue repair capability": 1.0
+            },
+            "TIM4@MGO magnetic bead system": {
+                "is_a: magnetic bead system": 1.0,
+                "has_quality: high-performance": 1.0,
+                "has_quality: reusable": 1.0,
+                "has_quality: high-efficiency": 1.0,
+                "has_quality: high-purity": 1.0
+            },
+            "TIM4": {
+                "part_of: TIM4@MGO magnetic bead system": 1.0,
+                "has_quality: immobilized on magnetic beads": 1.0
+            },
+            "MGO (magnetic graphene oxide)": {
+                "part_of: TIM4@MGO magnetic bead system": 1.0,
+                "has_quality: large specific surface area": 1.0
+            },
+            "Phosphatidylserine (PS)": {
+                "occurs_in: exosomal membrane": 1.0
+            },
+            "TIM4-PS interaction": {
+                "caused_by: Ca2+": 1.0,
+                "has_quality: reversible": 1.0
+            },
+            "EDTA": {
+                "caused_by: chelation of Ca2+": 1.0
+            },
+            "BMSC-Exos isolated via TIM4@MGO": {
+                "is_treatment_for: L929 cell proliferation": 1.0,
+                "is_treatment_for: scratch wound healing": 1.0,
+                "has_quality: enriched in proteins for extracellular matrix remodeling": 1.0,
+                "has_quality: enriched in proteins for TNF signaling pathway": 1.0
+            },
+            "L929 cell proliferation": {
+                "occurs_in: in vitro": 1.0
+            },
+            "scratch wound healing": {
+                "occurs_in: in vitro": 1.0
+            },
+            "mouse pulmonary fibrosis model": {
+                "is_a: disease model": 1.0,
+                "occurs_in: mouse": 1.0
+            },
+            "lung tissue structural damage": {
+                "occurs_in: mouse pulmonary fibrosis model": 1.0
+            },
+            "fibrotic progression": {
+                "occurs_in: mouse pulmonary fibrosis model": 1.0
+            },
+            "TIM4@MGO-isolated BMSC-Exos": {
+                "is_treatment_for: lung tissue structural damage": 1.0,
+                "is_treatment_for: fibrotic progression": 1.0,
+                "has_quality: superior therapeutic efficacy": 1.0
+            },
+            "exosome isolation technique": {
+                "is_a: technique": 1.0,
+                "has_quality: high-efficiency": 1.0,
+                "has_quality: high-purity": 1.0,
+                "has_quality: reusable": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260501_1915"
+    },
+    "42065809": {
+        "entities": {
+            "Diabetic Foot Ulcer": {
+                "is_a: Complication": 1.0,
+                "occurs_in: Diabetes": 1.0,
+                "has_quality: Chronic": 1.0
+            },
+            "METTL14": {
+                "is_a: Regulator": 1.0,
+                "occurs_in: Autophagy": 1.0,
+                "occurs_in: Pyroptosis": 1.0,
+                "caused_by: m6A Modification": 1.0
+            },
+            "Autophagy": {
+                "is_a: Biological Process": 1.0,
+                "occurs_in: Diabetic Foot Ulcer": 1.0
+            },
+            "Pyroptosis": {
+                "is_a: Biological Process": 1.0,
+                "occurs_in: Diabetic Foot Ulcer": 1.0
+            },
+            "Simiao Yong'an Decoction": {
+                "is_a: Herbal Decoction": 1.0,
+                "is_treatment_for: Diabetic Foot Ulcer": 1.0,
+                "is_treatment_for: Skin Wound": 1.0
+            },
+            "Skin Wound": {
+                "is_a: Wound": 1.0,
+                "occurs_in: Skin": 1.0
+            },
+            "Wound Healing": {
+                "is_a: Biological Process": 1.0,
+                "occurs_in: Diabetic Foot Ulcer": 1.0,
+                "occurs_in: Skin": 1.0
+            },
+            "BECN1": {
+                "is_a: Protein": 1.0,
+                "part_of: Autophagy": 1.0
+            },
+            "Angiogenesis": {
+                "is_a: Biological Process": 1.0,
+                "occurs_in: Diabetic Foot Ulcer": 1.0
+            },
+            "High Glucose": {
+                "is_a: Chemical Entity": 1.0,
+                "caused_by: Diabetes": 1.0
+            },
+            "m6A Modification": {
+                "is_a: Epigenetic Modification": 1.0,
+                "occurs_in: BECN1 mRNA": 1.0
+            },
+            "BECN1 mRNA": {
+                "is_a: mRNA": 1.0,
+                "part_of: BECN1": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260501_1915"
     },
     "predefined": {
         "entities": {

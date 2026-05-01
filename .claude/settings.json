@@ -2,7 +2,27 @@
   "permissions": {
     "allow": [
       "Bash(python3 -m pytest tests/test_inspection.py -x -q --no-header)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(python3 -c ' *)",
+      "Bash(/opt/anaconda3/envs/first_env/bin/python -m pytest \"/Users/Strubbelig/Library/Mobile Documents/com~apple~CloudDocs/Forschung/Wound ontology/tests\" --collect-only)",
+      "Read(//Users/Strubbelig/Library/Logs/**)",
+      "Read(//Users/Strubbelig/Library/**)",
+      "Read(//private/tmp/**)",
+      "Bash(/opt/anaconda3/bin/conda env *)",
+      "Bash(/opt/anaconda3/bin/conda create *)",
+      "Bash(/opt/anaconda3/envs/second_env/bin/python --version)",
+      "Bash(/opt/anaconda3/envs/second_env/bin/python -m pytest --version)",
+      "Bash(/opt/anaconda3/envs/second_env/bin/python -m ipykernel install --user --name second_env --display-name \"Python \\(second_env\\)\")",
+      "Bash(sqlite3 \"/Users/Strubbelig/Library/Application Support/Code/User/workspaceStorage/ee22a7a38f2f8977274712b7e6e703ce/state.vscdb\" \"SELECT value FROM ItemTable WHERE key = 'ms-python.python';\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); ws='/Users/Strubbelig/Library/Mobile Documents/com~apple~CloudDocs/Forschung/Wound ontology'; print\\(json.dumps\\(d.get\\('autoSelectedWorkspacePythonInterpreter-'+ws,{}\\), indent=2\\)\\)\")",
+      "Bash(sqlite3 \"/Users/Strubbelig/Library/Application Support/Code/User/workspaceStorage/ee22a7a38f2f8977274712b7e6e703ce/state.vscdb\" \"SELECT key, value FROM ItemTable;\")",
+      "Bash(sqlite3 \"/Users/Strubbelig/Library/Application Support/Code/User/globalStorage/state.vscdb\" \"SELECT key, value FROM ItemTable WHERE key LIKE '%python%' OR key LIKE '%envs%';\")",
+      "Bash(sqlite3 \"/Users/Strubbelig/Library/Application Support/Code/User/workspaceStorage/ee22a7a38f2f8977274712b7e6e703ce/state.vscdb\" \"SELECT value FROM ItemTable WHERE key = 'ms-python.vscode-python-envs';\")",
+      "Bash(python3 -m json.tool)",
+      "Bash(sqlite3 \"/Users/Strubbelig/Library/Application Support/Code/User/globalStorage/ms-python.vscode-python-envs/storage.db\" \"SELECT key, value FROM ItemTable;\")",
+      "Bash(/opt/anaconda3/envs/second_env/bin/pip show *)",
+      "Bash(/opt/anaconda3/envs/second_env/bin/pytest tests *)",
+      "Bash(/opt/anaconda3/envs/first_env/bin/pytest --collect-only -q)"
     ]
   }
 }

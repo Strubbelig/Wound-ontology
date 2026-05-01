@@ -10,6 +10,19 @@ import os
 from pathlib import Path
 
 import pytest
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+def pytest_collection_modifyitems(items):
+    """Skip all integration tests when OPENROUTER_API_KEY is not set."""
+    if os.getenv("OPENROUTER_API_KEY"):
+        return
+    skip = pytest.mark.skip(reason="OPENROUTER_API_KEY not set")
+    for item in items:
+        if "integration" in str(item.fspath):
+            item.add_marker(skip)
 
 _TEST_OUTPUT = Path(__file__).resolve().parents[1] / "test_output"
 

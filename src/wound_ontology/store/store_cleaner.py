@@ -126,58 +126,99 @@ class StoreCleaner:
         # Strip trailing parenthetical abbreviation: "Randomized Controlled Trial (RCT)"
         base = re.sub(r"\s*\([^)]*\)\s*$", "", lower).strip()
         return base in self.blocked_entities
-
-    def _pred(self, attr: str) -> str:
-        return attr.split(":", 1)[0].strip()
+    # unnecessary, predicate can be obtained from predicates property of store
+    #def _pred(self, attr: str) -> str:
+     #   return attr.split(":", 1)[0].strip()
 
     # ── Main entry point ──────────────────────────────────────────────────────
 
-    def clean(self, store) -> dict:
+    def clean_entities(self, store) -> dict:
         """
-        Clean the ConceptStore in-place and save it.
+        Finds all entities blocked by keyword search and removes them from the store.
+
+        Returns a report dict with counts of what was removed.
+        """
+        stats: dict[str, int] = defaultdict(int)
+        blocked_entity_examples: list[str] = []
+        blocked: set[str] = set()
+
+        for entity in store.entities:
+            if self._is_blocked(entity):
+                blocked.add(entity)
+                stats["blocked_entities"] += 1
+                if len(blocked_entity_examples) < 20:
+                    blocked_entity_examples.append(entity)
+
+        if blocked:
+            store.entities = [e for e in store.entities if e not in blocked]
+
+        return {
+            **dict(stats),
+            "blocked_entity_examples": blocked_entity_examples,
+        }
+
+
+    def clean_predicates(self, store) -> dict:
+        """
+        Remove attributes whose predicate is not in allowed_predicates.
 
         Returns a report dict with counts of what was removed.
         """
         stats: dict[str, int] = defaultdict(int)
         rogue_pred_counts: dict[str, int] = defaultdict(int)
-        blocked_entity_examples: list[str] = []
 
-        for key, pmid_data in store._dict.items():
-            entities: dict = pmid_data.get("entities", {})
-            to_delete: list[str] = []
+        for predicate in set(store.predicates):
+            if predicate and predicate not in self.allowed_predicates:
+                stats["rogue_predicates_removed"] += 1
+                rogue_pred_counts[predicate] += 1
 
-            for entity, attrs in list(entities.items()):
+        store.predicates = list(self.allowed_predicates)
 
-                # 1. Blocklist check
-                if self._is_blocked(entity):
-                    to_delete.append(entity)
-                    stats["blocked_entities"] += 1
-                    if len(blocked_entity_examples) < 20:
-                        blocked_entity_examples.append(entity)
-                    continue
+        return {
+            **dict(stats),
+            "rogue_predicate_breakdown": dict(rogue_pred_counts),
+        }
+    
 
-                # 2. Strip rogue predicates
-                rogue = [a for a in list(attrs) if self._pred(a) not in self.allowed_predicates]
-                for attr in rogue:
-                    del attrs[attr]
-                    rogue_pred_counts[self._pred(attr)] += 1
-                    stats["rogue_predicates_removed"] += 1
+    def clean_targets(self, store) -> dict:
+        """
+        Prune entities that have no confirmed (value == 1.0) attributes — typically
+        called after clean_predicates to remove entities emptied by predicate removal.
 
-                # 3. Prune entities left with no true attributes
+        Returns a report dict with counts of what was removed.
+        """
+        stats: dict[str, int] = defaultdict(int)
+
+        for pmid_data in store._dict.values():
+            entities = pmid_data.get("entities", {})
+            to_delete = []
+            for entity, attrs in entities.items():
                 if not any(v == 1.0 for v in attrs.values()):
                     to_delete.append(entity)
                     stats["empty_entities_pruned"] += 1
-
             for entity in to_delete:
                 del entities[entity]
 
         store.save()
 
-        return {
-            **dict(stats),
-            "rogue_predicate_breakdown": dict(rogue_pred_counts),
-            "blocked_entity_examples": blocked_entity_examples,
-        }
+        return dict(stats)
+    
+
+    def clean_attributes(self, store) -> dict:
+        """
+        Run all cleaning steps: predicate filter followed by target filter.
+
+        Returns a combined report dict.
+        """
+        pred_report = self.clean_predicates(store)
+        target_report = self.clean_targets(store)
+        return {**pred_report, **target_report}
+
+    def clean(self, store) -> dict:
+        """Run all cleaning steps: entities, predicates, and empty-entity pruning."""
+        entity_report = self.clean_entities(store)
+        attr_report = self.clean_attributes(store)
+        return {**entity_report, **attr_report}
 
     # ── Candidate scanning ────────────────────────────────────────────────────
 

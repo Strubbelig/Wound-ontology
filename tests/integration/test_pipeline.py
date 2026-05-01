@@ -2,8 +2,8 @@
 Integration tests for the full wound ontology pipeline.
 
 Requirements:
-  - GOOGLE_API_KEY and ENTREZ_EMAIL set in .env or environment
-  - Network access to PubMed and Google Gemini API
+  - OPENROUTER_API_KEY and ENTREZ_EMAIL set in .env or environment
+  - Network access to PubMed and OpenRouter API
 
 Run with:
   pytest tests/integration/ -m integration -v

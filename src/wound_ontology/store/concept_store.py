@@ -37,7 +37,7 @@ class ConceptStore:
     @dict.setter
     @validate_call(config=ConfigDict(extra='forbid', arbitrary_types_allowed=True))
     def dict(self, new_data: dict):
-        self._dict.update(new_data)
+        self.dict.update(new_data)
         self.save()
 
     # ── Derived views ─────────────────────────────────────────────────────────
@@ -66,9 +66,53 @@ class ConceptStore:
     def predicates(self) -> list[str]:
         return [a.split(':', 1)[0].strip() if ':' in a else "" for a in self.attributes]
 
+    @predicates.setter
+    def predicates(self, keep: list[str]) -> None:
+        """Keep only attributes whose predicate is in `keep`, removing all others."""
+        keep_set = set(keep)
+        for pmid_data in self.dict.values():
+            for entity, attrs in pmid_data.get("entities", {}).items():
+                pmid_data["entities"][entity] = {
+                    attr: val for attr, val in attrs.items()
+                    if ':' not in attr or attr.split(':', 1)[0].strip() in keep_set
+                }
+        self.save()
+        print(f"[ConceptStore] Predicates filtered — {len(keep_set)} allowed.")
+
     @property
     def targets(self) -> list[str]:
         return [a.split(':', 1)[1].strip() if ':' in a else a for a in self.attributes]
+
+    @targets.setter
+    def targets(self, keep: list[str]) -> None:
+        """Keep only attributes whose target is in `keep`, removing all others."""
+        keep_set = set(keep)
+        for pmid_data in self.dict.values():
+            for entity, attrs in pmid_data.get("entities", {}).items():
+                pmid_data["entities"][entity] = {
+                    attr: val for attr, val in attrs.items()
+                    if ':' not in attr or attr.split(':', 1)[1].strip() in keep_set
+                }
+        self.save()
+        print(f"[ConceptStore] Targets filtered — {len(keep_set)} allowed.")
+
+    @property
+    def entities(self) -> list[str]:
+        """Unique entity names across the store."""
+        all_entities: set[str] = set()
+        for pmid_data in self.dict.values():
+            all_entities.update(pmid_data.get("entities", {}).keys())
+        return sorted(all_entities)
+
+    @entities.setter
+    def entities(self, keep: list[str]) -> None:
+        """Keep only the listed entity names, removing all others from the store."""
+        keep_set = set(keep)
+        for pmid_data in self.dict.values():
+            old = pmid_data.get("entities", {})
+            pmid_data["entities"] = {k: v for k, v in old.items() if k in keep_set}
+        self.save()
+        print(f"[ConceptStore] Entities filtered — {len(keep_set)} kept.")
 
     # ── Ingestion ─────────────────────────────────────────────────────────────
 
