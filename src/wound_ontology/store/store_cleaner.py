@@ -113,7 +113,7 @@ class StoreCleaner(BaseCleaner):
         print(f"\n{'='*80}")
         print(f"  {len(ranked)} suspicious/blocked targets")
         print(f"  ✗ = blocklist  |  ✓ = whitelisted  |  ? = suspicious")
-        print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip")
+        print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  ESC = exit")
         print(f"{'='*80}\n")
 
         for target, count, score in ranked:
@@ -123,7 +123,10 @@ class StoreCleaner(BaseCleaner):
                 print(f"  ✓ (freq={count:>4})  '{target}'  — already whitelisted, skipping")
                 continue
             flag = "✗" if score == 100.0 else "?"
-            answer = input(f"  [{flag}] (freq={count:>4})  '{target}'  in scope? [y/n/s] ").strip().lower()
+            answer = self._prompt(f"  [{flag}] (freq={count:>4})  '{target}'  in scope? [y/n/s] ").strip().lower()
+            if answer == "esc":
+                print("  Exiting review.")
+                break
             if answer == "y":
                 to_whitelist.add(target)
             elif answer == "n":
@@ -160,11 +163,13 @@ class StoreCleaner(BaseCleaner):
         stats: dict[str, int] = defaultdict(int)
         rogue_pred_counts: dict[str, int] = defaultdict(int)
 
+        # Count all predicates that are not allowed before mutating the store.
         for predicate in set(store.predicates):
             if predicate and predicate not in self.allowed_predicates:
                 stats["rogue_predicates_removed"] += 1
                 rogue_pred_counts[predicate] += 1
 
+        # Replace the store's predicate set with only allowed predicates.
         store.predicates = list(self.allowed_predicates)
 
         return {
@@ -183,6 +188,7 @@ class StoreCleaner(BaseCleaner):
 
         for pmid_data in store._dict.values():
             for _, attrs in pmid_data.get("entities", {}).items():
+                # Identify any attribute whose target part is blocked.
                 to_delete = [
                     attr for attr in attrs
                     if ':' in attr and self._is_blocked(attr.split(':', 1)[1].strip())
@@ -191,6 +197,7 @@ class StoreCleaner(BaseCleaner):
                     del attrs[attr]
                     stats["blocked_targets_removed"] += 1
 
+        # Save only if there were modifications.
         store.save()
         return dict(stats)
 
@@ -269,7 +276,7 @@ class StoreCleaner(BaseCleaner):
         print(f"\n{'='*80}")
         print(f"  {len(ranked)} suspicious/blocked entities")
         print(f"  ✗ = blocklist  |  ✓ = whitelisted  |  ? = suspicious")
-        print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip")
+        print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  ESC = exit")
         print(f"{'='*80}\n")
 
         for entity, count, score, attrs in ranked:
@@ -279,7 +286,10 @@ class StoreCleaner(BaseCleaner):
                 print(f"  ✓ (freq={count:>4})  '{entity}'  — already whitelisted, skipping")
                 continue
             flag = "✗" if score == 100.0 else "?"
-            answer = input(f"  [{flag}] (freq={count:>4})  '{entity}'  in scope? [y/n/s] ").strip().lower()
+            answer = self._prompt(f"  [{flag}] (freq={count:>4})  '{entity}'  in scope? [y/n/s] ").strip().lower()
+            if answer == "esc":
+                print("  Exiting review.")
+                break
             if answer == "y":
                 to_whitelist.add(entity)
             elif answer == "n":
@@ -311,7 +321,9 @@ class StoreCleaner(BaseCleaner):
             pipeline.run_clean_store(extra_blocked_entities={"term1", "term2", ...})
         """
         self._reload_lists()
-        # Collect all entities sorted by frequency descending
+        # Collect all entities sorted by frequency descending; this is the candidate pool
+        # for the LLM scope scan. Entities present more often in the store are
+        # prioritized because they have greater influence on the ontology.
         ranked_raw = self._collect_ranked(store)
         by_freq = sorted(ranked_raw, key=lambda x: -x[1])
         total_entities = len(by_freq)
@@ -341,6 +353,7 @@ class StoreCleaner(BaseCleaner):
         # Entities already evaluated in a previous scan — skip LLM call for them
         already_evaluated: set[str] = set(cached_eval.keys())
         llm_flagged = {e for e, v in cached_eval.items() if v}
+        # Only send entities to the LLM that haven't been evaluated before.
         to_evaluate = [r for r in candidates if r[0] not in already_evaluated]
 
         if already_evaluated:

@@ -1,3 +1,4 @@
+"""Connector package exports for the wound ontology pipeline."""
 from wound_ontology.connectors.base_connector import BaseConnector
 from wound_ontology.connectors.onto_connector import OntoConnector
 from wound_ontology.connectors.bfo_connector import BFOConnector

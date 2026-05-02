@@ -11,7 +11,7 @@ class OntoConnector(BaseConnector):
         self.label_to_iri = {}
         self.iri_to_label = {}
 
-        # Load existing labels
+        # Load existing labels if a cached JSON exists, otherwise start empty.
         loaded = self.dm.load_latest_json(self.file_name)
         self._label_list = loaded if isinstance(loaded, list) else []
         self.connect()
@@ -35,6 +35,7 @@ class OntoConnector(BaseConnector):
             print(f"Loading {self.source_name} from {self.onto_url}...")
             self.onto = get_ontology(self.onto_url).load()
         except Exception as e:
+            # Fail gracefully if the ontology cannot be loaded from the network.
             print(f"Failed to load ontology: {e}")
 
     def get_data(self, query=None):

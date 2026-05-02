@@ -92,6 +92,7 @@ class MappingCleaner(BaseCleaner):
             print(f"\n  [{label} — {len(suspicious)} suspicious entries]")
             for raw, std in suspicious:
                 elower = raw.strip().lower()
+                # Strip parenthetical suffixes (e.g. "term (study)") before whitelist matching.
                 ebase = re.sub(r"\s*\([^)]*\)\s*$", "", elower).strip()
                 if elower in self.whitelist or ebase in self.whitelist:
                     print(f"  ✓  '{raw}' → '{std}'  — whitelisted, skipping")

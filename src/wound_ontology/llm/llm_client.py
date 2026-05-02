@@ -48,6 +48,7 @@ class LLMClient:
                 self._consec_errors = 0
                 return result
             except Exception as exc:
+                # If callers requested a hard failure threshold, enforce it here.
                 if self._max_consec_errors > 0:
                     self._consec_errors += 1
                     if self._consec_errors >= self._max_consec_errors:
@@ -86,6 +87,7 @@ class LLMClient:
                 temperature=temperature,
             )
             raw = resp.choices[0].message.content.strip()
+            # Remove code fences if the model wrapped JSON inside them.
             raw = raw.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
             return schema.model_validate_json(raw)
 
@@ -162,6 +164,9 @@ class LLMClient:
         2. If a term matches an INPUT STANDARD conceptually, you MUST reuse that standard exactly.
         3. Do NOT invent a new term if an existing standard covers the concept.
         4. Only create a new standard if no existing standard covers the concept.
+
+        This prompt is designed to preserve existing canonical labels and encourage
+        the model to map synonyms to the same target.
         """
         result = await self._execute_with_retry(self._call_json, prompt, NormalizationResponse, timeout=240)
         return {item.original: item.standard for item in result.mappings}

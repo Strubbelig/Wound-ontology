@@ -1,53 +1,272 @@
 from __future__ import annotations
+
 import asyncio
+import numpy as np
 import pandas as pd
+
+# sklearn utility for cosine similarity between vectors
+# this is how we measure "semantic closeness" between terms
+from sklearn.metrics.pairwise import cosine_similarity
+
 from wound_ontology.mappers.base_mapper import BaseMapper
 from wound_ontology.data_manager.data_manager import DataManager
 
 
 class NormalizationMapper(BaseMapper):
     def __init__(self, mapper_name, data_manager: DataManager, file_name):
+        """
+        This mapper evolves the simple dictionary-based mapper into a:
+
+        - semantic matcher (via embeddings)
+        - incremental learner (handles new terms without recomputing everything)
+        - human-in-the-loop system (via CSV review)
+
+        IMPORTANT:
+        self._mapping is the final truth:
+            term → standard
+        """
+
         super().__init__(
             mapper_name=mapper_name,
             data_manager=data_manager,
             file_name=file_name
         )
 
+        # ----------------------------
+        # NEW INTERNAL STATE
+        # ----------------------------
+
+        # Cache: standard term → embedding vector
+        # avoids recomputing embeddings every time
+        self._standard_embeddings: dict[str, np.ndarray] = {}
+
+        # Metadata per term (confidence, method, etc.)
+        # This is NOT required for mapping, but critical for:
+        # - auditing
+        # - human review
+        self._metadata: dict[str, dict] = {}
+
+        # Terms we failed to confidently map
+        self._unresolved_terms: list[str] = []
+
+        # ----------------------------
+        # TUNING PARAMETERS
+        # ----------------------------
+
+        # Below this confidence → send to human review
+        self._review_threshold: float = 0.75
+
+        # Above this similarity → auto-map without LLM
+        self._similarity_threshold: float = 0.85
+
+    # ----------------------------
+    # EXISTING API (unchanged)
+    # ----------------------------
+
     @property
     def standards(self) -> list[str]:
-        """Read-only unique list of the 'clean' ontology terms."""
+        """
+        Unique list of all canonical terms (targets of mapping).
+        """
         return sorted(list(set(self._mapping.values())))
 
     @property
     def originals(self) -> list[str]:
-        """Read-only list of all raw terms we have already processed."""
+        """
+        All raw terms we've already seen.
+        """
         return sorted(list(self._mapping.keys()))
 
     def map(self, term: str) -> str:
-        """Map a single term, returning it unchanged if not in the mapping."""
+        """
+        Simple lookup.
+        If term not found → return it unchanged.
+        """
         return self._mapping.get(term, term)
 
     def apply(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Apply the mapping to both index and columns (unmapped entries kept as-is)."""
+        """
+        Apply mapping to a dataframe (index + columns).
+        """
         return df.rename(index=self._mapping, columns=self._mapping)
+
+    # ----------------------------
+    # EMBEDDING UTILITIES
+    # ----------------------------
+
+    async def _ensure_standard_embeddings(self, llm):
+        """
+        Make sure every standard has an embedding.
+
+        WHY:
+        We compare new terms to standards using vector similarity.
+        So every standard must have a vector representation.
+
+        Only computes missing ones (important for performance).
+        """
+        missing = [s for s in self.standards if s not in self._standard_embeddings]
+
+        if not missing:
+            return
+
+        print(f"[{self.name}] Embedding {len(missing)} new standards...")
+
+        embeddings = await llm.create_embeddings(missing)
+
+        for s, emb in zip(missing, embeddings):
+            self._standard_embeddings[s] = np.array(emb)
+
+    def _nearest_standard(self, emb: np.ndarray):
+        """
+        Given a term embedding, find the closest standard.
+
+        RETURNS:
+            (best_standard, similarity_score)
+
+        HOW:
+        - stack all standard embeddings into a matrix
+        - compute cosine similarity
+        - pick the highest score
+
+        cosine similarity:
+            1.0 = identical meaning
+            0.0 = unrelated
+        """
+        if not self._standard_embeddings:
+            return None, 0.0
+
+        standards = list(self._standard_embeddings.keys())
+        matrix = np.vstack([self._standard_embeddings[s] for s in standards])
+
+        sims = cosine_similarity([emb], matrix)[0]
+        idx = int(np.argmax(sims))
+
+        return standards[idx], float(sims[idx])
+
+    # ----------------------------
+    # INCREMENTAL MAPPING (CORE LOGIC)
+    # ----------------------------
+
+    async def map_new_terms(self, terms: list[str], llm):
+        """
+        Main production method.
+
+        This replaces "re-run everything" with:
+            → only process NEW terms
+
+        PIPELINE:
+
+        for each term:
+            1. try similarity match (cheap, fast)
+            2. if uncertain → call LLM
+            3. assign confidence score
+            4. store metadata
+        """
+
+        new_terms = [t for t in terms if t not in self._mapping]
+
+        if not new_terms:
+            print(f"[{self.name}] No new terms to map.")
+            return self.mapping
+
+        print(f"[{self.name}] Mapping {len(new_terms)} new terms...")
+
+        # ensure we can compare against standards
+        await self._ensure_standard_embeddings(llm)
+
+        accumulated = {}
+
+        for term in new_terms:
+            try:
+                # --- STEP 1: embed the term ---
+                emb = np.array((await llm.create_embeddings([term]))[0])
+
+                # --- STEP 2: similarity match ---
+                best_std, score = self._nearest_standard(emb)
+
+                if best_std and score >= self._similarity_threshold:
+                    # HIGH CONFIDENCE → auto accept
+                    accumulated[term] = best_std
+
+                    self._metadata[term] = {
+                        "standard": best_std,
+                        "confidence": float(score),
+                        "method": "similarity"
+                    }
+                    continue
+
+                # --- STEP 3: LLM fallback ---
+                # used only when similarity is not strong enough
+                result = await llm.create_normalization_mapping([term], self.standards)
+
+                if result and term in result:
+                    std = result[term]
+
+                    # heuristic confidence (LLMs don't give real scores)
+                    confidence = 0.6
+                    if std == term:
+                        confidence = 0.4  # weak normalization
+
+                    accumulated[term] = std
+
+                    self._metadata[term] = {
+                        "standard": std,
+                        "confidence": confidence,
+                        "method": "llm"
+                    }
+
+                    # if LLM invented a NEW standard → embed it
+                    if std not in self._standard_embeddings:
+                        std_emb = (await llm.create_embeddings([std]))[0]
+                        self._standard_embeddings[std] = np.array(std_emb)
+
+                else:
+                    # completely failed case
+                    self._unresolved_terms.append(term)
+
+                    self._metadata[term] = {
+                        "standard": None,
+                        "confidence": 0.0,
+                        "method": "unresolved"
+                    }
+
+            except Exception as e:
+                print(f"[{self.name}] Failed to map '{term}': {e}")
+                self._unresolved_terms.append(term)
+
+        # persist results
+        if accumulated:
+            self._mapping.update(accumulated)
+            self.save()
+
+        print(f"[{self.name}] Mapping complete.")
+        print(f"[{self.name}] Unresolved: {len(self._unresolved_terms)}")
+
+        return self.mapping
+
+    # ----------------------------
+    # BULK MODE (INITIAL LOAD)
+    # ----------------------------
 
     async def get_data(self, terms: list[str], llm, batch_size=10, chunk_size=50):
         """
-        Normalizes medical terms in parallel waves.
+        Legacy bulk method.
 
-        batch_size  – concurrent LLM calls in flight at once.
-        chunk_size  – terms per LLM call (larger = fewer calls).
+        Use this ONCE to bootstrap your mapping.
+        After that → use map_new_terms()
+
+        This still uses LLM heavily (less efficient).
         """
+
         terms_to_map = [t for t in terms if t not in self.originals]
 
         if not terms_to_map:
-            print(f"[{self.name}] All {len(terms)} terms found in cache.")
+            print(f"[{self.name}] All terms cached.")
             return self.mapping
 
-        chunks = [terms_to_map[i:i + chunk_size] for i in range(0, len(terms_to_map), chunk_size)]
-        print(f"[{self.name}] Found {len(terms_to_map)} new terms → "
-              f"{len(chunks)} chunks (size={chunk_size}, concurrency={batch_size})...")
+        print(f"[{self.name}] Bulk normalizing {len(terms_to_map)} terms...")
 
+        chunks = [terms_to_map[i:i + chunk_size] for i in range(0, len(terms_to_map), chunk_size)]
         sem = asyncio.Semaphore(batch_size)
 
         async def process_chunk(chunk, chunk_id):
@@ -59,27 +278,127 @@ class NormalizationMapper(BaseMapper):
         tasks = [process_chunk(chunk, i) for i, chunk in enumerate(chunks)]
         all_results = await asyncio.gather(*tasks, return_exceptions=True)
 
-        # Merge all results in memory, then save once
         accumulated = {}
-        for i, result in enumerate(all_results):
-            if isinstance(result, Exception):
-                print(f"[{self.name}] Chunk {i + 1} failed ({type(result).__name__}): {result} — skipping.")
-            else:
-                accumulated.update(result)
+
+        for result in all_results:
+            if not isinstance(result, Exception):
+                for term, std in result.items():
+                    accumulated[term] = std
+
+                    self._metadata[term] = {
+                        "standard": std,
+                        "confidence": 0.6,
+                        "method": "llm_bulk"
+                    }
 
         if accumulated:
             self._mapping.update(accumulated)
             self.save()
 
-        print(f"[{self.name}] Normalization complete. Total terms in cache: {len(self.originals)}")
         return self.mapping
+
+    # ----------------------------
+    # HUMAN-IN-THE-LOOP
+    # ----------------------------
+
+    def export_review_csv(self, path: str):
+        """
+        Export LOW-CONFIDENCE mappings for human review.
+
+        Human fills:
+            reviewed_standard
+            notes
+        """
+
+        rows = []
+
+        for term, meta in self._metadata.items():
+            if meta["confidence"] < self._review_threshold:
+                rows.append({
+                    "term": term,
+                    "suggested_standard": meta["standard"],
+                    "confidence": meta["confidence"],
+                    "method": meta["method"],
+                    "reviewed_standard": "",
+                    "notes": ""
+                })
+
+        df = pd.DataFrame(rows)
+        df.to_csv(path, index=False)
+
+        print(f"[{self.name}] Exported {len(rows)} rows → {path}")
+
+    def import_review_csv(self, path: str):
+        """
+        Re-ingest human-reviewed decisions.
+
+        Any filled 'reviewed_standard' overrides the system.
+        """
+
+        df = pd.read_csv(path)
+
+        updates = 0
+
+        for _, row in df.iterrows():
+            term = row["term"]
+            reviewed = row.get("reviewed_standard")
+
+            if pd.notna(reviewed) and str(reviewed).strip():
+                reviewed = str(reviewed).strip()
+
+                self._mapping[term] = reviewed
+
+                self._metadata[term] = {
+                    "standard": reviewed,
+                    "confidence": 1.0,
+                    "method": "manual"
+                }
+
+                updates += 1
+
+        self.save()
+        print(f"[{self.name}] Applied {updates} human-reviewed mappings.")
+
+    # ----------------------------
+    # UNRESOLVED RETRY
+    # ----------------------------
+
+    async def resolve_unresolved(self, llm):
+        """
+        Retry unresolved terms in batch.
+
+        Useful after standards improve.
+        """
+
+        if not self._unresolved_terms:
+            print(f"[{self.name}] No unresolved terms.")
+            return
+
+        print(f"[{self.name}] Resolving {len(self._unresolved_terms)} terms...")
+
+        results = await llm.create_normalization_mapping(
+            self._unresolved_terms,
+            self.standards
+        )
+
+        for term, std in results.items():
+            self._mapping[term] = std
+
+            self._metadata[term] = {
+                "standard": std,
+                "confidence": 0.7,
+                "method": "llm_retry"
+            }
+
+        self._unresolved_terms = []
+        self.save()
 
 
 class TermMapper(NormalizationMapper):
     """
-    Normalization mapper for ontology terms — can be used for entity names,
-    predicate targets, or both (the legacy single-mapper mode).
+    Thin wrapper for your existing use case.
     """
+
     def __init__(
         self,
         data_manager: DataManager,

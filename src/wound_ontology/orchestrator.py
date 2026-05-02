@@ -1,4 +1,9 @@
 from __future__ import annotations
+"""Orchestrator glue code for the wound ontology pipeline.
+
+This module coordinates PubMed extraction, store cleaning, term normalization,
+hierarchy construction, FCA matrix generation, and final OWL export.
+"""
 import asyncio
 import os
 import pandas as pd
@@ -82,6 +87,9 @@ class Orchestrator:
         self.gexf          = GEXFExporter()
 
     def _run_sync(self, coroutine):
+        # Convert an async coroutine into a blocking call for the CLI-style
+        # orchestrator API. This is used by the code paths that are not
+        # already running inside an async event loop.
         loop = asyncio.get_event_loop()
         return loop.run_until_complete(coroutine)
 
@@ -97,12 +105,13 @@ class Orchestrator:
         Does NOT apply normalize() — call pipeline.mapping_cleaner.apply(store) after review.
         Safe to await mid-extraction because _dict writes only happen in the calling loop.
         """
-        # 1. Remove blocklisted entities and rogue predicates
+        # 1. Remove blocklisted entities and rogue predicates from the current store.
         cleaner = StoreCleaner(self.allowed_predicates)
         report = cleaner.clean(store)
         StoreCleaner.print_report(report)
 
-        # 2. Collect entity names and attribute targets separately
+        # 2. Collect entity names and attribute targets separately so we can
+        #    normalize both entity labels and the values that appear after ':'
         entity_terms: list[str] = []
         target_terms: list[str] = []
         seen_entities: set[str] = set()
@@ -119,7 +128,7 @@ class Orchestrator:
                             target_terms.append(tgt)
                             seen_targets.add(tgt)
 
-        # 3. Build mappings for new terms only (mappers skip already-known terms)
+        # 3. Build mappings for new terms only; cached terms are skipped.
         await self.entity_mapper.get_data(entity_terms, self.llm)
         await self.target_mapper.get_data(target_terms, self.llm)
 
@@ -205,9 +214,13 @@ class Orchestrator:
                 print(f"[Orchestrator] Loaded {len(predefined_df)} predefined edges from {p.name}")
 
         if predefined_df is not None:
+            # Ingest pre-defined hierarchy edges into the store before
+            # normalization so those terms are mapped alongside extracted data.
             self.store.get_data(predefined_df)
 
         if normalize:
+            # Collect all entity names and all predicate targets from the store.
+            # Use set comprehensions to avoid redundant LLM normalization calls.
             entity_terms = list({
                 entity
                 for pmid_data in self.store.dict.values()

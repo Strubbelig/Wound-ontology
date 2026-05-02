@@ -36,6 +36,8 @@ class ContextMatrix:
             return df
 
         # 1. Standardize casings
+        # Rows are formal object names and should look nicer in title case.
+        # Columns are predicates/targets and are normalized to lower case for stable grouping.
         df.index = df.index.astype(str).str.strip().str.title()
         df.columns = df.columns.astype(str).str.strip().str.lower()
 
@@ -46,12 +48,14 @@ class ContextMatrix:
 
         # 3. Process attributes (strictly numeric)
         if not attr_df.empty:
+            # Coerce any non-numeric values to NaN and collapse duplicates by max.
             attr_df = attr_df.apply(lambda x: pd.to_numeric(x, errors='coerce'))
             attr_df = attr_df.T.groupby(level=0).max().T
             attr_df = attr_df.groupby(level=0).max()
 
         # 4. Process metadata (strictly string)
         if not meta_df.empty:
+            # Keep the first metadata value when duplicate rows are merged.
             meta_df = meta_df.T.groupby(level=0).first().T
             meta_df = meta_df.groupby(level=0).first()
 
@@ -183,6 +187,7 @@ class ContextMatrix:
                 if obj_name not in entity_missing:
                     continue
                 for attr in entity_missing[obj_name]:
+                    # Write 1 for confirmed, 0 for denied. Existing truth values remain unchanged.
                     current_df.at[obj_name, attr] = 1 if attr in confirmed_list else 0
 
         meta_col, meta_id = self.dm.get_meta_stamp("llm_fill_nan")

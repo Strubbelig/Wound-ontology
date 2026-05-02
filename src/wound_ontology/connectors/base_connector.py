@@ -1,4 +1,5 @@
 from __future__ import annotations
+"""Base connector abstractions for the wound ontology pipeline."""
 from abc import ABC, abstractmethod
 from pydantic import validate_call, ConfigDict
 from wound_ontology.data_manager.data_manager import DataManager
@@ -8,6 +9,8 @@ class BaseConnector(ABC):
     """
     Abstract Base Class for all data and ontology sources.
     Enforces a consistent interface for the Orchestrator.
+
+    Subclasses must implement connect(), get_data(), and save().
     """
 
     @validate_call(config=ConfigDict(extra='forbid', arbitrary_types_allowed=True))
@@ -29,4 +32,5 @@ class BaseConnector(ABC):
 
     @abstractmethod
     def save(self):
+        """Persist connector data to disk."""
         pass

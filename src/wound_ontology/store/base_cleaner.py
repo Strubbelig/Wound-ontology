@@ -15,6 +15,9 @@ class BaseCleaner:
 
     Provides blocklist/whitelist management, scoring, interactive review helpers,
     and persistence methods for config/blocklists.py.
+
+    The blocklist and whitelist are updated by writing back to the source file
+    `config/blocklists.py`, so changes are immediately reflected by reloading the module.
     """
 
     def __init__(
@@ -37,9 +40,11 @@ class BaseCleaner:
 
     def _is_blocked(self, term: str) -> bool:
         lower = term.strip().lower()
+        # Remove parenthetical suffixes like "(study)" for matching purposes.
         base = re.sub(r"\s*\([^)]*\)\s*$", "", lower).strip()
         if lower in self.whitelist or base in self.whitelist:
             return False
+        # Block if either the full cleaned string or the stripped base is in the blocklist.
         return lower in self.blocked_entities or base in self.blocked_entities
 
     def _score(self, term: str) -> float:
@@ -50,6 +55,8 @@ class BaseCleaner:
             return 0.0
         if lower in self.blocked_entities or base in self.blocked_entities:
             return 100.0
+        # For non-explicit terms, score based on suspicious keywords.
+        # The heuristic is intentionally conservative: each keyword match adds weight.
         tokens = set(re.split(r"[\s\-_/(),]+", lower))
         score = len(tokens & _SUSPICIOUS_KEYWORDS) * 3.0
         for kw in _SUSPICIOUS_KEYWORDS:
@@ -59,13 +66,28 @@ class BaseCleaner:
 
     # ── Interactive review helpers ────────────────────────────────────────────
 
+    @staticmethod
+    def _prompt(msg: str) -> str:
+        """input() wrapper: maps ESC key and Ctrl-C/EOF to the sentinel 'esc'."""
+        try:
+            val = input(msg)
+            if "\x1b" in val and val.replace("\x1b", "").strip() == "":
+                return "esc"
+            return val
+        except (KeyboardInterrupt, EOFError):
+            print()
+            return "esc"
+
     def _review_to_whitelist(self, items: list[str], label: str) -> None:
-        """Per-item: y = move to WHITELIST, n = keep blocked, s = skip."""
+        """Per-item: y = move to WHITELIST, n = keep blocked, s = skip, ESC = exit."""
         to_whitelist: set[str] = set()
         print(f"  {len(items)} blocked {label}(s) to review")
-        print(f"  y = valid concept → WHITELIST  |  n = keep blocked  |  s = skip\n")
+        print(f"  y = valid concept → WHITELIST  |  n = keep blocked  |  s = skip  |  ESC = exit\n")
         for item in items:
-            answer = input(f"  '{item}' in scope? [y/n/s] ").strip().lower()
+            answer = self._prompt(f"  '{item}' in scope? [y/n/s] ").strip().lower()
+            if answer == "esc":
+                print("  Exiting review.")
+                break
             if answer == "y":
                 to_whitelist.add(item)
         if to_whitelist:
@@ -76,12 +98,15 @@ class BaseCleaner:
             print(f"  {kept} {label}(s) kept blocked or skipped.")
 
     def _review_to_blocklist(self, items: list[str], label: str) -> None:
-        """Per-item: y = keep in whitelist, n = move to BLOCKLIST + remove from whitelist, s = skip."""
+        """Per-item: y = keep in whitelist, n = move to BLOCKLIST + remove from whitelist, s = skip, ESC = exit."""
         to_block: set[str] = set()
         print(f"  {len(items)} whitelisted {label}(s) to review")
-        print(f"  y = keep in whitelist  |  n = move to BLOCKLIST  |  s = skip\n")
+        print(f"  y = keep in whitelist  |  n = move to BLOCKLIST  |  s = skip  |  ESC = exit\n")
         for item in items:
-            answer = input(f"  '{item}' still in scope? [y/n/s] ").strip().lower()
+            answer = self._prompt(f"  '{item}' still in scope? [y/n/s] ").strip().lower()
+            if answer == "esc":
+                print("  Exiting review.")
+                break
             if answer == "n":
                 to_block.add(item)
         if to_block:

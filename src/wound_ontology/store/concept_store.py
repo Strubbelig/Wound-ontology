@@ -171,9 +171,11 @@ class ConceptStore:
         target_map = target_mapper.mapping if target_mapper else {}
 
         def clean_entity(term: str) -> str:
+            # Prefer normalized mapped names, otherwise title-case as a fallback.
             return entity_map.get(term, term).strip().title()
 
         def clean_target(term: str) -> str:
+            # Normalize targets to preserve consistent ontology labels.
             return target_map.get(term, term).strip().title()
 
         normalized: dict = {}
@@ -190,7 +192,9 @@ class ConceptStore:
                     else:
                         new_triple = triple
                     merged[new_triple] = max(merged.get(new_triple, 0.0), float(value))
-                # Merge when Title-casing collapses two variants to the same name
+                # Merge when Title-casing collapses two variants to the same name.
+                # If the same normalized entity appears twice, keep the strongest
+                # evidence (max value) for every attribute triple.
                 if new_entity in new_entities:
                     for triple, value in merged.items():
                         new_entities[new_entity][triple] = max(
@@ -286,7 +290,9 @@ class ConceptStore:
                                 if triple not in attr_logic:
                                     attr_logic[triple] = 0.0
 
-                        # Semantic guard: is_a and part_of are mutually exclusive for the same target
+                        # Semantic guard: is_a and part_of are mutually exclusive for the same target.
+                        # If the model asserted both relations for the same target, keep is_a and
+                        # mark part_of as false so the store remains logically coherent.
                         is_a_targets = {
                             k.split(": ", 1)[1]
                             for k, v in attr_logic.items()

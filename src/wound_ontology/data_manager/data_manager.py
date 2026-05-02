@@ -35,13 +35,17 @@ class DataManager:
         """
         Removes oldest files matching the prefix, regardless of extension.
         Assumes prefix is unique to file type.
+
+        This keeps only the most recent `limit` files and prevents the cache
+        directory from growing without bound.
         """
         # search for any file starting with prefix_
         search_pattern = str(self.base_path / f"{prefix}_*")
         files = sorted(glob.glob(search_pattern))
 
         if len(files) > limit:
-            # The oldest files are at the start of the sorted list
+            # The file names are timestamped in a sortable format, so the
+            # oldest files naturally appear first after sorting.
             files_to_delete = files[:-limit]
             for file_path in files_to_delete:
                 try:
@@ -94,6 +98,8 @@ class DataManager:
         """
         Helper: Searches the directory for the most recent file
         matching the prefix and extension.
+
+        Uses the timestamped filename format to find the newest version.
         """
         search_pattern = str(self.base_path / f"{prefix}_*.{extension}")
         files = glob.glob(search_pattern)
@@ -160,12 +166,15 @@ class DataManager:
     def get_meta_stamp(self, workflow_prefix: str):
         """
         Returns ONLY the metadata fields for a specific workflow.
-        Returns: dict e.g., {'meta_extract_id': 'extract_1_20260316_1200'}
+        Returns: tuple(meta_column_name, meta_id_string)
+
+        This method keeps a simple persistent counter in `meta_ids.json` so that
+        every execution of a workflow can be traced with a stable stamp.
         """
         # 1. Increment the persistent state
         self.meta_id_dict[workflow_prefix] = self.meta_id_dict.get(workflow_prefix, 0) + 1
 
-        # 2. Persist the state immediately
+        # 2. Persist the state immediately so future calls do not reuse the same counter.
         self.save_as_json(self.meta_id_dict, self.file_name)
 
         # 3. Format the unique ID
@@ -180,6 +189,8 @@ class DataManager:
         """
         Deletes ALL files matching the prefix (json, csv, pkl).
         Safety: Requires confirm=True to actually execute deletion.
+
+        This is a destructive operation; the user must explicitly opt in.
         """
         if not prefix or len(prefix) < 5:
             print(f"Purge aborted: Prefix '{prefix}' is too short/dangerous.")

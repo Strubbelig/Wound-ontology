@@ -1,3 +1,4 @@
+"""Export package entry points for OWL and GEXF generation."""
 from wound_ontology.export.owl_generator import OWLGenerator
 from wound_ontology.export.tbox_generator import TBoxGenerator
 from wound_ontology.export.abox_generator import ABoxGenerator
