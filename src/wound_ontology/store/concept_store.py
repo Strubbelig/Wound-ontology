@@ -3,7 +3,7 @@ import asyncio
 import pandas as pd
 from pydantic import validate_call, ConfigDict
 from wound_ontology.data_manager.data_manager import DataManager
-from wound_ontology.store.store_cleaner import _METHODOLOGY_BLOCKLIST
+from config.blocklists import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST
 
 
 class ConceptStore:
@@ -156,30 +156,37 @@ class ConceptStore:
         else:
             raise TypeError(f"source must be a DataFrame or dict, got {type(source).__name__}")
 
-    def normalize(self, mapper) -> None:
+    def normalize(self, entity_mapper=None, target_mapper=None) -> None:
         """
         Apply term mapping and Title Case to every entity name and predicate target
         stored in the ConceptStore — in-place.
 
-        Call this after both add_llm_extracts() and add_predefined() are complete,
-        and after the mapper has been trained on the full term list.
-        """
-        term_map = mapper.mapping
+        entity_mapper – TermMapper for entity names (None = title-case only).
+        target_mapper – TermMapper for predicate targets (None = title-case only).
 
-        def clean(term: str) -> str:
-            return term_map.get(term, term).strip().title()
+        Call this after both add_llm_extracts() and add_predefined() are complete,
+        and after the mappers have been trained on the full term lists.
+        """
+        entity_map = entity_mapper.mapping if entity_mapper else {}
+        target_map = target_mapper.mapping if target_mapper else {}
+
+        def clean_entity(term: str) -> str:
+            return entity_map.get(term, term).strip().title()
+
+        def clean_target(term: str) -> str:
+            return target_map.get(term, term).strip().title()
 
         normalized: dict = {}
         for key, pmid_data in self._dict.items():
             entities = pmid_data.get("entities", {})
             new_entities: dict[str, dict] = {}
             for entity, attrs in entities.items():
-                new_entity = clean(entity)
+                new_entity = clean_entity(entity)
                 merged: dict[str, float] = {}
                 for triple, value in attrs.items():
                     if ":" in triple:
                         pred, tgt = triple.split(":", 1)
-                        new_triple = f"{pred.strip()}: {clean(tgt.strip())}"
+                        new_triple = f"{pred.strip()}: {clean_target(tgt.strip())}"
                     else:
                         new_triple = triple
                     merged[new_triple] = max(merged.get(new_triple, 0.0), float(value))

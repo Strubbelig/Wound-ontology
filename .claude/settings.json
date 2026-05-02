@@ -22,7 +22,9 @@
       "Bash(sqlite3 \"/Users/Strubbelig/Library/Application Support/Code/User/globalStorage/ms-python.vscode-python-envs/storage.db\" \"SELECT key, value FROM ItemTable;\")",
       "Bash(/opt/anaconda3/envs/second_env/bin/pip show *)",
       "Bash(/opt/anaconda3/envs/second_env/bin/pytest tests *)",
-      "Bash(/opt/anaconda3/envs/first_env/bin/pytest --collect-only -q)"
+      "Bash(/opt/anaconda3/envs/first_env/bin/pytest --collect-only -q)",
+      "Bash(xargs cat *)",
+      "Bash(python -m pytest tests/test_concept_store.py -q)"
     ]
   }
 }

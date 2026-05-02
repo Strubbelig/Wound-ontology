@@ -17,6 +17,7 @@ from wound_ontology.hierarchies.fca_hierarchy import FCAHierarchy
 from wound_ontology.fca.context_matrix import ContextMatrix
 from wound_ontology.fca.concept_lattice import ConceptLattice
 from wound_ontology.mappers.normalization_mapper import TermMapper
+from wound_ontology.mappers.mapping_cleaner import MappingCleaner
 from wound_ontology.export.owl_ontology import OWLOntology
 from wound_ontology.export.owl_reasoner import OWLReasoner
 from wound_ontology.export.gexf_exporter import GEXFExporter
@@ -62,20 +63,23 @@ class Orchestrator:
             llm_kwargs["model_id"] = openrouter_model
         self.llm = LLMClient(**llm_kwargs)
 
+        self.allowed_predicates = allowed_predicates
         self.pubcon        = PubmedConnector(self.dm, entrez_email)
         self.bfo           = BFOConnector(self.dm)
         self.ro            = ROConnector(self.dm)
         self.obi           = OBIConnector(self.dm)
         self.store         = ConceptStore(self.dm, "concept_store")
+        self.cleaner       = StoreCleaner(self.allowed_predicates)
         self.class_hier    = ClassHierarchy(self.dm)
         self.mere_hier     = MereologicalHierarchy(self.dm)
         self.fca_hier      = FCAHierarchy(self.dm)
         self.context_matrix = ContextMatrix(self.dm, "context_matrix")
         self.lattice       = ConceptLattice(self.dm, self.context_matrix)
-        self.term_mapper   = TermMapper(self.dm)
+        self.entity_mapper   = TermMapper(self.dm, file_name="entity_mapping", mapper_name="Entity mapper")
+        self.target_mapper   = TermMapper(self.dm, file_name="target_mapping", mapper_name="Target mapper")
+        self.mapping_cleaner = MappingCleaner(self.entity_mapper, self.target_mapper, self.allowed_predicates)
         self.reasoner      = OWLReasoner()
         self.gexf          = GEXFExporter()
-        self.allowed_predicates = allowed_predicates
 
     def _run_sync(self, coroutine):
         loop = asyncio.get_event_loop()
@@ -89,7 +93,8 @@ class Orchestrator:
 
     async def _normalization_milestone(self, store) -> None:
         """
-        Periodic callback: clean junk, normalize new terms, apply mapping, refresh hints.
+        Periodic callback: clean junk, build term mappings for review.
+        Does NOT apply normalize() — call pipeline.mapping_cleaner.apply(store) after review.
         Safe to await mid-extraction because _dict writes only happen in the calling loop.
         """
         # 1. Remove blocklisted entities and rogue predicates
@@ -97,23 +102,30 @@ class Orchestrator:
         report = cleaner.clean(store)
         StoreCleaner.print_report(report)
 
-        # 2. Collect all terms not yet in the mapping (entities + attribute targets)
-        all_terms = list({
-            term
-            for pmid_data in store.dict.values()
-            for entity, attrs in pmid_data.get("entities", {}).items()
-            for term in [entity] + [
-                triple.split(":", 1)[1].strip()
-                for triple in attrs.keys()
-                if ":" in triple
-            ]
-        })
+        # 2. Collect entity names and attribute targets separately
+        entity_terms: list[str] = []
+        target_terms: list[str] = []
+        seen_entities: set[str] = set()
+        seen_targets: set[str] = set()
+        for pmid_data in store.dict.values():
+            for entity, attrs in pmid_data.get("entities", {}).items():
+                if entity not in seen_entities:
+                    entity_terms.append(entity)
+                    seen_entities.add(entity)
+                for triple in attrs.keys():
+                    if ":" in triple:
+                        tgt = triple.split(":", 1)[1].strip()
+                        if tgt not in seen_targets:
+                            target_terms.append(tgt)
+                            seen_targets.add(tgt)
 
-        # 3. Normalize only the new ones (TermMapper skips known terms automatically)
-        await self.term_mapper.get_data(all_terms, self.llm)
+        # 3. Build mappings for new terms only (mappers skip already-known terms)
+        await self.entity_mapper.get_data(entity_terms, self.llm)
+        await self.target_mapper.get_data(target_terms, self.llm)
 
-        # 4. Apply updated mapping to the full store
-        store.normalize(self.term_mapper)
+        print("\n[Orchestrator] Mapping ready for review — "
+              "run pipeline.mapping_cleaner.review_mappings() then "
+              "pipeline.mapping_cleaner.apply(pipeline.store).")
 
     def run_extract_to_store(self, batch_size=10, use_bfo_attributes=True,
                              max_consecutive_failures=20, max_vocab_hints=300,
@@ -156,16 +168,16 @@ class Orchestrator:
         report = cleaner.clean(self.store)
         StoreCleaner.print_report(report)
 
-    def scan_store_candidates(
+    def llm_scan_entities(
         self,
         top_n: int = 1000,
         llm_batch_size: int = 150,
         display_batch_size: int = 500,
         threshold_pct: float = 20.0,
     ) -> None:
-        """LLM-powered scan of the top_n most frequent entities for user review."""
+        """LLM-powered scan of the top_n most frequent entities."""
         cleaner = StoreCleaner(self.allowed_predicates)
-        cleaner.scan_candidates(
+        cleaner.llm_scan_entities(
             self.store, self.llm,
             top_n=top_n,
             llm_batch_size=llm_batch_size,
@@ -196,18 +208,24 @@ class Orchestrator:
             self.store.get_data(predefined_df)
 
         if normalize:
-            all_terms = list({
-                term
+            entity_terms = list({
+                entity
                 for pmid_data in self.store.dict.values()
-                for entity, attrs in pmid_data.get("entities", {}).items()
-                for term in [entity] + [
-                    triple.split(":", 1)[1].strip()
-                    for triple in attrs.keys()
-                    if ":" in triple
-                ]
+                for entity in pmid_data.get("entities", {}).keys()
             })
-            self._run_sync(self.term_mapper.get_data(all_terms, self.llm))
-            self.store.normalize(self.term_mapper)
+            target_terms = list({
+                triple.split(":", 1)[1].strip()
+                for pmid_data in self.store.dict.values()
+                for attrs in pmid_data.get("entities", {}).values()
+                for triple in attrs.keys()
+                if ":" in triple
+            })
+            self._run_sync(self.entity_mapper.get_data(entity_terms, self.llm))
+            self._run_sync(self.target_mapper.get_data(target_terms, self.llm))
+            self.store.normalize(
+                entity_mapper=self.entity_mapper,
+                target_mapper=self.target_mapper,
+            )
 
         self.class_hier.get_data(self.store)
         self.mere_hier.get_data(self.store)

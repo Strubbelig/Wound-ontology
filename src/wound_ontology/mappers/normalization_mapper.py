@@ -77,13 +77,17 @@ class NormalizationMapper(BaseMapper):
 
 class TermMapper(NormalizationMapper):
     """
-    Single mapper for all ontology terms — entities and targets share one
-    normalization table so the same concept maps to the same standard regardless
-    of whether it appears as an object or as the target of a predicate.
+    Normalization mapper for ontology terms — can be used for entity names,
+    predicate targets, or both (the legacy single-mapper mode).
     """
-    def __init__(self, data_manager: DataManager):
+    def __init__(
+        self,
+        data_manager: DataManager,
+        file_name: str = "term_mapping",
+        mapper_name: str | None = None,
+    ):
         super().__init__(
-            mapper_name="Term mapper (entities + targets)",
+            mapper_name=mapper_name or "Term mapper (entities + targets)",
             data_manager=data_manager,
-            file_name="term_mapping",
+            file_name=file_name,
         )

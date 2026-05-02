@@ -3,97 +3,10 @@ import asyncio
 import re
 from collections import Counter, defaultdict
 
-_SUSPICIOUS_KEYWORDS: frozenset[str] = frozenset({
-    # Study design & reporting
-    "study", "trial", "review", "analysis", "cohort", "survey",
-    "registry", "database", "record", "protocol", "guideline",
-    "report", "reporting", "documentation",
-    # Study participants & groups
-    "group", "arm", "patient", "participant", "subject",
-    "control", "intervention", "allocation", "randomization",
-    "sample", "population", "cohort",
-    # Outcomes & statistics
-    "outcome", "endpoint", "result", "finding", "data",
-    "score", "scale", "index", "rate", "ratio", "percentage",
-    "mean", "median", "odds", "hazard", "confidence", "p-value",
-    "follow-up", "baseline", "duration",
-    # Admin / healthcare context
-    "hospital", "admission", "discharge", "stay", "cost",
-    "age", "gender", "sex", "bmi", "comorbidity",
-    "mortality", "morbidity", "survival",
-    # Methodology terms
-    "method", "methodology", "technique", "approach", "strategy",
-    "criteria", "inclusion", "exclusion", "consent",
-    "bias", "limitation", "heterogeneity", "blinding",
-    # Animal / basic science
-    "model", "assay", "vitro", "vivo", "murine", "rodent",
-    "pcr", "rrna", "sequencing", "staining", "immunohistochemistry",
-    "macrophage", "fibroblast", "keratinocyte", "cytokine",
-    # Demographics / admin
-    "age", "race", "sex", "ethnicity", "nurse", "physician",
-    "knowledge", "attitude", "satisfaction", "safety",
-    # Bibliometric
-    "pubmed", "scopus", "prospero", "prisma", "cochrane",
-    "regression", "hazard", "propensity", "heterogeneity",
-})
-
-_METHODOLOGY_BLOCKLIST: set[str] = {
-    # ── Study designs ──────────────────────────────────────────────────────────
-    "study", "review", "systematic review", "scoping review",
-    "systematic literature review", "literature review",
-    "meta-analysis", "meta analysis",
-    "randomized controlled trial", "randomised controlled trial", "rct",
-    "randomized clinical trial", "randomised clinical trial",
-    "clinical trial", "randomized trial", "randomised trial",
-    "cohort study", "retrospective study", "prospective study",
-    "cross-sectional study", "retrospective cohort study",
-    "prospective cohort study", "observational study",
-    "case-control study", "case control study", "case series", "case report",
-    # ── Study components & groups ──────────────────────────────────────────────
-    "control group", "intervention group", "study group", "comparison group",
-    "treatment group", "placebo group", "experimental group",
-    "intervention", "sample", "sample size", "population",
-    # ── Bibliometric / database terms ─────────────────────────────────────────
-    "pubmed", "scopus", "prospero", "prisma", "prisma guidelines",
-    "strobe", "strobe checklist", "cochrane",
-    # ── Statistical / analytical methods ──────────────────────────────────────
-    "logistic regression", "multivariate logistic regression",
-    "propensity score matching", "propensity score",
-    "hazard ratio", "odds ratio", "relative risk",
-    "auc", "receiver operating characteristic", "roc curve",
-    "sensitivity analysis", "subgroup analysis", "heterogeneity",
-    "risk of bias", "funnel plot", "forest plot",
-    "statistical analysis", "multivariate analysis",
-    "analysis", "regression", "correlation",
-    # ── Generic clinical/admin ─────────────────────────────────────────────────
-    "patient", "participant", "subject",
-    "follow-up", "follow-up period", "follow up",
-    "outcome", "outcome measure", "primary outcome", "secondary outcome",
-    "endpoint", "data", "result", "method", "methodology",
-    "inclusion criteria", "exclusion criteria",
-    "informed consent", "ethics", "ethical approval",
-    "limitation", "bias",
-    "protocol", "guideline", "guidelines",
-    # ── Demographics / noise ──────────────────────────────────────────────────
-    "age", "race", "sex", "ethnicity", "gender",
-    "nurse", "nursing staff", "healthcare professional",
-    "healthcare worker", "clinician", "physician",
-    "knowledge", "attitude", "practice", "theory",
-    "patient satisfaction", "patient safety",
-    # ── Animal / basic science ────────────────────────────────────────────────
-    "rat model", "mouse model", "murine model", "animal model",
-    "in vitro", "in vivo", "ex vivo",
-    "wound healing assay", "scratch assay",
-    "qrt-pcr", "qpcr", "rt-pcr", "pcr",
-    "16s rrna", "16s rrna gene sequencing", "rrna sequencing",
-    "cd31", "alpha-sma", "alpha smooth muscle actin",
-    "macrophage polarization",
-    "macrophage", "fibroblast", "keratinocyte",
-    "oxidative stress", "reactive oxygen species", "ros",
-}
+from wound_ontology.store.base_cleaner import BaseCleaner
 
 
-class StoreCleaner:
+class StoreCleaner(BaseCleaner):
     """
     Removes out-of-scope entities and invalid predicates from a ConceptStore.
 
@@ -109,27 +22,6 @@ class StoreCleaner:
         cleaner.print_report(report)
     """
 
-    def __init__(
-        self,
-        allowed_predicates: list[str],
-        extra_blocked_entities: set[str] | None = None,
-    ):
-        self.allowed_predicates: set[str] = set(allowed_predicates)
-        self.blocked_entities: set[str] = _METHODOLOGY_BLOCKLIST | (extra_blocked_entities or set())
-
-    # ── Helpers ───────────────────────────────────────────────────────────────
-
-    def _is_blocked(self, entity_name: str) -> bool:
-        lower = entity_name.strip().lower()
-        if lower in self.blocked_entities:
-            return True
-        # Strip trailing parenthetical abbreviation: "Randomized Controlled Trial (RCT)"
-        base = re.sub(r"\s*\([^)]*\)\s*$", "", lower).strip()
-        return base in self.blocked_entities
-    # unnecessary, predicate can be obtained from predicates property of store
-    #def _pred(self, attr: str) -> str:
-     #   return attr.split(":", 1)[0].strip()
-
     # ── Main entry point ──────────────────────────────────────────────────────
 
     def clean_entities(self, store) -> dict:
@@ -138,6 +30,7 @@ class StoreCleaner:
 
         Returns a report dict with counts of what was removed.
         """
+        self._reload_lists()
         stats: dict[str, int] = defaultdict(int)
         blocked_entity_examples: list[str] = []
         blocked: set[str] = set()
@@ -157,6 +50,106 @@ class StoreCleaner:
             "blocked_entity_examples": blocked_entity_examples,
         }
 
+    def list_blocked(self, store) -> list[str]:
+        """Print and return all entities in the store that are currently blocked."""
+        self._reload_lists()
+        blocked = sorted(e for e in store.entities if self._is_blocked(e))
+        print(f"{len(blocked)} blocked entities:")
+        for e in blocked:
+            print(f"  {e}")
+        return blocked
+
+    def list_blocked_targets(self, store) -> list[str]:
+        """Print and return all attribute targets in the store that are currently blocked."""
+        self._reload_lists()
+        blocked = sorted(set(t for t in store.targets if self._is_blocked(t)))
+        print(f"{len(blocked)} blocked targets:")
+        for t in blocked:
+            print(f"  {t}")
+        return blocked
+
+    # ── Interactive review methods ────────────────────────────────────────────
+
+    def review_blocked_entities(self, store) -> None:
+        """Review blocked entities in the store — keep blocked (n) or move to WHITELIST (y)."""
+        self._reload_lists()
+        blocked = sorted(e for e in store.entities if self._is_blocked(e))
+        if not blocked:
+            print("No blocked entities in store.")
+            return
+        self._review_to_whitelist(blocked, label="entity")
+
+    def review_blocked_targets(self, store) -> None:
+        """Review blocked targets in the store — keep blocked (n) or move to WHITELIST (y)."""
+        self._reload_lists()
+        blocked = sorted(set(t for t in store.targets if self._is_blocked(t)))
+        if not blocked:
+            print("No blocked targets in store.")
+            return
+        self._review_to_whitelist(blocked, label="target")
+
+    def review_susp_targets(self, store) -> None:
+        """Review suspicious and blocked targets — whitelist (y), block (n), or skip (s)."""
+        self._reload_lists()
+
+        freq: Counter = Counter()
+        for pmid_data in store._dict.values():
+            for _, attrs in pmid_data.get("entities", {}).items():
+                for attr in attrs:
+                    if ':' in attr:
+                        freq[attr.split(':', 1)[1].strip()] += 1
+
+        ranked = sorted(
+            [(t, c, self._score(t)) for t, c in freq.items() if self._score(t) > 0],
+            key=lambda x: (-x[2], -x[1]),
+        )
+        if not ranked:
+            print("No suspicious or blocked targets found.")
+            return
+
+        to_block: set[str] = set()
+        to_whitelist: set[str] = set()
+
+        print(f"\n{'='*80}")
+        print(f"  {len(ranked)} suspicious/blocked targets")
+        print(f"  ✗ = blocklist  |  ✓ = whitelisted  |  ? = suspicious")
+        print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip")
+        print(f"{'='*80}\n")
+
+        for target, count, score in ranked:
+            tlower = target.strip().lower()
+            tbase = re.sub(r"\s*\([^)]*\)\s*$", "", tlower).strip()
+            if tlower in self.whitelist or tbase in self.whitelist:
+                print(f"  ✓ (freq={count:>4})  '{target}'  — already whitelisted, skipping")
+                continue
+            flag = "✗" if score == 100.0 else "?"
+            answer = input(f"  [{flag}] (freq={count:>4})  '{target}'  in scope? [y/n/s] ").strip().lower()
+            if answer == "y":
+                to_whitelist.add(target)
+            elif answer == "n":
+                to_block.add(target)
+
+        self._save_review_results(to_block, to_whitelist, apply_hint="clean_targets")
+
+    def review_good_entities(self, store) -> None:
+        """Review whitelisted entities present in the store — keep (y) or move to BLOCKLIST (n)."""
+        self._reload_lists()
+        store_entities = {e.strip().lower() for e in store.entities}
+        good = sorted(e for e in self.whitelist if e in store_entities)
+        if not good:
+            print("No whitelisted entities found in store.")
+            return
+        self._review_to_blocklist(good, label="entity")
+
+    def review_good_targets(self, store) -> None:
+        """Review whitelisted targets present in the store — keep (y) or move to BLOCKLIST (n)."""
+        self._reload_lists()
+        store_targets = {t.strip().lower() for t in store.targets}
+        good = sorted(t for t in self.whitelist if t in store_targets)
+        if not good:
+            print("No whitelisted targets found in store.")
+            return
+        self._review_to_blocklist(good, label="target")
 
     def clean_predicates(self, store) -> dict:
         """
@@ -178,12 +171,32 @@ class StoreCleaner:
             **dict(stats),
             "rogue_predicate_breakdown": dict(rogue_pred_counts),
         }
-    
 
     def clean_targets(self, store) -> dict:
         """
-        Prune entities that have no confirmed (value == 1.0) attributes — typically
-        called after clean_predicates to remove entities emptied by predicate removal.
+        Remove attributes whose target is in the blocklist.
+
+        Returns a report dict with counts of what was removed.
+        """
+        self._reload_lists()
+        stats: dict[str, int] = defaultdict(int)
+
+        for pmid_data in store._dict.values():
+            for _, attrs in pmid_data.get("entities", {}).items():
+                to_delete = [
+                    attr for attr in attrs
+                    if ':' in attr and self._is_blocked(attr.split(':', 1)[1].strip())
+                ]
+                for attr in to_delete:
+                    del attrs[attr]
+                    stats["blocked_targets_removed"] += 1
+
+        store.save()
+        return dict(stats)
+
+    def prune_empty_entities(self, store) -> dict:
+        """
+        Remove entities that have no confirmed (value == 1.0) attributes.
 
         Returns a report dict with counts of what was removed.
         """
@@ -191,57 +204,31 @@ class StoreCleaner:
 
         for pmid_data in store._dict.values():
             entities = pmid_data.get("entities", {})
-            to_delete = []
-            for entity, attrs in entities.items():
-                if not any(v == 1.0 for v in attrs.values()):
-                    to_delete.append(entity)
-                    stats["empty_entities_pruned"] += 1
+            to_delete = [
+                entity for entity, attrs in entities.items()
+                if not any(v == 1.0 for v in attrs.values())
+            ]
             for entity in to_delete:
                 del entities[entity]
+                stats["empty_entities_pruned"] += 1
 
         store.save()
-
         return dict(stats)
-    
 
     def clean_attributes(self, store) -> dict:
-        """
-        Run all cleaning steps: predicate filter followed by target filter.
-
-        Returns a combined report dict.
-        """
-        pred_report = self.clean_predicates(store)
+        """Remove rogue predicates, blocked targets, then prune emptied entities."""
+        pred_report   = self.clean_predicates(store)
         target_report = self.clean_targets(store)
-        return {**pred_report, **target_report}
+        prune_report  = self.prune_empty_entities(store)
+        return {**pred_report, **target_report, **prune_report}
 
     def clean(self, store) -> dict:
-        """Run all cleaning steps: entities, predicates, and empty-entity pruning."""
+        """Run all cleaning steps: entities, predicates, blocked targets, empty-entity pruning."""
         entity_report = self.clean_entities(store)
-        attr_report = self.clean_attributes(store)
+        attr_report   = self.clean_attributes(store)
         return {**entity_report, **attr_report}
 
     # ── Candidate scanning ────────────────────────────────────────────────────
-
-    def _score(self, entity: str) -> float:
-        """
-        Higher score = more likely out-of-scope.
-        Blocklisted names score 100. Others are scored by suspicious keyword hits.
-        """
-        lower = entity.strip().lower()
-        base = re.sub(r"\s*\([^)]*\)\s*$", "", lower).strip()
-
-        if lower in self.blocked_entities or base in self.blocked_entities:
-            return 100.0
-
-        tokens = set(re.split(r"[\s\-_/(),]+", lower))
-        score = len(tokens & _SUSPICIOUS_KEYWORDS) * 3.0
-
-        # Partial substring hits for multi-word keywords not caught by tokenisation
-        for kw in _SUSPICIOUS_KEYWORDS:
-            if " " in kw and kw in lower:
-                score += 2.0
-
-        return score
 
     def _collect_ranked(self, store) -> list[tuple[str, int, float, list[str]]]:
         """
@@ -266,7 +253,41 @@ class StoreCleaner:
         ranked.sort(key=lambda x: (-x[2], -x[1]))
         return ranked
 
-    def scan_candidates(
+    def review_susp_entities(self, store) -> None:
+        """Review suspicious and blocked entities using keyword scoring — whitelist (y), block (n), or skip (s)."""
+        self._reload_lists()
+        ranked = [
+            (e, c, s, a) for e, c, s, a in self._collect_ranked(store) if s > 0
+        ]
+        if not ranked:
+            print("No suspicious or blocked entities found.")
+            return
+
+        to_block: set[str] = set()
+        to_whitelist: set[str] = set()
+
+        print(f"\n{'='*80}")
+        print(f"  {len(ranked)} suspicious/blocked entities")
+        print(f"  ✗ = blocklist  |  ✓ = whitelisted  |  ? = suspicious")
+        print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip")
+        print(f"{'='*80}\n")
+
+        for entity, count, score, attrs in ranked:
+            elower = entity.strip().lower()
+            ebase = re.sub(r"\s*\([^)]*\)\s*$", "", elower).strip()
+            if elower in self.whitelist or ebase in self.whitelist:
+                print(f"  ✓ (freq={count:>4})  '{entity}'  — already whitelisted, skipping")
+                continue
+            flag = "✗" if score == 100.0 else "?"
+            answer = input(f"  [{flag}] (freq={count:>4})  '{entity}'  in scope? [y/n/s] ").strip().lower()
+            if answer == "y":
+                to_whitelist.add(entity)
+            elif answer == "n":
+                to_block.add(entity)
+
+        self._save_review_results(to_block, to_whitelist, apply_hint="clean_entities")
+
+    def llm_scan_entities(
         self,
         store,
         llm,
@@ -289,6 +310,7 @@ class StoreCleaner:
 
             pipeline.run_clean_store(extra_blocked_entities={"term1", "term2", ...})
         """
+        self._reload_lists()
         # Collect all entities sorted by frequency descending
         ranked_raw = self._collect_ranked(store)
         by_freq = sorted(ranked_raw, key=lambda x: -x[1])
@@ -375,15 +397,19 @@ class StoreCleaner:
             print(f"\n{'='*80}")
             print(f"  SCOPE SCAN — Batch {batch_num}  "
                   f"(#{start + 1}–{start + len(batch)} of {len(ranked)})")
-            print(f"  ✗ = blocklist  |  ! = LLM flagged  |  · = clean")
+            print(f"  ✗ = blocklist  |  ! = LLM flagged  |  ✓ = whitelisted  |  · = clean")
             print(f"{'='*80}")
             print(f"  {'#':>5}  {'Freq':>4}  {'Flag':4}  Entity  →  sample true attributes")
             print(f"  {'-'*5}  {'-'*4}  {'-'*4}  {'-'*62}")
 
             n_flagged_in_batch = 0
             for rank, (entity, freq, score, attrs) in enumerate(batch, start=start + 1):
+                elower = entity.strip().lower()
+                ebase = re.sub(r"\s*\([^)]*\)\s*$", "", elower).strip()
                 if score == 100.0:
                     flag, n_flagged_in_batch = " ✗ ", n_flagged_in_batch + 1
+                elif elower in self.whitelist or ebase in self.whitelist:
+                    flag = " ✓  "
                 elif entity in llm_flagged:
                     flag, n_flagged_in_batch = " !  ", n_flagged_in_batch + 1
                 else:
@@ -402,11 +428,48 @@ class StoreCleaner:
                 print(f"  > {threshold_pct:.0f}% flagged → showing next batch automatically...\n")
             else:
                 print(f"  ≤ {threshold_pct:.0f}% flagged — stopping. "
-                      "Call scan_candidates() again to see more.")
+                      "Call review_susp_entities() again to see more.")
                 break
 
-        print(f"\nTo purge identified entities, run:")
-        print('  pipeline.run_clean_store(extra_blocked_entities={"term1", "term2", ...})')
+        # Per-entity interactive review
+        # Exclude entities already whitelisted (LLM cache may still flag them)
+        new_to_review = sorted(
+            e for e, _, _, _ in tier1
+            if e.strip().lower() not in self.whitelist
+            and re.sub(r"\s*\([^)]*\)\s*$", "", e.strip().lower()).strip() not in self.whitelist
+        )
+        if not new_to_review:
+            print("\nNo new entities to review — all flagged terms are already classified.")
+            return
+
+        to_block: set[str] = set()
+        to_whitelist: set[str] = set()
+
+        print(f"\n{'='*80}")
+        print(f"  Reviewing {len(new_to_review)} LLM-flagged entities one by one.")
+        print(f"  y = valid wound ontology concept → WHITELIST")
+        print(f"  n = out of scope                 → BLOCKLIST")
+        print(f"  s = skip (decide later)")
+        print(f"{'='*80}\n")
+
+        for entity in new_to_review:
+            answer = input(f"  '{entity}' in scope? [y/n/s] ").strip().lower()
+            if answer == "y":
+                to_whitelist.add(entity)
+            elif answer == "n":
+                to_block.add(entity)
+
+        if to_block:
+            added = self._append_to_blocklist(to_block)
+            print(f"\n  ✓ {added} new terms written to METHODOLOGY_BLOCKLIST.")
+        if to_whitelist:
+            added = self._append_to_whitelist(to_whitelist)
+            print(f"  ✓ {added} new terms written to WHITELIST.")
+        if to_block or to_whitelist:
+            print("  Run pipeline.run_clean_store() to apply blocklist changes.")
+        skipped = len(new_to_review) - len(to_block) - len(to_whitelist)
+        if skipped:
+            print(f"  {skipped} entities skipped (not yet classified).")
 
     # ── Reporting ─────────────────────────────────────────────────────────────
 
