@@ -57,6 +57,50 @@ class MappingCleaner(BaseCleaner):
 
     # ── Interactive review ────────────────────────────────────────────────────
 
+    def review_merged_mappings(self) -> None:
+        """
+        Per-entry review of all non-identity mappings (raw != canonical).
+
+        Shows every SapBERT cluster merge so the user can approve or reject each
+        one before the mapping is applied to the store.
+
+        y = keep merge  |  n = delete entry (raw stays as its own concept)  |  s = skip
+        """
+        mapping = self.term_mapper.mapping
+
+        non_identity = sorted(
+            [(raw, std) for raw, std in mapping.items()
+             if raw.strip().lower() != std.strip().lower()],
+            key=lambda x: x[1].lower(),
+        )
+
+        print(f"\n{'='*80}")
+        print(f"  Review SapBERT cluster mappings — {len(non_identity)} non-identity entries")
+        print(f"  y = keep merge  |  n = delete (keep as separate concept)  |  s = skip  |  ESC = exit")
+        print(f"{'='*80}\n")
+
+        if not non_identity:
+            print("  No non-identity mappings to review.")
+            return
+
+        to_delete: set[str] = set()
+
+        for raw, std in non_identity:
+            answer = self._prompt(f"  '{raw}'  →  '{std}'  keep merge? [y/n/s] ").strip().lower()
+            if answer == "esc":
+                print("  Exiting review.")
+                break
+            if answer == "n":
+                to_delete.add(raw)
+
+        if to_delete:
+            removed = self._delete_mapper_entries(self.term_mapper, to_delete)
+            print(f"\n  Restored {removed} terms as independent concepts.")
+        else:
+            print("\n  No entries removed.")
+
+        print("  Done. Run pipeline.mapping_cleaner.apply(pipeline.store) when satisfied.")
+
     def review_mappings(self) -> None:
         """
         Per-entry review of suspicious mapping entries.

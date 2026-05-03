@@ -1,48 +1,67 @@
+from __future__ import annotations
+
 import torch
 import numpy as np
 from transformers import AutoTokenizer, AutoModel
 
+
 class Embedder:
-    def __init__(self):
-        # We use the SapBERT model specifically trained for entity alignment
-        self.model_name = "cambridgeltl/SapBERT-from-PubMedBERT-fulltext"
+    """
+    SapBERT embedder for biomedical entity alignment.
 
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        self.model = AutoModel.from_pretrained(self.model_name)
+    Model weights are downloaded and cached on first use (~438 MB, HuggingFace cache).
+    GPU is used automatically when available.
+    """
 
-        self.model.eval()
+    MODEL_NAME = "cambridgeltl/SapBERT-from-PubMedBERT-fulltext"
+
+    def __init__(self, batch_size: int = 64):
+        self.batch_size   = batch_size
+        self._device      = None
+        self._tokenizer   = None
+        self._model       = None
+
+    # ── Lazy loading ──────────────────────────────────────────────────────────
+
+    def _ensure_loaded(self) -> None:
+        if self._model is not None:
+            return
+        self._device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        print(f"[Embedder] Loading SapBERT on {self._device}...")
+        self._tokenizer = AutoTokenizer.from_pretrained(self.MODEL_NAME)
+        self._model     = AutoModel.from_pretrained(self.MODEL_NAME).to(self._device)
+        self._model.eval()
+        print("[Embedder] SapBERT ready.")
+
+    # ── Core embedding ────────────────────────────────────────────────────────
 
     def embed(self, texts: list[str]) -> np.ndarray:
         """
-        Returns entity embeddings using the [CLS] token.
-        SapBERT is specifically trained to use the [CLS] representation.
+        Return an (N, hidden_size) float32 array of [CLS]-token embeddings.
+
+        Processes texts in mini-batches so VRAM usage stays bounded.
+        SapBERT is trained to use the [CLS] token for entity representation.
         """
-        inputs = self.tokenizer(
-            texts,
-            padding=True,
-            truncation=True,
-            return_tensors="pt"
-        )
+        self._ensure_loaded()
+        all_vecs: list[np.ndarray] = []
 
-        with torch.no_grad():
-            outputs = self.model(**inputs)
-            
-            # SapBERT documentation recommends using the [CLS] token (index 0) 
-            # for entity representation rather than mean pooling.
-            embeddings = outputs.last_hidden_state[:, 0, :]
+        for start in range(0, len(texts), self.batch_size):
+            batch = texts[start : start + self.batch_size]
+            inputs = self._tokenizer(
+                batch,
+                padding=True,
+                truncation=True,
+                max_length=128,
+                return_tensors="pt",
+            )
+            inputs = {k: v.to(self._device) for k, v in inputs.items()}
+            with torch.no_grad():
+                out  = self._model(**inputs)
+                vecs = out.last_hidden_state[:, 0, :]   # [CLS] token
+            all_vecs.append(vecs.cpu().float().numpy())
 
-        return embeddings.cpu().numpy()
-    
+        return np.vstack(all_vecs)
+
     async def create_embeddings(self, texts: list[str]) -> list[list[float]]:
-        """
-        Async wrapper for embed method, returns list of lists for compatibility.
-        """
-        embeddings = self.embed(texts)
-        return embeddings.tolist()
-    
-pmb = Embedder()
-# Test embedding
-test_texts = ["Wound healing involves inflammation and tissue repair.", "Chronic wounds are difficult to heal."]
-embeddings = pmb.embed(test_texts)
-print("Embeddings shape:", embeddings.shape)
-print("First embedding:", embeddings[0][:5])  # Print first 5 values    
+        """Async wrapper — returns list-of-lists for TermMapper compatibility."""
+        return self.embed(texts).tolist()

@@ -21,6 +21,7 @@ from wound_ontology.hierarchies.mereological_hierarchy import MereologicalHierar
 from wound_ontology.hierarchies.fca_hierarchy import FCAHierarchy
 from wound_ontology.fca.context_matrix import ContextMatrix
 from wound_ontology.fca.concept_lattice import ConceptLattice
+from wound_ontology.embedding.embedder import Embedder
 from wound_ontology.mappers.term_mapper import TermMapper
 from wound_ontology.mappers.mapping_cleaner import MappingCleaner
 from wound_ontology.export.owl_ontology import OWLOntology
@@ -82,6 +83,7 @@ class Orchestrator:
         self.lattice       = ConceptLattice(self.dm, self.context_matrix)
         self.term_mapper     = TermMapper(self.dm, file_name="term_mapping", mapper_name="Term mapper")
         self.mapping_cleaner = MappingCleaner(self.term_mapper, allowed_predicates=self.allowed_predicates)
+        self._embedder: Embedder | None = None   # lazy-loaded on first use
         self.reasoner      = OWLReasoner()
         self.gexf          = GEXFExporter()
 
@@ -92,23 +94,33 @@ class Orchestrator:
         loop = asyncio.get_event_loop()
         return loop.run_until_complete(coroutine)
 
+    def _ensure_embedder(self) -> Embedder:
+        """Return the shared SapBERT Embedder, initialising it on first call."""
+        if self._embedder is None:
+            self._embedder = Embedder()
+        return self._embedder
+
     def _collect_store_terms(self, store=None) -> list[str]:
         """Collect every medical term from entity names and predicate targets."""
+        return list(self._collect_store_terms_with_freq(store).keys())
+
+    def _collect_store_terms_with_freq(self, store=None) -> dict[str, int]:
+        """Collect every medical term with its PMID occurrence frequency."""
         store = store or self.store
-        terms: list[str] = []
-        seen_terms: set[str] = set()
+        freq: dict[str, int] = {}
         for pmid_data in store.dict.values():
+            seen_in_pmid: set[str] = set()
             for entity, attrs in pmid_data.get("entities", {}).items():
-                if entity not in seen_terms:
-                    terms.append(entity)
-                    seen_terms.add(entity)
+                if entity not in seen_in_pmid:
+                    freq[entity] = freq.get(entity, 0) + 1
+                    seen_in_pmid.add(entity)
                 for triple in attrs.keys():
                     if ":" in triple:
                         target = triple.split(":", 1)[1].strip()
-                        if target not in seen_terms:
-                            terms.append(target)
-                            seen_terms.add(target)
-        return terms
+                        if target not in seen_in_pmid:
+                            freq[target] = freq.get(target, 0) + 1
+                            seen_in_pmid.add(target)
+        return freq
 
     # ── Extraction ─────────────────────────────────────────────────────────────
 
@@ -118,23 +130,24 @@ class Orchestrator:
 
     async def _mapping_milestone(self, store) -> None:
         """
-        Periodic callback: clean junk, build term mappings for review.
+        Periodic callback during extraction: clean store, rebuild SapBERT term mapping.
         Does NOT apply normalize() — call pipeline.mapping_cleaner.apply(store) after review.
         Safe to await mid-extraction because _dict writes only happen in the calling loop.
         """
-        # 1. Remove blocklisted entities and rogue predicates from the current store.
         cleaner = StoreCleaner(self.allowed_predicates)
-        report = cleaner.clean(store)
+        report  = cleaner.clean(store)
         StoreCleaner.print_report(report)
 
-        # 2. Collect every medical term into one shared mapping dictionary.
-        terms = self._collect_store_terms(store)
-
-        # 3. Build mappings for new terms only; cached terms are skipped.
-        await self.term_mapper.build_mapping(terms, self.llm)
+        freq = self._collect_store_terms_with_freq(store)
+        self.term_mapper.build_from_embeddings(
+            list(freq.keys()),
+            embedder=self._ensure_embedder(),
+            similarity_threshold=self.term_mapper._similarity_threshold,
+            frequencies=freq,
+        )
 
         print("\n[Orchestrator] Mapping ready for review — "
-              "run pipeline.mapping_cleaner.review_mappings() then "
+              "run pipeline.mapping_cleaner.review_merged_mappings() then "
               "pipeline.mapping_cleaner.apply(pipeline.store).")
 
     def run_extract_to_store(self, batch_size=10, use_bfo_attributes=True,
@@ -172,25 +185,48 @@ class Orchestrator:
             print("\n[Orchestrator] Running post-extraction store clean...")
             self.run_clean_store()
 
-    def run_build_term_mapping(self, batch_size: int = 10, chunk_size: int = 50) -> dict:
+    def run_build_term_mapping(self, similarity_threshold: float = 0.92) -> dict:
         """
-        Build or extend the shared medical-term mapping from the current store.
+        Build the shared medical-term mapping using SapBERT cosine-similarity clustering.
 
-        Run this after extraction/cleaning and before mapping inspection/review.
-        Existing terms in term_mapping are skipped.
+        Embeds all entities and targets from the current store, then groups terms
+        whose similarity exceeds similarity_threshold into clusters.  The most
+        frequent term in each cluster becomes the canonical form.
+
+        After this returns, review and apply:
+            pipeline.mapping_cleaner.review_merged_mappings()
+            pipeline.mapping_cleaner.review_mappings()
+            pipeline.mapping_cleaner.apply(pipeline.store)
         """
-        terms = self._collect_store_terms()
-        print(f"[Orchestrator] Building term mapping from {len(terms)} unique store terms...")
-        mapping = self._run_sync(
-            self.term_mapper.build_mapping(
-                terms,
-                self.llm,
-                batch_size=batch_size,
-                chunk_size=chunk_size,
-            )
+        freq = self._collect_store_terms_with_freq()
+        print(f"[Orchestrator] Building SapBERT term mapping from {len(freq)} unique store terms "
+              f"(threshold={similarity_threshold})...")
+        mapping = self.term_mapper.build_from_embeddings(
+            list(freq.keys()),
+            embedder=self._ensure_embedder(),
+            similarity_threshold=similarity_threshold,
+            frequencies=freq,
         )
-        print("[Orchestrator] Term mapping ready for inspection.")
+        print("[Orchestrator] Term mapping ready — review with mapping_cleaner.")
         return mapping
+
+    def run_blocklist_similarity_scan(self, similarity_threshold: float = 0.92) -> None:
+        """
+        Use SapBERT to find store entities semantically similar to blocklist terms.
+
+        Presents flagged entities for interactive review.  Run this AFTER
+        pipeline.mapping_cleaner.apply(pipeline.store) so entity names are in
+        their canonical form.
+
+        Confirmed out-of-scope entities are added to METHODOLOGY_BLOCKLIST.
+        Confirmed in-scope entities are added to WHITELIST.
+        Then run pipeline.run_clean_store() to purge newly blocked entities.
+        """
+        self.cleaner.sapbert_blocklist_scan(
+            self.store,
+            embedder=self._ensure_embedder(),
+            similarity_threshold=similarity_threshold,
+        )
 
     def run_clean_store(self, extra_blocked_entities: set[str] | None = None) -> None:
         """Remove out-of-scope entities and invalid predicates from the ConceptStore."""

@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import asyncio
+from collections import defaultdict
 import numpy as np
 import pandas as pd
 
-# sklearn utility for cosine similarity between vectors
-# this is how we measure "semantic closeness" between terms
 from sklearn.metrics.pairwise import cosine_similarity
 
 from wound_ontology.data_manager.data_manager import DataManager
@@ -320,10 +319,100 @@ class TermMapper:
         return self.mapping
 
     async def get_data(self, terms: list[str], client, batch_size=10, chunk_size=50):
-        """
-        Backwards-compatible alias for build_mapping().
-        """
+        """Backwards-compatible alias for build_mapping()."""
         return await self.build_mapping(terms, client, batch_size=batch_size, chunk_size=chunk_size)
+
+    # ----------------------------
+    # SAPBERT CLUSTERING
+    # ----------------------------
+
+    def build_from_embeddings(
+        self,
+        terms: list[str],
+        embedder,
+        similarity_threshold: float = 0.92,
+        frequencies: dict[str, int] | None = None,
+    ) -> dict:
+        """
+        Build term mapping by SapBERT cosine-similarity clustering (union-find).
+
+        Algorithm:
+        1. Embed all unique terms with SapBERT.
+        2. Compute pairwise cosine similarity.
+        3. Union pairs above similarity_threshold into clusters.
+        4. Elect the most frequent term as canonical (tie-break: longest, then alphabetical).
+
+        After this returns, call:
+            mapping_cleaner.review_merged_mappings()
+            mapping_cleaner.apply(store)
+        """
+        unique_terms: list[str] = list(dict.fromkeys(terms))
+
+        if not unique_terms:
+            print(f"[{self.name}] No terms to cluster.")
+            return self._mapping
+
+        freq = frequencies or {}
+
+        print(f"[{self.name}] Embedding {len(unique_terms)} unique terms with SapBERT...")
+        embeddings = embedder.embed(unique_terms)   # (N, hidden_size)
+
+        print(f"[{self.name}] Computing pairwise similarity ({len(unique_terms)}×{len(unique_terms)})...")
+        sim_matrix = cosine_similarity(embeddings)  # (N, N)
+
+        # ── union-find ────────────────────────────────────────────────────────
+        parent = list(range(len(unique_terms)))
+
+        def find(x: int) -> int:
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+
+        n_merges = 0
+        n = len(unique_terms)
+        for i in range(n):
+            for j in range(i + 1, n):
+                if sim_matrix[i, j] >= similarity_threshold:
+                    ri, rj = find(i), find(j)
+                    if ri != rj:
+                        parent[ri] = rj
+                        n_merges += 1
+
+        print(f"[{self.name}] Merged {n_merges} pairs (threshold={similarity_threshold}).")
+
+        # ── elect canonical per cluster ───────────────────────────────────────
+        clusters: dict[int, list[int]] = defaultdict(list)
+        for idx in range(n):
+            clusters[find(idx)].append(idx)
+
+        accumulated: dict[str, str] = {}
+        n_non_identity = 0
+
+        for members in clusters.values():
+            # most frequent → longest → alphabetical (deterministic)
+            canonical_idx = min(
+                members,
+                key=lambda i: (-freq.get(unique_terms[i], 0), -len(unique_terms[i]), unique_terms[i]),
+            )
+            canonical = unique_terms[canonical_idx]
+
+            for idx in members:
+                raw = unique_terms[idx]
+                accumulated[raw] = canonical
+                self._metadata[raw] = {
+                    "standard": canonical,
+                    "confidence": 1.0 if raw == canonical else float(sim_matrix[canonical_idx, idx]),
+                    "method": "sapbert_cluster",
+                }
+                if raw != canonical:
+                    n_non_identity += 1
+
+        print(f"[{self.name}] {len(clusters)} clusters; {n_non_identity} non-identity mappings.")
+
+        self._mapping.update(accumulated)
+        self.save()
+        return self._mapping
 
     # ----------------------------
     # HUMAN-IN-THE-LOOP

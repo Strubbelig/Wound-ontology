@@ -484,6 +484,93 @@ class StoreCleaner(BaseCleaner):
         if skipped:
             print(f"  {skipped} entities skipped (not yet classified).")
 
+    # ── SapBERT blocklist similarity scan ────────────────────────────────────
+
+    def sapbert_blocklist_scan(
+        self,
+        store,
+        embedder,
+        similarity_threshold: float = 0.92,
+    ) -> None:
+        """
+        Compare store entities against blocklist terms via SapBERT cosine similarity.
+
+        Entities above similarity_threshold to any blocklist term are presented
+        for interactive review. Run AFTER mapping has been applied so entity names
+        are in their canonical form.
+
+        y = out of scope → BLOCKLIST  |  n = keep → WHITELIST  |  s = skip  |  ESC = exit
+
+        After review, call pipeline.run_clean_store() to purge newly blocked entities.
+        """
+        import numpy as np
+        from sklearn.metrics.pairwise import cosine_similarity
+
+        self._reload_lists()
+
+        entities = list(store.entities)
+        if not entities:
+            print("[StoreCleaner] sapbert_blocklist_scan: store has no entities.")
+            return
+
+        blocklist_terms = sorted(self.blocked_entities)
+        if not blocklist_terms:
+            print("[StoreCleaner] sapbert_blocklist_scan: blocklist is empty.")
+            return
+
+        print(f"[StoreCleaner] Embedding {len(entities)} store entities...")
+        entity_embs = embedder.embed(entities)          # (E, H)
+
+        print(f"[StoreCleaner] Embedding {len(blocklist_terms)} blocklist terms...")
+        block_embs  = embedder.embed(blocklist_terms)   # (B, H)
+
+        print("[StoreCleaner] Computing similarity matrix...")
+        sim = cosine_similarity(entity_embs, block_embs)  # (E, B)
+
+        max_sims = sim.max(axis=1)     # (E,)
+        max_idxs = sim.argmax(axis=1)  # (E,)
+
+        # Collect flagged entities (skip those already explicitly classified)
+        flagged: list[tuple[str, float, str]] = []
+        for i, entity in enumerate(entities):
+            if max_sims[i] < similarity_threshold:
+                continue
+            elower = entity.strip().lower()
+            ebase  = re.sub(r"\s*\([^)]*\)\s*$", "", elower).strip()
+            if elower in self.blocked_entities or ebase in self.blocked_entities:
+                continue
+            if elower in self.whitelist or ebase in self.whitelist:
+                continue
+            flagged.append((entity, float(max_sims[i]), blocklist_terms[max_idxs[i]]))
+
+        flagged.sort(key=lambda x: -x[1])
+
+        if not flagged:
+            print(f"  No store entities exceeded similarity threshold {similarity_threshold}.")
+            return
+
+        print(f"\n{'='*80}")
+        print(f"  SapBERT Blocklist Scan — {len(flagged)} entities flagged (threshold={similarity_threshold})")
+        print(f"  y = out of scope → BLOCKLIST  |  n = keep → WHITELIST  |  s = skip  |  ESC = exit")
+        print(f"{'='*80}\n")
+
+        to_block:     set[str] = set()
+        to_whitelist: set[str] = set()
+
+        for entity, sim_score, nearest in flagged:
+            answer = self._prompt(
+                f"  (sim={sim_score:.3f}, nearest='{nearest}')  '{entity}'  out of scope? [y/n/s] "
+            ).strip().lower()
+            if answer == "esc":
+                print("  Exiting scan.")
+                break
+            if answer == "y":
+                to_block.add(entity.strip().lower())
+            elif answer == "n":
+                to_whitelist.add(entity.strip().lower())
+
+        self._save_review_results(to_block, to_whitelist, apply_hint="clean_entities")
+
     # ── Reporting ─────────────────────────────────────────────────────────────
 
     @staticmethod
