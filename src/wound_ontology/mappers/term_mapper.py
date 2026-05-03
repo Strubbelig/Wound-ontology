@@ -8,12 +8,16 @@ import pandas as pd
 # this is how we measure "semantic closeness" between terms
 from sklearn.metrics.pairwise import cosine_similarity
 
-from wound_ontology.mappers.base_mapper import BaseMapper
 from wound_ontology.data_manager.data_manager import DataManager
 
 
-class NormalizationMapper(BaseMapper):
-    def __init__(self, mapper_name, data_manager: DataManager, file_name):
+class TermMapper:
+    def __init__(
+        self,
+        data_manager: DataManager,
+        file_name: str = "term_mapping",
+        mapper_name: str | None = None,
+    ):
         """
         This mapper evolves the simple dictionary-based mapper into a:
 
@@ -26,11 +30,10 @@ class NormalizationMapper(BaseMapper):
             term → standard
         """
 
-        super().__init__(
-            mapper_name=mapper_name,
-            data_manager=data_manager,
-            file_name=file_name
-        )
+        self.name = mapper_name or "Term mapper"
+        self.dm = data_manager
+        self.file_name = file_name
+        self._mapping = self.dm.load_latest_json(self.file_name) or {}
 
         # ----------------------------
         # NEW INTERNAL STATE
@@ -64,6 +67,25 @@ class NormalizationMapper(BaseMapper):
     # ----------------------------
 
     @property
+    def mapping(self) -> dict:
+        """Access the underlying mapping dictionary."""
+        return self._mapping
+
+    @mapping.setter
+    def mapping(self, new_data: dict):
+        """Updates the mapping and automatically triggers a save."""
+        if not isinstance(new_data, dict):
+            raise TypeError("mapping must be updated with a dict")
+        self._mapping.update(new_data)
+        self.save()
+
+    def save(self):
+        """Persist the mapping state via DataManager."""
+        if self._mapping:
+            print(f"[{self.name}] Saving updated mapping...")
+            self.dm.save_as_json(self._mapping, self.file_name)
+
+    @property
     def standards(self) -> list[str]:
         """
         Unique list of all canonical terms (targets of mapping).
@@ -94,7 +116,7 @@ class NormalizationMapper(BaseMapper):
     # EMBEDDING UTILITIES
     # ----------------------------
 
-    async def _ensure_standard_embeddings(self, llm):
+    async def _ensure_standard_embeddings(self, client):
         """
         Make sure every standard has an embedding.
 
@@ -111,7 +133,7 @@ class NormalizationMapper(BaseMapper):
 
         print(f"[{self.name}] Embedding {len(missing)} new standards...")
 
-        embeddings = await llm.create_embeddings(missing)
+        embeddings = await client.create_embeddings(missing)
 
         for s, emb in zip(missing, embeddings):
             self._standard_embeddings[s] = np.array(emb)
@@ -147,7 +169,7 @@ class NormalizationMapper(BaseMapper):
     # INCREMENTAL MAPPING (CORE LOGIC)
     # ----------------------------
 
-    async def map_new_terms(self, terms: list[str], llm):
+    async def map_new_terms(self, terms: list[str], client):
         """
         Main production method.
 
@@ -172,14 +194,14 @@ class NormalizationMapper(BaseMapper):
         print(f"[{self.name}] Mapping {len(new_terms)} new terms...")
 
         # ensure we can compare against standards
-        await self._ensure_standard_embeddings(llm)
+        await self._ensure_standard_embeddings(client)
 
         accumulated = {}
 
         for term in new_terms:
             try:
                 # --- STEP 1: embed the term ---
-                emb = np.array((await llm.create_embeddings([term]))[0])
+                emb = np.array((await client.create_embeddings([term]))[0])
 
                 # --- STEP 2: similarity match ---
                 best_std, score = self._nearest_standard(emb)
@@ -197,7 +219,7 @@ class NormalizationMapper(BaseMapper):
 
                 # --- STEP 3: LLM fallback ---
                 # used only when similarity is not strong enough
-                result = await llm.create_normalization_mapping([term], self.standards)
+                result = await client.create_normalization_mapping([term], self.standards)
 
                 if result and term in result:
                     std = result[term]
@@ -205,7 +227,7 @@ class NormalizationMapper(BaseMapper):
                     # heuristic confidence (LLMs don't give real scores)
                     confidence = 0.6
                     if std == term:
-                        confidence = 0.4  # weak normalization
+                        confidence = 0.4  # weak mapping
 
                     accumulated[term] = std
 
@@ -217,7 +239,7 @@ class NormalizationMapper(BaseMapper):
 
                     # if LLM invented a NEW standard → embed it
                     if std not in self._standard_embeddings:
-                        std_emb = (await llm.create_embeddings([std]))[0]
+                        std_emb = (await client.create_embeddings([std]))[0]
                         self._standard_embeddings[std] = np.array(std_emb)
 
                 else:
@@ -248,9 +270,9 @@ class NormalizationMapper(BaseMapper):
     # BULK MODE (INITIAL LOAD)
     # ----------------------------
 
-    async def get_data(self, terms: list[str], llm, batch_size=10, chunk_size=50):
+    async def build_mapping(self, terms: list[str], client, batch_size=10, chunk_size=50):
         """
-        Legacy bulk method.
+        Build the shared medical-term mapping dictionary.
 
         Use this ONCE to bootstrap your mapping.
         After that → use map_new_terms()
@@ -264,14 +286,14 @@ class NormalizationMapper(BaseMapper):
             print(f"[{self.name}] All terms cached.")
             return self.mapping
 
-        print(f"[{self.name}] Bulk normalizing {len(terms_to_map)} terms...")
+        print(f"[{self.name}] Building mappings for {len(terms_to_map)} terms...")
 
         chunks = [terms_to_map[i:i + chunk_size] for i in range(0, len(terms_to_map), chunk_size)]
         sem = asyncio.Semaphore(batch_size)
 
         async def process_chunk(chunk, chunk_id):
             async with sem:
-                results = await llm.create_normalization_mapping(chunk, self.standards)
+                results = await client.create_normalization_mapping(chunk, self.standards)
                 print(f"[{self.name}] Chunk {chunk_id + 1}/{len(chunks)} complete.")
                 return results
 
@@ -296,6 +318,12 @@ class NormalizationMapper(BaseMapper):
             self.save()
 
         return self.mapping
+
+    async def get_data(self, terms: list[str], client, batch_size=10, chunk_size=50):
+        """
+        Backwards-compatible alias for build_mapping().
+        """
+        return await self.build_mapping(terms, client, batch_size=batch_size, chunk_size=chunk_size)
 
     # ----------------------------
     # HUMAN-IN-THE-LOOP
@@ -363,7 +391,7 @@ class NormalizationMapper(BaseMapper):
     # UNRESOLVED RETRY
     # ----------------------------
 
-    async def resolve_unresolved(self, llm):
+    async def resolve_unresolved(self, client):
         """
         Retry unresolved terms in batch.
 
@@ -376,7 +404,7 @@ class NormalizationMapper(BaseMapper):
 
         print(f"[{self.name}] Resolving {len(self._unresolved_terms)} terms...")
 
-        results = await llm.create_normalization_mapping(
+        results = await client.create_normalization_mapping(
             self._unresolved_terms,
             self.standards
         )
@@ -392,21 +420,3 @@ class NormalizationMapper(BaseMapper):
 
         self._unresolved_terms = []
         self.save()
-
-
-class TermMapper(NormalizationMapper):
-    """
-    Thin wrapper for your existing use case.
-    """
-
-    def __init__(
-        self,
-        data_manager: DataManager,
-        file_name: str = "term_mapping",
-        mapper_name: str | None = None,
-    ):
-        super().__init__(
-            mapper_name=mapper_name or "Term mapper (entities + targets)",
-            data_manager=data_manager,
-            file_name=file_name,
-        )

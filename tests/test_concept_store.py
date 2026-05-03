@@ -80,7 +80,7 @@ def test_normalize_applies_mapping(empty_store):
     class FakeMapper:
         mapping = {"chronic wound": "Chronic Wound", "wound": "Wound"}
 
-    empty_store.normalize(entity_mapper=FakeMapper(), target_mapper=FakeMapper())
+    empty_store.normalize(mapper=FakeMapper())
     entities = empty_store.dict["1"]["entities"]
     assert "Chronic Wound" in entities
     assert entities["Chronic Wound"].get("is_a: Wound") == 1.0
@@ -98,7 +98,7 @@ def test_normalize_deduplicates_title_case(empty_store):
     class IdentityMapper:
         mapping = {}
 
-    empty_store.normalize(entity_mapper=IdentityMapper())
+    empty_store.normalize(mapper=IdentityMapper())
     # Both should collapse to "Wound"
     for pmid_data in empty_store.dict.values():
         for entity in pmid_data.get("entities", {}):

@@ -60,9 +60,7 @@ package "wound_ontology.llm.schemas" as wound_ontology.llm.schemas #coral {
 }
 package "wound_ontology.mappers" as wound_ontology.mappers #cornflowerblue {
 }
-package "wound_ontology.mappers.base_mapper" as wound_ontology.mappers.base_mapper #cornflowerblue {
-}
-package "wound_ontology.mappers.normalization_mapper" as wound_ontology.mappers.normalization_mapper #cornflowerblue {
+package "wound_ontology.mappers.term_mapper" as wound_ontology.mappers.term_mapper #cornflowerblue {
 }
 package "wound_ontology.orchestrator" as wound_ontology.orchestrator #aliceblue {
 }
@@ -128,11 +126,8 @@ wound_ontology.hierarchies.mereological_hierarchy --> wound_ontology.hierarchies
 wound_ontology.llm --> wound_ontology.llm.llm_client
 wound_ontology.llm --> wound_ontology.llm.schemas
 wound_ontology.llm.llm_client --> wound_ontology.llm.schemas
-wound_ontology.mappers --> wound_ontology.mappers.base_mapper
-wound_ontology.mappers --> wound_ontology.mappers.normalization_mapper
-wound_ontology.mappers.base_mapper --> wound_ontology.data_manager.data_manager
-wound_ontology.mappers.normalization_mapper --> wound_ontology.data_manager.data_manager
-wound_ontology.mappers.normalization_mapper --> wound_ontology.mappers.base_mapper
+wound_ontology.mappers --> wound_ontology.mappers.term_mapper
+wound_ontology.mappers.term_mapper --> wound_ontology.data_manager.data_manager
 wound_ontology.orchestrator --> wound_ontology.connectors.bfo_connector
 wound_ontology.orchestrator --> wound_ontology.connectors.obi_connector
 wound_ontology.orchestrator --> wound_ontology.connectors.pubmed_connector
@@ -148,7 +143,7 @@ wound_ontology.orchestrator --> wound_ontology.hierarchies.class_hierarchy
 wound_ontology.orchestrator --> wound_ontology.hierarchies.fca_hierarchy
 wound_ontology.orchestrator --> wound_ontology.hierarchies.mereological_hierarchy
 wound_ontology.orchestrator --> wound_ontology.llm.llm_client
-wound_ontology.orchestrator --> wound_ontology.mappers.normalization_mapper
+wound_ontology.orchestrator --> wound_ontology.mappers.term_mapper
 wound_ontology.orchestrator --> wound_ontology.store.concept_store
 wound_ontology.store --> wound_ontology.store.concept_store
 wound_ontology.store.concept_store --> wound_ontology.data_manager.data_manager

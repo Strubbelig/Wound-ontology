@@ -21,7 +21,7 @@ from wound_ontology.hierarchies.mereological_hierarchy import MereologicalHierar
 from wound_ontology.hierarchies.fca_hierarchy import FCAHierarchy
 from wound_ontology.fca.context_matrix import ContextMatrix
 from wound_ontology.fca.concept_lattice import ConceptLattice
-from wound_ontology.mappers.normalization_mapper import TermMapper
+from wound_ontology.mappers.term_mapper import TermMapper
 from wound_ontology.mappers.mapping_cleaner import MappingCleaner
 from wound_ontology.export.owl_ontology import OWLOntology
 from wound_ontology.export.owl_reasoner import OWLReasoner
@@ -80,9 +80,8 @@ class Orchestrator:
         self.fca_hier      = FCAHierarchy(self.dm)
         self.context_matrix = ContextMatrix(self.dm, "context_matrix")
         self.lattice       = ConceptLattice(self.dm, self.context_matrix)
-        self.entity_mapper   = TermMapper(self.dm, file_name="entity_mapping", mapper_name="Entity mapper")
-        self.target_mapper   = TermMapper(self.dm, file_name="target_mapping", mapper_name="Target mapper")
-        self.mapping_cleaner = MappingCleaner(self.entity_mapper, self.target_mapper, self.allowed_predicates)
+        self.term_mapper     = TermMapper(self.dm, file_name="term_mapping", mapper_name="Term mapper")
+        self.mapping_cleaner = MappingCleaner(self.term_mapper, allowed_predicates=self.allowed_predicates)
         self.reasoner      = OWLReasoner()
         self.gexf          = GEXFExporter()
 
@@ -93,13 +92,31 @@ class Orchestrator:
         loop = asyncio.get_event_loop()
         return loop.run_until_complete(coroutine)
 
+    def _collect_store_terms(self, store=None) -> list[str]:
+        """Collect every medical term from entity names and predicate targets."""
+        store = store or self.store
+        terms: list[str] = []
+        seen_terms: set[str] = set()
+        for pmid_data in store.dict.values():
+            for entity, attrs in pmid_data.get("entities", {}).items():
+                if entity not in seen_terms:
+                    terms.append(entity)
+                    seen_terms.add(entity)
+                for triple in attrs.keys():
+                    if ":" in triple:
+                        target = triple.split(":", 1)[1].strip()
+                        if target not in seen_terms:
+                            terms.append(target)
+                            seen_terms.add(target)
+        return terms
+
     # ── Extraction ─────────────────────────────────────────────────────────────
 
     def run_pubmed_search(self, queries: str | list[str], max_results_per_query: int = 200):
         """Fetch abstracts for one or more PubMed queries, merging into one database."""
         self.pubcon.get_data(queries, max_results_per_query)
 
-    async def _normalization_milestone(self, store) -> None:
+    async def _mapping_milestone(self, store) -> None:
         """
         Periodic callback: clean junk, build term mappings for review.
         Does NOT apply normalize() — call pipeline.mapping_cleaner.apply(store) after review.
@@ -110,27 +127,11 @@ class Orchestrator:
         report = cleaner.clean(store)
         StoreCleaner.print_report(report)
 
-        # 2. Collect entity names and attribute targets separately so we can
-        #    normalize both entity labels and the values that appear after ':'
-        entity_terms: list[str] = []
-        target_terms: list[str] = []
-        seen_entities: set[str] = set()
-        seen_targets: set[str] = set()
-        for pmid_data in store.dict.values():
-            for entity, attrs in pmid_data.get("entities", {}).items():
-                if entity not in seen_entities:
-                    entity_terms.append(entity)
-                    seen_entities.add(entity)
-                for triple in attrs.keys():
-                    if ":" in triple:
-                        tgt = triple.split(":", 1)[1].strip()
-                        if tgt not in seen_targets:
-                            target_terms.append(tgt)
-                            seen_targets.add(tgt)
+        # 2. Collect every medical term into one shared mapping dictionary.
+        terms = self._collect_store_terms(store)
 
         # 3. Build mappings for new terms only; cached terms are skipped.
-        await self.entity_mapper.get_data(entity_terms, self.llm)
-        await self.target_mapper.get_data(target_terms, self.llm)
+        await self.term_mapper.build_mapping(terms, self.llm)
 
         print("\n[Orchestrator] Mapping ready for review — "
               "run pipeline.mapping_cleaner.review_mappings() then "
@@ -165,11 +166,31 @@ class Orchestrator:
             max_consecutive_failures=max_consecutive_failures,
             max_vocab_hints=max_vocab_hints,
             milestone_every=normalize_every,
-            on_milestone=self._normalization_milestone if normalize_every > 0 else None,
+            on_milestone=self._mapping_milestone if normalize_every > 0 else None,
         ))
         if clean_after:
             print("\n[Orchestrator] Running post-extraction store clean...")
             self.run_clean_store()
+
+    def run_build_term_mapping(self, batch_size: int = 10, chunk_size: int = 50) -> dict:
+        """
+        Build or extend the shared medical-term mapping from the current store.
+
+        Run this after extraction/cleaning and before mapping inspection/review.
+        Existing terms in term_mapping are skipped.
+        """
+        terms = self._collect_store_terms()
+        print(f"[Orchestrator] Building term mapping from {len(terms)} unique store terms...")
+        mapping = self._run_sync(
+            self.term_mapper.build_mapping(
+                terms,
+                self.llm,
+                batch_size=batch_size,
+                chunk_size=chunk_size,
+            )
+        )
+        print("[Orchestrator] Term mapping ready for inspection.")
+        return mapping
 
     def run_clean_store(self, extra_blocked_entities: set[str] | None = None) -> None:
         """Remove out-of-scope entities and invalid predicates from the ConceptStore."""
@@ -196,15 +217,19 @@ class Orchestrator:
 
     # ── Hierarchies ────────────────────────────────────────────────────────────
 
-    def run_build_hierarchies(self, predefined_df: pd.DataFrame | None = None, normalize: bool = True) -> None:
+    def run_build_hierarchies(self, predefined_df: pd.DataFrame | None = None) -> None:
         """
         Build ClassHierarchy and MereologicalHierarchy from the ConceptStore.
 
         predefined_df – DataFrame with 'Class' and 'Parent class' columns.
                         When None, automatically loads from PREDEFINED_HIERARCHY_FILE
                         (data/raw/predefined_concept_hierarchy.csv) if it exists.
-        normalize     – if True, build LLM-based term normalization mapping and
-                        apply it to the whole store before reading hierarchies.
+
+        This method does not build or apply mappings. Run these explicit steps
+        first when needed:
+            run_build_term_mapping()
+            mapping_cleaner.review_mappings()
+            mapping_cleaner.apply(store)
         """
         if predefined_df is None and _PREDEFINED_HIERARCHY_FILE is not None:
             from pathlib import Path as _Path
@@ -214,31 +239,8 @@ class Orchestrator:
                 print(f"[Orchestrator] Loaded {len(predefined_df)} predefined edges from {p.name}")
 
         if predefined_df is not None:
-            # Ingest pre-defined hierarchy edges into the store before
-            # normalization so those terms are mapped alongside extracted data.
+            # Ingest pre-defined hierarchy edges into the store.
             self.store.get_data(predefined_df)
-
-        if normalize:
-            # Collect all entity names and all predicate targets from the store.
-            # Use set comprehensions to avoid redundant LLM normalization calls.
-            entity_terms = list({
-                entity
-                for pmid_data in self.store.dict.values()
-                for entity in pmid_data.get("entities", {}).keys()
-            })
-            target_terms = list({
-                triple.split(":", 1)[1].strip()
-                for pmid_data in self.store.dict.values()
-                for attrs in pmid_data.get("entities", {}).values()
-                for triple in attrs.keys()
-                if ":" in triple
-            })
-            self._run_sync(self.entity_mapper.get_data(entity_terms, self.llm))
-            self._run_sync(self.target_mapper.get_data(target_terms, self.llm))
-            self.store.normalize(
-                entity_mapper=self.entity_mapper,
-                target_mapper=self.target_mapper,
-            )
 
         self.class_hier.get_data(self.store)
         self.mere_hier.get_data(self.store)
@@ -438,5 +440,8 @@ class Orchestrator:
     def run_full_pipeline(self, query, max_results=50, predefined_df=None):
         self.run_pubmed_search(query, max_results)
         self.run_extract_to_store()
-        self.run_build_hierarchies(predefined_df)
-        self.export_to_owl()
+        self.run_build_term_mapping()
+        print("[Orchestrator] Pause for mapping review. Run "
+              "pipeline.mapping_cleaner.review_mappings() and "
+              "pipeline.mapping_cleaner.apply(pipeline.store), then continue with "
+              "pipeline.run_build_hierarchies(...).")

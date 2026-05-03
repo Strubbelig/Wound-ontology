@@ -1,12 +1,12 @@
 """
-Integration tests for NormalizationMapper.get_data.
+Integration tests for TermMapper.build_mapping.
 
 Requirements:
   - OPENROUTER_API_KEY set in .env or environment
   - Network access to OpenRouter API
 
 Run with:
-  pytest tests/integration/test_normalization_mapper.py -m integration -v
+  pytest tests/integration/test_term_mapper.py -m integration -v
 
 Skip during normal unit test runs:
   pytest tests/ -m "not integration"
@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.llm.llm_client import LLMClient
-from wound_ontology.mappers.normalization_mapper import NormalizationMapper
+from wound_ontology.mappers.term_mapper import TermMapper
 
 load_dotenv()
 
@@ -59,15 +59,15 @@ def llm():
 @pytest.fixture(scope="module")
 def mapper(tmp_data_dir):
     dm = DataManager(base_path=tmp_data_dir)
-    return NormalizationMapper("test_mapper", dm, "normalization_test")
+    return TermMapper(data_manager=dm, file_name="term_mapping_test", mapper_name="test_mapper")
 
 
 @pytest.fixture(scope="module")
 def built_mapper(mapper, llm):
-    """Run get_data once; all tests below share the result."""
+    """Run build_mapping once; all tests below share the result."""
     import asyncio
     asyncio.get_event_loop().run_until_complete(
-        mapper.get_data(TERMS, llm, batch_size=2)
+        mapper.build_mapping(TERMS, llm, batch_size=2)
     )
     return mapper
 
@@ -87,8 +87,8 @@ def test_standards_are_non_empty(built_mapper):
 
 
 @pytest.mark.integration
-def test_mapping_persisted_to_disk(built_mapper, tmp_data_dir):
-    files = list(tmp_data_dir.glob("normalization_test_*.json"))
+def test_term_mapping_persisted_to_disk(built_mapper, tmp_data_dir):
+    files = list(tmp_data_dir.glob("term_mapping_test_*.json"))
     assert len(files) > 0, "No JSON file written to disk"
 
 
@@ -98,7 +98,7 @@ def test_already_processed_terms_skipped(built_mapper, llm):
     import asyncio
     originals_before = set(built_mapper.originals)
     asyncio.get_event_loop().run_until_complete(
-        built_mapper.get_data(TERMS, llm, batch_size=2)
+        built_mapper.build_mapping(TERMS, llm, batch_size=2)
     )
     assert set(built_mapper.originals) == originals_before
 

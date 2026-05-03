@@ -3,7 +3,7 @@ from wound_ontology.connectors import BaseConnector, OntoConnector, BFOConnector
 from wound_ontology.llm import LLMClient
 from wound_ontology.store import ConceptStore
 from wound_ontology.fca import ContextMatrix, ConceptLattice
-from wound_ontology.mappers import BaseMapper, NormalizationMapper, TermMapper
+from wound_ontology.mappers import TermMapper
 from wound_ontology.hierarchies import BaseHierarchy, ClassHierarchy, MereologicalHierarchy, FCAHierarchy
 from wound_ontology.export.owl_ontology import OWLOntology
 from wound_ontology.export.owl_reasoner import OWLReasoner
@@ -18,7 +18,7 @@ __all__ = [
     "LLMClient",
     "ConceptStore",
     "ContextMatrix", "ConceptLattice",
-    "BaseMapper", "NormalizationMapper", "TermMapper",
+    "TermMapper",
     "BaseHierarchy", "ClassHierarchy", "MereologicalHierarchy", "FCAHierarchy",
     "OWLOntology", "OWLReasoner", "GEXFExporter",
     "KnowledgeGraph", "SPARQLHelper",

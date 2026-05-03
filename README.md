@@ -43,7 +43,7 @@ src/wound_ontology/
 ├── llm/
 │   └── llm_client.py           # Gemini API client (extraction + naming)
 ├── mappers/
-│   └── normalization_mapper.py # LLM-based term normalization (TermMapper)
+│   └── term_mapper.py          # Shared medical-term mapping (entities + targets)
 └── orchestrator.py             # High-level pipeline orchestration
 ```
 
@@ -84,7 +84,13 @@ pipeline.run_pubmed_search(["chronic wound healing", "surgical wound infection"]
 # 2. Extract entities and relations
 pipeline.run_extract_to_store(batch_size=10)
 
-# 3. Build hierarchies (with predefined seed edges)
+# 3. Build and review the shared term mapping
+pipeline.run_build_term_mapping()
+pipeline.mapping_cleaner.list_suspicious_mappings()
+pipeline.mapping_cleaner.review_mappings()
+pipeline.mapping_cleaner.apply(pipeline.store)
+
+# 4. Build hierarchies (with predefined seed edges)
 predefined = pd.DataFrame([
     {"Class": "Chronic Wound",  "Parent class": "Wound"},
     {"Class": "Acute Wound",    "Parent class": "Wound"},
@@ -92,13 +98,13 @@ predefined = pd.DataFrame([
 ])
 pipeline.run_build_hierarchies(predefined_df=predefined)
 
-# 4. FCA — group wound entities by shared qualities
+# 5. FCA — group wound entities by shared qualities
 pipeline.run_fca(
     subtree_root="Wound",
     predicates=["has_quality", "occurs_in", "caused_by", "is_treatment_for"],
 )
 
-# 5. Export OWL
+# 6. Export OWL
 pipeline.export_to_owl()
 ```
 

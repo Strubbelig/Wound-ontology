@@ -41,13 +41,6 @@ class "BaseLLMClient" as wound_ontology.llm.llm_client.BaseLLMClient #coral {
   {abstract}fill_nan(object_name: str, attributes: list[str]) -> list[str]
   {abstract}generate_semantic_name(intent_attributes, superclass_names) -> str
 }
-class "BaseMapper" as wound_ontology.mappers.base_mapper.BaseMapper #cornflowerblue {
-  dm
-  file_name : str
-  mapping
-  name : str
-  save()
-}
 class "ClassHierarchy" as wound_ontology.hierarchies.class_hierarchy.ClassHierarchy #chocolate {
   file_name : str
 }
@@ -162,12 +155,13 @@ class "NormalizationEntry" as wound_ontology.llm.schemas.NormalizationEntry #cor
   original : str
   standard : str
 }
-class "NormalizationMapper" as wound_ontology.mappers.normalization_mapper.NormalizationMapper #cornflowerblue {
+class "TermMapper" as wound_ontology.mappers.term_mapper.TermMapper #cornflowerblue {
   mapping
   originals
   standards
   apply(df: pd.DataFrame) -> pd.DataFrame
-  get_data(terms: list[str], llm, batch_size)
+  build_mapping(terms: list[str], client, batch_size)
+  get_data(terms: list[str], client, batch_size)
   map(term: str) -> str
 }
 class "NormalizationResponse" as wound_ontology.llm.schemas.NormalizationResponse #coral {
@@ -242,7 +236,7 @@ class "Orchestrator" as wound_ontology.orchestrator.Orchestrator #aliceblue {
   build_knowledge_graph(input_owl: str) -> KnowledgeGraph
   export_to_gexf(output_file: str, input_owl: str) -> None
   export_to_owl(output_file)
-  run_build_hierarchies(predefined_df: pd.DataFrame, normalize: bool) -> None
+  run_build_hierarchies(predefined_df: pd.DataFrame) -> None
   run_curate_owl(input_file: str, output_file: str, import_bfo: bool, import_ro: bool, import_obi: bool, umls_api_key: str) -> None
   run_extract_to_store(batch_size, use_bfo_attributes)
   run_fca(subtree_root: str, hierarchy, predicates: list, batch_size: int) -> None
@@ -281,8 +275,6 @@ class "SPARQLHelper" as wound_ontology.graph.sparql_helper.SPARQLHelper #lightst
 class "SemanticNameResponse" as wound_ontology.llm.schemas.SemanticNameResponse #coral {
   superclass_name : str
 }
-class "TermMapper" as wound_ontology.mappers.normalization_mapper.TermMapper #cornflowerblue {
-}
 class "UMLSConnector" as wound_ontology.connectors.umls_connector.UMLSConnector #aquamarine {
   api_key
   base_url : str
@@ -305,8 +297,6 @@ wound_ontology.llm.llm_client.AnthropicClient --|> wound_ontology.llm.llm_client
 wound_ontology.llm.llm_client.GeminiClient --|> wound_ontology.llm.llm_client.BaseLLMClient
 wound_ontology.llm.llm_client.LLMClient --|> wound_ontology.llm.llm_client.BaseLLMClient
 wound_ontology.llm.llm_client.OpenAIClient --|> wound_ontology.llm.llm_client.BaseLLMClient
-wound_ontology.mappers.normalization_mapper.NormalizationMapper --|> wound_ontology.mappers.base_mapper.BaseMapper
-wound_ontology.mappers.normalization_mapper.TermMapper --|> wound_ontology.mappers.normalization_mapper.NormalizationMapper
 wound_ontology.store.concept_store.ConceptStore --* wound_ontology.orchestrator.Orchestrator : store
 wound_ontology.connectors.bfo_connector.BFOConnector --* wound_ontology.orchestrator.Orchestrator : bfo
 wound_ontology.connectors.obi_connector.OBIConnector --* wound_ontology.orchestrator.Orchestrator : obi
@@ -322,10 +312,9 @@ wound_ontology.hierarchies.fca_hierarchy.FCAHierarchy --* wound_ontology.orchest
 wound_ontology.hierarchies.mereological_hierarchy.MereologicalHierarchy --* wound_ontology.orchestrator.Orchestrator : mere_hier
 wound_ontology.llm.llm_client.GeminiClient --* wound_ontology.llm.llm_client.LLMClient : _gemini
 wound_ontology.llm.llm_client.LLMClient --* wound_ontology.orchestrator.Orchestrator : llm
-wound_ontology.mappers.normalization_mapper.TermMapper --* wound_ontology.orchestrator.Orchestrator : term_mapper
+wound_ontology.mappers.term_mapper.TermMapper --* wound_ontology.orchestrator.Orchestrator : term_mapper
 wound_ontology.data_manager.data_manager.DataManager --o wound_ontology.store.concept_store.ConceptStore : dm
 wound_ontology.data_manager.data_manager.DataManager --o wound_ontology.connectors.base_connector.BaseConnector : dm
-wound_ontology.data_manager.data_manager.DataManager --o wound_ontology.mappers.base_mapper.BaseMapper : dm
 wound_ontology.fca.context_matrix.ContextMatrix --o wound_ontology.fca.concept_lattice.ConceptLattice : matrix
 wound_ontology.graph.knowledge_graph.KnowledgeGraph --o wound_ontology.graph.sparql_helper.SPARQLHelper : _rdf_graph
 wound_ontology.graph.knowledge_graph.KnowledgeGraph --o wound_ontology.export.gexf_exporter.GEXFExporter : uses

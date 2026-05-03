@@ -156,27 +156,26 @@ class ConceptStore:
         else:
             raise TypeError(f"source must be a DataFrame or dict, got {type(source).__name__}")
 
-    def normalize(self, entity_mapper=None, target_mapper=None) -> None:
+    def normalize(self, mapper=None) -> None:
         """
         Apply term mapping and Title Case to every entity name and predicate target
         stored in the ConceptStore — in-place.
 
-        entity_mapper – TermMapper for entity names (None = title-case only).
-        target_mapper – TermMapper for predicate targets (None = title-case only).
+        mapper – shared TermMapper for all medical terms, whether they appear as
+                 entity names or predicate targets (None = title-case only).
 
         Call this after both add_llm_extracts() and add_predefined() are complete,
-        and after the mappers have been trained on the full term lists.
+        and after the mapper has been trained on the full term list.
         """
-        entity_map = entity_mapper.mapping if entity_mapper else {}
-        target_map = target_mapper.mapping if target_mapper else {}
+        term_map = mapper.mapping if mapper else {}
 
         def clean_entity(term: str) -> str:
             # Prefer normalized mapped names, otherwise title-case as a fallback.
-            return entity_map.get(term, term).strip().title()
+            return term_map.get(term, term).strip().title()
 
         def clean_target(term: str) -> str:
             # Normalize targets to preserve consistent ontology labels.
-            return target_map.get(term, term).strip().title()
+            return term_map.get(term, term).strip().title()
 
         normalized: dict = {}
         for key, pmid_data in self._dict.items():

@@ -1,4 +1,3 @@
-from wound_ontology.mappers.base_mapper import BaseMapper
-from wound_ontology.mappers.normalization_mapper import NormalizationMapper, TermMapper
+from wound_ontology.mappers.term_mapper import TermMapper
 
-__all__ = ["BaseMapper", "NormalizationMapper", "TermMapper"]
+__all__ = ["TermMapper"]

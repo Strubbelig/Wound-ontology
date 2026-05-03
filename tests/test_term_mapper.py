@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from wound_ontology.mappers.normalization_mapper import NormalizationMapper, TermMapper
+from wound_ontology.mappers.term_mapper import TermMapper
 
 
 INITIAL_MAPPING = {
@@ -24,7 +24,7 @@ class MockDM:
         self.saved.append((dict(data), file_name))
 
 
-class FakeNormalizationClient:
+class FakeTermMappingClient:
     def __init__(self, embeddings=None, normalization_results=None):
         self.embeddings = {
             "wound": [0.0, 1.0],
@@ -55,7 +55,7 @@ def dm():
 
 @pytest.fixture
 def mapper(dm):
-    return NormalizationMapper("test_mapper", dm, "test_mapping")
+    return TermMapper(data_manager=dm, file_name="term_mapping", mapper_name="test_mapper")
 
 
 # ── Legacy public surface ─────────────────────────────────────────────────────
@@ -95,8 +95,8 @@ def test_apply_renames_index_and_columns_without_mutating_original(mapper):
     assert list(df.columns) == ["acute wound", "unknown term"]
 
 
-def test_empty_mapping_passthrough():
-    mapper = NormalizationMapper("empty", MockDM({}), "empty_mapping")
+def test_empty_term_mapping_passthrough():
+    mapper = TermMapper(data_manager=MockDM({}), file_name="empty_term_mapping", mapper_name="empty")
     df = pd.DataFrame([[1, 0]], columns=["term_a", "term_b"])
 
     assert list(mapper.apply(df).columns) == ["term_a", "term_b"]
@@ -108,7 +108,7 @@ def test_empty_mapping_passthrough():
 
 @pytest.mark.asyncio
 async def test_ensure_standard_embeddings_only_embeds_missing_standards(mapper):
-    client = FakeNormalizationClient()
+    client = FakeTermMappingClient()
 
     await mapper._ensure_standard_embeddings(client)
     await mapper._ensure_standard_embeddings(client)
@@ -135,7 +135,7 @@ def test_nearest_standard_without_embeddings_returns_empty_match(mapper):
 
 @pytest.mark.asyncio
 async def test_map_new_terms_auto_maps_high_similarity_terms(mapper, dm):
-    client = FakeNormalizationClient(embeddings={"slow wound": [0.0, 0.95]})
+    client = FakeTermMappingClient(embeddings={"slow wound": [0.0, 0.95]})
 
     result = await mapper.map_new_terms(["slow wound"], client)
 
@@ -146,12 +146,12 @@ async def test_map_new_terms_auto_maps_high_similarity_terms(mapper, dm):
         "method": "similarity",
     }
     assert client.normalization_calls == []
-    assert dm.saved[-1][1] == "test_mapping"
+    assert dm.saved[-1][1] == "term_mapping"
 
 
 @pytest.mark.asyncio
 async def test_map_new_terms_uses_llm_fallback_for_uncertain_similarity(mapper):
-    client = FakeNormalizationClient(
+    client = FakeTermMappingClient(
         embeddings={"fragile skin": [0.2, 0.2], "skin fragility": [0.3, 0.4]},
         normalization_results={"fragile skin": "skin fragility"},
     )
@@ -170,7 +170,7 @@ async def test_map_new_terms_uses_llm_fallback_for_uncertain_similarity(mapper):
 
 @pytest.mark.asyncio
 async def test_map_new_terms_records_unresolved_terms(mapper):
-    client = FakeNormalizationClient(embeddings={"ambiguous term": [0.2, 0.2]})
+    client = FakeTermMappingClient(embeddings={"ambiguous term": [0.2, 0.2]})
 
     await mapper.map_new_terms(["ambiguous term"], client)
 
@@ -185,7 +185,7 @@ async def test_map_new_terms_records_unresolved_terms(mapper):
 
 @pytest.mark.asyncio
 async def test_map_new_terms_skips_cached_terms_without_llm_calls(mapper):
-    client = FakeNormalizationClient()
+    client = FakeTermMappingClient()
 
     result = await mapper.map_new_terms(["chronic wound"], client)
 
@@ -197,15 +197,15 @@ async def test_map_new_terms_skips_cached_terms_without_llm_calls(mapper):
 # ── Bulk bootstrap mode ───────────────────────────────────────────────────────
 
 @pytest.mark.asyncio
-async def test_get_data_normalizes_only_new_terms_and_records_bulk_metadata(mapper, dm):
-    client = FakeNormalizationClient(
+async def test_build_mapping_normalizes_only_new_terms_and_records_bulk_metadata(mapper, dm):
+    client = FakeTermMappingClient(
         normalization_results={
             "sloughy": "slough",
             "granulating": "granulation",
         }
     )
 
-    result = await mapper.get_data(
+    result = await mapper.build_mapping(
         ["chronic wound", "sloughy", "granulating"],
         client,
         batch_size=1,
@@ -220,14 +220,14 @@ async def test_get_data_normalizes_only_new_terms_and_records_bulk_metadata(mapp
         "confidence": 0.6,
         "method": "llm_bulk",
     }
-    assert dm.saved[-1][1] == "test_mapping"
+    assert dm.saved[-1][1] == "term_mapping"
 
 
 @pytest.mark.asyncio
-async def test_get_data_returns_cached_mapping_when_every_term_is_known(mapper, dm):
-    client = FakeNormalizationClient()
+async def test_build_mapping_returns_cached_mapping_when_every_term_is_known(mapper, dm):
+    client = FakeTermMappingClient()
 
-    result = await mapper.get_data(["chronic wound", "acute wound"], client)
+    result = await mapper.build_mapping(["chronic wound", "acute wound"], client)
 
     assert result == mapper.mapping
     assert client.normalization_calls == []
@@ -275,13 +275,13 @@ def test_import_review_csv_overrides_mapping_and_marks_manual(mapper, dm, tmp_pa
         "confidence": 1.0,
         "method": "manual",
     }
-    assert dm.saved[-1][1] == "test_mapping"
+    assert dm.saved[-1][1] == "term_mapping"
 
 
 @pytest.mark.asyncio
 async def test_resolve_unresolved_retries_terms_and_clears_queue(mapper, dm):
     mapper._unresolved_terms = ["ambiguous term"]
-    client = FakeNormalizationClient(normalization_results={"ambiguous term": "resolved standard"})
+    client = FakeTermMappingClient(normalization_results={"ambiguous term": "resolved standard"})
 
     await mapper.resolve_unresolved(client)
 
@@ -292,12 +292,12 @@ async def test_resolve_unresolved_retries_terms_and_clears_queue(mapper, dm):
         "method": "llm_retry",
     }
     assert mapper._unresolved_terms == []
-    assert dm.saved[-1][1] == "test_mapping"
+    assert dm.saved[-1][1] == "term_mapping"
 
 
-def test_term_mapper_uses_new_normalization_mapper_architecture(dm):
+def test_term_mapper_has_default_term_mapping_identity(dm):
     mapper = TermMapper(data_manager=dm, file_name="terms")
 
-    assert isinstance(mapper, NormalizationMapper)
-    assert mapper.name == "Term mapper (entities + targets)"
+    assert mapper.__class__ is TermMapper
+    assert mapper.name == "Term mapper"
     assert mapper.file_name == "terms"
