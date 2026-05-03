@@ -1,7 +1,6 @@
 from __future__ import annotations
 import asyncio
 import pandas as pd
-from pydantic import validate_call, ConfigDict
 from wound_ontology.data_manager.data_manager import DataManager
 from config.blocklists import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST
 
@@ -35,7 +34,6 @@ class ConceptStore:
         return self._dict
 
     @dict.setter
-    @validate_call(config=ConfigDict(extra='forbid', arbitrary_types_allowed=True))
     def dict(self, new_data: dict):
         self.dict.update(new_data)
         self.save()

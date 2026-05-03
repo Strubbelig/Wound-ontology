@@ -3,7 +3,6 @@ import os, glob, json, pickle
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
-from pydantic import validate_call, ConfigDict
 
 _DEFAULT_BASE_PATH = Path(__file__).resolve().parents[3] / "data" / "cache"
 
@@ -109,8 +108,6 @@ class DataManager:
 
         # Standard sort puts the latest YYYY-MM-DD_HH-MM at the end [-1]
         return sorted(files)[-1]
-
-    @validate_call(config=ConfigDict(extra='forbid', arbitrary_types_allowed=True))
     def load_latest_owl(self, prefix: str) -> str | None:
         """Returns the path to the most recent OWL file matching prefix (does not parse)."""
         path = self._find_latest_path(prefix, "owl")
@@ -119,8 +116,6 @@ class DataManager:
             return path
         print(f"[DataManager] No OWL found for prefix: {prefix}")
         return None
-
-    @validate_call(config=ConfigDict(extra='forbid', arbitrary_types_allowed=True))
     def load_latest_csv(self, prefix: str):
         """Loads the most recent CSV matching the prefix into a DataFrame."""
         path = self._find_latest_path(prefix, "csv")
@@ -131,8 +126,6 @@ class DataManager:
 
         print(f"No CSV found for prefix: {prefix}")
         return None
-
-    @validate_call(config=ConfigDict(extra='forbid', arbitrary_types_allowed=True))
     def load_latest_json(self, prefix: str):
         """Loads the most recent JSON matching the prefix into a Dictionary."""
         path = self._find_latest_path(prefix, "json")
@@ -144,8 +137,6 @@ class DataManager:
 
         print(f"No JSON found for prefix: {prefix}")
         return None
-
-    @validate_call(config=ConfigDict(extra='forbid', arbitrary_types_allowed=True))
     def load_latest_pickle(self, prefix: str):
         """Loads the most recent Pickle matching the prefix into an Object."""
         path = self._find_latest_path(prefix, "pkl")

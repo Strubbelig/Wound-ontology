@@ -1,7 +1,6 @@
 from __future__ import annotations
 """Base connector abstractions for the wound ontology pipeline."""
 from abc import ABC, abstractmethod
-from pydantic import validate_call, ConfigDict
 from wound_ontology.data_manager.data_manager import DataManager
 
 
@@ -12,8 +11,6 @@ class BaseConnector(ABC):
 
     Subclasses must implement connect(), get_data(), and save().
     """
-
-    @validate_call(config=ConfigDict(extra='forbid', arbitrary_types_allowed=True))
     def __init__(self, source_name: str, data_manager: DataManager, file_name: str):
         self.source_name = source_name
         print(f"Initializing {self.source_name}...")

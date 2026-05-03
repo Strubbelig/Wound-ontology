@@ -1,7 +1,6 @@
 from __future__ import annotations
 import asyncio
 import pandas as pd
-from pydantic import validate_call, ConfigDict
 from wound_ontology.data_manager.data_manager import DataManager
 
 
@@ -19,7 +18,6 @@ class ContextMatrix:
         return self._df
 
     @df.setter
-    @validate_call(config=ConfigDict(extra='forbid', arbitrary_types_allowed=True))
     def df(self, new_data: pd.DataFrame):
         """Adds new data and triggers a global merge."""
         if self._df is None or self._df.empty:

@@ -1,26 +1,12 @@
-from wound_ontology.data_manager.data_manager import DataManager
-from wound_ontology.connectors import BaseConnector, OntoConnector, BFOConnector, ROConnector, UMLSConnector, PubmedConnector
-from wound_ontology.llm import LLMClient
-from wound_ontology.store import ConceptStore
-from wound_ontology.fca import ContextMatrix, ConceptLattice
-from wound_ontology.mappers import TermMapper
-from wound_ontology.hierarchies import BaseHierarchy, ClassHierarchy, MereologicalHierarchy, FCAHierarchy
-from wound_ontology.export.owl_ontology import OWLOntology
-from wound_ontology.export.owl_reasoner import OWLReasoner
-from wound_ontology.export.gexf_exporter import GEXFExporter
-from wound_ontology.graph.knowledge_graph import KnowledgeGraph
-from wound_ontology.graph.sparql_helper import SPARQLHelper
-from wound_ontology.orchestrator import Orchestrator
+"""Wound ontology package.
 
-__all__ = [
-    "DataManager",
-    "BaseConnector", "OntoConnector", "BFOConnector", "ROConnector", "UMLSConnector", "PubmedConnector",
-    "LLMClient",
-    "ConceptStore",
-    "ContextMatrix", "ConceptLattice",
-    "TermMapper",
-    "BaseHierarchy", "ClassHierarchy", "MereologicalHierarchy", "FCAHierarchy",
-    "OWLOntology", "OWLReasoner", "GEXFExporter",
-    "KnowledgeGraph", "SPARQLHelper",
-    "Orchestrator",
-]
+Import concrete classes from their modules, for example:
+
+    from wound_ontology.orchestrator import Orchestrator
+    from wound_ontology.mappers.term_mapper import TermMapper
+
+Keeping this package initializer lightweight avoids importing optional
+pipeline dependencies during unrelated test collection.
+"""
+
+__all__: list[str] = []

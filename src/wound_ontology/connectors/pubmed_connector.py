@@ -1,6 +1,5 @@
 from __future__ import annotations
 import pandas as pd
-from pydantic import validate_call, ConfigDict
 from Bio import Entrez, Medline
 from wound_ontology.connectors.base_connector import BaseConnector
 from wound_ontology.data_manager.data_manager import DataManager
@@ -23,8 +22,6 @@ class PubmedConnector(BaseConnector):
             raise ValueError("PubMed Connector requires a valid email for Entrez.")
         Entrez.email = self.email
         print(f"Connected to PubMed via {self.email}")
-
-    @validate_call(config=ConfigDict(extra='forbid', arbitrary_types_allowed=True))
     def get_data(self, queries: str | list[str], max_abstracts_per_query: int = 1000):
         """
         Fetch abstracts for one or more PubMed queries, merging all results

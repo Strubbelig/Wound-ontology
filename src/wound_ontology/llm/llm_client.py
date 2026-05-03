@@ -72,7 +72,12 @@ class LLMClient:
 
     async def _call_json(self, prompt: str, schema: type, temperature=0.1, timeout=240):
         """POST to OpenRouter, enforce JSON mode, parse into Pydantic schema."""
-        schema_hint = json.dumps(schema.model_json_schema(), indent=2)
+        schema_json = (
+            schema.model_json_schema()
+            if hasattr(schema, "model_json_schema")
+            else schema.schema()
+        )
+        schema_hint = json.dumps(schema_json, indent=2)
         full_prompt = (
             f"{prompt}\n\n"
             f"Respond with valid JSON only — no markdown fences — "
@@ -89,7 +94,9 @@ class LLMClient:
             raw = resp.choices[0].message.content.strip()
             # Remove code fences if the model wrapped JSON inside them.
             raw = raw.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
-            return schema.model_validate_json(raw)
+            if hasattr(schema, "model_validate_json"):
+                return schema.model_validate_json(raw)
+            return schema.parse_raw(raw)
 
         return await asyncio.wait_for(_inner(), timeout=timeout)
 
