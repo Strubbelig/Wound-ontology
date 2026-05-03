@@ -141,46 +141,23 @@ class GPUEmbedder:
 embedder = GPUEmbedder()
 
 
-# ── CELL 8: combined client (GPU embeddings + OpenRouter LLM) ─
-class CombinedMappingClient:
-    """
-    Satisfies the TermMapper interface:
-      - create_embeddings  → SapBERT on GPU  (fast similarity lookup)
-      - create_normalization_mapping → OpenRouter LLM (fallback for low-similarity terms)
-    """
+# ── CELL 8: run the mapping (greedy canonical, no transitivity) ──
+# Threshold: only merge terms that are DIRECTLY similar to an elected canonical.
+# 0.97 is strict — only near-exact synonyms merge (e.g. "Wound Healing" / "Wound Repair").
+# Lower it carefully; going below ~0.94 risks large spurious clusters.
+SIMILARITY_THRESHOLD = 0.97
 
-    def __init__(self, embedder: GPUEmbedder, llm: LLMClient):
-        self._emb = embedder
-        self._llm = llm
+freq   = pipeline._collect_store_terms_with_freq()
+terms  = list(freq.keys())
+print(f"Unique terms in store: {len(terms)}")
 
-    async def create_embeddings(self, texts: list[str]) -> list[list[float]]:
-        return await self._emb.create_embeddings(texts)
-
-    async def create_normalization_mapping(self, terms, standards) -> dict:
-        return await self._llm.create_normalization_mapping(terms, standards)
-
-
-llm    = LLMClient(api_key=os.environ["OPENROUTER_API_KEY"])
-client = CombinedMappingClient(embedder, llm)
-print("Combined client ready.")
-
-
-# ── CELL 9: run the mapping ───────────────────────────────────
-import asyncio
-
-terms = pipeline._collect_store_terms()
-print(f"Total unique terms in store : {len(terms)}")
-new   = [t for t in terms if t not in pipeline.term_mapper.mapping]
-print(f"Terms not yet mapped        : {len(new)}")
-
-if new:
-    loop   = asyncio.get_event_loop()
-    result = loop.run_until_complete(
-        pipeline.term_mapper.map_new_terms(terms, client)
-    )
-    print(f"Mapping complete. Total entries: {len(result)}")
-else:
-    print("All terms already mapped — nothing to do.")
+result = pipeline.term_mapper.build_from_embeddings(
+    terms,
+    embedder=embedder,
+    similarity_threshold=SIMILARITY_THRESHOLD,
+    frequencies=freq,
+)
+print(f"Mapping complete. Total entries: {len(result)}")
 
 
 # ── CELL 10: save mapping back to Drive ──────────────────────

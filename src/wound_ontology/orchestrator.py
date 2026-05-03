@@ -185,7 +185,7 @@ class Orchestrator:
             print("\n[Orchestrator] Running post-extraction store clean...")
             self.run_clean_store()
 
-    def run_build_term_mapping(self, similarity_threshold: float = 0.92) -> dict:
+    def run_build_term_mapping(self, similarity_threshold: float = 0.97) -> dict:
         """
         Build the shared medical-term mapping using SapBERT cosine-similarity clustering.
 
@@ -210,7 +210,7 @@ class Orchestrator:
         print("[Orchestrator] Term mapping ready — review with mapping_cleaner.")
         return mapping
 
-    def run_blocklist_similarity_scan(self, similarity_threshold: float = 0.92) -> None:
+    def run_blocklist_similarity_scan(self, similarity_threshold: float = 0.97) -> None:
         """
         Use SapBERT to find store entities semantically similar to blocklist terms.
 

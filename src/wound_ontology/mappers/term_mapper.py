@@ -330,17 +330,23 @@ class TermMapper:
         self,
         terms: list[str],
         embedder,
-        similarity_threshold: float = 0.92,
+        similarity_threshold: float = 0.97,
         frequencies: dict[str, int] | None = None,
     ) -> dict:
         """
-        Build term mapping by SapBERT cosine-similarity clustering (union-find).
+        Build term mapping by greedy SapBERT canonical assignment.
 
-        Algorithm:
+        Algorithm (avoids the transitive-chaining problem of union-find):
         1. Embed all unique terms with SapBERT.
-        2. Compute pairwise cosine similarity.
-        3. Union pairs above similarity_threshold into clusters.
-        4. Elect the most frequent term as canonical (tie-break: longest, then alphabetical).
+        2. Sort terms: most frequent first, then longest, then alphabetical.
+        3. For each term in order:
+             - If it is directly similar (≥ threshold) to an already-elected
+               canonical, map it to that canonical.
+             - Otherwise it becomes a new canonical.
+        4. Because every assignment is a direct comparison against an elected
+           canonical — never against another cluster member — transitivity is
+           impossible: "A→C, B→C" requires both A and B to be similar to C,
+           not just to each other.
 
         After this returns, call:
             mapping_cleaner.review_merged_mappings()
@@ -354,63 +360,53 @@ class TermMapper:
 
         freq = frequencies or {}
 
-        print(f"[{self.name}] Embedding {len(unique_terms)} unique terms with SapBERT...")
-        embeddings = embedder.embed(unique_terms)   # (N, hidden_size)
+        # Process most-frequent terms first so they become canonicals.
+        sorted_terms = sorted(
+            unique_terms,
+            key=lambda t: (-freq.get(t, 0), -len(t), t),
+        )
 
-        print(f"[{self.name}] Computing pairwise similarity ({len(unique_terms)}×{len(unique_terms)})...")
-        sim_matrix = cosine_similarity(embeddings)  # (N, N)
+        print(f"[{self.name}] Embedding {len(sorted_terms)} unique terms with SapBERT...")
+        # Embed in sorted order; keep an index back to sorted_terms.
+        embeddings = embedder.embed(sorted_terms)   # (N, hidden_size)
 
-        # ── union-find ────────────────────────────────────────────────────────
-        parent = list(range(len(unique_terms)))
+        canonical_terms: list[str]       = []
+        canonical_embs:  list[np.ndarray] = []
+        assignment: dict[str, str]       = {}
 
-        def find(x: int) -> int:
-            while parent[x] != x:
-                parent[x] = parent[parent[x]]
-                x = parent[x]
-            return x
+        for i, term in enumerate(sorted_terms):
+            emb = embeddings[i]
 
-        n_merges = 0
-        n = len(unique_terms)
-        for i in range(n):
-            for j in range(i + 1, n):
-                if sim_matrix[i, j] >= similarity_threshold:
-                    ri, rj = find(i), find(j)
-                    if ri != rj:
-                        parent[ri] = rj
-                        n_merges += 1
+            if not canonical_terms:
+                canonical_terms.append(term)
+                canonical_embs.append(emb)
+                assignment[term] = term
+                continue
 
-        print(f"[{self.name}] Merged {n_merges} pairs (threshold={similarity_threshold}).")
+            can_matrix = np.vstack(canonical_embs)          # (C, H)
+            sims = cosine_similarity([emb], can_matrix)[0]  # (C,)
+            best_idx = int(np.argmax(sims))
+            best_sim = float(sims[best_idx])
 
-        # ── elect canonical per cluster ───────────────────────────────────────
-        clusters: dict[int, list[int]] = defaultdict(list)
-        for idx in range(n):
-            clusters[find(idx)].append(idx)
+            if best_sim >= similarity_threshold:
+                assignment[term] = canonical_terms[best_idx]
+            else:
+                canonical_terms.append(term)
+                canonical_embs.append(emb)
+                assignment[term] = term
 
-        accumulated: dict[str, str] = {}
-        n_non_identity = 0
+        n_non_identity = sum(1 for t, c in assignment.items() if t != c)
+        print(f"[{self.name}] {len(canonical_terms)} canonicals; "
+              f"{n_non_identity} non-identity mappings (threshold={similarity_threshold}).")
 
-        for members in clusters.values():
-            # most frequent → longest → alphabetical (deterministic)
-            canonical_idx = min(
-                members,
-                key=lambda i: (-freq.get(unique_terms[i], 0), -len(unique_terms[i]), unique_terms[i]),
-            )
-            canonical = unique_terms[canonical_idx]
+        for term, canonical in assignment.items():
+            self._metadata[term] = {
+                "standard": canonical,
+                "confidence": 1.0 if term == canonical else similarity_threshold,
+                "method": "sapbert_cluster",
+            }
 
-            for idx in members:
-                raw = unique_terms[idx]
-                accumulated[raw] = canonical
-                self._metadata[raw] = {
-                    "standard": canonical,
-                    "confidence": 1.0 if raw == canonical else float(sim_matrix[canonical_idx, idx]),
-                    "method": "sapbert_cluster",
-                }
-                if raw != canonical:
-                    n_non_identity += 1
-
-        print(f"[{self.name}] {len(clusters)} clusters; {n_non_identity} non-identity mappings.")
-
-        self._mapping.update(accumulated)
+        self._mapping.update(assignment)
         self.save()
         return self._mapping
 
