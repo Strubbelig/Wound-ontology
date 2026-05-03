@@ -15,8 +15,10 @@ env/first_env/
 
 # Data & outputs (potentially large/sensitive)
 data/raw/
-data/cache/
 output/
+
+# Cache — track versioned pipeline state, but skip large regeneratable CSVs
+data/cache/pubmed_abstracts_*.csv
 
 # Flap ontology template files (large OWL/FMA/ABox files)
 notebooks/templates/
