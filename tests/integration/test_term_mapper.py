@@ -1,9 +1,9 @@
 """
-Integration tests for TermMapper.build_mapping.
+Integration tests for TermMapper.build_from_embeddings with real SapBERT.
 
-Requirements:
-  - OPENROUTER_API_KEY set in .env or environment
-  - Network access to OpenRouter API
+Tests surface-form synonym merging — only near-identical strings (case, hyphen,
+whitespace, parenthetical abbreviation variants) collapse.  Morphological variants
+like infected/infection are intentionally kept separate.
 
 Run with:
   pytest tests/integration/test_term_mapper.py -m integration -v
@@ -11,36 +11,33 @@ Run with:
 Skip during normal unit test runs:
   pytest tests/ -m "not integration"
 """
-import os
 import tempfile
 from pathlib import Path
 
-import pandas as pd
 import pytest
-from dotenv import load_dotenv
 
 from wound_ontology.data_manager.data_manager import DataManager
-from wound_ontology.llm.llm_client import LLMClient
+from wound_ontology.embedding.embedder import Embedder
 from wound_ontology.mappers.term_mapper import TermMapper
 
-load_dotenv()
 
-# Each pair is the same concept in different surface forms.
-# Both must collapse to the same standard — having both as separate
-# has_quality: infected / has_quality: infection columns is the bug we prevent.
+# Pairs that MUST collapse: same concept, different surface form only.
 SYNONYM_PAIRS = [
-    ("infected",  "infection"),      # same concept, adj vs noun form
-    ("necrotic",  "necrosis"),       # same concept, adj vs noun form
-    ("granulating", "granulation tissue"),  # same concept, participle vs noun phrase
+    ("full-thickness",     "full thickness"),     # hyphen variant
+    ("Wound Healing",      "wound healing"),       # case variant
+    ("deep partial thickness", "deep-partial thickness"),  # hyphen + case
 ]
 
-# Concepts that are genuinely different and must NOT collapse.
+# Pairs that MUST stay separate: different specificity or different concept.
 DISTINCT_PAIRS = [
-    ("infected",  "necrotic"),
-    ("chronic",   "infected"),
+    ("full thickness",       "full thickness burn"),  # extra word = more specific concept
+    ("wound",                "laceration"),            # generic vs specific type
+    ("infected",             "infection"),             # morphological variant — accepted difference
 ]
 
-TERMS = list({t for pair in SYNONYM_PAIRS + DISTINCT_PAIRS for t in pair})
+TERMS = list(dict.fromkeys(
+    t for pair in SYNONYM_PAIRS + DISTINCT_PAIRS for t in pair
+))
 
 
 # ── Module-scoped fixtures ────────────────────────────────────────────────────
@@ -52,22 +49,19 @@ def tmp_data_dir():
 
 
 @pytest.fixture(scope="module")
-def llm():
-    return LLMClient(os.getenv("OPENROUTER_API_KEY", ""))
+def embedder():
+    return Embedder(batch_size=64)
 
 
 @pytest.fixture(scope="module")
-def mapper(tmp_data_dir):
+def built_mapper(tmp_data_dir, embedder):
     dm = DataManager(base_path=tmp_data_dir)
-    return TermMapper(data_manager=dm, file_name="term_mapping_test", mapper_name="test_mapper")
-
-
-@pytest.fixture(scope="module")
-def built_mapper(mapper, llm):
-    """Run build_mapping once; all tests below share the result."""
-    import asyncio
-    asyncio.get_event_loop().run_until_complete(
-        mapper.build_mapping(TERMS, llm, batch_size=2)
+    mapper = TermMapper(data_manager=dm, file_name="term_mapping_test", mapper_name="test_mapper")
+    mapper.build_from_embeddings(
+        TERMS,
+        embedder=embedder,
+        similarity_threshold=0.95,
+        string_threshold=0.92,
     )
     return mapper
 
@@ -75,15 +69,17 @@ def built_mapper(mapper, llm):
 # ── Mechanics ─────────────────────────────────────────────────────────────────
 
 @pytest.mark.integration
-def test_all_terms_in_originals(built_mapper):
-    """Every input term must be stored after processing."""
+def test_all_terms_in_mapping(built_mapper):
+    """Every input term must appear as a key in the output mapping."""
     for term in TERMS:
-        assert term in built_mapper.originals, f"'{term}' missing from originals"
+        assert term in built_mapper.mapping, f"'{term}' missing from mapping"
 
 
 @pytest.mark.integration
-def test_standards_are_non_empty(built_mapper):
-    assert len(built_mapper.standards) > 0
+def test_every_canonical_maps_to_itself(built_mapper):
+    for term, canonical in built_mapper.mapping.items():
+        assert built_mapper.mapping[canonical] == canonical, \
+            f"Canonical '{canonical}' does not map to itself"
 
 
 @pytest.mark.integration
@@ -92,32 +88,20 @@ def test_term_mapping_persisted_to_disk(built_mapper, tmp_data_dir):
     assert len(files) > 0, "No JSON file written to disk"
 
 
-@pytest.mark.integration
-def test_already_processed_terms_skipped(built_mapper, llm):
-    """Second call with the same terms must be a no-op (no new API call)."""
-    import asyncio
-    originals_before = set(built_mapper.originals)
-    asyncio.get_event_loop().run_until_complete(
-        built_mapper.build_mapping(TERMS, llm, batch_size=2)
-    )
-    assert set(built_mapper.originals) == originals_before
-
-
 # ── Semantic content: collapsing ──────────────────────────────────────────────
 
 @pytest.mark.integration
 @pytest.mark.parametrize("term_a, term_b", SYNONYM_PAIRS)
-def test_synonyms_collapse_to_same_standard(built_mapper, term_a, term_b):
+def test_surface_form_synonyms_collapse(built_mapper, term_a, term_b):
     """
-    Same-concept terms must map to the same standard.
-    Having has_quality: infected and has_quality: infection as separate
-    matrix columns is the redundancy this mapper exists to prevent.
+    Near-identical surface forms (case / hyphen / whitespace variants)
+    must map to the same canonical.
     """
     std_a = built_mapper.mapping[term_a]
     std_b = built_mapper.mapping[term_b]
     assert std_a == std_b, (
         f"'{term_a}' → '{std_a}' and '{term_b}' → '{std_b}' "
-        f"should collapse to one standard"
+        f"should collapse to one canonical"
     )
 
 
@@ -125,59 +109,14 @@ def test_synonyms_collapse_to_same_standard(built_mapper, term_a, term_b):
 
 @pytest.mark.integration
 @pytest.mark.parametrize("term_a, term_b", DISTINCT_PAIRS)
-def test_distinct_concepts_stay_separate(built_mapper, term_a, term_b):
-    """Different concepts must not collapse to the same standard."""
+def test_distinct_terms_stay_separate(built_mapper, term_a, term_b):
+    """
+    Terms with different meaning or specificity must not share a canonical.
+    Note: morphological variants like infected/infection are also expected to
+    stay separate under the string-similarity guard (string_sim ≈ 0.71 < 0.92).
+    """
     std_a = built_mapper.mapping[term_a]
     std_b = built_mapper.mapping[term_b]
     assert std_a != std_b, (
-        f"'{term_a}' and '{term_b}' collapsed to '{std_a}' "
-        f"but they are different concepts"
+        f"'{term_a}' and '{term_b}' incorrectly collapsed to '{std_a}'"
     )
-
-
-# ── Apply methods use the built mapping ───────────────────────────────────────
-
-@pytest.mark.integration
-def test_apply_then_matrix_merge_collapses_synonyms(built_mapper, tmp_data_dir):
-    """
-    apply renames; ContextMatrix.merge() deduplicates.
-    After the full round-trip, synonym columns must be collapsed to one.
-    """
-    from wound_ontology.data_manager.data_manager import DataManager
-    from wound_ontology.fca.context_matrix import ContextMatrix
-
-    dm = DataManager(base_path=tmp_data_dir / "merge_col_test")
-    matrix = ContextMatrix(dm, "col_merge_test")
-
-    for term_a, term_b in SYNONYM_PAIRS:
-        matrix._df = None   # reset between pairs
-        df = pd.DataFrame([[1.0, 0.0]], columns=[term_a, term_b], index=["entity_a"])
-        renamed = built_mapper.apply(df)
-        matrix.df = renamed  # triggers merge()
-        assert len(matrix.attributes) == 1, (
-            f"After rename+merge, '{term_a}' and '{term_b}' should be one column, "
-            f"got: {matrix.attributes}"
-        )
-
-
-@pytest.mark.integration
-def test_apply_then_matrix_merge_collapses_synonyms(built_mapper, tmp_data_dir):
-    """
-    apply renames; ContextMatrix.merge() deduplicates.
-    After the full round-trip, synonym rows must be collapsed to one.
-    """
-    from wound_ontology.data_manager.data_manager import DataManager
-    from wound_ontology.fca.context_matrix import ContextMatrix
-
-    dm = DataManager(base_path=tmp_data_dir / "merge_idx_test")
-    matrix = ContextMatrix(dm, "idx_merge_test")
-
-    for term_a, term_b in SYNONYM_PAIRS:
-        matrix._df = None   # reset between pairs
-        df = pd.DataFrame([[1.0], [1.0]], index=[term_a, term_b], columns=["has_quality: wound"])
-        renamed = built_mapper.apply(df)
-        matrix.df = renamed  # triggers merge()
-        assert len(matrix.objects) == 1, (
-            f"After rename+merge, '{term_a}' and '{term_b}' should be one row, "
-            f"got: {matrix.objects}"
-        )

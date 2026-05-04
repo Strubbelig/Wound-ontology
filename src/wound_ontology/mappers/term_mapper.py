@@ -1,13 +1,55 @@
 from __future__ import annotations
 
 import asyncio
+import re
 from collections import defaultdict
 import numpy as np
 import pandas as pd
 
+from rapidfuzz.fuzz import ratio as _fuzz_ratio
 from sklearn.metrics.pairwise import cosine_similarity
 
 from wound_ontology.data_manager.data_manager import DataManager
+from wound_ontology.utils.string_utils import normalize_term
+
+# ---------------------------------------------------------------------------
+# Module-level helpers for synonym merging
+# ---------------------------------------------------------------------------
+
+_GENERIC_TERMS: frozenset[str] = frozenset({
+    "wound", "pain", "skin", "patient", "female", "male",
+    "chronic", "acute", "severe", "infection", "tissue",
+    "leg", "foot", "scar", "burn", "ulcer", "sore",
+    "symptom", "complication", "deformity", "crystal",
+    "vagina", "pathogen", "geriatric", "hand", "valid",
+})
+
+
+def _string_sim(a: str, b: str) -> float:
+    """Normalized edit-distance similarity on canonicalized strings."""
+    return _fuzz_ratio(normalize_term(a), normalize_term(b)) / 100.0
+
+
+def _is_generic(term: str) -> bool:
+    return normalize_term(term) in _GENERIC_TERMS
+
+
+def _is_abbreviation_pair(a: str, b: str) -> bool:
+    """True if one term is an acronym / parenthetical abbreviation of the other."""
+    def _check(abbr: str, phrase: str) -> bool:
+        abbr_up = re.sub(r'[^A-Z0-9]', '', abbr.upper())
+        if not abbr_up:
+            return False
+        # Parenthetical: "Diabetic Foot Ulcer (DFU)" contains "(DFU)"
+        paren = re.search(r'\(([A-Z0-9]+)\)', phrase)
+        if paren and paren.group(1).upper() == abbr_up:
+            return True
+        # Initial-letter acronym: DFU → Diabetic Foot Ulcer
+        words = re.sub(r'[^\w\s]', ' ', phrase).split()
+        initials = ''.join(w[0].upper() for w in words if w)
+        return abbr_up == initials
+
+    return _check(a, b) or _check(b, a)
 
 
 class TermMapper:
@@ -169,188 +211,57 @@ class TermMapper:
     # ----------------------------
 
     async def map_new_terms(self, terms: list[str], client):
-        """
-        Main production method.
-
-        This replaces "re-run everything" with:
-            → only process NEW terms
-
-        PIPELINE:
-
-        for each term:
-            1. try similarity match (cheap, fast)
-            2. if uncertain → call LLM
-            3. assign confidence score
-            4. store metadata
-        """
-
-        new_terms = [t for t in terms if t not in self._mapping]
-
-        if not new_terms:
-            print(f"[{self.name}] No new terms to map.")
-            return self.mapping
-
-        print(f"[{self.name}] Mapping {len(new_terms)} new terms...")
-
-        # ensure we can compare against standards
-        await self._ensure_standard_embeddings(client)
-
-        accumulated = {}
-
-        for term in new_terms:
-            try:
-                # --- STEP 1: embed the term ---
-                emb = np.array((await client.create_embeddings([term]))[0])
-
-                # --- STEP 2: similarity match ---
-                best_std, score = self._nearest_standard(emb)
-
-                if best_std and score >= self._similarity_threshold:
-                    # HIGH CONFIDENCE → auto accept
-                    accumulated[term] = best_std
-
-                    self._metadata[term] = {
-                        "standard": best_std,
-                        "confidence": float(score),
-                        "method": "similarity"
-                    }
-                    continue
-
-                # --- STEP 3: LLM fallback ---
-                # used only when similarity is not strong enough
-                result = await client.create_normalization_mapping([term], self.standards)
-
-                if result and term in result:
-                    std = result[term]
-
-                    # heuristic confidence (LLMs don't give real scores)
-                    confidence = 0.6
-                    if std == term:
-                        confidence = 0.4  # weak mapping
-
-                    accumulated[term] = std
-
-                    self._metadata[term] = {
-                        "standard": std,
-                        "confidence": confidence,
-                        "method": "llm"
-                    }
-
-                    # if LLM invented a NEW standard → embed it
-                    if std not in self._standard_embeddings:
-                        std_emb = (await client.create_embeddings([std]))[0]
-                        self._standard_embeddings[std] = np.array(std_emb)
-
-                else:
-                    # completely failed case
-                    self._unresolved_terms.append(term)
-
-                    self._metadata[term] = {
-                        "standard": None,
-                        "confidence": 0.0,
-                        "method": "unresolved"
-                    }
-
-            except Exception as e:
-                print(f"[{self.name}] Failed to map '{term}': {e}")
-                self._unresolved_terms.append(term)
-
-        # persist results
-        if accumulated:
-            self._mapping.update(accumulated)
-            self.save()
-
-        print(f"[{self.name}] Mapping complete.")
-        print(f"[{self.name}] Unresolved: {len(self._unresolved_terms)}")
-
-        return self.mapping
+        """Disabled — LLM mapping removed. Use build_from_embeddings() instead."""
+        raise NotImplementedError(
+            "LLM-based mapping is disabled. Use build_from_embeddings(terms, embedder) instead."
+        )
 
     # ----------------------------
     # BULK MODE (INITIAL LOAD)
     # ----------------------------
 
     async def build_mapping(self, terms: list[str], client, batch_size=10, chunk_size=50):
-        """
-        Build the shared medical-term mapping dictionary.
-
-        Use this ONCE to bootstrap your mapping.
-        After that → use map_new_terms()
-
-        This still uses LLM heavily (less efficient).
-        """
-
-        terms_to_map = [t for t in terms if t not in self.originals]
-
-        if not terms_to_map:
-            print(f"[{self.name}] All terms cached.")
-            return self.mapping
-
-        print(f"[{self.name}] Building mappings for {len(terms_to_map)} terms...")
-
-        chunks = [terms_to_map[i:i + chunk_size] for i in range(0, len(terms_to_map), chunk_size)]
-        sem = asyncio.Semaphore(batch_size)
-
-        async def process_chunk(chunk, chunk_id):
-            async with sem:
-                results = await client.create_normalization_mapping(chunk, self.standards)
-                print(f"[{self.name}] Chunk {chunk_id + 1}/{len(chunks)} complete.")
-                return results
-
-        tasks = [process_chunk(chunk, i) for i, chunk in enumerate(chunks)]
-        all_results = await asyncio.gather(*tasks, return_exceptions=True)
-
-        accumulated = {}
-
-        for result in all_results:
-            if not isinstance(result, Exception):
-                for term, std in result.items():
-                    accumulated[term] = std
-
-                    self._metadata[term] = {
-                        "standard": std,
-                        "confidence": 0.6,
-                        "method": "llm_bulk"
-                    }
-
-        if accumulated:
-            self._mapping.update(accumulated)
-            self.save()
-
-        return self.mapping
+        """Disabled — LLM mapping removed. Use build_from_embeddings() instead."""
+        raise NotImplementedError(
+            "LLM-based mapping is disabled. Use build_from_embeddings(terms, embedder) instead."
+        )
 
     async def get_data(self, terms: list[str], client, batch_size=10, chunk_size=50):
-        """Backwards-compatible alias for build_mapping()."""
-        return await self.build_mapping(terms, client, batch_size=batch_size, chunk_size=chunk_size)
+        """Disabled — LLM mapping removed. Use build_from_embeddings() instead."""
+        raise NotImplementedError(
+            "LLM-based mapping is disabled. Use build_from_embeddings(terms, embedder) instead."
+        )
 
     # ----------------------------
     # SAPBERT CLUSTERING
     # ----------------------------
 
+    # ── Main clustering method ────────────────────────────────────────────────
+
     def build_from_embeddings(
         self,
         terms: list[str],
         embedder,
-        similarity_threshold: float = 0.97,
+        similarity_threshold: float = 0.95,
+        string_threshold: float = 0.92,
         frequencies: dict[str, int] | None = None,
     ) -> dict:
         """
-        Build term mapping by greedy SapBERT canonical assignment.
+        High-precision synonym clustering via SapBERT + dual-threshold guard.
 
-        Algorithm (avoids the transitive-chaining problem of union-find):
-        1. Embed all unique terms with SapBERT.
-        2. Sort terms: most frequent first, then longest, then alphabetical.
-        3. For each term in order:
-             - If it is directly similar (≥ threshold) to an already-elected
-               canonical, map it to that canonical.
-             - Otherwise it becomes a new canonical.
-        4. Because every assignment is a direct comparison against an elected
-           canonical — never against another cluster member — transitivity is
-           impossible: "A→C, B→C" requires both A and B to be similar to C,
-           not just to each other.
+        MERGE CONDITION (all must hold):
+          1. cosine_similarity >= similarity_threshold  (default 0.95)
+          2. string_sim(a, b) >= string_threshold       (default 0.92)
+             — ensures only near-identical surface forms merge,
+               e.g. "Wound Healing" ↔ "wound healing" but NOT
+               "full thickness" ↔ "full thickness burn"
+          3. EXCEPTION: known abbreviation pairs bypass string check
+             e.g. "DFU" ↔ "Diabetic Foot Ulcer (DFU)"
+          4. Generic single-word terms (wound, pain, skin…) require
+             string_sim >= 0.90 regardless of cosine score.
 
-        After this returns, call:
-            mapping_cleaner.review_merged_mappings()
-            mapping_cleaner.apply(store)
+        Clustering uses Union-Find (connected components) so transitivity
+        is preserved within the above strict guards.
         """
         unique_terms: list[str] = list(dict.fromkeys(terms))
 
@@ -360,49 +271,93 @@ class TermMapper:
 
         freq = frequencies or {}
 
-        # Process most-frequent terms first so they become canonicals.
-        sorted_terms = sorted(
-            unique_terms,
-            key=lambda t: (-freq.get(t, 0), -len(t), t),
-        )
+        print(f"[{self.name}] Embedding {len(unique_terms)} unique terms with SapBERT...")
+        emb = embedder.embed(unique_terms)  # (N, H), L2-normalized in embedder
 
-        print(f"[{self.name}] Embedding {len(sorted_terms)} unique terms with SapBERT...")
-        # Embed in sorted order; keep an index back to sorted_terms.
-        embeddings = embedder.embed(sorted_terms)   # (N, hidden_size)
+        # Cosine similarity = dot product when embeddings are L2-normalized
+        sim_matrix: np.ndarray = emb @ emb.T
 
-        canonical_terms: list[str]       = []
-        canonical_embs:  list[np.ndarray] = []
-        assignment: dict[str, str]       = {}
+        n = len(unique_terms)
+        term_to_idx = {t: i for i, t in enumerate(unique_terms)}
 
-        for i, term in enumerate(sorted_terms):
-            emb = embeddings[i]
+        # --- Union-Find ---
+        parent = list(range(n))
 
-            if not canonical_terms:
-                canonical_terms.append(term)
-                canonical_embs.append(emb)
-                assignment[term] = term
+        def find(x: int) -> int:
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+
+        def union(x: int, y: int) -> None:
+            px, py = find(x), find(y)
+            if px != py:
+                parent[px] = py
+
+        # Vectorized: only check pairs that exceed the cosine threshold
+        rows, cols = np.where(sim_matrix >= similarity_threshold)
+        candidate_pairs = [(int(i), int(j)) for i, j in zip(rows, cols) if i < j]
+
+        print(f"[{self.name}] {len(candidate_pairs)} candidate pairs above cosine {similarity_threshold}...")
+
+        for i, j in candidate_pairs:
+            a, b = unique_terms[i], unique_terms[j]
+
+            # Generic terms: require near-identical strings
+            if _is_generic(a) or _is_generic(b):
+                if _string_sim(a, b) < 0.90:
+                    continue
+
+            # Abbreviation pairs bypass string-sim check
+            elif _is_abbreviation_pair(a, b):
+                pass  # merge unconditionally
+
+            # Standard dual threshold
+            elif _string_sim(a, b) < string_threshold:
                 continue
 
-            can_matrix = np.vstack(canonical_embs)          # (C, H)
-            sims = cosine_similarity([emb], can_matrix)[0]  # (C,)
-            best_idx = int(np.argmax(sims))
-            best_sim = float(sims[best_idx])
+            union(i, j)
 
-            if best_sim >= similarity_threshold:
-                assignment[term] = canonical_terms[best_idx]
-            else:
-                canonical_terms.append(term)
-                canonical_embs.append(emb)
-                assignment[term] = term
+        # Build clusters from union-find
+        clusters: dict[int, list[str]] = defaultdict(list)
+        for i, term in enumerate(unique_terms):
+            clusters[find(i)].append(term)
 
+        # Canonical = highest frequency, then most words, then shortest string
+        assignment: dict[str, str] = {}
+        for members in clusters.values():
+            canonical = max(
+                members,
+                key=lambda t: (freq.get(t, 0), len(t.split()), -len(t)),
+            )
+            for t in members:
+                assignment[t] = canonical
+
+        # Validation
         n_non_identity = sum(1 for t, c in assignment.items() if t != c)
-        print(f"[{self.name}] {len(canonical_terms)} canonicals; "
-              f"{n_non_identity} non-identity mappings (threshold={similarity_threshold}).")
+        cluster_sizes = [len(v) for v in clusters.values()]
+        max_size = max(cluster_sizes)
 
+        print(f"[{self.name}] {len(clusters)} clusters; "
+              f"{n_non_identity} non-identity mappings; "
+              f"max cluster size: {max_size}")
+
+        if max_size >= 20:
+            raise AssertionError(
+                f"Max cluster size {max_size} ≥ 20 — threshold is too low, "
+                "spurious merges detected. Raise similarity_threshold."
+            )
+
+        assert all(assignment[c] == c for c in assignment.values()), \
+            "Canonical terms must map to themselves"
+
+        # Update metadata
         for term, canonical in assignment.items():
+            idx_t = term_to_idx[term]
+            idx_c = term_to_idx[canonical]
             self._metadata[term] = {
                 "standard": canonical,
-                "confidence": 1.0 if term == canonical else similarity_threshold,
+                "confidence": float(sim_matrix[idx_t, idx_c]),
                 "method": "sapbert_cluster",
             }
 

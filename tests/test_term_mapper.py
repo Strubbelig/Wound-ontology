@@ -48,6 +48,22 @@ class FakeTermMappingClient:
         }
 
 
+class FakeEmbedder:
+    """Returns pre-set L2-normalised embeddings for unit tests."""
+
+    def __init__(self, embeddings: dict[str, list[float]]):
+        self._raw = embeddings
+
+    def embed(self, texts: list[str]) -> np.ndarray:
+        dim = len(next(iter(self._raw.values())))
+        vecs = []
+        for t in texts:
+            v = np.array(self._raw.get(t, [0.0] * dim), dtype=float)
+            norm = np.linalg.norm(v)
+            vecs.append(v / norm if norm > 0 else v)
+        return np.vstack(vecs)
+
+
 @pytest.fixture
 def dm():
     return MockDM()
@@ -104,7 +120,7 @@ def test_empty_term_mapping_passthrough():
     assert mapper.originals == []
 
 
-# ── Embedding-assisted incremental mapping ────────────────────────────────────
+# ── Embedding utilities ───────────────────────────────────────────────────────
 
 @pytest.mark.asyncio
 async def test_ensure_standard_embeddings_only_embeds_missing_standards(mapper):
@@ -133,105 +149,93 @@ def test_nearest_standard_without_embeddings_returns_empty_match(mapper):
     assert mapper._nearest_standard(np.array([1.0, 0.0])) == (None, 0.0)
 
 
-@pytest.mark.asyncio
-async def test_map_new_terms_auto_maps_high_similarity_terms(mapper, dm):
-    client = FakeTermMappingClient(embeddings={"slow wound": [0.0, 0.95]})
+# ── build_from_embeddings ─────────────────────────────────────────────────────
 
-    result = await mapper.map_new_terms(["slow wound"], client)
+def test_build_from_embeddings_merges_near_identical_surface_forms(dm):
+    """Case and hyphen variants of the same term collapse to one canonical."""
+    mapper = TermMapper(data_manager=MockDM({}), file_name="t", mapper_name="t")
+    # Identical (after L2 norm) embeddings → cosine = 1.0
+    embedder = FakeEmbedder({
+        "Wound Healing":  [1.0, 0.0, 0.0],
+        "wound healing":  [1.0, 0.0, 0.0],
+        "full-thickness": [0.0, 1.0, 0.0],
+        "full thickness": [0.0, 1.0, 0.0],
+    })
+    freq = {"Wound Healing": 10, "wound healing": 5, "full-thickness": 8, "full thickness": 3}
 
-    assert result["slow wound"] == "wound"
-    assert mapper._metadata["slow wound"] == {
-        "standard": "wound",
-        "confidence": pytest.approx(1.0),
-        "method": "similarity",
-    }
-    assert client.normalization_calls == []
-    assert dm.saved[-1][1] == "term_mapping"
-
-
-@pytest.mark.asyncio
-async def test_map_new_terms_uses_llm_fallback_for_uncertain_similarity(mapper):
-    client = FakeTermMappingClient(
-        embeddings={"fragile skin": [0.2, 0.2], "skin fragility": [0.3, 0.4]},
-        normalization_results={"fragile skin": "skin fragility"},
+    result = mapper.build_from_embeddings(
+        list(freq.keys()), embedder, similarity_threshold=0.95, frequencies=freq
     )
 
-    await mapper.map_new_terms(["fragile skin"], client)
-
-    assert mapper.mapping["fragile skin"] == "skin fragility"
-    assert mapper._metadata["fragile skin"] == {
-        "standard": "skin fragility",
-        "confidence": 0.6,
-        "method": "llm",
-    }
-    assert client.normalization_calls == [(["fragile skin"], ["granulation", "wound"])]
-    assert "skin fragility" in mapper._standard_embeddings
+    # Higher-frequency term becomes canonical
+    assert result["wound healing"] == result["Wound Healing"]
+    assert result["Wound Healing"] == "Wound Healing"
+    assert result["full thickness"] == result["full-thickness"]
+    assert result["full-thickness"] == "full-thickness"
 
 
-@pytest.mark.asyncio
-async def test_map_new_terms_records_unresolved_terms(mapper):
-    client = FakeTermMappingClient(embeddings={"ambiguous term": [0.2, 0.2]})
+def test_build_from_embeddings_keeps_distinct_terms_separate(dm):
+    """Orthogonal embeddings never merge regardless of string similarity."""
+    mapper = TermMapper(data_manager=MockDM({}), file_name="t", mapper_name="t")
+    embedder = FakeEmbedder({
+        "wound":      [1.0, 0.0, 0.0],
+        "laceration": [0.0, 1.0, 0.0],
+        "necrosis":   [0.0, 0.0, 1.0],
+    })
 
-    await mapper.map_new_terms(["ambiguous term"], client)
-
-    assert "ambiguous term" not in mapper.mapping
-    assert mapper._unresolved_terms == ["ambiguous term"]
-    assert mapper._metadata["ambiguous term"] == {
-        "standard": None,
-        "confidence": 0.0,
-        "method": "unresolved",
-    }
-
-
-@pytest.mark.asyncio
-async def test_map_new_terms_skips_cached_terms_without_llm_calls(mapper):
-    client = FakeTermMappingClient()
-
-    result = await mapper.map_new_terms(["chronic wound"], client)
-
-    assert result == mapper.mapping
-    assert client.embedding_calls == []
-    assert client.normalization_calls == []
-
-
-# ── Bulk bootstrap mode ───────────────────────────────────────────────────────
-
-@pytest.mark.asyncio
-async def test_build_mapping_normalizes_only_new_terms_and_records_bulk_metadata(mapper, dm):
-    client = FakeTermMappingClient(
-        normalization_results={
-            "sloughy": "slough",
-            "granulating": "granulation",
-        }
+    result = mapper.build_from_embeddings(
+        ["wound", "laceration", "necrosis"], embedder, similarity_threshold=0.95
     )
 
-    result = await mapper.build_mapping(
-        ["chronic wound", "sloughy", "granulating"],
-        client,
-        batch_size=1,
-        chunk_size=1,
+    assert result["wound"]      == "wound"
+    assert result["laceration"] == "laceration"
+    assert result["necrosis"]   == "necrosis"
+
+
+def test_build_from_embeddings_generic_term_not_merged_without_string_match(dm):
+    """Generic single-word terms (wound, pain…) require string_sim ≥ 0.90."""
+    mapper = TermMapper(data_manager=MockDM({}), file_name="t", mapper_name="t")
+    # High cosine (0.99) between "wound" and "pain" — must still be blocked
+    v = np.array([1.0, 0.01, 0.0])
+    v /= np.linalg.norm(v)
+    embedder = FakeEmbedder({
+        "wound": v.tolist(),
+        "pain":  [1.0, 0.0, 0.0],
+    })
+
+    result = mapper.build_from_embeddings(
+        ["wound", "pain"], embedder, similarity_threshold=0.95
     )
 
-    assert result["sloughy"] == "slough"
-    assert result["granulating"] == "granulation"
-    assert "chronic wound" not in [call[0][0] for call in client.normalization_calls]
-    assert mapper._metadata["sloughy"] == {
-        "standard": "slough",
-        "confidence": 0.6,
-        "method": "llm_bulk",
-    }
-    assert dm.saved[-1][1] == "term_mapping"
+    assert result["wound"] != result["pain"]
 
 
-@pytest.mark.asyncio
-async def test_build_mapping_returns_cached_mapping_when_every_term_is_known(mapper, dm):
-    client = FakeTermMappingClient()
+def test_build_from_embeddings_canonicals_map_to_themselves(dm):
+    """Every canonical in the output must map to itself."""
+    mapper = TermMapper(data_manager=MockDM({}), file_name="t", mapper_name="t")
+    embedder = FakeEmbedder({
+        "A": [1.0, 0.0],
+        "B": [1.0, 0.0],  # merges with A
+        "C": [0.0, 1.0],
+    })
 
-    result = await mapper.build_mapping(["chronic wound", "acute wound"], client)
+    result = mapper.build_from_embeddings(
+        ["A", "B", "C"], embedder, similarity_threshold=0.95
+    )
 
-    assert result == mapper.mapping
-    assert client.normalization_calls == []
-    assert dm.saved == []
+    for term, canonical in result.items():
+        assert result[canonical] == canonical, f"Canonical '{canonical}' does not map to itself"
+
+
+def test_build_from_embeddings_max_cluster_assertion(dm):
+    """AssertionError is raised when a cluster reaches 20+ members."""
+    mapper = TermMapper(data_manager=MockDM({}), file_name="t", mapper_name="t")
+    # 25 terms all with identical embeddings → one giant cluster
+    terms = [f"term_{i}" for i in range(25)]
+    embedder = FakeEmbedder({t: [1.0, 0.0] for t in terms})
+
+    with pytest.raises(AssertionError, match="≥ 20"):
+        mapper.build_from_embeddings(terms, embedder, similarity_threshold=0.95)
 
 
 # ── Human review and unresolved retry ─────────────────────────────────────────

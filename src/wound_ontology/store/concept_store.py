@@ -2,6 +2,7 @@ from __future__ import annotations
 import asyncio
 import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
+from wound_ontology.utils.string_utils import normalize_term
 from config.blocklists import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST
 
 
@@ -168,12 +169,18 @@ class ConceptStore:
         term_map = mapper.mapping if mapper else {}
 
         def clean_entity(term: str) -> str:
-            # Prefer normalized mapped names, otherwise title-case as a fallback.
-            return term_map.get(term, term).strip().title()
+            # Mapper lookup first; fall back to surface-form canonicalization + title case.
+            # normalize_term collapses hyphens, strips abbreviation parens, etc. so that
+            # "full-thickness" and "full thickness" converge to the same display name even
+            # when the mapper has no entry for them.
+            if term in term_map:
+                return term_map[term].strip().title()
+            return normalize_term(term).title()
 
         def clean_target(term: str) -> str:
-            # Normalize targets to preserve consistent ontology labels.
-            return term_map.get(term, term).strip().title()
+            if term in term_map:
+                return term_map[term].strip().title()
+            return normalize_term(term).title()
 
         normalized: dict = {}
         for key, pmid_data in self._dict.items():

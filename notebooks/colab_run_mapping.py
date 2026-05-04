@@ -17,10 +17,10 @@ import subprocess, sys
 # Clone (skip if already done)
 subprocess.run(["git", "clone", "https://github.com/Strubbelig/Wound-ontology.git"], check=False)
 
-# Install the package and all runtime deps
+# Install the package and all declared deps (includes rapidfuzz, transformers, etc.)
 subprocess.run([sys.executable, "-m", "pip", "install", "-e", "Wound-ontology", "-q"], check=True)
 subprocess.run([sys.executable, "-m", "pip", "install",
-    "transformers", "torch", "scikit-learn", "openai", "nest_asyncio", "python-dotenv",
+    "nest_asyncio", "python-dotenv",
     "-q"], check=True)
 
 print("Installation complete.")
@@ -39,25 +39,7 @@ os.makedirs(DRIVE_CACHE, exist_ok=True)
 print(f"Drive cache folder: {DRIVE_CACHE}")
 
 
-# ── CELL 4: API keys ─────────────────────────────────────────
-# Option A (recommended): store secrets in Colab → Secrets (key icon on left sidebar)
-#   Add keys named OPENROUTER_API_KEY and ENTREZ_EMAIL, then run this cell.
-try:
-    from google.colab import userdata
-    os.environ["OPENROUTER_API_KEY"] = userdata.get("OPENROUTER_API_KEY")
-    os.environ["ENTREZ_EMAIL"]        = userdata.get("ENTREZ_EMAIL")
-    print("API keys loaded from Colab Secrets.")
-except Exception:
-    # Option B: paste keys directly (less secure)
-    os.environ["OPENROUTER_API_KEY"] = "sk-or-..."   # ← replace
-    os.environ["ENTREZ_EMAIL"]        = "you@example.com"  # ← replace
-    print("API keys set manually.")
-
-assert os.environ.get("OPENROUTER_API_KEY", "").startswith("sk-"), \
-    "OPENROUTER_API_KEY looks wrong — double-check it."
-
-
-# ── CELL 5: copy concept store from Drive into repo cache ────
+# ── CELL 4: copy concept store from Drive into repo cache ────
 import glob, shutil
 from pathlib import Path
 
@@ -84,7 +66,7 @@ for f in sorted(glob.glob(f"{DRIVE_CACHE}/term_mapping_*.json")):
     print(f"Copied existing mapping: {Path(f).name}")
 
 
-# ── CELL 6: set up Python path & pipeline ────────────────────
+# ── CELL 5: set up pipeline ──────────────────────────────────
 import sys, nest_asyncio
 nest_asyncio.apply()
 
@@ -92,7 +74,7 @@ sys.path.insert(0, "/content/Wound-ontology")
 sys.path.insert(0, "/content/Wound-ontology/config")
 
 from wound_ontology.orchestrator import Orchestrator
-from wound_ontology.llm.llm_client import LLMClient
+from wound_ontology.embedding.embedder import Embedder
 
 pipeline = Orchestrator(
     base_path=str(REPO_CACHE),
@@ -103,49 +85,18 @@ pipeline = Orchestrator(
 print(f"Concept store loaded: {len(pipeline.store.dict)} PubMed entries")
 print(f"Existing mappings   : {len(pipeline.term_mapper.mapping)} terms already mapped")
 
-
-# ── CELL 7: build GPU-accelerated SapBERT embedder ───────────
-import numpy as np
-from transformers import AutoTokenizer, AutoModel
-
-class GPUEmbedder:
-    """SapBERT embedder with explicit CUDA placement."""
-
-    MODEL_NAME = "cambridgeltl/SapBERT-from-PubMedBERT-fulltext"
-
-    def __init__(self):
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        print(f"Loading SapBERT on {self.device}…")
-        self.tokenizer = AutoTokenizer.from_pretrained(self.MODEL_NAME)
-        self.model     = AutoModel.from_pretrained(self.MODEL_NAME).to(self.device)
-        self.model.eval()
-        print("SapBERT ready.")
-
-    def embed(self, texts: list[str], batch_size: int = 256) -> np.ndarray:
-        all_vecs = []
-        for i in range(0, len(texts), batch_size):
-            chunk = texts[i : i + batch_size]
-            inputs = self.tokenizer(chunk, padding=True, truncation=True,
-                                    return_tensors="pt")
-            inputs = {k: v.to(self.device) for k, v in inputs.items()}
-            with torch.no_grad():
-                out = self.model(**inputs)
-                vecs = out.last_hidden_state[:, 0, :]  # [CLS] token
-            all_vecs.append(vecs.cpu().float().numpy())
-        return np.vstack(all_vecs)
-
-    async def create_embeddings(self, texts: list[str]) -> list[list[float]]:
-        return self.embed(texts).tolist()
+# Larger batch size takes advantage of Colab GPU VRAM
+embedder = Embedder(batch_size=256)
 
 
-embedder = GPUEmbedder()
-
-
-# ── CELL 8: run the mapping (greedy canonical, no transitivity) ──
-# Threshold: only merge terms that are DIRECTLY similar to an elected canonical.
-# 0.97 is strict — only near-exact synonyms merge (e.g. "Wound Healing" / "Wound Repair").
-# Lower it carefully; going below ~0.94 risks large spurious clusters.
-SIMILARITY_THRESHOLD = 0.97
+# ── CELL 6: run the mapping ───────────────────────────────────
+# Dual-threshold: cosine >= SIMILARITY_THRESHOLD AND string_sim >= STRING_THRESHOLD.
+# Only near-identical surface forms merge (case, hyphen, whitespace variants).
+# Abbreviation pairs (DFU ↔ Diabetic Foot Ulcer) bypass string_sim check.
+# Generic single-word terms (wound, pain, skin…) require string_sim >= 0.90.
+# If max cluster size >= 20, an error is raised — raise SIMILARITY_THRESHOLD.
+SIMILARITY_THRESHOLD = 0.95   # cosine threshold (must be 0.93–0.98)
+STRING_THRESHOLD     = 0.92   # string similarity threshold after normalization
 
 freq   = pipeline._collect_store_terms_with_freq()
 terms  = list(freq.keys())
@@ -155,12 +106,13 @@ result = pipeline.term_mapper.build_from_embeddings(
     terms,
     embedder=embedder,
     similarity_threshold=SIMILARITY_THRESHOLD,
+    string_threshold=STRING_THRESHOLD,
     frequencies=freq,
 )
 print(f"Mapping complete. Total entries: {len(result)}")
 
 
-# ── CELL 10: save mapping back to Drive ──────────────────────
+# ── CELL 7: save mapping back to Drive ───────────────────────
 latest_mapping = sorted(glob.glob(str(REPO_CACHE / "term_mapping_*.json")))
 if latest_mapping:
     src  = latest_mapping[-1]

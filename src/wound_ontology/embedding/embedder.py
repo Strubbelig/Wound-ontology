@@ -58,7 +58,10 @@ class Embedder:
             with torch.no_grad():
                 out  = self._model(**inputs)
                 vecs = out.last_hidden_state[:, 0, :]   # [CLS] token
-            all_vecs.append(vecs.cpu().float().numpy())
+            vecs_np = vecs.cpu().float().numpy()
+            norms = np.linalg.norm(vecs_np, axis=1, keepdims=True)
+            vecs_np = vecs_np / np.maximum(norms, 1e-12)  # L2 normalize
+            all_vecs.append(vecs_np)
 
         return np.vstack(all_vecs)
 

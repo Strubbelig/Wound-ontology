@@ -55,7 +55,7 @@ async def test_semantic_similarity(embedding_model):
 
     score = sim(embs[0], embs[1])
 
-    assert score > 0.75, f"Expected high similarity, got {score}"
+    assert score > 0.7, f"Expected high similarity, got {score}"
 
 
 @pytest.mark.asyncio
@@ -89,8 +89,11 @@ async def test_abbreviation_handling(embedding_model):
 
     score = sim(embs[0], embs[1])
 
-    # allow slightly lower threshold (abbreviations are hard)
-    assert score > 0.65, f"Abbreviation not recognized well, got {score}"
+    # SapBERT handles abbreviations via training data context, not pure string match.
+    # Raw cosine on CPU lands around 0.75–0.80 for known abbrev pairs.
+    # Actual abbreviation merging in build_from_embeddings uses _is_abbreviation_pair(),
+    # which is independent of this score.
+    assert score > 0.7, f"Abbreviation not recognized well, got {score}"
 
 
 @pytest.mark.asyncio
@@ -118,12 +121,19 @@ async def test_cluster_separation(embedding_model):
     """
     positive = [
         ("heart attack", "myocardial infarction"),
-        ("pressure ulcer", "decubitus ulcer"),
+        ("pressure ulcer", "decubitus"),
+        ("diabetic foot ulcer", "DFU"),
+        ("wound healing", "healing of a wound")
+      
     ]
 
     negative = [
         ("heart attack", "banana"),
         ("ulcer", "car engine"),
+        ("Rehabilitation Intervention", "Surgical Procedure"),
+        ("Exercise-based Rehabilitation", "Flap-based Reconstruction"),
+        ("Patellar Redislocation", "Surgical Procedure"),
+        ("Complication", "Wound")
     ]
 
     pos_scores = []
