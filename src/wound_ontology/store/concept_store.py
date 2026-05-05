@@ -3,7 +3,7 @@ import asyncio
 import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.utils.string_utils import normalize_term
-from config.blocklists import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST
+from config.blocklist import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST
 
 
 class ConceptStore:

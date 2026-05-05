@@ -64,8 +64,8 @@ async def test_semantic_dissimilarity(embedding_model):
     Completely unrelated terms should be far apart.
     """
     terms = [
-        "heart attack",
-        "banana"
+            "Incomplete Healing", "Complete Healing"
+
     ]
 
     embs = await embed_terms(embedding_model, terms)
@@ -133,7 +133,8 @@ async def test_cluster_separation(embedding_model):
         ("Rehabilitation Intervention", "Surgical Procedure"),
         ("Exercise-based Rehabilitation", "Flap-based Reconstruction"),
         ("Patellar Redislocation", "Surgical Procedure"),
-        ("Complication", "Wound")
+        ("Complication", "Wound"),
+        ("Incomplete Healing", "Complete Healing"),
     ]
 
     pos_scores = []

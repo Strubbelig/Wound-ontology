@@ -41,7 +41,7 @@ load_dotenv(PROJECT_ROOT / ".env")
 import requests as _requests
 from Bio import Entrez, Medline
 
-from config.pubmed_search import PUBMED_SEARCH
+from config.pubmed_query_list import PUBMED_SEARCH
 
 
 # ── Constants ──────────────────────────────────────────────────────────────────

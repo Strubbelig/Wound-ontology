@@ -3,10 +3,10 @@ import importlib
 import re
 from pathlib import Path
 
-import config.blocklists as _blocklists_module
-from config.blocklists import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST
-from config.blocklists import SUSPICIOUS_KEYWORDS as _SUSPICIOUS_KEYWORDS
-from config.blocklists import WHITELIST as _WHITELIST
+import config.blocklist as _blocklists_module
+from config.blocklist import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST
+from config.blocklist import SUSPICIOUS_KEYWORDS as _SUSPICIOUS_KEYWORDS
+from config.blocklist import WHITELIST as _WHITELIST
 
 
 class BaseCleaner:

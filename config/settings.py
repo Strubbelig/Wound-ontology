@@ -10,7 +10,7 @@ OWL_OUTPUT_FILE = PROJECT_ROOT / "output" / "owl" / "ontology_classes.owl"
 PREDEFINED_HIERARCHY_FILE = PROJECT_ROOT / "data" / "raw" / "predefined_concept_hierarchy.csv"
 
 # Search terms — canonical list lives in pubmed_search.py
-from config.pubmed_search import PUBMED_SEARCH as PUBMED_SEARCH_TERMS
+from config.pubmed_query_list import PUBMED_SEARCH as PUBMED_SEARCH_TERMS
 
 # External ontology URLs
 BFO_OWL_URL = "http://purl.obolibrary.org/obo/bfo.owl"
@@ -45,7 +45,6 @@ ALLOWED_PREDICATES = [
 ]
 
 # Predicate definitions — used to build the LLM extraction prompt dynamically.
-# Add an entry here whenever you add a predicate to ALLOWED_PREDICATES.
 PREDICATE_DEFINITIONS = {
     "is_a": {
         "summary": "CLASS MEMBERSHIP (taxonomic). Use when X is a subtype of Y.",
