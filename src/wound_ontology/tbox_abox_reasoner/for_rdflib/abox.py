@@ -31,7 +31,8 @@ that relation goes through the process.
 
 Usage (fluent API)
 ------------------
-    from wound_ontology.export import TBox, ABox
+    from wound_ontology.tbox_abox_reasoner.for_owl.tbox import TBox
+    from wound_ontology.tbox_abox_reasoner.for_rdflib.abox import ABox
 
     tbox = TBox().load("flap_onto.owl")
     gen = ABox(tbox)
@@ -52,7 +53,7 @@ import sys
 from rdflib import Graph, URIRef, BNode
 from rdflib.namespace import RDF, RDFS, OWL
 
-from wound_ontology.export.abox_generator import ABoxGenerator
+from wound_ontology.tbox_abox_reasoner.for_rdflib.abox_generator import ABoxGenerator
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'Flap ontology' / 'VS Code output'))
 from ofl_constants import (
     OFL, OBO, FMA, DCTERMS,
@@ -217,7 +218,7 @@ class ABox:
 
             ABox.run_files("tbox.owl", "abox.owl", patients=5)
         """
-        from wound_ontology.export.tbox import TBox
+        from wound_ontology.tbox_abox_reasoner.for_owl.tbox import TBox
         tbox = TBox().load(tbox_file)
         gen = cls(tbox, id_start=id_start)
         gen.generate(patients_per_combination=patients, seed=seed)

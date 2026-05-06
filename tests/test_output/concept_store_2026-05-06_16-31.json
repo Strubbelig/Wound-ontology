@@ -1,0 +1,139 @@
+{
+    "42089585": {
+        "entities": {
+            "Lung Adenocarcinoma": {
+                "is_a: Cancer": 1.0,
+                "occurs_in: Lung": 1.0,
+                "caused_by: Malignant Transformation": 1.0
+            },
+            "Tumor Microenvironment": {
+                "part_of: Lung Adenocarcinoma": 1.0,
+                "has_quality: Heterogeneous": 1.0
+            },
+            "Malignant Epithelial Cell": {
+                "is_a: Epithelial Cell": 1.0,
+                "part_of: Tumor Microenvironment": 1.0,
+                "has_quality: Malignant": 1.0
+            },
+            "Bone Marrow Stromal Cell Antigen 2": {
+                "is_a: Oncogene": 1.0,
+                "occurs_in: Malignant Epithelial Cell": 1.0,
+                "occurs_in: Tumor-Associated Macrophage": 1.0,
+                "caused_by: Gene Upregulation": 1.0
+            },
+            "Oxidative Phosphorylation": {
+                "is_a: Oncogenic Pathway": 1.0,
+                "part_of: Lung Adenocarcinoma": 1.0
+            },
+            "Kras Signaling": {
+                "is_a: Oncogenic Pathway": 1.0,
+                "part_of: Lung Adenocarcinoma": 1.0
+            },
+            "Epithelial-Mesenchymal Transition": {
+                "is_a: Oncogenic Pathway": 1.0,
+                "part_of: Lung Adenocarcinoma": 1.0
+            },
+            "Tumor-Associated Macrophage": {
+                "is_a: Macrophage": 1.0,
+                "part_of: Tumor Microenvironment": 1.0
+            },
+            "MIF Signaling Pathway": {
+                "is_a: Cell Communication Pathway": 1.0,
+                "occurs_in: Tumor Microenvironment": 1.0
+            },
+            "APP Signaling Pathway": {
+                "is_a: Cell Communication Pathway": 1.0,
+                "occurs_in: Tumor Microenvironment": 1.0
+            },
+            "Immune Checkpoint Blockade Therapy": {
+                "is_treatment_for: Lung Adenocarcinoma": 1.0
+            },
+            "BST2 Knockdown": {
+                "is_treatment_for: Lung Adenocarcinoma": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260506_1630"
+    },
+    "42089837": {
+        "entities": {
+            "Drug-resistant bacterial biofilm infection": {
+                "is_a: infection": 1.0,
+                "occurs_in: wound": 1.0,
+                "caused_by: drug-resistant bacteria": 1.0
+            },
+            "HEA@OAH": {
+                "is_a: nanozyme-integrated hydrogel": 1.0,
+                "has_quality: injectable": 1.0,
+                "has_quality: self-healing": 1.0,
+                "is_treatment_for: MRSA biofilm-infected wound": 1.0
+            },
+            "High-entropy alloy nanozymes": {
+                "part_of: HEA@OAH": 1.0,
+                "has_quality: peroxidase-like activity": 1.0,
+                "has_quality: glutathione peroxidase-like activity": 1.0
+            },
+            "Photothermal therapy": {
+                "is_a: therapy": 1.0,
+                "caused_by: NIR irradiation": 1.0,
+                "occurs_in: HEA@OAH": 1.0
+            },
+            "MRSA biofilm": {
+                "is_a: biofilm": 1.0,
+                "caused_by: Methicillin-resistant Staphylococcus aureus": 1.0,
+                "occurs_in: wound": 1.0
+            },
+            "Wound healing": {
+                "is_a: biological process": 1.0,
+                "occurs_in: skin": 1.0,
+                "has_quality: near-scarless": 1.0
+            },
+            "Inflammation": {
+                "is_a: biological process": 1.0,
+                "occurs_in: wound": 1.0,
+                "caused_by: biofilm infection": 1.0
+            },
+            "NIR irradiation": {
+                "is_a: process": 1.0,
+                "occurs_in: HEA@OAH": 1.0
+            },
+            "Hydrogel": {
+                "is_a: material entity": 1.0,
+                "has_quality: injectable": 1.0,
+                "has_quality: self-healing": 1.0
+            },
+            "Schiff base bonds": {
+                "part_of: hydrogel": 1.0,
+                "has_quality: dynamic": 1.0
+            },
+            "Peroxidase-like activity": {
+                "is_a: quality": 1.0,
+                "occurs_in: high-entropy alloy nanozymes": 1.0
+            },
+            "Glutathione peroxidase-like activity": {
+                "is_a: quality": 1.0,
+                "occurs_in: high-entropy alloy nanozymes": 1.0
+            },
+            "Bactericidal .OH": {
+                "is_a: reactive oxygen species": 1.0,
+                "caused_by: peroxidase-like activity": 1.0
+            },
+            "H2O2": {
+                "is_a: chemical entity": 1.0,
+                "occurs_in: wound": 1.0
+            },
+            "Methicillin-resistant Staphylococcus aureus (MRSA)": {
+                "is_a: bacterium": 1.0,
+                "has_quality: drug-resistant": 1.0
+            },
+            "Biofilm": {
+                "is_a: microbial community": 1.0,
+                "occurs_in: wound": 1.0
+            },
+            "Wound dressing": {
+                "is_a: medical device": 1.0,
+                "is_treatment_for: wound": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260506_1630"
+    }
+}

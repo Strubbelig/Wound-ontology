@@ -1,0 +1,1516 @@
+{
+    "42089585": {
+        "entities": {
+            "Lung Adenocarcinoma": {
+                "is_a: Cancer": 1.0,
+                "occurs_in: Lung": 1.0,
+                "caused_by: Malignant Transformation": 1.0
+            },
+            "Tumor Microenvironment": {
+                "part_of: Lung Adenocarcinoma": 1.0,
+                "has_quality: Heterogeneous": 1.0
+            },
+            "Malignant Epithelial Cell": {
+                "is_a: Epithelial Cell": 1.0,
+                "part_of: Tumor Microenvironment": 1.0,
+                "has_quality: Malignant": 1.0
+            },
+            "Bone Marrow Stromal Cell Antigen 2": {
+                "is_a: Oncogene": 1.0,
+                "occurs_in: Malignant Epithelial Cell": 1.0,
+                "occurs_in: Tumor-Associated Macrophage": 1.0,
+                "caused_by: Gene Upregulation": 1.0
+            },
+            "Oxidative Phosphorylation": {
+                "is_a: Oncogenic Pathway": 1.0,
+                "part_of: Lung Adenocarcinoma": 1.0
+            },
+            "Kras Signaling": {
+                "is_a: Oncogenic Pathway": 1.0,
+                "part_of: Lung Adenocarcinoma": 1.0
+            },
+            "Epithelial-Mesenchymal Transition": {
+                "is_a: Oncogenic Pathway": 1.0,
+                "part_of: Lung Adenocarcinoma": 1.0
+            },
+            "Tumor-Associated Macrophage": {
+                "part_of: Tumor Microenvironment": 1.0
+            },
+            "MIF Signaling Pathway": {
+                "is_a: Cell Communication Pathway": 1.0,
+                "occurs_in: Tumor Microenvironment": 1.0
+            },
+            "APP Signaling Pathway": {
+                "is_a: Cell Communication Pathway": 1.0,
+                "occurs_in: Tumor Microenvironment": 1.0
+            },
+            "Immune Checkpoint Blockade Therapy": {
+                "is_treatment_for: Lung Adenocarcinoma": 1.0
+            },
+            "BST2 Knockdown": {
+                "is_treatment_for: Lung Adenocarcinoma": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260506_1630"
+    },
+    "42089837": {
+        "entities": {
+            "Drug-resistant bacterial biofilm infection": {
+                "is_a: infection": 1.0,
+                "occurs_in: wound": 1.0,
+                "caused_by: drug-resistant bacteria": 1.0
+            },
+            "HEA@OAH": {
+                "is_a: nanozyme-integrated hydrogel": 1.0,
+                "has_quality: injectable": 1.0,
+                "has_quality: self-healing": 1.0,
+                "is_treatment_for: MRSA biofilm-infected wound": 1.0
+            },
+            "High-entropy alloy nanozymes": {
+                "part_of: HEA@OAH": 1.0,
+                "has_quality: peroxidase-like activity": 1.0,
+                "has_quality: glutathione peroxidase-like activity": 1.0
+            },
+            "Photothermal therapy": {
+                "is_a: therapy": 1.0,
+                "caused_by: NIR irradiation": 1.0,
+                "occurs_in: HEA@OAH": 1.0
+            },
+            "MRSA biofilm": {
+                "is_a: biofilm": 1.0,
+                "caused_by: Methicillin-resistant Staphylococcus aureus": 1.0,
+                "occurs_in: wound": 1.0
+            },
+            "Wound healing": {
+                "is_a: biological process": 1.0,
+                "occurs_in: skin": 1.0,
+                "has_quality: near-scarless": 1.0
+            },
+            "Inflammation": {
+                "is_a: biological process": 1.0,
+                "occurs_in: wound": 1.0,
+                "caused_by: biofilm infection": 1.0
+            },
+            "NIR irradiation": {
+                "is_a: process": 1.0,
+                "occurs_in: HEA@OAH": 1.0
+            },
+            "Hydrogel": {
+                "is_a: material entity": 1.0,
+                "has_quality: injectable": 1.0,
+                "has_quality: self-healing": 1.0
+            },
+            "Schiff base bonds": {
+                "part_of: hydrogel": 1.0,
+                "has_quality: dynamic": 1.0
+            },
+            "Peroxidase-like activity": {
+                "is_a: quality": 1.0,
+                "occurs_in: high-entropy alloy nanozymes": 1.0
+            },
+            "Glutathione peroxidase-like activity": {
+                "is_a: quality": 1.0,
+                "occurs_in: high-entropy alloy nanozymes": 1.0
+            },
+            "Bactericidal .OH": {
+                "caused_by: peroxidase-like activity": 1.0
+            },
+            "H2O2": {
+                "is_a: chemical entity": 1.0,
+                "occurs_in: wound": 1.0
+            },
+            "Methicillin-resistant Staphylococcus aureus (MRSA)": {
+                "is_a: bacterium": 1.0,
+                "has_quality: drug-resistant": 1.0
+            },
+            "Biofilm": {
+                "is_a: microbial community": 1.0,
+                "occurs_in: wound": 1.0
+            },
+            "Wound dressing": {
+                "is_a: medical device": 1.0,
+                "is_treatment_for: wound": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260506_1630"
+    },
+    "42089563": {
+        "entities": {
+            "Implanted Neuromodulating Device": {
+                "is_a: Medical Device": 1.0,
+                "part_of: Neuromodulation System": 1.0
+            },
+            "Cochlear Implant": {
+                "is_a: Implanted Neuromodulating Device": 1.0
+            },
+            "Deep Brain Stimulator": {
+                "is_a: Implanted Neuromodulating Device": 1.0
+            },
+            "Hardware Exposure": {
+                "is_a: Postoperative Complication": 1.0,
+                "occurs_in: Implanted Neuromodulating Device": 1.0
+            },
+            "Surgical Salvage": {
+                "is_a: Surgical Procedure": 1.0,
+                "is_treatment_for: Hardware Exposure": 1.0
+            },
+            "Explantation": {
+                "is_a: Surgical Procedure": 1.0,
+                "is_treatment_for: Hardware Exposure": 1.0
+            },
+            "Reimplantation": {
+                "is_a: Surgical Procedure": 1.0
+            },
+            "Wound Healing Concern": {
+                "is_a: Postoperative Complication": 1.0,
+                "occurs_in: Surgical Site": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260506_1630"
+    },
+    "predefined": {
+        "entities": {
+            "Low-vacuum drains": {
+                "is_a: Active drainage": 1.0
+            },
+            "High-vacuum drains": {
+                "is_a: Active drainage": 1.0
+            },
+            "Ethanol": {
+                "is_a: alcohols": 1.0
+            },
+            "Isopropanol": {
+                "is_a: alcohols": 1.0
+            },
+            "n-propanol": {
+                "is_a: alcohols": 1.0
+            },
+            "Venous wounds": {
+                "is_a: Angiopathic wounds": 1.0
+            },
+            "Arterial wounds": {
+                "is_a: Angiopathic wounds": 1.0
+            },
+            "Mixed venous-arterial wounds": {
+                "is_a: Angiopathic wounds": 1.0
+            },
+            "Microangiopathic wounds": {
+                "is_a: Angiopathic wounds": 1.0
+            },
+            "Vasculitis": {
+                "is_a: Angiopathic wounds": 1.0
+            },
+            "Systemic antibiotic therapy": {
+                "is_a: Antibiotic therapy": 1.0
+            },
+            "Topical antibiotic therapy": {
+                "is_a: Antibiotic therapy": 1.0
+            },
+            "Quaternary ammonium compounds": {
+                "is_a: Antiseptic agents for wound treatment": 1.0
+            },
+            "Halogens and halogen-releasing compounds": {
+                "is_a: Antiseptic agents for wound treatment": 1.0
+            },
+            "Biguanide": {
+                "is_a: Antiseptic agents for wound treatment": 1.0
+            },
+            "alcohols": {
+                "is_a: Antiseptic agents for wound treatment": 1.0
+            },
+            "Phenols and phenol derivatives": {
+                "is_a: Antiseptic agents for wound treatment": 1.0
+            },
+            "Metals and metal salts": {
+                "is_a: Antiseptic agents for wound treatment": 1.0
+            },
+            "Dyes": {
+                "is_a: Antiseptic agents for wound treatment": 1.0
+            },
+            "Hypochlorous acid": {
+                "is_a: Antiseptic agents for wound treatment": 1.0
+            },
+            "Primary healing": {
+                "is_a: Types of wound healing": 1.0
+            },
+            "Secondary healing": {
+                "is_a: Types of wound healing": 1.0
+            },
+            "Tertiary healing": {
+                "is_a: Types of wound healing": 1.0
+            },
+            "Regenerative healing": {
+                "is_a: Types of wound healing": 1.0
+            },
+            "arterial leg ulcer": {
+                "is_a: Arterial wounds": 1.0
+            },
+            "Hand disinfection": {
+                "is_a: Aseptic cuticles": 1.0
+            },
+            "Sterile gloves": {
+                "is_a: Aseptic cuticles": 1.0
+            },
+            "Surface disinfection": {
+                "is_a: Aseptic cuticles": 1.0
+            },
+            "T-Drainage:": {
+                "is_a: abdominal drains": 1.0
+            },
+            "Polihexanide": {
+                "is_a: Biguanide": 1.0
+            },
+            "Chlorhexidine": {
+                "is_a: Biguanide": 1.0
+            },
+            "Biobag debridement": {
+                "is_a: Biosurgical debridement": 1.0
+            },
+            "cat bite wound": {
+                "is_a: bite wound": 1.0
+            },
+            "dog bite wound": {
+                "is_a: bite wound": 1.0
+            },
+            "Human bite wound": {
+                "is_a: bite wound": 1.0
+            },
+            "Pemphigus vulgaris": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Bullous pemphigoid": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Dermatitis herpetiformis Duhring": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Mucous membrane pemphigoid": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Linear IgA dermatosis": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Herpes zoster (shingles)": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Chickenpox (varicella)": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Herpes simplex (e.g. cold sores)": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Bullous impetigo": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Hand-foot-and-mouth disease": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Epidermolysis bullosa (\"butterfly disease\")": {
+                "is_a: Blistering wound": 1.0
+            },
+            "2nd degree burn": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Friction bubble": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Allergic contact dermatitis": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Stevens-Johnson syndrome (SJS) / TEN": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Fixed drug exanthema": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Porphyria cutanea tarda": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Bullosis diabeticorum (diabetic blisters)": {
+                "is_a: Blistering wound": 1.0
+            },
+            "Surgical area": {
+                "is_a: Surgical wound": 1.0
+            },
+            "Wound management": {
+                "is_a: Surgical wound": 1.0
+            },
+            "Surgical debridement": {
+                "is_a: Debridement": 1.0
+            },
+            "Enzymatic debridement": {
+                "is_a: Debridement": 1.0
+            },
+            "Autolytic debridement": {
+                "is_a: Debridement": 1.0
+            },
+            "Mechanical debridement": {
+                "is_a: Debridement": 1.0
+            },
+            "Biosurgical debridement": {
+                "is_a: Debridement": 1.0
+            },
+            "Ultrasound-assisted wound cleaning": {
+                "is_a: Debridement": 1.0
+            },
+            "Water-jet assisted wound cleansing": {
+                "is_a: Debridement": 1.0
+            },
+            "Passive drainage": {
+                "is_a: Drainage": 1.0
+            },
+            "Active drainage": {
+                "is_a: Drainage": 1.0
+            },
+            "Drainage system type": {
+                "is_a: Drainage": 1.0
+            },
+            "Drains classified according to application": {
+                "is_a: Drainage": 1.0
+            },
+            "Wound and soft tissue drains": {
+                "is_a: Drains classified according to application": 1.0
+            },
+            "bdominal drainage": {
+                "is_a: Drains classified according to application": 1.0
+            },
+            "Chest drains": {
+                "is_a: Drains classified according to application": 1.0
+            },
+            "Ventricular drainage": {
+                "is_a: Drains classified according to application": 1.0
+            },
+            "Tympanic drainage": {
+                "is_a: Drains classified according to application": 1.0
+            },
+            "Open drainage systems": {
+                "is_a: Drainage system type": 1.0
+            },
+            "Semi-open drainage systems": {
+                "is_a: Drainage system type": 1.0
+            },
+            "Closed drainage systems": {
+                "is_a: Drainage system type": 1.0
+            },
+            "Grade I according to Shea": {
+                "is_a: Pressure ulcer": 1.0
+            },
+            "Grade II according to Shea": {
+                "is_a: Pressure ulcer": 1.0
+            },
+            "Grade III according to Shea": {
+                "is_a: Pressure ulcer": 1.0
+            },
+            "Grade IV according to Shea": {
+                "is_a: Pressure ulcer": 1.0
+            },
+            "Bromelain": {
+                "is_a: Enzymatic debridement": 1.0
+            },
+            "Proteins": {
+                "is_a: Nutrition": 1.0
+            },
+            "Vitamins": {
+                "is_a: Nutrition": 1.0
+            },
+            "Trace elements": {
+                "is_a: Nutrition": 1.0
+            },
+            "Coagulation phase": {
+                "is_a: Exudation phase": 1.0
+            },
+            "Hemostasis": {
+                "is_a: Exudation phase": 1.0
+            },
+            "Inflammation": {
+                "is_a: Exudation phase": 1.0
+            },
+            "Vasoconstriction": {
+                "is_a: Exudation phase": 1.0
+            },
+            "Vasodilation": {
+                "is_a: Exudation phase": 1.0
+            },
+            "5": {
+                "is_a: Thread size": 1.0
+            },
+            "4": {
+                "is_a: Thread size": 1.0
+            },
+            "3": {
+                "is_a: Thread size": 1.0
+            },
+            "2": {
+                "is_a: Thread size": 1.0
+            },
+            "1": {
+                "is_a: Thread size": 1.0
+            },
+            "0": {
+                "is_a: Thread size": 1.0
+            },
+            "1-0": {
+                "is_a: Thread size": 1.0
+            },
+            "2-0": {
+                "is_a: Thread size": 1.0
+            },
+            "3-0": {
+                "is_a: Thread size": 1.0
+            },
+            "4-0": {
+                "is_a: Thread size": 1.0
+            },
+            "5-0": {
+                "is_a: Thread size": 1.0
+            },
+            "6-0": {
+                "is_a: Thread size": 1.0
+            },
+            "7-0": {
+                "is_a: Thread size": 1.0
+            },
+            "8-0": {
+                "is_a: Thread size": 1.0
+            },
+            "9-0": {
+                "is_a: Thread size": 1.0
+            },
+            "10-0": {
+                "is_a: Thread size": 1.0
+            },
+            "11-0": {
+                "is_a: Thread size": 1.0
+            },
+            "12-0": {
+                "is_a: Thread size": 1.0
+            },
+            "13-0": {
+                "is_a: Thread size": 1.0
+            },
+            "Measurement system": {
+                "is_a: Thread size": 1.0
+            },
+            "Resorbable thread material": {
+                "is_a: Thread material": 1.0
+            },
+            "Non-absorbable thread material": {
+                "is_a: Thread material": 1.0
+            },
+            "Monofilament thread material": {
+                "is_a: Thread material": 1.0
+            },
+            "Polyfiles thread material": {
+                "is_a: Thread material": 1.0
+            },
+            "Thread size": {
+                "is_a: Thread material": 1.0
+            },
+            "Crystal violet / Gentian violet": {
+                "is_a: Colorants": 1.0
+            },
+            "Plaster": {
+                "is_a: Fixing bandage": 1.0
+            },
+            "Gauze bandage": {
+                "is_a: Fixing bandage": 1.0
+            },
+            "Elastic bandage": {
+                "is_a: Fixing bandage": 1.0
+            },
+            "Net association": {
+                "is_a: Fixing bandage": 1.0
+            },
+            "Ulcus cruris mixtum": {
+                "is_a: Mixed veno-arterial wounds": 1.0
+            },
+            "Grade I": {
+                "is_a: Grading of the thermal or cauterizing wound": 1.0,
+                "is_a: Classification according to Tscherne and Oestern": 1.0
+            },
+            "Grade IIa": {
+                "is_a: Grading of the thermal or cauterizing wound": 1.0
+            },
+            "Grade IIb": {
+                "is_a: Grading of the thermal or cauterizing wound": 1.0
+            },
+            "Grade III": {
+                "is_a: Grading of the thermal or cauterizing wound": 1.0,
+                "is_a: Classification according to Tscherne and Oestern": 1.0
+            },
+            "Grade IV": {
+                "is_a: Grading of the thermal or cauterizing wound": 1.0,
+                "is_a: Classification according to Tscherne and Oestern": 1.0
+            },
+            "DiabetesMellitus": {
+                "is_a: Underlying disease": 1.0
+            },
+            "PAD": {
+                "is_a: Underlying disease": 1.0
+            },
+            "Iodine / povidone-iodine": {
+                "is_a: Halogens and halogen-releasing compounds": 1.0
+            },
+            "Split-thickness skin graft": {
+                "is_a: Skin grafting": 1.0
+            },
+            "Full-thickness skin graft": {
+                "is_a: Skin grafting": 1.0
+            },
+            "Redness": {
+                "is_a: Skin discoloration": 1.0
+            },
+            "Pallor": {
+                "is_a: Skin discoloration": 1.0
+            },
+            "Cyanosis": {
+                "is_a: Skin discoloration": 1.0
+            },
+            "Easy-Flow drainage": {
+                "is_a: Capillary drainage": 1.0
+            },
+            "Penrose drainage": {
+                "is_a: Capillary drainage": 1.0
+            },
+            "Staphylococcus aureus": {
+                "is_a: Germ spectrum": 1.0
+            },
+            "Pseudomonas aeruginosa": {
+                "is_a: Germ spectrum": 1.0
+            },
+            "Escherichia coli": {
+                "is_a: Germ spectrum": 1.0
+            },
+            "Streptococci": {
+                "is_a: Germ spectrum": 1.0
+            },
+            "MRSA": {
+                "is_a: Germ spectrum": 1.0
+            },
+            "I": {
+                "is_a: Classification according to Gustilo and Anderson": 1.0
+            },
+            "II": {
+                "is_a: Classification according to Gustilo and Anderson": 1.0
+            },
+            "IIIA": {
+                "is_a: Classification according to Gustilo and Anderson": 1.0
+            },
+            "IIIB": {
+                "is_a: Classification according to Gustilo and Anderson": 1.0
+            },
+            "IIIC": {
+                "is_a: Classification according to Gustilo and Anderson": 1.0
+            },
+            "Grade II": {
+                "is_a: Classification according to Tscherne and Oestern": 1.0
+            },
+            "URGE scale": {
+                "is_a: Classification system": 1.0
+            },
+            "ASEPSIS score": {
+                "is_a: Classification system": 1.0
+            },
+            "United States Pharmacopeia": {
+                "is_a: Measurement system": 1.0
+            },
+            "European Pharmacopoeia": {
+                "is_a: Measurement system": 1.0
+            },
+            "Compress debridement": {
+                "is_a: Mechanical debridement": 1.0
+            },
+            "Excision with the scalpel": {
+                "is_a: Mechanical debridement": 1.0
+            },
+            "Manuka honey": {
+                "is_a: Medicinal honey": 1.0
+            },
+            "Silver": {
+                "is_a: Metals and metal salts": 1.0
+            },
+            "Bismuth III bromide": {
+                "is_a: Metals and metal salts": 1.0
+            },
+            "Zinc": {
+                "is_a: Metals and metal salts": 1.0
+            },
+            "Copper": {
+                "is_a: Metals and metal salts": 1.0
+            },
+            "Diabetic foot syndrome (DFS)": {
+                "is_a: Microangiopathic wounds": 1.0
+            },
+            "Ulcus hypertonicus Martorell": {
+                "is_a: Microangiopathic wounds": 1.0
+            },
+            "Livedovasculopathy": {
+                "is_a: Microangiopathic wounds": 1.0
+            },
+            "Hydrocolloids": {
+                "is_a: Modern wound dressing": 1.0
+            },
+            "Hydrogels": {
+                "is_a: Modern wound dressing": 1.0
+            },
+            "Alginates": {
+                "is_a: Modern wound dressing": 1.0
+            },
+            "Foams": {
+                "is_a: Modern wound dressing": 1.0
+            },
+            "Wound-integrating wound dressings": {
+                "is_a: Modern wound dressing": 1.0
+            },
+            "Transparent polyurethane films": {
+                "is_a: Modern wound dressing": 1.0
+            },
+            "Silver-containing overlay": {
+                "is_a: Modern wound dressing": 1.0
+            },
+            "Biosynthetic cellulose": {
+                "is_a: Modern wound dressing": 1.0
+            },
+            "Activated carbon layer": {
+                "is_a: Modern wound dressing": 1.0
+            },
+            "Hydrofibers": {
+                "is_a: Modern wound dressing": 1.0
+            },
+            "Wound spacer grid": {
+                "is_a: Modern wound dressing": 1.0
+            },
+            "Composite dressing": {
+                "is_a: Modern wound dressing": 1.0
+            },
+            "Single button seam": {
+                "is_a: Seam technology": 1.0
+            },
+            "Continuous seam": {
+                "is_a: Seam technology": 1.0
+            },
+            "Intracutaneous suture": {
+                "is_a: Seam technology": 1.0
+            },
+            "Backstitch seam": {
+                "is_a: Seam technology": 1.0
+            },
+            "Moist necrosis": {
+                "is_a: Necrosis": 1.0
+            },
+            "Dry necrosis": {
+                "is_a: Necrosis": 1.0
+            },
+            "Gangrene": {
+                "is_a: Necrosis": 1.0
+            },
+            "Marjolin ulcer": {
+                "is_a: Neoplastic wound": 1.0
+            },
+            "Jackson-Pratt drainage": {
+                "is_a: Low-vacuum drains": 1.0
+            },
+            "Blake drainage": {
+                "is_a: Low-vacuum drains": 1.0
+            },
+            "Redon drainage": {
+                "is_a: ochvacuum drains": 1.0
+            },
+            "Incision": {
+                "is_a: Surgical area": 1.0
+            },
+            "Excision": {
+                "is_a: Surgical area": 1.0
+            },
+            "Anastomosis": {
+                "is_a: Surgical area": 1.0
+            },
+            "Gravity drainage": {
+                "is_a: Passive drainage": 1.0
+            },
+            "Capillary drainage": {
+                "is_a: Passive drainage": 1.0
+            },
+            "Pigtail catheter": {
+                "is_a: Passive drainage": 1.0
+            },
+            "Exudation phase": {
+                "is_a: Phases of wound healing": 1.0
+            },
+            "Proliferation phase": {
+                "is_a: Phases of wound healing": 1.0
+            },
+            "Regeneration phase": {
+                "is_a: Phases of wound healing": 1.0
+            },
+            "Remodeling phase": {
+                "is_a: Phases of wound healing": 1.0
+            },
+            "Triclosan": {
+                "is_a: Phenols and phenol derivatives": 1.0
+            },
+            "Phenoxyethanol": {
+                "is_a: Phenols and phenol derivatives": 1.0
+            },
+            "Granulation": {
+                "is_a: Proliferation phase": 1.0
+            },
+            "Angiogenesis": {
+                "is_a: Proliferation phase": 1.0
+            },
+            "Epithelialization": {
+                "is_a: Proliferation phase": 1.0
+            },
+            "Expert standard": {
+                "is_a: Quality assurance": 1.0
+            },
+            "Benzalkonium chloride": {
+                "is_a: Quaternary ammonium compounds": 1.0
+            },
+            "Octenidine": {
+                "is_a: Quaternary ammonium compounds": 1.0
+            },
+            "Repair phase": {
+                "is_a: Regeneration phase": 1.0
+            },
+            "Scarring": {
+                "is_a: Regeneration phase": 1.0
+            },
+            "Clean wound": {
+                "is_a: Cleaning class": 1.0
+            },
+            "Clean contaminated wound": {
+                "is_a: Cleaning class": 1.0
+            },
+            "Contaminated wound OP": {
+                "is_a: Cleaning class": 1.0
+            },
+            "Manifest-infected wound": {
+                "is_a: Cleaning class": 1.0
+            },
+            "Robinson drainage": {
+                "is_a: Gravity drainage": 1.0
+            },
+            "Adhesive silicone grid": {
+                "is_a: Silicone spacer grid": 1.0
+            },
+            "Cellulose acetate mesh impregnated with a special petrolatum emulsion": {
+                "is_a: Silicone spacer grid": 1.0
+            },
+            "Overheating": {
+                "is_a: Temperature": 1.0
+            },
+            "Hypothermia": {
+                "is_a: Temperature": 1.0
+            },
+            "Grading of the thermal or cauterizing wound": {
+                "is_a: Thermal wound": 1.0
+            },
+            "B\u00fclau drainage": {
+                "is_a: Chest drains": 1.0
+            },
+            "Monaldi drainage": {
+                "is_a: Chest drains": 1.0
+            },
+            "Fat gauze": {
+                "is_a: Traditional wound dressing": 1.0
+            },
+            "Silicone spacer grid": {
+                "is_a: Traditional wound dressing": 1.0
+            },
+            "Wound with accompanying fracture": {
+                "is_a: Traumatic wound": 1.0
+            },
+            "Bite wound": {
+                "is_a: Traumatic wound": 1.0
+            },
+            "Scratch wound": {
+                "is_a: Traumatic wound": 1.0
+            },
+            "CUSA(r) debridement": {
+                "is_a: Ultrasound-assisted wound cleaning": 1.0
+            },
+            "Ulcus cruris venosum (\"open leg\")": {
+                "is_a: Venous wounds": 1.0
+            },
+            "Secondary dressing": {
+                "is_a: Association": 1.0
+            },
+            "Fixing bandage": {
+                "is_a: Association": 1.0
+            },
+            "Traditional wound dressing": {
+                "is_a: Wound dressing": 1.0
+            },
+            "Modern wound dressing": {
+                "is_a: Wound dressing": 1.0
+            },
+            "Wound cleansing": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Antiseptic": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Wound closure": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Wound edge protection": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Wound dressing": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Wound gel/ointment/cream": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Association": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Compression therapy": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Vacuum therapy": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Hyperbaric O2 therapy": {
+                "is_a: Wound treatment": 1.0
+            },
+            "CO2 bath": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Skin grafting": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Flapplasty": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Drainage": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Patient education": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Dressing change": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Pain management": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Nutrition": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Aseptic conditions": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Perioperative antimicrobial prophylaxis": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Antibiotic therapy": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Wound therapeutic agent": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Cold plasma": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Local anesthesia": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Incision foil": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Antiseptic active ingredients for wound treatment": {
+                "is_a: Wound treatment": 1.0
+            },
+            "Wound expert": {
+                "is_a: People in wound treatment": 1.0
+            },
+            "Wound manager": {
+                "is_a: People in wound treatment": 1.0
+            },
+            "Doctor": {
+                "is_a: People in wound treatment": 1.0
+            },
+            "Carer": {
+                "is_a: People in wound treatment": 1.0
+            },
+            "Suture insufficiency": {
+                "is_a: Wound dehiscence": 1.0
+            },
+            "Belly": {
+                "is_a: Wound dehiscence": 1.0
+            },
+            "Wound assessment": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Medical history": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Clinical inspection": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Palpation": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Wound swab": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Biopsy": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Histopathological examination of wound material": {
+                "is_a: Biopsy": 1.0
+            },
+            "Doppler sonography": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Wound size measurement": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Classification system": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Sore odor": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Wound exudate": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Fibrin coating": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Wound edge": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Wound base": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Postoperative wound control": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Skin discoloration": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Temperature": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Swelling": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Functional restriction": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Germ spectrum": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Resistogram": {
+                "is_a: Wound diagnostics": 1.0
+            },
+            "Photo documentation": {
+                "is_a: Wound documentation": 1.0
+            },
+            "Quality assurance": {
+                "is_a: Wound documentation": 1.0
+            },
+            "Wound type": {
+                "is_a: material entity": 1.0
+            },
+            "Wound healing": {
+                "is_a: process": 1.0
+            },
+            "Wound complication": {
+                "is_a: Thing": 1.0
+            },
+            "Wound diagnostic process": {
+                "is_a: process": 1.0
+            },
+            "Wound treatment": {
+                "is_a: process": 1.0
+            },
+            "Wound documentation process": {
+                "is_a: process": 1.0
+            },
+            "Wound mechanism": {
+                "is_a: process": 1.0
+            },
+            "Classification according to Gustilo and Anderson": {
+                "is_a: Wound with accompanying fracture": 1.0
+            },
+            "Classification according to Tscherne and Oestern": {
+                "is_a: Wound with accompanying fracture": 1.0
+            },
+            "Serous exudate": {
+                "is_a: Wound exudate": 1.0
+            },
+            "Sanguine exudate": {
+                "is_a: Wound exudate": 1.0
+            },
+            "Serosanguineous exudate": {
+                "is_a: Wound exudate": 1.0
+            },
+            "Purulent exudate": {
+                "is_a: Wound exudate": 1.0
+            },
+            "Polihexanide gel": {
+                "is_a: Wound gel/ointment/cream": 1.0
+            },
+            "Octenidine gel": {
+                "is_a: Wound gel/ointment/cream": 1.0
+            },
+            "Iodine ointment": {
+                "is_a: Wound gel/ointment/cream": 1.0
+            },
+            "Flaminal": {
+                "is_a: Wound gel/ointment/cream": 1.0
+            },
+            "Bepanthen ointment": {
+                "is_a: Wound gel/ointment/cream": 1.0
+            },
+            "Voltaren gel": {
+                "is_a: Wound gel/ointment/cream": 1.0
+            },
+            "Planimetry": {
+                "is_a: Wound size measurement": 1.0
+            },
+            "Depth measurement": {
+                "is_a: Wound size measurement": 1.0
+            },
+            "Volumetrics": {
+                "is_a: Wound size measurement": 1.0
+            },
+            "Granulating wound primer": {
+                "is_a: Wound base": 1.0
+            },
+            "Necrotic wound bed": {
+                "is_a: Wound base": 1.0
+            },
+            "Fibrin-covered wound bed": {
+                "is_a: Wound base": 1.0
+            },
+            "Epithelializing wound bed": {
+                "is_a: Wound base": 1.0
+            },
+            "Phases of wound healing": {
+                "is_a: Wound healing": 1.0
+            },
+            "Types of wound healing": {
+                "is_a: Wound healing": 1.0
+            },
+            "Wound contraction": {
+                "is_a: Wound healing": 1.0
+            },
+            "Underlying disease": {
+                "is_a: Wound healing disorder": 1.0
+            },
+            "Immunosuppression": {
+                "is_a: Wound healing disorder": 1.0
+            },
+            "Malnutrition": {
+                "is_a: Wound healing disorder": 1.0
+            },
+            "Smoking": {
+                "is_a: Wound healing disorder": 1.0
+            },
+            "Obesity": {
+                "is_a: Wound healing disorder": 1.0
+            },
+            "Advanced age": {
+                "is_a: Wound healing disorder": 1.0
+            },
+            "Polylactide membrane": {
+                "is_a: Wound-integrating wound dressings": 1.0
+            },
+            "Polyurethane foam": {
+                "is_a: Wound-integrating wound dressings": 1.0
+            },
+            "Bovine collagen": {
+                "is_a: Wound-integrating wound dressings": 1.0
+            },
+            "Wound infection": {
+                "is_a: Wound complication": 1.0
+            },
+            "Erysipelas": {
+                "is_a: Wound infection": 1.0
+            },
+            "Phlegmon": {
+                "is_a: Wound infection": 1.0
+            },
+            "Fournier's gangrene": {
+                "is_a: Wound infection": 1.0
+            },
+            "Necrotizing fasciitis": {
+                "is_a: Wound infection": 1.0
+            },
+            "Wound dehiscence": {
+                "is_a: Wound complication": 1.0
+            },
+            "Serom": {
+                "is_a: Wound complication": 1.0
+            },
+            "Lymphatic fistula": {
+                "is_a: Wound complication": 1.0
+            },
+            "Lymphocele": {
+                "is_a: Wound complication": 1.0
+            },
+            "Hematoma": {
+                "is_a: Wound complication": 1.0
+            },
+            "Necrosis": {
+                "is_a: Wound complication": 1.0
+            },
+            "Fistula": {
+                "is_a: Wound complication": 1.0
+            },
+            "Abscess": {
+                "is_a: Wound complication": 1.0
+            },
+            "Hypertrophic scar": {
+                "is_a: Wound complication": 1.0
+            },
+            "Keloid": {
+                "is_a: Wound complication": 1.0
+            },
+            "Wound edge maceration": {
+                "is_a: Wound complication": 1.0
+            },
+            "Wound pocket formation": {
+                "is_a: Wound complication": 1.0
+            },
+            "Hypergranulation": {
+                "is_a: Wound complication": 1.0
+            },
+            "Wound pain": {
+                "is_a: Wound complication": 1.0
+            },
+            "Stress bubble": {
+                "is_a: Wound complication": 1.0
+            },
+            "Wound healing disorder": {
+                "is_a: Wound complication": 1.0
+            },
+            "Biofilm": {
+                "is_a: Wound complication": 1.0
+            },
+            "Pressure ulcer": {
+                "is_a: Wound mechanism": 1.0
+            },
+            "Thermal wound": {
+                "is_a: Wound mechanism": 1.0
+            },
+            "Cauterizing wound": {
+                "is_a: Wound mechanism": 1.0
+            },
+            "Traumatic wound": {
+                "is_a: Wound mechanism": 1.0
+            },
+            "Surgical wound": {
+                "is_a: Wound mechanism": 1.0
+            },
+            "Autoimmune wound": {
+                "is_a: Wound mechanism": 1.0
+            },
+            "Neoplastic wound": {
+                "is_a: Wound mechanism": 1.0
+            },
+            "Angiopathic wounds": {
+                "is_a: Wound mechanism": 1.0
+            },
+            "Diabetic wound": {
+                "is_a: Wound mechanism": 1.0
+            },
+            "Intact wound margin": {
+                "is_a: Wound edge": 1.0
+            },
+            "Livider wound margin": {
+                "is_a: Wound edge": 1.0
+            },
+            "Reddened wound edge": {
+                "is_a: Wound edge": 1.0
+            },
+            "Softened wound edge": {
+                "is_a: Wound edge": 1.0
+            },
+            "Undermined wound margin": {
+                "is_a: Wound edge": 1.0
+            },
+            "Skin protection films (barrier films)": {
+                "is_a: Wound edge protection": 1.0
+            },
+            "Pastes (e.g. zinc paste)": {
+                "is_a: Wound edge protection": 1.0
+            },
+            "Skin protection creams & ointments": {
+                "is_a: Wound edge protection": 1.0
+            },
+            "Hydrocolloids (thin)": {
+                "is_a: Wound edge protection": 1.0
+            },
+            "Silicone wound spacer": {
+                "is_a: Wound edge protection": 1.0
+            },
+            "Debridement": {
+                "is_a: Wound cleansing": 1.0
+            },
+            "Wound irrigation": {
+                "is_a: Wound cleansing": 1.0
+            },
+            "Wound irrigation solution": {
+                "is_a: Wound cleansing": 1.0
+            },
+            "Lavage": {
+                "is_a: Wound cleansing": 1.0
+            },
+            "Serasept": {
+                "is_a: Wound irrigation solution": 1.0
+            },
+            "NaCl 0.9%": {
+                "is_a: Wound irrigation solution": 1.0
+            },
+            "NaCl 10%": {
+                "is_a: Wound irrigation solution": 1.0
+            },
+            "Ringer solution": {
+                "is_a: Wound irrigation solution": 1.0
+            },
+            "Lavasept": {
+                "is_a: Wound irrigation solution": 1.0
+            },
+            "Antiseptic solution": {
+                "is_a: Wound irrigation solution": 1.0
+            },
+            "MedicinalHoney": {
+                "is_a: Wound therapeutic agent": 1.0
+            },
+            "Aseptic wound": {
+                "is_a: Wound type": 1.0
+            },
+            "Contaminated wound": {
+                "is_a: Wound type": 1.0
+            },
+            "Blistering wound": {
+                "is_a: Wound type": 1.0
+            },
+            "Colonized wound": {
+                "is_a: Wound type": 1.0
+            },
+            "Infected wound": {
+                "is_a: Wound type": 1.0
+            },
+            "Primary healing wound": {
+                "is_a: Wound type": 1.0
+            },
+            "Secondary healing wound": {
+                "is_a: Wound type": 1.0
+            },
+            "Tertiary healing wound": {
+                "is_a: Wound type": 1.0
+            },
+            "Regenerative healing wound": {
+                "is_a: Wound type": 1.0
+            },
+            "Acute wound": {
+                "is_a: Wound type": 1.0
+            },
+            "Chronic wound": {
+                "is_a: Wound type": 1.0
+            },
+            "Cleaning class": {
+                "is_a: Wound type": 1.0
+            },
+            "Primary seam": {
+                "is_a: Wound closure": 1.0
+            },
+            "Secondary seam": {
+                "is_a: Wound closure": 1.0
+            },
+            "Skin staples": {
+                "is_a: Wound closure": 1.0
+            },
+            "Staple plaster": {
+                "is_a: Wound closure": 1.0
+            },
+            "Fabric adhesive": {
+                "is_a: Wound closure": 1.0
+            },
+            "Thread material": {
+                "is_a: Wound closure": 1.0
+            },
+            "Seam technology": {
+                "is_a: Wound closure": 1.0
+            },
+            "Wound": {
+                "is_a: Thing": 1.0
+            },
+            "Wound classification according to Wagner and Anderson": {
+                "is_a: Classification systems": 1.0,
+                "is_a: Wound type": 1.0
+            },
+            "1A": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "1B": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "1C": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "1D": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "2A": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "2B": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "2C": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "2D": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "3A": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "3B": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "3C": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "3D": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "4A": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "4B": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "4C": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            },
+            "4D": {
+                "is_a: Wound classification according to Wagner and Anderson": 1.0
+            }
+        },
+        "meta_stamp": "predefined"
+    },
+    "llm_fill": {
+        "entities": {
+            "Lung Adenocarcinoma": {
+                "caused_by: Gene Upregulation": 0.0,
+                "caused_by: Methicillin-resistant Staphylococcus aureus": 0.0,
+                "caused_by: NIR irradiation": 0.0,
+                "caused_by: biofilm infection": 0.0,
+                "caused_by: drug-resistant bacteria": 0.0,
+                "caused_by: peroxidase-like activity": 0.0,
+                "has_quality: Heterogeneous": 1.0,
+                "has_quality: Malignant": 1.0,
+                "has_quality: drug-resistant": 0.0,
+                "has_quality: dynamic": 0.0,
+                "has_quality: glutathione peroxidase-like activity": 0.0,
+                "has_quality: injectable": 0.0,
+                "has_quality: near-scarless": 0.0,
+                "has_quality: peroxidase-like activity": 0.0,
+                "has_quality: self-healing": 0.0,
+                "is_a: Active drainage": 0.0,
+                "is_a: Angiopathic wounds": 0.0,
+                "is_a: Antibiotic therapy": 0.0,
+                "is_a: Antiseptic agents for wound treatment": 0.0,
+                "is_a: Arterial wounds": 0.0
+            },
+            "Tumor Microenvironment": {
+                "caused_by: Gene Upregulation": 0.0,
+                "caused_by: Malignant Transformation": 1.0,
+                "caused_by: Methicillin-resistant Staphylococcus aureus": 0.0,
+                "caused_by: NIR irradiation": 0.0,
+                "caused_by: biofilm infection": 0.0,
+                "caused_by: drug-resistant bacteria": 0.0,
+                "caused_by: peroxidase-like activity": 0.0,
+                "has_quality: Malignant": 0.0,
+                "has_quality: drug-resistant": 0.0,
+                "has_quality: dynamic": 1.0,
+                "has_quality: glutathione peroxidase-like activity": 0.0,
+                "has_quality: injectable": 0.0,
+                "has_quality: near-scarless": 0.0,
+                "has_quality: peroxidase-like activity": 0.0,
+                "has_quality: self-healing": 0.0,
+                "is_a: Active drainage": 0.0,
+                "is_a: Angiopathic wounds": 0.0,
+                "is_a: Antibiotic therapy": 0.0,
+                "is_a: Antiseptic agents for wound treatment": 0.0,
+                "is_a: Arterial wounds": 0.0
+            },
+            "Malignant Epithelial Cell": {
+                "caused_by: Gene Upregulation": 0.0,
+                "caused_by: Malignant Transformation": 1.0,
+                "caused_by: Methicillin-resistant Staphylococcus aureus": 0.0,
+                "caused_by: NIR irradiation": 0.0,
+                "caused_by: biofilm infection": 0.0,
+                "caused_by: drug-resistant bacteria": 0.0,
+                "caused_by: peroxidase-like activity": 0.0,
+                "has_quality: Heterogeneous": 0.0,
+                "has_quality: drug-resistant": 0.0,
+                "has_quality: dynamic": 0.0,
+                "has_quality: glutathione peroxidase-like activity": 0.0,
+                "has_quality: injectable": 0.0,
+                "has_quality: near-scarless": 0.0,
+                "has_quality: peroxidase-like activity": 0.0,
+                "has_quality: self-healing": 0.0,
+                "is_a: Active drainage": 0.0,
+                "is_a: Angiopathic wounds": 0.0,
+                "is_a: Antibiotic therapy": 0.0,
+                "is_a: Antiseptic agents for wound treatment": 0.0,
+                "is_a: Arterial wounds": 0.0
+            },
+            "Bone Marrow Stromal Cell Antigen 2": {
+                "caused_by: Malignant Transformation": 0.0,
+                "caused_by: Methicillin-resistant Staphylococcus aureus": 0.0,
+                "caused_by: NIR irradiation": 0.0,
+                "caused_by: biofilm infection": 0.0,
+                "caused_by: drug-resistant bacteria": 0.0,
+                "caused_by: peroxidase-like activity": 0.0,
+                "has_quality: Heterogeneous": 0.0,
+                "has_quality: Malignant": 0.0,
+                "has_quality: drug-resistant": 0.0,
+                "has_quality: dynamic": 0.0,
+                "has_quality: glutathione peroxidase-like activity": 0.0,
+                "has_quality: injectable": 0.0,
+                "has_quality: near-scarless": 0.0,
+                "has_quality: peroxidase-like activity": 0.0,
+                "has_quality: self-healing": 0.0,
+                "is_a: Active drainage": 0.0,
+                "is_a: Angiopathic wounds": 0.0,
+                "is_a: Antibiotic therapy": 0.0,
+                "is_a: Antiseptic agents for wound treatment": 0.0,
+                "is_a: Arterial wounds": 0.0
+            },
+            "Oxidative Phosphorylation": {
+                "caused_by: Gene Upregulation": 0.0,
+                "caused_by: Malignant Transformation": 0.0,
+                "caused_by: Methicillin-resistant Staphylococcus aureus": 0.0,
+                "caused_by: NIR irradiation": 0.0,
+                "caused_by: biofilm infection": 0.0,
+                "caused_by: drug-resistant bacteria": 0.0,
+                "caused_by: peroxidase-like activity": 0.0,
+                "has_quality: Heterogeneous": 0.0,
+                "has_quality: Malignant": 0.0,
+                "has_quality: drug-resistant": 0.0,
+                "has_quality: dynamic": 0.0,
+                "has_quality: glutathione peroxidase-like activity": 0.0,
+                "has_quality: injectable": 0.0,
+                "has_quality: near-scarless": 0.0,
+                "has_quality: peroxidase-like activity": 0.0,
+                "has_quality: self-healing": 0.0,
+                "is_a: Active drainage": 0.0,
+                "is_a: Angiopathic wounds": 0.0,
+                "is_a: Antibiotic therapy": 0.0,
+                "is_a: Antiseptic agents for wound treatment": 0.0
+            }
+        },
+        "meta_stamp": "llm_fill_1_20260506_1632"
+    }
+}

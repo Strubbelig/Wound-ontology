@@ -1,0 +1,300 @@
+{
+  "42089405": {
+    "entities": {
+      "Diabetic Foot Ulcer": {
+        "is_a: Chronic Cutaneous Wound": 1.0,
+        "has_quality: Refractory": 1.0
+      },
+      "Autologous Platelet-rich Gel": {
+        "is_a: Blood-derived Therapeutic Modality": 1.0,
+        "is_treatment_for: Diabetic Foot Ulcer": 1.0,
+        "has_quality: Restricted Availability": 1.0,
+        "has_quality: Short Shelf Life": 1.0,
+        "has_quality: Suboptimal Physical Characteristics": 1.0
+      },
+      "Platelet-rich Plasma": {
+        "part_of: Autologous Platelet-rich Gel": 1.0
+      },
+      "Biomaterial": {
+        "is_treatment_for: Diabetic Foot Ulcer": 1.0
+      },
+      "Cell-based Therapy": {
+        "is_treatment_for: Diabetic Foot Ulcer": 1.0
+      },
+      "Platelet-derived Extracellular Vesicle": {
+        "is_a: Extracellular Vesicle": 1.0,
+        "has_quality: Promising Potential": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260506_1632"
+  },
+  "42088948": {
+    "entities": {
+      "Mineralocorticoid Receptor": {
+        "is_a: receptor": 1.0,
+        "occurs_in: skeletal muscle": 1.0
+      },
+      "MR Antagonist Drug": {
+        "is_treatment_for: fibrosis": 1.0,
+        "is_treatment_for: chronic inflammation": 1.0
+      },
+      "Fibrosis": {
+        "is_a: pathological process": 1.0,
+        "occurs_in: skeletal muscle": 1.0,
+        "caused_by: fibroblast overactivation": 1.0
+      },
+      "Chronic Inflammation": {
+        "is_a: inflammatory process": 1.0,
+        "occurs_in: skeletal muscle": 1.0
+      },
+      "Aldosterone": {
+        "is_a: hormone": 1.0,
+        "is_a: MR agonist": 1.0
+      },
+      "Duchenne Muscular Dystrophy": {
+        "is_a: chronic degenerative disease": 1.0,
+        "is_a: muscular dystrophy": 1.0,
+        "occurs_in: skeletal muscle": 1.0
+      },
+      "Wound Healing": {
+        "is_a: biological process": 1.0,
+        "occurs_in: skeletal muscle": 1.0
+      },
+      "Scratch-Wound Closure": {
+        "occurs_in: fibroblast culture": 1.0
+      },
+      "Fibrotic Replacement": {
+        "is_a: pathological process": 1.0,
+        "occurs_in: skeletal muscle": 1.0,
+        "caused_by: fibroblast overactivation": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260506_1632"
+  },
+  "42089484": {
+    "entities": {
+      "Surgical Site Infection": {
+        "is_a: Infectious Complication": 1.0,
+        "occurs_in: Surgical Site": 1.0,
+        "caused_by: Inadequate Preoperative Preparation": 1.0
+      },
+      "Laparoscopic Colon Surgery": {
+        "is_a: Surgical Procedure": 1.0,
+        "part_of: Colon Surgery": 1.0
+      },
+      "Preoperative Preparation": {
+        "occurs_in: Preoperative Period": 1.0
+      },
+      "Antibiotic Prophylaxis": {
+        "is_treatment_for: Surgical Site Infection": 1.0
+      },
+      "Colon Surgery": {
+        "is_a: Surgical Procedure": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260506_1632"
+  },
+  "42088118": {
+    "entities": {
+      "Intravenous Drug Use": {
+        "caused_by: Substance Use Disorder": 1.0
+      },
+      "Abscess": {
+        "is_a: Severe Infection": 1.0,
+        "occurs_in: Intravenous Drug Use": 1.0
+      },
+      "Endocarditis": {
+        "is_a: Severe Infection": 1.0,
+        "occurs_in: Intravenous Drug Use": 1.0
+      },
+      "Necrotizing Fasciitis": {
+        "is_a: Severe Infection": 1.0,
+        "occurs_in: Intravenous Drug Use": 1.0
+      },
+      "Osteomyelitis": {
+        "is_a: Severe Infection": 1.0,
+        "occurs_in: Intravenous Drug Use": 1.0
+      },
+      "Acute Osteomyelitis": {
+        "is_a: Osteomyelitis": 1.0,
+        "has_quality: Acute": 1.0
+      },
+      "Chronic Osteomyelitis": {
+        "is_a: Osteomyelitis": 1.0,
+        "has_quality: Chronic": 1.0,
+        "caused_by: Acute Osteomyelitis": 1.0
+      },
+      "Biofilm-Mediated Antimicrobial Resistance": {
+        "is_a: Antimicrobial Resistance": 1.0,
+        "caused_by: Biofilm": 1.0
+      },
+      "Soft Tissue Necrosis": {
+        "is_a: Necrosis": 1.0,
+        "occurs_in: Chronic Osteomyelitis": 1.0
+      },
+      "Limb Loss": {
+        "is_a: Complication": 1.0,
+        "caused_by: Chronic Osteomyelitis": 1.0
+      },
+      "Chronic Right Forearm Wound": {
+        "is_a: Chronic Wound": 1.0,
+        "occurs_in: Forearm": 1.0,
+        "has_quality: Chronic": 1.0
+      },
+      "Pathological Fracture": {
+        "is_a: Fracture": 1.0,
+        "caused_by: Chronic Osteomyelitis": 1.0
+      },
+      "Transhumeral Amputation": {
+        "is_a: Amputation": 1.0,
+        "is_treatment_for: Chronic Osteomyelitis": 1.0
+      },
+      "Osteonecrosis": {
+        "is_a: Necrosis": 1.0,
+        "occurs_in: Bone": 1.0
+      },
+      "Surgical Debridement": {
+        "is_a: Surgical Treatment": 1.0,
+        "is_treatment_for: Chronic Osteomyelitis": 1.0
+      },
+      "Systemic Antibiotic Therapy": {
+        "is_a: Antibiotic Therapy": 1.0,
+        "is_treatment_for: Chronic Osteomyelitis": 1.0
+      },
+      "Local Antibiotic Therapy": {
+        "is_a: Antibiotic Therapy": 1.0,
+        "is_treatment_for: Chronic Osteomyelitis": 1.0
+      },
+      "Philadelphia Treatment Algorithm for Xylazine-Associated Wounds": {
+        "is_a: Treatment Algorithm": 1.0,
+        "is_treatment_for: Xylazine-Associated Wound": 1.0
+      },
+      "Xylazine-Associated Wound": {
+        "is_a: Wound": 1.0,
+        "caused_by: Xylazine": 1.0
+      },
+      "Substance Use Disorder": {
+        "is_a: Disorder": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260506_1632"
+  },
+  "42089430": {
+    "entities": {
+      "Chronic Wound Infection": {
+        "is_a: Infection": 1.0,
+        "occurs_in: Chronic Wound": 1.0,
+        "caused_by: Antibiotic-resistant Bacteria": 1.0,
+        "caused_by: Biofilm Formation": 1.0
+      },
+      "Lipid-droplet-engineered Gallium-loaded Sonodynamic Therapeutic Platform (LDTG)": {
+        "is_a: Sonodynamic Therapeutic Platform": 1.0,
+        "has_quality: Bacteria-targeting": 1.0,
+        "part_of: Bilayer Microneedle Patch": 1.0
+      },
+      "Bilayer Microneedle (MN) Patch": {
+        "is_a: Microneedle Patch": 1.0,
+        "has_quality: Bilayer": 1.0,
+        "part_of: LDTG A-MNs": 1.0
+      },
+      "All-trans Retinoic Acid (ATRA)": {
+        "is_a: Retinoic Acid": 1.0,
+        "part_of: LDTG A-MNs": 1.0
+      },
+      "LDTG A-MNs": {
+        "is_a: Therapeutic Platform": 1.0,
+        "has_quality: Minimally Invasive": 1.0,
+        "has_quality: Infection-responsive": 1.0,
+        "is_treatment_for: Chronic Wound Infection": 1.0,
+        "is_treatment_for: Infected Wound": 1.0
+      },
+      "Ultrasound Irradiation": {
+        "is_a: Process": 1.0,
+        "caused_by: Ultrasound": 1.0
+      },
+      "Bacterial Infection": {
+        "is_a: Infection": 1.0,
+        "occurs_in: Wound": 1.0
+      },
+      "Biofilm": {
+        "is_a: Bacterial Community": 1.0,
+        "occurs_in: Chronic Wound": 1.0
+      },
+      "M2-type Macrophage Polarization": {
+        "has_quality: Anti-inflammatory": 1.0
+      },
+      "Collagen Deposition": {
+        "is_a: Biological Process": 1.0,
+        "occurs_in: Wound": 1.0
+      },
+      "Angiogenesis": {
+        "is_a: Biological Process": 1.0,
+        "occurs_in: Wound": 1.0
+      },
+      "Wound Closure": {
+        "is_a: Process": 1.0,
+        "occurs_in: Skin Wound": 1.0
+      },
+      "Infected Murine Skin Wound": {
+        "is_a: Infected Wound": 1.0,
+        "occurs_in: Murine Skin": 1.0
+      },
+      "Antibiotic-resistant Bacteria": {
+        "is_a: Bacteria": 1.0,
+        "has_quality: Antibiotic-resistant": 1.0
+      },
+      "Sonodynamic Antibacterial Therapy": {
+        "is_a: Therapy": 1.0,
+        "is_treatment_for: Bacterial Infection": 1.0
+      },
+      "Tissue Regeneration": {
+        "is_a: Biological Process": 1.0,
+        "occurs_in: Tissue": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260506_1632"
+  },
+  "42089833": {
+    "entities": {
+      "Pilonidal Sinus Disease": {
+        "is_a: Disease": 1.0,
+        "has_quality: Chronic": 1.0,
+        "occurs_in: Sinus": 1.0
+      },
+      "Wound Complication": {
+        "is_a: Complication": 1.0,
+        "occurs_in: Wound": 1.0
+      },
+      "Recurrence": {
+        "is_a: Complication": 1.0,
+        "occurs_in: Postoperative Period": 1.0
+      },
+      "Laser Hair Removal": {
+        "is_a: Treatment": 1.0,
+        "is_treatment_for: Pilonidal Sinus Disease": 1.0
+      },
+      "Surgical Site Infection": {
+        "is_a: Infectious Complication": 1.0,
+        "occurs_in: Surgical Site": 1.0,
+        "occurs_in: Postoperative Period": 1.0
+      },
+      "Bascom Flap Closure": {
+        "is_a: Surgical Procedure": 1.0,
+        "is_treatment_for: Pilonidal Sinus Disease": 1.0
+      },
+      "Pilocystectomy": {
+        "is_a: Surgical Procedure": 1.0,
+        "is_treatment_for: Pilonidal Sinus Disease": 1.0
+      },
+      "Repeat Procedure": {
+        "is_a: Procedure": 1.0,
+        "occurs_in: Postoperative Period": 1.0
+      },
+      "Unplanned Clinic Visit": {
+        "is_a: Clinical Encounter": 1.0,
+        "occurs_in: Postoperative Period": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260506_1632"
+  }
+}

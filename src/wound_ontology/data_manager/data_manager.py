@@ -85,7 +85,7 @@ class DataManager:
         """Saves an owlready2 onto object as a timestamped OWL/RDF-XML file with versioned IRI."""
         filename = self._get_timestamped_name(filename_prefix, "owl")
         full_path = self.base_path / filename
-        onto.metadata.versionIRI = f"{onto.metadata.base_iri}/{datetime.now().strftime("%Y-%m-%d_%H-%M")}/"
+        onto.metadata.versionIRI = f"{onto.metadata.base_iri}/{datetime.now().strftime('%Y-%m-%d_%H-%M')}/"
         # Save to persist the changes in the RDF/XML file
         onto.save(file=str(full_path), format="rdfxml")
         print(f"[DataManager] Saved OWL → {full_path.name}  ({full_path.stat().st_size:,} bytes)")

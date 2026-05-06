@@ -11,9 +11,6 @@ from dotenv import load_dotenv
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.llm.llm_client import LLMClient
 from wound_ontology.connectors.pubmed_connector import PubmedConnector
-from wound_ontology.connectors.bfo_connector import BFOConnector
-from wound_ontology.connectors.ro_connector import ROConnector
-from wound_ontology.connectors.obi_connector import OBIConnector
 from wound_ontology.store.concept_store import ConceptStore
 from wound_ontology.store.store_cleaner import StoreCleaner
 from wound_ontology.hierarchies.class_hierarchy import ClassHierarchy
@@ -24,10 +21,10 @@ from wound_ontology.fca.concept_lattice import ConceptLattice
 from wound_ontology.embedding.embedder import Embedder
 from wound_ontology.mappers.term_mapper import TermMapper
 from wound_ontology.mappers.mapping_cleaner import MappingCleaner
-from wound_ontology.export.tbox import TBox
-from wound_ontology.export.reasoner import Reasoner
-from wound_ontology.export.graph_exporter import GraphExporter
-from wound_ontology.graph.knowledge_graph import KnowledgeGraph
+from wound_ontology.tbox_abox_reasoner.for_owl.tbox import TBox
+from wound_ontology.tbox_abox_reasoner.reasoner.reasoner import Reasoner
+from wound_ontology.graph_visualizer import GraphVisualizer
+from wound_ontology.tbox_abox_reasoner.for_rdflib.knowledge_graph import KnowledgeGraph
 
 load_dotenv()
 
@@ -35,10 +32,16 @@ try:
     from config.settings import (
         PREDICATE_DEFINITIONS as _PREDICATE_DEFINITIONS,
         PREDEFINED_HIERARCHY_FILE as _PREDEFINED_HIERARCHY_FILE,
+        BFO_OWL_URL as _BFO_URL,
+        RO_OWL_URL as _RO_URL,
+        OBI_OWL_URL as _OBI_URL,
     )
 except ImportError:
     _PREDICATE_DEFINITIONS = {}
     _PREDEFINED_HIERARCHY_FILE = None
+    _BFO_URL = "http://purl.obolibrary.org/obo/bfo.owl"
+    _RO_URL  = "http://purl.obolibrary.org/obo/ro.owl"
+    _OBI_URL = "http://purl.obolibrary.org/obo/obi.owl"
 
 _DEFAULT_ALLOWED_PREDICATES = [
     "is_a", "part_of", "has_quality", "occurs_in",
@@ -71,9 +74,6 @@ class Orchestrator:
 
         self.allowed_predicates = allowed_predicates
         self.pubcon        = PubmedConnector(self.dm, entrez_email)
-        self.bfo           = BFOConnector(self.dm)
-        self.ro            = ROConnector(self.dm)
-        self.obi           = OBIConnector(self.dm)
         self.store         = ConceptStore(self.dm, "concept_store")
         self.cleaner       = StoreCleaner(self.allowed_predicates)
         self.class_hier    = ClassHierarchy(self.dm)
@@ -85,7 +85,7 @@ class Orchestrator:
         self.mapping_cleaner = MappingCleaner(self.term_mapper, allowed_predicates=self.allowed_predicates)
         self._embedder: Embedder | None = None   # lazy-loaded on first use
         self.reasoner      = Reasoner()
-        self.graph_exporter = GraphExporter()
+        self.graph_exporter = GraphVisualizer()
 
     def _run_sync(self, coroutine):
         # Convert an async coroutine into a blocking call for the CLI-style
@@ -168,7 +168,7 @@ class Orchestrator:
                                    during extraction so vocab hints stay compact.
                                    0 = disable mid-extraction normalization.
         """
-        bfo_anchors = self.bfo.get_anchor_names() if use_bfo_attributes else []
+        bfo_anchors = list(TBox(_BFO_URL).labels.keys()) if use_bfo_attributes else []
         if bfo_anchors:
             print(f"Using BFO anchor classes as is_a target candidates: {bfo_anchors}")
         print("Starting LLM Extraction...")
@@ -387,15 +387,12 @@ class Orchestrator:
         """
         onto = TBox().load(input_file)
 
-        connectors = []
         if import_bfo:
-            connectors.append(self.bfo)
+            onto.import_external(_BFO_URL)
         if import_ro:
-            connectors.append(self.ro)
+            onto.import_external(_RO_URL)
         if import_obi:
-            connectors.append(self.obi)
-        if connectors:
-            onto.import_connector(*connectors)
+            onto.import_external(_OBI_URL)
 
         onto.resolve_external_classes()
         onto.normalize_label_language(target_lang="en")

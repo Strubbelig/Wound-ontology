@@ -24,7 +24,13 @@
       "Bash(/opt/anaconda3/envs/second_env/bin/pytest tests *)",
       "Bash(/opt/anaconda3/envs/first_env/bin/pytest --collect-only -q)",
       "Bash(xargs cat *)",
-      "Bash(python -m pytest tests/test_concept_store.py -q)"
+      "Bash(python -m pytest tests/test_concept_store.py -q)",
+      "Bash(python -m pytest tests/ -x --ignore=tests/integration -q)",
+      "Bash(git -C \"/Users/Strubbelig/Library/Mobile Documents/com~apple~CloudDocs/Forschung/Wound ontology\" log --oneline -10)",
+      "Bash(git -C \"/Users/Strubbelig/Library/Mobile Documents/com~apple~CloudDocs/Forschung/Wound ontology\" show --stat HEAD~1)",
+      "Bash(python -m pytest tests/ --ignore=tests/integration -q --tb=no)",
+      "Bash(python -m pytest tests/ --ignore=tests/integration --tb=no -q)",
+      "Bash(python -m pytest tests/ --ignore=tests/integration --tb=line -q)"
     ]
   }
 }

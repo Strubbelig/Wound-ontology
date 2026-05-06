@@ -313,14 +313,15 @@ class TBox:
                 print(f"[TBox] Imported: {url}")
         return self
 
-    def import_bfo(self) -> "TBox":
-        return self.import_external(_BFO_URL)
+    #deprecated because every onto shall be its own TBox() object
+    #def import_bfo(self) -> "TBox":
+    #    return self.import_external(_BFO_URL)
 
-    def import_ro(self) -> "TBox":
-        return self.import_external(_RO_URL)
+    #def import_ro(self) -> "TBox":
+    #    return self.import_external(_RO_URL)
 
-    def import_obi(self) -> "TBox":
-        return self.import_external(_OBI_URL)
+    #def import_obi(self) -> "TBox":
+    #return self.import_external(_OBI_URL)
 
     # ── In-place enrichment ───────────────────────────────────────────────────
 
@@ -500,6 +501,7 @@ class TBox:
 
     # ── Persistence ───────────────────────────────────────────────────────────
 
+    #use DataManager instead of this method, because it adds versioning and timestamping to the file name and IRI
     def save(self, output_file: str | Path | None = None) -> None:
         """Save as RDF/XML using owlready2."""
         out = Path(output_file or _DEFAULT_OUTPUT)

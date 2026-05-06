@@ -14,12 +14,29 @@ Usage::
 """
 from __future__ import annotations
 
-from rdflib import URIRef, Literal, RDF, OWL
-
-from wound_ontology.export.owl_generator import OWLGenerator
+from rdflib import Graph, URIRef, Literal, BNode, RDF, RDFS, OWL
 
 
-class ABoxGenerator(OWLGenerator):
+class ABoxGenerator:
+
+    def __init__(self, graph: Graph | None = None):
+        self._g = graph if graph is not None else Graph()
+
+    @property
+    def graph(self) -> Graph:
+        return self._g
+
+    def save(self, path: str) -> None:
+        self._g.serialize(destination=path, format="xml")
+
+    def _add_label(self, iri: URIRef, label: str, lang: str = "en") -> None:
+        self._g.add((iri, RDFS.label, Literal(label, lang=lang)))
+
+    def _add_type(self, subject: URIRef, cls: URIRef) -> None:
+        self._g.add((subject, RDF.type, cls))
+
+    def _add_object_property(self, subject: URIRef, prop: URIRef, obj: URIRef) -> None:
+        self._g.add((subject, prop, obj))
 
     def add_individual(
         self,

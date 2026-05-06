@@ -8,7 +8,7 @@ import rdflib
 from rdflib.namespace import RDF, RDFS, OWL
 
 if TYPE_CHECKING:
-    from wound_ontology.graph.sparql_helper import SPARQLHelper
+    from wound_ontology.tbox_abox_reasoner.for_rdflib.sparql.sparql_helper import SPARQLHelper
 
 # ── RDF namespace shorthands ──────────────────────────────────────────────────
 _OBO  = "http://purl.obolibrary.org/obo/"
@@ -329,7 +329,7 @@ class KnowledgeGraph:
         Returns a SPARQLHelper bound to this graph's rdflib graph.
         Requires from_owl() to have been called first.
         """
-        from wound_ontology.graph.sparql_helper import SPARQLHelper
+        from wound_ontology.tbox_abox_reasoner.for_rdflib.sparql.sparql_helper import SPARQLHelper
         return SPARQLHelper(self)
 
     @property

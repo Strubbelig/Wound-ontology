@@ -5,7 +5,7 @@ import pytest
 from rdflib import Graph, URIRef, Literal, RDF, RDFS, OWL
 from rdflib.namespace import XSD
 
-from wound_ontology.graph.sparql_helper import SPARQLHelper
+from wound_ontology.tbox_abox_reasoner.for_rdflib.sparql.sparql_helper import SPARQLHelper
 
 EX = "http://example.org/test/"
 

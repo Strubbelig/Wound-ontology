@@ -1,5 +1,6 @@
 """
-Unit tests for OWLGenerator, TBoxGenerator, and ABoxGenerator.
+Unit tests for ABoxGenerator.
+TBoxGenerator (rdflib-based) was removed — TBox is now owlready2-only.
 """
 import pytest
 from pathlib import Path
@@ -7,9 +8,7 @@ from pathlib import Path
 from rdflib import Graph, URIRef, Literal, RDF, RDFS, OWL
 from rdflib.namespace import XSD
 
-from wound_ontology.export.owl_generator import OWLGenerator
-from wound_ontology.export.tbox_generator import TBoxGenerator
-from wound_ontology.export.abox_generator import ABoxGenerator
+from wound_ontology.tbox_abox_reasoner.for_rdflib.abox_generator import ABoxGenerator
 
 EX = "http://example.org/test/"
 
@@ -23,161 +22,6 @@ def _iri(local: str) -> URIRef:
 def _has_triple(g: Graph, s, p, o) -> bool:
     return (s, p, o) in g
 
-
-# ── TBoxGenerator ─────────────────────────────────────────────────────────────
-
-class TestTBoxGenerator:
-
-    def test_add_class_declares_owl_class(self):
-        gen = TBoxGenerator()
-        iri = _iri("Wound")
-        gen.add_class(iri, "Wound")
-        assert _has_triple(gen.graph, iri, RDF.type, OWL.Class)
-
-    def test_add_class_sets_label(self):
-        gen = TBoxGenerator()
-        iri = _iri("ChronicWound")
-        gen.add_class(iri, "Chronic wound")
-        labels = list(gen.graph.objects(iri, RDFS.label))
-        assert any("Chronic wound" in str(l) for l in labels)
-
-    def test_add_class_with_parent(self):
-        gen = TBoxGenerator()
-        parent = _iri("Wound")
-        child  = _iri("ChronicWound")
-        gen.add_class(parent, "Wound")
-        gen.add_class(child, "Chronic wound", parent=parent)
-        assert _has_triple(gen.graph, child, RDFS.subClassOf, parent)
-
-    def test_add_class_without_parent_no_subclass(self):
-        gen = TBoxGenerator()
-        iri = _iri("Wound")
-        gen.add_class(iri, "Wound")
-        assert not list(gen.graph.objects(iri, RDFS.subClassOf))
-
-    def test_add_subclass_of(self):
-        gen = TBoxGenerator()
-        parent = _iri("Wound")
-        child  = _iri("SurgicalWound")
-        gen.add_class(parent, "Wound")
-        gen.add_class(child,  "Surgical wound")
-        gen.add_subclass_of(child, parent)
-        assert _has_triple(gen.graph, child, RDFS.subClassOf, parent)
-
-    def test_add_some_values_from_creates_restriction(self):
-        gen  = TBoxGenerator()
-        cls  = _iri("Wound")
-        prop = _iri("locatedIn")
-        fill = _iri("Skin")
-        gen.add_class(cls, "Wound")
-        restr = gen.add_some_values_from(cls, prop, fill)
-        # Restriction blank node should be typed owl:Restriction
-        assert _has_triple(gen.graph, restr, RDF.type, OWL.Restriction)
-        assert _has_triple(gen.graph, restr, OWL.onProperty, prop)
-        assert _has_triple(gen.graph, restr, OWL.someValuesFrom, fill)
-        # Class linked to restriction
-        assert _has_triple(gen.graph, cls, RDFS.subClassOf, restr)
-
-    def test_add_all_values_from(self):
-        gen  = TBoxGenerator()
-        cls  = _iri("Wound")
-        prop = _iri("locatedIn")
-        fill = _iri("Skin")
-        gen.add_class(cls, "Wound")
-        restr = gen.add_all_values_from(cls, prop, fill)
-        assert _has_triple(gen.graph, restr, OWL.allValuesFrom, fill)
-
-    def test_add_has_value(self):
-        gen  = TBoxGenerator()
-        cls  = _iri("Wound")
-        prop = _iri("stage")
-        val  = _iri("StageII")
-        restr = gen.add_has_value(cls, prop, val)
-        assert _has_triple(gen.graph, restr, OWL.hasValue, val)
-
-    def test_add_union_restriction(self):
-        gen    = TBoxGenerator()
-        cls    = _iri("Wound")
-        prop   = _iri("hasPart")
-        fillers = [_iri("Skin"), _iri("Fascia"), _iri("Muscle")]
-        gen.add_class(cls, "Wound")
-        restr = gen.add_union_restriction(cls, prop, fillers)
-        assert _has_triple(gen.graph, restr, RDF.type, OWL.Restriction)
-        assert _has_triple(gen.graph, cls, RDFS.subClassOf, restr)
-        # union blank node must be referenced
-        union_node = next(gen.graph.objects(restr, OWL.someValuesFrom), None)
-        assert union_node is not None
-        assert next(gen.graph.objects(union_node, OWL.unionOf), None) is not None
-
-    def test_add_union_restriction_all_type(self):
-        gen  = TBoxGenerator()
-        cls  = _iri("Wound")
-        prop = _iri("hasPart")
-        restr = gen.add_union_restriction(cls, prop, [_iri("A"), _iri("B")],
-                                          restriction_type="all")
-        assert next(gen.graph.objects(restr, OWL.allValuesFrom), None) is not None
-
-    def test_add_intersection_restriction(self):
-        gen  = TBoxGenerator()
-        cls  = _iri("Wound")
-        prop = _iri("hasPart")
-        restr = gen.add_intersection_restriction(cls, prop, [_iri("A"), _iri("B")])
-        inter = next(gen.graph.objects(restr, OWL.someValuesFrom), None)
-        assert next(gen.graph.objects(inter, OWL.intersectionOf), None) is not None
-
-    def test_add_class_returns_iri(self):
-        gen = TBoxGenerator()
-        iri = _iri("Wound")
-        result = gen.add_class(iri, "Wound")
-        assert result == iri
-
-    def test_label_of_from_own_graph(self):
-        gen = TBoxGenerator()
-        iri = _iri("Wound")
-        gen.add_class(iri, "Wound")
-        assert gen.label_of(iri) == "Wound"
-
-    def test_label_of_missing_returns_none(self):
-        gen = TBoxGenerator()
-        assert gen.label_of(_iri("Unknown")) is None
-
-    def test_save_creates_file(self, tmp_path):
-        gen = TBoxGenerator()
-        gen.add_class(_iri("Wound"), "Wound")
-        out = tmp_path / "tbox.owl"
-        gen.save(str(out))
-        assert out.exists()
-        assert out.stat().st_size > 0
-
-    def test_saved_file_is_valid_rdf(self, tmp_path):
-        gen = TBoxGenerator()
-        gen.add_class(_iri("Wound"), "Wound")
-        out = tmp_path / "tbox.owl"
-        gen.save(str(out))
-        g2 = Graph()
-        g2.parse(str(out), format="xml")
-        assert len(g2) > 0
-
-    def test_rdf_list_has_correct_members(self):
-        gen   = TBoxGenerator()
-        items = [_iri("A"), _iri("B"), _iri("C")]
-        head  = gen._make_rdf_list(items)
-        collected = []
-        node = head
-        while node and node != RDF.nil:
-            first = next(gen.graph.objects(node, RDF.first), None)
-            if first:
-                collected.append(first)
-            node = next(gen.graph.objects(node, RDF.rest), RDF.nil)
-        assert collected == items
-
-    def test_empty_rdf_list_returns_nil(self):
-        gen  = TBoxGenerator()
-        head = gen._make_rdf_list([])
-        assert head == RDF.nil
-
-
-# ── ABoxGenerator ─────────────────────────────────────────────────────────────
 
 class TestABoxGenerator:
 
@@ -279,34 +123,3 @@ class TestABoxGenerator:
         assert len(individuals) == 5
 
 
-# ── Combined TBox + ABox ──────────────────────────────────────────────────────
-
-class TestCombinedGenerators:
-
-    def test_shared_graph(self):
-        """TBoxGenerator and ABoxGenerator can write into the same graph."""
-        g    = Graph()
-        tbox = TBoxGenerator(graph=g)
-        abox = ABoxGenerator(graph=g)
-
-        wound_cls = _iri("Wound")
-        wound_ind = _iri("wound1")
-
-        tbox.add_class(wound_cls, "Wound")
-        abox.add_individual(wound_ind, "Wound of patient 1", wound_cls)
-
-        assert _has_triple(g, wound_cls, RDF.type, OWL.Class)
-        assert _has_triple(g, wound_ind, RDF.type, OWL.NamedIndividual)
-        assert _has_triple(g, wound_ind, RDF.type, wound_cls)
-
-    def test_tbox_and_abox_round_trip(self, tmp_path):
-        """A file written by TBoxGenerator is readable and contains expected IRIs."""
-        tbox = TBoxGenerator()
-        cls  = _iri("Wound")
-        tbox.add_class(cls, "Wound")
-        out = tmp_path / "combined.owl"
-        tbox.save(str(out))
-
-        g2 = Graph()
-        g2.parse(str(out), format="xml")
-        assert (cls, RDF.type, OWL.Class) in g2

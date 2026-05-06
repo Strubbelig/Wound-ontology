@@ -8,7 +8,7 @@ import types as python_types
 
 from owlready2 import get_ontology, Thing
 
-from wound_ontology.export.owl_ontology import OWLOntology
+from wound_ontology.tbox_abox_reasoner.for_owl.tbox import TBox as OWLOntology
 from wound_ontology.hierarchies.class_hierarchy import ClassHierarchy
 from wound_ontology.hierarchies.mereological_hierarchy import MereologicalHierarchy
 
@@ -325,45 +325,7 @@ def test_rdf_graph_lazy_from_get_data(class_hier):
     assert len(g) > 0
 
 
-# ── sparql property ───────────────────────────────────────────────────────────
-
-def test_sparql_returns_helper(tmp_path):
-    from wound_ontology.graph.sparql_helper import SPARQLHelper
-    owl = _make_minimal_owl(tmp_path, "sparql_helper")
-    onto = _onto("sparql_helper")
-    onto.load(str(owl))
-    assert isinstance(onto.sparql, SPARQLHelper)
-
-
-def test_sparql_cached(tmp_path):
-    owl = _make_minimal_owl(tmp_path, "sparql_cached")
-    onto = _onto("sparql_cached")
-    onto.load(str(owl))
-    assert onto.sparql is onto.sparql
-
-
-def test_sparql_can_query_classes(tmp_path):
-    owl = _make_minimal_owl(tmp_path, "sparql_query")
-    onto = _onto("sparql_query")
-    onto.load(str(owl))
-    results = onto.sparql.all_classes()
-    # The minimal OWL has 3 local classes
-    assert len(results) >= 3
-
-
 # ── label_of ──────────────────────────────────────────────────────────────────
-
-def test_label_of_returns_label(tmp_path):
-    from rdflib import URIRef
-    owl = _make_minimal_owl(tmp_path, "label_of")
-    onto = _onto("label_of")
-    onto.load(str(owl))
-    classes = onto.sparql.all_classes()
-    assert classes, "No classes found"
-    first_iri = classes[0]["iri"]
-    lbl = onto.label_of(first_iri)
-    # owlready2 may or may not add labels; at minimum no exception
-    assert lbl is None or isinstance(lbl, str)
 
 
 def test_label_of_known_label(tmp_path):
@@ -445,15 +407,6 @@ def test_normalize_labels_strips_whitespace(tmp_path):
 
     found = onto.iri_of_label("Chronic Wound")
     assert found is not None
-
-
-def test_normalize_labels_invalidates_sparql_cache(tmp_path):
-    owl = _make_minimal_owl(tmp_path, "cache_inval")
-    onto = _onto("cache_inval")
-    onto.load(str(owl))
-    _ = onto.sparql  # populate cache
-    onto.normalize_labels()
-    assert onto._sparql_helper is None  # cache cleared
 
 
 def test_normalize_labels_returns_self(tmp_path):

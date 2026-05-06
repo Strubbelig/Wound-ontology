@@ -476,3 +476,12 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "within-subject comparative study",
     "woc nurse",
 }
+
+SUSPICIOUS_KEYWORDS: frozenset[str] = frozenset({
+    "study", "trial", "review", "analysis", "survey", "protocol",
+    "cohort", "patient", "participant", "sample", "group",
+    "regression", "odds ratio", "hazard ratio", "p-value",
+    "database", "registry", "questionnaire",
+})
+
+WHITELIST: frozenset[str] = frozenset()

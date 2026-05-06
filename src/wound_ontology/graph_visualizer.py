@@ -3,7 +3,7 @@ from pathlib import Path
 
 import networkx as nx
 
-from wound_ontology.graph.knowledge_graph import KnowledgeGraph
+from wound_ontology.tbox_abox_reasoner.for_rdflib.knowledge_graph import KnowledgeGraph
 
 
 class GraphVisualizer:
