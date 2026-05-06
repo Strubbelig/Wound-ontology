@@ -1,0 +1,19 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+
+# All owl:Restriction axioms on {class_iri}: property, filler, and restriction type.
+SELECT DISTINCT ?property ?filler ?restriction_type WHERE {
+  <{class_iri}> rdfs:subClassOf ?restriction .
+  ?restriction a owl:Restriction ;
+               owl:onProperty ?property .
+  {
+    ?restriction owl:someValuesFrom ?filler .
+    BIND("someValuesFrom" AS ?restriction_type)
+  } UNION {
+    ?restriction owl:allValuesFrom ?filler .
+    BIND("allValuesFrom" AS ?restriction_type)
+  } UNION {
+    ?restriction owl:hasValue ?filler .
+    BIND("hasValue" AS ?restriction_type)
+  }
+}

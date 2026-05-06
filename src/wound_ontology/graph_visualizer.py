@@ -2,112 +2,133 @@ from __future__ import annotations
 from pathlib import Path
 
 import networkx as nx
+import rdflib
+from rdflib.namespace import RDF, RDFS, OWL
 
-from wound_ontology.tbox_abox_reasoner.for_rdflib.knowledge_graph import KnowledgeGraph
+
+def _local_name(iri: str) -> str:
+    return iri.rstrip("/").rsplit("/", 1)[-1].rsplit("#", 1)[-1]
+
+
+def _namespace_of(iri: str) -> str:
+    if "purl.obolibrary.org/obo/BFO" in iri: return "bfo"
+    if "purl.obolibrary.org/obo/RO"  in iri: return "ro"
+    if "purl.obolibrary.org/obo/OBI" in iri: return "obi"
+    if "purl.obolibrary.org/obo/"    in iri: return "obo"
+    if "www.w3.org"                  in iri: return "owl"
+    return "local"
 
 
 class GraphVisualizer:
     """
-    Exports a KnowledgeGraph to GEXF format for visualisation in Gephi
+    Exports an OWL ontology to GEXF format for visualisation in Gephi
     (or any tool that reads GEXF 1.2, such as Cytoscape or sigma.js).
 
-    GEXF encodes node attributes (label, iri, node_type, namespace) and
-    edge attributes (predicate) so that Gephi can colour and filter the
-    graph by relationship type and namespace on load.
+    Accepts an ABox instance or a plain rdflib.Graph.
 
     Usage:
+        exporter = GraphVisualizer()
+        exporter.export(abox, "output/ontology.gexf")
 
-        # From an already-built KnowledgeGraph
-        exporter = GraphExporter()
-        exporter.export(kg, "output/wound_ontology.gexf")
-
-        # One-shot directly from an OWL file
-        exporter.export_owl("output/ontology_enriched.owl",
-                            "output/wound_ontology.gexf")
-
-        # One-shot from ConceptStore + hierarchies (no OWL needed)
-        exporter.export_store(store, class_hier, mere_hier,
-                              output_file="output/wound_ontology.gexf")
-
-        # Via the orchestrator
-        pipeline.export_to_gexf(input_owl=..., output_file=...)
+        # One-shot from an OWL file
+        exporter.export_owl("enriched.owl", "output/ontology.gexf")
 
     Gephi tips:
-      - Open the .gexf file directly in Gephi (File → Open).
-      - Use "node_type" as a partition colour to distinguish classes from
-        individuals and external ontology nodes.
-      - Use "predicate" on edges to filter by relationship type (is_a,
-        part_of, has_quality …).
-      - Use "namespace" to hide/show BFO, RO, OBI classes separately.
+      - Use "node_type" as a partition colour (class vs individual).
+      - Use "predicate" on edges to filter by relationship type.
+      - Use "namespace" to hide/show BFO, RO, OBI nodes separately.
     """
 
-    # ── Primary export ────────────────────────────────────────────────────────
-
-    def export(self, kg: KnowledgeGraph, output_file: str) -> None:
+    def export(self, graph, output_file: str) -> None:
         """
-        Write a KnowledgeGraph to a GEXF file.
+        Write an rdflib.Graph (or ABox) to a GEXF file.
 
-        Node attributes written: label, iri, node_type, namespace
-        Edge attributes written: predicate (= relationship type)
+        Node attributes: label, iri, node_type, namespace
+        Edge attributes: predicate
         """
+        rdf_g = graph.graph if hasattr(graph, "graph") else graph
         out = Path(output_file)
         out.parent.mkdir(parents=True, exist_ok=True)
-
-        # NetworkX's GEXF writer requires string node attributes; ensure types.
-        g = self._prepare_graph(kg.graph)
-        nx.write_gexf(g, str(out))
-        print(f"[GraphExporter] Saved → {out}  "
-              f"({out.stat().st_size:,} bytes, "
-              f"{g.number_of_nodes()} nodes, {g.number_of_edges()} edges)")
-
-    # ── One-shot convenience ──────────────────────────────────────────────────
+        nx_graph = self._to_networkx(rdf_g)
+        nx.write_gexf(nx_graph, str(out))
+        print(
+            f"[GraphVisualizer] Saved → {out}  "
+            f"({out.stat().st_size:,} bytes, "
+            f"{nx_graph.number_of_nodes()} nodes, {nx_graph.number_of_edges()} edges)"
+        )
 
     def export_owl(self, owl_file: str, output_file: str) -> None:
-        """
-        One-shot: parse an OWL/RDF file, build a KnowledgeGraph, write GEXF.
-        """
-        kg = KnowledgeGraph().from_owl(owl_file)
-        self.export(kg, output_file)
-
-    def export_store(
-        self,
-        store,
-        *hierarchies,
-        output_file: str,
-    ) -> None:
-        """
-        One-shot: build from ConceptStore (+ optional hierarchy objects) and
-        write GEXF. Use when you want to visualise the pipeline graph before
-        exporting to OWL.
-        """
-        kg = KnowledgeGraph().from_store(store, *hierarchies)
-        self.export(kg, output_file)
-
-    # ── Private ───────────────────────────────────────────────────────────────
+        """One-shot: parse an OWL file and write GEXF."""
+        from wound_ontology.tbox_abox_reasoner.for_rdflib.abox import ABox
+        self.export(ABox.from_owl(owl_file), output_file)
 
     @staticmethod
-    def _prepare_graph(graph: nx.DiGraph) -> nx.DiGraph:
-        """
-        Return a copy of the graph with all node/edge attributes cast to types
-        that NetworkX's GEXF writer accepts (strings and primitives only).
-        """
-        g = nx.DiGraph()
+    def _to_networkx(g: rdflib.Graph) -> nx.DiGraph:
+        """Convert an rdflib.Graph to a NetworkX DiGraph for GEXF serialisation."""
+        labels: dict[str, str] = {
+            str(s): str(o)
+            for s, _, o in g.triples((None, RDFS.label, None))
+            if isinstance(s, rdflib.URIRef)
+        }
 
-        for node, attrs in graph.nodes(data=True):
-            g.add_node(
-                str(node),
-                label     = str(attrs.get("label",     node)),
-                iri       = str(attrs.get("iri",       "")),
-                node_type = str(attrs.get("node_type", "unknown")),
-                namespace = str(attrs.get("namespace", "local")),
-            )
+        def _label(iri: str) -> str:
+            return labels.get(iri, _local_name(iri))
 
-        for src, tgt, attrs in graph.edges(data=True):
-            g.add_edge(
-                str(src),
-                str(tgt),
-                predicate = str(attrs.get("predicate", "related_to")),
-                label     = str(attrs.get("label",     attrs.get("predicate", "related_to"))),
-            )
+        nx_g = nx.DiGraph()
 
-        return g
+        def _add_node(iri: str, node_type: str) -> None:
+            if iri not in nx_g:
+                nx_g.add_node(
+                    iri,
+                    label=_label(iri),
+                    iri=iri,
+                    node_type=node_type,
+                    namespace=_namespace_of(iri),
+                )
+
+        # subClassOf edges
+        for subj, _, obj in g.triples((None, RDFS.subClassOf, None)):
+            if not (isinstance(subj, rdflib.URIRef) and isinstance(obj, rdflib.URIRef)):
+                continue
+            s, o = str(subj), str(obj)
+            _add_node(s, "class")
+            _add_node(o, "class")
+            nx_g.add_edge(s, o, predicate="is_a", label="is_a")
+
+        # owl:Restriction → typed property edges
+        for cls_iri, _, restriction in g.triples((None, RDFS.subClassOf, None)):
+            if not isinstance(cls_iri, rdflib.URIRef):
+                continue
+            if (restriction, RDF.type, OWL.Restriction) not in g:
+                continue
+            prop_list = list(g.objects(restriction, OWL.onProperty))
+            if not prop_list or not isinstance(prop_list[0], rdflib.URIRef):
+                continue
+            prop_label = _label(str(prop_list[0]))
+            for restriction_type in (OWL.someValuesFrom, OWL.allValuesFrom, OWL.hasValue):
+                for filler in g.objects(restriction, restriction_type):
+                    if not isinstance(filler, rdflib.URIRef):
+                        continue
+                    s, o = str(cls_iri), str(filler)
+                    _add_node(s, "class")
+                    _add_node(o, "class")
+                    nx_g.add_edge(s, o, predicate=prop_label, label=prop_label)
+
+        # object property assertions on individuals
+        for subj, pred, obj in g:
+            if not (isinstance(subj, rdflib.URIRef) and isinstance(obj, rdflib.URIRef)):
+                continue
+            if pred in (RDFS.subClassOf, RDFS.label, RDF.type,
+                        OWL.onProperty, OWL.someValuesFrom,
+                        OWL.allValuesFrom, OWL.hasValue):
+                continue
+            if "purl.org/dc" in str(pred) or "w3.org" in str(pred):
+                continue
+            s, o = str(subj), str(obj)
+            pred_label = _label(str(pred))
+            _add_node(s, "individual")
+            _add_node(o, "individual")
+            if not nx_g.has_edge(s, o):
+                nx_g.add_edge(s, o, predicate=pred_label, label=pred_label)
+
+        return nx_g

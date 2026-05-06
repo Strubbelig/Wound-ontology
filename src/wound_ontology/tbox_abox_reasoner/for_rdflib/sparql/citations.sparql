@@ -1,0 +1,11 @@
+PREFIX rdfs:    <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+# Classes annotated with dcterms:bibliographicCitation.
+# {scope} is either empty (all classes) or "?iri rdfs:subClassOf* <iri> ."
+# to restrict to a subhierarchy — injected by Python.
+SELECT DISTINCT ?iri ?label ?citation WHERE {
+  {scope}
+  ?iri dcterms:bibliographicCitation ?citation .
+  OPTIONAL { ?iri rdfs:label ?label . }
+}

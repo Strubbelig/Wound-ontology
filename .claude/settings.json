@@ -30,7 +30,11 @@
       "Bash(git -C \"/Users/Strubbelig/Library/Mobile Documents/com~apple~CloudDocs/Forschung/Wound ontology\" show --stat HEAD~1)",
       "Bash(python -m pytest tests/ --ignore=tests/integration -q --tb=no)",
       "Bash(python -m pytest tests/ --ignore=tests/integration --tb=no -q)",
-      "Bash(python -m pytest tests/ --ignore=tests/integration --tb=line -q)"
+      "Bash(python -m pytest tests/ --ignore=tests/integration --tb=line -q)",
+      "Bash(python -m pytest tests/ -m \"not integration\" -q --tb=short)",
+      "Bash(python generate_abox.py)",
+      "Bash(python \"/Users/Strubbelig/Library/Mobile Documents/com~apple~CloudDocs/Forschung/Flap ontology/VS Code output/generate_abox.py\")",
+      "Bash(python3 -m pytest tests/ -x -q --ignore=tests/integration)"
     ]
   }
 }

@@ -1,0 +1,9 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# All classes reachable via rdfs:subClassOf* from the class whose label equals {root_label}.
+# Used by ABox.subgraph() to collect the set of IRIs to keep when slicing the graph.
+SELECT DISTINCT ?node WHERE {
+  ?root rdfs:label ?lbl .
+  FILTER(LCASE(STR(?lbl)) = LCASE("{root_label}"))
+  ?node rdfs:subClassOf* ?root .
+}

@@ -1,0 +1,6 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# All rdfs:label values for {iri}. Language preference is applied in Python.
+SELECT ?label WHERE {
+  <{iri}> rdfs:label ?label .
+}

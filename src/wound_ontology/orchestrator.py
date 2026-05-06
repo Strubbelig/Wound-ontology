@@ -24,7 +24,8 @@ from wound_ontology.mappers.mapping_cleaner import MappingCleaner
 from wound_ontology.tbox_abox_reasoner.for_owl.tbox import TBox
 from wound_ontology.tbox_abox_reasoner.reasoner.reasoner import Reasoner
 from wound_ontology.graph_visualizer import GraphVisualizer
-from wound_ontology.tbox_abox_reasoner.for_rdflib.knowledge_graph import KnowledgeGraph
+# ABox is imported lazily in build_knowledge_graph() to avoid pulling in the
+# cross-project ofl_constants dependency at module load time.
 
 load_dotenv()
 
@@ -421,52 +422,22 @@ class Orchestrator:
             infer_property_values=infer_property_values,
         )
 
-    def export_to_gexf(
-        self,
-        output_file: str,
-        input_owl: str | None = None,
-    ) -> None:
+    def export_to_gexf(self, output_file: str, input_owl: str) -> None:
         """
         Export the wound ontology as a GEXF file for Gephi / Cytoscape.
 
-        Two modes:
-          input_owl=None   — build the KnowledgeGraph from the in-memory
-                             ConceptStore + class/mereological/FCA hierarchies.
-                             Use this right after run_build_hierarchies() /
-                             run_fca(), without needing an OWL file.
-
-          input_owl="path" — parse the given OWL/RDF file with rdflib. Use
-                             this after export_to_owl() or run_curate_owl()
-                             to get the fully enriched graph with WOND IRIs.
-
-        The resulting GEXF encodes node attributes (label, iri, node_type,
-        namespace) and edge attributes (predicate) so Gephi can colour and
-        filter by relationship type and ontology namespace.
+        Parses input_owl with rdflib and writes GEXF encoding node attributes
+        (label, iri, node_type, namespace) and edge attributes (predicate).
         """
-        if input_owl:
-            self.graph_exporter.export_owl(input_owl, output_file)
-        else:
-            self.graph_exporter.export_store(
-                self.store,
-                self.class_hier,
-                self.mere_hier,
-                self.fca_hier,
-                output_file=output_file,
-            )
+        self.graph_exporter.export_owl(input_owl, output_file)
 
-    def build_knowledge_graph(self, input_owl: str | None = None) -> KnowledgeGraph:
+    def build_knowledge_graph(self, input_owl: str):
         """
-        Build and return a KnowledgeGraph for programmatic use (SPARQL,
-        subgraph extraction, neighbourhood inspection).
-
-        input_owl=None  — from in-memory store + hierarchies.
-        input_owl="…"   — from an OWL/RDF file (supports SPARQL).
+        Load an OWL/RDF file and return an ABox for programmatic use
+        (SPARQL via .sparql, subgraph extraction, label search, neighbour inspection).
         """
-        if input_owl:
-            return KnowledgeGraph().from_owl(input_owl)
-        return KnowledgeGraph().from_store(
-            self.store, self.class_hier, self.mere_hier, self.fca_hier
-        )
+        from wound_ontology.tbox_abox_reasoner.for_rdflib.abox import ABox
+        return ABox.from_owl(input_owl)
 
     # ── Full pipeline ──────────────────────────────────────────────────────────
 

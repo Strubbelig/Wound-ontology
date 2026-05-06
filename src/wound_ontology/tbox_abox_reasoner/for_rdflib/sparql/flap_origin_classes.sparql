@@ -1,0 +1,15 @@
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX ofl:  <https://purl.bioontology.org/ontology/OFL/>
+
+# Anatomical origin class for every flap under ORIGIN_ROOT.
+# All members of "Flaps classified by region of origin" carry a hasOrigin
+# (OFLID12003) restriction naming an anatomical region.
+SELECT DISTINCT ?flap ?origin WHERE {
+  ?flap rdfs:subClassOf* ofl:OFLID10098 .
+  ?flap rdfs:subClassOf ?r .
+  ?r a owl:Restriction ; owl:onProperty ofl:OFLID12003 ;
+     owl:someValuesFrom ?origin .
+  FILTER(!isBlank(?origin))
+}

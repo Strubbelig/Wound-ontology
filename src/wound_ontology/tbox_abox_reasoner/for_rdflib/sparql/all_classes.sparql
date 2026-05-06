@@ -1,0 +1,9 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+
+# Every explicitly declared owl:Class with its label.
+SELECT DISTINCT ?iri ?label WHERE {
+  ?iri a owl:Class .
+  FILTER(isIRI(?iri))
+  OPTIONAL { ?iri rdfs:label ?label . }
+}

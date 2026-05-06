@@ -1,0 +1,13 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+
+# All classes that carry a someValuesFrom restriction on {property_iri},
+# with the filler class and both labels.
+SELECT DISTINCT ?defined_class ?class_label ?filler ?filler_label WHERE {
+  ?defined_class rdfs:subClassOf ?restriction .
+  ?restriction a owl:Restriction ;
+               owl:onProperty <{property_iri}> ;
+               owl:someValuesFrom ?filler .
+  OPTIONAL { ?defined_class rdfs:label ?class_label . }
+  OPTIONAL { ?filler         rdfs:label ?filler_label . }
+}

@@ -1,0 +1,18 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+
+# All owl:Class IRIs that start with {prefix}, from four different graph patterns
+# (explicit class declarations, anonymous types, subClassOf subject/object positions).
+SELECT DISTINCT ?iri ?label WHERE {
+  {
+    ?iri a owl:Class .
+  }
+  UNION
+  { [] a ?iri . }
+  UNION
+  { [] rdfs:subClassOf ?iri . }
+  UNION
+  { ?iri rdfs:subClassOf [] . }
+  FILTER(STRSTARTS(STR(?iri), "{prefix}"))
+  OPTIONAL { ?iri rdfs:label ?label . }
+}

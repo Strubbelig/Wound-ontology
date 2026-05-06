@@ -1,0 +1,8 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+
+# All distinct object properties referenced in any owl:Restriction, with their labels.
+SELECT DISTINCT ?property ?label WHERE {
+  [] owl:onProperty ?property .
+  OPTIONAL { ?property rdfs:label ?label . }
+}

@@ -1,0 +1,8 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# Direct parent classes of {class_iri}.
+SELECT DISTINCT ?iri ?label WHERE {
+  <{class_iri}> rdfs:subClassOf ?iri .
+  FILTER(isIRI(?iri))
+  OPTIONAL { ?iri rdfs:label ?label . }
+}

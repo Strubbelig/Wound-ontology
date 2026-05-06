@@ -1,0 +1,29 @@
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX ofl:  <https://purl.bioontology.org/ontology/OFL/>
+
+# Leaf flap classes under ORIGIN_ROOT that carry an explicit hasPart restriction.
+# The restriction filler (?partBN) may be a named class IRI or a blank node
+# encoding a union/intersection, which _resolve_filler() unpacks in Python.
+SELECT DISTINCT ?flap ?flapLabel ?partBN WHERE {
+  ?flap rdfs:subClassOf* ofl:OFLID10098 .
+  ?flap rdfs:label ?flapLabel .
+  FILTER(!isBlank(?flap))
+  FILTER NOT EXISTS {
+    ?sub rdfs:subClassOf ?flap .
+    FILTER(!isBlank(?sub))
+    FILTER(isIRI(?sub))
+  }
+  {
+    ?flap rdfs:subClassOf ?r .
+    ?r a owl:Restriction ; owl:onProperty ofl:OFLID13296 ;
+       owl:someValuesFrom ?partBN .
+  } UNION {
+    ?flap owl:equivalentClass ?eq .
+    ?eq owl:intersectionOf ?list .
+    ?list rdf:rest*/rdf:first ?r .
+    ?r a owl:Restriction ; owl:onProperty ofl:OFLID13296 ;
+       owl:someValuesFrom ?partBN .
+  }
+}

@@ -1,0 +1,17 @@
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX ofl:  <https://purl.bioontology.org/ontology/OFL/>
+
+# Pedicle classes and the FMA vessel classes they contain.
+# Classes are identified by labels containing "pedicle of the"; the prefix is
+# stripped in Python to yield a fragment matchable against flap labels.
+SELECT DISTINCT ?ped ?pedLabel ?vessel WHERE {
+  ?ped rdfs:label ?pedLabel .
+  FILTER(CONTAINS(LCASE(STR(?pedLabel)), "pedicle of the"))
+  OPTIONAL {
+    ?ped rdfs:subClassOf ?r .
+    ?r a owl:Restriction ; owl:someValuesFrom ?vessel .
+    FILTER(STRSTARTS(STR(?vessel), "http://purl.obolibrary.org/obo/FMA_"))
+  }
+}

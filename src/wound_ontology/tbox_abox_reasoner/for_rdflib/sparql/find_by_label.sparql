@@ -1,0 +1,9 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+
+# Classes whose rdfs:label contains {text} (case-insensitive substring match).
+SELECT DISTINCT ?iri ?label WHERE {
+  ?iri a owl:Class .
+  ?iri rdfs:label ?label .
+  FILTER(CONTAINS(LCASE(STR(?label)), LCASE("{text}")))
+}

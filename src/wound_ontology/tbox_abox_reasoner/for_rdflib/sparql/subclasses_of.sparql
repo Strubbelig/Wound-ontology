@@ -1,0 +1,10 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+
+# All subclasses of {class_iri}.
+# {step} is either rdfs:subClassOf (direct) or rdfs:subClassOf* (transitive).
+SELECT DISTINCT ?iri ?label WHERE {
+  ?iri {step} <{class_iri}> .
+  FILTER(?iri != <{class_iri}>)
+  OPTIONAL { ?iri rdfs:label ?label . }
+}

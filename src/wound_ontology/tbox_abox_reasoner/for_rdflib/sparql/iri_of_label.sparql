@@ -1,0 +1,10 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# Reverse label lookup — first IRI whose rdfs:label matches {escaped} (case-insensitive).
+# {lang_filter} is either empty or FILTER(LANG(?label_val) = "…"), injected by Python.
+SELECT ?iri WHERE {
+  ?iri rdfs:label ?label_val .
+  FILTER(LCASE(STR(?label_val)) = LCASE("{escaped}"))
+  {lang_filter}
+}
+LIMIT 1
