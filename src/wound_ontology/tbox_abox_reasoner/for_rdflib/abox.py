@@ -47,12 +47,14 @@ from __future__ import annotations
 import random
 from itertools import product
 from pathlib import Path
+import sys
 
 from rdflib import Graph, URIRef, BNode
 from rdflib.namespace import RDF, RDFS, OWL
 
 from wound_ontology.export.abox_generator import ABoxGenerator
-from config.ofl_constants import (
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'Flap ontology' / 'VS Code output'))
+from ofl_constants import (
     OFL, OBO, FMA, DCTERMS,
     FLAP_ROOT, ORIGIN_ROOT,
     HAS_PART, PART_OF, HAS_ORIGIN,

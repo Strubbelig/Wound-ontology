@@ -1,6 +1,6 @@
 from __future__ import annotations
 from pathlib import Path
-from owlready2 import World, sync_reasoner
+from owlready2 import World, sync_reasoner, onto_path
 from rdflib import Graph, RDF, OWL
 
 
@@ -33,14 +33,24 @@ class Reasoner:
     def __init__(self):
         self._world = None
         self._onto  = None
+        onto_path.append("/Users/Strubbelig/Library/Mobile Documents/com~apple~CloudDocs/Forschung/Flap ontology/VS Code output")
 
     # ── Lifecycle ──────────────────────────────────────────────────────────────
 
     def load(self, owl_file: str) -> "Reasoner":
         """Load an OWL/RDF-XML file into a fresh owlready2 World."""
         path = Path(owl_file).resolve()
+        
+        if not path.exists():
+            raise FileNotFoundError(f"Ontology file not found at {path}")
+
         self._world = World()
-        self._onto  = self._world.get_ontology(f"file://{path}").load()
+        # Ensure the world looks in the file's directory for imports
+        onto_path.append(str(path.parent))
+        
+        # .as_uri() handles the file:// protocol and slashes correctly
+        self._onto = self._world.get_ontology(path.as_uri()).load()
+        
         print(f"[Reasoner] Loaded: {path}")
         return self
 

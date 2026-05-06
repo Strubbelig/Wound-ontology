@@ -6,7 +6,7 @@ import networkx as nx
 from wound_ontology.graph.knowledge_graph import KnowledgeGraph
 
 
-class GraphExporter:
+class GraphVisualizer:
     """
     Exports a KnowledgeGraph to GEXF format for visualisation in Gephi
     (or any tool that reads GEXF 1.2, such as Cytoscape or sigma.js).
