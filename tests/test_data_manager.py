@@ -137,7 +137,7 @@ def test_save_owl_creates_file(dm):
     from rdflib import Graph, URIRef, RDF, OWL
     g = Graph()
     g.add((URIRef("http://ex.org/Wound"), RDF.type, OWL.Class))
-    path = dm.save_owl(g, "test_owl")
+    path = dm.save_as_owl(g, "test_owl")
     from pathlib import Path
     assert Path(path).exists()
     assert Path(path).stat().st_size > 0
@@ -147,7 +147,7 @@ def test_save_owl_is_valid_rdf(dm):
     from rdflib import Graph, URIRef, RDF, OWL
     g = Graph()
     g.add((URIRef("http://ex.org/Wound"), RDF.type, OWL.Class))
-    path = dm.save_owl(g, "test_owl_valid")
+    path = dm.save_as_owl(g, "test_owl_valid")
     g2 = Graph()
     g2.parse(path, format="xml")
     assert len(g2) > 0

@@ -3,6 +3,8 @@ import os, glob, json, pickle
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
+import owlready2
+
 
 _DEFAULT_BASE_PATH = Path(__file__).resolve().parents[3] / "data" / "cache"
 
@@ -17,6 +19,7 @@ class DataManager:
         self.file_name = "meta_ids"
         self.meta_id_dict = self.load_latest_json(self.file_name) or {}
 
+
     def _ensure_directory(self):
         """Creates the storage directory if it's missing."""
         try:
@@ -25,10 +28,12 @@ class DataManager:
         except Exception as e:
             print(f"Note: Could not create directory (Local mode?): {e}")
 
+
     def _get_timestamped_name(self, prefix, extension):
         """Generates a filename like: wound_data_2026-03-05_21-30.json"""
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
         return f"{prefix}_{timestamp}.{extension}"
+
 
     def _cleanup_old_files(self, prefix, limit=10):
         """
@@ -76,14 +81,25 @@ class DataManager:
         return str(full_path)
 
 
-    def save_owl(self, graph, filename_prefix: str) -> str:
-        """Saves an rdflib.Graph as a timestamped OWL/RDF-XML file."""
+    def save_tbox_as_owl(self, onto, filename_prefix: str) -> str:
+        """Saves an owlready2 onto object as a timestamped OWL/RDF-XML file with versioned IRI."""
         filename = self._get_timestamped_name(filename_prefix, "owl")
         full_path = self.base_path / filename
-        graph.serialize(destination=str(full_path), format="xml")
-        self._cleanup_old_files(filename_prefix)
+        onto.metadata.versionIRI = f"{onto.metadata.base_iri}/{datetime.now().strftime("%Y-%m-%d_%H-%M")}/"
+        # Save to persist the changes in the RDF/XML file
+        onto.save(file=str(full_path), format="rdfxml")
         print(f"[DataManager] Saved OWL → {full_path.name}  ({full_path.stat().st_size:,} bytes)")
         return str(full_path)
+
+
+    def save_abox_as_owl(self, graph, filename_prefix: str) -> str:
+        """Saves an rdflib.Graph as a timestamped OWL/RDF-XML file with versioned IRI."""
+        filename = self._get_timestamped_name(filename_prefix, "owl")
+        full_path = self.base_path / filename
+        graph.serialize(destination=full_path, format="xml")
+        print(f"[DataManager] Saved OWL → {full_path.name}  ({full_path.stat().st_size:,} bytes)")
+        return str(full_path)
+
 
     def save_as_pickle(self, obj, filename_prefix):
         filename = self._get_timestamped_name(filename_prefix, "pkl")
@@ -108,14 +124,31 @@ class DataManager:
 
         # Standard sort puts the latest YYYY-MM-DD_HH-MM at the end [-1]
         return sorted(files)[-1]
-    def load_latest_owl(self, prefix: str) -> str | None:
-        """Returns the path to the most recent OWL file matching prefix (does not parse)."""
+    
+
+    def load_latest_owl_tbox(self, prefix: str) -> owlready2.Ontology | None:
+        """Returns owlready2 onto object of the most recent OWL file matching prefix (does parse)!!"""
         path = self._find_latest_path(prefix, "owl")
         if path:
             print(f"[DataManager] Latest OWL: {os.path.basename(path)}")
-            return path
+            return owlready2.get_ontology(f"file://{path}")
         print(f"[DataManager] No OWL found for prefix: {prefix}")
         return None
+    
+
+    def load_latest_owl_abox(self, prefix: str):
+        """Returns rdflib.Graph of the most recent OWL file matching prefix (does parse)!!"""
+        from rdflib import Graph
+        path = self._find_latest_path(prefix, "owl")
+        if path:
+            print(f"[DataManager] Latest OWL: {os.path.basename(path)}")
+            g = Graph()
+            g.parse(path, format="xml")
+            return g
+        print(f"[DataManager] No OWL found for prefix: {prefix}")
+        return None
+    
+
     def load_latest_csv(self, prefix: str):
         """Loads the most recent CSV matching the prefix into a DataFrame."""
         path = self._find_latest_path(prefix, "csv")
@@ -126,6 +159,8 @@ class DataManager:
 
         print(f"No CSV found for prefix: {prefix}")
         return None
+    
+
     def load_latest_json(self, prefix: str):
         """Loads the most recent JSON matching the prefix into a Dictionary."""
         path = self._find_latest_path(prefix, "json")
@@ -137,6 +172,7 @@ class DataManager:
 
         print(f"No JSON found for prefix: {prefix}")
         return None
+    
     def load_latest_pickle(self, prefix: str):
         """Loads the most recent Pickle matching the prefix into an Object."""
         path = self._find_latest_path(prefix, "pkl")
