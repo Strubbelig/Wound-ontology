@@ -153,9 +153,9 @@ class OWLVariantGenerator:
             OWLVariantGenerator.run_files("tbox.owl", "tbox_variants.owl",
                                            fma_file="fma.owl")
         """
-        from wound_ontology.export.owl_ontology import OWLOntology
-        tbox_onto = OWLOntology().load(tbox_file)
-        fma_onto  = OWLOntology().load(fma_file) if fma_file else None
+        from wound_ontology.export.tbox import TBox
+        tbox_onto = TBox().load(tbox_file)
+        fma_onto  = TBox().load(fma_file) if fma_file else None
         gen = cls(tbox_onto, fma_onto, flap_root=flap_root,
                   origin_root=origin_root, has_part=has_part)
         gen.generate()

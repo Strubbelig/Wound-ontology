@@ -6,7 +6,7 @@ import networkx as nx
 from wound_ontology.graph.knowledge_graph import KnowledgeGraph
 
 
-class GEXFExporter:
+class GraphExporter:
     """
     Exports a KnowledgeGraph to GEXF format for visualisation in Gephi
     (or any tool that reads GEXF 1.2, such as Cytoscape or sigma.js).
@@ -18,7 +18,7 @@ class GEXFExporter:
     Usage:
 
         # From an already-built KnowledgeGraph
-        exporter = GEXFExporter()
+        exporter = GraphExporter()
         exporter.export(kg, "output/wound_ontology.gexf")
 
         # One-shot directly from an OWL file
@@ -56,7 +56,7 @@ class GEXFExporter:
         # NetworkX's GEXF writer requires string node attributes; ensure types.
         g = self._prepare_graph(kg.graph)
         nx.write_gexf(g, str(out))
-        print(f"[GEXFExporter] Saved → {out}  "
+        print(f"[GraphExporter] Saved → {out}  "
               f"({out.stat().st_size:,} bytes, "
               f"{g.number_of_nodes()} nodes, {g.number_of_edges()} edges)")
 
@@ -65,8 +65,6 @@ class GEXFExporter:
     def export_owl(self, owl_file: str, output_file: str) -> None:
         """
         One-shot: parse an OWL/RDF file, build a KnowledgeGraph, write GEXF.
-        Equivalent to the create_gephi_graph() function from the Flap notebook,
-        but with semantic edge typing and node attributes.
         """
         kg = KnowledgeGraph().from_owl(owl_file)
         self.export(kg, output_file)

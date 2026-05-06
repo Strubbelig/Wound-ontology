@@ -1,12 +1,12 @@
 """
-OWLABoxGenerator
-================
+ABox
+====
 Algorithmically generates a large ABox (1 k – 10 k+ flap individuals) covering
 the complete variety expressible by an OFL TBox.
 
 Architecture
 ------------
-* ``OWLOntology`` for loading the TBox and resolving labels/IRIs via SPARQL.
+* ``TBox`` for loading the TBox and resolving labels/IRIs via SPARQL.
 * ``ABoxGenerator`` for writing all individual and property-assertion triples.
 * Only **leaf classes under OFLID10098** ("Flaps classified by region of
   origin") are instantiated — classification axes (Mathes & Nahai, blood
@@ -31,16 +31,16 @@ that relation goes through the process.
 
 Usage (fluent API)
 ------------------
-    from wound_ontology.export import OWLOntology, OWLABoxGenerator
+    from wound_ontology.export import TBox, ABox
 
-    tbox_onto = OWLOntology().load("flap_onto.owl")
-    gen = OWLABoxGenerator(tbox_onto)
+    tbox = TBox().load("flap_onto.owl")
+    gen = ABox(tbox)
     gen.generate(patients_per_combination=5)
     gen.save("ofl_abox_5k.owl")
 
 Or one-shot::
 
-    OWLABoxGenerator.run_files("flap_onto.owl", "ofl_abox_5k.owl", patients=5)
+    ABox.run_files("flap_onto.owl", "ofl_abox_5k.owl", patients=5)
 """
 from __future__ import annotations
 
@@ -87,21 +87,21 @@ class _IDCounter:
         return self._n
 
 
-class OWLABoxGenerator:
+class ABox:
     """
     Generates synthetic OWL ABox individuals for OFL-based TBoxes.
 
     Parameters
     ----------
-    tbox_onto : OWLOntology
-        The loaded TBox ontology (used for SPARQL-based TBox extraction).
+    tbox : TBox
+        The loaded TBox (used for SPARQL-based TBox extraction).
     id_start : int
         First IRI counter value (default 20 000 to avoid TBox collisions).
     """
 
-    def __init__(self, tbox_onto, id_start: int = 20_000):
-        self._tbox_onto = tbox_onto
-        self._id_start  = id_start
+    def __init__(self, tbox, id_start: int = 20_000):
+        self._tbox    = tbox
+        self._id_start = id_start
         self._gen: ABoxGenerator | None = None
 
     # ── Public API ─────────────────────────────────────────────────────────────
@@ -110,7 +110,7 @@ class OWLABoxGenerator:
         self,
         patients_per_combination: int = 1,
         seed: int = 42,
-    ) -> "OWLABoxGenerator":
+    ) -> "ABox":
         """Build the ABox graph in memory."""
         random.seed(seed)
         tbox_info = self._extract_tbox_info()
@@ -190,7 +190,7 @@ class OWLABoxGenerator:
 
         n_ind = sum(1 for _ in out.subjects(RDF.type, OWL.NamedIndividual))
         print(
-            f"[OWLABoxGenerator] {flap_count:,} flap instances, "
+            f"[ABox] {flap_count:,} flap instances, "
             f"{n_ind:,} individuals, {len(out):,} triples"
         )
         return self
@@ -209,15 +209,15 @@ class OWLABoxGenerator:
         patients: int = 1,
         seed: int = 42,
         id_start: int = 20_000,
-    ) -> "OWLABoxGenerator":
+    ) -> "ABox":
         """
         Convenience one-shot class method::
 
-            OWLABoxGenerator.run_files("tbox.owl", "abox.owl", patients=5)
+            ABox.run_files("tbox.owl", "abox.owl", patients=5)
         """
-        from wound_ontology.export.owl_ontology import OWLOntology
-        tbox_onto = OWLOntology().load(tbox_file)
-        gen = cls(tbox_onto, id_start=id_start)
+        from wound_ontology.export.tbox import TBox
+        tbox = TBox().load(tbox_file)
+        gen = cls(tbox, id_start=id_start)
         gen.generate(patients_per_combination=patients, seed=seed)
         gen.save(output_file)
         return gen
@@ -227,15 +227,15 @@ class OWLABoxGenerator:
         """The generated rdflib.Graph (available after generate())."""
         return self._gen.graph if self._gen else None
 
-    # ── TBox extraction via OWLOntology.sparql ─────────────────────────────────
+    # ── TBox extraction via TBox.sparql ────────────────────────────────────────
 
     def _extract_tbox_info(self) -> dict:
-        """Use the OWLOntology's SPARQL helper to extract generation metadata.
+        """Use the TBox's SPARQL helper to extract generation metadata.
 
         Only leaf classes under ORIGIN_ROOT are returned so that classification
         axes (Mathes & Nahai, blood supply, etc.) are never instantiated.
         """
-        g = self._tbox_onto.rdf_graph
+        g = self._tbox.rdf_graph
 
         P = ("PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
              "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
@@ -326,7 +326,7 @@ class OWLABoxGenerator:
         ]
 
         print(
-            f"[OWLABoxGenerator] TBox: {len(parts_map)} rich flaps, "
+            f"[ABox] TBox: {len(parts_map)} rich flaps, "
             f"{len(origin_map)} with origin, {len(pedicle_map)} pedicles, "
             f"{len(all_named)} total origin-leaf flap classes"
         )
@@ -381,7 +381,7 @@ class OWLABoxGenerator:
         # ── Anatomical part individuals ────────────────────────────────────────
         for comp_id, fma_iri in zip(part_ids, parts):
             short = fma_iri.rstrip("/").rsplit("_", 1)[-1]
-            lbl   = self._tbox_onto.label_of(URIRef(fma_iri)) or f"structure {short}"
+            lbl   = self._tbox.label_of(URIRef(fma_iri)) or f"structure {short}"
             gen.add_individual(
                 comp_id,
                 f"{sp}{lbl} of patient {patient_n}",
@@ -402,7 +402,7 @@ class OWLABoxGenerator:
             for v_iri in pedicle_vessels[:2]:
                 v_id  = counter.next()
                 short = v_iri.rstrip("/").rsplit("_", 1)[-1]
-                lbl   = self._tbox_onto.label_of(URIRef(v_iri)) or f"vessel {short}"
+                lbl   = self._tbox.label_of(URIRef(v_iri)) or f"vessel {short}"
                 gen.add_individual(
                     v_id,
                     f"{sp}{lbl} of patient {patient_n}",
@@ -487,7 +487,7 @@ def _resolve_list(g: Graph, lst) -> list[URIRef]:
     while lst and lst != RDF.nil:
         first = g.value(lst, RDF.first)
         if first is not None:
-            if isinstance(first, rdflib.BNode):
+            if isinstance(first, BNode):
                 items.extend(_resolve_filler(g, first))
             else:
                 items.append(first)

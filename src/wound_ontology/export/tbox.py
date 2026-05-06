@@ -45,21 +45,20 @@ def _name_to_label(name: str) -> str:
     return (label[0].upper() + label[1:].lower()) if label else label
 
 
-class OWLOntology:
+class TBox:
     """
-    Central data object for an OWL ontology — analogous to ConceptStore for
-    the store layer.  Owns the owlready2 World and ontology lifecycle, and
-    provides both construction and in-place enrichment methods.
+    Central data object for an OWL TBox — owns the owlready2 World and
+    ontology lifecycle, and provides construction and in-place enrichment methods.
 
     ── Construction ──────────────────────────────────────────────────────────
 
     get_data(class_hier, mere_hier, fca_hier)
-        Build from internal pipeline hierarchies (replaces OWLExporter).
+        Build from internal pipeline hierarchies.
 
     load(owl_file)
         Load an existing OWL/RDF-XML file into a fresh World.
 
-    ── In-place enrichment (replaces OWLCurator) ─────────────────────────────
+    ── In-place enrichment ───────────────────────────────────────────────────
 
     import_connector(*connectors)   — import BFO/RO/OBI from loaded connectors
     import_external(*urls)          — import by URL (fallback)
@@ -75,23 +74,19 @@ class OWLOntology:
 
     ── Reasoning ─────────────────────────────────────────────────────────────
 
-    Reasoning (Pellet/HermiT) is kept in OWLReasoner — it requires Java/JPype
+    Reasoning (Pellet/HermiT) is kept in Reasoner — it requires Java/JPype
     and is kept separate because it can fail for infrastructure reasons
     independent of the ontology content.
 
     ── Fluent API example ────────────────────────────────────────────────────
 
-        onto = OWLOntology()
-        onto.get_data(pipeline.class_hier, pipeline.mere_hier)
-        onto.import_bfo().import_ro()
-        onto.resolve_external_classes()
-        onto.normalize_label_language()
-        onto.rename_iris()
-        onto.save("output/wound_ontology.owl")
-
-    Or via the orchestrator:
-        pipeline.export_to_owl()
-        pipeline.run_curate_owl(input_file=..., output_file=...)
+        tbox = TBox()
+        tbox.get_data(pipeline.class_hier, pipeline.mere_hier)
+        tbox.import_bfo().import_ro()
+        tbox.resolve_external_classes()
+        tbox.normalize_label_language()
+        tbox.rename_iris()
+        tbox.save("output/wound_ontology.owl")
     """
 
     def __init__(
@@ -117,7 +112,7 @@ class OWLOntology:
         class_hierarchy=None,
         mereological_hierarchy=None,
         fca_hierarchy=None,
-    ) -> "OWLOntology":
+    ) -> "TBox":
         """
         Build OWL axioms from BaseHierarchy objects.
 
@@ -142,60 +137,60 @@ class OWLOntology:
 
     # ── Load from file ─────────────────────────────────────────────────────────
 
-    def load(self, owl_file: str) -> "OWLOntology":
+    def load(self, owl_file: str) -> "TBox":
         """Load an OWL/RDF-XML file into a fresh owlready2 World and rdflib Graph."""
         path = Path(owl_file).resolve()
         self._world = World()
         try:
             self._onto = self._world.get_ontology(f"file://{path}").load()
         except Exception as exc:
-            print(f"[OWLOntology] owlready2 import warning ({exc.__class__.__name__}) "
+            print(f"[TBox] owlready2 import warning ({exc.__class__.__name__}) "
                   f"— using rdflib-only mode for {path.name}")
             self._onto = self._world.get_ontology(f"file://{path}")
         self._rg    = Graph()
         self._rg.parse(str(path), format="xml")
         self._sparql_helper = None
-        print(f"[OWLOntology] Loaded: {path}")
+        print(f"[TBox] Loaded: {path}")
         return self
 
     # ── External imports ───────────────────────────────────────────────────────
 
-    def import_connector(self, *connectors) -> "OWLOntology":
+    def import_connector(self, *connectors) -> "TBox":
         """
         Import ontologies already loaded by OntoConnector instances (BFO, RO, OBI…).
         Reuses the connector's owlready2 ontology — no second download.
         """
         for connector in connectors:
             if connector.onto is None:
-                print(f"[OWLOntology] {connector.source_name} not loaded — skipping.")
+                print(f"[TBox] {connector.source_name} not loaded — skipping.")
                 continue
             ext = self._world.get_ontology(connector.onto_url).load()
             if ext not in self._onto.imported_ontologies:
                 self._onto.imported_ontologies.append(ext)
-                print(f"[OWLOntology] Imported via connector: {connector.source_name}")
+                print(f"[TBox] Imported via connector: {connector.source_name}")
         return self
 
-    def import_external(self, *urls: str) -> "OWLOntology":
+    def import_external(self, *urls: str) -> "TBox":
         """Import ontologies by URL (fallback when connectors are not available)."""
         for url in urls:
             ext = self._world.get_ontology(url).load()
             if ext not in self._onto.imported_ontologies:
                 self._onto.imported_ontologies.append(ext)
-                print(f"[OWLOntology] Imported: {url}")
+                print(f"[TBox] Imported: {url}")
         return self
 
-    def import_bfo(self) -> "OWLOntology":
+    def import_bfo(self) -> "TBox":
         return self.import_external(_BFO_URL)
 
-    def import_ro(self) -> "OWLOntology":
+    def import_ro(self) -> "TBox":
         return self.import_external(_RO_URL)
 
-    def import_obi(self) -> "OWLOntology":
+    def import_obi(self) -> "TBox":
         return self.import_external(_OBI_URL)
 
     # ── External class resolution ──────────────────────────────────────────────
 
-    def resolve_external_classes(self) -> "OWLOntology":
+    def resolve_external_classes(self) -> "TBox":
         """
         Replace local classes that shadow an already-imported external class
         (BFO, RO, OBI…) with the canonical external class.
@@ -216,7 +211,7 @@ class OWLOntology:
                     label_map[name_key] = cls
 
         if not label_map:
-            print("[OWLOntology] No imported ontologies to resolve against — skipping.")
+            print("[TBox] No imported ontologies to resolve against — skipping.")
             return self
 
         resolved = 0
@@ -239,9 +234,9 @@ class OWLOntology:
                     destroy_entity(local_cls)
                     resolved += 1
                 except Exception as exc:
-                    print(f"[OWLOntology] Could not destroy '{local_cls.name}': {exc}")
+                    print(f"[TBox] Could not destroy '{local_cls.name}': {exc}")
 
-        print(f"[OWLOntology] Resolved {resolved} local classes to external IRIs.")
+        print(f"[TBox] Resolved {resolved} local classes to external IRIs.")
         return self
 
     # ── Label language normalisation ───────────────────────────────────────────
@@ -250,7 +245,7 @@ class OWLOntology:
         self,
         target_lang: str = "en",
         source_lang: str | None = None,
-    ) -> "OWLOntology":
+    ) -> "TBox":
         """
         Re-tag rdfs:labels that carry the wrong (or no) language tag.
 
@@ -277,12 +272,12 @@ class OWLOntology:
                 if changed:
                     entity.label = new_labels
                     fixed += 1
-        print(f"[OWLOntology] normalize_label_language: {fixed} entities re-tagged → '{target_lang}'.")
+        print(f"[TBox] normalize_label_language: {fixed} entities re-tagged → '{target_lang}'.")
         return self
 
     # ── IRI renaming + labeling ────────────────────────────────────────────────
 
-    def rename_iris(self) -> "OWLOntology":
+    def rename_iris(self) -> "TBox":
         """
         Assign proper ontology IRIs (WOND_NNNNNNN) to all local entities and
         set rdfs:label (en) from the original name.
@@ -308,13 +303,13 @@ class OWLOntology:
                         entity.iri = new_iri
                         renamed += 1
                     except Exception as e:
-                        print(f"[OWLOntology] IRI rename failed for '{original_name}': {e}")
-        print(f"[OWLOntology] Renamed {renamed} local entities.")
+                        print(f"[TBox] IRI rename failed for '{original_name}': {e}")
+        print(f"[TBox] Renamed {renamed} local entities.")
         return self
 
     # ── UMLS synonym mapping ───────────────────────────────────────────────────
 
-    def umls_mapping(self, umls_connector, max_results: int = 3) -> "OWLOntology":
+    def umls_mapping(self, umls_connector, max_results: int = 3) -> "TBox":
         """
         Annotate each local class with hasUMLSSynonym (CUI + preferred name).
         Additive — never replaces WOND IRIs.  Call AFTER rename_iris().
@@ -325,11 +320,11 @@ class OWLOntology:
 
         local_classes = [c for c in self._onto.classes() if self.is_local(c)]
         if not local_classes:
-            print("[OWLOntology] No local classes to map — skipping UMLS mapping.")
+            print("[TBox] No local classes to map — skipping UMLS mapping.")
             return self
 
         mapped = 0
-        print(f"[OWLOntology] UMLS mapping for {len(local_classes)} classes...")
+        print(f"[TBox] UMLS mapping for {len(local_classes)} classes...")
         for cls in local_classes:
             label = str(cls.label.first()) if cls.label else cls.name
             hits = umls_connector.lookup(label, max_results=max_results)
@@ -342,7 +337,7 @@ class OWLOntology:
                         cls.hasUMLSSynonym.append(annotation)
             mapped += 1
 
-        print(f"[OWLOntology] UMLS synonyms added to {mapped}/{len(local_classes)} classes.")
+        print(f"[TBox] UMLS synonyms added to {mapped}/{len(local_classes)} classes.")
         return self
 
     # ── Label normalization ───────────────────────────────────────────────────
@@ -351,7 +346,7 @@ class OWLOntology:
         self,
         strip_whitespace: bool = True,
         title_case: bool = False,
-    ) -> "OWLOntology":
+    ) -> "TBox":
         """
         Normalize ``rdfs:label`` values on all classes and individuals.
 
@@ -388,7 +383,7 @@ class OWLOntology:
                     changed += 1
         self._rg = None
         self._sparql_helper = None
-        print(f"[OWLOntology] normalize_labels: {changed} entities updated.")
+        print(f"[TBox] normalize_labels: {changed} entities updated.")
         return self
 
     # ── Lookup ────────────────────────────────────────────────────────────────
@@ -417,9 +412,9 @@ class OWLOntology:
     @property
     def rdf_graph(self) -> Graph:
         """
-        rdflib.Graph representation of this ontology.
+        rdflib.Graph representation of this TBox.
 
-        When the ontology was created via ``load()``, the graph is already
+        When the TBox was created via ``load()``, the graph is already
         populated.  When created via ``get_data()`` (owlready2 construction
         path), the graph is lazily serialized from the owlready2 world on
         first access.
@@ -449,11 +444,11 @@ class OWLOntology:
     # ── Save ──────────────────────────────────────────────────────────────────
 
     def save(self, output_file: str | Path | None = None) -> None:
-        """Save the ontology as RDF/XML."""
+        """Save the TBox as RDF/XML."""
         out = Path(output_file or _DEFAULT_OUTPUT)
         out.parent.mkdir(parents=True, exist_ok=True)
         self._onto.save(file=str(out), format="rdfxml")
-        print(f"[OWLOntology] Saved → {out}  ({out.stat().st_size:,} bytes)")
+        print(f"[TBox] Saved → {out}  ({out.stat().st_size:,} bytes)")
 
     # ── Properties ────────────────────────────────────────────────────────────
 
@@ -515,8 +510,8 @@ class OWLOntology:
                             if Thing in child_cls.is_a:
                                 child_cls.is_a.remove(Thing)
                         except TypeError:
-                            print(f"[OWLOntology] Skipped cycle: {child} → {parent}")
-        print(f"[OWLOntology] {label}: {len(hierarchy.df.index)} concepts exported.")
+                            print(f"[TBox] Skipped cycle: {child} → {parent}")
+        print(f"[TBox] {label}: {len(hierarchy.df.index)} concepts exported.")
 
     def _export_mereological(self, cls_reg: dict, mere_hier) -> None:
         with self._onto:
@@ -533,4 +528,4 @@ class OWLOntology:
                     restriction = part_of.some(root_cls)
                     if restriction not in branch_cls.is_a:
                         branch_cls.is_a.append(restriction)
-        print(f"[OWLOntology] MereologicalHierarchy: {len(mere_hier.df.index)} concepts exported.")
+        print(f"[TBox] MereologicalHierarchy: {len(mere_hier.df.index)} concepts exported.")

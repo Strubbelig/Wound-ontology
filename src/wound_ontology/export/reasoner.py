@@ -4,20 +4,27 @@ from owlready2 import World, sync_reasoner
 from rdflib import Graph, RDF, OWL
 
 
-class OWLReasoner:
+class Reasoner:
     """
-    Runs the Pellet/HermiT reasoner over an OWL file and saves the result.
+    Runs reasoning over TBox and ABox.
 
-    Requires Java and JPype to be installed.
+    TBox reasoning uses owlready2's sync_reasoner() (Pellet/HermiT) and
+    requires Java and JPype.
 
-    Usage — fluent API:
-        OWLReasoner()
+    ABox reasoning uses owlrl (OWL RL materialisation) over a combined
+    TBox + ABox rdflib graph — no Java required.
+
+    Usage — fluent API (TBox):
+        Reasoner()
             .load("output/ontology.owl")
             .run()
             .save("output/ontology_inferred.owl")
 
-    Or one-shot:
-        OWLReasoner().reason("output/ontology.owl", "output/ontology_inferred.owl")
+    Or one-shot (TBox):
+        Reasoner().reason("output/ontology.owl", "output/ontology_inferred.owl")
+
+    Or ABox reasoning:
+        Reasoner().expand_owlrl("tbox.owl", "abox.owl", "abox_inferred.owl")
 
     Or via the orchestrator:
         pipeline.run_reason_owl(input_file=..., output_file=...)
@@ -29,26 +36,26 @@ class OWLReasoner:
 
     # ── Lifecycle ──────────────────────────────────────────────────────────────
 
-    def load(self, owl_file: str) -> "OWLReasoner":
+    def load(self, owl_file: str) -> "Reasoner":
         """Load an OWL/RDF-XML file into a fresh owlready2 World."""
         path = Path(owl_file).resolve()
         self._world = World()
         self._onto  = self._world.get_ontology(f"file://{path}").load()
-        print(f"[OWLReasoner] Loaded: {path}")
+        print(f"[Reasoner] Loaded: {path}")
         return self
 
-    # ── Reasoning ─────────────────────────────────────────────────────────────
+    # ── TBox reasoning ─────────────────────────────────────────────────────────
 
-    def run(self, infer_property_values: bool = True) -> "OWLReasoner":
+    def run(self, infer_property_values: bool = True) -> "Reasoner":
         """
-        Run the Pellet/HermiT reasoner to materialise inferred axioms.
+        Run the Pellet/HermiT reasoner to materialise inferred TBox axioms.
         Must call load() first.
         """
         if self._onto is None:
             raise RuntimeError("No ontology loaded — call load() first.")
         with self._onto:
             sync_reasoner(infer_property_values=infer_property_values)
-        print("[OWLReasoner] Reasoning complete.")
+        print("[Reasoner] TBox reasoning complete.")
         return self
 
     # ── Save ──────────────────────────────────────────────────────────────────
@@ -60,7 +67,7 @@ class OWLReasoner:
         out = Path(output_file)
         out.parent.mkdir(parents=True, exist_ok=True)
         self._onto.save(file=str(out), format="rdfxml")
-        print(f"[OWLReasoner] Saved → {out}  ({out.stat().st_size:,} bytes)")
+        print(f"[Reasoner] Saved → {out}  ({out.stat().st_size:,} bytes)")
 
     # ── One-shot convenience ───────────────────────────────────────────────────
 
@@ -70,12 +77,12 @@ class OWLReasoner:
         output_file: str,
         infer_property_values: bool = True,
     ) -> None:
-        """Load → reason → save in one call."""
+        """Load → reason → save in one call (TBox, requires Java)."""
         self.load(input_file)
         self.run(infer_property_values=infer_property_values)
         self.save(output_file)
 
-    # ── OWL RL (rdflib-based, no Java required) ────────────────────────────────
+    # ── ABox reasoning (OWL RL, rdflib-based, no Java required) ───────────────
 
     def expand_owlrl(
         self,
@@ -114,16 +121,16 @@ class OWLReasoner:
             ) from exc
 
         g = Graph()
-        print(f"[OWLReasoner] Loading TBox: {tbox_file}", flush=True)
+        print(f"[Reasoner] Loading TBox: {tbox_file}", flush=True)
         g.parse(tbox_file, format="xml")
         t = len(g)
         print(f"  {t:,} triples")
 
-        print(f"[OWLReasoner] Loading ABox: {abox_file}", flush=True)
+        print(f"[Reasoner] Loading ABox: {abox_file}", flush=True)
         g.parse(abox_file, format="xml")
         print(f"  +{len(g) - t:,} triples (total {len(g):,})")
 
-        print("[OWLReasoner] Running OWL RL reasoning …", flush=True)
+        print("[Reasoner] Running OWL RL reasoning …", flush=True)
         owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(g)
         print(f"  After reasoning: {len(g):,} triples")
 
@@ -131,15 +138,15 @@ class OWLReasoner:
         if check_consistency:
             incon = list(g.subjects(RDF.type, OWL.Nothing))
             if incon:
-                print(f"[OWLReasoner] INCONSISTENCY: {len(incon)} individual(s) typed owl:Nothing")
+                print(f"[Reasoner] INCONSISTENCY: {len(incon)} individual(s) typed owl:Nothing")
                 for ind in incon[:5]:
                     print(f"  {ind}")
                 consistent = False
             else:
-                print("[OWLReasoner] CONSISTENT — no owl:Nothing individuals.")
+                print("[Reasoner] CONSISTENT — no owl:Nothing individuals.")
 
         out = Path(output_file)
         out.parent.mkdir(parents=True, exist_ok=True)
         g.serialize(destination=str(out), format="xml")
-        print(f"[OWLReasoner] Saved → {out}  ({out.stat().st_size / 1e6:.1f} MB)")
+        print(f"[Reasoner] Saved → {out}  ({out.stat().st_size / 1e6:.1f} MB)")
         return consistent

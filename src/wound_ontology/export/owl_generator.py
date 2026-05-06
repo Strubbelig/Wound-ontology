@@ -26,8 +26,8 @@ class OWLGenerator(ABC):
     graph : rdflib.Graph, optional
         Pre-existing graph to write into.  A fresh empty Graph is created when
         omitted.
-    ontology : OWLOntology, optional
-        Ontology instance used for label / IRI lookups.
+    ontology : TBox, optional
+        TBox instance used for label / IRI lookups.
     """
 
     def __init__(self, graph: Graph | None = None, ontology=None):

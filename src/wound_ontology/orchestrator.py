@@ -24,9 +24,9 @@ from wound_ontology.fca.concept_lattice import ConceptLattice
 from wound_ontology.embedding.embedder import Embedder
 from wound_ontology.mappers.term_mapper import TermMapper
 from wound_ontology.mappers.mapping_cleaner import MappingCleaner
-from wound_ontology.export.owl_ontology import OWLOntology
-from wound_ontology.export.owl_reasoner import OWLReasoner
-from wound_ontology.export.gexf_exporter import GEXFExporter
+from wound_ontology.export.tbox import TBox
+from wound_ontology.export.reasoner import Reasoner
+from wound_ontology.export.graph_exporter import GraphExporter
 from wound_ontology.graph.knowledge_graph import KnowledgeGraph
 
 load_dotenv()
@@ -84,8 +84,8 @@ class Orchestrator:
         self.term_mapper     = TermMapper(self.dm, file_name="term_mapping", mapper_name="Term mapper")
         self.mapping_cleaner = MappingCleaner(self.term_mapper, allowed_predicates=self.allowed_predicates)
         self._embedder: Embedder | None = None   # lazy-loaded on first use
-        self.reasoner      = OWLReasoner()
-        self.gexf          = GEXFExporter()
+        self.reasoner      = Reasoner()
+        self.graph_exporter = GraphExporter()
 
     def _run_sync(self, coroutine):
         # Convert an async coroutine into a blocking call for the CLI-style
@@ -364,7 +364,7 @@ class Orchestrator:
     # ── Export ─────────────────────────────────────────────────────────────────
 
     def export_to_owl(self, output_file=None):
-        onto = OWLOntology()
+        onto = TBox()
         onto.get_data(self.class_hier, self.mere_hier, self.fca_hier)
         onto.save(output_file)
 
@@ -385,7 +385,7 @@ class Orchestrator:
 
         For reasoning over the curated file use run_reason_owl().
         """
-        onto = OWLOntology().load(input_file)
+        onto = TBox().load(input_file)
 
         connectors = []
         if import_bfo:
@@ -447,9 +447,9 @@ class Orchestrator:
         filter by relationship type and ontology namespace.
         """
         if input_owl:
-            self.gexf.export_owl(input_owl, output_file)
+            self.graph_exporter.export_owl(input_owl, output_file)
         else:
-            self.gexf.export_store(
+            self.graph_exporter.export_store(
                 self.store,
                 self.class_hier,
                 self.mere_hier,
