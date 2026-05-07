@@ -79,9 +79,12 @@ Or one-shot::
 from __future__ import annotations
 
 import random
-from itertools import product
 from pathlib import Path
 import sys
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from wound_ontology.tbox_abox_reasoner.for_rdflib.sparql.sparql_helper import SPARQLHelper
 
 # rdflib core types:
 #   Graph   — the triple store (our in-memory OWL file)
@@ -97,7 +100,6 @@ from rdflib.namespace import RDF, RDFS, OWL
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'Flap ontology' / 'VS Code output'))
 from ofl_constants import (
     OFL, OBO, FMA, DCTERMS,          # Namespace objects (IRI prefix factories)
-    FLAP_ROOT, ORIGIN_ROOT,           # Root class IRIs
     HAS_PART, PART_OF, HAS_ORIGIN,    # OFL object properties
     HAS_PARTICIPANT, CONCRETIZES, HAS_FUNCTION, HAS_QUALITY, HAS_ROLE, IS_OUTPUT_OF,
     HAS_SPECIFIED_OUTPUT, HAS_SPECIFIED_INPUT, REALIZES,
@@ -120,24 +122,6 @@ except ImportError:
     _RO_URL  = "http://purl.obolibrary.org/obo/ro.owl"
     _OBI_URL = "http://purl.obolibrary.org/obo/obi.owl"
 
-
-def _individual(
-    output_graph: Graph,
-    iri: URIRef,
-    label: str,
-    *class_iris: URIRef,
-) -> None:
-    """
-    Declare a named individual: add rdf:type owl:NamedIndividual, an
-    rdfs:label, and one rdf:type triple per extra class argument.
-
-    Equivalent to three (or more) raw output_graph.add() calls, kept as a
-    module function to avoid repeating the NamedIndividual + label boilerplate.
-    """
-    output_graph.add((iri, RDF.type,   OWL.NamedIndividual))
-    output_graph.add((iri, RDFS.label, Literal(label, lang="en")))
-    for class_iri in class_iris:
-        output_graph.add((iri, RDF.type, class_iri))
 
 
 def _load_query(path: Path) -> str:
@@ -191,7 +175,7 @@ class ABox:
     def __init__(self, tbox, id_start: int = 20_000):
         self._tbox         = tbox
         self._id_start     = id_start
-        self._output_graph: Graph | None = None   # populated by generate()
+        self._output_graph: Graph = Graph()
 
     # ── Public API ─────────────────────────────────────────────────────────────
 
@@ -230,10 +214,11 @@ class ABox:
         counter = _IDCounter(self._id_start)
 
         parts_map   = tbox_info["parts_map"]    # flap IRI → {label, [part IRIs]}
-        origin_map  = tbox_info["origin_map"]   # flap IRI → anatomical origin IRI
-        pedicle_map = tbox_info["pedicle_map"]  # label fragment → {iri, [vessel IRIs]}
-        all_named   = tbox_info["all_named"]    # [(flap IRI, label)] — all origin leaves
-        rich_flap_iris = set(parts_map)         # flaps that have explicit hasPart data
+        origin_map     = tbox_info["origin_map"]     # flap IRI → anatomical origin IRI
+        pedicle_map    = tbox_info["pedicle_map"]    # label fragment → {iri, [vessel IRIs]}
+        perforator_set = tbox_info["perforator_set"] # set of flap IRIs with perforator axiom
+        all_named      = tbox_info["all_named"]      # [(flap IRI, label)] — all origin leaves
+        rich_flap_iris = set(parts_map)              # flaps that have explicit hasPart data
 
         flap_count = 0
         patient_n  = 1
@@ -243,26 +228,27 @@ class ABox:
         # restrictions) are the "rich" set.  We iterate every combination of
         # side × survival outcome × preharvest modification.
         for flap_iri, flap_info in parts_map.items():
-            flap_label   = flap_info["label"]
-            part_iris    = flap_info["parts"]          # list of FMA part IRIs
-            origin_class = origin_map.get(flap_iri)   # anatomical origin class IRI or None
-            pedicle_info = pedicle_map.get(flap_label.lower(), {})
-            transfer_cls = _infer_transfer(flap_label)
-            distance_cls = _infer_distance(flap_label, transfer_cls)
+            flap_label      = flap_info["label"]
+            part_iris       = flap_info["parts"]          # list of FMA part IRIs
+            origin_class    = origin_map.get(flap_iri)   # anatomical origin class IRI or None
+            pedicle_info    = pedicle_map.get(flap_label.lower(), {})
+            transfer_cls    = _infer_transfer(flap_label)
+            distance_cls    = _infer_distance(flap_label, transfer_cls)
+            is_perforator   = flap_iri in perforator_set
 
-            # product() gives every combination of the three lists
-            for side, survival_cls, modification_cls in product(
-                ["left", "right"], LEAF_SURVIVAL, [MOD_NO, MOD_YES]
-            ):
-                for _ in range(patients_per_combination):
-                    self._add_instance(
-                        output_graph, counter, patient_n,
-                        flap_iri, flap_label, part_iris, origin_class,
-                        pedicle_cls=pedicle_info.get("iri"),
-                        pedicle_vessels=pedicle_info.get("vessels", []),
-                        survival_cls=survival_cls, modification_cls=modification_cls,
-                        transfer_cls=transfer_cls, distance_cls=distance_cls, side=side,
-                    )
+            for side in ("left", "right"):
+                for survival_cls in LEAF_SURVIVAL:
+                    for modification_cls in (MOD_NO, MOD_YES):
+                        for _ in range(patients_per_combination):
+                            self._add_instance(
+                                output_graph, counter, patient_n,
+                                flap_iri, flap_label, part_iris, origin_class,
+                                pedicle_cls=pedicle_info.get("iri"),
+                                pedicle_vessels=pedicle_info.get("vessels", []),
+                                survival_cls=survival_cls, modification_cls=modification_cls,
+                                transfer_cls=transfer_cls, distance_cls=distance_cls, side=side,
+                                is_perforator=is_perforator,
+                            )
                     flap_count += 1
                     patient_n  += 1
 
@@ -272,37 +258,38 @@ class ABox:
         for flap_iri, flap_label in all_named:
             if flap_iri in rich_flap_iris:
                 continue   # already handled in Phase 1
-            origin_class = origin_map.get(flap_iri)
-            transfer_cls = _infer_transfer(flap_label)
-            distance_cls = _infer_distance(flap_label, transfer_cls)
+            origin_class  = origin_map.get(flap_iri)
+            transfer_cls  = _infer_transfer(flap_label)
+            distance_cls  = _infer_distance(flap_label, transfer_cls)
+            is_perforator = flap_iri in perforator_set
 
-            for side, survival_cls in product(["left", "right"], MAIN_SURVIVAL):
-                for _ in range(patients_per_combination):
-                    self._add_instance(
-                        output_graph, counter, patient_n,
-                        flap_iri, flap_label, [], origin_class,
-                        pedicle_cls=None, pedicle_vessels=[],
-                        survival_cls=survival_cls, modification_cls=MOD_NO,
-                        transfer_cls=transfer_cls, distance_cls=distance_cls, side=side,
-                    )
+            for side in ("left", "right"):
+                for survival_cls in MAIN_SURVIVAL:
+                    for _ in range(patients_per_combination):
+                        self._add_instance(
+                            output_graph, counter, patient_n,
+                            flap_iri, flap_label, [], origin_class,
+                            pedicle_cls=None, pedicle_vessels=[],
+                            survival_cls=survival_cls, modification_cls=MOD_NO,
+                            transfer_cls=transfer_cls, distance_cls=distance_cls, side=side,
+                            is_perforator=is_perforator,
+                        )
                     flap_count += 1
                     patient_n  += 1
 
         # Count NamedIndividuals by querying the graph for all subjects that
         # have rdf:type owl:NamedIndividual
-        n_individuals = sum(
+        n_declares = sum(
             1 for _ in output_graph.subjects(RDF.type, OWL.NamedIndividual)
         )
         print(
             f"[ABox] {flap_count:,} flap instances, "
-            f"{n_individuals:,} individuals, {len(output_graph):,} triples"
+            f"{n_declares:,} individuals, {len(output_graph):,} triples"
         )
         return self
 
     def save(self, output_file: str) -> None:
         """Serialize the ABox as RDF/XML."""
-        if self._output_graph is None:
-            raise RuntimeError("Call generate() first.")
         self._output_graph.serialize(destination=output_file, format="xml")
 
     @classmethod
@@ -398,16 +385,14 @@ class ABox:
     # ── Properties ─────────────────────────────────────────────────────────────
 
     @property
-    def graph(self) -> Graph | None:
+    def graph(self) -> Graph:
         """The generated rdflib.Graph (available after generate() or from_owl())."""
         return self._output_graph
 
     @property
-    def sparql(self) -> "SPARQLHelper":
+    def sparql(self) -> SPARQLHelper:
         """SPARQLHelper bound to this graph for named SPARQL queries."""
         from wound_ontology.tbox_abox_reasoner.for_rdflib.sparql.sparql_helper import SPARQLHelper
-        if self._output_graph is None:
-            raise RuntimeError("No graph available — call generate() or from_owl() first.")
         return SPARQLHelper(self._output_graph)
 
     def _wrap_graph(self, graph: Graph) -> "ABox":
@@ -498,19 +483,51 @@ class ABox:
             for sparql_row in tbox_graph.query(_q("origin_leaf_flap_classes.sparql"))
         ]
 
+        # ── Query 5: perforator flap classes ───────────────────────────────────
+        # A perforator flap is defined by having a restriction on PERFORATOR_VESSEL_OF
+        # (ofl:OFLID120000) anywhere in its OWL axiom graph — not by label text.
+        perforator_set: set[str] = {
+            str(sparql_row.flap)
+            for sparql_row in tbox_graph.query(_q("perforator_flap_classes.sparql"))
+        }
+
         print(
             f"[ABox] TBox: {len(parts_map)} rich flaps, "
             f"{len(origin_map)} with origin, {len(pedicle_map)} pedicles, "
+            f"{len(perforator_set)} perforator flap classes, "
             f"{len(all_named)} total origin-leaf flap classes"
         )
         return dict(
             parts_map=parts_map,
             origin_map=origin_map,
             pedicle_map=pedicle_map,
+            perforator_set=perforator_set,
             all_named=all_named,
         )
 
     # ── Instance builder ───────────────────────────────────────────────────────
+
+    @staticmethod
+    def _declare(
+        output_graph: Graph,
+        iri: URIRef,
+        label: str,
+        *class_iris: URIRef,
+    ) -> None:
+        """
+
+        The function is really a low-level RDF writing helper — 
+        it emits the three boilerplate triples that every typed resource needs. 
+        Declare a named individual: add rdf:type owl:NamedIndividual, an
+        rdfs:label, and one rdf:type triple per extra class argument.
+
+        Equivalent to three (or more) raw output_graph.add() calls, kept as a
+        static method to avoid repeating the NamedIndividual + label boilerplate.
+        """
+        output_graph.add((iri, RDF.type,   OWL.NamedIndividual))
+        output_graph.add((iri, RDFS.label, Literal(label, lang="en")))
+        for class_iri in class_iris:
+            output_graph.add((iri, RDF.type, class_iri))
 
     def _add_instance(
         self,
@@ -528,13 +545,14 @@ class ABox:
         transfer_cls: URIRef,           # FREE_TRANSFER or PEDICLED_TRANSFER
         distance_cls: URIRef,           # LOCAL_FLAP, REGIONAL_FLAP, DISTANT_FLAP
         side: str,                      # "left" or "right"
+        is_perforator: bool = False,    # True iff the TBox defines this as a perforator flap
     ) -> None:
         """
         Write all triples for one flap instance and all its satellite
         individuals (patient, processes, plan, qualities, role, locations).
 
         The core primitive is output_graph.add((subject, predicate, object)).
-        _individual() is a small helper that groups the three boilerplate
+        _declare() is a small helper that groups the three boilerplate
         triples every named individual needs:
             (iri, rdf:type, owl:NamedIndividual)
             (iri, rdfs:label, "…"@en)
@@ -548,37 +566,27 @@ class ABox:
         # We reserve IRIs up-front so we can forward-reference them
         # (e.g. PART_OF references flap_id before the flap triple is written —
         # that is fine because a Graph is an unordered set of triples).
-        patient_id       = counter.next()
-        flap_id          = counter.next()
-        harvest_id       = counter.next()
-        transfer_id      = counter.next()
-        operation_id     = counter.next()
-        surgery_plan_id  = counter.next()
-        conc_plan_id     = counter.next()  # concretized plan (specifically dependent continuant)
-        volume_id        = counter.next()
-        mass_id          = counter.next()
-        role_id          = counter.next()
-        pedicle_id       = counter.next() if pedicle_cls else None
-        blood_func_id    = counter.next() if pedicle_cls else None
-        part_ids         = [counter.next() for _ in part_iris]
-
-        is_perforator_flap     = "perforator" in flap_label.lower()
-        recipient_site_id      = counter.next()
-        # Local flaps reuse recipient_site_id as the donor site (donor = recipient).
-        # Non-local flaps get a separate donor site individual.
-        donor_site_id          = counter.next() if distance_cls != LOCAL_FLAP else None
-        anatomical_input_id    = counter.next()  # anatomical entity (specified input of operation)
-        # Perforator-specific vessel individuals (only allocated when needed)
-        arterial_perforator_id = counter.next() if (is_perforator_flap and pedicle_cls) else None
-        venous_perforator_id   = counter.next() if (is_perforator_flap and pedicle_cls) else None
-        arterial_segment_id    = counter.next() if (is_perforator_flap and pedicle_cls) else None
-        venous_segment_id      = counter.next() if (is_perforator_flap and pedicle_cls) else None
+        patient_id          = counter.next()
+        flap_id             = counter.next()
+        harvest_id          = counter.next()
+        transfer_id         = counter.next()
+        operation_id        = counter.next()
+        surgery_plan_id     = counter.next()
+        conc_plan_id        = counter.next()  # concretized plan (specifically dependent continuant)
+        volume_id           = counter.next()
+        mass_id             = counter.next()
+        role_id             = counter.next()
+        pedicle_id          = counter.next() if pedicle_cls else None
+        part_ids            = [counter.next() for _ in part_iris]
+        recipient_site_id   = counter.next()
+        donor_site_id       = counter.next() if distance_cls != LOCAL_FLAP else None         # Non-local flaps get a separate donor site individual. Local flaps reuse recipient_site_id as the donor site (donor = recipient).
+        anatomical_input_id = counter.next()  # anatomical entity (specified input of operation)
 
         instance_label = f"{side_prefix}{flap_label} of patient {patient_n}"
 
         # ── Patient ────────────────────────────────────────────────────────────
         # PATIENT_TYPE = NCBITaxon:9606 (Homo sapiens)
-        _individual(output_graph, patient_id, f"Patient {patient_n}", PATIENT_TYPE)
+        self._declare(output_graph, patient_id, f"Patient {patient_n}", PATIENT_TYPE)
 
         # ── Anatomical part individuals ────────────────────────────────────────
         # Each FMA part class gets an individual typed with that class.
@@ -586,14 +594,14 @@ class ABox:
         for part_id, fma_iri in zip(part_ids, part_iris):
             fma_id_suffix = fma_iri.rstrip("/").rsplit("_", 1)[-1]
             part_label    = tbox.label_of(URIRef(fma_iri)) or f"structure {fma_id_suffix}"
-            _individual(output_graph, part_id,
+            self._declare(output_graph, part_id,
                         f"{side_prefix}{part_label} of patient {patient_n}",
                         URIRef(fma_iri))
             output_graph.add((part_id, PART_OF, flap_id))
 
         # ── Pedicle ────────────────────────────────────────────────────────────
         if pedicle_id and pedicle_cls:
-            _individual(output_graph, pedicle_id,
+            self._declare(output_graph, pedicle_id,
                         f"Flap pedicle of {instance_label}",
                         URIRef(pedicle_cls))
             output_graph.add((pedicle_id, PART_OF, flap_id))
@@ -603,13 +611,14 @@ class ABox:
                 vessel_id     = counter.next()
                 fma_id_suffix = vessel_iri.rstrip("/").rsplit("_", 1)[-1]
                 vessel_label  = tbox.label_of(URIRef(vessel_iri)) or f"vessel {fma_id_suffix}"
-                _individual(output_graph, vessel_id,
+                self._declare(output_graph, vessel_id,
                             f"{side_prefix}{vessel_label} of patient {patient_n}",
                             URIRef(vessel_iri))
                 output_graph.add((pedicle_id, HAS_PART, vessel_id))
 
             # The pedicle carries a blood-supply function (BFO:function)
-            _individual(output_graph, blood_func_id,
+            blood_func_id = counter.next()
+            self._declare(output_graph, blood_func_id,
                         f"Oxygenated blood supply to {instance_label} function",
                         FUNC_TYPE)
             output_graph.add((pedicle_id, HAS_FUNCTION, blood_func_id))
@@ -618,20 +627,28 @@ class ABox:
             # A perforator flap pedicle must include arterial and venous
             # perforator vessels, each connected to its tree-segment origin
             # via the 'perforator vessel of' property.
-            if is_perforator_flap and arterial_perforator_id:
-                _individual(output_graph, arterial_segment_id,
-                            f"Arterial tree segment for {instance_label}",
+            if is_perforator:
+                arterial_segment_id    = counter.next()
+                arterial_perforator_id = counter.next()
+                venous_segment_id      = counter.next()
+                venous_perforator_id   = counter.next()
+
+#---------------------------------------------------------------
+#_______________________________________________________________
+                #COMPLAINT: This is too coarse. The Subsegment of the arterial tree that gives rise to the perforator vessel should be the instance of a specific subclass of Segment of arterial tree organ, not just the general class. This is because a flap is defined largely by the incorporated vessel. This is axiomatized using: equivalent to "Surgical flap" and (hasPart some ("Anterior tibial artery")) 
+                self._declare(output_graph, arterial_segment_id,
+                            f"Arterial tree segment of patient {patient_id}",
                             SEGMENT_ARTERIAL_TREE)
-                _individual(output_graph, arterial_perforator_id,
-                            f"Arterial perforator of {instance_label}",
+                self._declare(output_graph, arterial_perforator_id,
+                            f"Arterial perforator of a vessel in patient {patient_id}",
                             PERFORATOR_VESSEL_CLS)
                 output_graph.add((arterial_perforator_id, PERFORATOR_VESSEL_OF, arterial_segment_id))
                 output_graph.add((pedicle_id,             HAS_PART,             arterial_perforator_id))
 
-                _individual(output_graph, venous_segment_id,
+                self._declare(output_graph, venous_segment_id,
                             f"Venous tree segment for {instance_label}",
                             SEGMENT_VENOUS_TREE)
-                _individual(output_graph, venous_perforator_id,
+                self._declare(output_graph, venous_perforator_id,
                             f"Venous perforator of {instance_label}",
                             PERFORATOR_VESSEL_CLS)
                 output_graph.add((venous_perforator_id, PERFORATOR_VESSEL_OF, venous_segment_id))
@@ -639,35 +656,35 @@ class ABox:
 
         # ── Qualities: volume and mass ─────────────────────────────────────────
         # BFO qualities inhere in the flap (connected below via HAS_QUALITY).
-        _individual(output_graph, volume_id, f"Volume of {instance_label}", VOL_TYPE)
-        _individual(output_graph, mass_id,   f"Mass of {instance_label}",   MASS_TYPE)
+        self._declare(output_graph, volume_id, f"Volume of {instance_label}", VOL_TYPE)
+        self._declare(output_graph, mass_id,   f"Mass of {instance_label}",   MASS_TYPE)
 
         # ── Role ───────────────────────────────────────────────────────────────
         # A flap can serve different surgical roles; one is assigned randomly.
         role_class = random.choice([ROLE_TYPE, MOTOR_FUNC_ROLE_TYPE, TISSUE_LOSS_ROLE_TYPE])
-        _individual(output_graph, role_id, f"Role of {instance_label}", role_class)
+        self._declare(output_graph, role_id, f"Role of {instance_label}", role_class)
 
         # ── Surgery plan (generically dependent continuant / GDC) ─────────────
         # The plan is a BFO:InformationContentEntity that prescribes the surgery.
-        _individual(output_graph, surgery_plan_id,
+        self._declare(output_graph, surgery_plan_id,
                     f"Flap surgery plan for {flap_label}",
                     FLAP_SURGERY_PLAN)
 
         # ── Concretized surgery plan (specifically dependent continuant / SDC) ─
         # The SDC is the plan as instantiated for this specific patient.
-        _individual(output_graph, conc_plan_id,
+        self._declare(output_graph, conc_plan_id,
                     f"Concretized surgery plan of {instance_label}",
                     CONC_PLAN_TYPE)
         output_graph.add((conc_plan_id, CONCRETIZES, surgery_plan_id))
 
         # ── Flap harvest process ───────────────────────────────────────────────
         # The flap comes into existence at the end of this process.
-        _individual(output_graph, harvest_id,
+        self._declare(output_graph, harvest_id,
                     f"Flap harvest process of {instance_label}",
                     FLAP_HARVEST_PROCESS)
 
         # ── Transfer process + donor / recipient site ──────────────────────────
-        _individual(output_graph, transfer_id,
+        self._declare(output_graph, transfer_id,
                     f"{transfer_word} flap transfer process of {instance_label}",
                     transfer_cls)
 
@@ -675,7 +692,7 @@ class ABox:
         # This applies uniformly to all flaps — every flap classified by origin
         # has a defined origin in the TBox (hasOrigin restriction).
         donor_site_class = URIRef(origin_class_iri) if origin_class_iri else SUBDIVISION_CARDINAL_BODY
-        _individual(output_graph, recipient_site_id,
+        self._declare(output_graph, recipient_site_id,
                     f"Recipient site of {instance_label}",
                     SUBDIVISION_CARDINAL_BODY)
         output_graph.add((transfer_id, HAS_TARGET_END_LOCATION, recipient_site_id))
@@ -688,19 +705,19 @@ class ABox:
             output_graph.add((recipient_site_id, RDF.type,                  donor_site_class))
         else:
             # Regional / distant flap: separate donor site individual
-            _individual(output_graph, donor_site_id,
+            self._declare(output_graph, donor_site_id,
                         f"Donor site of {instance_label}",
                         donor_site_class)
             output_graph.add((transfer_id, HAS_TARGET_START_LOCATION, donor_site_id))
 
         # ── Anatomical entity (specified input to the operation) ───────────────
-        _individual(output_graph, anatomical_input_id,
+        self._declare(output_graph, anatomical_input_id,
                     f"Anatomical site of {instance_label}",
                     ANATOMICAL_ENT_TYPE)
 
         # ── Complete flap operation ────────────────────────────────────────────
         # The operation is the top-level process that contains all sub-processes.
-        _individual(output_graph, operation_id,
+        self._declare(output_graph, operation_id,
                     f"{transfer_word} flap operation of {instance_label}",
                     COMPLETE_OPERATION)
         output_graph.add((operation_id, HAS_PARTICIPANT,      flap_id))
@@ -716,7 +733,7 @@ class ABox:
         # Typed with multiple OWL classes simultaneously: specific flap class +
         # survival outcome + modification + distance.  In OWL an individual can
         # belong to any number of classes.
-        _individual(output_graph, flap_id, instance_label,
+        self._declare(output_graph, flap_id, instance_label,
                     URIRef(flap_iri), survival_cls, modification_cls, distance_cls)
         # Temporal / causal relations
         output_graph.add((flap_id, IS_OUTPUT_OF,               harvest_id))
@@ -785,7 +802,7 @@ def _resolve_rdf_list(tbox_graph: Graph, rdf_list_node) -> list[URIRef]:
         if list_item is not None:
             if isinstance(list_item, BNode):
                 collected_iris.extend(_resolve_filler(tbox_graph, list_item))
-            else:
+            elif isinstance(list_item, URIRef):
                 collected_iris.append(list_item)
         rdf_list_node = tbox_graph.value(rdf_list_node, RDF.rest)
     return collected_iris

@@ -1,0 +1,21 @@
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:  <http://www.w3.org/2002/07/owl#>
+PREFIX ofl:  <https://purl.bioontology.org/ontology/OFL/>
+
+# Leaf flap classes whose OWL definition contains a restriction on
+# ofl:OFLID120000 (Perforator vessel of) anywhere in the axiom graph.
+# The property path traverses all standard OWL encoding predicates
+# (subClassOf, equivalentClass, someValuesFrom, intersectionOf, rdf list).
+SELECT DISTINCT ?flap WHERE {
+  ?flap rdfs:subClassOf* ofl:OFLID10098 .
+  FILTER(!isBlank(?flap))
+  FILTER NOT EXISTS {
+    ?sub rdfs:subClassOf ?flap .
+    FILTER(!isBlank(?sub))
+    FILTER(isIRI(?sub))
+  }
+  ?flap (rdfs:subClassOf|owl:equivalentClass|owl:someValuesFrom|
+         owl:intersectionOf|rdf:first|rdf:rest)+ ?restriction .
+  ?restriction owl:onProperty ofl:OFLID120000 .
+}
