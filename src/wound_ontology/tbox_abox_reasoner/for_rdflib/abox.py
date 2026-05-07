@@ -97,12 +97,12 @@ from rdflib.namespace import RDF, RDFS, OWL
 
 # ofl_constants.py lives in the Flap ontology project; add it to the path so
 # we can import it without installing it as a package.
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'Flap ontology' / 'VS Code output'))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'Flap ontology' / 'VS Code output' / 'src'))
 from ofl_constants import (
     OFL, OBO, FMA, DCTERMS,          # Namespace objects (IRI prefix factories)
     HAS_PART, PART_OF, HAS_ORIGIN,    # OFL object properties
     HAS_PARTICIPANT, CONCRETIZES, HAS_FUNCTION, HAS_QUALITY, HAS_ROLE, IS_OUTPUT_OF,
-    HAS_SPECIFIED_OUTPUT, HAS_SPECIFIED_INPUT, REALIZES,
+    HAS_SPECIFIED_OUTPUT, REALIZES,
     EXISTENCE_STARTS_AT_END_OF, EXISTENCE_STARTS_DURING,
     PARTICIPATES_IN, HAS_TARGET_START_LOCATION, HAS_TARGET_END_LOCATION,
     MOD_NO, MOD_YES,                  # Modification class IRIs
@@ -112,7 +112,7 @@ from ofl_constants import (
     FLAP_HARVEST_PROCESS, COMPLETE_OPERATION, FLAP_SURGERY_PLAN,
     CONC_PLAN_TYPE, PATIENT_TYPE, VOL_TYPE, MASS_TYPE,
     ROLE_TYPE, MOTOR_FUNC_ROLE_TYPE, TISSUE_LOSS_ROLE_TYPE, FUNC_TYPE,
-    SUBDIVISION_CARDINAL_BODY, ANATOMICAL_ENT_TYPE,
+    SUBDIVISION_CARDINAL_BODY,
     PERFORATOR_VESSEL_OF, PERFORATOR_VESSEL_CLS, SEGMENT_ARTERIAL_TREE, SEGMENT_VENOUS_TREE,
 )
 try:
@@ -576,11 +576,10 @@ class ABox:
         volume_id           = counter.next()
         mass_id             = counter.next()
         role_id             = counter.next()
-        pedicle_id          = counter.next() if pedicle_cls else None
-        part_ids            = [counter.next() for _ in part_iris]
-        recipient_site_id   = counter.next()
-        donor_site_id       = counter.next() if distance_cls != LOCAL_FLAP else None         # Non-local flaps get a separate donor site individual. Local flaps reuse recipient_site_id as the donor site (donor = recipient).
-        anatomical_input_id = counter.next()  # anatomical entity (specified input of operation)
+        pedicle_id        = counter.next() if pedicle_cls else None
+        part_ids          = [counter.next() for _ in part_iris]
+        recipient_site_id = counter.next()
+        donor_site_id     = counter.next() if distance_cls != LOCAL_FLAP else None  # Non-local flaps get a separate donor site individual. Local flaps reuse recipient_site_id as the donor site (donor = recipient).
 
         instance_label = f"{side_prefix}{flap_label} of patient {patient_n}"
 
@@ -710,11 +709,6 @@ class ABox:
                         donor_site_class)
             output_graph.add((transfer_id, HAS_TARGET_START_LOCATION, donor_site_id))
 
-        # ── Anatomical entity (specified input to the operation) ───────────────
-        self._declare(output_graph, anatomical_input_id,
-                    f"Anatomical site of {instance_label}",
-                    ANATOMICAL_ENT_TYPE)
-
         # ── Complete flap operation ────────────────────────────────────────────
         # The operation is the top-level process that contains all sub-processes.
         self._declare(output_graph, operation_id,
@@ -725,7 +719,6 @@ class ABox:
         output_graph.add((operation_id, HAS_PART,             harvest_id))
         output_graph.add((operation_id, HAS_PART,             transfer_id))
         output_graph.add((operation_id, HAS_SPECIFIED_OUTPUT, flap_id))
-        output_graph.add((operation_id, HAS_SPECIFIED_INPUT,  anatomical_input_id))
         # The operation realizes the concretized plan (SDC), not the plan itself
         output_graph.add((operation_id, REALIZES,             conc_plan_id))
 
