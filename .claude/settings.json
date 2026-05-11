@@ -36,7 +36,16 @@
       "Bash(python \"/Users/Strubbelig/Library/Mobile Documents/com~apple~CloudDocs/Forschung/Flap ontology/VS Code output/generate_abox.py\")",
       "Bash(python3 -m pytest tests/ -x -q --ignore=tests/integration)",
       "Bash(python -m pytest --tb=short -q)",
-      "Bash(git mv *)"
+      "Bash(git mv *)",
+      "Bash(/opt/anaconda3/envs/first_env/bin/jupyter nbconvert *)",
+      "Bash(python -c \"import sys; sys.path.insert\\(0, 'src'\\); sys.path.insert\\(0, '../Flap ontology/VS Code output/src'\\); from wound_ontology.tbox_abox_reasoner.for_rdflib.abox import ABox; print\\('Import OK'\\)\")",
+      "Bash(python -c ' *)",
+      "Bash(awk '/OFLID10053.*rdf:about/{flag=1; next} /OFLID10054.*rdf:about/{flag=0} flag && /subClassOf/{print}' \"/Users/Strubbelig/Library/Mobile Documents/com~apple~CloudDocs/Forschung/Flap ontology/VS Code output/ontologies/ofl_2.1.0_for_inference.owl\")",
+      "Bash(awk '/OFLID10054.*rdf:about/{flag=1; next} /<\\\\/owl:Class>/{if \\(flag\\) flag=0} flag && /subClassOf/{print}' \"/Users/Strubbelig/Library/Mobile Documents/com~apple~CloudDocs/Forschung/Flap ontology/VS Code output/ontologies/ofl_2.1.0_for_inference.owl\")",
+      "Bash(awk '/OFLID10223.*rdf:about/{flag=1; next} /<\\\\/owl:Class>/{if \\(flag\\) flag=0} flag && /subClassOf/{print}' \"/Users/Strubbelig/Library/Mobile Documents/com~apple~CloudDocs/Forschung/Flap ontology/VS Code output/ontologies/ofl_2.1.0_for_inference.owl\")",
+      "Bash(awk '/OFLID120066.*rdf:about/{flag=1; next} /<\\\\/owl:Class>/{if \\(flag\\) flag=0} flag && /subClassOf/{print}' \"/Users/Strubbelig/Library/Mobile Documents/com~apple~CloudDocs/Forschung/Flap ontology/VS Code output/ontologies/ofl_2.1.0_for_inference.owl\")",
+      "Bash(grep -v \"^--$\")",
+      "Bash(python -c \"import json; nb=json.load\\(open\\('notebooks/cq_sparql_queries.ipynb'\\)\\); print\\(len\\(nb['cells']\\)\\)\")"
     ]
   }
 }

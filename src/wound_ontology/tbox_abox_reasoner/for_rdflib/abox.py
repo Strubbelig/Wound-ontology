@@ -103,9 +103,10 @@ from ofl_constants import (
     HAS_PART, PART_OF, HAS_ORIGIN,    # OFL object properties
     HAS_PARTICIPANT, CONCRETIZES, HAS_FUNCTION, HAS_QUALITY, HAS_ROLE, IS_OUTPUT_OF,
     HAS_SPECIFIED_OUTPUT, REALIZES,
-    EXISTENCE_STARTS_AT_END_OF, EXISTENCE_STARTS_DURING,
     PARTICIPATES_IN, HAS_TARGET_START_LOCATION, HAS_TARGET_END_LOCATION,
+    HAS_FLAP_DESTINATION,                        # OFLID12004 (chain: participates_in ∘ has_target_end_location_of)
     MOD_NO, MOD_YES,                  # Modification class IRIs
+    SURVIVAL_NO_LOSS, SURVIVAL_APEX, SURVIVAL_TOTAL, SURVIVAL_ARTERIAL, SURVIVAL_VENOUS,
     LEAF_SURVIVAL, MAIN_SURVIVAL,     # Survival outcome class IRI lists
     LOCAL_FLAP, REGIONAL_FLAP, DISTANT_FLAP,   # Transfer distance class IRIs
     FREE_TRANSFER, PEDICLED_TRANSFER,           # Transfer type class IRIs
@@ -114,13 +115,32 @@ from ofl_constants import (
     ROLE_TYPE, MOTOR_FUNC_ROLE_TYPE, TISSUE_LOSS_ROLE_TYPE, FUNC_TYPE,
     SUBDIVISION_CARDINAL_BODY,
     PERFORATOR_VESSEL_OF, PERFORATOR_VESSEL_CLS, SEGMENT_ARTERIAL_TREE, SEGMENT_VENOUS_TREE,
+    CONNECTS,                                    # RO:connects (anastomosis to vessel)
+    ANASTOMOSIS_ART, ANASTOMOSIS_VEN,            # Vessel-type anastomosis classes (CQ16)
+    ANASTOMOSIS_ETE, ANASTOMOSIS_ETS, ANASTOMOSIS_STS,  # Configuration anastomosis classes
+    MOVEMENT_ROTATION, MOVEMENT_ADVANCEMENT, MOVEMENT_TRANSPOSITION, PEDICLED_MOVEMENTS,  # CQ11
+    CHIMERIC_TYPES,                              # List of chimeric subtype class IRIs (CQ9)
+    CONTINUOUS_WITH, FMA_TISSUE,                 # tissue topology
+    FLAP_TISSUE_ROLE, SOURCE_TISSUE_ROLE, RECIPIENT_TISSUE_ROLE,
+    PEDICLE_VESSEL_ROLE, RECIPIENT_VESSEL_ROLE,  # needed to infer OFLID120023/24 (pedicle/recipient vessel)
+    NECROTIC_PROCESS_CLS, VESSEL_OCCLUSION_CLS,  # survival-derived process types
+    ANASTOMOSIS_PROCESS_CLS,                     # OFLID106031 → lets OWL RL infer OFLID120019
+    PREINSERTION_TREATMENT_CLS,                  # CQ13: OFLID120048 → lets OWL RL infer OFLID130001
+    GRAFT_TRANSFER_CLS, SKIN_GRAFT_CLS, TARGET_END_LOCATION_OF,  # CQ15: skin graft
+    ANASTOMOSIS_TECHNIQUES,                      # CQ16: [OFLID10233, OFLID10235] (primitive → must assert)
 )
 try:
-    from config.settings import BFO_OWL_URL as _BFO_URL, RO_OWL_URL as _RO_URL, OBI_OWL_URL as _OBI_URL
+    from config.settings import (
+        BFO_OWL_URL as _BFO_URL,
+        RO_OWL_URL  as _RO_URL,
+        OBI_OWL_URL as _OBI_URL,
+        COB_OWL_URL as _COB_URL,
+    )
 except ImportError:
     _BFO_URL = "http://purl.obolibrary.org/obo/bfo.owl"
     _RO_URL  = "http://purl.obolibrary.org/obo/ro.owl"
     _OBI_URL = "http://purl.obolibrary.org/obo/obi.owl"
+    _COB_URL = "http://purl.obolibrary.org/obo/cob.owl"
 
 
 
@@ -209,6 +229,7 @@ class ABox:
         output_graph.add((ontology_iri, OWL.imports, URIRef(_BFO_URL)))
         output_graph.add((ontology_iri, OWL.imports, URIRef(_RO_URL)))
         output_graph.add((ontology_iri, OWL.imports, URIRef(_OBI_URL)))
+        output_graph.add((ontology_iri, OWL.imports, URIRef(_COB_URL)))
 
         self._output_graph = output_graph
         counter = _IDCounter(self._id_start)
@@ -276,6 +297,40 @@ class ABox:
                         )
                     flap_count += 1
                     patient_n  += 1
+
+        # ── Phase 3: Chimeric flap instances (CQ9) ────────────────────────────
+        # OFLID1000092 (Chimeric flaps) is a defined class:
+        #   equivalentClass: OFLID10002 AND (HAS_PART some OFLID10002)
+        # OWL RL infers it once main_flap HAS_PART sub_flap (and sub_flap is
+        # typed as a subclass of OFLID10002, which OWL RL propagates upward).
+        # The chimeric sub-type classes (OFLID1000093 subtypes) are PRIMITIVE,
+        # so they must be explicitly asserted here.
+        chimeric_candidates = list(parts_map.items())[:min(len(parts_map), 16)]
+        for idx, (flap_iri, flap_info) in enumerate(chimeric_candidates):
+            flap_label    = flap_info["label"]
+            chimeric_type = CHIMERIC_TYPES[idx % len(CHIMERIC_TYPES)]
+            distance_cls  = _infer_distance(flap_label, _infer_transfer(flap_label))
+
+            sub_flap_id  = counter.next()
+            main_flap_id = counter.next()
+            vol_id       = counter.next()
+            mass_id_c    = counter.next()
+
+            main_label = f"Chimeric {flap_label} of patient {patient_n}"
+            sub_label  = f"Component sub-flap of {main_label}"
+
+            self._declare(output_graph, sub_flap_id,  sub_label,  URIRef(flap_iri))
+            self._declare(output_graph, main_flap_id, main_label,
+                          URIRef(flap_iri), chimeric_type, MAIN_SURVIVAL[0], MOD_NO, distance_cls)
+            output_graph.add((main_flap_id, HAS_PART,    sub_flap_id))
+            output_graph.add((sub_flap_id,  PART_OF,     main_flap_id))
+            self._declare(output_graph, vol_id,    f"Volume of {main_label}", VOL_TYPE)
+            self._declare(output_graph, mass_id_c, f"Mass of {main_label}",   MASS_TYPE)
+            output_graph.add((main_flap_id, HAS_QUALITY, vol_id))
+            output_graph.add((main_flap_id, HAS_QUALITY, mass_id_c))
+
+            flap_count += 1
+            patient_n  += 1
 
         # Count NamedIndividuals by querying the graph for all subjects that
         # have rdf:type owl:NamedIndividual
@@ -562,6 +617,17 @@ class ABox:
         tbox          = self._tbox
         transfer_word = "Free" if transfer_cls == FREE_TRANSFER else "Pedicled"
 
+        # CQ11: For pedicled flaps, type transfer_id with the specific movement
+        # subclass rather than generic PEDICLED_TRANSFER.  All three subclasses
+        # (OFLID120025/56/57) are subClassOf OFLID1000138, so OWL RL infers
+        # PEDICLED_TRANSFER upward while also satisfying the participates_in
+        # restriction that fires OFLID10014 / OFLID10067 / OFLID10070.
+        if transfer_cls == FREE_TRANSFER:
+            declare_transfer_cls = FREE_TRANSFER
+        else:
+            mv = _infer_movement(flap_label)
+            declare_transfer_cls = mv if mv is not None else random.choice(PEDICLED_MOVEMENTS)
+
         # ── Pre-allocate IRIs for all individuals in this instance ─────────────
         # We reserve IRIs up-front so we can forward-reference them
         # (e.g. PART_OF references flap_id before the flap triple is written —
@@ -605,15 +671,40 @@ class ABox:
                         URIRef(pedicle_cls))
             output_graph.add((pedicle_id, PART_OF, flap_id))
 
-            # Named vessels within the pedicle (up to 2, from TBox SPARQL)
+            # Named vessels within the pedicle (up to 2, from TBox SPARQL).
+            # Each vessel receives a Flap pedicle vessel role individual so that
+            # OWL RL can infer OFLID120023 (Flap pedicle vessel, a defined class:
+            #   (FMA_86187 OR FMA_86188) AND (HAS_ROLE some OFLID120017)).
             for vessel_iri in pedicle_vessels[:2]:
                 vessel_id     = counter.next()
+                ped_role_id   = counter.next()
                 fma_id_suffix = vessel_iri.rstrip("/").rsplit("_", 1)[-1]
                 vessel_label  = tbox.label_of(URIRef(vessel_iri)) or f"vessel {fma_id_suffix}"
                 self._declare(output_graph, vessel_id,
                             f"{side_prefix}{vessel_label} of patient {patient_n}",
                             URIRef(vessel_iri))
+                self._declare(output_graph, ped_role_id,
+                            f"Pedicle vessel role of {vessel_label} in {instance_label}",
+                            PEDICLE_VESSEL_ROLE)
+                output_graph.add((vessel_id,  HAS_ROLE, ped_role_id))
                 output_graph.add((pedicle_id, HAS_PART, vessel_id))
+
+            # OFLID106008 (Flap pedicle) mandates subClassOf [HAS_PART some FMA:86187]
+            # AND [HAS_PART some FMA:86188].  Always add a generic artery and vein to
+            # satisfy these axioms regardless of whether named SPARQL vessels exist.
+            for ped_fma, ped_word in (
+                (SEGMENT_ARTERIAL_TREE, "artery"),
+                (SEGMENT_VENOUS_TREE,   "vein"),
+            ):
+                ped_vessel_id = counter.next()
+                ped_role_id   = counter.next()
+                self._declare(output_graph, ped_vessel_id,
+                              f"Pedicle {ped_word} of {instance_label}", ped_fma)
+                self._declare(output_graph, ped_role_id,
+                              f"Pedicle vessel role for {ped_word} of {instance_label}",
+                              PEDICLE_VESSEL_ROLE)
+                output_graph.add((ped_vessel_id, HAS_ROLE, ped_role_id))
+                output_graph.add((pedicle_id,    HAS_PART, ped_vessel_id))
 
             # The pedicle carries a blood-supply function (BFO:function)
             blood_func_id = counter.next()
@@ -653,6 +744,40 @@ class ABox:
                 output_graph.add((venous_perforator_id, PERFORATOR_VESSEL_OF, venous_segment_id))
                 output_graph.add((pedicle_id,           HAS_PART,             venous_perforator_id))
 
+        # ── Tissue topology ────────────────────────────────────────────────────
+        # Pedicled flaps: assert flap tissue (OFLID120029) continuous_with source
+        # tissue (OFLID120030) — required for OWL RL to infer OFLID10053
+        # (Flaps with tissue connection to origin).  OFLID120029/120030 are
+        # defined classes; assigning the corresponding roles enables their inference.
+        # Free flaps: flap is continuous_with recipient tissue (OFLID120031) after
+        # inset; OFLID120031 is similarly inferred via role.
+        if transfer_cls == PEDICLED_TRANSFER:
+            flap_tissue_id = counter.next()
+            flap_t_role_id = counter.next()
+            src_tissue_id  = counter.next()
+            src_t_role_id  = counter.next()
+            self._declare(output_graph, flap_tissue_id,
+                          f"Flap tissue of {instance_label}", FMA_TISSUE)
+            self._declare(output_graph, flap_t_role_id,
+                          f"Flap tissue role of {instance_label}", FLAP_TISSUE_ROLE)
+            output_graph.add((flap_tissue_id, HAS_ROLE,        flap_t_role_id))
+            self._declare(output_graph, src_tissue_id,
+                          f"Source tissue for {instance_label}", FMA_TISSUE)
+            self._declare(output_graph, src_t_role_id,
+                          f"Source tissue role for {instance_label}", SOURCE_TISSUE_ROLE)
+            output_graph.add((src_tissue_id,  HAS_ROLE,        src_t_role_id))
+            output_graph.add((flap_tissue_id, CONTINUOUS_WITH, src_tissue_id))
+            output_graph.add((flap_id,        HAS_PART,        flap_tissue_id))
+        else:
+            rec_tissue_id  = counter.next()
+            rec_t_role_id  = counter.next()
+            self._declare(output_graph, rec_tissue_id,
+                          f"Recipient tissue for {instance_label}", FMA_TISSUE)
+            self._declare(output_graph, rec_t_role_id,
+                          f"Recipient tissue role for {instance_label}", RECIPIENT_TISSUE_ROLE)
+            output_graph.add((rec_tissue_id, HAS_ROLE,        rec_t_role_id))
+            output_graph.add((flap_id,       CONTINUOUS_WITH, rec_tissue_id))
+
         # ── Qualities: volume and mass ─────────────────────────────────────────
         # BFO qualities inhere in the flap (connected below via HAS_QUALITY).
         self._declare(output_graph, volume_id, f"Volume of {instance_label}", VOL_TYPE)
@@ -685,7 +810,7 @@ class ABox:
         # ── Transfer process + donor / recipient site ──────────────────────────
         self._declare(output_graph, transfer_id,
                     f"{transfer_word} flap transfer process of {instance_label}",
-                    transfer_cls)
+                    declare_transfer_cls)
 
         # The donor site is typed with the TBox-defined anatomical origin class.
         # This applies uniformly to all flaps — every flap classified by origin
@@ -721,6 +846,15 @@ class ABox:
         output_graph.add((operation_id, HAS_SPECIFIED_OUTPUT, flap_id))
         # The operation realizes the concretized plan (SDC), not the plan itself
         output_graph.add((operation_id, REALIZES,             conc_plan_id))
+        # CQ13: Preinsertion treatment (OFLID120048) as sub-process of the operation
+        # satisfies the nested restriction in OFLID130001 equivalentClass, enabling
+        # OWL RL to infer flap → OFLID130001 (Flaps classified by insertion site prep)
+        # via: flap participates_in (operation AND has_part some OFLID120048).
+        preinsertion_id = counter.next()
+        self._declare(output_graph, preinsertion_id,
+                      f"Preinsertion treatment of recipient site for {instance_label}",
+                      PREINSERTION_TREATMENT_CLS)
+        output_graph.add((operation_id, HAS_PART, preinsertion_id))
 
         # ── Flap individual ────────────────────────────────────────────────────
         # Typed with multiple OWL classes simultaneously: specific flap class +
@@ -728,17 +862,23 @@ class ABox:
         # belong to any number of classes.
         self._declare(output_graph, flap_id, instance_label,
                     URIRef(flap_iri), survival_cls, modification_cls, distance_cls)
-        # Temporal / causal relations
-        output_graph.add((flap_id, IS_OUTPUT_OF,               harvest_id))
-        output_graph.add((flap_id, IS_OUTPUT_OF,               operation_id))
-        output_graph.add((flap_id, EXISTENCE_STARTS_AT_END_OF, harvest_id))
-        output_graph.add((flap_id, EXISTENCE_STARTS_DURING,    operation_id))
+        # CQ16: Free flaps are typed with the anastomosis technique class (OFLID10223
+        # branch). OFLID10233/10235 are primitive — cannot be inferred, must be asserted.
+        if transfer_cls == FREE_TRANSFER:
+            output_graph.add((flap_id, RDF.type, random.choice(ANASTOMOSIS_TECHNIQUES)))
+        # Causal / output relations
+        output_graph.add((flap_id, IS_OUTPUT_OF,         harvest_id))
+        output_graph.add((flap_id, IS_OUTPUT_OF,         operation_id))
         # Quality and role bearership
-        output_graph.add((flap_id, HAS_QUALITY,                volume_id))
-        output_graph.add((flap_id, HAS_QUALITY,                mass_id))
-        output_graph.add((flap_id, HAS_ROLE,                   role_id))
-        # Process participation
-        output_graph.add((flap_id, PARTICIPATES_IN,            transfer_id))
+        output_graph.add((flap_id, HAS_QUALITY,          volume_id))
+        output_graph.add((flap_id, HAS_QUALITY,          mass_id))
+        output_graph.add((flap_id, HAS_ROLE,             role_id))
+        # Process participation (transfer explicit; operation inferred via inverse
+        # of HAS_PARTICIPANT but also asserted for direct queryability)
+        output_graph.add((flap_id, PARTICIPATES_IN,      transfer_id))
+        output_graph.add((flap_id, PARTICIPATES_IN,      operation_id))
+        # Transfer destination (also derivable via property chain OFLID12004)
+        output_graph.add((flap_id, HAS_FLAP_DESTINATION, recipient_site_id))
         # Anatomical origin (OFL-specific relation, from TBox restriction)
         if origin_class_iri:
             output_graph.add((flap_id, HAS_ORIGIN, URIRef(origin_class_iri)))
@@ -747,6 +887,103 @@ class ABox:
             output_graph.add((flap_id, HAS_PART, part_id))
         if pedicle_id:
             output_graph.add((flap_id, HAS_PART, pedicle_id))
+
+        # ── Survival-related process individuals ───────────────────────────────
+        # OFLID10183 (total loss) requires participates_in some OFLID120039.
+        # OFLID10180/81 (arterial/venous obstruction) require participates_in some
+        # (OFLID120045 AND has_participant some FMA:86187/88).
+        # OFLID10179 (apex loss) is a primitive subclass — explicit type only.
+        # OFLID10184 (no loss) uses complementOf — no process individual needed.
+        if survival_cls == SURVIVAL_TOTAL:
+            necrosis_id = counter.next()
+            self._declare(output_graph, necrosis_id,
+                          f"Necrotic process of {instance_label}", NECROTIC_PROCESS_CLS)
+            output_graph.add((flap_id, PARTICIPATES_IN, necrosis_id))
+        elif survival_cls == SURVIVAL_ARTERIAL:
+            occ_artery_id = counter.next()
+            occlusion_id  = counter.next()
+            self._declare(output_graph, occ_artery_id,
+                          f"Occluded artery in {instance_label}", SEGMENT_ARTERIAL_TREE)
+            self._declare(output_graph, occlusion_id,
+                          f"Arterial occlusion process of {instance_label}",
+                          VESSEL_OCCLUSION_CLS)
+            output_graph.add((occlusion_id, HAS_PARTICIPANT, occ_artery_id))
+            output_graph.add((flap_id,      PARTICIPATES_IN, occlusion_id))
+        elif survival_cls == SURVIVAL_VENOUS:
+            occ_vein_id  = counter.next()
+            occlusion_id = counter.next()
+            self._declare(output_graph, occ_vein_id,
+                          f"Occluded vein in {instance_label}", SEGMENT_VENOUS_TREE)
+            self._declare(output_graph, occlusion_id,
+                          f"Venous occlusion process of {instance_label}",
+                          VESSEL_OCCLUSION_CLS)
+            output_graph.add((occlusion_id, HAS_PARTICIPANT, occ_vein_id))
+            output_graph.add((flap_id,      PARTICIPATES_IN, occlusion_id))
+
+        # ── Anastomosis process + result individuals for free flaps (CQ16) ─────
+        # Vessel-type subclasses (ART/VEN) use allValuesFrom → must be explicit.
+        # Configuration subclasses (ETE/ETS/STS) are primitive → also explicit.
+        # OFLID120019 (Flap vessel anastomosis process) is defined as
+        # OFLID106031 AND (part_of some OFLID1000128); asserting an OFLID106031
+        # individual as part of the operation lets OWL RL infer OFLID120019.
+        # Each anastomosis CONNECTS both a flap pedicle vessel stump (role
+        # OFLID120017 → infers OFLID120023) and a recipient vessel (role
+        # OFLID120018 → infers OFLID120024), enabling OWL RL to infer
+        # OFLID120014 (Flap pedicle vessel to recipient vessel anastomosis).
+        if transfer_cls == FREE_TRANSFER:
+            anast_proc_id = counter.next()
+            self._declare(output_graph, anast_proc_id,
+                          f"Vessel anastomosis process of {instance_label}",
+                          ANASTOMOSIS_PROCESS_CLS)
+            output_graph.add((operation_id, HAS_PART, anast_proc_id))
+            for vessel_fma, anast_cls, label_word in (
+                (SEGMENT_ARTERIAL_TREE, ANASTOMOSIS_ART, "Arterial"),
+                (SEGMENT_VENOUS_TREE,   ANASTOMOSIS_VEN,  "Venous"),
+            ):
+                config_cls        = random.choice([ANASTOMOSIS_ETE, ANASTOMOSIS_ETS, ANASTOMOSIS_STS])
+                flap_vessel_id    = counter.next()
+                flap_ped_role_id  = counter.next()
+                recv_vessel_id    = counter.next()
+                recv_role_id      = counter.next()
+                anastomosis_id    = counter.next()
+                self._declare(output_graph, flap_vessel_id,
+                              f"Flap pedicle {label_word.lower()} stump of {instance_label}",
+                              vessel_fma)
+                self._declare(output_graph, flap_ped_role_id,
+                              f"Pedicle vessel role of flap {label_word.lower()} stump of {instance_label}",
+                              PEDICLE_VESSEL_ROLE)
+                output_graph.add((flap_vessel_id,   HAS_ROLE, flap_ped_role_id))
+                self._declare(output_graph, recv_vessel_id,
+                              f"{side_prefix}Recipient {label_word.lower()} vessel of patient {patient_n}",
+                              vessel_fma)
+                self._declare(output_graph, recv_role_id,
+                              f"Recipient vessel role of {label_word.lower()} vessel of patient {patient_n}",
+                              RECIPIENT_VESSEL_ROLE)
+                output_graph.add((recv_vessel_id,   HAS_ROLE, recv_role_id))
+                self._declare(output_graph, anastomosis_id,
+                              f"{label_word} anastomosis of {instance_label}",
+                              anast_cls, config_cls)
+                output_graph.add((anastomosis_id, CONNECTS,             flap_vessel_id))
+                output_graph.add((anastomosis_id, CONNECTS,             recv_vessel_id))
+                output_graph.add((transfer_id,    HAS_SPECIFIED_OUTPUT, anastomosis_id))
+
+        # ── Skin graft (CQ15) ──────────────────────────────────────────────────
+        # OFLID120066 (Flaps with skin graft) is defined as:
+        #   OFLID120065 AND (OFLID12002 someValuesFrom (OFLID10702 AND
+        #                                               (has_participant some OFLID106021)))
+        # Assert (flap_id, TARGET_END_LOCATION_OF, graft_transfer_id) where
+        # graft_transfer_id ∈ OFLID10702 and has_participant some OFLID106021.
+        # About half the instances receive skin grafting to provide both CQ outcomes.
+        if random.random() < 0.5:
+            skin_graft_id  = counter.next()
+            graft_trans_id = counter.next()
+            self._declare(output_graph, skin_graft_id,
+                          f"Skin graft for {instance_label}", SKIN_GRAFT_CLS)
+            self._declare(output_graph, graft_trans_id,
+                          f"Skin graft transfer process for {instance_label}",
+                          GRAFT_TRANSFER_CLS)
+            output_graph.add((graft_trans_id, HAS_PARTICIPANT,       skin_graft_id))
+            output_graph.add((flap_id,        TARGET_END_LOCATION_OF, graft_trans_id))
 
 
 # ── Module-private helpers ────────────────────────────────────────────────────
@@ -817,3 +1054,22 @@ def _infer_distance(flap_label: str, transfer_cls: URIRef) -> URIRef:
     if any(word in flap_label.lower() for word in ["local", "advancement", "rotation"]):
         return LOCAL_FLAP
     return REGIONAL_FLAP
+
+
+def _infer_movement(flap_label: str) -> URIRef | None:
+    """
+    Return the specific pedicled-transfer movement subclass for this flap, or
+    None if the label gives no hint (caller should fall back to random choice).
+
+    Rotation    → OFLID120025 (subClassOf PEDICLED_TRANSFER)
+    Advancement → OFLID120056 (subClassOf PEDICLED_TRANSFER)
+    Transposition → OFLID120057 (subClassOf PEDICLED_TRANSFER via OFLID1000140)
+    """
+    lower = flap_label.lower()
+    if "rotation" in lower:
+        return MOVEMENT_ROTATION
+    if "advancement" in lower:
+        return MOVEMENT_ADVANCEMENT
+    if "transposition" in lower:
+        return MOVEMENT_TRANSPOSITION
+    return None

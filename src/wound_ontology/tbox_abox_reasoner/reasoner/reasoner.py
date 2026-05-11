@@ -99,11 +99,17 @@ class Reasoner:
         tbox_file: str,
         abox_file: str,
         output_file: str,
+        extra_ontologies: list[str] | None = None,
         check_consistency: bool = True,
     ) -> bool:
         """
-        Load TBox + ABox, run OWL RL materialisation via ``owlrl``, and save
-        the fully expanded graph as RDF/XML.  Does not require Java or JPype.
+        Load TBox + ABox (+ optional supporting ontologies), run OWL RL
+        materialisation via ``owlrl``, and save the fully expanded graph as
+        RDF/XML.  Does not require Java or JPype.
+
+        rdflib does NOT follow owl:imports automatically, so any ontologies
+        whose axioms are needed for complete reasoning (BFO, RO, OBI, COB …)
+        must be supplied explicitly via ``extra_ontologies``.
 
         Parameters
         ----------
@@ -113,6 +119,9 @@ class Reasoner:
             Path to the ABox OWL file.
         output_file : str
             Destination for the merged + inferred OWL file.
+        extra_ontologies : list[str] | None
+            Additional OWL/RDF-XML files to merge into the graph before
+            reasoning (e.g. local copies of BFO, RO, OBI, COB).
         check_consistency : bool
             If True (default), report whether any individual is typed
             ``owl:Nothing`` (indicates inconsistency).
@@ -131,6 +140,13 @@ class Reasoner:
             ) from exc
 
         g = Graph()
+
+        for onto_file in (extra_ontologies or []):
+            print(f"[Reasoner] Loading support ontology: {Path(onto_file).name}", flush=True)
+            g.parse(onto_file, format="xml")
+        if extra_ontologies:
+            print(f"  {len(g):,} triples from {len(extra_ontologies)} support ontologies")
+
         print(f"[Reasoner] Loading TBox: {tbox_file}", flush=True)
         g.parse(tbox_file, format="xml")
         t = len(g)
