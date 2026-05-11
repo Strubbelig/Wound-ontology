@@ -45,7 +45,11 @@
       "Bash(awk '/OFLID10223.*rdf:about/{flag=1; next} /<\\\\/owl:Class>/{if \\(flag\\) flag=0} flag && /subClassOf/{print}' \"/Users/Strubbelig/Library/Mobile Documents/com~apple~CloudDocs/Forschung/Flap ontology/VS Code output/ontologies/ofl_2.1.0_for_inference.owl\")",
       "Bash(awk '/OFLID120066.*rdf:about/{flag=1; next} /<\\\\/owl:Class>/{if \\(flag\\) flag=0} flag && /subClassOf/{print}' \"/Users/Strubbelig/Library/Mobile Documents/com~apple~CloudDocs/Forschung/Flap ontology/VS Code output/ontologies/ofl_2.1.0_for_inference.owl\")",
       "Bash(grep -v \"^--$\")",
-      "Bash(python -c \"import json; nb=json.load\\(open\\('notebooks/cq_sparql_queries.ipynb'\\)\\); print\\(len\\(nb['cells']\\)\\)\")"
+      "Bash(python -c \"import json; nb=json.load\\(open\\('notebooks/cq_sparql_queries.ipynb'\\)\\); print\\(len\\(nb['cells']\\)\\)\")",
+      "Bash(git fetch *)",
+      "Bash(xargs ls -lh)",
+      "Bash(sort -k5 -rh)",
+      "Bash(git ls-tree *)"
     ]
   }
 }
