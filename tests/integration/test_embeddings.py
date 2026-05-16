@@ -152,6 +152,31 @@ async def test_cluster_separation(embedding_model):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("term_a, term_b", [
+    ("Incomplete Healing",                    "Complete Healing"),                    # regression: term_mapping_2026-05-04
+    ("Inadequate Treatment",                  "Adequate Treatment"),                  # regression: term_mapping_2026-05-04
+    ("Symptomatic",                           "Asymptomatic"),                        # regression: term_mapping_2026-05-04
+    ("Restricted Cubic Splines (RCS)",        "Insignificant Effect on Detection Sensitivity"),  # regression: term_mapping_2026-05-04
+    ("Transcutaneous PCO2",                          "Transcutaneous PO2"),                        # regression: term_mapping_2026-05-04
+    ("Vascular Endothelial Growth Factor B (VEGFB)", "Vascular Endothelial Growth Factor"),        # regression: term_mapping_2026-05-04
+    ("Indirectly Revascularized (IR) Angiosome",     "Directly Revascularized (DR) Angiosome"),    # regression: term_mapping_2026-05-04
+    ("Type II PCL Tear",                             "Type I PCL Tear"),                           # regression: term_mapping_2026-05-04
+    ("Acute Type A Aortic Dissection",               "Acute Type B Aortic Dissection"),            # regression: term_mapping_2026-05-04
+])
+async def test_antonym_pair_below_merge_threshold(embedding_model, term_a, term_b):
+    """
+    Antonyms that share most surface tokens must not exceed the 0.95 cosine
+    threshold used by build_from_embeddings — otherwise they would be merged.
+    """
+    embs = await embed_terms(embedding_model, [term_a, term_b])
+    score = sim(embs[0], embs[1])
+    assert score < 0.95, (
+        f"'{term_a}' / '{term_b}' similarity {score:.3f} "
+        f">= 0.95 merge threshold — would produce a false merge"
+    )
+
+
+@pytest.mark.asyncio
 async def test_embedding_stability(embedding_model):
     """
     Same input should produce consistent embeddings.

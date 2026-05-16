@@ -174,6 +174,27 @@ def test_build_from_embeddings_merges_near_identical_surface_forms(dm):
     assert result["full-thickness"] == "full-thickness"
 
 
+def test_build_from_embeddings_pre_merges_trailing_abbreviations(dm):
+    """Terms identical after normalize_term merge without SapBERT (step 0)."""
+    mapper = TermMapper(data_manager=MockDM({}), file_name="t", mapper_name="t")
+    # Embedder only knows the canonical form — pre-merged variants never reach it.
+    embedder = FakeEmbedder({
+        "Systemic Sclerosis (SSc)": [1.0, 0.0],
+        "Split-Thickness Skin Graft (STSG)": [0.0, 1.0],
+    })
+    freq = {
+        "Systemic Sclerosis (SSc)": 10,
+        "Systemic Sclerosis":       5,
+        "Split-Thickness Skin Graft (STSG)": 8,
+        "Split-thickness skin graft (STSG)": 3,
+    }
+
+    result = mapper.build_from_embeddings(list(freq.keys()), embedder, frequencies=freq)
+
+    assert result["Systemic Sclerosis"] == result["Systemic Sclerosis (SSc)"]
+    assert result["Split-thickness skin graft (STSG)"] == result["Split-Thickness Skin Graft (STSG)"]
+
+
 def test_build_from_embeddings_keeps_distinct_terms_separate(dm):
     """Orthogonal embeddings never merge regardless of string similarity."""
     mapper = TermMapper(data_manager=MockDM({}), file_name="t", mapper_name="t")

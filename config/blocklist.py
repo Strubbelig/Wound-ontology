@@ -13,15 +13,19 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     # ── Study components & groups ──────────────────────────────────────────────
     "control group", "intervention group", "study group", "comparison group",
     "treatment group", "placebo group", "experimental group",
+    "directly revascularized (dr) angiosome", "indirectly revascularized (ir) angiosome",
+    "directly revascularized angiosome", "indirectly revascularized angiosome",
     "intervention", "sample", "sample size", "population",
     # ── Bibliometric / database terms ─────────────────────────────────────────
     "pubmed", "scopus", "prospero", "prisma", "prisma guidelines",
     "strobe", "strobe checklist", "cochrane",
+    "web of science", "web of science (wos)",
     # ── Statistical / analytical methods ──────────────────────────────────────
     "logistic regression", "multivariate logistic regression",
     "propensity score matching", "propensity score",
     "hazard ratio", "odds ratio", "relative risk",
     "auc", "receiver operating characteristic", "roc curve",
+    "restricted cubic splines", "restricted cubic splines (rcs)",
     "sensitivity analysis", "subgroup analysis", "heterogeneity",
     "risk of bias", "funnel plot", "forest plot",
     "statistical analysis", "multivariate analysis",
@@ -481,7 +485,7 @@ SUSPICIOUS_KEYWORDS: frozenset[str] = frozenset({
     "study", "trial", "review", "analysis", "survey", "protocol",
     "cohort", "patient", "participant", "sample", "group",
     "regression", "odds ratio", "hazard ratio", "p-value",
-    "database", "registry", "questionnaire",
+    "database", "registry", "questionnaire", "science",
 })
 
 WHITELIST: frozenset[str] = frozenset()

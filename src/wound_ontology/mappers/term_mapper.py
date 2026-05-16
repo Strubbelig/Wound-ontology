@@ -93,15 +93,8 @@ class TermMapper:
         # Terms we failed to confidently map
         self._unresolved_terms: list[str] = []
 
-        # ----------------------------
-        # TUNING PARAMETERS
-        # ----------------------------
-
         # Below this confidence → send to human review
         self._review_threshold: float = 0.75
-
-        # Above this similarity → auto-map without LLM
-        self._similarity_threshold: float = 0.85
 
     # ----------------------------
     # EXISTING API (unchanged)
@@ -249,7 +242,10 @@ class TermMapper:
         """
         High-precision synonym clustering via SapBERT + dual-threshold guard.
 
-        MERGE CONDITION (all must hold):
+        MERGE CONDITION — applied in order:
+          0. normalize_term(a) == normalize_term(b)  (pure string, no SapBERT)
+             — collapses case/hyphen/abbreviation variants before any embedding,
+               e.g. "Systemic Sclerosis" ↔ "Systemic Sclerosis (SSc)"
           1. cosine_similarity >= similarity_threshold  (default 0.95)
           2. string_sim(a, b) >= string_threshold       (default 0.92)
              — ensures only near-identical surface forms merge,
@@ -271,14 +267,34 @@ class TermMapper:
 
         freq = frequencies or {}
 
-        print(f"[{self.name}] Embedding {len(unique_terms)} unique terms with SapBERT...")
-        emb = embedder.embed(unique_terms)  # (N, H), L2-normalized in embedder
+        # ── Step 0: pre-merge by normalized form (no SapBERT) ─────────────────
+        # Groups terms that are identical after normalize_term (strips trailing
+        # abbreviations, lowercases, collapses hyphens/whitespace) into one
+        # canonical before any embedding is computed.
+        norm_groups: dict[str, list[str]] = defaultdict(list)
+        for t in unique_terms:
+            norm_groups[normalize_term(t)].append(t)
+
+        pre_merged: dict[str, str] = {}   # non-canonical orig → pre-merge canonical
+        embed_terms: list[str] = []
+        for members in norm_groups.values():
+            canonical = max(members, key=lambda t: (freq.get(t, 0), len(t.split()), -len(t)))
+            embed_terms.append(canonical)
+            for t in members:
+                if t != canonical:
+                    pre_merged[t] = canonical
+
+        if pre_merged:
+            print(f"[{self.name}] Pre-merged {len(pre_merged)} terms by normalized form.")
+
+        print(f"[{self.name}] Embedding {len(embed_terms)} terms with SapBERT...")
+        emb = embedder.embed(embed_terms)  # (N, H), L2-normalized in embedder
 
         # Cosine similarity = dot product when embeddings are L2-normalized
         sim_matrix: np.ndarray = emb @ emb.T
 
-        n = len(unique_terms)
-        term_to_idx = {t: i for i, t in enumerate(unique_terms)}
+        n = len(embed_terms)
+        term_to_idx = {t: i for i, t in enumerate(embed_terms)}
 
         # --- Union-Find ---
         parent = list(range(n))
@@ -301,7 +317,7 @@ class TermMapper:
         print(f"[{self.name}] {len(candidate_pairs)} candidate pairs above cosine {similarity_threshold}...")
 
         for i, j in candidate_pairs:
-            a, b = unique_terms[i], unique_terms[j]
+            a, b = embed_terms[i], embed_terms[j]
 
             # Generic terms: require near-identical strings
             if _is_generic(a) or _is_generic(b):
@@ -320,7 +336,7 @@ class TermMapper:
 
         # Build clusters from union-find
         clusters: dict[int, list[str]] = defaultdict(list)
-        for i, term in enumerate(unique_terms):
+        for i, term in enumerate(embed_terms):
             clusters[find(i)].append(term)
 
         # Canonical = highest frequency, then most words, then shortest string
@@ -351,8 +367,16 @@ class TermMapper:
         assert all(assignment[c] == c for c in assignment.values()), \
             "Canonical terms must map to themselves"
 
-        # Update metadata
+        # Resolve pre-merged terms through the cluster assignment and record metadata
+        for orig, pre_canon in pre_merged.items():
+            final = assignment.get(pre_canon, pre_canon)
+            assignment[orig] = final
+            self._metadata[orig] = {"standard": final, "confidence": 1.0, "method": "string_norm"}
+
+        # Update metadata for terms that went through SapBERT clustering
         for term, canonical in assignment.items():
+            if term in pre_merged:
+                continue
             idx_t = term_to_idx[term]
             idx_c = term_to_idx[canonical]
             self._metadata[term] = {

@@ -143,7 +143,7 @@ class Orchestrator:
         self.term_mapper.build_from_embeddings(
             list(freq.keys()),
             embedder=self._ensure_embedder(),
-            similarity_threshold=self.term_mapper._similarity_threshold,
+            similarity_threshold=0.95,
             frequencies=freq,
         )
 
@@ -186,7 +186,7 @@ class Orchestrator:
             print("\n[Orchestrator] Running post-extraction store clean...")
             self.run_clean_store()
 
-    def run_build_term_mapping(self, similarity_threshold: float = 0.97) -> dict:
+    def run_build_term_mapping(self, similarity_threshold: float = 0.95) -> dict:
         """
         Build the shared medical-term mapping using SapBERT cosine-similarity clustering.
 
