@@ -4,7 +4,7 @@ import re
 import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.utils.string_utils import normalize_term
-from config.blocklist import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST
+from config.blocklist import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST, is_noise_term as _is_noise_term
 
 
 class ConceptStore:
@@ -297,7 +297,7 @@ class ConceptStore:
                     entities_map: dict[str, dict] = {}
                     for ent in extracted:
                         entity_name = ConceptStore.clean_entity_str(ent.object.strip())
-                        if entity_name.lower() in _METHODOLOGY_BLOCKLIST:
+                        if entity_name.lower() in _METHODOLOGY_BLOCKLIST or _is_noise_term(entity_name):
                             continue
                         attr_logic: dict[str, float] = {}
                         for a in ent.true_attributes:

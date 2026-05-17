@@ -1,3 +1,11 @@
+import re as _re
+
+
+def is_noise_term(term: str) -> bool:
+    """Return True if term contains no alphabetic characters (numbers/symbols only)."""
+    return not bool(_re.search(r'[a-zA-Z]', term))
+
+
 METHODOLOGY_BLOCKLIST: set[str] = {
     # ── Study designs ──────────────────────────────────────────────────────────
     "study", "review", "systematic review", "scoping review",

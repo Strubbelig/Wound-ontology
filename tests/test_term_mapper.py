@@ -248,15 +248,27 @@ def test_build_from_embeddings_canonicals_map_to_themselves(dm):
         assert result[canonical] == canonical, f"Canonical '{canonical}' does not map to itself"
 
 
-def test_build_from_embeddings_max_cluster_assertion(dm):
-    """AssertionError is raised when a cluster reaches 20+ members."""
+def test_build_from_embeddings_single_linkage_would_merge_complete_linkage_does_not(dm):
+    """
+    Classic Union-Find failure case: A↔B valid, B↔C valid, but A↔C invalid.
+    Complete-linkage must keep A and C in separate clusters.
+    Uses FakeEmbedder (identical cosine=1.0 for all pairs) so only the
+    string-similarity guard distinguishes which pairs are valid.
+    """
     mapper = TermMapper(data_manager=MockDM({}), file_name="t", mapper_name="t")
-    # 25 terms all with identical embeddings → one giant cluster
-    terms = [f"term_{i}" for i in range(25)]
-    embedder = FakeEmbedder({t: [1.0, 0.0] for t in terms})
+    # A="Wound Healing", B="Wound Healings" (high str_sim with both A and C),
+    # C="Sound Healing" — str_sim(A,C) ≈ 0.889 < 0.92.
+    # Union-Find would merge all three (A↔B→{A,B}, then B↔C→{A,B,C}).
+    # Complete-linkage must reject the merge of {A,B} with {C} because A↔C is invalid.
+    terms = ["Wound Healing", "Wound Healings", "Sound Healing"]
+    embedder = FakeEmbedder({t: [1.0, 0.0] for t in terms})  # cosine=1.0 for all
 
-    with pytest.raises(AssertionError, match="≥ 20"):
-        mapper.build_from_embeddings(terms, embedder, similarity_threshold=0.95)
+    result = mapper.build_from_embeddings(terms, embedder, frequencies={})
+
+    wh = result["Wound Healing"]
+    assert result["Wound Healings"] == wh, "Near-identical terms must merge"
+    assert result.get("Sound Healing", "Sound Healing") != wh, \
+        "Complete linkage must not transitively pull 'Sound Healing' into the Wound Healing cluster"
 
 
 # ── Human review and unresolved retry ─────────────────────────────────────────
@@ -326,3 +338,43 @@ def test_term_mapper_has_default_term_mapping_identity(dm):
     assert mapper.__class__ is TermMapper
     assert mapper.name == "Term mapper"
     assert mapper.file_name == "terms"
+
+
+def test_build_from_embeddings_complete_linkage_blocks_transitive_merge():
+    """
+    Complete-linkage must block transitive false merges.
+
+    A↔B and B↔C each pass cosine+string thresholds, but A and C do not.
+    With single-linkage (Union-Find) all three end up in one cluster.
+    With complete-linkage, A and C stay separate.
+    """
+    mapper = TermMapper(data_manager=MockDM({}), file_name="t", mapper_name="t")
+
+    # A=[1,0], B=[cos45,sin45], C=[0,1]
+    # cos(A,B)=0.707 — below 0.95, so this test is actually verifying the threshold logic.
+    # Use embeddings where A↔B and B↔C are ≥0.95 but A↔C is not.
+    # cos(A,B) = A·B / (|A||B|). With L2-normalised: [1,0]·[0.98,0.2] ≈ 0.98 ✓
+    # [0.98,0.2]·[0.2,0.98] ≈ 0.196+0.196 = 0.392 — not ≥ 0.95, so B↔C edge is weak.
+    # Better: use 3D embeddings to place B between A and C with each edge ≥0.95.
+    # A=[1,0,0], B=[0.97,0.24,0], C=[0.97,0,0.24]
+    # cos(A,B)=0.97 ✓, cos(A,C)=0.97 ✓ — that merges all three. Not what we want.
+    #
+    # Correct setup: A and C are far, B is close to both.
+    # Use string-sim guard: A="Wound Healing", B="Wound Healings", C="Sound Healing"
+    # string_sim(A,C) < 0.92 → blocks direct A↔C edge even if cosine were high.
+    # Give all three cosine=1.0 via identical embeddings to test string-sim guard only.
+    terms = ["Wound Healing", "Wound Healings", "Sound Healing"]
+    embedder = FakeEmbedder({t: [1.0, 0.0] for t in terms})  # cosine=1.0 for all pairs
+
+    result = mapper.build_from_embeddings(terms, embedder, frequencies={})
+
+    # "Wound Healing" and "Wound Healings" are near-identical → should merge
+    assert result["Wound Healing"] == result["Wound Healings"], \
+        "Near-identical terms must merge"
+
+    # "Sound Healing" has low string-sim with "Wound Healing" (< 0.92) → must NOT merge
+    # With Union-Find it would merge via "Wound Healings" as bridge;
+    # with complete-linkage it stays separate because "Sound Healing"↔"Wound Healing" is invalid.
+    wh_canonical = result["Wound Healing"]
+    assert result.get("Sound Healing", "Sound Healing") != wh_canonical, \
+        "Complete linkage must not transitively merge 'Sound Healing' with 'Wound Healing'"

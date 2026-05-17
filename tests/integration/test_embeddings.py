@@ -162,6 +162,15 @@ async def test_cluster_separation(embedding_model):
     ("Indirectly Revascularized (IR) Angiosome",     "Directly Revascularized (DR) Angiosome"),    # regression: term_mapping_2026-05-04
     ("Type II PCL Tear",                             "Type I PCL Tear"),                           # regression: term_mapping_2026-05-04
     ("Acute Type A Aortic Dissection",               "Acute Type B Aortic Dissection"),            # regression: term_mapping_2026-05-04
+    # regression: term_mapping_2026-05-17
+    ("Uncollaborative",                       "Collaborative"),                       # regression: term_mapping_2026-05-17
+    ("Acellular",                             "Cellular"),                            # regression: term_mapping_2026-05-17
+    ("Stage IV",                              "Stage I"),                             # regression: term_mapping_2026-05-17
+    ("Typical",                               "Atypical"),                            # regression: term_mapping_2026-05-17
+    ("Normal Wound Healing",                  "Abnormal Wound Healing"),              # regression: term_mapping_2026-05-17
+    ("Tissue Degeneration",                   "Tissue Regeneration"),                 # regression: term_mapping_2026-05-17
+    ("Neuroregeneration",                     "Neurodegeneration"),                   # regression: term_mapping_2026-05-17
+    ("Female Patient",                        "Male Patient"),                        # regression: term_mapping_2026-05-17
 ])
 async def test_antonym_pair_below_merge_threshold(embedding_model, term_a, term_b):
     """

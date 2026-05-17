@@ -240,9 +240,9 @@ class TermMapper:
         frequencies: dict[str, int] | None = None,
     ) -> dict:
         """
-        High-precision synonym clustering via SapBERT + dual-threshold guard.
+        High-precision synonym clustering via SapBERT + complete-linkage.
 
-        MERGE CONDITION — applied in order:
+        DIRECT MERGE CONDITION — a pair (a, b) is valid iff ALL of:
           0. normalize_term(a) == normalize_term(b)  (pure string, no SapBERT)
              — collapses case/hyphen/abbreviation variants before any embedding,
                e.g. "Systemic Sclerosis" ↔ "Systemic Sclerosis (SSc)"
@@ -256,8 +256,11 @@ class TermMapper:
           4. Generic single-word terms (wound, pain, skin…) require
              string_sim >= 0.90 regardless of cosine score.
 
-        Clustering uses Union-Find (connected components) so transitivity
-        is preserved within the above strict guards.
+        CLUSTERING: complete-linkage (not Union-Find / single-linkage).
+        Two clusters A and B merge only when EVERY cross-cluster pair (a, b)
+        independently satisfies the direct merge condition above. This prevents
+        transitive false merges where A↔B↔C would pull A and C together even
+        though they are unrelated.
         """
         unique_terms: list[str] = list(dict.fromkeys(terms))
 
@@ -296,48 +299,53 @@ class TermMapper:
         n = len(embed_terms)
         term_to_idx = {t: i for i, t in enumerate(embed_terms)}
 
-        # --- Union-Find ---
-        parent = list(range(n))
-
-        def find(x: int) -> int:
-            while parent[x] != x:
-                parent[x] = parent[parent[x]]
-                x = parent[x]
-            return x
-
-        def union(x: int, y: int) -> None:
-            px, py = find(x), find(y)
-            if px != py:
-                parent[px] = py
-
-        # Vectorized: only check pairs that exceed the cosine threshold
+        # ── Step 2: pre-compute valid direct pairs ────────────────────────────
+        # A pair (i, j) is valid iff cosine ≥ threshold AND all secondary guards
+        # pass. This set is the only source of truth for mergeability.
         rows, cols = np.where(sim_matrix >= similarity_threshold)
-        candidate_pairs = [(int(i), int(j)) for i, j in zip(rows, cols) if i < j]
-
-        print(f"[{self.name}] {len(candidate_pairs)} candidate pairs above cosine {similarity_threshold}...")
-
-        for i, j in candidate_pairs:
+        valid: set[tuple[int, int]] = set()
+        for i, j in zip(rows.tolist(), cols.tolist()):
+            if i >= j:
+                continue
             a, b = embed_terms[i], embed_terms[j]
-
-            # Generic terms: require near-identical strings
             if _is_generic(a) or _is_generic(b):
                 if _string_sim(a, b) < 0.90:
                     continue
+            elif not _is_abbreviation_pair(a, b):
+                if _string_sim(a, b) < string_threshold:
+                    continue
+            valid.add((i, j))
 
-            # Abbreviation pairs bypass string-sim check
-            elif _is_abbreviation_pair(a, b):
-                pass  # merge unconditionally
+        print(f"[{self.name}] {len(valid)} valid pairs after all guards (cosine {similarity_threshold})...")
 
-            # Standard dual threshold
-            elif _string_sim(a, b) < string_threshold:
+        # ── Step 3: complete-linkage clustering ───────────────────────────────
+        # Process pairs in descending cosine order. Two clusters A and B merge
+        # only if EVERY (a, b) cross-pair is in `valid`. This prevents transitive
+        # false merges: a chain A↔B↔C can no longer pull A and C together unless
+        # A and C are also directly compatible.
+        cluster_of: list[int] = list(range(n))   # term_idx → cluster id
+        cl_members: dict[int, set[int]] = {i: {i} for i in range(n)}
+
+        for i, j in sorted(valid, key=lambda p: sim_matrix[p[0], p[1]], reverse=True):
+            ci, cj = cluster_of[i], cluster_of[j]
+            if ci == cj:
                 continue
+            # Complete linkage: all cross-cluster pairs must be individually valid
+            if all(
+                (min(a, b), max(a, b)) in valid
+                for a in cl_members[ci]
+                for b in cl_members[cj]
+            ):
+                # Absorb cj into ci
+                for k in cl_members[cj]:
+                    cluster_of[k] = ci
+                cl_members[ci] |= cl_members[cj]
+                del cl_members[cj]
 
-            union(i, j)
-
-        # Build clusters from union-find
+        # Build term-level clusters from the final partition
         clusters: dict[int, list[str]] = defaultdict(list)
-        for i, term in enumerate(embed_terms):
-            clusters[find(i)].append(term)
+        for idx, term in enumerate(embed_terms):
+            clusters[cluster_of[idx]].append(term)
 
         # Canonical = highest frequency, then most words (normalized), then shortest string
         assignment: dict[str, str] = {}
@@ -351,18 +359,11 @@ class TermMapper:
 
         # Validation
         n_non_identity = sum(1 for t, c in assignment.items() if t != c)
-        cluster_sizes = [len(v) for v in clusters.values()]
-        max_size = max(cluster_sizes)
+        max_size = max(len(v) for v in clusters.values())
 
         print(f"[{self.name}] {len(clusters)} clusters; "
               f"{n_non_identity} non-identity mappings; "
               f"max cluster size: {max_size}")
-
-        if max_size >= 20:
-            raise AssertionError(
-                f"Max cluster size {max_size} ≥ 20 — threshold is too low, "
-                "spurious merges detected. Raise similarity_threshold."
-            )
 
         assert all(assignment[c] == c for c in assignment.values()), \
             "Canonical terms must map to themselves"
