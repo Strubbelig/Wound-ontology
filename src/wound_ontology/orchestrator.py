@@ -153,7 +153,6 @@ class Orchestrator:
 
     def run_extract_to_store(self, batch_size=10, use_bfo_attributes=True,
                              max_consecutive_failures=20, max_vocab_hints=300,
-                             clean_after: bool = True,
                              normalize_every: int = 1000):
         """
         Extract entities from PubMed abstracts → ConceptStore.
@@ -164,7 +163,6 @@ class Orchestrator:
         max_consecutive_failures – circuit breaker: abort if this many results in a row
                                    are permanent failures (all retries exhausted).
         max_vocab_hints          – cap on targets/attributes sent per prompt (most frequent).
-        clean_after              – if True, run StoreCleaner immediately after extraction.
         normalize_every          – run clean+normalize+apply every N new entity mentions
                                    during extraction so vocab hints stay compact.
                                    0 = disable mid-extraction normalization.
@@ -182,9 +180,6 @@ class Orchestrator:
             milestone_every=normalize_every,
             on_milestone=self._mapping_milestone if normalize_every > 0 else None,
         ))
-        if clean_after:
-            print("\n[Orchestrator] Running post-extraction store clean...")
-            self.run_clean_store()
 
     def run_build_term_mapping(self, similarity_threshold: float = 0.95) -> dict:
         """
@@ -199,6 +194,9 @@ class Orchestrator:
             pipeline.mapping_cleaner.review_mappings()
             pipeline.mapping_cleaner.apply(pipeline.store)
         """
+        print("[Orchestrator] Cleaning store before mapping...")
+        self.run_clean_store()
+
         freq = self._collect_store_terms_with_freq()
         print(f"[Orchestrator] Building SapBERT term mapping from {len(freq)} unique store terms "
               f"(threshold={similarity_threshold})...")

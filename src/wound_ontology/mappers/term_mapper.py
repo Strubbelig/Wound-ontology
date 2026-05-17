@@ -34,24 +34,6 @@ def _is_generic(term: str) -> bool:
     return normalize_term(term) in _GENERIC_TERMS
 
 
-def _is_abbreviation_pair(a: str, b: str) -> bool:
-    """True if one term is an acronym / parenthetical abbreviation of the other."""
-    def _check(abbr: str, phrase: str) -> bool:
-        abbr_up = re.sub(r'[^A-Z0-9]', '', abbr.upper())
-        if not abbr_up:
-            return False
-        # Parenthetical: "Diabetic Foot Ulcer (DFU)" contains "(DFU)"
-        paren = re.search(r'\(([A-Z0-9]+)\)', phrase)
-        if paren and paren.group(1).upper() == abbr_up:
-            return True
-        # Initial-letter acronym: DFU → Diabetic Foot Ulcer
-        words = re.sub(r'[^\w\s]', ' ', phrase).split()
-        initials = ''.join(w[0].upper() for w in words if w)
-        return abbr_up == initials
-
-    return _check(a, b) or _check(b, a)
-
-
 class TermMapper:
     def __init__(
         self,
@@ -236,31 +218,24 @@ class TermMapper:
         terms: list[str],
         embedder,
         similarity_threshold: float = 0.95,
-        string_threshold: float = 0.92,
         frequencies: dict[str, int] | None = None,
     ) -> dict:
         """
-        High-precision synonym clustering via SapBERT + complete-linkage.
+        Synonym clustering via SapBERT cosine similarity + complete-linkage.
 
-        DIRECT MERGE CONDITION — a pair (a, b) is valid iff ALL of:
+        MERGE CONDITION — a pair (a, b) is valid iff:
           0. normalize_term(a) == normalize_term(b)  (pure string, no SapBERT)
              — collapses case/hyphen/abbreviation variants before any embedding,
                e.g. "Systemic Sclerosis" ↔ "Systemic Sclerosis (SSc)"
           1. cosine_similarity >= similarity_threshold  (default 0.95)
-          2. string_sim(a, b) >= string_threshold       (default 0.92)
-             — ensures only near-identical surface forms merge,
-               e.g. "Wound Healing" ↔ "wound healing" but NOT
-               "full thickness" ↔ "full thickness burn"
-          3. EXCEPTION: known abbreviation pairs bypass string check
-             e.g. "DFU" ↔ "Diabetic Foot Ulcer (DFU)"
-          4. Generic single-word terms (wound, pain, skin…) require
-             string_sim >= 0.90 regardless of cosine score.
 
-        CLUSTERING: complete-linkage (not Union-Find / single-linkage).
-        Two clusters A and B merge only when EVERY cross-cluster pair (a, b)
-        independently satisfies the direct merge condition above. This prevents
-        transitive false merges where A↔B↔C would pull A and C together even
-        though they are unrelated.
+        EXCEPTION: generic single-word terms (wound, pain, skin…) additionally
+        require string_sim >= 0.90 to avoid absorbing unrelated biomedical terms
+        that share a common context word.
+
+        CLUSTERING: complete-linkage. Two clusters merge only when EVERY
+        cross-cluster pair independently passes the merge condition above,
+        preventing transitive false merges.
         """
         unique_terms: list[str] = list(dict.fromkeys(terms))
 
@@ -300,20 +275,18 @@ class TermMapper:
         term_to_idx = {t: i for i, t in enumerate(embed_terms)}
 
         # ── Step 2: pre-compute valid direct pairs ────────────────────────────
-        # A pair (i, j) is valid iff cosine ≥ threshold AND all secondary guards
-        # pass. This set is the only source of truth for mergeability.
+        # SapBERT cosine is the primary (and normally sole) merge criterion.
+        # Generic single-word terms additionally require a string-sim guard
+        # because common words like "wound" or "pain" appear in many biomedical
+        # contexts and SapBERT may give them spuriously high cosines.
         rows, cols = np.where(sim_matrix >= similarity_threshold)
         valid: set[tuple[int, int]] = set()
         for i, j in zip(rows.tolist(), cols.tolist()):
             if i >= j:
                 continue
             a, b = embed_terms[i], embed_terms[j]
-            if _is_generic(a) or _is_generic(b):
-                if _string_sim(a, b) < 0.90:
-                    continue
-            elif not _is_abbreviation_pair(a, b):
-                if _string_sim(a, b) < string_threshold:
-                    continue
+            if (_is_generic(a) or _is_generic(b)) and _string_sim(a, b) < 0.90:
+                continue
             valid.add((i, j))
 
         print(f"[{self.name}] {len(valid)} valid pairs after all guards (cosine {similarity_threshold})...")

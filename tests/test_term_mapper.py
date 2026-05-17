@@ -252,23 +252,36 @@ def test_build_from_embeddings_single_linkage_would_merge_complete_linkage_does_
     """
     Classic Union-Find failure case: A↔B valid, B↔C valid, but A↔C invalid.
     Complete-linkage must keep A and C in separate clusters.
-    Uses FakeEmbedder (identical cosine=1.0 for all pairs) so only the
-    string-similarity guard distinguishes which pairs are valid.
+
+    Geometry (3D, L2-normalised):
+      B = [1, 0, 0]          — the bridge
+      A = [0.95,  0.312, 0]  — cos(A,B) = 0.95  (at merge threshold)
+      C = [0.95, -0.312, 0]  — cos(C,B) = 0.95  (at merge threshold)
+      cos(A,C) = 0.95²-0.312² ≈ 0.805  (below threshold → no direct edge)
+
+    Union-Find: A→B then B→C → all three in one cluster.
+    Complete-linkage: after merging {A,B} the check for adding C requires
+    cos(A,C) ≥ 0.95, which fails → C stays separate.
     """
     mapper = TermMapper(data_manager=MockDM({}), file_name="t", mapper_name="t")
-    # A="Wound Healing", B="Wound Healings" (high str_sim with both A and C),
-    # C="Sound Healing" — str_sim(A,C) ≈ 0.889 < 0.92.
-    # Union-Find would merge all three (A↔B→{A,B}, then B↔C→{A,B,C}).
-    # Complete-linkage must reject the merge of {A,B} with {C} because A↔C is invalid.
-    terms = ["Wound Healing", "Wound Healings", "Sound Healing"]
-    embedder = FakeEmbedder({t: [1.0, 0.0] for t in terms})  # cosine=1.0 for all
+    embedder = FakeEmbedder({
+        "term_a": [0.95,  0.312, 0.0],
+        "term_b": [1.0,   0.0,   0.0],
+        "term_c": [0.95, -0.312, 0.0],
+    })
 
-    result = mapper.build_from_embeddings(terms, embedder, frequencies={})
+    result = mapper.build_from_embeddings(
+        ["term_a", "term_b", "term_c"], embedder, frequencies={}
+    )
 
-    wh = result["Wound Healing"]
-    assert result["Wound Healings"] == wh, "Near-identical terms must merge"
-    assert result.get("Sound Healing", "Sound Healing") != wh, \
-        "Complete linkage must not transitively pull 'Sound Healing' into the Wound Healing cluster"
+    # A and B or B and C must merge (each edge is exactly at threshold)
+    ab_merged = result.get("term_a", "term_a") == result.get("term_b", "term_b")
+    bc_merged = result.get("term_b", "term_b") == result.get("term_c", "term_c")
+    assert ab_merged or bc_merged, "At least one valid edge must produce a merge"
+
+    # A and C must never be in the same cluster
+    assert result.get("term_a", "term_a") != result.get("term_c", "term_c"), \
+        "Complete-linkage must not merge term_a and term_c via term_b as bridge"
 
 
 # ── Human review and unresolved retry ─────────────────────────────────────────
@@ -340,41 +353,3 @@ def test_term_mapper_has_default_term_mapping_identity(dm):
     assert mapper.file_name == "terms"
 
 
-def test_build_from_embeddings_complete_linkage_blocks_transitive_merge():
-    """
-    Complete-linkage must block transitive false merges.
-
-    A↔B and B↔C each pass cosine+string thresholds, but A and C do not.
-    With single-linkage (Union-Find) all three end up in one cluster.
-    With complete-linkage, A and C stay separate.
-    """
-    mapper = TermMapper(data_manager=MockDM({}), file_name="t", mapper_name="t")
-
-    # A=[1,0], B=[cos45,sin45], C=[0,1]
-    # cos(A,B)=0.707 — below 0.95, so this test is actually verifying the threshold logic.
-    # Use embeddings where A↔B and B↔C are ≥0.95 but A↔C is not.
-    # cos(A,B) = A·B / (|A||B|). With L2-normalised: [1,0]·[0.98,0.2] ≈ 0.98 ✓
-    # [0.98,0.2]·[0.2,0.98] ≈ 0.196+0.196 = 0.392 — not ≥ 0.95, so B↔C edge is weak.
-    # Better: use 3D embeddings to place B between A and C with each edge ≥0.95.
-    # A=[1,0,0], B=[0.97,0.24,0], C=[0.97,0,0.24]
-    # cos(A,B)=0.97 ✓, cos(A,C)=0.97 ✓ — that merges all three. Not what we want.
-    #
-    # Correct setup: A and C are far, B is close to both.
-    # Use string-sim guard: A="Wound Healing", B="Wound Healings", C="Sound Healing"
-    # string_sim(A,C) < 0.92 → blocks direct A↔C edge even if cosine were high.
-    # Give all three cosine=1.0 via identical embeddings to test string-sim guard only.
-    terms = ["Wound Healing", "Wound Healings", "Sound Healing"]
-    embedder = FakeEmbedder({t: [1.0, 0.0] for t in terms})  # cosine=1.0 for all pairs
-
-    result = mapper.build_from_embeddings(terms, embedder, frequencies={})
-
-    # "Wound Healing" and "Wound Healings" are near-identical → should merge
-    assert result["Wound Healing"] == result["Wound Healings"], \
-        "Near-identical terms must merge"
-
-    # "Sound Healing" has low string-sim with "Wound Healing" (< 0.92) → must NOT merge
-    # With Union-Find it would merge via "Wound Healings" as bridge;
-    # with complete-linkage it stays separate because "Sound Healing"↔"Wound Healing" is invalid.
-    wh_canonical = result["Wound Healing"]
-    assert result.get("Sound Healing", "Sound Healing") != wh_canonical, \
-        "Complete linkage must not transitively merge 'Sound Healing' with 'Wound Healing'"

@@ -29,9 +29,33 @@ class Embedder:
         self._device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f"[Embedder] Loading SapBERT on {self._device}...")
         self._tokenizer = AutoTokenizer.from_pretrained(self.MODEL_NAME)
-        self._model     = AutoModel.from_pretrained(self.MODEL_NAME).to(self._device)
+        # Explicitly load in float32 — GPU autocast or default float16 can cause
+        # attention overflow that collapses all [CLS] embeddings to the same vector.
+        self._model = AutoModel.from_pretrained(self.MODEL_NAME, torch_dtype=torch.float32)
+        self._model = self._model.to(self._device)
         self._model.eval()
+        self._sanity_check()
         print("[Embedder] SapBERT ready.")
+
+    def _sanity_check(self) -> None:
+        """Embed two obviously different strings and assert their cosine < 0.999."""
+        probes = ["wound healing", "acute myocardial infarction"]
+        inputs = self._tokenizer(probes, padding=True, return_tensors="pt")
+        inputs = {k: v.to(self._device) for k, v in inputs.items()}
+        with torch.no_grad():
+            out = self._model(**inputs)
+            vecs = out.last_hidden_state[:, 0, :].cpu().float().numpy()
+        norms = np.linalg.norm(vecs, axis=1, keepdims=True)
+        vecs  = vecs / np.maximum(norms, 1e-12)
+        cos   = float(np.dot(vecs[0], vecs[1]))
+        if cos > 0.999:
+            raise RuntimeError(
+                f"[Embedder] Degenerate embeddings detected (cosine={cos:.6f} for "
+                "unrelated probe terms). Model weights may be corrupted or loaded "
+                "in wrong precision. Try clearing the HuggingFace cache:\n"
+                "  import shutil, os\n"
+                "  shutil.rmtree(os.path.expanduser('~/.cache/huggingface'), ignore_errors=True)"
+            )
 
     # ── Core embedding ────────────────────────────────────────────────────────
 

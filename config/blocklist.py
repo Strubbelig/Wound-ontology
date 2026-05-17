@@ -284,7 +284,6 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "automated and objective analysis",
     "behavioral management control group",
     "binary logistic regression model",
-    "braden scale",
     "burn nurse",
     "cannabis-negative control",
     "cannabis-positive patient",
@@ -355,7 +354,6 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "keratinocyte proliferation",
     "keratinocyte-based study",
     "knee injury and osteoarthritis outcome score-quality of life (koos-qol)",
-    "knowledge on venous leg ulcer questionnaire",
     "knowledge, attitude and practice instrument for care workers in preventing skin tears (kap-st)",
     "knowledge, attitude, practice (kap) framework",
     "large-scale randomized trial",
@@ -375,7 +373,6 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "mdrpi knowledge score",
     "mean score",
     "median follow-up duration",
-    "medical device associated pressure injury knowledge scale",
     "medical record review",
     "meniscal extrusion index",
     "methodological index for non-randomized studies criteria",
@@ -461,11 +458,9 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "scale-level content validity index (s-cvi/ave)",
     "silver sulfadiazine and gauze dressings (control group)",
     "simplified modified rankin score",
-    "skin graft survival rate",
     "skin tear knowledge assessment instrument (oases)",
     "spa efficiency score",
     "speckle flow index (sfi) variation rate",
-    "st. mark's incontinence score",
     "standard treatment protocol",
     "structured educational intervention",
     "study protocol",
@@ -494,6 +489,10 @@ SUSPICIOUS_KEYWORDS: frozenset[str] = frozenset({
     "cohort", "patient", "participant", "sample", "group",
     "regression", "odds ratio", "hazard ratio", "p-value",
     "database", "registry", "questionnaire", "science",
+    # units of time / measurement
+    "%", "day", "days", "week", "weeks", "month", "months",
+    "year", "years", "hour", "hours", "minute", "minutes",
+    "second", "seconds", "cm", "mm", "mg", "ml", "kg", "g",
 })
 
 WHITELIST: frozenset[str] = frozenset()

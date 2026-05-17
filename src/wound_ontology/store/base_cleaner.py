@@ -7,6 +7,7 @@ import config.blocklist as _blocklists_module
 from config.blocklist import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST
 from config.blocklist import SUSPICIOUS_KEYWORDS as _SUSPICIOUS_KEYWORDS
 from config.blocklist import WHITELIST as _WHITELIST
+from config.blocklist import is_noise_term as _is_noise_term
 
 
 class BaseCleaner:
@@ -39,6 +40,8 @@ class BaseCleaner:
     # ── Classification helpers ────────────────────────────────────────────────
 
     def _is_blocked(self, term: str) -> bool:
+        if _is_noise_term(term):
+            return True
         lower = term.strip().lower()
         # Remove parenthetical suffixes like "(study)" for matching purposes.
         base = re.sub(r"\s*\([^)]*\)\s*$", "", lower).strip()
