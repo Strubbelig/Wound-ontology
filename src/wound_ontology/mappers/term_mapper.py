@@ -278,7 +278,7 @@ class TermMapper:
         pre_merged: dict[str, str] = {}   # non-canonical orig → pre-merge canonical
         embed_terms: list[str] = []
         for members in norm_groups.values():
-            canonical = max(members, key=lambda t: (freq.get(t, 0), len(t.split()), -len(t)))
+            canonical = max(members, key=lambda t: (freq.get(t, 0), len(normalize_term(t).split()), -len(t)))
             embed_terms.append(canonical)
             for t in members:
                 if t != canonical:
@@ -339,12 +339,12 @@ class TermMapper:
         for i, term in enumerate(embed_terms):
             clusters[find(i)].append(term)
 
-        # Canonical = highest frequency, then most words, then shortest string
+        # Canonical = highest frequency, then most words (normalized), then shortest string
         assignment: dict[str, str] = {}
         for members in clusters.values():
             canonical = max(
                 members,
-                key=lambda t: (freq.get(t, 0), len(t.split()), -len(t)),
+                key=lambda t: (freq.get(t, 0), len(normalize_term(t).split()), -len(t)),
             )
             for t in members:
                 assignment[t] = canonical

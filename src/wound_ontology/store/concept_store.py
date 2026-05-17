@@ -1,5 +1,6 @@
 from __future__ import annotations
 import asyncio
+import re
 import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.utils.string_utils import normalize_term
@@ -20,6 +21,23 @@ class ConceptStore:
     extraction and predefined ingestion are complete, so all downstream consumers
     (hierarchies, FCA matrix) receive clean, deduplicated names.
     """
+
+    @staticmethod
+    def clean_entity_str(term: str) -> str:
+        """String-only cleaning: strip parenthetical abbreviations, preserve original casing.
+
+        'Systemic Sclerosis (SSc)' -> 'Systemic Sclerosis'
+        Applied at ingestion time — before any mapper or title-casing.
+        """
+        return re.sub(r'\s*\([^)]*\)', '', term).strip()
+
+    @staticmethod
+    def clean_target_str(term: str) -> str:
+        """String-only cleaning: strip parenthetical abbreviations, preserve original casing.
+
+        Applied at ingestion time — before any mapper or title-casing.
+        """
+        return re.sub(r'\s*\([^)]*\)', '', term).strip()
 
     def __init__(self, data_manager: DataManager, file_name: str):
         self.dm = data_manager
@@ -169,18 +187,14 @@ class ConceptStore:
         term_map = mapper.mapping if mapper else {}
 
         def clean_entity(term: str) -> str:
-            # Mapper lookup first; fall back to surface-form canonicalization + title case.
-            # normalize_term collapses hyphens, strips abbreviation parens, etc. so that
-            # "full-thickness" and "full thickness" converge to the same display name even
-            # when the mapper has no entry for them.
             if term in term_map:
                 return term_map[term].strip().title()
-            return normalize_term(term).title()
+            return normalize_term(self.clean_entity_str(term)).title()
 
         def clean_target(term: str) -> str:
             if term in term_map:
                 return term_map[term].strip().title()
-            return normalize_term(term).title()
+            return normalize_term(self.clean_target_str(term)).title()
 
         normalized: dict = {}
         for key, pmid_data in self._dict.items():
@@ -282,15 +296,18 @@ class ConceptStore:
                     allowed_set = set(allowed_predicates)
                     entities_map: dict[str, dict] = {}
                     for ent in extracted:
-                        if ent.object.strip().lower() in _METHODOLOGY_BLOCKLIST:
+                        entity_name = ConceptStore.clean_entity_str(ent.object.strip())
+                        if entity_name.lower() in _METHODOLOGY_BLOCKLIST:
                             continue
                         attr_logic: dict[str, float] = {}
                         for a in ent.true_attributes:
                             if a.predicate in allowed_set:
-                                attr_logic[f"{a.predicate}: {a.target}"] = 1.0
+                                target = ConceptStore.clean_target_str(a.target)
+                                attr_logic[f"{a.predicate}: {target}"] = 1.0
                         for a in ent.false_attributes:
                             if a.predicate in allowed_set:
-                                triple = f"{a.predicate}: {a.target}"
+                                target = ConceptStore.clean_target_str(a.target)
+                                triple = f"{a.predicate}: {target}"
                                 if triple not in attr_logic:
                                     attr_logic[triple] = 0.0
 
@@ -307,7 +324,7 @@ class ConceptStore:
                             if attr_logic.get(mereological) == 1.0:
                                 attr_logic[mereological] = 0.0
 
-                        entities_map[ent.object] = attr_logic
+                        entities_map[entity_name] = attr_logic
 
                     return pmid, {"entities": entities_map, "meta_stamp": meta_id}
 

@@ -1,0 +1,334 @@
+{
+  "42137687": {
+    "entities": {
+      "Inguinal Hernia Repair": {
+        "is_a: Surgical Procedure": 1.0
+      },
+      "Chronic Wound Infection": {
+        "is_a: Wound Infection": 1.0,
+        "has_quality: Chronic": 1.0,
+        "occurs_in: Surgical Wound": 1.0
+      },
+      "Mesh Erosion": {
+        "is_a: Complication": 1.0,
+        "occurs_in: Colonic Mucosa": 1.0
+      },
+      "Sigmoid Diverticulosis": {
+        "is_a: Diverticulosis": 1.0,
+        "occurs_in: Sigmoid Colon": 1.0
+      },
+      "Recurrence": {
+        "is_a: Complication": 1.0,
+        "occurs_in: Inguinal Region": 1.0
+      },
+      "Infection": {
+        "is_a: Complication": 1.0
+      },
+      "Chronic Pain": {
+        "is_a: Complication": 1.0,
+        "has_quality: Chronic": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260516_1453"
+  },
+  "42139662": {
+    "entities": {
+      "Surgical Antibiotic Prophylaxis": {
+        "is_treatment_for: Surgical Site Infection": 1.0,
+        "is_treatment_for: Clean Elective Upper Limb Soft-tissue Surgery": 0.0
+      },
+      "Surgical Site Infection": {
+        "is_a: Infectious Complication": 1.0,
+        "occurs_in: Surgical Site": 1.0
+      },
+      "Clean Elective Upper Limb Soft-tissue Surgery": {
+        "has_quality: Clean": 1.0,
+        "has_quality: Elective": 1.0,
+        "occurs_in: Upper Limb": 1.0
+      },
+      "Postoperative Wound Complication": {
+        "is_a: Complication": 1.0,
+        "occurs_in: Postoperative Period": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260516_1453"
+  },
+  "42141493": {
+    "entities": {
+      "Wound Healing": {
+        "is_a: process": 1.0,
+        "occurs_in: organism": 1.0,
+        "has_quality: dynamic": 1.0,
+        "has_quality: biological": 1.0
+      },
+      "Inflammatory Response": {
+        "is_a: process": 1.0,
+        "part_of: Wound Healing": 1.0,
+        "has_quality: key early step": 1.0
+      },
+      "Chronic Inflammation": {
+        "is_a: Inflammatory Response": 1.0,
+        "has_quality: chronic": 1.0,
+        "has_quality: excessive": 1.0,
+        "caused_by: tissue damage": 1.0,
+        "caused_by: fibrosis": 1.0,
+        "caused_by: chronic non-healing wounds": 1.0
+      },
+      "Mild to Moderate Inflammation": {
+        "is_a: Inflammatory Response": 1.0,
+        "has_quality: mild": 1.0,
+        "has_quality: moderate": 1.0,
+        "caused_by: angiogenesis": 1.0,
+        "caused_by: fibroblast activation": 1.0,
+        "caused_by: extracellular matrix remodeling": 1.0
+      },
+      "Immune Homeostasis": {
+        "is_a: process": 1.0,
+        "has_quality: steady-state": 1.0,
+        "has_quality: key prerequisite for injury repair": 1.0
+      },
+      "Negative Pressure Wound Therapy": {
+        "is_treatment_for: Wound Healing": 1.0
+      },
+      "Hyperbaric Oxygen": {
+        "is_treatment_for: Wound Healing": 1.0
+      },
+      "Exosome-based Approaches": {
+        "is_treatment_for: Wound Healing": 1.0
+      },
+      "Biomaterial-based Approaches": {
+        "is_treatment_for: Wound Healing": 1.0
+      },
+      "Nanohydrogel Systems": {
+        "is_treatment_for: Wound Healing": 1.0
+      },
+      "Microneedle-facilitated Delivery": {
+        "is_treatment_for: Wound Healing": 1.0
+      },
+      "Wound Heterogeneity": {
+        "occurs_in: clinical translation": 1.0
+      },
+      "Host-microbe Cross-talk": {
+        "occurs_in: clinical translation": 1.0
+      },
+      "Limitations of Model Extrapolation": {
+        "occurs_in: clinical translation": 1.0
+      },
+      "Multi-omics Integration": {
+        "is_a: approach": 1.0,
+        "is_treatment_for: precision wound healing": 1.0
+      },
+      "Interdisciplinary Approach": {
+        "is_a: approach": 1.0,
+        "is_treatment_for: precision wound healing": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260516_1453"
+  },
+  "42139022": {
+    "entities": {
+      "Exosome": {
+        "is_a: Extracellular Vesicle": 1.0,
+        "has_quality: Nanosized": 1.0,
+        "has_quality: 30-150 nm": 1.0
+      },
+      "Exosome-based Therapy": {
+        "is_a: Biotherapeutic Strategy": 1.0,
+        "is_treatment_for: Chronic Wound": 1.0,
+        "is_treatment_for: Inflammatory Dermatosis": 1.0,
+        "is_treatment_for: Pigmentary Disorder": 1.0,
+        "is_treatment_for: Skin Ageing": 1.0,
+        "is_treatment_for: Acne Scarring": 1.0,
+        "is_treatment_for: Treatment-related Skin Toxicity": 1.0
+      },
+      "Chronic Wound": {
+        "is_a: Wound": 1.0,
+        "has_quality: Chronic": 1.0
+      },
+      "Inflammatory Dermatosis": {
+        "is_a: Dermatological Disease": 1.0
+      },
+      "Pigmentary Disorder": {
+        "is_a: Dermatological Disease": 1.0
+      },
+      "Skin Ageing": {
+        "is_a: Dermatological Condition": 1.0
+      },
+      "Acne Scarring": {
+        "is_a: Dermatological Condition": 1.0
+      },
+      "Treatment-related Skin Toxicity": {
+        "is_a: Oncologic Skin Complication": 1.0
+      },
+      "Mesenchymal Stem Cell-derived Exosome": {
+        "is_a: Exosome": 1.0,
+        "has_quality: Regenerative": 1.0,
+        "has_quality: Immunomodulatory": 1.0
+      },
+      "Adipose-derived Stem Cell Exosome": {
+        "is_a: Exosome": 1.0,
+        "has_quality: Regenerative": 1.0,
+        "has_quality: Immunomodulatory": 1.0
+      },
+      "Wound Healing": {
+        "is_a: Biological Process": 1.0,
+        "occurs_in: Skin": 1.0
+      },
+      "Inflammation": {
+        "is_a: Biological Process": 1.0
+      },
+      "Extracellular Matrix Remodelling": {
+        "is_a: Biological Process": 1.0
+      },
+      "Tissue Repair": {
+        "is_a: Biological Process": 1.0
+      },
+      "Tumour Progression": {
+        "is_a: Pathological Process": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260516_1453"
+  },
+  "42141294": {
+    "entities": {
+      "Surgical Site Infection": {
+        "is_a: Postoperative Wound Complication": 1.0,
+        "occurs_in: Surgical Site": 1.0
+      },
+      "CSF Leakage": {
+        "is_a: Postoperative Wound Complication": 1.0,
+        "occurs_in: Wound": 1.0
+      },
+      "Wound Dehiscence": {
+        "is_a: Postoperative Wound Complication": 1.0,
+        "occurs_in: Wound": 1.0
+      },
+      "Wound Necrosis": {
+        "is_a: Postoperative Wound Complication": 1.0,
+        "occurs_in: Wound": 1.0
+      },
+      "Closed Incisional Negative Pressure Wound Therapy": {
+        "has_quality: Negative Pressure": 1.0,
+        "is_treatment_for: Surgical Wound": 1.0
+      },
+      "Spinal Dysraphism Surgery": {
+        "is_a: Surgery": 1.0,
+        "has_quality: Pediatric": 1.0
+      },
+      "Open Spinal Dysraphism": {
+        "is_a: Spinal Dysraphism": 1.0
+      },
+      "Closed Spinal Dysraphism": {
+        "is_a: Spinal Dysraphism": 1.0
+      },
+      "Myelomeningocele": {
+        "is_a: Open Spinal Dysraphism": 1.0
+      },
+      "Myeloschisis": {
+        "is_a: Open Spinal Dysraphism": 1.0
+      },
+      "Hemimyelomeningocele": {
+        "is_a: Open Spinal Dysraphism": 1.0
+      },
+      "Pygopagus Conjoined Twins": {
+        "is_a: Congenital Abnormality": 1.0
+      },
+      "Primary Wound Closure": {
+        "is_a: Wound Closure": 1.0,
+        "occurs_in: Surgery": 1.0,
+        "has_quality: Primary": 1.0
+      },
+      "Postoperative Wound Complication": {
+        "is_a: Complication": 1.0,
+        "occurs_in: Postoperative Period": 1.0
+      },
+      "Surgical Site": {
+        "is_a: site": 1.0
+      },
+      "Wound": {
+        "is_a: Material Entity": 1.0,
+        "has_quality: Surgical": 1.0
+      },
+      "Surgery": {
+        "is_a: process": 1.0
+      },
+      "Postoperative Period": {
+        "is_a: Temporal Region": 1.0
+      },
+      "Spinal Dysraphism": {
+        "is_a: Congenital Abnormality": 1.0
+      },
+      "Negative Pressure": {
+        "is_a: Quality": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260516_1453"
+  },
+  "42140399": {
+    "entities": {
+      "Diabetic Wound": {
+        "is_a: Chronic Wound": 1.0,
+        "has_quality: Chronic": 1.0,
+        "occurs_in: Diabetic Patient": 1.0,
+        "caused_by: Chronic Inflammation": 1.0,
+        "caused_by: Impaired Angiogenesis": 1.0,
+        "caused_by: Excessive Protease Activity": 1.0,
+        "caused_by: Delayed Extracellular Matrix Remodelling": 1.0
+      },
+      "Chronic Inflammation": {
+        "is_a: Inflammatory Process": 1.0,
+        "occurs_in: Diabetic Wound": 1.0
+      },
+      "Impaired Angiogenesis": {
+        "is_a: Pathological Process": 1.0,
+        "occurs_in: Diabetic Wound": 1.0
+      },
+      "Excessive Protease Activity": {
+        "is_a: Pathological Process": 1.0,
+        "occurs_in: Diabetic Wound": 1.0
+      },
+      "Delayed Extracellular Matrix Remodelling": {
+        "is_a: Pathological Process": 1.0,
+        "occurs_in: Diabetic Wound": 1.0
+      },
+      "Diabetic Foot Ulcer": {
+        "is_a: Diabetic Wound": 1.0,
+        "occurs_in: Foot": 1.0
+      },
+      "Conventional Wound Dressing": {
+        "is_treatment_for: Diabetic Wound": 1.0,
+        "has_quality: Effective": 0.0
+      },
+      "Scaffold-based Biomaterial": {
+        "is_a: Biomaterial": 1.0,
+        "is_treatment_for: Diabetic Wound": 1.0,
+        "has_quality: Three-dimensional": 1.0
+      },
+      "Nanofibrous Scaffold": {
+        "is_a: Scaffold-based Biomaterial": 1.0,
+        "is_treatment_for: Diabetic Wound": 1.0
+      },
+      "Hydrogel": {
+        "is_a: Scaffold-based Biomaterial": 1.0,
+        "is_treatment_for: Diabetic Wound": 1.0
+      },
+      "Decellularized Extracellular Matrix": {
+        "is_a: Scaffold-based Biomaterial": 1.0,
+        "is_treatment_for: Diabetic Wound": 1.0
+      },
+      "Angiogenesis": {
+        "is_a: Biological Process": 1.0,
+        "occurs_in: Diabetic Wound": 1.0
+      },
+      "Wound Closure": {
+        "is_a: Healing Process": 1.0,
+        "occurs_in: Diabetic Wound": 1.0
+      },
+      "Wound Contraction": {
+        "is_a: Healing Process": 1.0,
+        "occurs_in: Diabetic Wound": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260516_1453"
+  }
+}
