@@ -206,17 +206,31 @@ class Orchestrator:
         print("[Orchestrator] Term mapping ready — review with mapping_cleaner.")
         return mapping
 
+    def check_list_exclusivity(self, similarity_threshold: float = 0.92) -> None:
+        """
+        Check that METHODOLOGY_BLOCKLIST and WHITELIST contain no overlapping synonyms.
+
+        Embeds all terms in both lists via SapBERT and warns when any whitelist term
+        has cosine ≥ similarity_threshold to a blocklist term.  Whitelist takes priority,
+        so conflicting blocklist entries should be removed from config/blocklists.py.
+        """
+        self.cleaner._reload_lists()
+        self.cleaner._check_list_exclusivity(
+            self._ensure_embedder(),
+            similarity_threshold,
+        )
+
     def review_susp_entities(self, similarity_threshold: float = 0.92) -> None:
         """
         SapBERT-assisted review of keyword-suspicious store entities.
 
-        First checks that blocklist and whitelist contain no overlapping synonyms.
-        Then embeds each suspicious entity and compares to both lists:
+        Embeds each suspicious entity and compares to blocklist and whitelist:
           - clear blocklist match  → auto-blocked (written to METHODOLOGY_BLOCKLIST)
           - clear whitelist match  → auto-whitelisted (written to WHITELIST)
           - ambiguous              → shown for manual review
 
-        Call pipeline.run_clean_store() afterwards to apply blocklist changes.
+        Run pipeline.check_list_exclusivity() first if you want to validate the lists
+        before reviewing.  Call pipeline.run_clean_store() afterwards to apply changes.
         """
         self.cleaner.review_susp_entities(
             self.store,

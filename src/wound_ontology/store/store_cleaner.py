@@ -346,8 +346,6 @@ class StoreCleaner(BaseCleaner):
             return
 
         # ── SapBERT-assisted path ────────────────────────────────────────────
-        self._check_list_exclusivity(embedder, similarity_threshold)
-
         entities = [e for e, _, _, _ in ranked]
         entity_idx = {e: i for i, e in enumerate(entities)}
         bl_terms = sorted(self.blocked_entities)
