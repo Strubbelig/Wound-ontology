@@ -266,7 +266,6 @@ class StoreCleaner(BaseCleaner):
         wl_terms = sorted(self.whitelist)
         bl_terms = sorted(self.blocked_entities)
         if not wl_terms or not bl_terms:
-            print("  (Skipping exclusivity check — one or both lists are empty.)")
             return
 
         print(f"\n[StoreCleaner] Checking list exclusivity "
