@@ -279,6 +279,28 @@ class Orchestrator:
             threshold_pct=threshold_pct,
         )
 
+    def llm_scan_singletons(
+        self,
+        max_freq: int = 1,
+        llm_batch_size: int = 150,
+    ) -> None:
+        """
+        LLM scope scan targeted at rare entities (freq ≤ max_freq, default 1).
+
+        Complements llm_scan_entities which only covers the most frequent terms.
+        Sends singleton entities to the LLM in batches; flagged ones are then
+        presented one-by-one for interactive review.  Results are cached under
+        ``singleton_eval`` separately from the regular scope scan cache.
+
+        Call pipeline.run_clean_store() afterwards to purge blocked entities.
+        """
+        cleaner = StoreCleaner(self.allowed_predicates)
+        cleaner.llm_scan_singletons(
+            self.store, self.llm,
+            max_freq=max_freq,
+            llm_batch_size=llm_batch_size,
+        )
+
     # ── Hierarchies ────────────────────────────────────────────────────────────
 
     def run_build_hierarchies(self, predefined_df: pd.DataFrame | None = None) -> None:

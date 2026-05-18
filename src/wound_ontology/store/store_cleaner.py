@@ -640,6 +640,118 @@ class StoreCleaner(BaseCleaner):
         if skipped:
             print(f"  {skipped} entities skipped (not yet classified).")
 
+    def llm_scan_singletons(
+        self,
+        store,
+        llm,
+        max_freq: int = 1,
+        llm_batch_size: int = 150,
+    ) -> None:
+        """
+        LLM scope scan targeted at rare entities (freq ≤ max_freq).
+
+        These are the long-tail entries that llm_scan_entities never reaches
+        because it prioritises high-frequency terms.  The LLM classifies each
+        batch; flagged entities are then presented one-by-one for interactive
+        review.  Results are cached under the key ``singleton_eval`` so
+        repeated runs skip already-evaluated entities.
+
+        After reviewing, call pipeline.run_clean_store() to purge blocked terms.
+        """
+        self._reload_lists()
+
+        # Collect rare, non-blocked entities
+        ranked_raw = self._collect_ranked(store)
+        rare = [
+            (e, c, s, a) for e, c, s, a in ranked_raw
+            if c <= max_freq and s < 100.0
+        ]
+        if not rare:
+            print(f"No non-blocked entities with freq ≤ {max_freq} found.")
+            return
+
+        print(f"[StoreCleaner] Singleton scan: {len(rare)} entities with freq ≤ {max_freq} "
+              f"(batches of {llm_batch_size})...")
+
+        # Load cached eval
+        dm = getattr(store, "dm", None)
+        cached_eval: dict = {}
+        if dm is not None:
+            cached_eval = dm.load_latest_json("singleton_eval") or {}
+
+        already_evaluated: set[str] = set(cached_eval.keys())
+        llm_flagged: set[str] = {e for e, v in cached_eval.items() if v}
+        to_evaluate = [r for r in rare if r[0] not in already_evaluated]
+
+        if already_evaluated:
+            print(f"  Reusing cached eval for {len(already_evaluated)} entities "
+                  f"({len(to_evaluate)} new to evaluate).")
+
+        async def _run_llm():
+            n_batches = (len(to_evaluate) + llm_batch_size - 1) // llm_batch_size
+            for i in range(0, len(to_evaluate), llm_batch_size):
+                chunk = to_evaluate[i : i + llm_batch_size]
+                batch_num = i // llm_batch_size + 1
+                batch_input = [(e, c, a) for e, c, _, a in chunk]
+                try:
+                    flagged = await llm.classify_scope_batch(batch_input)
+                    flagged_set = set(flagged)
+                    llm_flagged.update(flagged_set)
+                    for entity, _, _, _ in chunk:
+                        cached_eval[entity] = entity in flagged_set
+                    done = min(i + llm_batch_size, len(to_evaluate))
+                    print(f"  LLM batch {batch_num}/{n_batches}: "
+                          f"{done}/{len(to_evaluate)} evaluated, "
+                          f"{len(flagged)} flagged in this batch.")
+                except Exception as exc:
+                    print(f"  LLM batch {batch_num}/{n_batches} failed ({exc}) — skipped.")
+                finally:
+                    if dm is not None:
+                        dm.save_as_json(cached_eval, "singleton_eval")
+
+        asyncio.get_event_loop().run_until_complete(_run_llm())
+        print(f"  Eval saved ({len(cached_eval)} singleton entities total).")
+
+        # Interactive review of flagged entities
+        new_to_review = sorted(
+            e for e, _, _, _ in rare
+            if e in llm_flagged
+            and e.strip().lower() not in self.whitelist
+            and re.sub(r"\s*\([^)]*\)\s*$", "", e.strip().lower()).strip() not in self.whitelist
+        )
+
+        flagged_total = len(llm_flagged)
+        print(f"\n[StoreCleaner] Singleton scan complete: "
+              f"{flagged_total} / {len(rare)} flagged as out-of-scope "
+              f"({100 * flagged_total / max(len(rare), 1):.1f}%)")
+
+        if not new_to_review:
+            print("  No new entities to review.")
+            return
+
+        to_block: set[str] = set()
+        to_whitelist: set[str] = set()
+
+        print(f"\n{'='*80}")
+        print(f"  Reviewing {len(new_to_review)} LLM-flagged singleton entities.")
+        print(f"  y = valid concept → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  q = quit all")
+        print(f"{'='*80}\n")
+
+        for entity in new_to_review:
+            answer = self._prompt(f"  '{entity}'  in scope? [y/n/s/q] ").strip().lower()
+            if answer in ("esc", "q"):
+                print("  Exiting review.")
+                break
+            if answer == "y":
+                to_whitelist.add(entity)
+            elif answer == "n":
+                to_block.add(entity)
+
+        self._save_review_results(to_block, to_whitelist, apply_hint="clean_entities")
+        skipped = len(new_to_review) - len(to_block) - len(to_whitelist)
+        if skipped:
+            print(f"  {skipped} entities skipped (not yet classified).")
+
     # ── SapBERT blocklist similarity scan ────────────────────────────────────
 
     def sapbert_blocklist_scan(

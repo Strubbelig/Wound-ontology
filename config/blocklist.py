@@ -482,6 +482,27 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "vehicle control (vc)",
     "within-subject comparative study",
     "woc nurse",
+    # ── added interactively ─────────────────────────────────────────────
+    "advanced manufacturing technology",
+    "aerosol chamber",
+    "article",
+    "artificial intelligence-based shape analysis",
+    "body mass index >35 kg/m2",
+    "case finding and treatment",
+    "corynebacterium striatum",
+    "endoscopic ultrasound-guided transmural dual drainage combined with lavage and intermittent negative pressure drainage",
+    "exosome-rich conditioned medium",
+    "french society of geriatrics and gerontology",
+    "g score",
+    "hook plate fixation",
+    "horizontal ladder locomotor assessment",
+    "imagej software",
+    "item-level content validity index",
+    "progenitor exhaustion",
+    "snai1",
+    "standardized diagnostic system",
+    "turkish version of the scale",
+    "vacstent colon",
 }
 
 SUSPICIOUS_KEYWORDS: frozenset[str] = frozenset({
