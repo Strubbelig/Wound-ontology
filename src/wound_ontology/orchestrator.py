@@ -194,9 +194,6 @@ class Orchestrator:
             pipeline.mapping_cleaner.review_mappings()
             pipeline.mapping_cleaner.apply(pipeline.store)
         """
-        print("[Orchestrator] Cleaning store before mapping...")
-        self.run_clean_store()
-
         freq = self._collect_store_terms_with_freq()
         print(f"[Orchestrator] Building SapBERT term mapping from {len(freq)} unique store terms "
               f"(threshold={similarity_threshold})...")

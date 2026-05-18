@@ -100,19 +100,18 @@ class StoreCleaner(BaseCleaner):
                         freq[attr.split(':', 1)[1].strip()] += 1
 
         ranked = sorted(
-            [(t, c, self._score(t)) for t, c in freq.items() if self._score(t) > 0],
+            [(t, c, self._score(t)) for t, c in freq.items() if 0 < self._score(t) < 100],
             key=lambda x: (-x[2], -x[1]),
         )
         if not ranked:
-            print("No suspicious or blocked targets found.")
+            print("No suspicious targets found.")
             return
 
         to_block: set[str] = set()
         to_whitelist: set[str] = set()
 
         print(f"\n{'='*80}")
-        print(f"  {len(ranked)} suspicious/blocked targets")
-        print(f"  ✗ = blocklist  |  ✓ = whitelisted  |  ? = suspicious")
+        print(f"  {len(ranked)} suspicious targets (already-blocked excluded)")
         print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  ESC = exit")
         print(f"{'='*80}\n")
 
@@ -122,8 +121,7 @@ class StoreCleaner(BaseCleaner):
             if tlower in self.whitelist or tbase in self.whitelist:
                 print(f"  ✓ (freq={count:>4})  '{target}'  — already whitelisted, skipping")
                 continue
-            flag = "✗" if score == 100.0 else "?"
-            answer = self._prompt(f"  [{flag}] (freq={count:>4})  '{target}'  in scope? [y/n/s] ").strip().lower()
+            answer = self._prompt(f"  [?] (freq={count:>4})  '{target}'  in scope? [y/n/s] ").strip().lower()
             if answer == "esc":
                 print("  Exiting review.")
                 break
@@ -261,21 +259,20 @@ class StoreCleaner(BaseCleaner):
         return ranked
 
     def review_susp_entities(self, store) -> None:
-        """Review suspicious and blocked entities using keyword scoring — whitelist (y), block (n), or skip (s)."""
+        """Review suspicious (not yet decided) entities — whitelist (y), block (n), or skip (s)."""
         self._reload_lists()
         ranked = [
-            (e, c, s, a) for e, c, s, a in self._collect_ranked(store) if s > 0
+            (e, c, s, a) for e, c, s, a in self._collect_ranked(store) if 0 < s < 100
         ]
         if not ranked:
-            print("No suspicious or blocked entities found.")
+            print("No suspicious entities found.")
             return
 
         to_block: set[str] = set()
         to_whitelist: set[str] = set()
 
         print(f"\n{'='*80}")
-        print(f"  {len(ranked)} suspicious/blocked entities")
-        print(f"  ✗ = blocklist  |  ✓ = whitelisted  |  ? = suspicious")
+        print(f"  {len(ranked)} suspicious entities (already-blocked excluded)")
         print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  ESC = exit")
         print(f"{'='*80}\n")
 
@@ -285,8 +282,7 @@ class StoreCleaner(BaseCleaner):
             if elower in self.whitelist or ebase in self.whitelist:
                 print(f"  ✓ (freq={count:>4})  '{entity}'  — already whitelisted, skipping")
                 continue
-            flag = "✗" if score == 100.0 else "?"
-            answer = self._prompt(f"  [{flag}] (freq={count:>4})  '{entity}'  in scope? [y/n/s] ").strip().lower()
+            answer = self._prompt(f"  [?] (freq={count:>4})  '{entity}'  in scope? [y/n/s] ").strip().lower()
             if answer == "esc":
                 print("  Exiting review.")
                 break
