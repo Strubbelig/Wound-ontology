@@ -258,8 +258,58 @@ class StoreCleaner(BaseCleaner):
         ranked.sort(key=lambda x: (-x[2], -x[1]))
         return ranked
 
-    def review_susp_entities(self, store) -> None:
-        """Review suspicious (not yet decided) entities — whitelist (y), block (n), or skip (s)."""
+    def _check_list_exclusivity(self, embedder, threshold: float) -> None:
+        """Warn if any whitelist term is semantically similar to a blocklist term."""
+        import numpy as np
+        from sklearn.metrics.pairwise import cosine_similarity
+
+        wl_terms = sorted(self.whitelist)
+        bl_terms = sorted(self.blocked_entities)
+        if not wl_terms or not bl_terms:
+            print("  (Skipping exclusivity check — one or both lists are empty.)")
+            return
+
+        print(f"\n[StoreCleaner] Checking list exclusivity "
+              f"({len(wl_terms)} whitelist × {len(bl_terms)} blocklist terms)...")
+        wl_embs = embedder.embed(wl_terms)
+        bl_embs = embedder.embed(bl_terms)
+        sim = cosine_similarity(wl_embs, bl_embs)   # (W, B)
+
+        conflicts: list[tuple[str, str, float]] = []
+        for wi, wt in enumerate(wl_terms):
+            max_bi  = int(sim[wi].argmax())
+            max_sim = float(sim[wi, max_bi])
+            if max_sim >= threshold:
+                conflicts.append((wt, bl_terms[max_bi], max_sim))
+
+        if not conflicts:
+            print(f"  ✓ Lists are exclusive (no overlap above {threshold}).")
+            return
+
+        print(f"\n  ⚠ {len(conflicts)} whitelist terms match a blocklist term "
+              f"(cos ≥ {threshold}) — whitelist takes priority:")
+        for wt, bt, s in sorted(conflicts, key=lambda x: -x[2]):
+            print(f"    cos={s:.3f}  whitelist='{wt}'  ≈  blocklist='{bt}'")
+        print("  Review config/blocklists.py manually to remove the redundant blocklist entries.")
+
+    def review_susp_entities(
+        self,
+        store,
+        embedder=None,
+        similarity_threshold: float = 0.92,
+    ) -> None:
+        """Review suspicious (not yet decided) entities.
+
+        Without embedder: shows all keyword-suspicious entities for manual review.
+        With embedder: first checks blocklist/whitelist exclusivity, then uses
+        SapBERT cosine similarity to pre-classify each suspicious entity:
+          - cosine ≥ threshold to blocklist only  → auto-block (not shown)
+          - cosine ≥ threshold to whitelist only  → auto-whitelist (not shown)
+          - fits neither or both                  → shown for manual review
+        """
+        import numpy as np
+        from sklearn.metrics.pairwise import cosine_similarity
+
         self._reload_lists()
         ranked = [
             (e, c, s, a) for e, c, s, a in self._collect_ranked(store) if 0 < s < 100
@@ -271,25 +321,121 @@ class StoreCleaner(BaseCleaner):
         to_block: set[str] = set()
         to_whitelist: set[str] = set()
 
-        print(f"\n{'='*80}")
-        print(f"  {len(ranked)} suspicious entities (already-blocked excluded)")
-        print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  ESC = exit")
-        print(f"{'='*80}\n")
+        if embedder is None:
+            # ── Keyword-only path ────────────────────────────────────────────
+            print(f"\n{'='*80}")
+            print(f"  {len(ranked)} suspicious entities (already-blocked excluded)")
+            print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  ESC = exit")
+            print(f"{'='*80}\n")
+            for entity, count, score, attrs in ranked:
+                elower = entity.strip().lower()
+                ebase = re.sub(r"\s*\([^)]*\)\s*$", "", elower).strip()
+                if elower in self.whitelist or ebase in self.whitelist:
+                    continue
+                answer = self._prompt(
+                    f"  [?] (freq={count:>4})  '{entity}'  in scope? [y/n/s] "
+                ).strip().lower()
+                if answer == "esc":
+                    print("  Exiting review.")
+                    break
+                if answer == "y":
+                    to_whitelist.add(entity)
+                elif answer == "n":
+                    to_block.add(entity)
+            self._save_review_results(to_block, to_whitelist, apply_hint="clean_entities")
+            return
+
+        # ── SapBERT-assisted path ────────────────────────────────────────────
+        self._check_list_exclusivity(embedder, similarity_threshold)
+
+        entities = [e for e, _, _, _ in ranked]
+        entity_idx = {e: i for i, e in enumerate(entities)}
+        bl_terms = sorted(self.blocked_entities)
+        wl_terms = sorted(self.whitelist)
+
+        print(f"\n[StoreCleaner] Embedding {len(entities)} suspicious entities...")
+        ent_embs = embedder.embed(entities)
+
+        if bl_terms:
+            print(f"[StoreCleaner] Embedding {len(bl_terms)} blocklist terms...")
+            bl_embs  = embedder.embed(bl_terms)
+            bl_sim   = cosine_similarity(ent_embs, bl_embs)   # (E, B)
+            bl_max_s = bl_sim.max(axis=1)
+            bl_max_i = bl_sim.argmax(axis=1)
+        else:
+            bl_max_s = np.zeros(len(entities))
+            bl_max_i = np.zeros(len(entities), dtype=int)
+            bl_terms = []
+
+        if wl_terms:
+            print(f"[StoreCleaner] Embedding {len(wl_terms)} whitelist terms...")
+            wl_embs  = embedder.embed(wl_terms)
+            wl_sim   = cosine_similarity(ent_embs, wl_embs)   # (E, W)
+            wl_max_s = wl_sim.max(axis=1)
+            wl_max_i = wl_sim.argmax(axis=1)
+        else:
+            wl_max_s = np.zeros(len(entities))
+            wl_max_i = np.zeros(len(entities), dtype=int)
+            wl_terms = []
+
+        auto_blocked: list[tuple[str, float, str]] = []
+        auto_wl:      list[tuple[str, float, str]] = []
+        for_review:   list[tuple[str, int, float, list, float, str, float, str]] = []
 
         for entity, count, score, attrs in ranked:
             elower = entity.strip().lower()
-            ebase = re.sub(r"\s*\([^)]*\)\s*$", "", elower).strip()
+            ebase  = re.sub(r"\s*\([^)]*\)\s*$", "", elower).strip()
             if elower in self.whitelist or ebase in self.whitelist:
-                print(f"  ✓ (freq={count:>4})  '{entity}'  — already whitelisted, skipping")
-                continue
-            answer = self._prompt(f"  [?] (freq={count:>4})  '{entity}'  in scope? [y/n/s] ").strip().lower()
-            if answer == "esc":
-                print("  Exiting review.")
-                break
-            if answer == "y":
-                to_whitelist.add(entity)
-            elif answer == "n":
-                to_block.add(entity)
+                continue  # already explicit — skip
+
+            idx    = entity_idx[entity]
+            bl_s   = float(bl_max_s[idx])
+            wl_s   = float(wl_max_s[idx])
+            near_bl = bl_terms[bl_max_i[idx]] if bl_terms else "—"
+            near_wl = wl_terms[wl_max_i[idx]] if wl_terms else "—"
+            fits_bl = bl_s >= similarity_threshold
+            fits_wl = wl_s >= similarity_threshold
+
+            if fits_wl and not fits_bl:
+                auto_wl.append((entity, wl_s, near_wl))
+            elif fits_bl and not fits_wl:
+                auto_blocked.append((entity, bl_s, near_bl))
+            else:
+                for_review.append((entity, count, score, attrs, bl_s, near_bl, wl_s, near_wl))
+
+        if auto_blocked:
+            print(f"\n  Auto-blocking {len(auto_blocked)} entities "
+                  f"(cos ≥ {similarity_threshold} to blocklist only):")
+            for e, s, n in sorted(auto_blocked, key=lambda x: -x[1]):
+                print(f"    cos={s:.3f}  '{e}'  ≈  '{n}'")
+            to_block.update(e.strip().lower() for e, _, _ in auto_blocked)
+
+        if auto_wl:
+            print(f"\n  Auto-whitelisting {len(auto_wl)} entities "
+                  f"(cos ≥ {similarity_threshold} to whitelist only):")
+            for e, s, n in sorted(auto_wl, key=lambda x: -x[1]):
+                print(f"    cos={s:.3f}  '{e}'  ≈  '{n}'")
+            to_whitelist.update(e.strip().lower() for e, _, _ in auto_wl)
+
+        if for_review:
+            print(f"\n{'='*80}")
+            print(f"  {len(for_review)} ambiguous entities (fit neither list clearly)")
+            print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  ESC = exit")
+            print(f"{'='*80}\n")
+            for entity, count, score, attrs, bl_s, near_bl, wl_s, near_wl in for_review:
+                context = f"bl={bl_s:.3f}(≈'{near_bl}'), wl={wl_s:.3f}(≈'{near_wl}')"
+                answer = self._prompt(
+                    f"  [?] (freq={count:>4}, {context})  '{entity}'  in scope? [y/n/s] "
+                ).strip().lower()
+                if answer == "esc":
+                    print("  Exiting review.")
+                    break
+                if answer == "y":
+                    to_whitelist.add(entity)
+                elif answer == "n":
+                    to_block.add(entity)
+        else:
+            print("\n  All suspicious entities auto-classified — no manual review needed.")
 
         self._save_review_results(to_block, to_whitelist, apply_hint="clean_entities")
 

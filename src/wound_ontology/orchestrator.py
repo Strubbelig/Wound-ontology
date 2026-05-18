@@ -206,6 +206,24 @@ class Orchestrator:
         print("[Orchestrator] Term mapping ready — review with mapping_cleaner.")
         return mapping
 
+    def review_susp_entities(self, similarity_threshold: float = 0.92) -> None:
+        """
+        SapBERT-assisted review of keyword-suspicious store entities.
+
+        First checks that blocklist and whitelist contain no overlapping synonyms.
+        Then embeds each suspicious entity and compares to both lists:
+          - clear blocklist match  → auto-blocked (written to METHODOLOGY_BLOCKLIST)
+          - clear whitelist match  → auto-whitelisted (written to WHITELIST)
+          - ambiguous              → shown for manual review
+
+        Call pipeline.run_clean_store() afterwards to apply blocklist changes.
+        """
+        self.cleaner.review_susp_entities(
+            self.store,
+            embedder=self._ensure_embedder(),
+            similarity_threshold=similarity_threshold,
+        )
+
     def run_blocklist_similarity_scan(self, similarity_threshold: float = 0.97) -> None:
         """
         Use SapBERT to find store entities semantically similar to blocklist terms.
