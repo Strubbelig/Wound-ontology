@@ -3,11 +3,12 @@ import importlib
 import re
 from pathlib import Path
 
-import config.blocklist as _blocklists_module
+import config.blocklist as _blocklist_module
+import config.whitelist as _whitelist_module
 from config.blocklist import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST
 from config.blocklist import SUSPICIOUS_KEYWORDS as _SUSPICIOUS_KEYWORDS
-from config.blocklist import WHITELIST as _WHITELIST
 from config.blocklist import is_noise_term as _is_noise_term
+from config.whitelist import WHITELIST as _WHITELIST
 
 
 class BaseCleaner:
@@ -15,10 +16,7 @@ class BaseCleaner:
     Shared base for StoreCleaner and MappingCleaner.
 
     Provides blocklist/whitelist management, scoring, interactive review helpers,
-    and persistence methods for config/blocklists.py.
-
-    The blocklist and whitelist are updated by writing back to the source file
-    `config/blocklists.py`, so changes are immediately reflected by reloading the module.
+    and persistence methods for config/blocklist.py and config/whitelist.py.
     """
 
     def __init__(
@@ -32,10 +30,11 @@ class BaseCleaner:
         self.whitelist: frozenset[str] = _WHITELIST
 
     def _reload_lists(self) -> None:
-        """Reload blocklists from disk — changes to blocklists.py take effect without a kernel restart."""
-        importlib.reload(_blocklists_module)
-        self.blocked_entities = _blocklists_module.METHODOLOGY_BLOCKLIST | self._extra_blocked
-        self.whitelist = _blocklists_module.WHITELIST
+        """Reload blocklist and whitelist from disk without a kernel restart."""
+        importlib.reload(_blocklist_module)
+        importlib.reload(_whitelist_module)
+        self.blocked_entities = _blocklist_module.METHODOLOGY_BLOCKLIST | self._extra_blocked
+        self.whitelist = _whitelist_module.WHITELIST
 
     # ── Classification helpers ────────────────────────────────────────────────
 
@@ -136,11 +135,15 @@ class BaseCleaner:
 
     @staticmethod
     def _blocklist_path() -> Path:
-        return Path(__file__).resolve().parents[3] / "config" / "blocklists.py"
+        return Path(__file__).resolve().parents[3] / "config" / "blocklist.py"
+
+    @staticmethod
+    def _whitelist_path() -> Path:
+        return Path(__file__).resolve().parents[3] / "config" / "whitelist.py"
 
     @staticmethod
     def _append_to_blocklist(new_terms: set[str]) -> int:
-        """Append new_terms to METHODOLOGY_BLOCKLIST in config/blocklists.py."""
+        """Append new_terms to METHODOLOGY_BLOCKLIST in config/blocklist.py."""
         path = BaseCleaner._blocklist_path()
         lines = path.read_text().splitlines()
         in_block = False
@@ -152,9 +155,9 @@ class BaseCleaner:
                 insert_at = i
                 break
         if insert_at == -1:
-            raise RuntimeError("Could not find METHODOLOGY_BLOCKLIST closing brace in blocklists.py")
-        importlib.reload(_blocklists_module)
-        truly_new = sorted(t.lower() for t in new_terms if t.lower() not in _blocklists_module.METHODOLOGY_BLOCKLIST)
+            raise RuntimeError("Could not find METHODOLOGY_BLOCKLIST closing brace in blocklist.py")
+        importlib.reload(_blocklist_module)
+        truly_new = sorted(t.lower() for t in new_terms if t.lower() not in _blocklist_module.METHODOLOGY_BLOCKLIST)
         if not truly_new:
             return 0
         new_lines = ['    # ── added interactively ─────────────────────────────────────────────']
@@ -165,8 +168,8 @@ class BaseCleaner:
 
     @staticmethod
     def _append_to_whitelist(new_terms: set[str]) -> int:
-        """Append new_terms to WHITELIST in config/blocklists.py."""
-        path = BaseCleaner._blocklist_path()
+        """Append new_terms to WHITELIST in config/whitelist.py."""
+        path = BaseCleaner._whitelist_path()
         lines = path.read_text().splitlines()
         in_block = False
         insert_at = -1
@@ -177,9 +180,9 @@ class BaseCleaner:
                 insert_at = i
                 break
         if insert_at == -1:
-            raise RuntimeError("Could not find WHITELIST closing brace in blocklists.py")
-        importlib.reload(_blocklists_module)
-        truly_new = sorted(t.lower() for t in new_terms if t.lower() not in _blocklists_module.WHITELIST)
+            raise RuntimeError("Could not find WHITELIST closing brace in whitelist.py")
+        importlib.reload(_whitelist_module)
+        truly_new = sorted(t.lower() for t in new_terms if t.lower() not in _whitelist_module.WHITELIST)
         if not truly_new:
             return 0
         new_lines = [f'    "{term}",' for term in truly_new]
@@ -189,8 +192,8 @@ class BaseCleaner:
 
     @staticmethod
     def _remove_from_whitelist(terms: set[str]) -> int:
-        """Remove terms from WHITELIST in config/blocklists.py."""
-        path = BaseCleaner._blocklist_path()
+        """Remove terms from WHITELIST in config/whitelist.py."""
+        path = BaseCleaner._whitelist_path()
         lines = path.read_text().splitlines()
         to_remove = {t.strip().lower() for t in terms}
         in_block = False
