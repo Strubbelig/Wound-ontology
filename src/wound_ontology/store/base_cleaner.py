@@ -82,13 +82,13 @@ class BaseCleaner:
             return "esc"
 
     def _review_to_whitelist(self, items: list[str], label: str) -> None:
-        """Per-item: y = move to WHITELIST, n = keep blocked, s = skip, ESC = exit."""
+        """Per-item: y = move to WHITELIST, n = keep blocked, s = skip, q = quit all."""
         to_whitelist: set[str] = set()
         print(f"  {len(items)} blocked {label}(s) to review")
-        print(f"  y = valid concept → WHITELIST  |  n = keep blocked  |  s = skip  |  ESC = exit\n")
+        print(f"  y = valid concept → WHITELIST  |  n = keep blocked  |  s = skip  |  q = quit all\n")
         for item in items:
-            answer = self._prompt(f"  '{item}' in scope? [y/n/s] ").strip().lower()
-            if answer == "esc":
+            answer = self._prompt(f"  '{item}' in scope? [y/n/s/q] ").strip().lower()
+            if answer in ("esc", "q"):
                 print("  Exiting review.")
                 break
             if answer == "y":
@@ -101,13 +101,13 @@ class BaseCleaner:
             print(f"  {kept} {label}(s) kept blocked or skipped.")
 
     def _review_to_blocklist(self, items: list[str], label: str) -> None:
-        """Per-item: y = keep in whitelist, n = move to BLOCKLIST + remove from whitelist, s = skip, ESC = exit."""
+        """Per-item: y = keep in whitelist, n = move to BLOCKLIST + remove from whitelist, s = skip, q = quit all."""
         to_block: set[str] = set()
         print(f"  {len(items)} whitelisted {label}(s) to review")
-        print(f"  y = keep in whitelist  |  n = move to BLOCKLIST  |  s = skip  |  ESC = exit\n")
+        print(f"  y = keep in whitelist  |  n = move to BLOCKLIST  |  s = skip  |  q = quit all\n")
         for item in items:
-            answer = self._prompt(f"  '{item}' still in scope? [y/n/s] ").strip().lower()
-            if answer == "esc":
+            answer = self._prompt(f"  '{item}' still in scope? [y/n/s/q] ").strip().lower()
+            if answer in ("esc", "q"):
                 print("  Exiting review.")
                 break
             if answer == "n":

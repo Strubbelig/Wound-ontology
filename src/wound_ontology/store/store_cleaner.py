@@ -112,7 +112,7 @@ class StoreCleaner(BaseCleaner):
 
         print(f"\n{'='*80}")
         print(f"  {len(ranked)} suspicious targets (already-blocked excluded)")
-        print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  ESC = exit")
+        print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  q = quit all")
         print(f"{'='*80}\n")
 
         for target, count, score in ranked:
@@ -121,8 +121,8 @@ class StoreCleaner(BaseCleaner):
             if tlower in self.whitelist or tbase in self.whitelist:
                 print(f"  ✓ (freq={count:>4})  '{target}'  — already whitelisted, skipping")
                 continue
-            answer = self._prompt(f"  [?] (freq={count:>4})  '{target}'  in scope? [y/n/s] ").strip().lower()
-            if answer == "esc":
+            answer = self._prompt(f"  [?] (freq={count:>4})  '{target}'  in scope? [y/n/s/q] ").strip().lower()
+            if answer in ("esc", "q"):
                 print("  Exiting review.")
                 break
             if answer == "y":
@@ -325,7 +325,7 @@ class StoreCleaner(BaseCleaner):
             # ── Keyword-only path ────────────────────────────────────────────
             print(f"\n{'='*80}")
             print(f"  {len(ranked)} suspicious entities (already-blocked excluded)")
-            print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  ESC = exit")
+            print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  q = quit all")
             print(f"{'='*80}\n")
             for entity, count, score, attrs in ranked:
                 elower = entity.strip().lower()
@@ -333,9 +333,9 @@ class StoreCleaner(BaseCleaner):
                 if elower in self.whitelist or ebase in self.whitelist:
                     continue
                 answer = self._prompt(
-                    f"  [?] (freq={count:>4})  '{entity}'  in scope? [y/n/s] "
+                    f"  [?] (freq={count:>4})  '{entity}'  in scope? [y/n/s/q] "
                 ).strip().lower()
-                if answer == "esc":
+                if answer in ("esc", "q"):
                     print("  Exiting review.")
                     break
                 if answer == "y":
@@ -420,14 +420,14 @@ class StoreCleaner(BaseCleaner):
         if for_review:
             print(f"\n{'='*80}")
             print(f"  {len(for_review)} ambiguous entities (fit neither list clearly)")
-            print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  ESC = exit")
+            print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  q = quit all")
             print(f"{'='*80}\n")
             for entity, count, score, attrs, bl_s, near_bl, wl_s, near_wl in for_review:
                 context = f"bl={bl_s:.3f}(≈'{near_bl}'), wl={wl_s:.3f}(≈'{near_wl}')"
                 answer = self._prompt(
-                    f"  [?] (freq={count:>4}, {context})  '{entity}'  in scope? [y/n/s] "
+                    f"  [?] (freq={count:>4}, {context})  '{entity}'  in scope? [y/n/s/q] "
                 ).strip().lower()
-                if answer == "esc":
+                if answer in ("esc", "q"):
                     print("  Exiting review.")
                     break
                 if answer == "y":
