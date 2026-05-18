@@ -285,11 +285,28 @@ class StoreCleaner(BaseCleaner):
             print(f"  ✓ Lists are exclusive (no overlap above {threshold}).")
             return
 
-        print(f"\n  ⚠ {len(conflicts)} whitelist terms match a blocklist term "
-              f"(cos ≥ {threshold}) — whitelist takes priority:")
-        for wt, bt, s in sorted(conflicts, key=lambda x: -x[2]):
-            print(f"    cos={s:.3f}  whitelist='{wt}'  ≈  blocklist='{bt}'")
-        print("  Review config/blocklists.py manually to remove the redundant blocklist entries.")
+        conflicts.sort(key=lambda x: -x[2])
+        print(f"\n  ⚠ {len(conflicts)} blocklist terms match a whitelisted term (cos ≥ {threshold}).")
+        print(f"  Whitelist takes priority — you can add the blocklist term to whitelist too.")
+        print(f"  y = add blocklist term to WHITELIST  |  n = leave as-is  |  q = quit\n")
+
+        to_whitelist: set[str] = set()
+        for wt, bt, s in conflicts:
+            answer = self._prompt(
+                f"  cos={s:.3f}  whitelist='{wt}'  ≈  blocklist='{bt}'  — add '{bt}' to WHITELIST? [y/n/q] "
+            ).strip().lower()
+            if answer in ("esc", "q"):
+                print("  Exiting.")
+                break
+            if answer == "y":
+                to_whitelist.add(bt)
+
+        if to_whitelist:
+            added = self._append_to_whitelist(to_whitelist)
+            print(f"\n  ✓ {added} term(s) added to WHITELIST.")
+        skipped = len(conflicts) - len(to_whitelist)
+        if skipped:
+            print(f"  {skipped} conflict(s) left as-is (whitelist still takes priority).")
 
     def review_susp_entities(
         self,
