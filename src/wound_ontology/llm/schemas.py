@@ -46,3 +46,12 @@ class SemanticNameResponse(BaseModel):
 
 class ScopeCheckResponse(BaseModel):
     inappropriate: list[str]  # entity names from the input that are out of scope
+
+
+class MereRelationResult(BaseModel):
+    child: str
+    parent: str
+    verdict: str  # "keep" | "is_a" | "drop"
+
+class MereRelationBatchResponse(BaseModel):
+    results: list[MereRelationResult]

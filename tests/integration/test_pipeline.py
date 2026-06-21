@@ -249,10 +249,11 @@ def test_enrich_owl(pipeline, tmp_data_dir):
     print(f"Size delta: +{enriched_owl.stat().st_size - plain_owl.stat().st_size:,} bytes")
 
     # Print first class with a WOND_ IRI so we can visually verify
-    from wound_ontology.tbox_abox_reasoner.for_owl.tbox import TBox
-    verifier = TBox().load(str(enriched_owl))
+    from wound_ontology.owl import OWLOntology
+    from wound_ontology.data_manager.data_manager import DataManager
+    verifier = OWLOntology.load(str(enriched_owl), DataManager())
     sample = [(cls.iri, cls.label.first() if cls.label else None)
-              for cls in verifier._onto.classes()
+              for cls in verifier.onto.classes()
               if ONTOLOGY_ID_PREFIX + "_" in cls.iri][:5]
     print("\nSample enriched classes (IRI → label):")
     for iri, label in sample:

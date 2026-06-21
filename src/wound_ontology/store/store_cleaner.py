@@ -71,13 +71,24 @@ class StoreCleaner(BaseCleaner):
     # ── Interactive review methods ────────────────────────────────────────────
 
     def review_blocked_entities(self, store) -> None:
-        """Review blocked entities in the store — keep blocked (n) or move to WHITELIST (y)."""
+        """Review entities blocked by automatic rules (keyword/noise) — not explicit blocklist entries.
+
+        Only surfaces false-positive candidates: entities in the store that are blocked
+        solely because they matched KEYWORD_BLOCKLIST or the noise filter, not because
+        they were explicitly added to METHODOLOGY_BLOCKLIST.
+        """
         self._reload_lists()
-        blocked = sorted(e for e in store.entities if self._is_blocked(e))
-        if not blocked:
-            print("No blocked entities in store.")
+        auto_blocked = sorted(
+            e for e in store.entities
+            if self._is_blocked(e)
+            and not (e.strip().lower() in self.blocked_entities
+                     or re.sub(r"\s*\([^)]*\)\s*$", "", e.strip().lower()).strip()
+                     in self.blocked_entities)
+        )
+        if not auto_blocked:
+            print("No auto-blocked entities to review.")
             return
-        self._review_to_whitelist(blocked, label="entity")
+        self._review_to_whitelist(auto_blocked, label="entity")
 
     def review_blocked_targets(self, store) -> None:
         """Review blocked targets in the store — keep blocked (n) or move to WHITELIST (y)."""
@@ -88,9 +99,31 @@ class StoreCleaner(BaseCleaner):
             return
         self._review_to_whitelist(blocked, label="target")
 
-    def review_susp_targets(self, store) -> None:
-        """Review suspicious and blocked targets — whitelist (y), block (n), or skip (s)."""
+    def review_susp_targets(
+        self,
+        store,
+        embedder=None,
+        high_threshold: float = 0.92,
+        low_threshold: float = 0.40,
+        save_skipped: bool = False,
+        llm=None,
+        llm_batch_size: int = 50,
+        run_sync=None,
+    ) -> None:
+        """
+        Review undecided targets by SapBERT similarity to the nearest blocklist term.
+
+          score ≥ high_threshold → auto-block
+          score < low_threshold  → silently skip (saved to WHITELIST if save_skipped=True)
+          zone (between)         → LLM batch filter if llm provided, then manual for remainder
+        """
+        if self._abort_review:
+            return
+        import numpy as np
+        from sklearn.metrics.pairwise import cosine_similarity
+
         self._reload_lists()
+        seen: set[str] = self._load_seen()
 
         freq: Counter = Counter()
         for pmid_data in store._dict.values():
@@ -99,38 +132,166 @@ class StoreCleaner(BaseCleaner):
                     if ':' in attr:
                         freq[attr.split(':', 1)[1].strip()] += 1
 
-        ranked = sorted(
-            [(t, c, self._score(t)) for t, c in freq.items() if 0 < self._score(t) < 100],
-            key=lambda x: (-x[2], -x[1]),
-        )
-        if not ranked:
-            print("No suspicious targets found.")
+        undecided: list[str] = []
+        for target in freq:
+            if self._score(target) == 100.0:
+                continue
+            tlower = target.strip().lower()
+            tbase  = re.sub(r"\s*\([^)]*\)\s*$", "", tlower).strip()
+            if (tlower not in self.whitelist and tbase not in self.whitelist
+                    and not self.blocker.white_kw.match(target)
+                    and tlower not in seen and tbase not in seen):
+                undecided.append(target)
+
+        if not undecided or not embedder:
+            print("No undecided targets found.")
             return
 
-        to_block: set[str] = set()
-        to_whitelist: set[str] = set()
+        store_blocked = {t.strip().lower() for t in freq if self._is_blocked(t)}
+        bl_terms = sorted(self.blocked_entities | store_blocked)
+        if not bl_terms:
+            print("Blocklist is empty — skipping.")
+            return
+
+        print(f"[StoreCleaner] Embedding {len(undecided)} targets...")
+        tgt_embs = np.array(embedder.embed(undecided))   # (U, H)
+        tgt_idx  = {t: i for i, t in enumerate(undecided)}
+        print(f"[StoreCleaner] Embedding {len(bl_terms)} blocklist terms "
+              f"({len(store_blocked)} from store keywords)...")
+        bl_embs  = np.array(embedder.embed(bl_terms))    # (B, H)
+
+        sim = cosine_similarity(tgt_embs, bl_embs)       # (U, B)
+        scores: dict[str, tuple[float, str]] = {
+            t: (float(sim[i].max()), bl_terms[int(sim[i].argmax())])
+            for i, t in enumerate(undecided)
+        }
+
+        processed: set[str] = set()
+
+        auto_blocked = [t for t in undecided if scores[t][0] >= high_threshold]
+        if auto_blocked:
+            print(f"\n  Auto-blocking {len(auto_blocked)} targets (cos ≥ {high_threshold}):")
+            for t in sorted(auto_blocked, key=lambda t: -scores[t][0]):
+                s, n = scores[t]
+                print(f"    cos={s:.3f}  '{t}'  ≈  '{n}'")
+            ab_lower = {t.strip().lower() for t in auto_blocked}
+            self._append_to_blocklist(ab_lower)
+            self._remove_from_whitelist(ab_lower)
+            self._reload_lists()
+            processed.update(auto_blocked)
+
+        skipped_list = [t for t in undecided if scores[t][0] < low_threshold]
+        if skipped_list:
+            if save_skipped:
+                self._append_to_whitelist(set(skipped_list))
+                self._reload_lists()
+                print(f"  {len(skipped_list)} in-scope targets (cos < {low_threshold}) saved to WHITELIST.")
+            else:
+                print(f"  Silently skipping {len(skipped_list)} targets with cos < {low_threshold}.")
+
+        def _queue():
+            return sorted(
+                [t for t in undecided
+                 if t not in processed and low_threshold <= scores[t][0] < high_threshold],
+                key=lambda t: -scores[t][0],
+            )
+
+        queue = _queue()
+        if not queue:
+            if not auto_blocked:
+                print("  No targets in the review zone — nothing to do.")
+            return
+
+        # ── LLM batch filter ──────────────────────────────────────────────────
+        if llm and run_sync and queue:
+            print(f"\n  Running LLM scope filter on {len(queue)} zone targets "
+                  f"(batches of {llm_batch_size})...")
+
+            async def _llm_filter():
+                flagged: list[str] = []
+                for i in range(0, len(queue), llm_batch_size):
+                    batch = queue[i:i + llm_batch_size]
+                    candidates = [(t, freq[t], []) for t in batch]
+                    flagged.extend(await llm.classify_scope_batch(candidates))
+                return flagged
+
+            llm_blocked = run_sync(_llm_filter())
+            llm_blocked_set = {t.strip().lower() for t in llm_blocked}
+
+            if llm_blocked:
+                print(f"  LLM flagged {len(llm_blocked)} targets as out of scope → BLOCKLIST")
+                self._append_to_blocklist(llm_blocked_set)
+                self._remove_from_whitelist(llm_blocked_set)
+                self._reload_lists()
+                processed.update(llm_blocked)
+
+            llm_kept = [t for t in queue if t not in processed]
+            if llm_kept:
+                self._append_to_whitelist(set(llm_kept))
+                self._reload_lists()
+                print(f"  LLM kept {len(llm_kept)} targets as in scope → WHITELIST")
+                processed.update(llm_kept)
+
+            queue = _queue()
+
+        if not queue:
+            return
 
         print(f"\n{'='*80}")
-        print(f"  {len(ranked)} suspicious targets (already-blocked excluded)")
+        print(f"  {len(queue)} targets for manual review (cos {low_threshold}–{high_threshold})")
         print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  q = quit all")
         print(f"{'='*80}\n")
 
-        for target, count, score in ranked:
-            tlower = target.strip().lower()
-            tbase = re.sub(r"\s*\([^)]*\)\s*$", "", tlower).strip()
-            if tlower in self.whitelist or tbase in self.whitelist:
-                print(f"  ✓ (freq={count:>4})  '{target}'  — already whitelisted, skipping")
+        while queue:
+            target = queue.pop(0)
+            if target in processed:
                 continue
-            answer = self._prompt(f"  [?] (freq={count:>4})  '{target}'  in scope? [y/n/s/q] ").strip().lower()
+            score, nearest = scores[target]
+            answer = self._prompt(
+                f"  [?] (freq={freq[target]:>4}, cos={score:.3f} ≈ '{nearest}')  '{target}'  in scope? [y/n/s/q] "
+            ).strip().lower()
             if answer in ("esc", "q"):
+                self._abort_review = True
                 print("  Exiting review.")
                 break
             if answer == "y":
-                to_whitelist.add(target)
+                self._append_to_whitelist({target})
+                self._remove_from_blocklist({target})
+                self._reload_lists()
+                processed.add(target)
+                seen.add(target.strip().lower()); self._save_seen(seen)
             elif answer == "n":
-                to_block.add(target)
-
-        self._save_review_results(to_block, to_whitelist, apply_hint="clean_targets")
+                tl = target.strip().lower()
+                self._append_to_blocklist({tl})
+                self._remove_from_whitelist({tl})
+                self._reload_lists()
+                processed.add(target)
+                seen.add(tl); self._save_seen(seen)
+                # ── Incremental update ────────────────────────────────────────
+                new_emb  = tgt_embs[tgt_idx[target]].reshape(1, -1)
+                remaining = [t for t in undecided if t not in processed]
+                if remaining:
+                    r_idx    = [tgt_idx[t] for t in remaining]
+                    new_sims = cosine_similarity(tgt_embs[r_idx], new_emb).ravel()
+                    newly_auto: list[str] = []
+                    for t, ns in zip(remaining, new_sims):
+                        if ns > scores[t][0]:
+                            scores[t] = (float(ns), target)
+                        if scores[t][0] >= high_threshold:
+                            newly_auto.append(t)
+                    if newly_auto:
+                        print(f"\n  → {len(newly_auto)} target(s) now above threshold:")
+                        for t in sorted(newly_auto, key=lambda t: -scores[t][0]):
+                            s, n = scores[t]
+                            print(f"    cos={s:.3f}  '{t}'  ≈  '{n}'")
+                        na_lower = {t.strip().lower() for t in newly_auto}
+                        self._append_to_blocklist(na_lower)
+                        self._remove_from_whitelist(na_lower)
+                        self._reload_lists()
+                        processed.update(newly_auto)
+                    queue = _queue()
+            elif answer == "s":
+                seen.add(target.strip().lower()); self._save_seen(seen)
 
     def review_good_entities(self, store) -> None:
         """Review whitelisted entities present in the store — keep (y) or move to BLOCKLIST (n)."""
@@ -235,31 +396,70 @@ class StoreCleaner(BaseCleaner):
 
     # ── Candidate scanning ────────────────────────────────────────────────────
 
-    def _collect_ranked(self, store) -> list[tuple[str, int, float, list[str]]]:
+    def _collect_ranked(
+        self,
+        store,
+        embedder=None,
+    ) -> list[tuple[str, int, float, list[str], str]]:
         """
-        Return all unique entities sorted by (score desc, freq desc).
-        Each tuple: (entity_name, pmid_count, score, sample_true_attrs).
+        Return entities sorted by descending out-of-scope likelihood.
+
+        Tuple: (entity, pmid_freq, score, sample_attrs, nearest_bl_term)
+          score = 100.0  : explicitly blocked or noise
+          score = 0.0    : whitelisted or no blocklist similarity
+          score ∈ (0, 1) : SapBERT cosine similarity to nearest blocklist term
         """
+        from sklearn.metrics.pairwise import cosine_similarity
+
         freq: Counter = Counter()
         sample_attrs: dict[str, list[str]] = {}
-
         for pmid_data in store._dict.values():
             for entity, attrs in pmid_data.get("entities", {}).items():
                 freq[entity] += 1
                 if entity not in sample_attrs:
-                    sample_attrs[entity] = [
-                        a for a, v in attrs.items() if v == 1.0
-                    ][:4]
+                    sample_attrs[entity] = [a for a, v in attrs.items() if v == 1.0][:4]
 
-        ranked = [
-            (entity, count, self._score(entity), sample_attrs.get(entity, []))
-            for entity, count in freq.items()
-        ]
-        ranked.sort(key=lambda x: (-x[2], -x[1]))
-        return ranked
+        entities = list(freq.keys())
+        decided: dict[str, tuple[float, str]] = {}
+        undecided: list[str] = []
+        for entity in entities:
+            s = self._score(entity)
+            if s == 100.0:
+                decided[entity] = (100.0, "")
+            else:
+                lower = entity.strip().lower()
+                base = re.sub(r"\s*\([^)]*\)\s*$", "", lower).strip()
+                if lower in self.whitelist or base in self.whitelist:
+                    decided[entity] = (0.0, "")
+                else:
+                    undecided.append(entity)
+
+        sapbert: dict[str, tuple[float, str]] = {}
+        bl_terms = sorted(self.blocked_entities)
+        if embedder and undecided and bl_terms:
+            print(f"[StoreCleaner] Embedding {len(undecided)} entities for SapBERT ranking...")
+            ent_embs = embedder.embed(undecided)
+            bl_embs  = embedder.embed(bl_terms)
+            sim      = cosine_similarity(ent_embs, bl_embs)
+            max_sims = sim.max(axis=1)
+            max_idxs = sim.argmax(axis=1)
+            for i, entity in enumerate(undecided):
+                sapbert[entity] = (float(max_sims[i]), bl_terms[int(max_idxs[i])])
+        else:
+            for entity in undecided:
+                sapbert[entity] = (0.0, "")
+
+        result: list[tuple[str, int, float, list[str], str]] = []
+        for entity in entities:
+            sc, nb = decided.get(entity) or sapbert[entity]
+            result.append((entity, freq[entity], sc, sample_attrs.get(entity, []), nb))
+        result.sort(key=lambda x: (-x[2], -x[1]))
+        return result
 
     def _check_list_exclusivity(self, embedder, threshold: float) -> None:
         """Warn if any whitelist term is semantically similar to a blocklist term."""
+        if self._abort_review:
+            return
         import numpy as np
         from sklearn.metrics.pairwise import cosine_similarity
 
@@ -285,559 +485,245 @@ class StoreCleaner(BaseCleaner):
             print(f"  ✓ Lists are exclusive (no overlap above {threshold}).")
             return
 
-        conflicts.sort(key=lambda x: -x[2])
-        print(f"\n  ⚠ {len(conflicts)} blocklist terms match a whitelisted term (cos ≥ {threshold}).")
-        print(f"  Whitelist takes priority — you can add the blocklist term to whitelist too.")
-        print(f"  y = add blocklist term to WHITELIST  |  n = leave as-is  |  q = quit\n")
-
-        to_whitelist: set[str] = set()
+        # Deduplicate: one question per unique blocklist term (highest-sim pair shown).
+        seen: dict[str, tuple[str, float]] = {}
         for wt, bt, s in conflicts:
+            if bt not in seen or s > seen[bt][1]:
+                seen[bt] = (wt, s)
+        deduped = sorted(
+            [(wt, bt, s) for bt, (wt, s) in seen.items()],
+            key=lambda x: -x[2],
+        )
+
+        print(f"\n  ⚠ {len(deduped)} conflict(s) between whitelist and blocklist (cos ≥ {threshold}).")
+        print(f"  w = WHITELIST wins → move blocklist term to whitelist")
+        print(f"  b = BLOCKLIST wins → move whitelist term to blocklist")
+        print(f"  s = skip  |  q = quit\n")
+
+        resolved = 0
+        for wt, bt, s in deduped:
             answer = self._prompt(
-                f"  cos={s:.3f}  whitelist='{wt}'  ≈  blocklist='{bt}'  — add '{bt}' to WHITELIST? [y/n/q] "
+                f"  cos={s:.3f}  WL='{wt}'  ≈  BL='{bt}'  [w/b/s/q] "
             ).strip().lower()
             if answer in ("esc", "q"):
+                self._abort_review = True
                 print("  Exiting.")
                 break
-            if answer == "y":
-                to_whitelist.add(bt)
+            if answer == "w":
+                self._append_to_whitelist({bt})
+                self._remove_from_blocklist({bt})
+                self._reload_lists()
+                resolved += 1
+                print(f"    ✓ '{bt}' → WHITELIST.")
+            elif answer == "b":
+                self._append_to_blocklist({wt})
+                self._remove_from_whitelist({wt})
+                self._reload_lists()
+                resolved += 1
+                print(f"    ✓ '{wt}' → BLOCKLIST.")
 
-        if to_whitelist:
-            added = self._append_to_whitelist(to_whitelist)
-            print(f"\n  ✓ {added} term(s) added to WHITELIST.")
-        skipped = len(conflicts) - len(to_whitelist)
+        skipped = len(deduped) - resolved
         if skipped:
-            print(f"  {skipped} conflict(s) left as-is (whitelist still takes priority).")
+            print(f"  {skipped} conflict(s) skipped.")
 
     def review_susp_entities(
         self,
         store,
         embedder=None,
-        similarity_threshold: float = 0.92,
+        high_threshold: float = 0.92,
+        low_threshold: float = 0.40,
+        save_skipped: bool = False,
+        llm=None,
+        llm_batch_size: int = 50,
+        run_sync=None,
     ) -> None:
-        """Review suspicious (not yet decided) entities.
-
-        Without embedder: shows all keyword-suspicious entities for manual review.
-        With embedder: first checks blocklist/whitelist exclusivity, then uses
-        SapBERT cosine similarity to pre-classify each suspicious entity:
-          - cosine ≥ threshold to blocklist only  → auto-block (not shown)
-          - cosine ≥ threshold to whitelist only  → auto-whitelist (not shown)
-          - fits neither or both                  → shown for manual review
         """
+        Review undecided entities by SapBERT similarity to the nearest blocklist term.
+
+          score ≥ high_threshold → auto-block
+          score < low_threshold  → silently skip (saved to WHITELIST if save_skipped=True)
+          zone (between)         → LLM batch filter if llm provided, then manual for remainder
+        """
+        if self._abort_review:
+            return
         import numpy as np
         from sklearn.metrics.pairwise import cosine_similarity
 
         self._reload_lists()
-        ranked = [
-            (e, c, s, a) for e, c, s, a in self._collect_ranked(store) if 0 < s < 100
-        ]
-        if not ranked:
-            print("No suspicious entities found.")
+        seen: set[str] = self._load_seen()
+
+        freq: Counter = Counter()
+        sample_attrs: dict[str, list[str]] = {}
+        for pmid_data in store._dict.values():
+            for entity, attrs in pmid_data.get("entities", {}).items():
+                freq[entity] += 1
+                if entity not in sample_attrs:
+                    sample_attrs[entity] = [a for a, v in attrs.items() if v == 1.0][:3]
+
+        undecided: list[str] = []
+        for entity in freq:
+            if self._score(entity) == 100.0:
+                continue
+            lower = entity.strip().lower()
+            base  = re.sub(r"\s*\([^)]*\)\s*$", "", lower).strip()
+            if (lower not in self.whitelist and base not in self.whitelist
+                    and not self.blocker.white_kw.match(entity)
+                    and lower not in seen and base not in seen):
+                undecided.append(entity)
+
+        if not undecided or not embedder:
+            print("No undecided entities found.")
             return
 
-        to_block: set[str] = set()
-        to_whitelist: set[str] = set()
-
-        if embedder is None:
-            # ── Keyword-only path ────────────────────────────────────────────
-            print(f"\n{'='*80}")
-            print(f"  {len(ranked)} suspicious entities (already-blocked excluded)")
-            print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  q = quit all")
-            print(f"{'='*80}\n")
-            for entity, count, score, attrs in ranked:
-                elower = entity.strip().lower()
-                ebase = re.sub(r"\s*\([^)]*\)\s*$", "", elower).strip()
-                if elower in self.whitelist or ebase in self.whitelist:
-                    continue
-                answer = self._prompt(
-                    f"  [?] (freq={count:>4})  '{entity}'  in scope? [y/n/s/q] "
-                ).strip().lower()
-                if answer in ("esc", "q"):
-                    print("  Exiting review.")
-                    break
-                if answer == "y":
-                    to_whitelist.add(entity)
-                elif answer == "n":
-                    to_block.add(entity)
-            self._save_review_results(to_block, to_whitelist, apply_hint="clean_entities")
+        store_blocked = {e.strip().lower() for e in freq if self._is_blocked(e)}
+        bl_terms = sorted(self.blocked_entities | store_blocked)
+        if not bl_terms:
+            print("Blocklist is empty — skipping.")
             return
 
-        # ── SapBERT-assisted path ────────────────────────────────────────────
-        entities = [e for e, _, _, _ in ranked]
-        entity_idx = {e: i for i, e in enumerate(entities)}
-        bl_terms = sorted(self.blocked_entities)
-        wl_terms = sorted(self.whitelist)
+        print(f"[StoreCleaner] Embedding {len(undecided)} entities...")
+        ent_embs = np.array(embedder.embed(undecided))   # (U, H)
+        ent_idx  = {e: i for i, e in enumerate(undecided)}
+        print(f"[StoreCleaner] Embedding {len(bl_terms)} blocklist terms "
+              f"({len(store_blocked)} from store keywords)...")
+        bl_embs  = np.array(embedder.embed(bl_terms))    # (B, H)
 
-        print(f"\n[StoreCleaner] Embedding {len(entities)} suspicious entities...")
-        ent_embs = embedder.embed(entities)
+        sim = cosine_similarity(ent_embs, bl_embs)       # (U, B)
+        scores: dict[str, tuple[float, str]] = {
+            e: (float(sim[i].max()), bl_terms[int(sim[i].argmax())])
+            for i, e in enumerate(undecided)
+        }
 
-        if bl_terms:
-            print(f"[StoreCleaner] Embedding {len(bl_terms)} blocklist terms...")
-            bl_embs  = embedder.embed(bl_terms)
-            bl_sim   = cosine_similarity(ent_embs, bl_embs)   # (E, B)
-            bl_max_s = bl_sim.max(axis=1)
-            bl_max_i = bl_sim.argmax(axis=1)
-        else:
-            bl_max_s = np.zeros(len(entities))
-            bl_max_i = np.zeros(len(entities), dtype=int)
-            bl_terms = []
+        processed: set[str] = set()
 
-        if wl_terms:
-            print(f"[StoreCleaner] Embedding {len(wl_terms)} whitelist terms...")
-            wl_embs  = embedder.embed(wl_terms)
-            wl_sim   = cosine_similarity(ent_embs, wl_embs)   # (E, W)
-            wl_max_s = wl_sim.max(axis=1)
-            wl_max_i = wl_sim.argmax(axis=1)
-        else:
-            wl_max_s = np.zeros(len(entities))
-            wl_max_i = np.zeros(len(entities), dtype=int)
-            wl_terms = []
-
-        auto_blocked: list[tuple[str, float, str]] = []
-        auto_wl:      list[tuple[str, float, str]] = []
-        for_review:   list[tuple[str, int, float, list, float, str, float, str]] = []
-
-        for entity, count, score, attrs in ranked:
-            elower = entity.strip().lower()
-            ebase  = re.sub(r"\s*\([^)]*\)\s*$", "", elower).strip()
-            if elower in self.whitelist or ebase in self.whitelist:
-                continue  # already explicit — skip
-
-            idx    = entity_idx[entity]
-            bl_s   = float(bl_max_s[idx])
-            wl_s   = float(wl_max_s[idx])
-            near_bl = bl_terms[bl_max_i[idx]] if bl_terms else "—"
-            near_wl = wl_terms[wl_max_i[idx]] if wl_terms else "—"
-            fits_bl = bl_s >= similarity_threshold
-            fits_wl = wl_s >= similarity_threshold
-
-            if fits_wl and not fits_bl:
-                auto_wl.append((entity, wl_s, near_wl))
-            elif fits_bl and not fits_wl:
-                auto_blocked.append((entity, bl_s, near_bl))
-            else:
-                for_review.append((entity, count, score, attrs, bl_s, near_bl, wl_s, near_wl))
-
+        auto_blocked = [e for e in undecided if scores[e][0] >= high_threshold]
         if auto_blocked:
-            print(f"\n  Auto-blocking {len(auto_blocked)} entities "
-                  f"(cos ≥ {similarity_threshold} to blocklist only):")
-            for e, s, n in sorted(auto_blocked, key=lambda x: -x[1]):
+            print(f"\n  Auto-blocking {len(auto_blocked)} entities (cos ≥ {high_threshold}):")
+            for e in sorted(auto_blocked, key=lambda e: -scores[e][0]):
+                s, n = scores[e]
                 print(f"    cos={s:.3f}  '{e}'  ≈  '{n}'")
-            to_block.update(e.strip().lower() for e, _, _ in auto_blocked)
+            ab_lower = {e.strip().lower() for e in auto_blocked}
+            self._append_to_blocklist(ab_lower)
+            self._remove_from_whitelist(ab_lower)
+            self._reload_lists()
+            processed.update(auto_blocked)
 
-        if auto_wl:
-            print(f"\n  Auto-whitelisting {len(auto_wl)} entities "
-                  f"(cos ≥ {similarity_threshold} to whitelist only):")
-            for e, s, n in sorted(auto_wl, key=lambda x: -x[1]):
-                print(f"    cos={s:.3f}  '{e}'  ≈  '{n}'")
-            to_whitelist.update(e.strip().lower() for e, _, _ in auto_wl)
-
-        if for_review:
-            print(f"\n{'='*80}")
-            print(f"  {len(for_review)} ambiguous entities (fit neither list clearly)")
-            print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  q = quit all")
-            print(f"{'='*80}\n")
-            for entity, count, score, attrs, bl_s, near_bl, wl_s, near_wl in for_review:
-                context = f"bl={bl_s:.3f}(≈'{near_bl}'), wl={wl_s:.3f}(≈'{near_wl}')"
-                answer = self._prompt(
-                    f"  [?] (freq={count:>4}, {context})  '{entity}'  in scope? [y/n/s/q] "
-                ).strip().lower()
-                if answer in ("esc", "q"):
-                    print("  Exiting review.")
-                    break
-                if answer == "y":
-                    to_whitelist.add(entity)
-                elif answer == "n":
-                    to_block.add(entity)
-        else:
-            print("\n  All suspicious entities auto-classified — no manual review needed.")
-
-        self._save_review_results(to_block, to_whitelist, apply_hint="clean_entities")
-
-    def llm_scan_entities(
-        self,
-        store,
-        llm,
-        top_n: int = 1000,
-        llm_batch_size: int = 150,
-        display_batch_size: int = 500,
-        threshold_pct: float = 20.0,
-    ) -> None:
-        """
-        Use the LLM to evaluate the ``top_n`` most frequent entities and flag those
-        inappropriate for a wound ontology.
-
-        Only the top_n entities by PMID frequency are sent to the LLM — this focuses
-        evaluation on the terms that have the most impact on the ontology.
-        Entities already in the blocklist are pre-flagged without an LLM call.
-        If more than ``threshold_pct`` % of a display batch are flagged, the next
-        batch is shown automatically.
-
-        After reviewing, purge with::
-
-            pipeline.run_clean_store(extra_blocked_entities={"term1", "term2", ...})
-        """
-        self._reload_lists()
-        # Collect all entities sorted by frequency descending; this is the candidate pool
-        # for the LLM scope scan. Entities present more often in the store are
-        # prioritized because they have greater influence on the ontology.
-        ranked_raw = self._collect_ranked(store)
-        by_freq = sorted(ranked_raw, key=lambda x: -x[1])
-        total_entities = len(by_freq)
-
-        # Separate blocked from non-blocked before selecting top_n
-        # so the top_n quota is filled exclusively by non-blocked entities
-        pre_blocked = [r for r in by_freq if r[2] == 100.0]
-        non_blocked = [r for r in by_freq if r[2] < 100.0]
-
-        candidates = non_blocked[:top_n]
-        rest       = non_blocked[top_n:]
-
-        print(f"[StoreCleaner] Evaluating top {len(candidates)} most frequent "
-              f"non-blocked entities (of {total_entities} total) via LLM "
-              f"(batches of {llm_batch_size})...")
-        print(f"  Pre-blocked (in blocklist)      : {len(pre_blocked)}")
-        print(f"  Sending to LLM                  : {len(candidates)}")
-        print(f"  Below top {top_n}, not evaluated: {len(rest)}")
-
-        # Load cached eval if available
-        llm_flagged: set[str] = set()
-        dm = getattr(store, "dm", None)
-        cached_eval: dict = {}
-        if dm is not None:
-            cached_eval = dm.load_latest_json("scope_eval") or {}
-
-        # Entities already evaluated in a previous scan — skip LLM call for them
-        already_evaluated: set[str] = set(cached_eval.keys())
-        llm_flagged = {e for e, v in cached_eval.items() if v}
-        # Only send entities to the LLM that haven't been evaluated before.
-        to_evaluate = [r for r in candidates if r[0] not in already_evaluated]
-
-        if already_evaluated:
-            print(f"  Reusing cached eval for {len(already_evaluated)} entities "
-                  f"({len(to_evaluate)} new to evaluate).")
-
-        # LLM evaluation for new entities — saves after every batch
-        async def _run_llm():
-            n_batches = (len(to_evaluate) + llm_batch_size - 1) // llm_batch_size
-            for i in range(0, len(to_evaluate), llm_batch_size):
-                chunk = to_evaluate[i : i + llm_batch_size]
-                batch_num = i // llm_batch_size + 1
-                batch_input = [(e, c, a) for e, c, _, a in chunk]
-                try:
-                    flagged = await llm.classify_scope_batch(batch_input)
-                    flagged_set = set(flagged)
-                    llm_flagged.update(flagged_set)
-                    for entity, _, _, _ in chunk:
-                        cached_eval[entity] = entity in flagged_set
-                    done = min(i + llm_batch_size, len(to_evaluate))
-                    print(f"  LLM batch {batch_num}/{n_batches}: "
-                          f"{done}/{len(to_evaluate)} evaluated, "
-                          f"{len(flagged)} flagged in this batch.")
-                except Exception as exc:
-                    print(f"  LLM batch {batch_num}/{n_batches} failed ({exc}) — skipped.")
-                finally:
-                    if dm is not None:
-                        dm.save_as_json(cached_eval, "scope_eval")
-
-        asyncio.get_event_loop().run_until_complete(_run_llm())
-        print(f"  Eval saved ({len(cached_eval)} entities total).")
-
-        # Build final ranked list:
-        #   tier0 — blocklist hits (definitely out)
-        #   tier1 — LLM-confirmed inappropriate from top_n
-        #   tier2 — LLM-cleared from top_n (evaluated, passed)
-        #   tier3 — below top_n (not evaluated)
-        tier0 = sorted(pre_blocked,                                      key=lambda x: -x[1])
-        tier1 = sorted([r for r in candidates if r[0] in llm_flagged],  key=lambda x: -x[1])
-        tier2 = sorted([r for r in candidates if r[0] not in llm_flagged], key=lambda x: -x[1])
-        tier3 = sorted(rest,                                             key=lambda x: -x[1])
-        ranked = tier0 + tier1 + tier2 + tier3
-
-        flagged_total = len(tier0) + len(tier1)
-        print(f"\n[StoreCleaner] Total flagged as inappropriate: "
-              f"{flagged_total} / {total_entities} "
-              f"({100 * flagged_total / max(total_entities, 1):.1f}%)")
-
-        # Display in batches
-        for start in range(0, len(ranked), display_batch_size):
-            batch = ranked[start : start + display_batch_size]
-            batch_num = start // display_batch_size + 1
-
-            print(f"\n{'='*80}")
-            print(f"  SCOPE SCAN — Batch {batch_num}  "
-                  f"(#{start + 1}–{start + len(batch)} of {len(ranked)})")
-            print(f"  ✗ = blocklist  |  ! = LLM flagged  |  ✓ = whitelisted  |  · = clean")
-            print(f"{'='*80}")
-            print(f"  {'#':>5}  {'Freq':>4}  {'Flag':4}  Entity  →  sample true attributes")
-            print(f"  {'-'*5}  {'-'*4}  {'-'*4}  {'-'*62}")
-
-            n_flagged_in_batch = 0
-            for rank, (entity, freq, score, attrs) in enumerate(batch, start=start + 1):
-                elower = entity.strip().lower()
-                ebase = re.sub(r"\s*\([^)]*\)\s*$", "", elower).strip()
-                if score == 100.0:
-                    flag, n_flagged_in_batch = " ✗ ", n_flagged_in_batch + 1
-                elif elower in self.whitelist or ebase in self.whitelist:
-                    flag = " ✓  "
-                elif entity in llm_flagged:
-                    flag, n_flagged_in_batch = " !  ", n_flagged_in_batch + 1
-                else:
-                    flag = " ·  "
-                attr_str = ", ".join(attrs) if attrs else "—"
-                print(f"  {rank:>5}  {freq:>4}  {flag}  {entity}  →  {attr_str}")
-
-            flagged_pct = 100 * n_flagged_in_batch / len(batch)
-            print(f"\n  Flagged in this batch: {n_flagged_in_batch}/{len(batch)} ({flagged_pct:.1f}%)")
-
-            if start + display_batch_size >= len(ranked):
-                print("  [End of store — all entities shown]")
-                break
-
-            if flagged_pct > threshold_pct:
-                print(f"  > {threshold_pct:.0f}% flagged → showing next batch automatically...\n")
+        skipped_list = [e for e in undecided if scores[e][0] < low_threshold]
+        if skipped_list:
+            if save_skipped:
+                self._append_to_whitelist(set(skipped_list))
+                self._reload_lists()
+                print(f"  {len(skipped_list)} in-scope entities (cos < {low_threshold}) saved to WHITELIST.")
             else:
-                print(f"  ≤ {threshold_pct:.0f}% flagged — stopping. "
-                      "Call review_susp_entities() again to see more.")
-                break
+                print(f"  Silently skipping {len(skipped_list)} entities with cos < {low_threshold}.")
 
-        # Per-entity interactive review
-        # Exclude entities already whitelisted (LLM cache may still flag them)
-        new_to_review = sorted(
-            e for e, _, _, _ in tier1
-            if e.strip().lower() not in self.whitelist
-            and re.sub(r"\s*\([^)]*\)\s*$", "", e.strip().lower()).strip() not in self.whitelist
-        )
-        if not new_to_review:
-            print("\nNo new entities to review — all flagged terms are already classified.")
+        def _queue():
+            return sorted(
+                [e for e in undecided
+                 if e not in processed and low_threshold <= scores[e][0] < high_threshold],
+                key=lambda e: -scores[e][0],
+            )
+
+        queue = _queue()
+        if not queue:
+            if not auto_blocked:
+                print("  No entities in the review zone — nothing to do.")
             return
 
-        to_block: set[str] = set()
-        to_whitelist: set[str] = set()
+        # ── LLM batch filter ──────────────────────────────────────────────────
+        if llm and run_sync and queue:
+            print(f"\n  Running LLM scope filter on {len(queue)} zone entities "
+                  f"(batches of {llm_batch_size})...")
+
+            async def _llm_filter():
+                flagged: list[str] = []
+                total = (len(queue) + llm_batch_size - 1) // llm_batch_size
+                for i in range(0, len(queue), llm_batch_size):
+                    batch = queue[i:i + llm_batch_size]
+                    batch_n = i // llm_batch_size + 1
+                    print(f"  [LLM] batch {batch_n}/{total} "
+                          f"({len(flagged)} flagged so far)...", flush=True)
+                    candidates = [(e, freq[e], sample_attrs.get(e, [])) for e in batch]
+                    flagged.extend(await llm.classify_scope_batch(candidates))
+                return flagged
+
+            llm_blocked = run_sync(_llm_filter())
+            llm_blocked_set = {e.strip().lower() for e in llm_blocked}
+
+            if llm_blocked:
+                print(f"  LLM flagged {len(llm_blocked)} entities as out of scope → BLOCKLIST")
+                self._append_to_blocklist(llm_blocked_set)
+                self._remove_from_whitelist(llm_blocked_set)
+                self._reload_lists()
+                processed.update(llm_blocked)
+
+            llm_kept = [e for e in queue if e not in processed]
+            if llm_kept:
+                self._append_to_whitelist(set(llm_kept))
+                self._reload_lists()
+                print(f"  LLM kept {len(llm_kept)} entities as in scope → WHITELIST")
+                processed.update(llm_kept)
+
+            queue = _queue()
+
+        if not queue:
+            return
 
         print(f"\n{'='*80}")
-        print(f"  Reviewing {len(new_to_review)} LLM-flagged entities one by one.")
-        print(f"  y = valid wound ontology concept → WHITELIST")
-        print(f"  n = out of scope                 → BLOCKLIST")
-        print(f"  s = skip (decide later)")
+        print(f"  {len(queue)} entities for manual review (cos {low_threshold}–{high_threshold})")
+        print(f"  y = in scope → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  q = quit all")
         print(f"{'='*80}\n")
 
-        for entity in new_to_review:
-            answer = input(f"  '{entity}' in scope? [y/n/s] ").strip().lower()
-            if answer == "y":
-                to_whitelist.add(entity)
-            elif answer == "n":
-                to_block.add(entity)
-
-        if to_block:
-            added = self._append_to_blocklist(to_block)
-            print(f"\n  ✓ {added} new terms written to METHODOLOGY_BLOCKLIST.")
-        if to_whitelist:
-            added = self._append_to_whitelist(to_whitelist)
-            print(f"  ✓ {added} new terms written to WHITELIST.")
-        if to_block or to_whitelist:
-            print("  Run pipeline.run_clean_store() to apply blocklist changes.")
-        skipped = len(new_to_review) - len(to_block) - len(to_whitelist)
-        if skipped:
-            print(f"  {skipped} entities skipped (not yet classified).")
-
-    def llm_scan_singletons(
-        self,
-        store,
-        llm,
-        max_freq: int = 1,
-        llm_batch_size: int = 150,
-    ) -> None:
-        """
-        LLM scope scan targeted at rare entities (freq ≤ max_freq).
-
-        These are the long-tail entries that llm_scan_entities never reaches
-        because it prioritises high-frequency terms.  The LLM classifies each
-        batch; flagged entities are then presented one-by-one for interactive
-        review.  Results are cached under the key ``singleton_eval`` so
-        repeated runs skip already-evaluated entities.
-
-        After reviewing, call pipeline.run_clean_store() to purge blocked terms.
-        """
-        self._reload_lists()
-
-        # Collect rare, non-blocked entities
-        ranked_raw = self._collect_ranked(store)
-        rare = [
-            (e, c, s, a) for e, c, s, a in ranked_raw
-            if c <= max_freq and s < 100.0
-        ]
-        if not rare:
-            print(f"No non-blocked entities with freq ≤ {max_freq} found.")
-            return
-
-        print(f"[StoreCleaner] Singleton scan: {len(rare)} entities with freq ≤ {max_freq} "
-              f"(batches of {llm_batch_size})...")
-
-        # Load cached eval
-        dm = getattr(store, "dm", None)
-        cached_eval: dict = {}
-        if dm is not None:
-            cached_eval = dm.load_latest_json("singleton_eval") or {}
-
-        already_evaluated: set[str] = set(cached_eval.keys())
-        llm_flagged: set[str] = {e for e, v in cached_eval.items() if v}
-        to_evaluate = [r for r in rare if r[0] not in already_evaluated]
-
-        if already_evaluated:
-            print(f"  Reusing cached eval for {len(already_evaluated)} entities "
-                  f"({len(to_evaluate)} new to evaluate).")
-
-        async def _run_llm():
-            n_batches = (len(to_evaluate) + llm_batch_size - 1) // llm_batch_size
-            for i in range(0, len(to_evaluate), llm_batch_size):
-                chunk = to_evaluate[i : i + llm_batch_size]
-                batch_num = i // llm_batch_size + 1
-                batch_input = [(e, c, a) for e, c, _, a in chunk]
-                try:
-                    flagged = await llm.classify_scope_batch(batch_input)
-                    flagged_set = set(flagged)
-                    llm_flagged.update(flagged_set)
-                    for entity, _, _, _ in chunk:
-                        cached_eval[entity] = entity in flagged_set
-                    done = min(i + llm_batch_size, len(to_evaluate))
-                    print(f"  LLM batch {batch_num}/{n_batches}: "
-                          f"{done}/{len(to_evaluate)} evaluated, "
-                          f"{len(flagged)} flagged in this batch.")
-                except Exception as exc:
-                    print(f"  LLM batch {batch_num}/{n_batches} failed ({exc}) — skipped.")
-                finally:
-                    if dm is not None:
-                        dm.save_as_json(cached_eval, "singleton_eval")
-
-        asyncio.get_event_loop().run_until_complete(_run_llm())
-        print(f"  Eval saved ({len(cached_eval)} singleton entities total).")
-
-        # Interactive review of flagged entities
-        new_to_review = sorted(
-            e for e, _, _, _ in rare
-            if e in llm_flagged
-            and e.strip().lower() not in self.whitelist
-            and re.sub(r"\s*\([^)]*\)\s*$", "", e.strip().lower()).strip() not in self.whitelist
-        )
-
-        flagged_total = len(llm_flagged)
-        print(f"\n[StoreCleaner] Singleton scan complete: "
-              f"{flagged_total} / {len(rare)} flagged as out-of-scope "
-              f"({100 * flagged_total / max(len(rare), 1):.1f}%)")
-
-        if not new_to_review:
-            print("  No new entities to review.")
-            return
-
-        to_block: set[str] = set()
-        to_whitelist: set[str] = set()
-
-        print(f"\n{'='*80}")
-        print(f"  Reviewing {len(new_to_review)} LLM-flagged singleton entities.")
-        print(f"  y = valid concept → WHITELIST  |  n = out of scope → BLOCKLIST  |  s = skip  |  q = quit all")
-        print(f"{'='*80}\n")
-
-        for entity in new_to_review:
-            answer = self._prompt(f"  '{entity}'  in scope? [y/n/s/q] ").strip().lower()
+        while queue:
+            entity = queue.pop(0)
+            if entity in processed:
+                continue
+            score, nearest = scores[entity]
+            answer = self._prompt(
+                f"  [?] (freq={freq[entity]:>4}, cos={score:.3f} ≈ '{nearest}')  '{entity}'  in scope? [y/n/s/q] "
+            ).strip().lower()
             if answer in ("esc", "q"):
+                self._abort_review = True
                 print("  Exiting review.")
                 break
             if answer == "y":
-                to_whitelist.add(entity)
+                self._append_to_whitelist({entity})
+                self._remove_from_blocklist({entity})
+                self._reload_lists()
+                processed.add(entity)
+                seen.add(entity.strip().lower()); self._save_seen(seen)
             elif answer == "n":
-                to_block.add(entity)
-
-        self._save_review_results(to_block, to_whitelist, apply_hint="clean_entities")
-        skipped = len(new_to_review) - len(to_block) - len(to_whitelist)
-        if skipped:
-            print(f"  {skipped} entities skipped (not yet classified).")
-
-    # ── SapBERT blocklist similarity scan ────────────────────────────────────
-
-    def sapbert_blocklist_scan(
-        self,
-        store,
-        embedder,
-        similarity_threshold: float = 0.92,
-    ) -> None:
-        """
-        Compare store entities against blocklist terms via SapBERT cosine similarity.
-
-        Entities above similarity_threshold to any blocklist term are presented
-        for interactive review. Run AFTER mapping has been applied so entity names
-        are in their canonical form.
-
-        y = out of scope → BLOCKLIST  |  n = keep → WHITELIST  |  s = skip  |  ESC = exit
-
-        After review, call pipeline.run_clean_store() to purge newly blocked entities.
-        """
-        import numpy as np
-        from sklearn.metrics.pairwise import cosine_similarity
-
-        self._reload_lists()
-
-        entities = list(store.entities)
-        if not entities:
-            print("[StoreCleaner] sapbert_blocklist_scan: store has no entities.")
-            return
-
-        blocklist_terms = sorted(self.blocked_entities)
-        if not blocklist_terms:
-            print("[StoreCleaner] sapbert_blocklist_scan: blocklist is empty.")
-            return
-
-        print(f"[StoreCleaner] Embedding {len(entities)} store entities...")
-        entity_embs = embedder.embed(entities)          # (E, H)
-
-        print(f"[StoreCleaner] Embedding {len(blocklist_terms)} blocklist terms...")
-        block_embs  = embedder.embed(blocklist_terms)   # (B, H)
-
-        print("[StoreCleaner] Computing similarity matrix...")
-        sim = cosine_similarity(entity_embs, block_embs)  # (E, B)
-
-        max_sims = sim.max(axis=1)     # (E,)
-        max_idxs = sim.argmax(axis=1)  # (E,)
-
-        # Collect flagged entities (skip those already explicitly classified)
-        flagged: list[tuple[str, float, str]] = []
-        for i, entity in enumerate(entities):
-            if max_sims[i] < similarity_threshold:
-                continue
-            elower = entity.strip().lower()
-            ebase  = re.sub(r"\s*\([^)]*\)\s*$", "", elower).strip()
-            if elower in self.blocked_entities or ebase in self.blocked_entities:
-                continue
-            if elower in self.whitelist or ebase in self.whitelist:
-                continue
-            flagged.append((entity, float(max_sims[i]), blocklist_terms[max_idxs[i]]))
-
-        flagged.sort(key=lambda x: -x[1])
-
-        if not flagged:
-            print(f"  No store entities exceeded similarity threshold {similarity_threshold}.")
-            return
-
-        print(f"\n{'='*80}")
-        print(f"  SapBERT Blocklist Scan — {len(flagged)} entities flagged (threshold={similarity_threshold})")
-        print(f"  y = out of scope → BLOCKLIST  |  n = keep → WHITELIST  |  s = skip  |  ESC = exit")
-        print(f"{'='*80}\n")
-
-        to_block:     set[str] = set()
-        to_whitelist: set[str] = set()
-
-        for entity, sim_score, nearest in flagged:
-            answer = self._prompt(
-                f"  (sim={sim_score:.3f}, nearest='{nearest}')  '{entity}'  out of scope? [y/n/s] "
-            ).strip().lower()
-            if answer == "esc":
-                print("  Exiting scan.")
-                break
-            if answer == "y":
-                to_block.add(entity.strip().lower())
-            elif answer == "n":
-                to_whitelist.add(entity.strip().lower())
-
-        self._save_review_results(to_block, to_whitelist, apply_hint="clean_entities")
+                el = entity.strip().lower()
+                self._append_to_blocklist({el})
+                self._remove_from_whitelist({el})
+                self._reload_lists()
+                processed.add(entity)
+                seen.add(el); self._save_seen(seen)
+                # ── Incremental update ────────────────────────────────────────
+                new_emb   = ent_embs[ent_idx[entity]].reshape(1, -1)
+                remaining = [e for e in undecided if e not in processed]
+                if remaining:
+                    r_idx    = [ent_idx[e] for e in remaining]
+                    new_sims = cosine_similarity(ent_embs[r_idx], new_emb).ravel()
+                    newly_auto: list[str] = []
+                    for e, ns in zip(remaining, new_sims):
+                        if ns > scores[e][0]:
+                            scores[e] = (float(ns), entity)
+                        if scores[e][0] >= high_threshold:
+                            newly_auto.append(e)
+                    if newly_auto:
+                        print(f"\n  → {len(newly_auto)} entity(ies) now above threshold:")
+                        for e in sorted(newly_auto, key=lambda e: -scores[e][0]):
+                            s, n = scores[e]
+                            print(f"    cos={s:.3f}  '{e}'  ≈  '{n}'")
+                        na_lower = {e.strip().lower() for e in newly_auto}
+                        self._append_to_blocklist(na_lower)
+                        self._remove_from_whitelist(na_lower)
+                        self._reload_lists()
+                        processed.update(newly_auto)
+                    queue = _queue()
+            elif answer == "s":
+                seen.add(entity.strip().lower()); self._save_seen(seen)
 
     # ── Reporting ─────────────────────────────────────────────────────────────
 

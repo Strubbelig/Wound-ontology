@@ -1,9 +1,5 @@
 from __future__ import annotations
-"""Orchestrator glue code for the wound ontology pipeline.
-
-This module coordinates PubMed extraction, store cleaning, term normalization,
-hierarchy construction, FCA matrix generation, and final OWL export.
-"""
+"""Orchestrator glue code for the wound ontology pipeline."""
 import asyncio
 import os
 import pandas as pd
@@ -21,11 +17,9 @@ from wound_ontology.fca.concept_lattice import ConceptLattice
 from wound_ontology.embedding.embedder import Embedder
 from wound_ontology.mappers.term_mapper import TermMapper
 from wound_ontology.mappers.mapping_cleaner import MappingCleaner
-from wound_ontology.tbox_abox_reasoner.for_owl.tbox import TBox
-from wound_ontology.tbox_abox_reasoner.reasoner.reasoner import Reasoner
+from wound_ontology.owl import OWLOntology, OntologyCurator
+from wound_ontology.reasoning import OWLReasoner
 from wound_ontology.graph_visualizer import GraphVisualizer
-# ABox is imported lazily in build_knowledge_graph() to avoid pulling in the
-# cross-project ofl_constants dependency at module load time.
 
 load_dotenv()
 
@@ -84,29 +78,22 @@ class Orchestrator:
         self.lattice       = ConceptLattice(self.dm, self.context_matrix)
         self.term_mapper     = TermMapper(self.dm, file_name="term_mapping", mapper_name="Term mapper")
         self.mapping_cleaner = MappingCleaner(self.term_mapper, allowed_predicates=self.allowed_predicates)
-        self._embedder: Embedder | None = None   # lazy-loaded on first use
-        self.reasoner      = Reasoner()
+        self._embedder: Embedder | None = None
+        self.reasoner      = OWLReasoner()
         self.graph_exporter = GraphVisualizer()
 
+    # ── Internal helpers ───────────────────────────────────────────────────────
+
     def _run_sync(self, coroutine):
-        # Convert an async coroutine into a blocking call for the CLI-style
-        # orchestrator API. This is used by the code paths that are not
-        # already running inside an async event loop.
         loop = asyncio.get_event_loop()
         return loop.run_until_complete(coroutine)
 
     def _ensure_embedder(self) -> Embedder:
-        """Return the shared SapBERT Embedder, initialising it on first call."""
         if self._embedder is None:
             self._embedder = Embedder()
         return self._embedder
 
-    def _collect_store_terms(self, store=None) -> list[str]:
-        """Collect every medical term from entity names and predicate targets."""
-        return list(self._collect_store_terms_with_freq(store).keys())
-
     def _collect_store_terms_with_freq(self, store=None) -> dict[str, int]:
-        """Collect every medical term with its PMID occurrence frequency."""
         store = store or self.store
         freq: dict[str, int] = {}
         for pmid_data in store.dict.values():
@@ -123,18 +110,8 @@ class Orchestrator:
                             seen_in_pmid.add(target)
         return freq
 
-    # ── Extraction ─────────────────────────────────────────────────────────────
-
-    def run_pubmed_search(self, queries: str | list[str], max_results_per_query: int = 200):
-        """Fetch abstracts for one or more PubMed queries, merging into one database."""
-        self.pubcon.get_data(queries, max_results_per_query)
-
     async def _mapping_milestone(self, store) -> None:
-        """
-        Periodic callback during extraction: clean store, rebuild SapBERT term mapping.
-        Does NOT apply normalize() — call pipeline.mapping_cleaner.apply(store) after review.
-        Safe to await mid-extraction because _dict writes only happen in the calling loop.
-        """
+        """Periodic callback during extraction: clean store and rebuild term mapping."""
         cleaner = StoreCleaner(self.allowed_predicates)
         report  = cleaner.clean(store)
         StoreCleaner.print_report(report)
@@ -146,28 +123,32 @@ class Orchestrator:
             similarity_threshold=0.95,
             frequencies=freq,
         )
+        print("\n[Orchestrator] Mapping milestone complete.")
 
-        print("\n[Orchestrator] Mapping ready for review — "
-              "run pipeline.mapping_cleaner.review_merged_mappings() then "
-              "pipeline.mapping_cleaner.apply(pipeline.store).")
+    # ── Phase 1: Extraction ────────────────────────────────────────────────────
+    # Noise filtering (units, pure symbols) is applied automatically during
+    # the milestone callback and again in run_clean_store().
 
-    def run_extract_to_store(self, batch_size=10, use_bfo_attributes=True,
-                             max_consecutive_failures=20, max_vocab_hints=300,
-                             normalize_every: int = 1000):
+    def run_pubmed_search(self, queries: str | list[str], max_results_per_query: int = 200):
+        """Fetch abstracts for one or more PubMed queries, merging into one database."""
+        self.pubcon.get_data(queries, max_results_per_query)
+
+    def run_extract_to_store(
+        self,
+        batch_size: int = 10,
+        use_bfo_attributes: bool = True,
+        max_consecutive_failures: int = 20,
+        max_vocab_hints: int = 300,
+        normalize_every: int = 1000,
+    ):
         """
-        Extract entities from PubMed abstracts → ConceptStore.
+        Extract entities from PubMed abstracts into the ConceptStore.
 
-        use_bfo_attributes       – if True, BFO anchor classes are passed to the LLM
-                                   as candidate is_a targets so every entity gets
-                                   classified against them.
-        max_consecutive_failures – circuit breaker: abort if this many results in a row
-                                   are permanent failures (all retries exhausted).
-        max_vocab_hints          – cap on targets/attributes sent per prompt (most frequent).
-        normalize_every          – run clean+normalize+apply every N new entity mentions
-                                   during extraction so vocab hints stay compact.
-                                   0 = disable mid-extraction normalization.
+        Noise terms (units, pure symbols, abbreviations) are filtered
+        automatically via the milestone callback every normalize_every mentions.
+        Set normalize_every=0 to disable mid-extraction filtering.
         """
-        bfo_anchors = list(TBox(_BFO_URL).labels.keys()) if use_bfo_attributes else []
+        bfo_anchors = list(OWLOntology.load(_BFO_URL, self.dm).labels.keys()) if use_bfo_attributes else []
         if bfo_anchors:
             print(f"Using BFO anchor classes as is_a target candidates: {bfo_anchors}")
         print("Starting LLM Extraction...")
@@ -181,21 +162,17 @@ class Orchestrator:
             on_milestone=self._mapping_milestone if normalize_every > 0 else None,
         ))
 
+    # ── Phase 2: Mapping ───────────────────────────────────────────────────────
+
     def run_build_term_mapping(self, similarity_threshold: float = 0.95) -> dict:
         """
-        Build the shared medical-term mapping using SapBERT cosine-similarity clustering.
+        Build a SapBERT cosine-similarity mapping that clusters near-duplicate terms.
 
-        Embeds all entities and targets from the current store, then groups terms
-        whose similarity exceeds similarity_threshold into clusters.  The most
-        frequent term in each cluster becomes the canonical form.
-
-        After this returns, review and apply:
-            pipeline.mapping_cleaner.review_merged_mappings()
-            pipeline.mapping_cleaner.review_mappings()
-            pipeline.mapping_cleaner.apply(pipeline.store)
+        The most frequent term in each cluster becomes the canonical form.
+        Follow up with review_mapping(), then run_apply_mapping().
         """
         freq = self._collect_store_terms_with_freq()
-        print(f"[Orchestrator] Building SapBERT term mapping from {len(freq)} unique store terms "
+        print(f"[Orchestrator] Building term mapping from {len(freq)} unique store terms "
               f"(threshold={similarity_threshold})...")
         mapping = self.term_mapper.build_from_embeddings(
             list(freq.keys()),
@@ -203,103 +180,119 @@ class Orchestrator:
             similarity_threshold=similarity_threshold,
             frequencies=freq,
         )
-        print("[Orchestrator] Term mapping ready — review with mapping_cleaner.")
+        print("[Orchestrator] Mapping built — call review_mapping() to inspect and curate.")
         return mapping
 
-    def check_list_exclusivity(self, similarity_threshold: float = 0.92) -> None:
+    def review_mapping(self) -> None:
         """
-        Check that METHODOLOGY_BLOCKLIST and WHITELIST contain no overlapping synonyms.
+        Inspect and curate the term mapping before applying it to the store.
 
-        Embeds all terms in both lists via SapBERT and warns when any whitelist term
-        has cosine ≥ similarity_threshold to a blocklist term.  Whitelist takes priority,
-        so conflicting blocklist entries should be removed from config/blocklists.py.
+        Runs sequentially:
+          1. List all mappings (informational).
+          2. Interactive review of auto-merged clusters.
+          3. List suspicious mappings (informational).
+          4. Interactive review of remaining mappings.
         """
+        self.mapping_cleaner.list_mappings()
+        self.mapping_cleaner.review_merged_mappings()
+        self.mapping_cleaner.list_suspicious_mappings()
+        self.mapping_cleaner.review_mappings()
+
+    def check_term_mapping(self, threshold: float = 0.95) -> list[dict]:
+        """Re-evaluate term mappings with SapBERT and flag potential false merges.
+
+        Reads the live term_mapper.mapping dict and embeds every non-identity
+        (term, canonical) pair.  Reports entries whose cosine similarity falls
+        below threshold — these are potentially wrong merges.
+
+        Returns a list of flagged dicts: {term, canonical, cosine, string_sim}.
+        """
+        from wound_ontology.mappers.mapping_checker import check_mapping, print_report
+
+        mapping = self.term_mapper.mapping
+        non_id  = {t: c for t, c in mapping.items() if t != c}
+        print(f"Non-identity entries : {len(non_id)}")
+
+        flagged = check_mapping(mapping, self._ensure_embedder(), threshold)
+        print_report(flagged, len(non_id), threshold)
+        return flagged
+
+    def run_apply_mapping(self) -> None:
+        """Apply the reviewed term mapping to the store (normalise all entity and target names)."""
+        self.mapping_cleaner.apply(self.store)
+
+    # ── Phase 3: Curation ─────────────────────────────────────────────────────
+
+    def review_lists(
+        self,
+        high_threshold: float = 0.92,
+        low_threshold: float = 0.40,
+        save_skipped: bool = False,
+        llm_batch_size: int = 50,
+        recluster: bool = False,
+        bl_clusters: int = 40,
+        wl_clusters: int = 25,
+    ) -> None:
+        """
+        Interactively review and curate entities in the store.
+
+        Targets are intentionally not cleaned here — they are normalised and
+        clustered to canonical forms by run_build_term_mapping() + run_apply_mapping().
+
+        Runs sequentially:
+          1. Validate blocklist/whitelist exclusivity.
+          2. Entities: score ≥ high_threshold → auto-block; score < low_threshold → skip;
+             in between → manual review.
+          3. Auto-blocked entities in store — allow to whitelist exceptions.
+          4. Whitelisted entities — allow to move to blocklist.
+          5. Recluster both lists with SapBERT K-means (only if recluster=True).
+
+        Call run_clean_store() afterwards to apply changes.
+        """
+        self.cleaner._abort_review = False
         self.cleaner._reload_lists()
-        self.cleaner._check_list_exclusivity(
-            self._ensure_embedder(),
-            similarity_threshold,
-        )
+        embedder = self._ensure_embedder()
 
-    def review_susp_entities(self, similarity_threshold: float = 0.92) -> None:
+        self.cleaner._check_list_exclusivity(embedder, threshold=0.92)
+        self.cleaner.review_susp_entities(self.store, embedder=embedder,
+                                          high_threshold=high_threshold,
+                                          low_threshold=low_threshold,
+                                          save_skipped=save_skipped,
+                                          llm=self.llm,
+                                          llm_batch_size=llm_batch_size,
+                                          run_sync=self._run_sync)
+        self.cleaner.review_blocked_entities(self.store)
+        self.cleaner.review_good_entities(self.store)
+
+        if recluster:
+            self.recluster_lists(bl_clusters=bl_clusters, wl_clusters=wl_clusters)
+
+    def cluster_blocklist(self, dry_run: bool = False) -> None:
+        """Print a cluster summary of METHODOLOGY_BLOCKLIST and optionally rewrite
+        blocklist.py with cluster-headed sections.
+
+        dry_run=True  → print summary only, no file written.
+        dry_run=False → rewrite METHODOLOGY_BLOCKLIST in config/blocklist.py.
         """
-        SapBERT-assisted review of keyword-suspicious store entities.
+        self.cleaner.blocker.recluster(dry_run=dry_run)
 
-        Embeds each suspicious entity and compares to blocklist and whitelist:
-          - clear blocklist match  → auto-blocked (written to METHODOLOGY_BLOCKLIST)
-          - clear whitelist match  → auto-whitelisted (written to WHITELIST)
-          - ambiguous              → shown for manual review
+    def recluster_lists(self, bl_clusters: int = 40, wl_clusters: int = 25) -> None:
+        """Recluster blocklist and whitelist with SapBERT K-means."""
+        embedder = self._ensure_embedder()
 
-        Run pipeline.check_list_exclusivity() first if you want to validate the lists
-        before reviewing.  Call pipeline.run_clean_store() afterwards to apply changes.
-        """
-        self.cleaner.review_susp_entities(
-            self.store,
-            embedder=self._ensure_embedder(),
-            similarity_threshold=similarity_threshold,
-        )
+        print("\n[recluster] Blocklist...")
+        self.cleaner.blocker.recluster_sapbert(embedder, n_clusters=bl_clusters)
 
-    def run_blocklist_similarity_scan(self, similarity_threshold: float = 0.97) -> None:
-        """
-        Use SapBERT to find store entities semantically similar to blocklist terms.
+        print("\n[recluster] Whitelist...")
+        self.cleaner.blocker.recluster_whitelist_sapbert(embedder, n_clusters=wl_clusters)
 
-        Presents flagged entities for interactive review.  Run this AFTER
-        pipeline.mapping_cleaner.apply(pipeline.store) so entity names are in
-        their canonical form.
-
-        Confirmed out-of-scope entities are added to METHODOLOGY_BLOCKLIST.
-        Confirmed in-scope entities are added to WHITELIST.
-        Then run pipeline.run_clean_store() to purge newly blocked entities.
-        """
-        self.cleaner.sapbert_blocklist_scan(
-            self.store,
-            embedder=self._ensure_embedder(),
-            similarity_threshold=similarity_threshold,
-        )
+    # ── Phase 4: Filtering ─────────────────────────────────────────────────────
 
     def run_clean_store(self, extra_blocked_entities: set[str] | None = None) -> None:
-        """Remove out-of-scope entities and invalid predicates from the ConceptStore."""
+        """Remove out-of-scope entities, invalid predicates, and empty entities from the store."""
         cleaner = StoreCleaner(self.allowed_predicates, extra_blocked_entities)
         report = cleaner.clean(self.store)
         StoreCleaner.print_report(report)
-
-    def llm_scan_entities(
-        self,
-        top_n: int = 1000,
-        llm_batch_size: int = 150,
-        display_batch_size: int = 500,
-        threshold_pct: float = 20.0,
-    ) -> None:
-        """LLM-powered scan of the top_n most frequent entities."""
-        cleaner = StoreCleaner(self.allowed_predicates)
-        cleaner.llm_scan_entities(
-            self.store, self.llm,
-            top_n=top_n,
-            llm_batch_size=llm_batch_size,
-            display_batch_size=display_batch_size,
-            threshold_pct=threshold_pct,
-        )
-
-    def llm_scan_singletons(
-        self,
-        max_freq: int = 1,
-        llm_batch_size: int = 150,
-    ) -> None:
-        """
-        LLM scope scan targeted at rare entities (freq ≤ max_freq, default 1).
-
-        Complements llm_scan_entities which only covers the most frequent terms.
-        Sends singleton entities to the LLM in batches; flagged ones are then
-        presented one-by-one for interactive review.  Results are cached under
-        ``singleton_eval`` separately from the regular scope scan cache.
-
-        Call pipeline.run_clean_store() afterwards to purge blocked entities.
-        """
-        cleaner = StoreCleaner(self.allowed_predicates)
-        cleaner.llm_scan_singletons(
-            self.store, self.llm,
-            max_freq=max_freq,
-            llm_batch_size=llm_batch_size,
-        )
 
     # ── Hierarchies ────────────────────────────────────────────────────────────
 
@@ -307,15 +300,8 @@ class Orchestrator:
         """
         Build ClassHierarchy and MereologicalHierarchy from the ConceptStore.
 
-        predefined_df – DataFrame with 'Class' and 'Parent class' columns.
-                        When None, automatically loads from PREDEFINED_HIERARCHY_FILE
-                        (data/raw/predefined_concept_hierarchy.csv) if it exists.
-
-        This method does not build or apply mappings. Run these explicit steps
-        first when needed:
-            run_build_term_mapping()
-            mapping_cleaner.review_mappings()
-            mapping_cleaner.apply(store)
+        predefined_df – optional DataFrame with 'Class' and 'Parent class' columns.
+                        When None, loads from PREDEFINED_HIERARCHY_FILE if configured.
         """
         if predefined_df is None and _PREDEFINED_HIERARCHY_FILE is not None:
             from pathlib import Path as _Path
@@ -325,12 +311,10 @@ class Orchestrator:
                 print(f"[Orchestrator] Loaded {len(predefined_df)} predefined edges from {p.name}")
 
         if predefined_df is not None:
-            # Ingest pre-defined hierarchy edges into the store.
             self.store.get_data(predefined_df)
 
         self.class_hier.get_data(self.store)
         self.mere_hier.get_data(self.store)
-
         self.class_hier.save()
         self.mere_hier.save()
 
@@ -339,7 +323,21 @@ class Orchestrator:
         print(f"MereologicalHierarchy : {len(self.mere_hier.concepts)} concepts, "
               f"roots={self.mere_hier.roots[:3]}")
 
-    # ── FCA ────────────────────────────────────────────────────────────────────
+    # ── Enrichment ─────────────────────────────────────────────────────────────
+
+    def run_store_fill(
+        self,
+        batch_size: int = 20,
+        entity_batch: int = 5,
+        max_entities: int | None = None,
+        max_attrs_per_entity: int = 80,
+    ) -> None:
+        """Fill missing store attributes for each entity via LLM. Run after run_apply_mapping()."""
+        print(f"Filling missing store attributes (concurrency={batch_size}, entity_batch={entity_batch})...")
+        self._run_sync(self.store.fill_missing_attributes(
+            self.llm, batch_size=batch_size, entity_batch=entity_batch,
+            max_entities=max_entities, max_attrs_per_entity=max_attrs_per_entity,
+        ))
 
     def run_fca(
         self,
@@ -353,8 +351,7 @@ class Orchestrator:
 
         subtree_root – restrict entities to the subtree of this concept.
         hierarchy    – which hierarchy to use for subtree lookup (default: class_hier).
-        predicates   – restrict to these store predicates (e.g. ['has_quality']).
-                       None = all predicates.
+        predicates   – restrict to these store predicates; None = all predicates.
         """
         hier = hierarchy or self.class_hier
         entities = hier.subtree_of(subtree_root) if subtree_root else None
@@ -373,15 +370,11 @@ class Orchestrator:
             print(f"FCAHierarchy          : {len(self.fca_hier.concepts)} concepts, "
                   f"roots={self.fca_hier.roots[:3]}")
 
-            # Wire extent entities → named FCA superclass into ClassHierarchy
-            # so that FCA-derived groupings appear in the final OWL alongside
-            # the predefined taxonomy.
             added = 0
             for concept in self.lattice.lattice:
                 name = getattr(concept, 'name', None)
                 if not isinstance(name, str) or not name:
                     continue
-                # Normalise casing to match BaseHierarchy convention
                 if hasattr(concept, 'name'):
                     concept.name = name.strip().title()
                     name = concept.name
@@ -389,34 +382,90 @@ class Orchestrator:
                     self.class_hier._set_edge(str(entity), name)
                     added += 1
             if added:
-                self.class_hier._df = self.class_hier._df.copy()  # defragment
+                self.class_hier._df = self.class_hier._df.copy()
                 self.class_hier.save()
                 print(f"FCA → ClassHierarchy  : {added} extent→superclass edges merged.")
         else:
             print("FCAHierarchy          : skipped (empty lattice).")
 
-    def run_store_fill(self, batch_size: int = 20, entity_batch: int = 5, max_entities: int | None = None, max_attrs_per_entity: int = 80) -> None:
-        """
-        Fill every missing attribute for each entity in the ConceptStore via LLM.
-        Run this AFTER normalize() and BEFORE FCA so enrichment flows everywhere.
-        """
-        print(f"Filling missing store attributes (concurrency={batch_size}, entity_batch={entity_batch})...")
-        self._run_sync(self.store.fill_missing_attributes(
-            self.llm, batch_size=batch_size, entity_batch=entity_batch,
-            max_entities=max_entities, max_attrs_per_entity=max_attrs_per_entity,
-        ))
-
-    def run_matrix_nan_fill(self, batch_size=20, entity_batch=5):
+    def run_matrix_nan_fill(self, batch_size: int = 20, entity_batch: int = 5) -> None:
         """Fallback: fill NaNs directly on the FCA context matrix (post-FCA)."""
         print(f"Evaluating missing relations (concurrency={batch_size}, entity_batch={entity_batch})...")
-        self._run_sync(self.context_matrix.fill_nan(self.llm, batch_size=batch_size, entity_batch=entity_batch))
+        self._run_sync(self.context_matrix.fill_nan(
+            self.llm, batch_size=batch_size, entity_batch=entity_batch,
+        ))
+
+    def review_mere_relations(self, batch_size: int = 50) -> None:
+        """
+        LLM-validate every part_of edge in the mereological hierarchy.
+
+        Each (child, part_of, parent) triple is classified as:
+          keep  – valid anatomical/physical part_of → left unchanged
+          is_a  – subtype relation mislabelled as part_of →
+                  removed from mere_hier, added to class_hier
+          drop  – wrong in both directions → removed from mere_hier
+
+        Both hierarchies are saved after correction.
+        Re-run after run_build_hierarchies() to keep corrections current.
+        """
+        df = self.mere_hier.df
+        if df.empty:
+            print("Mereological hierarchy is empty.")
+            return
+
+        # Collect all edges as (child, parent)
+        triples: list[tuple[str, str]] = []
+        for child in df.index:
+            for parent in df.columns[df.loc[child] == 1.0]:
+                triples.append((child, parent))
+
+        if not triples:
+            print("No part_of edges found.")
+            return
+
+        print(f"[review_mere_relations] Validating {len(triples)} part_of edges "
+              f"in batches of {batch_size}...")
+
+        async def _run():
+            results = []
+            total = (len(triples) + batch_size - 1) // batch_size
+            for i in range(0, len(triples), batch_size):
+                batch = triples[i:i + batch_size]
+                bn = i // batch_size + 1
+                print(f"  batch {bn}/{total} ({len(batch)} triples)...", flush=True)
+                results.extend(await self.llm.validate_mere_batch(batch))
+            return results
+
+        results = self._run_sync(_run())
+
+        kept = dropped = reclassified = 0
+        for r in results:
+            child, parent, verdict = r.child, r.parent, r.verdict.strip().lower()
+            if verdict == "keep":
+                kept += 1
+                continue
+            # Remove from mere_hier
+            if child in self.mere_hier._df.index and parent in self.mere_hier._df.columns:
+                self.mere_hier._df.at[child, parent] = 0.0
+            if verdict == "is_a":
+                self.class_hier._set_edge(child, parent)
+                reclassified += 1
+            else:
+                dropped += 1
+
+        self.mere_hier.save()
+        self.class_hier.save()
+        print(f"\n[review_mere_relations] done — "
+              f"kept={kept}, reclassified as is_a={reclassified}, dropped={dropped}. "
+              f"Both hierarchies saved.")
 
     # ── Export ─────────────────────────────────────────────────────────────────
 
-    def export_to_owl(self, output_file=None):
-        onto = TBox()
-        onto.get_data(self.class_hier, self.mere_hier, self.fca_hier)
-        onto.save(output_file)
+    def export_to_owl(self, output_file=None) -> None:
+        """Export ClassHierarchy, MereologicalHierarchy, and FCAHierarchy to OWL."""
+        onto = OWLOntology.create()
+        OntologyCurator(onto).from_hierarchies(self.class_hier, self.mere_hier, self.fca_hier)
+        onto.save(self.dm, output_file)
 
     def run_curate_owl(
         self,
@@ -429,29 +478,175 @@ class Orchestrator:
         umls_max_results: int = 3,
     ) -> None:
         """
-        Curate an OWL file: assign proper ontology IRIs (WOND_NNNNNNN),
-        add rdfs:labels, import BFO/RO/OBI via connectors, and optionally
-        annotate with UMLS cross-references.
-
-        For reasoning over the curated file use run_reason_owl().
+        Curate an OWL file: assign IRIs, add labels, import BFO/RO/OBI,
+        and optionally annotate with UMLS cross-references.
         """
-        onto = TBox().load(input_file)
+        onto    = OWLOntology.load(input_file, self.dm)
+        curator = OntologyCurator(onto)
 
         if import_bfo:
-            onto.import_external(_BFO_URL)
+            curator.import_external(_BFO_URL)
         if import_ro:
-            onto.import_external(_RO_URL)
+            curator.import_external(_RO_URL)
         if import_obi:
-            onto.import_external(_OBI_URL)
+            curator.import_external(_OBI_URL)
 
-        onto.resolve_external_classes()
-        onto.normalize_label_language(target_lang="en")
-        onto.rename_iris()
+        curator.resolve_external_classes()
+        curator.normalize_label_language(target_lang="en")
+        curator.rename_iris()
         if umls_api_key:
             from wound_ontology.connectors.umls_connector import UMLSConnector
             umls = UMLSConnector(self.dm, api_key=umls_api_key)
-            onto.umls_mapping(umls, max_results=umls_max_results)
-        onto.save(output_file)
+            curator.umls_mapping(umls, max_results=umls_max_results)
+        onto.save(self.dm, output_file)
+
+    def run_enrich_external(
+        self,
+        input_file: str,
+        output_file: str | None = None,
+        onto_dir: str | None = None,
+        dry_run: bool = False,
+    ) -> None:
+        """Patch wrong external IRIs and enrich external classes with labels.
+
+        Reads *input_file*, applies IRI patches and label/definition lookup
+        from local source-ontology files, then writes to *output_file*
+        (defaults to overwriting *input_file*).
+
+        onto_dir: path to folder containing bfo-core.owl, cob.owl, iao.owl,
+                  obi.owl, pato.owl, go.obo.  Defaults to IMPORT_ONTO_DIR
+                  from config/settings.py.
+        """
+        from rdflib import Graph
+        from wound_ontology.owl.external_enricher import ExternalEnricher
+
+        try:
+            from config.settings import IMPORT_ONTO_DIR as _default_onto_dir
+        except ImportError:
+            _default_onto_dir = None
+
+        resolved_onto_dir = onto_dir or _default_onto_dir
+        if resolved_onto_dir is None:
+            raise ValueError("onto_dir must be provided or IMPORT_ONTO_DIR set in config/settings.py")
+
+        out = output_file or input_file
+        with open(input_file) as fh:
+            first = fh.read(300)
+        fmt = "turtle" if first.strip().startswith("@") else "xml"
+
+        print(f"Loading {input_file} …")
+        g = Graph()
+        g.parse(input_file, format=fmt)
+        print(f"  {len(g)} triples, format={fmt}")
+
+        stats = ExternalEnricher(resolved_onto_dir).enrich(g, dry_run=dry_run)
+
+        if dry_run:
+            print("\n[dry-run] No files written.")
+            return
+
+        g.serialize(out, format=fmt)
+        print(f"\nWritten → {out}  ({len(g)} triples)")
+        print(f"Stats: {stats}")
+
+    def fetch_snomed_concepts(
+        self,
+        out_dir: str = "data/reference",
+        prune_only: bool = False,
+        rebuild_from_cache: bool = False,
+    ) -> list[dict]:
+        """Fetch wound-related SNOMED CT concepts from the UMLS UTS API.
+
+        Requires UMLS_API_KEY in .env.
+
+        out_dir:            where to write snomed_wound_concepts.json/csv and cache.
+        prune_only:         re-apply semantic filters to existing output (no API calls).
+        rebuild_from_cache: re-filter the BFS cache (no API calls, re-reads SEED_TERMS).
+
+        Returns the final concept list.
+        """
+        from wound_ontology.connectors.snomed_fetcher import SnomedFetcher
+        from pathlib import Path as _Path
+        import os
+
+        api_key = os.getenv("UMLS_API_KEY", "")
+        root    = _Path(self.dm.base_path) if hasattr(self.dm, "base_path") and self.dm.base_path else _Path(".")
+        out     = _Path(out_dir) if _Path(out_dir).is_absolute() else root / out_dir
+
+        fetcher = SnomedFetcher(api_key=api_key, out_dir=out)
+        if prune_only:
+            return fetcher.prune()
+        if rebuild_from_cache:
+            return fetcher.rebuild_cache()
+        return fetcher.fetch()
+
+    def align_ontology(
+        self,
+        source_owl: str,
+        target: str,
+        out_dir: str,
+        method: str = "sapbert+lexical",
+        top_k: int = 5,
+        close_thresh: float = 0.70,
+        extend: bool = True,
+        enrich: bool = True,
+        dry_run: bool = False,
+    ):
+        """Align source_owl to any target ontology (SNOMED JSON, OBO, or OWL).
+
+        target: path to the target file (.json / .obo / .owl).
+        out_dir: directory for output files (candidates CSV, SSSOM TSV, extended OWL).
+        method: "lexical", "sapbert", or "sapbert+lexical" (default).
+        extend: mint WOND stubs for target concepts without a source match.
+        enrich: copy rdfs:label, IAO def, and xrefs from target into matched source classes.
+
+        Prints unmatched source classes (your own classes with no target mapping).
+        Returns AlignmentResult for further inspection.
+        """
+        from wound_ontology.alignment.aligner import Aligner
+        from pathlib import Path as _Path
+        from datetime import datetime
+
+        root = _Path(self.dm.base_path) if hasattr(self.dm, "base_path") and self.dm.base_path else _Path(".")
+
+        def _resolve(p: str) -> _Path:
+            pp = _Path(p)
+            return pp if pp.is_absolute() else root / pp
+
+        embedder = self._ensure_embedder() if "sapbert" in method else None
+        aligner  = Aligner(_resolve(source_owl), embedder=embedder)
+        result   = aligner.align(
+            _resolve(target),
+            method=method,
+            top_k=top_k,
+            close_thresh=close_thresh,
+        )
+
+        stamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+        out   = _resolve(out_dir)
+        out.mkdir(parents=True, exist_ok=True)
+
+        aligner.write_candidates(result, out / f"alignment_candidates_{stamp}.csv")
+        aligner.write_sssom(result,      out / f"alignment_{stamp}.sssom.tsv")
+
+        ext_owl = out / f"source_extended_{stamp}.owl"
+        if extend:
+            aligner.extend(result, ext_owl, dry_run=dry_run)
+        if enrich:
+            enrich_path = ext_owl if ext_owl.exists() else _resolve(source_owl)
+            aligner.enrich(result, enrich_path, dry_run=dry_run)
+
+        if result.unmatched_source:
+            print(f"\n[align_ontology] {len(result.unmatched_source)} source classes "
+                  f"have no mapping in {_resolve(target).name}:")
+            for iri in result.unmatched_source[:20]:
+                label = next((k for k, v in result.source_label_index.items()
+                              if v == iri), str(iri))
+                print(f"  {label}")
+            if len(result.unmatched_source) > 20:
+                print(f"  ... and {len(result.unmatched_source) - 20} more")
+
+        return result
 
     def run_reason_owl(
         self,
@@ -459,12 +654,7 @@ class Orchestrator:
         output_file: str,
         infer_property_values: bool = True,
     ) -> None:
-        """
-        Run the Pellet/HermiT reasoner over an enriched OWL file and save
-        the result with materialised inferences.
-
-        Requires Java and JPype. Call AFTER run_curate_owl().
-        """
+        """Run the Pellet/HermiT reasoner over an OWL file and save materialised inferences."""
         self.reasoner.reason(
             input_file,
             output_file,
@@ -472,29 +662,74 @@ class Orchestrator:
         )
 
     def export_to_gexf(self, output_file: str, input_owl: str) -> None:
-        """
-        Export the wound ontology as a GEXF file for Gephi / Cytoscape.
-
-        Parses input_owl with rdflib and writes GEXF encoding node attributes
-        (label, iri, node_type, namespace) and edge attributes (predicate).
-        """
+        """Export the ontology as GEXF for Gephi/Cytoscape."""
         self.graph_exporter.export_owl(input_owl, output_file)
 
     def build_knowledge_graph(self, input_owl: str):
-        """
-        Load an OWL/RDF file and return an ABox for programmatic use
-        (SPARQL via .sparql, subgraph extraction, label search, neighbour inspection).
-        """
-        from wound_ontology.tbox_abox_reasoner.for_rdflib.abox import ABox
-        return ABox.from_owl(input_owl)
+        """Load an OWL/RDF file and return a KnowledgeGraph for SPARQL queries and graph traversal."""
+        from wound_ontology.knowledge_graph import KnowledgeGraphRepository
+        return KnowledgeGraphRepository().load(input_owl)
 
-    # ── Full pipeline ──────────────────────────────────────────────────────────
 
-    def run_full_pipeline(self, query, max_results=50, predefined_df=None):
-        self.run_pubmed_search(query, max_results)
-        self.run_extract_to_store()
-        self.run_build_term_mapping()
-        print("[Orchestrator] Pause for mapping review. Run "
-              "pipeline.mapping_cleaner.review_mappings() and "
-              "pipeline.mapping_cleaner.apply(pipeline.store), then continue with "
-              "pipeline.run_build_hierarchies(...).")
+    def plot_hierarchy(
+        self,
+        hierarchy=None,
+        output_file: str = "class_hierarchy.html",
+        height: str = "900px",
+        root: str | None = None,
+        max_nodes: int = 300,
+    ) -> None:
+        """
+        Render a hierarchy as an interactive pyvis graph in the notebook.
+
+        hierarchy   – BaseHierarchy instance; defaults to class_hier.
+        output_file – HTML file written alongside the notebook.
+        root        – restrict to the subtree under this concept.
+        max_nodes   – cap on number of nodes rendered (default 300).
+                      The full graph has 4500+ nodes which crashes vis.js.
+                      Use root= to focus on a subtree instead.
+        """
+        try:
+            from pyvis.network import Network
+        except ImportError:
+            print("pyvis not installed — run: pip install pyvis")
+            return
+        import networkx as nx
+
+        hier = hierarchy or self.class_hier
+        df   = hier.df
+        if df.empty:
+            print("Hierarchy is empty — run the pipeline first.")
+            return
+
+        if root:
+            subtree = hier.subtree_of(root)
+            df = df.loc[
+                df.index.isin(subtree),
+                df.columns.isin(subtree),
+            ]
+
+        G = nx.DiGraph()
+        for concept in df.index:
+            for parent in df.columns[df.loc[concept] == 1.0]:
+                G.add_edge(concept, parent)
+
+        if G.number_of_nodes() > max_nodes:
+            print(f"  Graph has {G.number_of_nodes()} nodes — truncating to {max_nodes}.")
+            print(f"  Use root='<concept>' to focus on a subtree, e.g. root='Wound'.")
+            keep = list(G.nodes)[:max_nodes]
+            G = G.subgraph(keep).copy()
+
+        from pathlib import Path as _Path
+        out = _Path(output_file)
+
+        net = Network(
+            height=height,
+            width="100%",
+            directed=True,
+            cdn_resources="in_line",
+        )
+        net.from_nx(G)
+        out.write_text(net.generate_html(), encoding="utf-8")
+        print(f"[plot_hierarchy] {G.number_of_nodes()} nodes, "
+              f"{G.number_of_edges()} edges → {out}")

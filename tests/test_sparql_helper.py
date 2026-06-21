@@ -5,7 +5,7 @@ import pytest
 from rdflib import Graph, URIRef, Literal, RDF, RDFS, OWL
 from rdflib.namespace import XSD
 
-from wound_ontology.tbox_abox_reasoner.for_rdflib.sparql.sparql_helper import SPARQLHelper
+from wound_ontology.knowledge_graph import KnowledgeGraph, KnowledgeGraphQuerier as SPARQLHelper
 
 EX = "http://example.org/test/"
 
@@ -22,22 +22,20 @@ def _build_graph() -> Graph:
     return g
 
 
+def _sq(g: Graph) -> SPARQLHelper:
+    return SPARQLHelper(KnowledgeGraph(g))
+
+
 @pytest.fixture
 def sq() -> SPARQLHelper:
-    return SPARQLHelper(_build_graph())
+    return _sq(_build_graph())
 
 
 # ── Construction ──────────────────────────────────────────────────────────────
 
-def test_accepts_rdflib_graph():
-    g = Graph()
-    helper = SPARQLHelper(g)
+def test_accepts_knowledge_graph():
+    helper = _sq(Graph())
     assert helper is not None
-
-
-def test_rejects_unknown_type():
-    with pytest.raises(TypeError):
-        SPARQLHelper("not a graph")
 
 
 # ── label_of ─────────────────────────────────────────────────────────────────
@@ -52,7 +50,7 @@ def test_label_of_prefers_lang_tag(sq):
     iri = URIRef(EX + "Thing")
     g.add((iri, RDFS.label, Literal("Thing", lang="de")))
     g.add((iri, RDFS.label, Literal("Thing EN", lang="en")))
-    lbl = SPARQLHelper(g).label_of(str(iri), lang="en")
+    lbl = _sq(g).label_of(str(iri), lang="en")
     assert lbl == "Thing EN"
 
 
@@ -60,7 +58,7 @@ def test_label_of_falls_back_to_any_lang(sq):
     g = Graph()
     iri = URIRef(EX + "German")
     g.add((iri, RDFS.label, Literal("Wunde", lang="de")))
-    lbl = SPARQLHelper(g).label_of(str(iri), lang="en")
+    lbl = _sq(g).label_of(str(iri), lang="en")
     assert lbl == "Wunde"
 
 

@@ -1,0 +1,235 @@
+id: https://w3id.org/yourproject/bfo-extraction
+name: bfo-extraction
+title: BFO-rooted extraction schema
+description: >-
+  LinkML extraction template for a BFO-grounded ontology. Single source of truth:
+  `gen-pydantic` -> Pydantic models for extraction; `gen-owl` -> OWL for reasoning.
+  Every domain class is anchored to a BFO upper category via LinkML `is_a:`
+  inheritance + `class_uri`. (Note: `is_a:` here is the LinkML class-inheritance
+  KEYWORD — distinct from the ontological subclass_of relation between extracted
+  entities, which is adjudicated by FCA and NOT modelled here as an extractable
+  relation.) Only object-property relations are extracted by the LLM.
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  yourproject: https://w3id.org/yourproject/
+  BFO: http://purl.obolibrary.org/obo/BFO_
+  RO:  http://purl.obolibrary.org/obo/RO_
+  CL:  http://purl.obolibrary.org/obo/CL_
+  GO:  http://purl.obolibrary.org/obo/GO_
+  MONDO: http://purl.obolibrary.org/obo/MONDO_
+  CHEBI: http://purl.obolibrary.org/obo/CHEBI_
+  PATO:  http://purl.obolibrary.org/obo/PATO_
+default_prefix: yourproject
+default_range: string
+imports:
+  - linkml:types
+  # - core            # uncomment to reuse OntoGPT's NamedEntity/grounding mixins
+
+# ---------------------------------------------------------------------------
+# SLOTS (reusable field definitions; `description` becomes the LLM prompt line)
+# ---------------------------------------------------------------------------
+slots:
+  id:
+    identifier: true
+    range: uriorcurie
+    description: the persistent identifier (CURIE) for this entity
+  label:
+    range: string
+    description: the name of the entity as it appears in the text
+  entities:
+    range: NamedEntity
+    multivalued: true
+    inlined_as_list: true
+  relations:
+    range: Relation
+    multivalued: true
+    inlined_as_list: true
+  subject:
+    range: NamedEntity
+  object:
+    range: NamedEntity
+
+# ---------------------------------------------------------------------------
+# CLASSES
+# ---------------------------------------------------------------------------
+classes:
+
+  # ---- entry point / container ------------------------------------------
+  ExtractionResult:
+    tree_root: true
+    description: the top-level container the LLM fills in for a document
+    slots:
+      - entities
+      - relations
+
+  # ---- abstract base for everything groundable --------------------------
+  NamedEntity:
+    abstract: true
+    description: any entity grounded to a persistent identifier
+    slots:
+      - id
+      - label
+
+  # =======================================================================
+  # BFO UPPER LAYER  (abstract anchors — `class_uri` ties them to real BFO)
+  # =======================================================================
+  Continuant:
+    abstract: true
+    is_a: NamedEntity
+    class_uri: BFO:0000002
+
+  Occurrent:
+    abstract: true
+    is_a: NamedEntity
+    class_uri: BFO:0000003
+
+  MaterialEntity:
+    abstract: true
+    is_a: Continuant
+    class_uri: BFO:0000040
+
+  ImmaterialEntity:
+    abstract: true
+    is_a: Continuant
+    class_uri: BFO:0000141
+
+  SpecificallyDependentContinuant:
+    abstract: true
+    is_a: Continuant
+    class_uri: BFO:0000020
+
+  Quality:
+    abstract: true
+    is_a: SpecificallyDependentContinuant
+    class_uri: BFO:0000019
+
+  RealizableEntity:
+    abstract: true
+    is_a: SpecificallyDependentContinuant
+    class_uri: BFO:0000017
+
+  Disposition:
+    abstract: true
+    is_a: RealizableEntity
+    class_uri: BFO:0000016
+
+  Role:
+    abstract: true
+    is_a: RealizableEntity
+    class_uri: BFO:0000023
+
+  Function:
+    abstract: true
+    is_a: RealizableEntity
+    class_uri: BFO:0000034
+
+  Process:
+    abstract: true
+    is_a: Occurrent
+    class_uri: BFO:0000015
+
+  # =======================================================================
+  # DOMAIN CLASSES  (what the LLM actually instantiates)
+  #   - is_a  -> the BFO anchor (so the ontology is "entirely based on BFO")
+  #   - id_prefixes -> grounding targets AND your prefix-validation allow-list
+  #   - annotators  -> which ontology to ground against
+  # =======================================================================
+  Cell:
+    is_a: MaterialEntity
+    id_prefixes: [CL]
+    annotations:
+      annotators: sqlite:obo:cl
+    description: a cell type mentioned in the text
+
+  Chemical:
+    is_a: MaterialEntity
+    id_prefixes: [CHEBI]
+    annotations:
+      annotators: sqlite:obo:chebi
+    description: a chemical or drug
+
+  BiologicalProcess:
+    is_a: Process
+    id_prefixes: [GO]
+    annotations:
+      annotators: sqlite:obo:go
+    description: a biological process
+
+  Disease:
+    is_a: Disposition          # a disease is a disposition in BFO/OGMS terms
+    id_prefixes: [MONDO]
+    annotations:
+      annotators: sqlite:obo:mondo
+    description: a disease or disorder
+
+  PhenotypicQuality:
+    is_a: Quality
+    id_prefixes: [PATO]
+    annotations:
+      annotators: sqlite:obo:pato
+    description: a quality such as size, color, or shape
+
+  # =======================================================================
+  # RELATIONS  (typed object properties; subclass_of is NOT among them — FCA owns it)
+  #   Each relation class's `class_uri` IS its predicate IRI.
+  #   Constrained subject/object ranges enforce BFO domain/range:
+  #     part_of stays WITHIN material<->material or process<->process.
+  # =======================================================================
+  Relation:
+    abstract: true
+    description: an object-property assertion between two named entities
+    slots: [subject, object]
+
+  MaterialPartOf:
+    is_a: Relation
+    class_uri: BFO:0000050     # part of
+    slot_usage:
+      subject: {range: MaterialEntity}
+      object:  {range: MaterialEntity}
+    description: a material entity is part of another material entity
+
+  ProcessPartOf:
+    is_a: Relation
+    class_uri: BFO:0000050     # part of
+    slot_usage:
+      subject: {range: Process}
+      object:  {range: Process}
+    description: a process is part of another process
+
+  LocatedIn:
+    is_a: Relation
+    class_uri: RO:0001025
+    slot_usage:
+      subject: {range: MaterialEntity}
+      object:  {range: Continuant}
+    description: an independent continuant is located in another
+
+  OccursIn:
+    is_a: Relation
+    class_uri: BFO:0000066
+    slot_usage:
+      subject: {range: Process}
+      object:  {range: MaterialEntity}
+    description: a process occurs in an independent continuant
+
+  HasParticipant:
+    is_a: Relation
+    class_uri: RO:0000057
+    slot_usage:
+      subject: {range: Process}
+      object:  {range: MaterialEntity}
+    description: a process has a material entity as participant
+
+  InheresIn:
+    is_a: Relation
+    class_uri: RO:0000052
+    slot_usage:
+      subject: {range: SpecificallyDependentContinuant}
+      object:  {range: MaterialEntity}
+    description: a quality/disposition inheres in its bearer
+
+# NOTE on disjointness: LinkML does not fully express OWL DisjointClasses.
+# Assert  DisjointClasses(Continuant, Occurrent)  during gen-owl post-processing
+# (e.g. a ROBOT template or an extra axioms file). With BFO typing + this axiom,
+# the reasoner flags any cross-category part_of as inconsistent (plan SS5.2 / SS2A.4).

@@ -24,11 +24,11 @@ class GraphVisualizer:
     Exports an OWL ontology to GEXF format for visualisation in Gephi
     (or any tool that reads GEXF 1.2, such as Cytoscape or sigma.js).
 
-    Accepts an ABox instance or a plain rdflib.Graph.
+    Accepts a KnowledgeGraph instance or a plain rdflib.Graph.
 
     Usage:
         exporter = GraphVisualizer()
-        exporter.export(abox, "output/ontology.gexf")
+        exporter.export(kg, "output/ontology.gexf")
 
         # One-shot from an OWL file
         exporter.export_owl("enriched.owl", "output/ontology.gexf")
@@ -41,7 +41,7 @@ class GraphVisualizer:
 
     def export(self, graph, output_file: str) -> None:
         """
-        Write an rdflib.Graph (or ABox) to a GEXF file.
+        Write a KnowledgeGraph or plain rdflib.Graph to a GEXF file.
 
         Node attributes: label, iri, node_type, namespace
         Edge attributes: predicate
@@ -59,8 +59,8 @@ class GraphVisualizer:
 
     def export_owl(self, owl_file: str, output_file: str) -> None:
         """One-shot: parse an OWL file and write GEXF."""
-        from wound_ontology.tbox_abox_reasoner.for_rdflib.abox import ABox
-        self.export(ABox.from_owl(owl_file), output_file)
+        from wound_ontology.knowledge_graph import KnowledgeGraphRepository
+        self.export(KnowledgeGraphRepository().load(owl_file), output_file)
 
     @staticmethod
     def _to_networkx(g: rdflib.Graph) -> nx.DiGraph:

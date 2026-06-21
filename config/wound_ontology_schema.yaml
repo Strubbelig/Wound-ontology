@@ -1,0 +1,381 @@
+id: https://w3id.org/wond/schema
+name: wound-ontology-schema
+title: WOND — Wound Ontology LinkML Schema
+description: >-
+  BFO-grounded LinkML schema for the Wound Ontology (WOND). Every domain class
+  is anchored to a BFO upper category via `is_a:` + `class_uri`. This schema is
+  the single source of truth:
+    gen-pydantic  -> Pydantic models (extraction validation, replaces bare Pydantic)
+    gen-owl       -> OWL axioms (formal subClassOf BFO, enforced by reasoner)
+  `annotators` entries force OAK grounding: the LLM must return a CURIE whose IRI
+  actually exists in the target ontology, making hallucinated IDs a hard error.
+
+prefixes:
+  linkml:    https://w3id.org/linkml/
+  wond:      https://w3id.org/wond/
+  BFO:       http://purl.obolibrary.org/obo/BFO_
+  RO:        http://purl.obolibrary.org/obo/RO_
+  CHEBI:     http://purl.obolibrary.org/obo/CHEBI_
+  DOID:      http://purl.obolibrary.org/obo/DOID_
+  OBI:       http://purl.obolibrary.org/obo/OBI_
+  OGMS:      http://purl.obolibrary.org/obo/OGMS_
+  HP:        http://purl.obolibrary.org/obo/HP_
+  FMA:       http://purl.obolibrary.org/obo/FMA_
+  PATO:      http://purl.obolibrary.org/obo/PATO_
+  IAO:       http://purl.obolibrary.org/obo/IAO_
+  DRON:      http://purl.obolibrary.org/obo/DRON_
+  GO:        http://purl.obolibrary.org/obo/GO_
+  SNOMEDCT:  http://snomed.info/id/
+  NCBITaxon: http://purl.obolibrary.org/obo/NCBITaxon_
+  CL:        http://purl.obolibrary.org/obo/CL_
+
+default_prefix: wond
+default_range: string
+imports:
+  - linkml:types
+
+# ---------------------------------------------------------------------------
+# SLOTS
+# ---------------------------------------------------------------------------
+slots:
+  id:
+    identifier: true
+    range: uriorcurie
+    description: persistent CURIE for this entity
+  label:
+    range: string
+    description: preferred label as it appears in the source text
+  entities:
+    range: NamedEntity
+    multivalued: true
+    inlined_as_list: true
+  relations:
+    range: Relation
+    multivalued: true
+    inlined_as_list: true
+  subject:
+    range: NamedEntity
+  object:
+    range: NamedEntity
+
+# ---------------------------------------------------------------------------
+# CLASSES
+# ---------------------------------------------------------------------------
+classes:
+
+  # ---- entry point -------------------------------------------------------
+  ExtractionResult:
+    tree_root: true
+    description: top-level container the LLM fills in for a document
+    slots: [entities, relations]
+
+  # ---- abstract base for every groundable entity ------------------------
+  NamedEntity:
+    abstract: true
+    description: any entity grounded to a persistent identifier
+    slots: [id, label]
+
+  # =======================================================================
+  # BFO UPPER LAYER  (abstract — each ties to its real BFO IRI via class_uri)
+  # =======================================================================
+  Continuant:
+    abstract: true
+    is_a: NamedEntity
+    class_uri: BFO:0000002
+
+  Occurrent:
+    abstract: true
+    is_a: NamedEntity
+    class_uri: BFO:0000003
+
+  MaterialEntity:
+    abstract: true
+    is_a: Continuant
+    class_uri: BFO:0000040
+
+  ImmaterialEntity:
+    abstract: true
+    is_a: Continuant
+    class_uri: BFO:0000141
+
+  SpecificallyDependentContinuant:
+    abstract: true
+    is_a: Continuant
+    class_uri: BFO:0000020
+
+  Quality:
+    abstract: true
+    is_a: SpecificallyDependentContinuant
+    class_uri: BFO:0000019
+
+  RealizableEntity:
+    abstract: true
+    is_a: SpecificallyDependentContinuant
+    class_uri: BFO:0000017
+
+  Disposition:
+    abstract: true
+    is_a: RealizableEntity
+    class_uri: BFO:0000016
+
+  Role:
+    abstract: true
+    is_a: RealizableEntity
+    class_uri: BFO:0000023
+
+  Function:
+    abstract: true
+    is_a: RealizableEntity
+    class_uri: BFO:0000034
+
+  GenericallyDependentContinuant:
+    abstract: true
+    is_a: Continuant
+    class_uri: BFO:0000031
+
+  Process:
+    abstract: true
+    is_a: Occurrent
+    class_uri: BFO:0000015
+
+  # =======================================================================
+  # WOUND-DOMAIN CLASSES
+  #   is_a        -> BFO anchor (gen-owl produces formal rdfs:subClassOf)
+  #   class_uri   -> IRI used in compiled OWL; absent here so gen-owl mints wond:
+  #   id_prefixes -> CURIE allow-list enforced by OAK grounding
+  #   annotators  -> OAK selector used to verify the returned CURIE actually exists
+  # =======================================================================
+
+  # ---- Material entities ------------------------------------------------
+
+  WoundLesion:
+    is_a: MaterialEntity
+    id_prefixes: [DOID, SNOMEDCT, wond]
+    annotations:
+      annotators: "sqlite:obo:doid, sqlite:obo:hp"
+    description: >-
+      a wound, ulcer, lesion, or skin/tissue defect (e.g. laceration, burn,
+      pressure injury, surgical wound, chronic ulcer)
+
+  AnatomicalSite:
+    is_a: MaterialEntity
+    id_prefixes: [FMA, SNOMEDCT, wond]
+    annotations:
+      annotators: "sqlite:fma"
+    description: >-
+      a body part, tissue region, or anatomical structure that is a site or
+      boundary of a wound (e.g. skin, dermis, lower leg, sacrum)
+
+  WoundMaterial:
+    is_a: MaterialEntity
+    id_prefixes: [CHEBI, wond]
+    annotations:
+      annotators: "sqlite:obo:chebi"
+    description: >-
+      a chemical substance, dressing component, or wound fluid at the molecular
+      level (e.g. collagen, hydrogen peroxide, wound exudate, fibrin)
+
+  WoundDrug:
+    is_a: MaterialEntity
+    id_prefixes: [DRON, CHEBI, wond]
+    annotations:
+      annotators: "sqlite:obo:dron, sqlite:obo:chebi"
+    description: >-
+      a drug product or medication applied in wound care (e.g. silver
+      sulfadiazine cream, mupirocin ointment, iodine-based dressing,
+      topical antibiotic, anaesthetic agent)
+
+  WoundDevice:
+    is_a: MaterialEntity
+    id_prefixes: [OBI, SNOMEDCT, wond]
+    annotations:
+      annotators: "sqlite:obo:obi"
+    description: >-
+      a medical device or instrument used in wound assessment or treatment
+      (e.g. negative-pressure wound therapy device, wound probe, VAC system)
+
+  WoundMicroorganism:
+    is_a: MaterialEntity
+    id_prefixes: [NCBITaxon, wond]
+    annotations:
+      annotators: "sqlite:obo:ncbitaxon"
+    description: >-
+      a microorganism relevant to wound infection or biofilm
+      (e.g. Staphylococcus aureus, Pseudomonas aeruginosa, Candida albicans)
+
+  # ---- Generically dependent continuants (information artifacts) ---------
+
+  WoundRecord:
+    is_a: GenericallyDependentContinuant
+    id_prefixes: [IAO, wond]
+    annotations:
+      annotators: "sqlite:obo:iao"
+    description: >-
+      an information content entity that is about a wound or wound-care episode
+      (e.g. wound measurement datum, wound assessment report, wound photograph,
+      microbiological culture result, clinical note)
+
+  # ---- Specifically dependent continuants --------------------------------
+
+  WoundCharacteristic:
+    is_a: Quality
+    id_prefixes: [PATO, HP, wond]
+    annotations:
+      annotators: "sqlite:obo:pato, sqlite:obo:hp"
+    description: >-
+      an observable quality of a wound (e.g. wound depth, wound area, exudate
+      colour, tissue viability, wound odour, pH)
+
+  # ---- Realizables -------------------------------------------------------
+
+  WoundInfection:
+    is_a: Disposition
+    id_prefixes: [DOID, HP, SNOMEDCT, wond]
+    annotations:
+      annotators: "sqlite:obo:doid, sqlite:obo:hp"
+    description: >-
+      a disposition of wound tissue to harbour or propagate infection
+      (e.g. wound colonisation, wound biofilm infection, cellulitis)
+
+  ClinicalRole:
+    is_a: Role
+    id_prefixes: [OBI, OGMS, wond]
+    annotations:
+      annotators: "sqlite:obo:obi"
+    description: >-
+      a role borne by a person or entity in a wound-care context
+      (e.g. wound-care nurse, wound-care patient, attending physician)
+
+  # ---- Processes ---------------------------------------------------------
+
+  WoundProcess:
+    is_a: Process
+    id_prefixes: [OGMS, SNOMEDCT, wond]
+    annotations:
+      annotators: "sqlite:obo:ogms"
+    description: >-
+      a biological or pathological process affecting a wound
+      (e.g. wound healing, tissue repair, granulation, epithelialisation,
+      wound dehiscence, necrosis, slough formation)
+
+  WoundTreatment:
+    is_a: Process
+    id_prefixes: [OBI, SNOMEDCT, wond]
+    annotations:
+      annotators: "sqlite:obo:obi"
+    description: >-
+      a clinical intervention or procedure applied to manage a wound
+      (e.g. debridement, wound irrigation, skin grafting, VAC therapy,
+      dressing application, surgical closure)
+
+  WoundAssessment:
+    is_a: Process
+    id_prefixes: [OBI, OGMS, wond]
+    annotations:
+      annotators: "sqlite:obo:obi"
+    description: >-
+      a clinical measurement, observation, or assessment act directed at a wound
+      (e.g. wound measurement, microbiological swab, biopsy, photography)
+
+  WoundBiologicalProcess:
+    is_a: Process
+    id_prefixes: [GO, wond]
+    annotations:
+      annotators: "sqlite:obo:go"
+    description: >-
+      a molecular or cellular biological process occurring in wound tissue
+      (e.g. inflammatory response, angiogenesis, keratinocyte migration,
+      fibroblast proliferation, collagen biosynthesis, apoptosis)
+
+  # =======================================================================
+  # RELATIONS  (typed object properties)
+  #   class_uri IS the predicate IRI; ranges enforce BFO domain/range.
+  #   Subclass_of between wound entities is NOT extracted here — FCA owns it.
+  # =======================================================================
+  Relation:
+    abstract: true
+    description: an object-property assertion between two named entities
+    slots: [subject, object]
+
+  MaterialPartOf:
+    is_a: Relation
+    class_uri: BFO:0000050
+    slot_usage:
+      subject: {range: MaterialEntity}
+      object:  {range: MaterialEntity}
+    description: a material entity is part of another material entity
+
+  ProcessPartOf:
+    is_a: Relation
+    class_uri: BFO:0000050
+    slot_usage:
+      subject: {range: Process}
+      object:  {range: Process}
+    description: a process is part of another process
+
+  LocatedAtAnatomicalSite:
+    is_a: Relation
+    class_uri: RO:0001025       # located_in
+    slot_usage:
+      subject: {range: WoundLesion}
+      object:  {range: AnatomicalSite}
+    description: a wound lesion is located at an anatomical site
+
+  HasWoundCharacteristic:
+    is_a: Relation
+    class_uri: RO:0000086       # has_quality
+    slot_usage:
+      subject: {range: WoundLesion}
+      object:  {range: WoundCharacteristic}
+    description: a wound lesion has a measurable quality
+
+  CausedBy:
+    is_a: Relation
+    class_uri: RO:0003302       # caused_by (causally upstream of)
+    slot_usage:
+      subject: {range: WoundProcess}
+      object:  {range: WoundLesion}
+    description: a wound process is causally upstream of the wound lesion
+
+  TreatedBy:
+    is_a: Relation
+    class_uri: RO:0002606       # is_input_of (treatment acts on wound)
+    slot_usage:
+      subject: {range: WoundLesion}
+      object:  {range: WoundTreatment}
+    description: a wound lesion is treated by a wound treatment process
+
+  HasParticipant:
+    is_a: Relation
+    class_uri: RO:0000057
+    slot_usage:
+      subject: {range: Process}
+      object:  {range: MaterialEntity}
+    description: a process has a material entity as participant
+
+  OccursIn:
+    is_a: Relation
+    class_uri: BFO:0000066
+    slot_usage:
+      subject: {range: Process}
+      object:  {range: AnatomicalSite}
+    description: a wound process occurs in an anatomical site
+
+  InheresIn:
+    is_a: Relation
+    class_uri: RO:0000052
+    slot_usage:
+      subject: {range: WoundCharacteristic}
+      object:  {range: WoundLesion}
+    description: a wound characteristic inheres in the wound lesion
+
+  IsAbout:
+    is_a: Relation
+    class_uri: IAO:0000136
+    slot_usage:
+      subject: {range: WoundRecord}
+      object:  {range: NamedEntity}
+    description: a wound record is about a wound entity (lesion, process, or characteristic)
+
+# NOTE: Assert DisjointClasses(Continuant, Occurrent) as an extra ROBOT axiom
+# after gen-owl compilation so the reasoner flags cross-category typing errors.

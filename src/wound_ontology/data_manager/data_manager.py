@@ -126,6 +126,70 @@ class DataManager:
         return sorted(files)[-1]
     
 
+    # ── OWL I/O (explicit path) ───────────────────────────────────────────────
+
+    def _owl_uri(self, source: str) -> str:
+        """Convert a file path to a file:// URI; pass URLs through unchanged."""
+        if source.startswith(("http://", "https://", "file://")):
+            return source
+        return Path(source).resolve().as_uri()
+
+    def load_owl(
+        self,
+        source: str,
+        world=None,
+        base_iri=None,
+        id_prefix=None,
+        id_start=None,
+        iri: str = "http://example.org/ontology",
+    ):
+        """Load an OWL file or URL and return an OWLOntology.
+
+        source: local file path or http(s):// URL.
+        world:  share an existing owlready2 World (optional; new World created otherwise).
+        """
+        from wound_ontology.owl.model import (
+            OWLOntology,
+            ONTOLOGY_BASE_IRI,
+            ONTOLOGY_ID_PREFIX,
+            ONTOLOGY_ID_START,
+        )
+        base_iri  = base_iri  if base_iri  is not None else ONTOLOGY_BASE_IRI
+        id_prefix = id_prefix if id_prefix is not None else ONTOLOGY_ID_PREFIX
+        id_start  = id_start  if id_start  is not None else ONTOLOGY_ID_START
+
+        w      = world if world is not None else owlready2.World()
+        ontobj = OWLOntology(onto=w.get_ontology(iri), world=w,
+                             base_iri=base_iri, id_prefix=id_prefix, id_start=id_start)
+        uri = self._owl_uri(source)
+        try:
+            ontobj.onto = w.get_ontology(uri).load()
+        except Exception as exc:
+            print(f"[DataManager] owlready2 warning ({exc.__class__.__name__}) — partial load")
+            ontobj.onto = w.get_ontology(uri)
+        ontobj._invalidate_caches()
+        print(f"[DataManager] Loaded OWL: {source}")
+        return ontobj
+
+    def save_owl(self, ontology, output_file=None) -> str:
+        """Save an OWLOntology to RDF/XML.
+
+        Returns the path written.
+        """
+        try:
+            from config.settings import OWL_OUTPUT_FILE as _default
+        except ImportError:
+            _default = str(
+                Path(__file__).resolve().parents[3] / "output" / "owl" / "ontology_classes.owl"
+            )
+        out = Path(output_file or _default)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        ontology.onto.save(file=str(out), format="rdfxml")
+        print(f"[DataManager] Saved OWL → {out}  ({out.stat().st_size:,} bytes)")
+        return str(out)
+
+    # ── OWL I/O (versioned, by prefix) ───────────────────────────────────────
+
     def load_latest_owl_tbox(self, prefix: str) -> owlready2.Ontology | None:
         """Returns owlready2 onto object of the most recent OWL file matching prefix (does parse)!!"""
         path = self._find_latest_path(prefix, "owl")
@@ -134,7 +198,7 @@ class DataManager:
             return owlready2.get_ontology(f"file://{path}")
         print(f"[DataManager] No OWL found for prefix: {prefix}")
         return None
-    
+
 
     def load_latest_owl_abox(self, prefix: str):
         """Returns rdflib.Graph of the most recent OWL file matching prefix (does parse)!!"""

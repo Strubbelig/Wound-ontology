@@ -1,13 +1,38 @@
 from __future__ import annotations
 import asyncio
 import json
+from pathlib import Path
 
 import openai as openai_sdk
 from openai import RateLimitError as _RateLimitError
 
+_CQ_PATH = Path(__file__).resolve().parents[3] / "config" / "competency_questions.json"
+
+def _build_cq_block() -> str:
+    """Load competency_questions.json and return a compact prompt section."""
+    try:
+        data = json.loads(_CQ_PATH.read_text())
+    except Exception:
+        return ""
+    in_lines: list[str] = []
+    for theme in data.get("clinical_themes", []):
+        cqs = theme.get("in_scope", [])
+        if cqs:
+            t = cqs[0].get("example_triple", [])
+            triple_str = f'({t[0]} {t[1]} {t[2]})' if len(t) == 3 else ""
+            in_lines.append(f'        ✓ {cqs[0]["question"]} → {triple_str}')
+    out_lines = [
+        f'        ✗ {cq["question"]} [{cq.get("category", "")}]'
+        for cq in data.get("global_out_of_scope", [])[:4]
+    ]
+    lines = ["        IN SCOPE — ontology must answer:"] + in_lines
+    lines += ["        OUT OF SCOPE — extract NOTHING for these:"] + out_lines
+    return "\n".join(lines)
+
 from wound_ontology.llm.schemas import (
     ExtractResponse, NormalizationResponse, FillNanResponse,
     FillNanBatchResponse, SemanticNameResponse, ScopeCheckResponse,
+    MereRelationResult, MereRelationBatchResponse,
 )
 
 _OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -70,7 +95,7 @@ class LLMClient:
 
     # ── Core call ──────────────────────────────────────────────────────────────
 
-    async def _call_json(self, prompt: str, schema: type, temperature=0.1, timeout=240):
+    async def _call_json(self, prompt: str, schema: type, temperature=0.0, timeout=240):
         """POST to OpenRouter, enforce JSON mode, parse into Pydantic schema."""
         schema_json = (
             schema.model_json_schema()
@@ -125,11 +150,15 @@ class LLMClient:
             if predicate_definitions
             else f"        Use only these predicates: {predicates}"
         )
+        cq_block = _build_cq_block()
         prompt = f"""
         Analyze the following clinical text to build a formal wound ontology compliant with BFO and RO standards.
         The domain is clinical and surgical (medication, surgical treatment, physical therapy, etiology, pathophysiology, classifications).
 
         GOAL: Extract objects and their FORMAL ATTRIBUTES. Every attribute is a composite of a predicate and a target.
+
+        ══ ONTOLOGY SCOPE (COMPETENCY QUESTIONS) ══
+{cq_block}
 
         ══ PREDICATE DEFINITIONS AND RULES ══
 
@@ -141,17 +170,26 @@ class LLMClient:
         3. Add confirmed attributes to true_attributes, denied to false_attributes.
         4. Classify existing attributes where possible: {attributes}
         5. MUTUAL EXCLUSION: If you assign is_a: X for an entity, you MUST NOT also assign part_of: X for the same target X.
-        6. DOMAIN FILTER: Extract ONLY clinical/biomedical concepts (wounds, conditions, treatments, anatomy, pathogens, biological processes). NEVER extract study design or methodology terms such as: Study, Randomized Controlled Trial, Systematic Review, Meta-analysis, Cohort Study, Clinical Trial, Control Group, Intervention Group, Patient, Sample Size, Follow-up, Outcome Measure.
+        6. DOMAIN FILTER: Extract ONLY wound-care concepts — wound types, conditions, anatomy, pathogens, biological processes, treatments. NEVER extract:
+           • Study designs / trial types: Study, Trial, RCT, Systematic Review, Meta-analysis, Cohort Study, Case Series, Pilot Study, Cross-sectional Study, Observational Study
+           • Study components / participants: Control Group, Intervention Group, Patient, Participant, Sample Size, Population, Follow-up, Outcome Measure, Endpoint, Inclusion Criteria, Exclusion Criteria
+           • Statistical methods: Regression, Propensity Score, Odds Ratio, Hazard Ratio, AUC, ROC Curve, Confidence Interval, Sensitivity Analysis, Nomogram, Forest Plot
+           • Bibliometric / database terms: PubMed, Scopus, PROSPERO, PRISMA, Cochrane, Embase, STROBE, Web of Science
+           • ML / AI methods: Machine Learning, Deep Learning, Neural Network, Random Forest, SVM, Algorithm, Predictive Model
+           • Healthcare admin / nursing / education: Nurse Training, Healthcare Professional, Clinical Guideline, Protocol, Education, Knowledge Score, Clinical Practice, Multidisciplinary Team
+           • Cost / economic terms: Cost-effectiveness, Healthcare Cost, Economic Evaluation, Cost Analysis, Incremental Cost
+           • Animal / in-vitro: Mouse Model, Rat Model, In Vitro, In Vivo, PCR, RNA Sequencing, Macrophage Polarization, Fibroblast Migration, Keratinocyte Proliferation
+           • Generic process / admin terms: Management Strategy, Prevention Strategy, Risk Stratification, Assessment Tool, Survey, Questionnaire, Care Bundle, Standard of Care
 
         ══ EXAMPLE ══
-        Object: "Surgical Site Infection"
+        Object: "Pressure Injury"
         true_attributes:
-          - predicate: "is_a", target: "Infectious Complication"
-          - predicate: "occurs_in", target: "Surgical Site"
-          - predicate: "caused_by", target: "Bacterial Contamination"
+          - predicate: "is_a", target: "Chronic Wound"
+          - predicate: "affects", target: "Subcutaneous Tissue"
+          - predicate: "caused_by", target: "Sustained Mechanical Load"
         false_attributes:
-          - predicate: "part_of", target: "Infectious Complication"
-          - predicate: "is_a", target: "Surgical Instrument"
+          - predicate: "occurs_in", target: "Subcutaneous Tissue"  (wrong — affects two continuants, not a process)
+          - predicate: "part_of", target: "Chronic Wound"  (wrong — use is_a for taxonomy)
 
         TEXT: {text}
         """
@@ -251,6 +289,44 @@ class LLMClient:
         """
         result = await self._execute_with_retry(self._call_json, prompt, ScopeCheckResponse, temperature=0.0, timeout=360)
         return result.inappropriate
+
+    async def validate_mere_batch(
+        self, triples: list[tuple[str, str]]
+    ) -> list[MereRelationResult]:
+        """
+        Classify (child, part_of, parent) triples for a wound ontology.
+
+        Returns list of MereRelationResult with verdict:
+          keep  – valid anatomical/physical part_of
+          is_a  – child is a subtype of parent, not a part
+          drop  – relation is wrong in both directions
+        """
+        lines = [f'- ("{c}", part_of, "{p}")' for c, p in triples]
+        prompt = f"""
+        You are a biomedical ontologist curating a wound care ontology (BFO/RO).
+
+        BFO rule: part_of connects CONTINUANTS (material entities, anatomical structures).
+        A PROCESS or PROCEDURE cannot be part_of a material entity.
+
+        Classify each triple with one of three verdicts:
+          keep  – the child is physically/anatomically a PART of the parent
+                  (e.g. "Wound Bed part_of Wound", "Dermis part_of Skin")
+          is_a  – the child is a SUBTYPE/KIND of the parent, not a part
+                  (e.g. "Pressure Injury is_a Wound", "Alveolar Bone Plate Avulsion is_a Alveolar Bone Injury")
+          drop  – the relation is wrong in both directions; remove it
+                  (e.g. "Alginate Hydrogel part_of Wound Management" — a dressing is not a part of a management concept)
+
+        TRIPLES:
+        {chr(10).join(lines)}
+
+        Return JSON with "results": list of {{child, parent, verdict}}.
+        Use the EXACT child and parent strings from the input — do not paraphrase.
+        """
+        result = await self._execute_with_retry(
+            self._call_json, prompt, MereRelationBatchResponse,
+            temperature=0.0, timeout=360,
+        )
+        return result.results
 
     async def generate_semantic_name(self, intent_attributes, superclass_names) -> str:
         prompt = f"""

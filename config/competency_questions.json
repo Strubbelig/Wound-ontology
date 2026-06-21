@@ -1,0 +1,434 @@
+{
+  "description": "Competency questions defining the scope of the wound ontology. Organised by clinical question. Questions the ontology must answer (in_scope) or explicitly cannot answer (out_of_scope).",
+  "clinical_themes": [
+    {
+      "theme": "What is a wound? What is not a wound?",
+      "in_scope": [
+        {
+          "id": "CQ001",
+          "question": "Is a diabetic foot ulcer a type of wound?",
+          "example_triple": ["Diabetic Foot Ulcer", "is_a", "Chronic Wound"]
+        },
+        {
+          "id": "CQ002",
+          "question": "Is a pressure injury a type of wound?",
+          "example_triple": ["Pressure Injury", "is_a", "Chronic Wound"]
+        },
+        {
+          "id": "CQ003",
+          "question": "Is a surgical site infection a type of wound complication?",
+          "example_triple": ["Surgical Site Infection", "is_a", "Wound Complication"]
+        },
+        {
+          "id": "CQ004",
+          "question": "Is a burn injury a type of traumatic wound?",
+          "example_triple": ["Burn Injury", "is_a", "Traumatic Wound"]
+        },
+        {
+          "id": "CQ005",
+          "question": "Is necrotizing fasciitis a type of wound?",
+          "example_triple": ["Necrotizing Fasciitis", "is_a", "Soft Tissue Wound"]
+        },
+        {
+          "id": "CQ006",
+          "question": "Is a venous leg ulcer a type of chronic wound?",
+          "example_triple": ["Venous Leg Ulcer", "is_a", "Chronic Wound"]
+        },
+        {
+          "id": "CQ007",
+          "question": "Is an abscess a type of wound?",
+          "example_triple": ["Abscess", "is_a", "Wound"]
+        },
+        {
+          "id": "CQ008",
+          "question": "Is a laceration a type of acute wound?",
+          "example_triple": ["Laceration", "is_a", "Acute Wound"]
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "CQ_OUT001",
+          "question": "Is a bone fracture a wound?",
+          "reason": "Fracture is an orthopaedic injury — not a soft-tissue wound concept in this ontology."
+        },
+        {
+          "id": "CQ_OUT002",
+          "question": "Is a myocardial infarction a wound?",
+          "reason": "Organ infarction is not within the wound care domain."
+        }
+      ]
+    },
+    {
+      "theme": "What is the size and morphology of the wound?",
+      "in_scope": [
+        {
+          "id": "CQ010",
+          "question": "What intrinsic quality characterises a large wound?",
+          "example_triple": ["Large Wound", "has_quality", "Large"]
+        },
+        {
+          "id": "CQ011",
+          "question": "What quality distinguishes a full-thickness wound from a partial-thickness wound?",
+          "example_triple": ["Full-Thickness Wound", "has_quality", "Full-Thickness"]
+        },
+        {
+          "id": "CQ012",
+          "question": "What quality characterises a deep wound?",
+          "example_triple": ["Deep Wound", "has_quality", "Deep"]
+        },
+        {
+          "id": "CQ013",
+          "question": "What quality characterises an open wound versus a closed wound?",
+          "example_triple": ["Open Wound", "has_quality", "Open"]
+        }
+      ]
+    },
+    {
+      "theme": "Which tissue is affected by the wound?",
+      "in_scope": [
+        {
+          "id": "CQ020",
+          "question": "In which anatomical structure does wound healing occur?",
+          "example_triple": ["Wound Healing", "occurs_in", "Dermis"]
+        },
+        {
+          "id": "CQ021",
+          "question": "Which tissue does a pressure injury affect?",
+          "example_triple": ["Pressure Injury", "affects", "Subcutaneous Tissue"]
+        },
+        {
+          "id": "CQ022",
+          "question": "Which tissue does necrotizing fasciitis affect?",
+          "example_triple": ["Necrotizing Fasciitis", "affects", "Fascia"]
+        },
+        {
+          "id": "CQ023",
+          "question": "Which anatomical site does a diabetic foot ulcer affect?",
+          "example_triple": ["Diabetic Foot Ulcer", "affects", "Plantar Foot"]
+        },
+        {
+          "id": "CQ024",
+          "question": "Is the dermis part of the skin?",
+          "example_triple": ["Dermis", "part_of", "Skin"]
+        },
+        {
+          "id": "CQ025",
+          "question": "Is the wound bed part of the wound?",
+          "example_triple": ["Wound Bed", "part_of", "Wound"]
+        }
+      ]
+    },
+    {
+      "theme": "How does the wound develop? What is the reason for the wound?",
+      "in_scope": [
+        {
+          "id": "CQ030",
+          "question": "What causes a pressure injury?",
+          "example_triple": ["Pressure Injury", "caused_by", "Sustained Mechanical Load"]
+        },
+        {
+          "id": "CQ031",
+          "question": "What causes a diabetic foot ulcer?",
+          "example_triple": ["Diabetic Foot Ulcer", "caused_by", "Peripheral Neuropathy"]
+        },
+        {
+          "id": "CQ032",
+          "question": "What causes a venous leg ulcer?",
+          "example_triple": ["Venous Leg Ulcer", "caused_by", "Chronic Venous Insufficiency"]
+        },
+        {
+          "id": "CQ033",
+          "question": "What causes an ischemic wound?",
+          "example_triple": ["Ischemic Wound", "caused_by", "Peripheral Artery Disease"]
+        },
+        {
+          "id": "CQ034",
+          "question": "What causes impaired wound healing?",
+          "example_triple": ["Impaired Wound Healing", "caused_by", "Diabetes Mellitus"]
+        }
+      ]
+    },
+    {
+      "theme": "Is the wound contaminated or sterile? What contaminates it?",
+      "in_scope": [
+        {
+          "id": "CQ040",
+          "question": "What quality characterises a contaminated wound?",
+          "example_triple": ["Contaminated Wound", "has_quality", "Contaminated"]
+        },
+        {
+          "id": "CQ041",
+          "question": "What quality characterises a sterile wound?",
+          "example_triple": ["Clean Wound", "has_quality", "Sterile"]
+        },
+        {
+          "id": "CQ042",
+          "question": "What contaminates a wound with bacteria?",
+          "example_triple": ["Wound Infection", "caused_by", "Bacterial Colonization"]
+        },
+        {
+          "id": "CQ043",
+          "question": "What causes a foreign body wound?",
+          "example_triple": ["Foreign Body Wound", "caused_by", "Foreign Body"]
+        },
+        {
+          "id": "CQ044",
+          "question": "What pathogen causes necrotizing fasciitis?",
+          "example_triple": ["Necrotizing Fasciitis", "caused_by", "Group A Streptococcus"]
+        },
+        {
+          "id": "CQ045",
+          "question": "What causes biofilm formation in a wound?",
+          "example_triple": ["Wound Biofilm", "caused_by", "Bacterial Colonization"]
+        }
+      ]
+    },
+    {
+      "theme": "How was the wound treated? With what and for how long?",
+      "in_scope": [
+        {
+          "id": "CQ050",
+          "question": "Which intervention treats chronic wounds?",
+          "example_triple": ["Negative Pressure Wound Therapy", "is_treatment_for", "Chronic Wound"]
+        },
+        {
+          "id": "CQ051",
+          "question": "Which dressing treats diabetic foot ulcers?",
+          "example_triple": ["Hydrogel Dressing", "is_treatment_for", "Diabetic Foot Ulcer"]
+        },
+        {
+          "id": "CQ052",
+          "question": "Which antibiotic treats wound infections?",
+          "example_triple": ["Vancomycin", "is_treatment_for", "Wound Infection"]
+        },
+        {
+          "id": "CQ053",
+          "question": "Which procedure treats necrotizing fasciitis?",
+          "example_triple": ["Surgical Debridement", "is_treatment_for", "Necrotizing Fasciitis"]
+        },
+        {
+          "id": "CQ054",
+          "question": "Which therapy treats venous leg ulcers?",
+          "example_triple": ["Compression Therapy", "is_treatment_for", "Venous Leg Ulcer"]
+        },
+        {
+          "id": "CQ055",
+          "question": "Which intervention treats pressure injuries?",
+          "example_triple": ["Pressure Offloading", "is_treatment_for", "Pressure Injury"]
+        },
+        {
+          "id": "CQ056",
+          "question": "Is debridement part of wound care?",
+          "example_triple": ["Debridement", "part_of", "Wound Care Procedure"]
+        },
+        {
+          "id": "CQ057",
+          "question": "Is wound irrigation part of wound cleansing?",
+          "example_triple": ["Wound Irrigation", "part_of", "Wound Cleansing"]
+        }
+      ]
+    },
+    {
+      "theme": "What types of wound healing are there?",
+      "in_scope": [
+        {
+          "id": "CQ060",
+          "question": "Is primary intention healing a type of wound healing?",
+          "example_triple": ["Primary Intention Healing", "is_a", "Wound Healing"]
+        },
+        {
+          "id": "CQ061",
+          "question": "Is secondary intention healing a type of wound healing?",
+          "example_triple": ["Secondary Intention Healing", "is_a", "Wound Healing"]
+        },
+        {
+          "id": "CQ062",
+          "question": "Is granulation tissue formation a phase of wound healing?",
+          "example_triple": ["Granulation Tissue Formation", "is_a", "Wound Healing Phase"]
+        },
+        {
+          "id": "CQ063",
+          "question": "Is re-epithelialization a phase of wound healing?",
+          "example_triple": ["Re-Epithelialization", "is_a", "Wound Healing Phase"]
+        },
+        {
+          "id": "CQ064",
+          "question": "Is the inflammatory phase part of wound healing?",
+          "example_triple": ["Inflammatory Phase", "part_of", "Wound Healing"]
+        },
+        {
+          "id": "CQ065",
+          "question": "Is the proliferative phase part of wound healing?",
+          "example_triple": ["Proliferative Phase", "part_of", "Wound Healing"]
+        }
+      ]
+    },
+    {
+      "theme": "What complications can follow a wound?",
+      "in_scope": [
+        {
+          "id": "CQ070",
+          "question": "Is wound infection a type of wound complication?",
+          "example_triple": ["Wound Infection", "is_a", "Wound Complication"]
+        },
+        {
+          "id": "CQ071",
+          "question": "Is sepsis a type of wound complication?",
+          "example_triple": ["Sepsis", "is_a", "Infectious Complication"]
+        },
+        {
+          "id": "CQ072",
+          "question": "Is wound dehiscence a type of wound complication?",
+          "example_triple": ["Wound Dehiscence", "is_a", "Wound Complication"]
+        },
+        {
+          "id": "CQ073",
+          "question": "Is osteomyelitis a complication of an open wound?",
+          "example_triple": ["Osteomyelitis", "is_a", "Wound Complication"]
+        },
+        {
+          "id": "CQ074",
+          "question": "What causes wound dehiscence?",
+          "example_triple": ["Wound Dehiscence", "caused_by", "Wound Infection"]
+        },
+        {
+          "id": "CQ075",
+          "question": "What causes hypertrophic scar formation?",
+          "example_triple": ["Hypertrophic Scar", "caused_by", "Excessive Collagen Deposition"]
+        }
+      ]
+    },
+    {
+      "theme": "How can wound complications be prevented?",
+      "in_scope": [
+        {
+          "id": "CQ080",
+          "question": "Which intervention prevents surgical site infection?",
+          "example_triple": ["Prophylactic Antibiotic", "is_treatment_for", "Surgical Site Infection"]
+        },
+        {
+          "id": "CQ081",
+          "question": "Which measure prevents pressure injury?",
+          "example_triple": ["Pressure Redistribution Mattress", "is_treatment_for", "Pressure Injury"]
+        },
+        {
+          "id": "CQ082",
+          "question": "Which intervention prevents diabetic foot ulcer recurrence?",
+          "example_triple": ["Therapeutic Footwear", "is_treatment_for", "Diabetic Foot Ulcer"]
+        }
+      ]
+    },
+    {
+      "theme": "Are some wounds worse than others for the patient?",
+      "in_scope": [
+        {
+          "id": "CQ090",
+          "question": "What quality characterises a chronic non-healing wound?",
+          "example_triple": ["Chronic Non-Healing Wound", "has_quality", "Chronic"]
+        },
+        {
+          "id": "CQ091",
+          "question": "What quality characterises a malignant wound?",
+          "example_triple": ["Malignant Wound", "has_quality", "Malignant"]
+        },
+        {
+          "id": "CQ092",
+          "question": "What quality characterises an ischemic wound?",
+          "example_triple": ["Ischemic Wound", "has_quality", "Ischemic"]
+        },
+        {
+          "id": "CQ093",
+          "question": "What quality characterises an infected wound?",
+          "example_triple": ["Infected Wound", "has_quality", "Infected"]
+        }
+      ]
+    },
+    {
+      "theme": "What diagnostics were used to assess the wound?",
+      "in_scope": [
+        {
+          "id": "CQ100",
+          "question": "Where does wound assessment take place?",
+          "example_triple": ["Wound Assessment", "occurs_in", "Wound"]
+        },
+        {
+          "id": "CQ101",
+          "question": "Is bacterial culture a type of wound diagnostic?",
+          "example_triple": ["Bacterial Culture", "is_a", "Wound Diagnostic"]
+        },
+        {
+          "id": "CQ102",
+          "question": "Is ankle-brachial index a diagnostic for vascular wounds?",
+          "example_triple": ["Ankle-Brachial Index", "is_a", "Vascular Assessment"]
+        },
+        {
+          "id": "CQ103",
+          "question": "Is wound biopsy a type of wound diagnostic?",
+          "example_triple": ["Wound Biopsy", "is_a", "Wound Diagnostic"]
+        },
+        {
+          "id": "CQ104",
+          "question": "Is wound photography a type of wound documentation?",
+          "example_triple": ["Wound Photography", "is_a", "Wound Documentation"]
+        }
+      ]
+    },
+    {
+      "theme": "What is a well-healed wound? When is a wound fully healed?",
+      "in_scope": [
+        {
+          "id": "CQ110",
+          "question": "What quality characterises a fully healed wound?",
+          "example_triple": ["Healed Wound", "has_quality", "Epithelialized"]
+        },
+        {
+          "id": "CQ111",
+          "question": "What quality characterises a non-healing wound?",
+          "example_triple": ["Non-Healing Wound", "has_quality", "Chronic"]
+        },
+        {
+          "id": "CQ112",
+          "question": "What quality characterises complete wound closure?",
+          "example_triple": ["Closed Wound", "has_quality", "Closed"]
+        },
+        {
+          "id": "CQ113",
+          "question": "Is complete epithelialization a criterion for wound healing?",
+          "example_triple": ["Complete Epithelialization", "is_a", "Wound Healing Criterion"]
+        }
+      ]
+    }
+  ],
+  "global_out_of_scope": [
+    {
+      "id": "CQ_OUT010",
+      "question": "What statistical method was used to analyse wound healing outcomes?",
+      "category": "Statistical methodology"
+    },
+    {
+      "id": "CQ_OUT011",
+      "question": "How many patients were enrolled in the randomized controlled trial?",
+      "category": "Study design"
+    },
+    {
+      "id": "CQ_OUT012",
+      "question": "What was the cost-effectiveness of the wound treatment?",
+      "category": "Health economics"
+    },
+    {
+      "id": "CQ_OUT013",
+      "question": "Which machine learning algorithm predicted wound healing?",
+      "category": "Machine learning"
+    },
+    {
+      "id": "CQ_OUT014",
+      "question": "What nursing curriculum includes wound care education?",
+      "category": "Education / admin"
+    },
+    {
+      "id": "CQ_OUT015",
+      "question": "What was the 30-day mortality rate in the cohort?",
+      "category": "Epidemiology"
+    }
+  ]
+}

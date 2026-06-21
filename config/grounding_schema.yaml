@@ -1,0 +1,128 @@
+id: https://w3id.org/wond/grounding-schema
+name: wond-grounding-schema
+title: WOND — Single-concept BFO grounding schema for OntoGPT SPIRES
+
+description: >-
+  Purpose-built OntoGPT template for grounding one WOND class at a time.
+  The tree-root (GroundingResult) has ONE slot per BFO leaf category so
+  SPIRES instantiates a concrete type rather than the abstract NamedEntity
+  base class.  Only one slot will be filled per call; the rest stay empty.
+
+prefixes:
+  linkml:    https://w3id.org/linkml/
+  wond:      https://w3id.org/wond/
+  BFO:       http://purl.obolibrary.org/obo/BFO_
+  DOID:      http://purl.obolibrary.org/obo/DOID_
+  HP:        http://purl.obolibrary.org/obo/HP_
+  CHEBI:     http://purl.obolibrary.org/obo/CHEBI_
+  OBI:       http://purl.obolibrary.org/obo/OBI_
+  OGMS:      http://purl.obolibrary.org/obo/OGMS_
+  PATO:      http://purl.obolibrary.org/obo/PATO_
+  IAO:       http://purl.obolibrary.org/obo/IAO_
+  DRON:      http://purl.obolibrary.org/obo/DRON_
+  GO:        http://purl.obolibrary.org/obo/GO_
+  SNOMEDCT:  http://snomed.info/id/
+  NCBITaxon: http://purl.obolibrary.org/obo/NCBITaxon_
+  FMA:       http://purl.obolibrary.org/obo/FMA_
+  RO:        http://purl.obolibrary.org/obo/RO_
+
+default_prefix: wond
+default_range: string
+imports:
+  - linkml:types
+
+# ---------------------------------------------------------------------------
+# SLOTS
+# ---------------------------------------------------------------------------
+slots:
+  id:
+    identifier: true
+    range: uriorcurie
+    description: best-matching OBO CURIE for this entity
+  label:
+    range: string
+    description: the preferred label of the grounded entity
+
+  # One slot per BFO category — SPIRES fills exactly one per call
+  material_entity:
+    range: MaterialEntityConcept
+    description: fill this if the concept is a material entity (physical object, organism, device, substance)
+  process:
+    range: ProcessConcept
+    description: fill this if the concept is a process or event (treatment, assessment, biological process, pathological process)
+  quality:
+    range: QualityConcept
+    description: fill this if the concept is a quality or observable characteristic (size, color, pH, temperature)
+  disposition:
+    range: DispositionConcept
+    description: fill this if the concept is a disposition (disease, infection, tendency to react)
+  role:
+    range: RoleConcept
+    description: fill this if the concept is a role borne by a person or organisation in a clinical context
+  information_entity:
+    range: InformationEntityConcept
+    description: fill this if the concept is an information content entity (record, report, measurement datum, plan)
+
+# ---------------------------------------------------------------------------
+# CLASSES
+# ---------------------------------------------------------------------------
+classes:
+
+  GroundingResult:
+    tree_root: true
+    description: >-
+      Container for one WOND-class grounding.  Exactly one of the category
+      slots will be filled; the others remain empty.
+    slots:
+      - material_entity
+      - process
+      - quality
+      - disposition
+      - role
+      - information_entity
+
+  # ---- concrete grounding targets (one per BFO category) ------------------
+
+  MaterialEntityConcept:
+    description: >-
+      A physical object, organism, device, drug, or substance — anything that
+      exists in space and has mass.  Ground to CHEBI, DRON, OBI, NCBITaxon,
+      FMA, or SNOMEDCT.
+    slots: [id, label]
+    id_prefixes: [CHEBI, DRON, OBI, NCBITaxon, FMA, SNOMEDCT]
+
+  ProcessConcept:
+    description: >-
+      A process, event, or procedure — something that happens over time.
+      Includes clinical procedures, biological processes, and pathological
+      events.  Ground to OBI, OGMS, GO, or SNOMEDCT.
+    slots: [id, label]
+    id_prefixes: [OBI, OGMS, GO, SNOMEDCT]
+
+  QualityConcept:
+    description: >-
+      An observable quality or attribute that inheres in an entity — size,
+      color, pH, temperature, viscosity.  Ground to PATO or HP.
+    slots: [id, label]
+    id_prefixes: [PATO, HP]
+
+  DispositionConcept:
+    description: >-
+      A disposition — a disease, condition, or tendency to exhibit a
+      behaviour under certain circumstances.  Ground to DOID or HP.
+    slots: [id, label]
+    id_prefixes: [DOID, HP, SNOMEDCT]
+
+  RoleConcept:
+    description: >-
+      A role borne by a person or organisation in a clinical context —
+      nurse, physician, patient, wound-care specialist.  Ground to OBI or OGMS.
+    slots: [id, label]
+    id_prefixes: [OBI, OGMS]
+
+  InformationEntityConcept:
+    description: >-
+      An information content entity — a record, report, measurement datum,
+      plan, or protocol.  Ground to IAO.
+    slots: [id, label]
+    id_prefixes: [IAO]
