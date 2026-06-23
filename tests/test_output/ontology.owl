@@ -14,7 +14,6 @@
 
 <owl:Class rdf:about="#Acute_Wound">
   <rdfs:subClassOf rdf:resource="#Wound"/>
-  <rdfs:subClassOf rdf:resource="#Wound_Or_Injury"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Acute Wound</rdfs:label>
 </owl:Class>
 
@@ -23,9 +22,14 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Wound_Or_Injury">
+<owl:Class rdf:about="#Bloodstream_Infection">
+  <rdfs:subClassOf rdf:resource="#Healthcare-Associated_Infection"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bloodstream Infection</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Healthcare-Associated_Infection">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Or Injury</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Healthcare-Associated Infection</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Cavity_Wound">
@@ -34,19 +38,18 @@
 </owl:Class>
 
 <owl:Class rdf:about="#Wound_Complication">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:subClassOf rdf:resource="#Complication"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Complication</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Chronic_Non-Healing_Wound">
   <rdfs:subClassOf rdf:resource="#Chronic_Wound"/>
-  <rdfs:subClassOf rdf:resource="#Wound_Or_Injury"/>
+  <rdfs:subClassOf rdf:resource="#Wound"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chronic Non-Healing Wound</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Chronic_Wound">
   <rdfs:subClassOf rdf:resource="#Wound"/>
-  <rdfs:subClassOf rdf:resource="#Wound_Or_Injury"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chronic Wound</rdfs:label>
 </owl:Class>
 
@@ -60,15 +63,19 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Site Infection</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Diabetic_Infected_Wound">
-  <rdfs:subClassOf rdf:resource="#Diabetic_Wound"/>
-  <rdfs:subClassOf rdf:resource="#Wound_Or_Injury"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetic Infected Wound</rdfs:label>
+<owl:Class rdf:about="#Diabetes">
+  <rdfs:subClassOf rdf:resource="#Metabolic_Disease"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetes</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Metabolic_Disease">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Metabolic Disease</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Diabetic_Wound">
   <rdfs:subClassOf rdf:resource="#Chronic_Wound"/>
-  <rdfs:subClassOf rdf:resource="#Wound_Or_Injury"/>
+  <rdfs:subClassOf rdf:resource="#Wound"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetic Wound</rdfs:label>
 </owl:Class>
 
@@ -82,15 +89,25 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Healing</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Granulation">
+<owl:Class rdf:about="#High_Blood_Sugar">
+  <rdfs:subClassOf rdf:resource="#Condition"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">High Blood Sugar</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Condition">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Condition</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Iatrogenic_Wound">
+  <rdfs:subClassOf rdf:resource="#Wound"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Iatrogenic Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Infection">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#part_of"/>
-      <owl:someValuesFrom rdf:resource="#Wound_Healing"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Granulation</rdfs:label>
+  <rdfs:subClassOf rdf:resource="#Wound_Complication"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Infection</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Process">
@@ -98,21 +115,46 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Process</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Iatrogenic_Wound">
-  <rdfs:subClassOf rdf:resource="#Wound"/>
-  <rdfs:subClassOf rdf:resource="#Wound_Or_Injury"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Iatrogenic Wound</rdfs:label>
-</owl:Class>
-
 <owl:Class rdf:about="#Pressure_Injury">
+  <rdfs:subClassOf rdf:resource="#Chronic_Wound"/>
   <rdfs:subClassOf rdf:resource="#Wound"/>
-  <rdfs:subClassOf rdf:resource="#Wound_Or_Injury"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pressure Injury</rdfs:label>
 </owl:Class>
 
+<owl:Class rdf:about="#Sharp_Excision">
+  <rdfs:subClassOf rdf:resource="#Surgical_Procedure"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#part_of"/>
+      <owl:someValuesFrom rdf:resource="#Wound_Care_Procedure"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sharp Excision</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Surgical_Procedure">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Procedure</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Smeln">
+  <rdfs:subClassOf rdf:resource="#Nanovesicle"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Smeln</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Nanovesicle">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Nanovesicle</rdfs:label>
+</owl:Class>
+
 <owl:Class rdf:about="#Superficial_Infection">
-  <rdfs:subClassOf rdf:resource="#Surgical_Site_Infection"/>
+  <rdfs:subClassOf rdf:resource="#Wound_Infection"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Superficial Infection</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Wound_Infection">
+  <rdfs:subClassOf rdf:resource="#Infectious_Complication"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Infection</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Infectious_Complication">
@@ -120,45 +162,50 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Infectious Complication</rdfs:label>
 </owl:Class>
 
+<owl:Class rdf:about="#Surgical_Sterilization">
+  <rdfs:subClassOf rdf:resource="#Surgical_Procedure"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#part_of"/>
+      <owl:someValuesFrom rdf:resource="#Wound_Care_Procedure"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Sterilization</rdfs:label>
+</owl:Class>
+
 <owl:Class rdf:about="#Surgical_Wound">
   <rdfs:subClassOf rdf:resource="#Wound"/>
-  <rdfs:subClassOf rdf:resource="#Wound_Or_Injury"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Wound</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Surgical-Site_Infection">
   <rdfs:subClassOf rdf:resource="#Healthcare-Associated_Infection"/>
+  <rdfs:subClassOf rdf:resource="#Infectious_Complication"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical-Site Infection</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Healthcare-Associated_Infection">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Healthcare-Associated Infection</rdfs:label>
-</owl:Class>
-
 <owl:Class rdf:about="#Synthetic_Electrospun_Fiber_Matrix">
-  <rdfs:subClassOf rdf:resource="#Material_Entity"/>
+  <rdfs:subClassOf rdf:resource="#Extracellular_Matrix"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Synthetic Electrospun Fiber Matrix</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Material_Entity">
+<owl:Class rdf:about="#Extracellular_Matrix">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Material Entity</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Extracellular Matrix</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Tibial_Plateau_Fracture">
-  <rdfs:subClassOf rdf:resource="#Fracture"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Tibial Plateau Fracture</rdfs:label>
+<owl:Class rdf:about="#Tegaderm">
+  <rdfs:subClassOf rdf:resource="#Wound_Dressing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Tegaderm</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Fracture">
+<owl:Class rdf:about="#Wound_Dressing">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fracture</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Dressing</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Traumatic_Wound">
   <rdfs:subClassOf rdf:resource="#Wound"/>
-  <rdfs:subClassOf rdf:resource="#Wound_Or_Injury"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Traumatic Wound</rdfs:label>
 </owl:Class>
 
@@ -177,14 +224,14 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Breakdown</rdfs:label>
 </owl:Class>
 
+<owl:Class rdf:about="#Complication">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Complication</rdfs:label>
+</owl:Class>
+
 <owl:Class rdf:about="#Wound_Dehiscence">
   <rdfs:subClassOf rdf:resource="#Wound_Complication"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Dehiscence</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Wound_Infection">
-  <rdfs:subClassOf rdf:resource="#Wound_Complication"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Infection</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Wound_Necrosis">
@@ -206,6 +253,33 @@
 <owl:Class rdf:about="#Bilayer_Polyurethane_Scaffold">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bilayer Polyurethane Scaffold</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Aseptic_Wound_Care">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#part_of"/>
+      <owl:someValuesFrom rdf:resource="#Minimum_Antibiotic_And_Sterilisation_Guideline"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Aseptic Wound Care</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Minimum_Antibiotic_And_Sterilisation_Guideline">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Minimum Antibiotic And Sterilisation Guideline</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Granulation">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="#part_of"/>
+      <owl:someValuesFrom rdf:resource="#Wound_Healing"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Granulation</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Hydrophilic_Layer">
@@ -250,6 +324,11 @@
     </owl:Restriction>
   </rdfs:subClassOf>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Redv Peptides</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Wound_Care_Procedure">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Care Procedure</rdfs:label>
 </owl:Class>
 
 

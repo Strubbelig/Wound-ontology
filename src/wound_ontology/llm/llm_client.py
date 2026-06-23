@@ -33,6 +33,7 @@ from wound_ontology.llm.schemas import (
     ExtractResponse, NormalizationResponse, FillNanResponse,
     FillNanBatchResponse, SemanticNameResponse, ScopeCheckResponse,
     MereRelationResult, MereRelationBatchResponse,
+    OccursInTargetBatch,
 )
 
 _OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -340,3 +341,52 @@ class LLMClient:
         """
         result = await self._execute_with_retry(self._call_json, prompt, SemanticNameResponse, temperature=0.3)
         return result.superclass_name
+
+    async def classify_anatomical_targets(
+        self,
+        terms: list[str],
+        batch_size: int = 60,
+    ) -> dict[str, bool]:
+        """Classify terms as ANATOMICAL (True) or NOT_ANATOMICAL (False).
+
+        Used by the occurs_in fixer to decide which targets are valid BFO
+        process locations versus conditions, patient types, time periods, etc.
+        Returns {term: is_anatomical} for every term in *terms*.
+        """
+        import json as _json
+        schema = OccursInTargetBatch.model_json_schema()
+        results: dict[str, bool] = {}
+
+        for i in range(0, len(terms), batch_size):
+            batch     = terms[i : i + batch_size]
+            term_list = "\n".join(f"- {t}" for t in batch)
+            prompt = f"""You are a biomedical ontologist. Classify each term below as ANATOMICAL or NOT_ANATOMICAL.
+
+ANATOMICAL = a physical body structure, tissue, organ, anatomical region, or wound site.
+Examples: Foot, Dermis, Sacrum, Lower Limb, Wound Bed, Surgical Site, Fascia, Skin, Bone,
+          Subcutaneous Tissue, Plantar Foot, Nasal Region, Cornea, Axilla, Perineum
+
+NOT_ANATOMICAL = everything else: diseases, conditions, patient types, time periods,
+countries, institutions, clinical endpoints, populations, psychological concepts.
+Examples: Diabetes, Patient, UK, Postoperative Period, Hospital, Chronic Wound,
+          People With Diabetes, Bedridden, End Of Life, Type 2 Diabetes Mellitus,
+          Venous Leg Ulcer, Post-Thrombotic Syndrome, Diverse Populations
+
+Terms to classify:
+{term_list}
+
+Respond with valid JSON only matching this schema exactly:
+{_json.dumps(schema, indent=2)}"""
+
+            parsed = await self._execute_with_retry(
+                self._call_json, prompt, OccursInTargetBatch, temperature=0.0
+            )
+            for r in parsed.results:
+                results[r.term] = r.anatomical
+            print(
+                f"  Classified {min(i + batch_size, len(terms))}/{len(terms)} targets...",
+                end="\r",
+            )
+
+        print()
+        return results

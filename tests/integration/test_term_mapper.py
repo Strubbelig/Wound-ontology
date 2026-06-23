@@ -18,6 +18,7 @@ import pytest
 
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.embedding.embedder import Embedder
+from wound_ontology.mappers.term_mapping import TermMapping
 from wound_ontology.mappers.term_mapper import TermMapper
 
 
@@ -56,12 +57,12 @@ def embedder():
 @pytest.fixture(scope="module")
 def built_mapper(tmp_data_dir, embedder):
     dm = DataManager(base_path=tmp_data_dir)
-    mapper = TermMapper(data_manager=dm, file_name="term_mapping_test", mapper_name="test_mapper")
+    tm = TermMapping(dm, "term_mapping_test")
+    mapper = TermMapper(term_mapping=tm, name="test_mapper")
     mapper.build_from_embeddings(
         TERMS,
         embedder=embedder,
         similarity_threshold=0.95,
-        string_threshold=0.92,
     )
     return mapper
 

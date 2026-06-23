@@ -1,39 +1,32 @@
-"""Tests for alignment.aligner."""
+"""Tests for OntologyMapper — align / extend / enrich / write outputs."""
 
 from __future__ import annotations
 
 import json
-import textwrap
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
-from rdflib import Graph, Literal, Namespace, URIRef
-from rdflib.namespace import OWL, RDF, RDFS
+from rdflib import Graph, Namespace
+from rdflib.namespace import RDFS
 
-from wound_ontology.alignment.aligner import (
-    Aligner,
-    AlignmentResult,
-    MappedPair,
+from wound_ontology.owl.ontology_mapper import (
+    OntologyMapper,
+    MapMatch,
+    MapResult,
     _norm,
-    _xref_id,
+    _iri_to_xref,
 )
-from wound_ontology.alignment.target_loader import TargetConcept
 
-WOND    = Namespace("http://purl.obolibrary.org/obo/WOND_")
-OBOANN  = Namespace("http://www.geneontology.org/formats/oboInOwl#")
+WOND     = Namespace("http://purl.obolibrary.org/obo/WOND_")
+OBOANN   = Namespace("http://www.geneontology.org/formats/oboInOwl#")
 HAS_XREF = OBOANN["hasDbXref"]
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
-def _norm_test():
-    assert _norm("  Wound  Healing  ") == "wound healing"
-
-
 def _write_source_owl(tmp_path: Path, classes: list[tuple[str, str]]) -> Path:
-    """Write a minimal Turtle OWL with WOND classes: [(iri_suffix, label), ...]."""
     lines = [
         "@prefix owl: <http://www.w3.org/2002/07/owl#> .",
         "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .",
@@ -53,105 +46,97 @@ def _write_snomed_json(tmp_path: Path, concepts: list[dict]) -> Path:
     return p
 
 
-def _mock_embedder(labels: list[str], dim: int = 8) -> MagicMock:
+def _make_encode():
+    """Return a callable that produces consistent random embeddings (8-dim)."""
     rng = np.random.default_rng(42)
-    emb = MagicMock()
-    def _embed(texts):
-        vecs = rng.random((len(texts), dim)).astype(np.float32)
+    def _encode(texts):
+        vecs = rng.random((len(texts), 8)).astype(np.float32)
         norms = np.linalg.norm(vecs, axis=1, keepdims=True)
         return vecs / norms
-    emb.embed.side_effect = _embed
-    return emb
+    return _encode
 
 
-# ── _xref_id ──────────────────────────────────────────────────────────────────
+# ── Module-level helpers ──────────────────────────────────────────────────────
 
-class TestXrefId:
+def test_norm_strips_and_lowercases():
+    assert _norm("  Wound  Healing  ") == "wound healing"
+
+
+class TestIriToXref:
     def test_snomed(self):
-        assert _xref_id("http://snomed.info/id/12345") == "SNOMEDCT:12345"
+        assert _iri_to_xref("http://snomed.info/id/12345") == "SNOMEDCT:12345"
 
     def test_obo(self):
-        assert _xref_id("http://purl.obolibrary.org/obo/BFO_0000040") == "BFO:0000040"
+        assert _iri_to_xref("http://purl.obolibrary.org/obo/BFO_0000040") == "BFO:0000040"
 
     def test_unknown_passthrough(self):
         iri = "http://example.org/X"
-        assert _xref_id(iri) == iri
-
-
-# ── Aligner construction ──────────────────────────────────────────────────────
-
-class TestAlignerInit:
-    def test_raises_if_source_missing(self, tmp_path):
-        with pytest.raises(FileNotFoundError):
-            Aligner(tmp_path / "missing.owl")
-
-    def test_accepts_valid_source(self, tmp_path):
-        owl = _write_source_owl(tmp_path, [("0000001", "Wound Healing")])
-        aligner = Aligner(owl)
-        assert aligner.source_owl == owl
+        assert _iri_to_xref(iri) == iri
 
 
 # ── align (lexical) ───────────────────────────────────────────────────────────
 
 class TestAlignLexical:
-    def _aligner(self, tmp_path):
-        owl = _write_source_owl(tmp_path, [
+    def _setup(self, tmp_path, source_classes=None, target_concepts=None):
+        source_classes  = source_classes or [
             ("0000001", "Wound Healing"),
             ("0000002", "Chronic Wound"),
-        ])
-        return Aligner(owl, embedder=None)
+        ]
+        target_concepts = target_concepts or [
+            {"snomed_code": "X1", "preferred_name": "Wound Healing", "parent_code": ""},
+        ]
+        owl    = _write_source_owl(tmp_path, source_classes)
+        target = _write_snomed_json(tmp_path, target_concepts)
+        return OntologyMapper(), owl, target
+
+    def test_raises_if_source_missing(self, tmp_path):
+        mapper = OntologyMapper()
+        target = _write_snomed_json(tmp_path, [])
+        with pytest.raises(Exception):
+            mapper.align(tmp_path / "missing.owl", target)
 
     def test_exact_match_maps(self, tmp_path):
-        aligner = self._aligner(tmp_path)
-        target  = _write_snomed_json(tmp_path, [
-            {"snomed_code": "X1", "preferred_name": "Wound Healing", "parent_code": ""},
-        ])
-        result = aligner.align(target, method="lexical", close_thresh=0.99)
-        assert len(result.mappings) == 1
-        assert result.mappings[0].method == "exact"
-        assert result.mappings[0].score == 1.0
+        mapper, owl, target = self._setup(tmp_path)
+        result = mapper.align(owl, target, method="lexical", threshold=0.99)
+        assert len(result.matches) == 1
+        assert result.matches[0].method == "lexical"
+        assert result.matches[0].score == 1.0
 
     def test_unmatched_source_reported(self, tmp_path):
-        aligner = self._aligner(tmp_path)
-        target  = _write_snomed_json(tmp_path, [
-            {"snomed_code": "X1", "preferred_name": "Wound Healing", "parent_code": ""},
-        ])
-        result = aligner.align(target, method="lexical", close_thresh=0.99)
-        assert len(result.unmatched_source) == 1  # "Chronic Wound" unmatched
+        mapper, owl, target = self._setup(tmp_path)
+        result = mapper.align(owl, target, method="lexical", threshold=0.99)
+        assert len(result.unmatched) == 1  # "Chronic Wound" unmatched
 
-    def test_no_match_below_threshold(self, tmp_path):
-        aligner = self._aligner(tmp_path)
-        target  = _write_snomed_json(tmp_path, [
+    def test_no_match_returns_empty(self, tmp_path):
+        mapper, owl, _ = self._setup(tmp_path)
+        target = _write_snomed_json(tmp_path, [
             {"snomed_code": "X1", "preferred_name": "Something Else", "parent_code": ""},
         ])
-        result = aligner.align(target, method="lexical", close_thresh=0.99)
-        assert result.mappings == []
-        assert len(result.unmatched_source) == 2
+        result = mapper.align(owl, target, method="lexical", threshold=0.99)
+        assert result.matches == []
+        assert len(result.unmatched) == 2
 
     def test_synonym_match(self, tmp_path):
-        aligner = self._aligner(tmp_path)
-        target  = _write_snomed_json(tmp_path, [
+        mapper, owl, _ = self._setup(tmp_path)
+        target = _write_snomed_json(tmp_path, [
             {"snomed_code": "X1", "preferred_name": "Different Label",
              "synonyms": ["Wound Healing"], "parent_code": ""},
         ])
-        result = aligner.align(target, method="lexical", close_thresh=0.99)
-        assert len(result.mappings) == 1
+        result = mapper.align(owl, target, method="lexical", threshold=0.99)
+        assert len(result.matches) == 1
 
     def test_candidates_populated(self, tmp_path):
-        aligner = self._aligner(tmp_path)
-        target  = _write_snomed_json(tmp_path, [
+        mapper, owl, _ = self._setup(tmp_path)
+        target = _write_snomed_json(tmp_path, [
             {"snomed_code": "X1", "preferred_name": "Wound Healing", "parent_code": ""},
             {"snomed_code": "X2", "preferred_name": "Scar",          "parent_code": ""},
         ])
-        result = aligner.align(target, method="lexical", top_k=2, close_thresh=0.99)
+        result = mapper.align(owl, target, method="lexical", top_k=2, threshold=0.99)
         assert len(result.candidates) > 0
 
     def test_result_carries_target_concepts(self, tmp_path):
-        aligner = self._aligner(tmp_path)
-        target  = _write_snomed_json(tmp_path, [
-            {"snomed_code": "X1", "preferred_name": "Wound Healing", "parent_code": ""},
-        ])
-        result = aligner.align(target, method="lexical")
+        mapper, owl, target = self._setup(tmp_path)
+        result = mapper.align(owl, target, method="lexical")
         assert len(result.target_concepts) == 1
         assert result.target_concepts[0].label == "Wound Healing"
 
@@ -159,51 +144,57 @@ class TestAlignLexical:
 # ── align (sapbert) ───────────────────────────────────────────────────────────
 
 class TestAlignSapbert:
-    def test_sapbert_called(self, tmp_path):
-        owl = _write_source_owl(tmp_path, [("0000001", "Wound Healing")])
+    def test_encode_called_for_sapbert(self, tmp_path, monkeypatch):
+        owl    = _write_source_owl(tmp_path, [("0000001", "Wound Healing")])
         target = _write_snomed_json(tmp_path, [
             {"snomed_code": "X1", "preferred_name": "Wound Care", "parent_code": ""},
         ])
-        embedder = _mock_embedder(["Wound Healing", "Wound Care"])
-        aligner  = Aligner(owl, embedder=embedder)
-        aligner.align(target, method="sapbert", close_thresh=0.0)
-        embedder.embed.assert_called_once()
+        encode = MagicMock(side_effect=_make_encode())
+        mapper = OntologyMapper()
+        monkeypatch.setattr(mapper, "_get_encoder", lambda: encode)
 
-    def test_lexical_only_skips_embedder(self, tmp_path):
-        owl = _write_source_owl(tmp_path, [("0000001", "Wound Healing")])
+        mapper.align(owl, target, method="sapbert", threshold=0.0)
+
+        encode.assert_called_once()
+
+    def test_lexical_skips_encoder(self, tmp_path, monkeypatch):
+        owl    = _write_source_owl(tmp_path, [("0000001", "Wound Healing")])
         target = _write_snomed_json(tmp_path, [
             {"snomed_code": "X1", "preferred_name": "Wound Healing", "parent_code": ""},
         ])
-        embedder = MagicMock()
-        aligner  = Aligner(owl, embedder=embedder)
-        aligner.align(target, method="lexical")
-        embedder.embed.assert_not_called()
+        encode = MagicMock()
+        mapper = OntologyMapper()
+        monkeypatch.setattr(mapper, "_get_encoder", lambda: encode)
+
+        mapper.align(owl, target, method="lexical")
+
+        encode.assert_not_called()
 
 
 # ── extend ────────────────────────────────────────────────────────────────────
 
 class TestExtend:
-    def _result_with_one_unmatched(self, tmp_path) -> tuple[Aligner, AlignmentResult]:
-        owl = _write_source_owl(tmp_path, [("0000001", "Wound Healing")])
+    def _result_with_one_unmatched(self, tmp_path):
+        owl    = _write_source_owl(tmp_path, [("0000001", "Wound Healing")])
         target = _write_snomed_json(tmp_path, [
             {"snomed_code": "X1", "preferred_name": "Wound Healing", "parent_code": ""},
             {"snomed_code": "X2", "preferred_name": "Chronic Wound",  "parent_code": "X1"},
         ])
-        aligner = Aligner(owl)
-        result  = aligner.align(target, method="lexical", close_thresh=0.99)
-        return aligner, result
+        mapper = OntologyMapper()
+        result = mapper.align(owl, target, method="lexical", threshold=0.99)
+        return mapper, result
 
     def test_dry_run_no_file(self, tmp_path):
-        aligner, result = self._result_with_one_unmatched(tmp_path)
-        out = tmp_path / "out.owl"
-        stats = aligner.extend(result, out, dry_run=True)
+        mapper, result = self._result_with_one_unmatched(tmp_path)
+        out   = tmp_path / "out.owl"
+        stats = mapper.extend(result, out, dry_run=True)
         assert not out.exists()
         assert stats["new_stubs"] == 1
 
     def test_stub_added(self, tmp_path):
-        aligner, result = self._result_with_one_unmatched(tmp_path)
-        out = tmp_path / "out.owl"
-        stats = aligner.extend(result, out, dry_run=False)
+        mapper, result = self._result_with_one_unmatched(tmp_path)
+        out   = tmp_path / "out.owl"
+        stats = mapper.extend(result, out, dry_run=False)
         assert stats["new_stubs"] == 1
         g = Graph()
         g.parse(str(out))
@@ -211,41 +202,41 @@ class TestExtend:
         assert "Chronic Wound" in labels
 
     def test_parent_resolved_to_matched_source(self, tmp_path):
-        aligner, result = self._result_with_one_unmatched(tmp_path)
-        out = tmp_path / "out.owl"
-        stats = aligner.extend(result, out, dry_run=False)
+        mapper, result = self._result_with_one_unmatched(tmp_path)
+        out   = tmp_path / "out.owl"
+        stats = mapper.extend(result, out, dry_run=False)
         assert stats["parent_resolved"] == 1
         assert stats["parent_owlthing"] == 0
 
-    def test_no_unmatched_writes_source_unchanged(self, tmp_path):
-        owl = _write_source_owl(tmp_path, [("0000001", "Wound Healing")])
+    def test_no_unmatched_writes_no_stubs(self, tmp_path):
+        owl    = _write_source_owl(tmp_path, [("0000001", "Wound Healing")])
         target = _write_snomed_json(tmp_path, [
             {"snomed_code": "X1", "preferred_name": "Wound Healing", "parent_code": ""},
         ])
-        aligner = Aligner(owl)
-        result  = aligner.align(target, method="lexical", close_thresh=0.99)
-        out = tmp_path / "out.owl"
-        stats = aligner.extend(result, out, dry_run=False)
+        mapper = OntologyMapper()
+        result = mapper.align(owl, target, method="lexical", threshold=0.99)
+        out    = tmp_path / "out.owl"
+        stats  = mapper.extend(result, out, dry_run=False)
         assert stats["new_stubs"] == 0
 
 
 # ── enrich ────────────────────────────────────────────────────────────────────
 
 class TestEnrich:
-    def _result_with_match(self, tmp_path) -> tuple[Aligner, AlignmentResult]:
-        owl = _write_source_owl(tmp_path, [("0000001", "Wound Healing")])
+    def _result_with_match(self, tmp_path):
+        owl    = _write_source_owl(tmp_path, [("0000001", "Wound Healing")])
         target = _write_snomed_json(tmp_path, [
             {"snomed_code": "X1", "preferred_name": "Wound Healing",
              "parent_code": "", "definition": "The process of wound repair."},
         ])
-        aligner = Aligner(owl)
-        result  = aligner.align(target, method="lexical", close_thresh=0.99)
-        return aligner, result
+        mapper = OntologyMapper()
+        result = mapper.align(owl, target, method="lexical", threshold=0.99)
+        return mapper, result
 
     def test_xref_added(self, tmp_path):
-        aligner, result = self._result_with_match(tmp_path)
-        out = tmp_path / "out.owl"
-        stats = aligner.enrich(result, out, dry_run=False)
+        mapper, result = self._result_with_match(tmp_path)
+        out   = tmp_path / "out.owl"
+        stats = mapper.enrich(result, out, dry_run=False)
         assert stats["added_xrefs"] == 1
         g = Graph()
         g.parse(str(out))
@@ -253,47 +244,47 @@ class TestEnrich:
         assert "SNOMEDCT:X1" in xrefs
 
     def test_definition_added(self, tmp_path):
-        aligner, result = self._result_with_match(tmp_path)
-        out = tmp_path / "out.owl"
-        stats = aligner.enrich(result, out, dry_run=False)
+        mapper, result = self._result_with_match(tmp_path)
+        out   = tmp_path / "out.owl"
+        stats = mapper.enrich(result, out, dry_run=False)
         assert stats["added_defs"] == 1
 
     def test_dry_run_no_write(self, tmp_path):
-        aligner, result = self._result_with_match(tmp_path)
+        mapper, result = self._result_with_match(tmp_path)
         out = tmp_path / "out.owl"
-        aligner.enrich(result, out, dry_run=True)
+        mapper.enrich(result, out, dry_run=True)
         assert not out.exists()
 
     def test_reads_extended_owl_if_exists(self, tmp_path):
-        aligner, result = self._result_with_match(tmp_path)
+        mapper, result = self._result_with_match(tmp_path)
         out = tmp_path / "out.owl"
-        aligner.extend(result, out, dry_run=False)
-        stats = aligner.enrich(result, out, dry_run=False)
+        mapper.extend(result, out, dry_run=False)
+        stats = mapper.enrich(result, out, dry_run=False)
         assert stats["added_xrefs"] == 1
 
 
 # ── write_candidates / write_sssom ────────────────────────────────────────────
 
 class TestWriteOutputs:
-    def _result(self, tmp_path) -> tuple[Aligner, AlignmentResult]:
-        owl = _write_source_owl(tmp_path, [("0000001", "Wound Healing")])
+    def _result(self, tmp_path):
+        owl    = _write_source_owl(tmp_path, [("0000001", "Wound Healing")])
         target = _write_snomed_json(tmp_path, [
             {"snomed_code": "X1", "preferred_name": "Wound Healing", "parent_code": ""},
         ])
-        aligner = Aligner(owl)
-        return aligner, aligner.align(target, method="lexical")
+        mapper = OntologyMapper()
+        return mapper, mapper.align(owl, target, method="lexical")
 
     def test_candidates_csv_created(self, tmp_path):
-        aligner, result = self._result(tmp_path)
+        mapper, result = self._result(tmp_path)
         out = tmp_path / "candidates.csv"
-        aligner.write_candidates(result, out)
+        mapper.write_candidates(result, out)
         assert out.exists()
         assert "source_iri" in out.read_text()
 
     def test_sssom_tsv_created(self, tmp_path):
-        aligner, result = self._result(tmp_path)
+        mapper, result = self._result(tmp_path)
         out = tmp_path / "alignment.sssom.tsv"
-        aligner.write_sssom(result, out)
+        mapper.write_sssom(result, out)
         assert out.exists()
         content = out.read_text()
         assert "subject_id" in content

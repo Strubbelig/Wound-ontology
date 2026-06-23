@@ -55,3 +55,11 @@ class MereRelationResult(BaseModel):
 
 class MereRelationBatchResponse(BaseModel):
     results: list[MereRelationResult]
+
+
+class OccursInTargetResult(BaseModel):
+    term: str
+    anatomical: bool
+
+class OccursInTargetBatch(BaseModel):
+    results: list[OccursInTargetResult]

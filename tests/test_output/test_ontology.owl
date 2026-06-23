@@ -8,10 +8,6 @@
 
 <owl:Ontology rdf:about="http://example.org/ontology"/>
 
-<owl:ObjectProperty rdf:about="#part_of">
-  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
-</owl:ObjectProperty>
-
 <owl:Class rdf:about="#0">
   <rdfs:subClassOf rdf:resource="#Thread_Size"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">0</rdfs:label>
@@ -424,14 +420,7 @@
 </owl:Class>
 
 <owl:Class rdf:about="#Debridement">
-  <rdfs:subClassOf rdf:resource="#Surgical_Procedure"/>
   <rdfs:subClassOf rdf:resource="#Wound_Cleansing"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="#part_of"/>
-      <owl:someValuesFrom rdf:resource="#Wound_Care_Procedure"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Debridement</rdfs:label>
 </owl:Class>
 
@@ -600,16 +589,6 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Copper</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Coronary_Artery_Bypass_Grafting">
-  <rdfs:subClassOf rdf:resource="#Surgical_Procedure"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Coronary Artery Bypass Grafting</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Surgical_Procedure">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Procedure</rdfs:label>
-</owl:Class>
-
 <owl:Class rdf:about="#Crystal_Violet_Gentian_Violet">
   <rdfs:subClassOf rdf:resource="#Colorants"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Crystal Violet / Gentian Violet</rdfs:label>
@@ -646,13 +625,13 @@
 </owl:Class>
 
 <owl:Class rdf:about="#Deep_Sternal_Wound_Infection">
-  <rdfs:subClassOf rdf:resource="#Surgical_Site_Infection"/>
+  <rdfs:subClassOf rdf:resource="#Wound_Infection"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Deep Sternal Wound Infection</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Surgical_Site_Infection">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Site Infection</rdfs:label>
+<owl:Class rdf:about="#Wound_Infection">
+  <rdfs:subClassOf rdf:resource="#Wound_Complication"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Infection</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Depth_Measurement">
@@ -763,11 +742,6 @@
 <owl:Class rdf:about="#Erysipelas">
   <rdfs:subClassOf rdf:resource="#Wound_Infection"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Erysipelas</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Wound_Infection">
-  <rdfs:subClassOf rdf:resource="#Wound_Complication"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Infection</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Escherichia_Coli">
@@ -1265,16 +1239,6 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Necrotizing Fasciitis</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Negative_Pressure_Wound_Therapy">
-  <rdfs:subClassOf rdf:resource="#Wound_Therapy"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Negative Pressure Wound Therapy</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Wound_Therapy">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Therapy</rdfs:label>
-</owl:Class>
-
 <owl:Class rdf:about="#Net_Association">
   <rdfs:subClassOf rdf:resource="#Fixing_Bandage"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Net Association</rdfs:label>
@@ -1343,11 +1307,6 @@
 <owl:Class rdf:about="#Patient_Education">
   <rdfs:subClassOf rdf:resource="#Wound_Treatment"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Patient Education</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Pectoralis_Major_Flap_Reconstruction">
-  <rdfs:subClassOf rdf:resource="#Surgical_Procedure"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pectoralis Major Flap Reconstruction</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Perioperative_Antimicrobial_Prophylaxis">
@@ -1661,7 +1620,7 @@
 </owl:Class>
 
 <owl:Class rdf:about="#Sternal_Wound_Dehiscence">
-  <rdfs:subClassOf rdf:resource="#Wound_Dehiscence"/>
+  <rdfs:subClassOf rdf:resource="#Wound_Complication"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sternal Wound Dehiscence</rdfs:label>
 </owl:Class>
 
@@ -1923,11 +1882,6 @@
 <owl:Class rdf:about="#Zinc">
   <rdfs:subClassOf rdf:resource="#Metals_And_Metal_Salts"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zinc</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Wound_Care_Procedure">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Care Procedure</rdfs:label>
 </owl:Class>
 
 

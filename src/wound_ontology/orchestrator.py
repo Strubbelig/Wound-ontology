@@ -15,6 +15,7 @@ from wound_ontology.hierarchies.fca_hierarchy import FCAHierarchy
 from wound_ontology.fca.context_matrix import ContextMatrix
 from wound_ontology.fca.concept_lattice import ConceptLattice
 from wound_ontology.embedding.embedder import Embedder
+from wound_ontology.mappers.term_mapping import TermMapping
 from wound_ontology.mappers.term_mapper import TermMapper
 from wound_ontology.mappers.mapping_cleaner import MappingCleaner
 from wound_ontology.owl import OWLOntology, OntologyCurator
@@ -76,7 +77,8 @@ class Orchestrator:
         self.fca_hier      = FCAHierarchy(self.dm)
         self.context_matrix = ContextMatrix(self.dm, "context_matrix")
         self.lattice       = ConceptLattice(self.dm, self.context_matrix)
-        self.term_mapper     = TermMapper(self.dm, file_name="term_mapping", mapper_name="Term mapper")
+        _term_mapping        = TermMapping(self.dm, file_name="term_mapping")
+        self.term_mapper     = TermMapper(_term_mapping, name="Term mapper")
         self.mapping_cleaner = MappingCleaner(self.term_mapper, allowed_predicates=self.allowed_predicates)
         self._embedder: Embedder | None = None
         self.reasoner      = OWLReasoner()
@@ -294,6 +296,21 @@ class Orchestrator:
         report = cleaner.clean(self.store)
         StoreCleaner.print_report(report)
 
+    def run_fix_occurs_in(self, batch_size: int = 60, dry_run: bool = False) -> None:
+        """Fix occurs_in misuse via LLM-based anatomical target classification.
+
+        Conditions with anatomical targets → renamed to affects.
+        Conditions or any subject with non-anatomical targets → dropped.
+        Process subjects with anatomical targets → left unchanged (correct BFO).
+
+        dry_run: classify and print decisions but do not modify the store.
+        """
+        stats = self._run_sync(
+            self.cleaner.fix_occurs_in(self.store, self.llm, batch_size=batch_size, dry_run=dry_run)
+        )
+        if not dry_run:
+            print(f"[Orchestrator] Store saved — {stats}")
+
     # ── Hierarchies ────────────────────────────────────────────────────────────
 
     def run_build_hierarchies(self, predefined_df: pd.DataFrame | None = None) -> None:
@@ -507,18 +524,16 @@ class Orchestrator:
         onto_dir: str | None = None,
         dry_run: bool = False,
     ) -> None:
-        """Patch wrong external IRIs and enrich external classes with labels.
+        """Enrich external classes in a mapped OWL file with labels and definitions.
 
-        Reads *input_file*, applies IRI patches and label/definition lookup
-        from local source-ontology files, then writes to *output_file*
-        (defaults to overwriting *input_file*).
+        For every non-WOND OBO class in *input_file*, looks up rdfs:label and
+        IAO:0000115 from local source-ontology files and writes them in-place.
+        Writes to *output_file* (defaults to overwriting *input_file*).
 
-        onto_dir: path to folder containing bfo-core.owl, cob.owl, iao.owl,
-                  obi.owl, pato.owl, go.obo.  Defaults to IMPORT_ONTO_DIR
+        onto_dir: path to local ontology files.  Defaults to IMPORT_ONTO_DIR
                   from config/settings.py.
         """
-        from rdflib import Graph
-        from wound_ontology.owl.external_enricher import ExternalEnricher
+        from wound_ontology.owl.ontology_mapper import OntologyMapper
 
         try:
             from config.settings import IMPORT_ONTO_DIR as _default_onto_dir
@@ -529,25 +544,10 @@ class Orchestrator:
         if resolved_onto_dir is None:
             raise ValueError("onto_dir must be provided or IMPORT_ONTO_DIR set in config/settings.py")
 
-        out = output_file or input_file
-        with open(input_file) as fh:
-            first = fh.read(300)
-        fmt = "turtle" if first.strip().startswith("@") else "xml"
-
-        print(f"Loading {input_file} …")
-        g = Graph()
-        g.parse(input_file, format=fmt)
-        print(f"  {len(g)} triples, format={fmt}")
-
-        stats = ExternalEnricher(resolved_onto_dir).enrich(g, dry_run=dry_run)
-
-        if dry_run:
-            print("\n[dry-run] No files written.")
-            return
-
-        g.serialize(out, format=fmt)
-        print(f"\nWritten → {out}  ({len(g)} triples)")
-        print(f"Stats: {stats}")
+        mapper = OntologyMapper(onto_dir=resolved_onto_dir)
+        stats  = mapper.enrich_external(input_file, output_file, dry_run=dry_run)
+        if not dry_run:
+            print(f"Stats: {stats}")
 
     def fetch_snomed_concepts(
         self,
@@ -601,9 +601,9 @@ class Orchestrator:
         enrich: copy rdfs:label, IAO def, and xrefs from target into matched source classes.
 
         Prints unmatched source classes (your own classes with no target mapping).
-        Returns AlignmentResult for further inspection.
+        Returns MapResult for further inspection.
         """
-        from wound_ontology.alignment.aligner import Aligner
+        from wound_ontology.owl.ontology_mapper import OntologyMapper
         from pathlib import Path as _Path
         from datetime import datetime
 
@@ -613,38 +613,38 @@ class Orchestrator:
             pp = _Path(p)
             return pp if pp.is_absolute() else root / pp
 
-        embedder = self._ensure_embedder() if "sapbert" in method else None
-        aligner  = Aligner(_resolve(source_owl), embedder=embedder)
-        result   = aligner.align(
+        mapper = OntologyMapper()
+        result = mapper.align(
+            _resolve(source_owl),
             _resolve(target),
             method=method,
             top_k=top_k,
-            close_thresh=close_thresh,
+            threshold=close_thresh,
         )
 
         stamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
         out   = _resolve(out_dir)
         out.mkdir(parents=True, exist_ok=True)
 
-        aligner.write_candidates(result, out / f"alignment_candidates_{stamp}.csv")
-        aligner.write_sssom(result,      out / f"alignment_{stamp}.sssom.tsv")
+        mapper.write_candidates(result, out / f"alignment_candidates_{stamp}.csv")
+        mapper.write_sssom(result,      out / f"alignment_{stamp}.sssom.tsv")
 
         ext_owl = out / f"source_extended_{stamp}.owl"
         if extend:
-            aligner.extend(result, ext_owl, dry_run=dry_run)
+            mapper.extend(result, ext_owl, dry_run=dry_run)
         if enrich:
             enrich_path = ext_owl if ext_owl.exists() else _resolve(source_owl)
-            aligner.enrich(result, enrich_path, dry_run=dry_run)
+            mapper.enrich(result, enrich_path, dry_run=dry_run)
 
-        if result.unmatched_source:
-            print(f"\n[align_ontology] {len(result.unmatched_source)} source classes "
+        if result.unmatched:
+            print(f"\n[align_ontology] {len(result.unmatched)} source classes "
                   f"have no mapping in {_resolve(target).name}:")
-            for iri in result.unmatched_source[:20]:
+            for iri in result.unmatched[:20]:
                 label = next((k for k, v in result.source_label_index.items()
                               if v == iri), str(iri))
                 print(f"  {label}")
-            if len(result.unmatched_source) > 20:
-                print(f"  ... and {len(result.unmatched_source) - 20} more")
+            if len(result.unmatched) > 20:
+                print(f"  ... and {len(result.unmatched) - 20} more")
 
         return result
 
@@ -670,6 +670,277 @@ class Orchestrator:
         from wound_ontology.knowledge_graph import KnowledgeGraphRepository
         return KnowledgeGraphRepository().load(input_owl)
 
+
+    # ── OWL grounding / replacement ────────────────────────────────────────────
+
+    def run_replace_upper_stubs(
+        self,
+        source_file: str,
+        output_file: str | None = None,
+        dry_run: bool = False,
+    ) -> None:
+        """Replace WOND_120xxx structural stubs with their external OBO IRIs.
+
+        Rewrites every rdfs:subClassOf that pointed to a stub, removes the stub
+        and any artifact axioms, and anchors WOND_0000249 to BFO:0000015.
+
+        source_file: source TTL/OWL file (usually data/raw/*.ttl).
+        output_file: destination (default: overwrite source_file).
+        """
+        from wound_ontology.owl.upper_stub_replacer import UpperStubReplacer
+        UpperStubReplacer().run(source_file, output=output_file, dry_run=dry_run)
+
+    def run_map_ontology(
+        self,
+        owl_file: str,
+        output_file: str | None = None,
+        onto_dir: str | None = None,
+        targets: list[str] | None = None,
+        method: str = "lexical",
+        mode: str = "replace",
+        threshold: float = 0.90,
+        use_synonyms: bool = False,
+        model: str = "openrouter/deepseek/deepseek-v4-flash",
+        schema_path: str | None = None,
+        cache_path: str | None = None,
+        candidates_path: str | None = None,
+        sssom_path: str | None = None,
+        top_k: int = 5,
+        dry_run: bool = False,
+    ) -> None:
+        """Map source OWL classes to target ontology concepts.
+
+        Replaces run_ground_wond_classes (method="ontogpt", mode="subclass"),
+        run_replace_wond_classes (method="lexical", mode="replace"), and
+        run_sapbert_ground (method="sapbert", mode="replace"/"subclass").
+
+        Args:
+            owl_file:         Source OWL/Turtle file.
+            output_file:      Output path (default: overwrite owl_file).
+            onto_dir:         Directory with local OBO/OWL files.
+                              Defaults to IMPORT_ONTO_DIR in config/settings.py.
+            targets:          Ordered list of ontology keys; order = priority.
+                              None → DEFAULT_PRIORITY from ontology_mapper.
+            method:           "lexical" | "sapbert" | "ontogpt" | "llm"
+            mode:             "replace" | "xref" | "subclass"
+                              Ignored for method="ontogpt" (always subclass).
+            threshold:        Minimum cosine similarity for sapbert/llm.
+            use_synonyms:     Match against hasExactSynonym (lexical method).
+            model:            LiteLLM / OpenRouter model for ontogpt or llm.
+            schema_path:      OntoGPT schema YAML (method="ontogpt").
+                              Defaults to GROUNDING_SCHEMA in config/settings.py.
+            cache_path:       JSON cache for ontogpt/llm (avoids re-calling LLM).
+            candidates_path:  Optional CSV of top-K candidates per source class.
+            sssom_path:       Optional SSSOM TSV of best matches.
+            top_k:            Candidate count for sapbert/llm.
+            dry_run:          Print plan without writing any files.
+        """
+        from wound_ontology.owl.ontology_mapper import OntologyMapper
+        from pathlib import Path as _Path
+
+        try:
+            from config.settings import IMPORT_ONTO_DIR as _default_onto_dir
+        except (ImportError, AttributeError):
+            _default_onto_dir = None
+
+        resolved_onto = onto_dir or _default_onto_dir
+
+        # schema_path fallback for ontogpt
+        resolved_schema = schema_path
+        if method == "ontogpt" and not resolved_schema:
+            try:
+                from config.settings import GROUNDING_SCHEMA
+                resolved_schema = GROUNDING_SCHEMA
+            except (ImportError, AttributeError):
+                resolved_schema = str(
+                    _Path(owl_file).parents[2] / "config" / "grounding_schema.yaml"
+                )
+
+        OntologyMapper(onto_dir=resolved_onto).run(
+            source_owl=owl_file,
+            output_path=output_file,
+            targets=targets,
+            method=method,
+            mode=mode,
+            threshold=threshold,
+            use_synonyms=use_synonyms,
+            model=model,
+            schema_path=resolved_schema,
+            cache_path=cache_path,
+            candidates_path=candidates_path,
+            sssom_path=sssom_path,
+            top_k=top_k,
+            dry_run=dry_run,
+        )
+
+    # ── Store / list management ────────────────────────────────────────────────
+
+    def run_promote_clusters(
+        self,
+        target_labels: list[str] | None = None,
+        dry_run: bool = False,
+    ) -> None:
+        """Move named SapBERT clusters from METHODOLOGY_BLOCKLIST to WHITELIST.
+
+        Clusters are identified by partial matching of their comment-header
+        label in config/blocklist.py.  Matched terms are moved to
+        config/whitelist.py and removed from the blocklist.
+
+        target_labels: list of partial cluster-header strings to match.
+                       Defaults to the five clusters identified during
+                       initial review.
+        """
+        from wound_ontology.store.cluster_promoter import (
+            extract_and_strip_clusters,
+            append_to_whitelist,
+        )
+        from pathlib import Path as _Path
+        import re as _re
+
+        _DEFAULT_TARGET_LABELS = [
+            "bilayer hydrogel dressing · superabsorbent dressing · polymeric membrane dressing",
+            "diabetes-related foot ulcer · diabetes foot ulcer · complex diabetic foot ulcer",
+            "wound surface reduction · wound area reduction · wound retraction",
+            "scarring wound · incomplete healing · scar healing",
+            "wound stratification system · sinbad grading system · wound severity score",
+        ]
+        labels = target_labels or _DEFAULT_TARGET_LABELS
+
+        try:
+            from config.settings import PROJECT_ROOT as _root
+        except ImportError:
+            _root = _Path(__file__).resolve().parents[3]
+
+        bl_path = _Path(_root) / "config" / "blocklist.py"
+        wl_path = _Path(_root) / "config" / "whitelist.py"
+
+        src = bl_path.read_text()
+        promoted, new_src = extract_and_strip_clusters(src, labels)
+
+        print(f"\nPromoting {len(promoted)} terms from {len(labels)} clusters:")
+        for label in labels:
+            print(f"  • {label}")
+
+        if dry_run:
+            print(f"\n[dry-run] Terms that would be promoted (first 30):")
+            for t in sorted(promoted)[:30]:
+                print(f"    {t}")
+            if len(promoted) > 30:
+                print(f"    ... and {len(promoted) - 30} more")
+            print("\n[dry-run] No files written.")
+            return
+
+        remaining = len(_re.findall(r"""^\s*['"]""", new_src, _re.MULTILINE))
+        print(f"\nRemoving from blocklist: {len(promoted)} terms  ({remaining} remain)")
+        bl_path.write_text(new_src)
+        print("  ✓ blocklist.py updated")
+
+        added = append_to_whitelist(promoted, wl_path)
+        print(f"  ✓ whitelist.py: {added} new terms added")
+
+    def run_scan_occurs_in(self, show_all: bool = False) -> dict:
+        """Scan the concept store for occurs_in misuse and print a report.
+
+        Classifies every occurs_in (subject, target) pair as:
+          process  — correct BFO usage (left unchanged)
+          condition — should use 'affects' (flagged)
+          uncertain — manual review recommended
+
+        Returns the report dict.  To apply fixes use run_fix_occurs_in().
+        """
+        report = self.cleaner.scan_occurs_in(self.store, show_all=show_all)
+        StoreCleaner.print_occurs_in_report(report)
+        return report
+
+    # ── PubMed query validation ────────────────────────────────────────────────
+
+    def run_validate_pubmed_queries(
+        self,
+        queries: list[str] | None = None,
+        sample_n: int = 5,
+        max_retries: int = 2,
+        delay: float = 0.4,
+        out_path: str | None = None,
+    ) -> list:
+        """Validate PubMed search queries for wound-ontology scope.
+
+        For each query: fetches a sample of abstracts, asks Claude Haiku to
+        evaluate scope, and revises failing queries (up to max_retries times).
+
+        queries:     List of query strings; defaults to config/pubmed_query_list.py.
+        sample_n:    Abstracts per query to sample.
+        max_retries: Max revision attempts per failing query.
+        out_path:    JSON report output path (default: scripts/query_validation_report.json).
+        """
+        from wound_ontology.connectors.pubmed_query_validator import PubMedQueryValidator
+        import os as _os
+        from pathlib import Path as _Path
+
+        if queries is None:
+            from config.pubmed_query_list import PUBMED_SEARCH
+            queries = PUBMED_SEARCH
+
+        email   = _os.getenv("ENTREZ_EMAIL", "")
+        api_key = _os.getenv("OPENROUTER_API_KEY", "")
+        if not email:
+            raise RuntimeError("ENTREZ_EMAIL is not set in .env")
+        if not api_key:
+            raise RuntimeError("OPENROUTER_API_KEY is not set in .env")
+
+        if out_path is None:
+            try:
+                from config.settings import PROJECT_ROOT as _root
+            except ImportError:
+                _root = _Path(__file__).resolve().parents[3]
+            out_path = str(_Path(_root) / "scripts" / "query_validation_report.json")
+
+        return PubMedQueryValidator(email, api_key).run(
+            queries,
+            sample_n=sample_n,
+            max_retries=max_retries,
+            delay=delay,
+            out_path=out_path,
+        )
+
+    # ── UML generation ─────────────────────────────────────────────────────────
+
+    def generate_uml(self, out_dir: str = "docs/uml") -> None:
+        """Generate PlantUML class and package diagrams with pyreverse.
+
+        Requires: pip install pylint  (ships pyreverse).
+        Output .puml files are written to *out_dir*.
+        Preview in VS Code with the jebbs.plantuml extension (Alt+D).
+        """
+        import subprocess
+        from pathlib import Path as _Path
+
+        try:
+            from config.settings import PROJECT_ROOT as _root
+        except ImportError:
+            _root = _Path(__file__).resolve().parents[3]
+
+        src_dir = _Path(_root) / "src" / "wound_ontology"
+        out     = _Path(out_dir) if _Path(out_dir).is_absolute() else _Path(_root) / out_dir
+        out.mkdir(parents=True, exist_ok=True)
+
+        cmd = [
+            "pyreverse",
+            "--output", "plantuml",
+            "--project", "wound_ontology",
+            "--colorized",
+            "--filter-mode", "PUB_ONLY",
+            "--output-directory", str(out),
+            str(src_dir),
+        ]
+        print(f"Running pyreverse on {src_dir} …")
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode != 0:
+            print(result.stderr)
+            raise RuntimeError("pyreverse failed — is pylint installed? (pip install pylint)")
+        print(f"Generated in {out}:")
+        for f in sorted(out.glob("*.plantuml")):
+            print(f"  {f.name}")
+        print("\nOpen a .plantuml file in VS Code and press Alt+D to preview.")
 
     def plot_hierarchy(
         self,
