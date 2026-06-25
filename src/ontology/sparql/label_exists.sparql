@@ -1,0 +1,10 @@
+# QC: every WOND class must have an rdfs:label
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX WOND: <http://purl.obolibrary.org/obo/WOND_>
+
+SELECT ?class WHERE {
+  ?class a owl:Class .
+  FILTER(STRSTARTS(STR(?class), STR(WOND:)))
+  FILTER NOT EXISTS { ?class rdfs:label ?label }
+}

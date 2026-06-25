@@ -1,0 +1,12 @@
+# QC: no two WOND classes may share the same label
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX WOND: <http://purl.obolibrary.org/obo/WOND_>
+
+SELECT ?label (COUNT(?class) AS ?count) WHERE {
+  ?class a owl:Class .
+  FILTER(STRSTARTS(STR(?class), STR(WOND:)))
+  ?class rdfs:label ?label .
+}
+GROUP BY ?label
+HAVING (COUNT(?class) > 1)
