@@ -1,0 +1,2878 @@
+@prefix : <http://purl.obolibrary.org/obo/wond/ground_truth.owl/> .
+@prefix ns1: <http://purl.obolibrary.org/obo/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://purl.obolibrary.org/obo/wond/ground_truth.owl/> .
+
+<http://purl.obolibrary.org/obo/wond/ground_truth.owl> rdf:type owl:Ontology ;
+                                                        owl:imports <http://purl.obolibrary.org/obo/bfo/2020/bfo-core.owl> ,
+                                                                    <http://purl.obolibrary.org/obo/cob/releases/2025-12-15/cob.owl> ,
+                                                                    <http://purl.obolibrary.org/obo/doid/releases/2026-05-30/doid.owl> ,
+                                                                    <http://purl.obolibrary.org/obo/dron/releases/2026-06-04/dron.owl> ,
+                                                                    <http://purl.obolibrary.org/obo/go/releases/2026-05-19/go.owl> ,
+                                                                    <http://purl.obolibrary.org/obo/iao/2026-03-30/iao.owl> ,
+                                                                    <http://purl.obolibrary.org/obo/obi/2026-03-19/obi.owl> ,
+                                                                    <http://purl.obolibrary.org/obo/ogms/2021-08-19/ogms.owl> .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://purl.obolibrary.org/obo/IAO_0000118
+ns1:IAO_0000118 rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://purl.obolibrary.org/obo/BFO_0000015
+ns1:BFO_0000015 rdf:type owl:Class ;
+                rdfs:label "process" .
+
+
+###  http://purl.obolibrary.org/obo/BFO_0000016
+ns1:BFO_0000016 rdf:type owl:Class ;
+                rdfs:label "disposition" .
+
+
+###  http://purl.obolibrary.org/obo/BFO_0000019
+ns1:BFO_0000019 rdf:type owl:Class ;
+                rdfs:label "quality" .
+
+
+###  http://purl.obolibrary.org/obo/BFO_0000023
+ns1:BFO_0000023 rdf:type owl:Class ;
+                rdfs:label "role" .
+
+
+###  http://purl.obolibrary.org/obo/BFO_0000040
+ns1:BFO_0000040 rdf:type owl:Class ;
+                rdfs:label "material entity" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_135826
+ns1:CHEBI_135826 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:CHEBI_35267 ;
+                 rdfs:label "Octenidine" ,
+                            "octenidine" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_15882
+ns1:CHEBI_15882 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:CHEBI_48218 ;
+                ns1:IAO_0000115 "An organic hydroxy compound that consists of benzene bearing a single hydroxy substituent. The parent of the class of phenols." ;
+                rdfs:label "phenol"@en ,
+                           "phenol" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_16236
+ns1:CHEBI_16236 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:WOND_0000010 ;
+                ns1:IAO_0000115 "A primary alcohol that is ethane in which one of the hydrogens is substituted by a hydroxy group." ;
+                rdfs:label "ethanol"@en ,
+                           "ethanol" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_164200
+ns1:CHEBI_164200 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000025 ;
+                 ns1:IAO_0000115 "An aromatic ether that is phenol which is substituted at C-5 by a chloro group and at C-2 by a 2,4-dichlorophenoxy group. It is widely used as a preservative and antimicrobial agent in personal care products such as soaps, skin creams, toothpaste and deodorants as well as in household items such as plastic chopping boards, sports equipment and shoes." ;
+                 rdfs:label "Triclosan" ,
+                            "triclosan" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_17606
+ns1:CHEBI_17606 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:CHEBI_24473 ;
+                ns1:IAO_0000115 "Molecule comprising two covalently bonded iodine atoms with overall zero charge.." ;
+                rdfs:label "Iodine"@en ,
+                           "diiodine" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_17824
+ns1:CHEBI_17824 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:WOND_0000010 ;
+                ns1:IAO_0000115 "A secondary alcohol that is propane in which one of the hydrogens attached to the central carbon is substituted by a hydroxy group." ;
+                rdfs:label "propane-2-ol"@en ,
+                           "propan-2-ol" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_231501
+ns1:CHEBI_231501 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000020 ;
+                 ns1:IAO_0000115 "An inorganic potassium salt of permanganic acid." ;
+                 ns1:IAO_0000118 "Crystal violet"@en ;
+                 rdfs:label "potassium permanganate"@en ,
+                            "potassium permanganate" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_24473
+ns1:CHEBI_24473 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:BFO_0000040 ;
+                rdfs:label "halogen"@en ,
+                           "halogen" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_24757
+ns1:CHEBI_24757 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:CHEBI_48218 ;
+                ns1:IAO_0000115 "A chlorine oxoacid with formula HOCl; a weak, unstable acid, it is the active form of chlorine in water." ;
+                rdfs:label "hypochlorous acid"@en ,
+                           "hypochlorous acid" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_27363
+ns1:CHEBI_27363 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:WOND_0000022 ;
+                rdfs:label "zinc atom"@en ,
+                           "zinc atom" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_28694
+ns1:CHEBI_28694 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:WOND_0000022 ;
+                rdfs:label "copper atom"@en ,
+                           "copper atom" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_3020
+ns1:CHEBI_3020 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:CHEBI_35267 ;
+               ns1:IAO_0000115 "A class of quaternary ammonium chloride salts in which the nitrogen is substituted by a benzyl group, two methyl groups and an even-numbered alkyl chain." ;
+               rdfs:label "benzalkonium chloride"@en ,
+                          "benzalkonium chloride" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_30512
+ns1:CHEBI_30512 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:WOND_0000022 ;
+                rdfs:label "silver atom"@en ,
+                           "silver atom" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_3095
+ns1:CHEBI_3095 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:CHEBI_48218 ;
+               rdfs:label "Antiseptic biguanide" ,
+                          "biguanide" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_33229
+ns1:CHEBI_33229 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:CHEBI_33284 ;
+                ns1:IAO_0000115 "A biochemical role played by any micronutrient that is an organic compound. Vitamins are present in foods in small amounts and are essential to normal metabolism and biochemical functions, usually as coenzymes. The term \\" ;
+                rdfs:label "vitamin"@en ,
+                           "vitamin (role)" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_33284
+ns1:CHEBI_33284 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:BFO_0000040 ;
+                ns1:IAO_0000115 "A nutrient is a food component that an organism uses to survive and grow." ;
+                rdfs:label "Nutritional substance" ,
+                           "nutrient" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_33301
+ns1:CHEBI_33301 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:WOND_0000022 ;
+                rdfs:label "bismuth atom"@en ,
+                           "bismuth atom" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_35267
+ns1:CHEBI_35267 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:CHEBI_48218 ;
+                ns1:IAO_0000115 "A derivative of ammonium, NH<small><sub>4</sub></small><small><sup>+</small></sup>, in which all four of the hydrogens bonded to nitrogen have been replaced with univalent (usually organyl) groups." ,
+                                "Derivatives of ammonium compounds, (NH<small><sub>4</sub></small><small><sup>+</small></sup>)Y<small><sup>−</small></sup>, in which all four of the hydrogens bonded to nitrogen have been replaced with univalent (usually organyl) groups." ;
+                rdfs:label "Quaternary ammonium compounds" ,
+                           "quaternary ammonium ion" ,
+                           "quaternary ammonium salt" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_36080
+ns1:CHEBI_36080 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:CHEBI_33284 ;
+                ns1:IAO_0000115 "A biological macromolecule minimally consisting of one polypeptide chain synthesized at the ribosome." ;
+                rdfs:label "protein"@en ,
+                           "protein" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_3614
+ns1:CHEBI_3614 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:CHEBI_3095 ;
+               ns1:IAO_0000115 "A bisbiguanide compound with a structure consisting of two (<em>p</em>-chlorophenyl)guanide units linked by a hexamethylene bridge." ;
+               rdfs:label "Chlorhexidine" ,
+                          "chlorhexidine" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_48218
+ns1:CHEBI_48218 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:WOND_0000188 ;
+                ns1:IAO_0000115 "A substance used locally on humans and other animals to destroy harmful microorganisms or to inhibit their activity (cf. disinfectants, which destroy microorganisms found on non-living objects, and antibiotics, which can be transported through the lymphatic system to destroy bacteria within the body)." ;
+                rdfs:label "Antiseptic agent" ,
+                           "antiseptic drug" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_64275
+ns1:CHEBI_64275 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:WOND_0000025 ;
+                ns1:IAO_0000115 "An aromatic ether that is phenol substituted on oxygen by a 2-hydroxyethyl group." ;
+                rdfs:label "2-phenoxyethanol" ,
+                           "Phenoxyethanol" .
+
+
+###  http://purl.obolibrary.org/obo/CHEBI_8347
+ns1:CHEBI_8347 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:WOND_0000021 ;
+               rdfs:label "Povidone-iodine" .
+
+
+###  http://purl.obolibrary.org/obo/COB_0000082
+ns1:COB_0000082 rdf:type owl:Class ;
+                ns1:IAO_0000115 "A process that is initiated by an agent who intends to carry out a plan to achieve an objective through one or more actions as described in a plan specification." ;
+                rdfs:label "planned process" .
+
+
+###  http://purl.obolibrary.org/obo/COB_0001300
+ns1:COB_0001300 rdf:type owl:Class ;
+                ns1:IAO_0000115 "A processed material entity which is designed to be capable of a process." ;
+                rdfs:label "device" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_0050061
+ns1:DOID_0050061 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:IDO_0000586 ;
+                 ns1:IAO_0000115 "A primary bacterial infectious disease that results_in infection located_in skin, has_material_basis_in Erysipelothrix rhusiopathiae, which is transmitted_by contact with infected animals. The infection has_symptom redness of skin, has_symptom tenderness of skin and has_symptom warmth of skin." ;
+                 rdfs:label "Erysipel" ,
+                            "erysipeloid" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_0050426
+ns1:DOID_0050426 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000194 ;
+                 ns1:IAO_0000115 "A skin disease that is characterized by ulceration of less than 10 percent of the surface area of the body. The disease is often precipitated by the use of medications, such as antibiotics or antiepileptics, or onset of infection." ;
+                 rdfs:label "Stevens-Johnson syndrome" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_0050853
+ns1:DOID_0050853 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000192 ;
+                 ns1:IAO_0000115 "A venous insufficiency that is characterized by lower extremity swelling, hyperpigmentation, pruritus and venous ulceration caused by blood pooling in the veins." ;
+                 rdfs:label "Chronic venous insufficiency" ,
+                            "chronic venous insufficiency" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_0060851
+ns1:DOID_0060851 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000194 ;
+                 ns1:IAO_0000115 "A pemphigus characterized by autosomal dominant blisters and erosions on the skin and mucous membranes erosions cause by autoantibodies to intercellular cement substance." ;
+                 rdfs:label "Pemphigus vulgaris" ,
+                            "pemphigus vulgaris" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_0080841
+ns1:DOID_0080841 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000194 ;
+                 ns1:IAO_0000115 "An autoimmune disease of skin and connective tissue that is characterized by subepidermal blistering especially in the lower abdomen, groin, and flexor surfaces of the extremities, creating tense blisters that do not break easily." ;
+                 rdfs:label "Mucous membrane pemphigoid" ,
+                            "pemphigoid" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_10881
+ns1:DOID_10881 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:WOND_0000194 ;
+               ns1:IAO_0000115 "A viral infectious disease that results_in infection located_in skin, has_material_basis_in Enterovirus A (Enterovirus alphacoxsackie), which are transmitted_by contaminated fomites, and transmitted_by contact with nose and throat secretions, saliva, blister fluid and stool of infected persons. The infection has_symptom fever, has_symptom poor appetite, has_symptom malaise, has_symptom sore throat, has_symptom painful sores in the mouth, and has_symptom skin rash on the palms of the hands and soles of the feet." ;
+               rdfs:label "Hand-foot-and-mouth disease" ,
+                          "hand, foot and mouth disease" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_2730
+ns1:DOID_2730 rdf:type owl:Class ;
+              rdfs:subClassOf ns1:WOND_0000194 ;
+              ns1:IAO_0000115 "A vesiculobullous skin disease that is characterized by formation of blisters with only minor skin trauma, which can cause widespread wounds, dehydration, electrolyte abnormalities, and severe infection, frequently develops_from mutations in connective tissue elements, including genes encoding keratin, collagen, and laminin." ;
+              rdfs:label "Epidermolysis bullosa" ,
+                         "epidermolysis bullosa" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_3042
+ns1:DOID_3042 rdf:type owl:Class ;
+              rdfs:subClassOf ns1:WOND_0000194 ;
+              ns1:IAO_0000115 "A contact dermatitis that is an allergic skin reaction to foreign chemical or substances leading to red, itchy, weepy reaction where the skin has come into contact with a substance that the immune system recognizes as foreign." ;
+              rdfs:label "Allergic contact dermatitis" ,
+                         "allergic contact dermatitis" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_3132
+ns1:DOID_3132 rdf:type owl:Class ;
+              rdfs:subClassOf ns1:WOND_0000194 ;
+              ns1:IAO_0000115 "An acute porphyria characterized by painful, blistering skin lesions that develop on sun-exposed skin." ;
+              rdfs:label "Porphyria cutanea tarda" ,
+                         "porphyria cutanea tarda" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_4347
+ns1:DOID_4347 rdf:type owl:Class ;
+              rdfs:subClassOf ns1:BFO_0000040 ;
+              rdfs:label "Lymphocele" ,
+                         "lymphocele" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_8505
+ns1:DOID_8505 rdf:type owl:Class ;
+              rdfs:subClassOf ns1:WOND_0000194 ;
+              rdfs:label "Dermatitis herpetiformis Duhring" ,
+                         "dermatitis herpetiformis" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_8506
+ns1:DOID_8506 rdf:type owl:Class ;
+              rdfs:subClassOf ns1:WOND_0000194 ;
+              ns1:IAO_0000115 "A pemphigoid that is characterized by large blisters." ;
+              rdfs:label "Bullous pemphigoid" ,
+                         "bullous pemphigoid" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_8536
+ns1:DOID_8536 rdf:type owl:Class ;
+              rdfs:subClassOf ns1:WOND_0000194 ;
+              ns1:IAO_0000115 "A viral infectious disease that results_in infection located_in nerve fiber, has_material_basis_in Human herpesvirus 3 (Varicellovirus humanalpha3), which reactivates after appearing as chickenpox in childhood. The virus is transmitted_by direct contact with the rash, which can develop into chickenpox in newly-infected individuals. The infection has_symptom rash which is followed by blisters, has_symptom headache, has_symptom fever, has_symptom malaise, has_symptom itching, has_symptom burning pain, and has_symptom paresthesia." ;
+              rdfs:label "Herpes zoster" ,
+                         "herpes zoster" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_8566
+ns1:DOID_8566 rdf:type owl:Class ;
+              rdfs:subClassOf ns1:WOND_0000194 ;
+              ns1:IAO_0000115 "A viral infectious disease that results_in_formation_of lesions, located_in mouth, located_in face, located_in genitalia, or located_in hands, has_material_basis_in Human herpesvirus 1 (Simplexvirus humanalpha1) or 2 (Simplexvirus humanalpha2), which are transmitted_by direct contact with an active lesion or body fluid of an infected person." ;
+              rdfs:label "Herpes simplex (e.g. cold sores)" ,
+                         "herpes simplex" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_8659
+ns1:DOID_8659 rdf:type owl:Class ;
+              rdfs:subClassOf ns1:WOND_0000194 ;
+              ns1:IAO_0000115 "A viral infectious disease that results_in infection located_in skin, has_material_basis_in Human herpesvirus 3 (Varicellovirus humanalpha3), which is transmitted_by direct contact with secretions from the rash, or transmitted_by droplet spread of respiratory secretions. The infection has_symptom anorexia, has_symptom myalgia, has_symptom nausea, has_symptom fever, has_symptom headache, has_symptom sore throat, and has_symptom blisters." ;
+              rdfs:label "Chickenpox (varicella)" ,
+                         "chickenpox" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_9351
+ns1:DOID_9351 rdf:type owl:Class ;
+              rdfs:subClassOf ns1:WOND_0000192 ;
+              ns1:IAO_0000115 "A glucose metabolism disease that is characterized by chronic hyperglycaemia with disturbances of carbohydrate, fat and protein metabolism resulting from defects in insulin secretion, insulin action, or both." ;
+              rdfs:label "Diabetes mellitus" ,
+                         "diabetes mellitus" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_9602
+ns1:DOID_9602 rdf:type owl:Class ;
+              rdfs:subClassOf ns1:BFO_0000040 ;
+              rdfs:label "Necrotizing fasciitis" ,
+                         "necrotizing fasciitis" .
+
+
+###  http://purl.obolibrary.org/obo/DOID_9970
+ns1:DOID_9970 rdf:type owl:Class ;
+              rdfs:subClassOf ns1:WOND_0000193 ;
+              ns1:IAO_0000115 "An overnutrition that is characterized by excess body fat, traditionally defined as an elevated ratio of weight to height (specifically 30 kilograms per meter squared), has_material_basis_in a multifactorial etiology related to excess nutrition intake, decreased caloric utilization, and genetic susceptibility, and possibly medications and certain disorders of metabolism, endocrine function, and mental illness." ;
+              rdfs:label "Obesity" ,
+                         "obesity" .
+
+
+###  http://purl.obolibrary.org/obo/DRON_00000005
+ns1:DRON_00000005 rdf:type owl:Class ;
+                  rdfs:label "clinical drug product" .
+
+
+###  http://purl.obolibrary.org/obo/GO_0001525
+ns1:GO_0001525 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:WOND_0000409 ;
+               ns1:IAO_0000115 "Blood vessel formation when new vessels emerge from the proliferation of pre-existing blood vessels." ;
+               rdfs:label "Angiogenesis process"@en ,
+                          "angiogenesis" .
+
+
+###  http://purl.obolibrary.org/obo/GO_0007599
+ns1:GO_0007599 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:WOND_0000409 ;
+               ns1:IAO_0000115 "The stopping of bleeding (loss of body fluid) or the arrest of the circulation to an organ or part." ;
+               rdfs:label "Hemostasis process"@en ,
+                          "hemostasis" .
+
+
+###  http://purl.obolibrary.org/obo/GO_0008150
+ns1:GO_0008150 rdf:type owl:Class ;
+               ns1:IAO_0000115 "A biological process is the execution of a genetically-encoded biological module or program. It consists of all the steps required to achieve the specific biological objective of the module. A biological process is accomplished by a particular set of molecular functions carried out by specific gene products (or macromolecular complexes), often in a highly regulated manner and in a particular temporal sequence." ;
+               rdfs:label "biological_process" .
+
+
+###  http://purl.obolibrary.org/obo/GO_0008283
+ns1:GO_0008283 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:WOND_0000409 ;
+               ns1:IAO_0000115 "The multiplication or reproduction of cells, resulting in the expansion of a cell population." ;
+               rdfs:label "Proliferation process"@en ,
+                          "cell population proliferation" .
+
+
+###  http://purl.obolibrary.org/obo/GO_0042060
+ns1:GO_0042060 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:GO_0008150 ;
+               ns1:IAO_0000115 "The series of events that restore integrity to a damaged tissue, following an injury." ;
+               ns1:IAO_0000118 "wound healing process"@en ;
+               rdfs:label "wound healing"@en ,
+                          "wound healing" .
+
+
+###  http://purl.obolibrary.org/obo/GO_0042246
+ns1:GO_0042246 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:WOND_0000409 ;
+               ns1:IAO_0000115 "The regrowth of lost or destroyed tissues." ;
+               rdfs:label "Tissue regeneration process"@en ,
+                          "tissue regeneration" .
+
+
+###  http://purl.obolibrary.org/obo/GO_0042310
+ns1:GO_0042310 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:WOND_0000409 ;
+               ns1:IAO_0000115 "A decrease in the diameter of blood vessels, especially arteries, due to constriction of smooth muscle cells that line the vessels, and usually causing an increase in blood pressure." ;
+               rdfs:label "Vasoconstriction process"@en ,
+                          "vasoconstriction" .
+
+
+###  http://purl.obolibrary.org/obo/GO_0042311
+ns1:GO_0042311 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:WOND_0000409 ;
+               ns1:IAO_0000115 "An increase in the internal diameter of blood vessels, especially arterioles or capillaries, due to relaxation of smooth muscle cells that line the vessels, and usually resulting in a decrease in blood pressure." ;
+               rdfs:label "Vasodilation process"@en ,
+                          "vasodilation" .
+
+
+###  http://purl.obolibrary.org/obo/GO_0048771
+ns1:GO_0048771 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:WOND_0000409 ;
+               ns1:IAO_0000115 "The reorganization or renovation of existing tissues. This process can either change the characteristics of a tissue such as in blood vessel remodeling, or result in the dynamic equilibrium of a tissue such as in bone remodeling." ;
+               rdfs:label "Remodeling process"@en ,
+                          "tissue remodeling" .
+
+
+###  http://purl.obolibrary.org/obo/GO_0050817
+ns1:GO_0050817 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:WOND_0000409 ;
+               ns1:IAO_0000115 "The process in which a fluid solution, or part of it, changes into a solid or semisolid mass." ;
+               rdfs:label "Coagulation process"@en ,
+                          "coagulation" .
+
+
+###  http://purl.obolibrary.org/obo/HP_0000961
+ns1:HP_0000961 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:PATO_0000014 ;
+               ns1:IAO_0000115 "Bluish discoloration of the skin and mucosa due to poor circulation or inadequate oxygenation of arterial or capillary blood." ;
+               rdfs:label "Cyanosis" .
+
+
+###  http://purl.obolibrary.org/obo/HP_0000980
+ns1:HP_0000980 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:PATO_0000014 ;
+               ns1:IAO_0000115 "Abnormally pale skin." ;
+               rdfs:label "Pallor" .
+
+
+###  http://purl.obolibrary.org/obo/HP_0004395
+ns1:HP_0004395 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:WOND_0000193 ;
+               ns1:IAO_0000115 "A deficiency in the intake of energy and nutrients." ;
+               rdfs:label "Malnutrition" .
+
+
+###  http://purl.obolibrary.org/obo/HP_0012399
+ns1:HP_0012399 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:HP_0032674 ;
+               ns1:IAO_0000115 "A chronic ulcer of skin where the ulcer is an ulceration of tissue deprived of adequate blood supply by prolonged pressure." ,
+                               "A type of ulcer that is caused when an area of skin is subject to pressure over a prolonged period of time, ranging in range in severity from patches of discolored skin to open wounds that expose the underlying bone or muscle. The most common sites are the sacrum, coccyx, heels and the hips." ;
+               rdfs:label "Pressure ulcer" ,
+                          "decubitus ulcer" .
+
+
+###  http://purl.obolibrary.org/obo/HP_0025615
+ns1:HP_0025615 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:IDO_0000586 ;
+               ns1:IAO_0000115 "An abscess is a localized collection of purulent material surrounded by inflammation and granulation." ;
+               rdfs:label "abscess"@en .
+
+
+###  http://purl.obolibrary.org/obo/HP_0032326
+ns1:HP_0032326 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:NCBITaxon_1280 ;
+               ns1:IAO_0000115 "Infection with staphylococcus aureus resistant to the antibiotic methicillin (MRSA). MRSA can infect any individual but is more common among hospitalized patients, and can also occur as an opportunistic infection." ;
+               rdfs:label "Methicillin-resistant Staphylococcus aureus infection" .
+
+
+###  http://purl.obolibrary.org/obo/HP_0032674
+ns1:HP_0032674 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:WOND_0000380 ;
+               ns1:IAO_0000115 "A cutaneous wound is a defined as a disruption of normal anatomic structure and function of the skin that occurs owing to an injury of the skin. Wound healing is a dynamic, interactive process involving soluble mediators, blood cells, extracellularmatrix, and parenchymal cells. Wound healing has three phases: inflammation, tissue formation, and tissue remodeling, that overlap in time." ;
+               rdfs:label "Cutaneous wound" ,
+                          "Skin wound" .
+
+
+###  http://purl.obolibrary.org/obo/HP_0032675
+ns1:HP_0032675 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:HP_0032674 ;
+               ns1:IAO_0000115 "A cutaneous wound that is proceeding through an orderly and timely reparative process that results in sustained restoration of the anatomic and functional integrity of the skin." ;
+               rdfs:label "Acute cutaneous wound" .
+
+
+###  http://purl.obolibrary.org/obo/HP_0032676
+ns1:HP_0032676 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:HP_0032674 ;
+               ns1:IAO_0000115 "A cutaneous wound that has failed to proceed through the orderly and timely process to produce an atomic and functional integrity, or proceeded through the repair process without establishing a sustained anatomic and functional result." ;
+               rdfs:label "Chronic cutaneous wound" ,
+                          "Chronic wound" .
+
+
+###  http://purl.obolibrary.org/obo/HP_0100699
+ns1:HP_0100699 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:WOND_0000409 ;
+               ns1:IAO_0000115 "A scar refers to a lesion in which wound, burn, or sore has not healed completely and fibrous connective tissue has developed." ;
+               rdfs:label "Scarring process"@en ,
+                          "Scarring" .
+
+
+###  http://purl.obolibrary.org/obo/HP_0100758
+ns1:HP_0100758 rdf:type owl:Class ;
+               rdfs:subClassOf ns1:PATO_0000647 ;
+               ns1:IAO_0000115 "A serious and potentially life-threatening condition that arises when a considerable mass of body tissue dies (necrosis)." ;
+               rdfs:label "gangrene"@en ,
+                          "Gangrene" .
+
+
+###  http://purl.obolibrary.org/obo/IAO_0000104
+ns1:IAO_0000104 rdf:type owl:Class ;
+                ns1:IAO_0000115 "A directive information entity with action specifications and objective specifications as parts, and that may be concretized as a realizable entity that, if realized, is realized in a process in which the bearer tries to achieve the objectives by taking the actions specified." ;
+                rdfs:label "plan specification" .
+
+
+###  http://purl.obolibrary.org/obo/IAO_0000109
+ns1:IAO_0000109 rdf:type owl:Class ;
+                ns1:IAO_0000115 "A measurement datum is an information content entity that is a recording of the output of a measurement such as produced by a device." ;
+                rdfs:label "measurement datum" .
+
+
+###  http://purl.obolibrary.org/obo/NCBITaxon_1280
+ns1:NCBITaxon_1280 rdf:type owl:Class ;
+                   rdfs:subClassOf ns1:NCBITaxon_2 ,
+                                   ns1:WOND_0000410 ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty ns1:RO_0000091 ;
+                                     owl:someValuesFrom :WOND_120018
+                                   ] ;
+                   rdfs:label "Staphylococcus aureus" .
+
+
+###  http://purl.obolibrary.org/obo/NCBITaxon_1301
+ns1:NCBITaxon_1301 rdf:type owl:Class ;
+                   rdfs:subClassOf ns1:NCBITaxon_2 ;
+                   rdfs:label "Streptococcus" .
+
+
+###  http://purl.obolibrary.org/obo/NCBITaxon_2
+ns1:NCBITaxon_2 rdf:type owl:Class .
+
+
+###  http://purl.obolibrary.org/obo/NCBITaxon_287
+ns1:NCBITaxon_287 rdf:type owl:Class ;
+                  rdfs:subClassOf ns1:NCBITaxon_2 ;
+                  rdfs:label "Pseudomonas aeruginosa" .
+
+
+###  http://purl.obolibrary.org/obo/NCBITaxon_562
+ns1:NCBITaxon_562 rdf:type owl:Class ;
+                  rdfs:subClassOf ns1:NCBITaxon_2 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000091 ;
+                                    owl:someValuesFrom :WOND_120018
+                                  ] ;
+                  rdfs:label "Escherichia coli" .
+
+
+###  http://purl.obolibrary.org/obo/OBI_0000938
+ns1:OBI_0000938 rdf:type owl:Class ;
+                ns1:IAO_0000115 "A measurement datum that is reported on a categorical scale." ;
+                rdfs:label "categorical measurement datum" .
+
+
+###  http://purl.obolibrary.org/obo/OBI_0600022
+ns1:OBI_0600022 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:WOND_0000189 ;
+                ns1:IAO_0000115 "the use physical means to remove a portion of a substance from the rest" ;
+                rdfs:label "Surgical excision" ,
+                           "excision" .
+
+
+###  http://purl.obolibrary.org/obo/OBI_0600044
+ns1:OBI_0600044 rdf:type owl:Class ;
+                rdfs:subClassOf ns1:WOND_0000387 ;
+                ns1:IAO_0000115 "A protocol application to separate cells and/or cellular secretions from an anatomical space by the introduction and removal of fluid" ;
+                rdfs:label "Lavage process"@en ,
+                           "lavage" .
+
+
+###  http://purl.obolibrary.org/obo/PATO_0000014
+ns1:PATO_0000014 rdf:type owl:Class ;
+                 ns1:IAO_0000115 "A composite chromatic quality composed of hue, saturation and intensity parts." ;
+                 rdfs:label "color" .
+
+
+###  http://purl.obolibrary.org/obo/PATO_0000117
+ns1:PATO_0000117 rdf:type owl:Class ;
+                 ns1:IAO_0000115 "A morphology quality inhering in a bearer by virtue of the bearer's physical magnitude." ;
+                 rdfs:label "size" .
+
+
+###  http://purl.obolibrary.org/obo/PATO_0000647
+ns1:PATO_0000647 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 ns1:IAO_0000115 "A structural quality inhering in a bearer by virtue of the bearer's undergoing unprogrammed cell death." ;
+                 rdfs:label "necrosis"@en ,
+                            "necrotic" .
+
+
+###  http://purl.obolibrary.org/obo/PATO_0001595
+ns1:PATO_0001595 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000419 ;
+                 ns1:IAO_0000115 "A 1-D extent quality inhering in a bearer by virtue of the bearer's downward or backward or inward dimension." ;
+                 rdfs:label "Depth measurement" ,
+                            "depth" .
+
+
+###  http://purl.obolibrary.org/obo/PATO_0001764
+ns1:PATO_0001764 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000193 ;
+                 ns1:IAO_0000115 "An age which is high relative to the normal or average." ;
+                 rdfs:label "Advanced age" ,
+                            "increased age" .
+
+
+###  http://purl.obolibrary.org/obo/PATO_0001851
+ns1:PATO_0001851 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000019 ;
+                 ns1:IAO_0000115 "A structure quality inhering in a bearer by virtue of the bearer's exhibiting transient abnormal enlargement, not due to cell proliferation." ;
+                 rdfs:label "Swelling" ,
+                            "swollen" .
+
+
+###  http://purl.obolibrary.org/obo/PATO_0002097
+ns1:PATO_0002097 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000192 ;
+                 ns1:IAO_0000115 "A disposition inhering in a tumour by virtue of the bearer's disposition to progress, invade surrounding tissues or metastasize." ;
+                 rdfs:label "Malignancy" ,
+                            "neoplastic, malignant" .
+
+
+###  http://purl.obolibrary.org/obo/PATO_0002104
+ns1:PATO_0002104 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000409 ;
+                 ns1:IAO_0000115 "A compositional quality inhering in an bearer by virtue of the bearer's infiltration by leukocytes, local edema and accumulation of plasma proteins." ;
+                 rdfs:label "Inflammation process"@en ,
+                            "inflamed" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000001
+ns1:WOND_0000001 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000194 ;
+                 rdfs:label "2nd degree burn" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000002
+ns1:WOND_0000002 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000093 ;
+                 rdfs:label "Abdominal drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000004
+ns1:WOND_0000004 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000418 ;
+                 rdfs:label "Acidity impact process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000005
+ns1:WOND_0000005 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Activated carbon layer wound dressing" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000006
+ns1:WOND_0000006 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000093 ;
+                 rdfs:label "Active drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000008
+ns1:WOND_0000008 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000280 ;
+                 rdfs:label "Adhesive silicone grid" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000010
+ns1:WOND_0000010 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:CHEBI_48218 ;
+                 rdfs:label "Antiseptic alcohol"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000011
+ns1:WOND_0000011 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Alginate containing wound dressing" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000013
+ns1:WOND_0000013 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000192 ;
+                 rdfs:label "ANCA-associated Vasculitis" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000015
+ns1:WOND_0000015 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Angiopathic wounds" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000016
+ns1:WOND_0000016 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000198 ;
+                 rdfs:label "Antibiotic therapy" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000020
+ns1:WOND_0000020 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:CHEBI_48218 ;
+                 rdfs:label "Antiseptic dye" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000021
+ns1:WOND_0000021 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:CHEBI_48218 ;
+                 rdfs:label "Antiseptic halogen-releasing compound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000022
+ns1:WOND_0000022 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:CHEBI_48218 ;
+                 rdfs:label "Antiseptic metal ion"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000025
+ns1:WOND_0000025 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:CHEBI_48218 ;
+                 rdfs:label "Antiseptic phenol derivatives" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000026
+ns1:WOND_0000026 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000412 ;
+                 rdfs:label "Antiseptic solution" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000027
+ns1:WOND_0000027 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:HP_0032674 ;
+                 rdfs:label "Arterial leg ulcer" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000028
+ns1:WOND_0000028 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000066 ;
+                 rdfs:label "ASEPSIS score" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000029
+ns1:WOND_0000029 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000200 ;
+                 rdfs:label "Aseptic conditions" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000030
+ns1:WOND_0000030 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:IAO_0000104 ;
+                 rdfs:label "Aseptic cuticle" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000031
+ns1:WOND_0000031 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Aseptic wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000032
+ns1:WOND_0000032 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000089 ;
+                 rdfs:label "Assessing patient's medical history" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000033
+ns1:WOND_0000033 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Autoimmune disease related wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000034
+ns1:WOND_0000034 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000084 ;
+                 rdfs:label "Autolytic wound debridement process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000037
+ns1:WOND_0000037 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000406 ;
+                 rdfs:label "Bepanthen ointment" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000038
+ns1:WOND_0000038 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000040 ;
+                 rdfs:label "Biobag debridement" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000039
+ns1:WOND_0000039 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000395 ;
+                 rdfs:label "Wound specimen procurement by biopsy process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000040
+ns1:WOND_0000040 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:IAO_0000104 ;
+                 rdfs:label "Biosurgical debridement" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000041
+ns1:WOND_0000041 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000084 ;
+                 rdfs:label "Biosurgical wound debridement process" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000042
+ns1:WOND_0000042 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Biosynthetic cellulose" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000043
+ns1:WOND_0000043 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:CHEBI_48218 ;
+                 rdfs:label "Bismuth III bromide" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000044
+ns1:WOND_0000044 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000339 ;
+                 rdfs:label "Bite wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000045
+ns1:WOND_0000045 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000177 ;
+                 rdfs:label "Blake drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000046
+ns1:WOND_0000046 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:HP_0032674 ;
+                 rdfs:label "Blistering skin wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000047
+ns1:WOND_0000047 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000427 ;
+                 rdfs:label "Bovine collagen containing wound dressing" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000048
+ns1:WOND_0000048 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000296 ;
+                 rdfs:label "Bromelain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000049
+ns1:WOND_0000049 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000194 ;
+                 rdfs:label "Bullosis diabeticorum" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000050
+ns1:WOND_0000050 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000194 ;
+                 rdfs:label "Bullous impetigo" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000052
+ns1:WOND_0000052 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000309 ;
+                 rdfs:label "Burn wound Grade I" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000053
+ns1:WOND_0000053 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000309 ;
+                 rdfs:label "Burn wound Grade IIa" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000054
+ns1:WOND_0000054 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000309 ;
+                 rdfs:label "Burn wound Grade IIb" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000055
+ns1:WOND_0000055 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000309 ;
+                 rdfs:label "Burn wound Grade III" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000056
+ns1:WOND_0000056 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000309 ;
+                 rdfs:label "Burn wound Grade IV" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000057
+ns1:WOND_0000057 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000311 ;
+                 rdfs:label "Bülau drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000058
+ns1:WOND_0000058 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000224 ;
+                 rdfs:label "Capillary drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000060
+ns1:WOND_0000060 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000044 ;
+                 rdfs:label "Cat bite wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000061
+ns1:WOND_0000061 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Cellulose acetate mesh impregnated with a petrolatum emulsion" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000066
+ns1:WOND_0000066 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:IAO_0000030 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:OBI_0000295 ;
+                                   owl:someValuesFrom :WOND_120015
+                                 ] ;
+                 rdfs:label "Wound classification scale"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000067
+ns1:WOND_0000067 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Clean contaminated wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000068
+ns1:WOND_0000068 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Clean wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000069
+ns1:WOND_0000069 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000089 ;
+                 rdfs:label "Clinical inspection" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000070
+ns1:WOND_0000070 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000089 ;
+                 rdfs:label "Clinical wound assessment" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000071
+ns1:WOND_0000071 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000093 ;
+                 rdfs:label "Closed drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000072
+ns1:WOND_0000072 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000200 ;
+                 rdfs:label "CO2 bath wound therapy" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000074
+ns1:WOND_0000074 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000423 ;
+                 rdfs:label "Cold plasma wound treatment process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000075
+ns1:WOND_0000075 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Colonized wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000076
+ns1:WOND_0000076 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000189 ;
+                 rdfs:label "Compress debridement" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000077
+ns1:WOND_0000077 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000200 ;
+                 rdfs:label "Compression therapy" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000078
+ns1:WOND_0000078 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Contaminated wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000079
+ns1:WOND_0000079 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000301 ;
+                 rdfs:label "Continuous suture" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000082
+ns1:WOND_0000082 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000350 ;
+                 rdfs:label "CUSA(r) assisted debridement" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000084
+ns1:WOND_0000084 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000387 ;
+                 rdfs:label "Debridement process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000088
+ns1:WOND_0000088 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Diabetic wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000089
+ns1:WOND_0000089 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000015 ;
+                 rdfs:label "Diagnostic process to assess wound characteristics" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000090
+ns1:WOND_0000090 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:OMRSE_00000012 ;
+                 rdfs:label "Physician role"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000091
+ns1:WOND_0000091 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000044 ;
+                 rdfs:label "Dog bite wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000092
+ns1:WOND_0000092 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000395 ;
+                 rdfs:label "Doppler sonographic diagnostic process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000093
+ns1:WOND_0000093 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000188 ;
+                 rdfs:label "Drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000094
+ns1:WOND_0000094 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000200 ;
+                 rdfs:label "Dressing change" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000095
+ns1:WOND_0000095 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:PATO_0000647 ;
+                 rdfs:label "Dry necrosis" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000096
+ns1:WOND_0000096 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000058 ;
+                 rdfs:label "Easy-Flow drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000097
+ns1:WOND_0000097 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000112 ;
+                 rdfs:label "Elastic bandage" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000098
+ns1:WOND_0000098 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000084 ;
+                 rdfs:label "Enzymatic wound debridement process" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000100
+ns1:WOND_0000100 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000409 ;
+                 rdfs:label "Epithelialization process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000101
+ns1:WOND_0000101 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000382 ;
+                 rdfs:label "Epithelializing wound bed" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000106
+ns1:WOND_0000106 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000409 ;
+                 rdfs:label "Exudation process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000107
+ns1:WOND_0000107 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Fat gauze" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000108
+ns1:WOND_0000108 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Fibrin coating of the wound"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000109
+ns1:WOND_0000109 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000382 ;
+                 rdfs:label "Fibrin-covered wound bed" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000110
+ns1:WOND_0000110 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "fistula"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000111
+ns1:WOND_0000111 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000194 ;
+                 rdfs:label "Fixed drug exanthema" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000112
+ns1:WOND_0000112 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Fixing bandage" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000113
+ns1:WOND_0000113 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000406 ;
+                 rdfs:label "Flaminal" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000114
+ns1:WOND_0000114 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000200 ;
+                 rdfs:label "Flap plasty" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000115
+ns1:WOND_0000115 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:DOID_9602 ;
+                 rdfs:label "Fournier's gangrene" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000116
+ns1:WOND_0000116 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000194 ;
+                 rdfs:label "Friction bubble" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000117
+ns1:WOND_0000117 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000285 ;
+                 rdfs:label "Full-thickness skin graft" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000120
+ns1:WOND_0000120 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000112 ;
+                 rdfs:label "Gauze bandage" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000121
+ns1:WOND_0000121 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000395 ;
+                 rdfs:label "Germ spectrum assessment process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000123
+ns1:WOND_0000123 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:HP_0012399 ;
+                 rdfs:label "Grade I pressure ulcer according to Shea" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000125
+ns1:WOND_0000125 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:HP_0012399 ;
+                 rdfs:label "Grade II pressure ulcer according to Shea" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000127
+ns1:WOND_0000127 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:HP_0012399 ;
+                 rdfs:label "Grade III pressure ulcer according to Shea" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000129
+ns1:WOND_0000129 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:HP_0012399 ;
+                 rdfs:label "Grade IV pressure ulcer according to Shea" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000130
+ns1:WOND_0000130 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000310 ;
+                 rdfs:label "Graded thermal or cauterizing wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000131
+ns1:WOND_0000131 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000382 ;
+                 rdfs:label "Granulating wound bed" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000132
+ns1:WOND_0000132 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000409 ;
+                 rdfs:label "Granulation process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000133
+ns1:WOND_0000133 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000224 ;
+                 rdfs:label "Gravity drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000134
+ns1:WOND_0000134 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000066 ;
+                 rdfs:label "Gustilo and Anderson wound classification" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000135
+ns1:WOND_0000135 rdf:type owl:Class ;
+                 rdfs:subClassOf :WOND_120016 ;
+                 rdfs:label "Gustilo and Anderson wound classification grade"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000138
+ns1:WOND_0000138 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000030 ;
+                 rdfs:label "Hand disinfection" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000140
+ns1:WOND_0000140 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000418 ;
+                 rdfs:label "Heat impact process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000141
+ns1:WOND_0000141 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Hematoma" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000145
+ns1:WOND_0000145 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000006 ;
+                 rdfs:label "High-vacuum drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000146
+ns1:WOND_0000146 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000395 ;
+                 rdfs:label "Histopathological examination process of wound material"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000147
+ns1:WOND_0000147 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000301 ;
+                 rdfs:label "Horizontal mattress suture" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000148
+ns1:WOND_0000148 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000044 ;
+                 rdfs:label "Human bite wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000149
+ns1:WOND_0000149 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Hydrocolloid containing wound dressing" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000150
+ns1:WOND_0000150 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Hydrofiber-containing wound dressing" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000151
+ns1:WOND_0000151 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Hydrogel containing wound dressing" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000152
+ns1:WOND_0000152 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000200 ;
+                 rdfs:label "Hyperbaric O2 wound therapy" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000153
+ns1:WOND_0000153 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Hypergranulation" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000154
+ns1:WOND_0000154 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000269 ;
+                 rdfs:label "Hypertrophic scarring process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000161
+ns1:WOND_0000161 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000193 ;
+                 rdfs:label "Immunosuppression" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000162
+ns1:WOND_0000162 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000187 ;
+                 rdfs:label "Incision foil" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000163
+ns1:WOND_0000163 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Infected wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000165
+ns1:WOND_0000165 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000401 ;
+                 rdfs:label "Intact wound margin" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000166
+ns1:WOND_0000166 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000301 ;
+                 rdfs:label "Intracutaneous suture" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000168
+ns1:WOND_0000168 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000406 ;
+                 rdfs:label "Iodine ointment" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000170
+ns1:WOND_0000170 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000177 ;
+                 rdfs:label "Jackson-Pratt drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000171
+ns1:WOND_0000171 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000269 ;
+                 rdfs:label "Keloid development process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000173
+ns1:WOND_0000173 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000194 ;
+                 rdfs:label "Linear IgA dermatosis" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000174
+ns1:WOND_0000174 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000192 ;
+                 rdfs:label "Livedovasculopathy" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000175
+ns1:WOND_0000175 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000401 ;
+                 rdfs:label "Livider wound margin" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000176
+ns1:WOND_0000176 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000015 ;
+                 rdfs:label "Process of administering a local anaesthetic agent"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000177
+ns1:WOND_0000177 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000006 ;
+                 rdfs:label "Low-vacuum drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000178
+ns1:WOND_0000178 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Lymphatic fistula" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000180
+ns1:WOND_0000180 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Macerated wound edge" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000182
+ns1:WOND_0000182 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Malignant wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000184
+ns1:WOND_0000184 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000163 ;
+                 rdfs:label "Manifest-infected wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000185
+ns1:WOND_0000185 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000196 ;
+                 rdfs:label "Manuka honey" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000186
+ns1:WOND_0000186 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:HP_0032674 ;
+                 rdfs:label "Marjolin ulcer" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000187
+ns1:WOND_0000187 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Material used for wound complication prevention" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000188
+ns1:WOND_0000188 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Material used for wound treatment" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000189
+ns1:WOND_0000189 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:IAO_0000104 ;
+                 rdfs:label "Mechanical debridement" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000190
+ns1:WOND_0000190 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000084 ;
+                 rdfs:label "Mechanical wound debridement process" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000192
+ns1:WOND_0000192 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:OGMS_0000031 ;
+                 rdfs:label "Medical condition contributing to wound formation" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000193
+ns1:WOND_0000193 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:OGMS_0000031 ;
+                 rdfs:label "Medical conditions affecting wound healing" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000194
+ns1:WOND_0000194 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:OGMS_0000031 ;
+                 rdfs:label "Medical conditions contributing to blistering wounds" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000196
+ns1:WOND_0000196 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000188 ;
+                 rdfs:label "Medicinal honey" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000198
+ns1:WOND_0000198 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:IAO_0000104 ;
+                 rdfs:label "Method used for wound complication prevention" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000199
+ns1:WOND_0000199 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:IAO_0000104 ;
+                 rdfs:label "Method used for wound complication treatment" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000200
+ns1:WOND_0000200 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:IAO_0000104 ;
+                 rdfs:label "Method used for wound treatment" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000201
+ns1:WOND_0000201 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000192 ;
+                 rdfs:label "Microangiopathy" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000202
+ns1:WOND_0000202 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000089 ;
+                 rdfs:label "Microbial analysis of the wound swab for wound pathogens" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000203
+ns1:WOND_0000203 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:PATO_0000647 ;
+                 rdfs:label "Moist necrosis" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000204
+ns1:WOND_0000204 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000311 ;
+                 rdfs:label "Monaldi drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000205
+ns1:WOND_0000205 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Monofilament thread material" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000207
+ns1:WOND_0000207 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000010 ;
+                 rdfs:label "n-propanol" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000208
+ns1:WOND_0000208 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000412 ;
+                 rdfs:label "NaCl 0.9%" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000209
+ns1:WOND_0000209 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000412 ;
+                 rdfs:label "NaCl 10%" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000211
+ns1:WOND_0000211 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000382 ;
+                 rdfs:label "Necrotic wound bed" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000213
+ns1:WOND_0000213 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000200 ;
+                 rdfs:label "Negative pressure wound therapy" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000214
+ns1:WOND_0000214 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Neoplastic wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000215
+ns1:WOND_0000215 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Non-absorbable thread material" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000216
+ns1:WOND_0000216 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000423 ;
+                 rdfs:label "Nutritional status improvement process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000220
+ns1:WOND_0000220 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000406 ;
+                 rdfs:label "Octenidine gel" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000221
+ns1:WOND_0000221 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000093 ;
+                 rdfs:label "Open drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000222
+ns1:WOND_0000222 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000199 ;
+                 rdfs:label "Pain management" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000224
+ns1:WOND_0000224 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000093 ;
+                 rdfs:label "Passive drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000225
+ns1:WOND_0000225 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000200 ;
+                 rdfs:label "Patient education" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000227
+ns1:WOND_0000227 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000058 ;
+                 rdfs:label "Penrose drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000228
+ns1:WOND_0000228 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000198 ;
+                 rdfs:label "Perioperative antimicrobial prophylaxis" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000229
+ns1:WOND_0000229 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000192 ;
+                 rdfs:label "Peripheral arterial occlusive disease" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000233
+ns1:WOND_0000233 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Phlegmon" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000235
+ns1:WOND_0000235 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000224 ;
+                 rdfs:label "Pigtail catheter" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000236
+ns1:WOND_0000236 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000419 ;
+                 rdfs:label "Planimetry" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000237
+ns1:WOND_0000237 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000112 ;
+                 rdfs:label "Plaster" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000238
+ns1:WOND_0000238 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:CHEBI_3095 ;
+                 rdfs:label "Polihexanide" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000239
+ns1:WOND_0000239 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000026 ;
+                 rdfs:label "Polihexanide containing solution" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000240
+ns1:WOND_0000240 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000406 ;
+                 rdfs:label "Polihexanide gel" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000241
+ns1:WOND_0000241 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Polyfilament thread material" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000243
+ns1:WOND_0000243 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000395 ;
+                 rdfs:label "Postoperative wound control process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000245
+ns1:WOND_0000245 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000418 ;
+                 rdfs:label "Pressure impact process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000247
+ns1:WOND_0000247 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Primarily-healing wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000248
+ns1:WOND_0000248 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:GO_0042060 ;
+                 rdfs:label "Wound healing by primary intention"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000253
+ns1:WOND_0000253 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000404 ;
+                 rdfs:label "Purulent exudate" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000256
+ns1:WOND_0000256 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000401 ;
+                 rdfs:label "Reddened wound edge" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000257
+ns1:WOND_0000257 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:PATO_0000014 ;
+                 rdfs:label "Redness" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000258
+ns1:WOND_0000258 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000145 ;
+                 rdfs:label "Redon drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000260
+ns1:WOND_0000260 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:GO_0042060 ;
+                 rdfs:label "Regenerative wound healing" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000261
+ns1:WOND_0000261 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Regeneratively-healing wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000263
+ns1:WOND_0000263 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000409 ;
+                 rdfs:label "Tissue repair process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000265
+ns1:WOND_0000265 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Resorbable thread material" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000266
+ns1:WOND_0000266 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000412 ;
+                 rdfs:label "Ringer solution" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000267
+ns1:WOND_0000267 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000133 ;
+                 rdfs:label "Robinson drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000268
+ns1:WOND_0000268 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000404 ;
+                 rdfs:label "Sanguine exudate" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000269
+ns1:WOND_0000269 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000015 ;
+                 rdfs:label "Scar complication process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000271
+ns1:WOND_0000271 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000339 ;
+                 rdfs:label "Scratch wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000272
+ns1:WOND_0000272 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Secondarily-healing wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000273
+ns1:WOND_0000273 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Secondary dressing" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000274
+ns1:WOND_0000274 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:GO_0042060 ;
+                 rdfs:label "Wound healing by secondary intention"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000275
+ns1:WOND_0000275 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000093 ;
+                 rdfs:label "Semi-open drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000276
+ns1:WOND_0000276 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Seroma" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000277
+ns1:WOND_0000277 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000404 ;
+                 rdfs:label "Serosanguineous exudate" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000278
+ns1:WOND_0000278 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000404 ;
+                 rdfs:label "Serous exudate" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000279
+ns1:WOND_0000279 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000066 ;
+                 rdfs:label "Shea classification of pressure ulcers" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000280
+ns1:WOND_0000280 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Silicone spacer grid" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000282
+ns1:WOND_0000282 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Silver-containing wound dressing" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000283
+ns1:WOND_0000283 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000301 ;
+                 rdfs:label "Simple interrupted suture" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000284
+ns1:WOND_0000284 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000395 ;
+                 rdfs:label "Skin color assessment process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000285
+ns1:WOND_0000285 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Skin graft" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000286
+ns1:WOND_0000286 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000200 ;
+                 rdfs:label "Skin grafting" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000287
+ns1:WOND_0000287 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000389 ;
+                 rdfs:label "Skin stapling" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000289
+ns1:WOND_0000289 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000193 ;
+                 rdfs:label "Smoking" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000290
+ns1:WOND_0000290 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000401 ;
+                 rdfs:label "Softened wound edge" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000291
+ns1:WOND_0000291 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000395 ;
+                 rdfs:label "Wound odor assessment process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000292
+ns1:WOND_0000292 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000285 ;
+                 rdfs:label "Split-thickness skin graft" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000296
+ns1:WOND_0000296 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000188 ;
+                 rdfs:label "Substance used for enzymatic wound debridement" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000297
+ns1:WOND_0000297 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000030 ;
+                 rdfs:label "Surface disinfection" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000298
+ns1:WOND_0000298 rdf:type owl:Class ;
+                 rdfs:subClassOf <http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120086> ;
+                 rdfs:label "Surgical treatment process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000299
+ns1:WOND_0000299 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000084 ;
+                 rdfs:label "Surgical wound debridement process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000301
+ns1:WOND_0000301 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:COB_0001300 ;
+                 rdfs:label "Suture in situ"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000302
+ns1:WOND_0000302 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000389 ;
+                 rdfs:label "Suturing" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000304
+ns1:WOND_0000304 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Synthetic wound dressing foam"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000305
+ns1:WOND_0000305 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000016 ;
+                 rdfs:label "Systemic antibiotic therapy" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000306
+ns1:WOND_0000306 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000089 ;
+                 rdfs:label "Taking a wound swab" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000307
+ns1:WOND_0000307 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Tertiarily-healing wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000308
+ns1:WOND_0000308 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:GO_0042060 ;
+                 rdfs:label "Wound healing by tertiary intention"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000309
+ns1:WOND_0000309 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Thermal or cauterizing wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000310
+ns1:WOND_0000310 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Thermal wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000311
+ns1:WOND_0000311 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000093 ;
+                 rdfs:label "Thoracic drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000315
+ns1:WOND_0000315 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:PATO_0000117 ;
+                 rdfs:label "Thread size" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000316
+ns1:WOND_0000316 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 0" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000317
+ns1:WOND_0000317 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 1" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000318
+ns1:WOND_0000318 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 1-0" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000319
+ns1:WOND_0000319 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 10-0" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000320
+ns1:WOND_0000320 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 11-0" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000321
+ns1:WOND_0000321 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 12-0" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000322
+ns1:WOND_0000322 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 13-0" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000323
+ns1:WOND_0000323 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 2" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000324
+ns1:WOND_0000324 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 2-0" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000325
+ns1:WOND_0000325 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 3" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000326
+ns1:WOND_0000326 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 3-0" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000327
+ns1:WOND_0000327 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 4" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000328
+ns1:WOND_0000328 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 4-0" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000329
+ns1:WOND_0000329 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 5" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000330
+ns1:WOND_0000330 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 5-0" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000331
+ns1:WOND_0000331 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 6-0" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000332
+ns1:WOND_0000332 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 7-0" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000333
+ns1:WOND_0000333 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 8-0" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000334
+ns1:WOND_0000334 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000315 ;
+                 rdfs:label "Thread size 9-0" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000335
+ns1:WOND_0000335 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000016 ;
+                 rdfs:label "Topical antibiotic therapy" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000336
+ns1:WOND_0000336 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:CHEBI_33284 ;
+                 rdfs:label "trace element"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000337
+ns1:WOND_0000337 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Transparent polyurethane films" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000338
+ns1:WOND_0000338 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000418 ;
+                 rdfs:label "Trauma process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000339
+ns1:WOND_0000339 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Traumatic wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000341
+ns1:WOND_0000341 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000066 ;
+                 rdfs:label "Tscherne and Oestern wound classification" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000342
+ns1:WOND_0000342 rdf:type owl:Class ;
+                 rdfs:subClassOf :WOND_120016 ;
+                 rdfs:label "Tscherne and Oestern wound classification grade" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000344
+ns1:WOND_0000344 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000093 ;
+                 rdfs:label "Tympanic drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000346
+ns1:WOND_0000346 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:HP_0032674 ;
+                 rdfs:label "Ulcus cruris mixtum" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000347
+ns1:WOND_0000347 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:HP_0032674 ,
+                                 ns1:WOND_0000384 ;
+                 rdfs:label "Ulcus cruris venosum" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000348
+ns1:WOND_0000348 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:HP_0032674 ;
+                 rdfs:label "Ulcus hypertonicus Martorell" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000350
+ns1:WOND_0000350 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000084 ;
+                 rdfs:label "Ultrasound-assisted wound debridement process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000351
+ns1:WOND_0000351 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000401 ;
+                 rdfs:label "Undermined wound margin" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000352
+ns1:WOND_0000352 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000066 ;
+                 rdfs:label "URGE scale" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000355
+ns1:WOND_0000355 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000093 ;
+                 rdfs:label "Ventricular drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000356
+ns1:WOND_0000356 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000301 ;
+                 rdfs:label "Vertical mattress suture" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000358
+ns1:WOND_0000358 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000406 ;
+                 rdfs:label "Voltaren gel" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000375
+ns1:WOND_0000375 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000066 ;
+                 rdfs:label "Wagner and Anderson wound classification" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000376
+ns1:WOND_0000376 rdf:type owl:Class ;
+                 rdfs:subClassOf :WOND_120016 ;
+                 rdfs:label "Wagner and Anderson wound classification grade" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000377
+ns1:WOND_0000377 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000084 ;
+                 rdfs:label "Water-jet assisted wound debridement process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000378
+ns1:WOND_0000378 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000030 ;
+                 rdfs:label "Wearing Sterile gloves" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000379
+ns1:WOND_0000379 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000392 ;
+                 rdfs:label "Wound dehiscence causally related to suture insufficiency" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000380
+ns1:WOND_0000380 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:OBI_0000312 ;
+                                   owl:someValuesFrom ns1:WOND_0000414
+                                 ] ;
+                 rdfs:label "Wound" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000381
+ns1:WOND_0000381 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000093 ;
+                 rdfs:label "Wound and soft tissue drain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000382
+ns1:WOND_0000382 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Wound base" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000383
+ns1:WOND_0000383 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Wound biofilm" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000384
+ns1:WOND_0000384 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000380 ;
+                 rdfs:label "Wound causally related to impaired venous backflow" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000387
+ns1:WOND_0000387 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000423 ;
+                 rdfs:label "Wound cleansing process" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000388
+ns1:WOND_0000388 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000423 ;
+                 rdfs:label "Wound closure process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000389
+ns1:WOND_0000389 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:IAO_0000104 ;
+                 rdfs:label "Wound closure technique" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000390
+ns1:WOND_0000390 rdf:type owl:Class ;
+                 rdfs:subClassOf <http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120092> ;
+                 rdfs:label "Wound complication process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000391
+ns1:WOND_0000391 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000409 ;
+                 rdfs:label "Wound contraction process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000392
+ns1:WOND_0000392 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Wound dehiscence" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000395
+ns1:WOND_0000395 rdf:type owl:Class ;
+                 rdfs:subClassOf <http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120047> ;
+                 rdfs:label "Wound diagnostic process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000397
+ns1:WOND_0000397 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:COB_0000082 ;
+                 rdfs:label "Wound documentation process" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000398
+ns1:WOND_0000398 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:COB_0001300 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:RO_0000085 ;
+                                   owl:someValuesFrom :WOND_120012
+                                 ] ;
+                 rdfs:label "Wound dressing" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000399
+ns1:WOND_0000399 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000427 ;
+                 rdfs:label "Wound dressing composed of a polylactide membrane" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000400
+ns1:WOND_0000400 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000427 ;
+                 rdfs:label "Wound dressing composed of polyurethane foam" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000401
+ns1:WOND_0000401 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Wound edge" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000402
+ns1:WOND_0000402 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000423 ;
+                 rdfs:label "Wound edge protection process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000403
+ns1:WOND_0000403 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:OMRSE_00000012 ;
+                 rdfs:label "Wound expert role"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000404
+ns1:WOND_0000404 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Wound exudate" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000405
+ns1:WOND_0000405 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000389 ;
+                 rdfs:label "Wound Fabric adhesive" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000406
+ns1:WOND_0000406 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:DRON_00000005 ;
+                 rdfs:label "Wound gel/ointment/cream" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000408
+ns1:WOND_0000408 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000192 ;
+                 rdfs:label "Wound healing disorder" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000409
+ns1:WOND_0000409 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:GO_0008150 ;
+                 rdfs:label "Wound healing related physiological process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000410
+ns1:WOND_0000410 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000390 ;
+                 rdfs:label "Wound infection process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000411
+ns1:WOND_0000411 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000423 ;
+                 rdfs:label "Wound irrigation process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000412
+ns1:WOND_0000412 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:DRON_00000005 ;
+                 rdfs:label "Wound irrigation solution" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000413
+ns1:WOND_0000413 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:OMRSE_00000012 ;
+                 rdfs:label "Wound manager role"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000414
+ns1:WOND_0000414 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000015 ;
+                 rdfs:label "Wound development process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000415
+ns1:WOND_0000415 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000019 ;
+                 rdfs:label "Wound pain" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000416
+ns1:WOND_0000416 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000089 ;
+                 rdfs:label "Wound palpation" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000417
+ns1:WOND_0000417 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Wound pocket" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000418
+ns1:WOND_0000418 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000015 ;
+                 rdfs:label "Pathologial wound realizing process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000419
+ns1:WOND_0000419 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000395 ;
+                 rdfs:label "Wound size measurement process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000420
+ns1:WOND_0000420 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Wound spacer grid" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000421
+ns1:WOND_0000421 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000389 ;
+                 rdfs:label "Wound staple plastering" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000422
+ns1:WOND_0000422 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000395 ;
+                 rdfs:label "Wound temperature assessment process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000423
+ns1:WOND_0000423 rdf:type owl:Class ;
+                 rdfs:subClassOf <http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120086> ;
+                 rdfs:label "Wound treatment process"@en .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000425
+ns1:WOND_0000425 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000419 ;
+                 rdfs:label "Wound volumetrics" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000426
+ns1:WOND_0000426 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000339 ,
+                                 ns1:WOND_0000380 ;
+                 rdfs:label "Wound with accompanying fracture" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000427
+ns1:WOND_0000427 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Wound-integrating wound dressing" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000428
+ns1:WOND_0000428 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000398 ;
+                 rdfs:label "Wound-integrating wound dressings" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000429
+ns1:WOND_0000429 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:HP_0032674 ,
+                                 ns1:WOND_0000426 ;
+                 rdfs:label "Wounds classified according to Gustilo and Anderson" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000430
+ns1:WOND_0000430 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:HP_0032674 ,
+                                 ns1:WOND_0000426 ;
+                 rdfs:label "Wounds classified according to Tscherne and Oestern" .
+
+
+###  http://purl.obolibrary.org/obo/WOND_0000432
+ns1:WOND_0000432 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:WOND_0000002 ;
+                 rdfs:label "T drain" .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120000
+:WOND_120000 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:BFO_0000034 ;
+             rdfs:label "wound protection function"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120001
+:WOND_120001 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:BFO_0000034 ;
+             rdfs:label "wound signalling function"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120002
+:WOND_120002 rdf:type owl:Class ;
+             rdfs:subClassOf :WOND_120004 ;
+             rdfs:label "first wound dressing layer function"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120003
+:WOND_120003 rdf:type owl:Class ;
+             rdfs:subClassOf :WOND_120004 ;
+             rdfs:label "second wound dressing layer function"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120004
+:WOND_120004 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:BFO_0000034 ;
+             rdfs:label "wound dressing layer function"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120005
+:WOND_120005 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:BFO_0000034 ;
+             rdfs:label "wound dressing fixation function"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120006
+:WOND_120006 rdf:type owl:Class ;
+             rdfs:subClassOf :WOND_120005 ;
+             rdfs:label "non adhesive wound dressing fixation function"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120007
+:WOND_120007 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:BFO_0000034 ;
+             rdfs:label "wound moisture absorbance function"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120008
+:WOND_120008 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:BFO_0000034 ;
+             rdfs:label "wound moisture regulation function"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120009
+:WOND_120009 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:BFO_0000034 ;
+             rdfs:label "wound desinfecting function"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120010
+:WOND_120010 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:BFO_0000034 ;
+             rdfs:label "wound edge approximating function"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120011
+:WOND_120011 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:BFO_0000034 ;
+             rdfs:label "wound inspection facilitation function"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120012
+:WOND_120012 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:BFO_0000034 ;
+             rdfs:label "wound coverage function"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120013
+:WOND_120013 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:WOND_0000423 ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty ns1:OBI_0000299 ;
+                               owl:someValuesFrom :WOND_120014
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty ns1:RO_0000057 ;
+                               owl:someValuesFrom ns1:WOND_0000380
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty ns1:RO_0000057 ;
+                               owl:someValuesFrom ns1:WOND_0000398
+                             ] ;
+             rdfs:label "Wound dressing process"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120014
+:WOND_120014 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:WOND_0000380 ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty ns1:BFO_0000051 ;
+                               owl:someValuesFrom ns1:WOND_0000380
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty ns1:BFO_0000051 ;
+                               owl:someValuesFrom ns1:WOND_0000398
+                             ] ;
+             rdfs:label "Wound covered by wound dressing"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120015
+:WOND_120015 rdf:type owl:Class ;
+             rdfs:subClassOf <http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120055> ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty ns1:OBI_0000299 ;
+                               owl:someValuesFrom :WOND_120017
+                             ] ;
+             rdfs:label "Wound classification process"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120016
+:WOND_120016 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:IAO_0000030 ;
+             rdfs:label "wound classification grade"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120017
+:WOND_120017 rdf:type owl:Class ;
+             rdfs:subClassOf <http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120054> ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty ns1:IAO_0000136 ;
+                               owl:someValuesFrom ns1:WOND_0000380
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty ns1:OBI_0000312 ;
+                               owl:someValuesFrom :WOND_120015
+                             ] ;
+             rdfs:label "Wound classification result"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120018
+:WOND_120018 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:BFO_0000040 ;
+             rdfs:label "wound infecting disposition"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120019
+:WOND_120019 rdf:type owl:Class ;
+             owl:equivalentClass [ owl:intersectionOf ( ns1:BFO_0000040
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty ns1:RO_0000091 ;
+                                                          owl:someValuesFrom :WOND_120018
+                                                        ]
+                                                      ) ;
+                                   rdf:type owl:Class
+                                 ] ;
+             rdfs:subClassOf ns1:IDO_0000528 ;
+             rdfs:label "wound infecting pathogen"@en .
+
+
+###  http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120047
+<http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120047> rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120054
+<http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120054> rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120055
+<http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120055> rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120086
+<http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120086> rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120092
+<http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120092> rdf:type owl:Class .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120061
+:WOND_120061 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000342 ;
+             rdfs:label "Tscherne and Oestern wound classification grade I"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120062
+:WOND_120062 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000342 ;
+             rdfs:label "Tscherne and Oestern wound classification grade II"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120063
+:WOND_120063 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000342 ;
+             rdfs:label "Tscherne and Oestern wound classification grade III"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120064
+:WOND_120064 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000342 ;
+             rdfs:label "Tscherne and Oestern wound classification grade IV"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120065
+:WOND_120065 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 1A"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120066
+:WOND_120066 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 1B"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120067
+:WOND_120067 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 1C"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120068
+:WOND_120068 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 1D"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120069
+:WOND_120069 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 2A"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120070
+:WOND_120070 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 2B"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120071
+:WOND_120071 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 2C"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120072
+:WOND_120072 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 2D"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120073
+:WOND_120073 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 3A"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120074
+:WOND_120074 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 3B"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120075
+:WOND_120075 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 3C"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120076
+:WOND_120076 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 3D"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120077
+:WOND_120077 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 4A"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120078
+:WOND_120078 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 4B"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120079
+:WOND_120079 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 4C"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120080
+:WOND_120080 rdf:type owl:NamedIndividual ,
+                      ns1:WOND_0000376 ;
+             rdfs:label "Wagner and Anderson grade 4D"@en .
+
+
+###  http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120056
+<http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120056> rdf:type owl:NamedIndividual ,
+                                                                                            ns1:WOND_0000135 .
+
+
+###  http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120057
+<http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120057> rdf:type owl:NamedIndividual ,
+                                                                                            ns1:WOND_0000135 .
+
+
+###  http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120058
+<http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120058> rdf:type owl:NamedIndividual ,
+                                                                                            ns1:WOND_0000135 .
+
+
+###  http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120059
+<http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120059> rdf:type owl:NamedIndividual ,
+                                                                                            ns1:WOND_0000135 .
+
+
+###  http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120060
+<http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120060> rdf:type owl:NamedIndividual ,
+                                                                                            ns1:WOND_0000135 .
+
+
+###  Generated by the OWL API (version 4.5.26.2023-07-17T20:34:13Z) https://github.com/owlcs/owlapi

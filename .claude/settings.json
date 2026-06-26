@@ -79,7 +79,8 @@
       "Bash(python -m pytest tests/test_sparql_helper.py::test_iri_of_label_exact_match -x -q)",
       "Bash(python -m pytest tests/test_sparql_helper.py -q)",
       "Bash(python -m pytest tests/test_owl_ontology.py -q)",
-      "Bash(python -c \"from wound_ontology.owl.external_enricher import ExternalEnricher; print\\('OK'\\)\")"
+      "Bash(python -c \"from wound_ontology.owl.external_enricher import ExternalEnricher; print\\('OK'\\)\")",
+      "Bash(python -c \"from wound_ontology.store.occurs_in_fixer import OccursInFixer, subject_class, collect_triples; print\\('OK'\\)\")"
     ]
   }
 }

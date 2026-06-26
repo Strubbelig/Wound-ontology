@@ -1,0 +1,1768 @@
+@prefix ns1: <http://purl.obolibrary.org/obo/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ns1:BFO_0000016 a owl:Class ;
+    rdfs:label "disposition" .
+
+ns1:BFO_0000023 a owl:Class ;
+    rdfs:label "role" .
+
+ns1:CHEBI_135826 a owl:Class ;
+    rdfs:label "Octenidine",
+        "octenidine" ;
+    rdfs:subClassOf ns1:CHEBI_35273 .
+
+ns1:CHEBI_15882 a owl:Class ;
+    rdfs:label "phenol",
+        "phenol"@en ;
+    ns1:IAO_0000115 "An organic hydroxy compound that consists of benzene bearing a single hydroxy substituent. The parent of the class of phenols." ;
+    rdfs:subClassOf ns1:WOND_0000017 .
+
+ns1:CHEBI_16236 a owl:Class ;
+    rdfs:label "ethanol",
+        "ethanol"@en ;
+    ns1:IAO_0000115 "A primary alcohol that is ethane in which one of the hydrogens is substituted by a hydroxy group." ;
+    rdfs:subClassOf ns1:WOND_0000010 .
+
+ns1:CHEBI_164200 a owl:Class ;
+    rdfs:label "Triclosan",
+        "triclosan" ;
+    ns1:IAO_0000115 "An aromatic ether that is phenol which is substituted at C-5 by a chloro group and at C-2 by a 2,4-dichlorophenoxy group. It is widely used as a preservative and antimicrobial agent in personal care products such as soaps, skin creams, toothpaste and deodorants as well as in household items such as plastic chopping boards, sports equipment and shoes." ;
+    rdfs:subClassOf ns1:WOND_0000025 .
+
+ns1:CHEBI_17606 a owl:Class ;
+    rdfs:label "diiodine",
+        "Iodine"@en ;
+    ns1:IAO_0000115 "Molecule comprising two covalently bonded iodine atoms with overall zero charge.." ;
+    rdfs:subClassOf ns1:CHEBI_24473 .
+
+ns1:CHEBI_231501 a owl:Class ;
+    rdfs:label "potassium permanganate",
+        "potassium permanganate"@en ;
+    ns1:IAO_0000115 "An inorganic potassium salt of permanganic acid." ;
+    ns1:IAO_0000118 "Crystal violet"@en ;
+    rdfs:subClassOf ns1:WOND_0000020 .
+
+ns1:CHEBI_24757 a owl:Class ;
+    rdfs:label "hypochlorous acid",
+        "hypochlorous acid"@en ;
+    ns1:IAO_0000115 "A chlorine oxoacid with formula HOCl; a weak, unstable acid, it is the active form of chlorine in water." ;
+    rdfs:subClassOf ns1:WOND_0000017 .
+
+ns1:CHEBI_27363 a owl:Class ;
+    rdfs:label "zinc atom",
+        "zinc atom"@en ;
+    rdfs:subClassOf ns1:WOND_0000022 .
+
+ns1:CHEBI_28694 a owl:Class ;
+    rdfs:label "copper atom",
+        "copper atom"@en ;
+    rdfs:subClassOf ns1:WOND_0000022 .
+
+ns1:CHEBI_3020 a owl:Class ;
+    rdfs:label "benzalkonium chloride",
+        "benzalkonium chloride"@en ;
+    ns1:IAO_0000115 "A class of quaternary ammonium chloride salts in which the nitrogen is substituted by a benzyl group, two methyl groups and an even-numbered alkyl chain." ;
+    rdfs:subClassOf ns1:CHEBI_35273 .
+
+ns1:CHEBI_30512 a owl:Class ;
+    rdfs:label "silver atom",
+        "silver atom"@en ;
+    rdfs:subClassOf ns1:WOND_0000022 .
+
+ns1:CHEBI_33301 a owl:Class ;
+    rdfs:label "bismuth atom",
+        "bismuth atom"@en ;
+    rdfs:subClassOf ns1:WOND_0000022 .
+
+ns1:CHEBI_36080 a owl:Class ;
+    rdfs:label "protein",
+        "protein"@en ;
+    ns1:IAO_0000115 "A biological macromolecule minimally consisting of one polypeptide chain synthesized at the ribosome." ;
+    rdfs:subClassOf ns1:WOND_0000217 .
+
+ns1:CHEBI_3614 a owl:Class ;
+    rdfs:label "Chlorhexidine",
+        "chlorhexidine" ;
+    ns1:IAO_0000115 "A bisbiguanide compound with a structure consisting of two (<em>p</em>-chlorophenyl)guanide units linked by a hexamethylene bridge." ;
+    rdfs:subClassOf ns1:WOND_0000019 .
+
+ns1:CHEBI_8347 a owl:Class ;
+    rdfs:label "Povidone-iodine" ;
+    rdfs:subClassOf ns1:WOND_0000021 .
+
+ns1:DOID_0050426 a owl:Class ;
+    rdfs:label "Stevens-Johnson syndrome" ;
+    ns1:IAO_0000115 "A skin disease that is characterized by ulceration of less than 10 percent of the surface area of the body. The disease is often precipitated by the use of medications, such as antibiotics or antiepileptics, or onset of infection." ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:DOID_0050853 a owl:Class ;
+    rdfs:label "Chronic venous insufficiency",
+        "chronic venous insufficiency" ;
+    ns1:IAO_0000115 "A venous insufficiency that is characterized by lower extremity swelling, hyperpigmentation, pruritus and venous ulceration caused by blood pooling in the veins." ;
+    rdfs:subClassOf ns1:WOND_0000192 .
+
+ns1:DOID_0060851 a owl:Class ;
+    rdfs:label "Pemphigus vulgaris",
+        "pemphigus vulgaris" ;
+    ns1:IAO_0000115 "A pemphigus characterized by autosomal dominant blisters and erosions on the skin and mucous membranes erosions cause by autoantibodies to intercellular cement substance." ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:DOID_2730 a owl:Class ;
+    rdfs:label "Epidermolysis bullosa",
+        "epidermolysis bullosa" ;
+    ns1:IAO_0000115 "A vesiculobullous skin disease that is characterized by formation of blisters with only minor skin trauma, which can cause widespread wounds, dehydration, electrolyte abnormalities, and severe infection, frequently develops_from mutations in connective tissue elements, including genes encoding keratin, collagen, and laminin." ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:DOID_3042 a owl:Class ;
+    rdfs:label "Allergic contact dermatitis",
+        "allergic contact dermatitis" ;
+    ns1:IAO_0000115 "A contact dermatitis that is an allergic skin reaction to foreign chemical or substances leading to red, itchy, weepy reaction where the skin has come into contact with a substance that the immune system recognizes as foreign." ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:DOID_3132 a owl:Class ;
+    rdfs:label "Porphyria cutanea tarda",
+        "porphyria cutanea tarda" ;
+    ns1:IAO_0000115 "An acute porphyria characterized by painful, blistering skin lesions that develop on sun-exposed skin." ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:DOID_4347 a owl:Class ;
+    rdfs:label "Lymphocele",
+        "lymphocele" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:DOID_8506 a owl:Class ;
+    rdfs:label "Bullous pemphigoid",
+        "bullous pemphigoid" ;
+    ns1:IAO_0000115 "A pemphigoid that is characterized by large blisters." ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:DOID_8536 a owl:Class ;
+    rdfs:label "Herpes zoster",
+        "herpes zoster" ;
+    ns1:IAO_0000115 "A viral infectious disease that results_in infection located_in nerve fiber, has_material_basis_in Human herpesvirus 3 (Varicellovirus humanalpha3), which reactivates after appearing as chickenpox in childhood. The virus is transmitted_by direct contact with the rash, which can develop into chickenpox in newly-infected individuals. The infection has_symptom rash which is followed by blisters, has_symptom headache, has_symptom fever, has_symptom malaise, has_symptom itching, has_symptom burning pain, and has_symptom paresthesia." ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:DOID_9351 a owl:Class ;
+    rdfs:label "Diabetes mellitus",
+        "diabetes mellitus" ;
+    ns1:IAO_0000115 "A glucose metabolism disease that is characterized by chronic hyperglycaemia with disturbances of carbohydrate, fat and protein metabolism resulting from defects in insulin secretion, insulin action, or both." ;
+    rdfs:subClassOf ns1:WOND_0000192 .
+
+ns1:DOID_9970 a owl:Class ;
+    rdfs:label "Obesity",
+        "obesity" ;
+    ns1:IAO_0000115 "An overnutrition that is characterized by excess body fat, traditionally defined as an elevated ratio of weight to height (specifically 30 kilograms per meter squared), has_material_basis_in a multifactorial etiology related to excess nutrition intake, decreased caloric utilization, and genetic susceptibility, and possibly medications and certain disorders of metabolism, endocrine function, and mental illness." ;
+    rdfs:subClassOf ns1:WOND_0000193 .
+
+ns1:HP_0000961 a owl:Class ;
+    rdfs:label "Cyanosis" ;
+    ns1:IAO_0000115 "Bluish discoloration of the skin and mucosa due to poor circulation or inadequate oxygenation of arterial or capillary blood." ;
+    rdfs:subClassOf ns1:PATO_0000014 .
+
+ns1:HP_0000980 a owl:Class ;
+    rdfs:label "Pallor" ;
+    ns1:IAO_0000115 "Abnormally pale skin." ;
+    rdfs:subClassOf ns1:PATO_0000014 .
+
+ns1:HP_0004395 a owl:Class ;
+    rdfs:label "Malnutrition" ;
+    ns1:IAO_0000115 "A deficiency in the intake of energy and nutrients." ;
+    rdfs:subClassOf ns1:WOND_0000193 .
+
+ns1:HP_0025615 a owl:Class ;
+    rdfs:label "Abscess",
+        "abscess"@en ;
+    ns1:IAO_0000115 "An abscess is a localized collection of purulent material surrounded by inflammation and granulation." ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:HP_0100758 a owl:Class ;
+    rdfs:label "Gangrene",
+        "gangrene"@en ;
+    ns1:IAO_0000115 "A serious and potentially life-threatening condition that arises when a considerable mass of body tissue dies (necrosis)." ;
+    rdfs:subClassOf ns1:WOND_0000210 .
+
+ns1:IAO_0000118 a owl:AnnotationProperty .
+
+ns1:NCBITaxon_1301 a owl:Class ;
+    rdfs:label "Streptococcus" ;
+    rdfs:subClassOf ns1:NCBITaxon_2 .
+
+ns1:NCBITaxon_287 a owl:Class ;
+    rdfs:label "Pseudomonas aeruginosa" ;
+    rdfs:subClassOf ns1:NCBITaxon_2 .
+
+ns1:NCBITaxon_562 a owl:Class ;
+    rdfs:label "Escherichia coli" ;
+    rdfs:subClassOf ns1:NCBITaxon_2 .
+
+ns1:WOND_0000001 a owl:Class ;
+    rdfs:label "2nd degree burn" ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:WOND_0000004 a owl:Class ;
+    rdfs:label "Acidity impact process"@en ;
+    rdfs:subClassOf ns1:WOND_0000418 .
+
+ns1:WOND_0000005 a owl:Class ;
+    rdfs:label "Activated carbon layer wound dressing" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000007 a owl:Class ;
+    rdfs:label "Acute wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000008 a owl:Class ;
+    rdfs:label "Adhesive silicone grid" ;
+    rdfs:subClassOf ns1:WOND_0000280 .
+
+ns1:WOND_0000009 a owl:Class ;
+    rdfs:label "Advanced age" ;
+    rdfs:subClassOf ns1:WOND_0000193 .
+
+ns1:WOND_0000011 a owl:Class ;
+    rdfs:label "Alginate contatining wound dressing" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000013 a owl:Class ;
+    rdfs:label "ANCA-associated Vasculitis" ;
+    rdfs:subClassOf ns1:WOND_0000192 .
+
+ns1:WOND_0000014 a owl:Class ;
+    rdfs:label "Angiogenesis process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000015 a owl:Class ;
+    rdfs:label "Angiopathic wounds" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000027 a owl:Class ;
+    rdfs:label "Arterial leg ulcer" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000028 a owl:Class ;
+    rdfs:label "ASEPSIS score" ;
+    rdfs:subClassOf ns1:WOND_0000066 .
+
+ns1:WOND_0000029 a owl:Class ;
+    rdfs:label "Aseptic conditions" ;
+    rdfs:subClassOf ns1:WOND_0000200 .
+
+ns1:WOND_0000031 a owl:Class ;
+    rdfs:label "Aseptic wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000032 a owl:Class ;
+    rdfs:label "Assessing patient's medical history" ;
+    rdfs:subClassOf ns1:WOND_0000089 .
+
+ns1:WOND_0000033 a owl:Class ;
+    rdfs:label "Autoimmune disease related wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000034 a owl:Class ;
+    rdfs:label "Autolytic wound debridement process"@en ;
+    rdfs:subClassOf ns1:WOND_0000084 .
+
+ns1:WOND_0000037 a owl:Class ;
+    rdfs:label "Bepanthen ointment" ;
+    rdfs:subClassOf ns1:WOND_0000406 .
+
+ns1:WOND_0000038 a owl:Class ;
+    rdfs:label "Biobag debridement" ;
+    rdfs:subClassOf ns1:WOND_0000040 .
+
+ns1:WOND_0000039 a owl:Class ;
+    rdfs:label "Wound specimen procurement by biopsy process"@en ;
+    rdfs:subClassOf ns1:WOND_0000395 .
+
+ns1:WOND_0000041 a owl:Class ;
+    rdfs:label "Biosurgical wound debridement process" ;
+    rdfs:subClassOf ns1:WOND_0000084 .
+
+ns1:WOND_0000042 a owl:Class ;
+    rdfs:label "Biosynthetic cellulose" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000043 a owl:Class ;
+    rdfs:label "Bismuth III bromide" ;
+    rdfs:subClassOf ns1:WOND_0000017 .
+
+ns1:WOND_0000045 a owl:Class ;
+    rdfs:label "Blake drain" ;
+    rdfs:subClassOf ns1:WOND_0000177 .
+
+ns1:WOND_0000046 a owl:Class ;
+    rdfs:label "Blistering skin wound" ;
+    rdfs:subClassOf ns1:HP_0032674 .
+
+ns1:WOND_0000047 a owl:Class ;
+    rdfs:label "Bovine collagen containing wound dressing" ;
+    rdfs:subClassOf ns1:WOND_0000427 .
+
+ns1:WOND_0000048 a owl:Class ;
+    rdfs:label "Bromelain" ;
+    rdfs:subClassOf ns1:WOND_0000296 .
+
+ns1:WOND_0000049 a owl:Class ;
+    rdfs:label "Bullosis diabeticorum" ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:WOND_0000050 a owl:Class ;
+    rdfs:label "Bullous impetigo" ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:WOND_0000052 a owl:Class ;
+    rdfs:label "Burn wound Grade I" ;
+    rdfs:subClassOf ns1:WOND_0000309 .
+
+ns1:WOND_0000053 a owl:Class ;
+    rdfs:label "Burn wound Grade IIa" ;
+    rdfs:subClassOf ns1:WOND_0000309 .
+
+ns1:WOND_0000054 a owl:Class ;
+    rdfs:label "Burn wound Grade IIb" ;
+    rdfs:subClassOf ns1:WOND_0000309 .
+
+ns1:WOND_0000055 a owl:Class ;
+    rdfs:label "Burn wound Grade III" ;
+    rdfs:subClassOf ns1:WOND_0000309 .
+
+ns1:WOND_0000056 a owl:Class ;
+    rdfs:label "Burn wound Grade IV" ;
+    rdfs:subClassOf ns1:WOND_0000309 .
+
+ns1:WOND_0000057 a owl:Class ;
+    rdfs:label "Bülau drain" ;
+    rdfs:subClassOf ns1:WOND_0000311 .
+
+ns1:WOND_0000060 a owl:Class ;
+    rdfs:label "Cat bite wound" ;
+    rdfs:subClassOf ns1:WOND_0000044 .
+
+ns1:WOND_0000061 a owl:Class ;
+    rdfs:label "Cellulose acetate mesh impregnated with a petrolatum emulsion" ;
+    rdfs:subClassOf ns1:WOND_0000280 .
+
+ns1:WOND_0000062 a owl:Class ;
+    rdfs:label "Chickenpox (varicella)" ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:WOND_0000065 a owl:Class ;
+    rdfs:label "Chronic wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000067 a owl:Class ;
+    rdfs:label "Clean contaminated wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000068 a owl:Class ;
+    rdfs:label "Clean wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000069 a owl:Class ;
+    rdfs:label "Clinical inspection" ;
+    rdfs:subClassOf ns1:WOND_0000089 .
+
+ns1:WOND_0000070 a owl:Class ;
+    rdfs:label "Clinical wound assessment" ;
+    rdfs:subClassOf ns1:WOND_0000089 .
+
+ns1:WOND_0000071 a owl:Class ;
+    rdfs:label "Closed drain" ;
+    rdfs:subClassOf ns1:WOND_0000093 .
+
+ns1:WOND_0000072 a owl:Class ;
+    rdfs:label "CO2 bath wound therapy" ;
+    rdfs:subClassOf ns1:WOND_0000200 .
+
+ns1:WOND_0000073 a owl:Class ;
+    rdfs:label "Coagulation process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000074 a owl:Class ;
+    rdfs:label "Cold plasma wound treatment process"@en ;
+    rdfs:subClassOf ns1:WOND_0000423 .
+
+ns1:WOND_0000075 a owl:Class ;
+    rdfs:label "Colonized wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000076 a owl:Class ;
+    rdfs:label "Compress debridement" ;
+    rdfs:subClassOf ns1:WOND_0000189 .
+
+ns1:WOND_0000077 a owl:Class ;
+    rdfs:label "Compression therapy" ;
+    rdfs:subClassOf ns1:WOND_0000200 .
+
+ns1:WOND_0000078 a owl:Class ;
+    rdfs:label "Contaminated wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000079 a owl:Class ;
+    rdfs:label "Continuous suture" ;
+    rdfs:subClassOf ns1:WOND_0000301 .
+
+ns1:WOND_0000082 a owl:Class ;
+    rdfs:label "CUSA(r) assisted debridement" ;
+    rdfs:subClassOf ns1:WOND_0000350 .
+
+ns1:WOND_0000085 a owl:Class ;
+    rdfs:label "Depth measurement" ;
+    rdfs:subClassOf ns1:WOND_0000419 .
+
+ns1:WOND_0000086 a owl:Class ;
+    rdfs:label "Dermatitis herpetiformis Duhring" ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:WOND_0000088 a owl:Class ;
+    rdfs:label "Diabetic wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000090 a owl:Class ;
+    rdfs:label "Physician role"@en ;
+    rdfs:subClassOf ns1:OMRSE_00000012 .
+
+ns1:WOND_0000091 a owl:Class ;
+    rdfs:label "Dog bite wound" ;
+    rdfs:subClassOf ns1:WOND_0000044 .
+
+ns1:WOND_0000092 a owl:Class ;
+    rdfs:label "Doppler sonographic diagnostic process"@en ;
+    rdfs:subClassOf ns1:WOND_0000395 .
+
+ns1:WOND_0000094 a owl:Class ;
+    rdfs:label "Dressing change" ;
+    rdfs:subClassOf ns1:WOND_0000200 .
+
+ns1:WOND_0000095 a owl:Class ;
+    rdfs:label "Dry necrosis" ;
+    rdfs:subClassOf ns1:WOND_0000210 .
+
+ns1:WOND_0000096 a owl:Class ;
+    rdfs:label "Easy-Flow drain" ;
+    rdfs:subClassOf ns1:WOND_0000058 .
+
+ns1:WOND_0000097 a owl:Class ;
+    rdfs:label "Elastic bandage" ;
+    rdfs:subClassOf ns1:WOND_0000112 .
+
+ns1:WOND_0000098 a owl:Class ;
+    rdfs:label "Enzymatic wound debridement process" ;
+    rdfs:subClassOf ns1:WOND_0000084 .
+
+ns1:WOND_0000100 a owl:Class ;
+    rdfs:label "Epithelialization process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000101 a owl:Class ;
+    rdfs:label "Epithelializing wound bed" ;
+    rdfs:subClassOf ns1:WOND_0000382 .
+
+ns1:WOND_0000102 a owl:Class ;
+    rdfs:label "Erysipel" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000106 a owl:Class ;
+    rdfs:label "Exudation process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000107 a owl:Class ;
+    rdfs:label "Fat gauze" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000108 a owl:Class ;
+    rdfs:label "Fibrin coating of the wound"@en ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000109 a owl:Class ;
+    rdfs:label "Fibrin-covered wound bed" ;
+    rdfs:subClassOf ns1:WOND_0000382 .
+
+ns1:WOND_0000110 a owl:Class ;
+    rdfs:label "fistula"@en ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000111 a owl:Class ;
+    rdfs:label "Fixed drug exanthema" ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:WOND_0000113 a owl:Class ;
+    rdfs:label "Flaminal" ;
+    rdfs:subClassOf ns1:WOND_0000406 .
+
+ns1:WOND_0000114 a owl:Class ;
+    rdfs:label "Flap plasty" ;
+    rdfs:subClassOf ns1:WOND_0000200 .
+
+ns1:WOND_0000115 a owl:Class ;
+    rdfs:label "Fournier's gangrene" ;
+    rdfs:subClassOf ns1:DOID_9602 .
+
+ns1:WOND_0000116 a owl:Class ;
+    rdfs:label "Friction bubble" ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:WOND_0000117 a owl:Class ;
+    rdfs:label "Full-thickness skin graft" ;
+    rdfs:subClassOf ns1:WOND_0000285 .
+
+ns1:WOND_0000120 a owl:Class ;
+    rdfs:label "Gauze bandage" ;
+    rdfs:subClassOf ns1:WOND_0000112 .
+
+ns1:WOND_0000121 a owl:Class ;
+    rdfs:label "Germ spectrum assessment process"@en ;
+    rdfs:subClassOf ns1:WOND_0000395 .
+
+ns1:WOND_0000122 a owl:Class ;
+    rdfs:label "Grade I" ;
+    rdfs:subClassOf ns1:WOND_0000342 .
+
+ns1:WOND_0000123 a owl:Class ;
+    rdfs:label "Grade I pressure ulcer according to Shea" ;
+    rdfs:subClassOf ns1:DOID_8717 .
+
+ns1:WOND_0000124 a owl:Class ;
+    rdfs:label "Grade II" ;
+    rdfs:subClassOf ns1:WOND_0000342 .
+
+ns1:WOND_0000125 a owl:Class ;
+    rdfs:label "Grade II pressure ulcer according to Shea" ;
+    rdfs:subClassOf ns1:DOID_8717 .
+
+ns1:WOND_0000126 a owl:Class ;
+    rdfs:label "Grade III" ;
+    rdfs:subClassOf ns1:WOND_0000342 .
+
+ns1:WOND_0000127 a owl:Class ;
+    rdfs:label "Grade III pressure ulcer according to Shea" ;
+    rdfs:subClassOf ns1:DOID_8717 .
+
+ns1:WOND_0000128 a owl:Class ;
+    rdfs:label "Grade IV" ;
+    rdfs:subClassOf ns1:WOND_0000342 .
+
+ns1:WOND_0000129 a owl:Class ;
+    rdfs:label "Grade IV pressure ulcer according to Shea" ;
+    rdfs:subClassOf ns1:DOID_8717 .
+
+ns1:WOND_0000130 a owl:Class ;
+    rdfs:label "Graded thermal or cauterizing wound" ;
+    rdfs:subClassOf ns1:WOND_0000310 .
+
+ns1:WOND_0000131 a owl:Class ;
+    rdfs:label "Granulating wound bed" ;
+    rdfs:subClassOf ns1:WOND_0000382 .
+
+ns1:WOND_0000132 a owl:Class ;
+    rdfs:label "Granulation process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000134 a owl:Class ;
+    rdfs:label "Gustilo and Anderson wound classification" ;
+    rdfs:subClassOf ns1:WOND_0000385 .
+
+ns1:WOND_0000138 a owl:Class ;
+    rdfs:label "Hand disinfection" ;
+    rdfs:subClassOf ns1:WOND_0000030 .
+
+ns1:WOND_0000139 a owl:Class ;
+    rdfs:label "Hand-foot-and-mouth disease" ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:WOND_0000140 a owl:Class ;
+    rdfs:label "Heat impact process"@en ;
+    rdfs:subClassOf ns1:WOND_0000418 .
+
+ns1:WOND_0000141 a owl:Class ;
+    rdfs:label "Hematoma" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000142 a owl:Class ;
+    rdfs:label "Hemostasis process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000143 a owl:Class ;
+    rdfs:label "Herpes simplex (e.g. cold sores)" ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:WOND_0000146 a owl:Class ;
+    rdfs:label "Histopathological examination process of wound material"@en ;
+    rdfs:subClassOf ns1:WOND_0000395 .
+
+ns1:WOND_0000147 a owl:Class ;
+    rdfs:label "Horizontal mattress suture" ;
+    rdfs:subClassOf ns1:WOND_0000301 .
+
+ns1:WOND_0000148 a owl:Class ;
+    rdfs:label "Human bite wound" ;
+    rdfs:subClassOf ns1:WOND_0000044 .
+
+ns1:WOND_0000149 a owl:Class ;
+    rdfs:label "Hydrocolloid containing wound dressing" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000150 a owl:Class ;
+    rdfs:label "Hydrofiber-containing wound dressing" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000151 a owl:Class ;
+    rdfs:label "Hydrogel containing wound dressing" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000152 a owl:Class ;
+    rdfs:label "Hyperbaric O2 wound therapy" ;
+    rdfs:subClassOf ns1:WOND_0000200 .
+
+ns1:WOND_0000153 a owl:Class ;
+    rdfs:label "Hypergranulation" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000154 a owl:Class ;
+    rdfs:label "Hypertrophic scarring process"@en ;
+    rdfs:subClassOf ns1:WOND_0000269 .
+
+ns1:WOND_0000156 a owl:Class ;
+    rdfs:label "I" ;
+    rdfs:subClassOf ns1:WOND_0000135 .
+
+ns1:WOND_0000157 a owl:Class ;
+    rdfs:label "II" ;
+    rdfs:subClassOf ns1:WOND_0000135 .
+
+ns1:WOND_0000158 a owl:Class ;
+    rdfs:label "IIIA" ;
+    rdfs:subClassOf ns1:WOND_0000135 .
+
+ns1:WOND_0000159 a owl:Class ;
+    rdfs:label "IIIB" ;
+    rdfs:subClassOf ns1:WOND_0000135 .
+
+ns1:WOND_0000160 a owl:Class ;
+    rdfs:label "IIIC" ;
+    rdfs:subClassOf ns1:WOND_0000135 .
+
+ns1:WOND_0000161 a owl:Class ;
+    rdfs:label "Immunosuppression" ;
+    rdfs:subClassOf ns1:WOND_0000193 .
+
+ns1:WOND_0000162 a owl:Class ;
+    rdfs:label "Incision foil" ;
+    rdfs:subClassOf ns1:WOND_0000187 .
+
+ns1:WOND_0000163 a owl:Class ;
+    rdfs:label "Infected wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000164 a owl:Class ;
+    rdfs:label "Inflammation process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000165 a owl:Class ;
+    rdfs:label "Intact wound margin" ;
+    rdfs:subClassOf ns1:WOND_0000401 .
+
+ns1:WOND_0000166 a owl:Class ;
+    rdfs:label "Intracutaneous suture" ;
+    rdfs:subClassOf ns1:WOND_0000301 .
+
+ns1:WOND_0000168 a owl:Class ;
+    rdfs:label "Iodine ointment" ;
+    rdfs:subClassOf ns1:WOND_0000406 .
+
+ns1:WOND_0000169 a owl:Class ;
+    rdfs:label "propane-2-ol"@en ;
+    rdfs:subClassOf ns1:WOND_0000010 .
+
+ns1:WOND_0000170 a owl:Class ;
+    rdfs:label "Jackson-Pratt drain" ;
+    rdfs:subClassOf ns1:WOND_0000177 .
+
+ns1:WOND_0000171 a owl:Class ;
+    rdfs:label "Keloid development process"@en ;
+    rdfs:subClassOf ns1:WOND_0000269 .
+
+ns1:WOND_0000172 a owl:Class ;
+    rdfs:label "Lavage process"@en ;
+    rdfs:subClassOf ns1:WOND_0000387 .
+
+ns1:WOND_0000173 a owl:Class ;
+    rdfs:label "Linear IgA dermatosis" ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:WOND_0000174 a owl:Class ;
+    rdfs:label "Livedovasculopathy" ;
+    rdfs:subClassOf ns1:WOND_0000191 .
+
+ns1:WOND_0000175 a owl:Class ;
+    rdfs:label "Livider wound margin" ;
+    rdfs:subClassOf ns1:WOND_0000401 .
+
+ns1:WOND_0000176 a owl:Class ;
+    rdfs:label "Process of administering a local anaesthetic agent"@en ;
+    rdfs:subClassOf ns1:BFO_0000015 .
+
+ns1:WOND_0000178 a owl:Class ;
+    rdfs:label "Lymphatic fistula" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000180 a owl:Class ;
+    rdfs:label "Macerated wound edge" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000181 a owl:Class ;
+    rdfs:label "Malignancy" ;
+    rdfs:subClassOf ns1:WOND_0000192 .
+
+ns1:WOND_0000182 a owl:Class ;
+    rdfs:label "Malignant wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000184 a owl:Class ;
+    rdfs:label "Manifest-infected wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000185 a owl:Class ;
+    rdfs:label "Manuka honey" ;
+    rdfs:subClassOf ns1:WOND_0000196 .
+
+ns1:WOND_0000186 a owl:Class ;
+    rdfs:label "Marjolin ulcer" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000190 a owl:Class ;
+    rdfs:label "Mechanical wound debridement process" ;
+    rdfs:subClassOf ns1:WOND_0000084 .
+
+ns1:WOND_0000197 a owl:Class ;
+    rdfs:label "Methicillin-resistant Staphylococcus aureus" ;
+    rdfs:subClassOf ns1:NCBITaxon_1280 .
+
+ns1:WOND_0000201 a owl:Class ;
+    rdfs:label "Microangiopathy" ;
+    rdfs:subClassOf ns1:WOND_0000192 .
+
+ns1:WOND_0000202 a owl:Class ;
+    rdfs:label "Microbial analysis of the wound swab for wound pathogens" ;
+    rdfs:subClassOf ns1:WOND_0000089 .
+
+ns1:WOND_0000203 a owl:Class ;
+    rdfs:label "Moist necrosis" ;
+    rdfs:subClassOf ns1:WOND_0000210 .
+
+ns1:WOND_0000204 a owl:Class ;
+    rdfs:label "Monaldi drain" ;
+    rdfs:subClassOf ns1:WOND_0000311 .
+
+ns1:WOND_0000205 a owl:Class ;
+    rdfs:label "Monofilament thread material" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000206 a owl:Class ;
+    rdfs:label "Mucous membrane pemphigoid" ;
+    rdfs:subClassOf ns1:WOND_0000194 .
+
+ns1:WOND_0000207 a owl:Class ;
+    rdfs:label "n-propanol" ;
+    rdfs:subClassOf ns1:WOND_0000010 .
+
+ns1:WOND_0000208 a owl:Class ;
+    rdfs:label "NaCl 0.9%" ;
+    rdfs:subClassOf ns1:WOND_0000412 .
+
+ns1:WOND_0000209 a owl:Class ;
+    rdfs:label "NaCl 10%" ;
+    rdfs:subClassOf ns1:WOND_0000412 .
+
+ns1:WOND_0000211 a owl:Class ;
+    rdfs:label "Necrotic wound bed" ;
+    rdfs:subClassOf ns1:WOND_0000382 .
+
+ns1:WOND_0000213 a owl:Class ;
+    rdfs:label "Negative pressure wound therapy" ;
+    rdfs:subClassOf ns1:WOND_0000200 .
+
+ns1:WOND_0000214 a owl:Class ;
+    rdfs:label "Neoplastic wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000215 a owl:Class ;
+    rdfs:label "Non-absorbable thread material" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000216 a owl:Class ;
+    rdfs:label "Nutritional status improvement process"@en ;
+    rdfs:subClassOf ns1:WOND_0000423 .
+
+ns1:WOND_0000220 a owl:Class ;
+    rdfs:label "Octenidine gel" ;
+    rdfs:subClassOf ns1:WOND_0000406 .
+
+ns1:WOND_0000221 a owl:Class ;
+    rdfs:label "Open drain" ;
+    rdfs:subClassOf ns1:WOND_0000093 .
+
+ns1:WOND_0000222 a owl:Class ;
+    rdfs:label "Pain management" ;
+    rdfs:subClassOf ns1:WOND_0000199 .
+
+ns1:WOND_0000225 a owl:Class ;
+    rdfs:label "Patient education" ;
+    rdfs:subClassOf ns1:WOND_0000200 .
+
+ns1:WOND_0000227 a owl:Class ;
+    rdfs:label "Penrose drain" ;
+    rdfs:subClassOf ns1:WOND_0000058 .
+
+ns1:WOND_0000228 a owl:Class ;
+    rdfs:label "Perioperative antimicrobial prophylaxis" ;
+    rdfs:subClassOf ns1:WOND_0000198 .
+
+ns1:WOND_0000229 a owl:Class ;
+    rdfs:label "Peripheral arterial occlusive disease" ;
+    rdfs:subClassOf ns1:WOND_0000192 .
+
+ns1:WOND_0000232 a owl:Class ;
+    rdfs:label "Phenoxyethanol" ;
+    rdfs:subClassOf ns1:WOND_0000025 .
+
+ns1:WOND_0000233 a owl:Class ;
+    rdfs:label "Phlegmon" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000235 a owl:Class ;
+    rdfs:label "Pigtail catheter" ;
+    rdfs:subClassOf ns1:WOND_0000224 .
+
+ns1:WOND_0000236 a owl:Class ;
+    rdfs:label "Planimetry" ;
+    rdfs:subClassOf ns1:WOND_0000419 .
+
+ns1:WOND_0000237 a owl:Class ;
+    rdfs:label "Plaster" ;
+    rdfs:subClassOf ns1:WOND_0000112 .
+
+ns1:WOND_0000238 a owl:Class ;
+    rdfs:label "Polihexanide" ;
+    rdfs:subClassOf ns1:WOND_0000019 .
+
+ns1:WOND_0000239 a owl:Class ;
+    rdfs:label "Polihexanide containing solution" ;
+    rdfs:subClassOf ns1:WOND_0000026 .
+
+ns1:WOND_0000240 a owl:Class ;
+    rdfs:label "Polihexanide gel" ;
+    rdfs:subClassOf ns1:WOND_0000406 .
+
+ns1:WOND_0000241 a owl:Class ;
+    rdfs:label "Polyfiles thread material" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000243 a owl:Class ;
+    rdfs:label "Postoperative wound control process"@en ;
+    rdfs:subClassOf ns1:WOND_0000395 .
+
+ns1:WOND_0000245 a owl:Class ;
+    rdfs:label "Pressure impact process"@en ;
+    rdfs:subClassOf ns1:WOND_0000418 .
+
+ns1:WOND_0000247 a owl:Class ;
+    rdfs:label "Primarily-healing wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000248 a owl:Class ;
+    rdfs:label "Wound healing by primary intention"@en ;
+    rdfs:subClassOf ns1:GO_0042060 .
+
+ns1:WOND_0000250 a owl:Class ;
+    rdfs:label "Proliferation process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000253 a owl:Class ;
+    rdfs:label "Purulent exudate" ;
+    rdfs:subClassOf ns1:WOND_0000404 .
+
+ns1:WOND_0000256 a owl:Class ;
+    rdfs:label "Reddened wound edge" ;
+    rdfs:subClassOf ns1:WOND_0000401 .
+
+ns1:WOND_0000257 a owl:Class ;
+    rdfs:label "Redness" ;
+    rdfs:subClassOf ns1:PATO_0000014 .
+
+ns1:WOND_0000258 a owl:Class ;
+    rdfs:label "Redon drain" ;
+    rdfs:subClassOf ns1:WOND_0000145 .
+
+ns1:WOND_0000259 a owl:Class ;
+    rdfs:label "Tissue regeneration process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000260 a owl:Class ;
+    rdfs:label "Regenerative wound healing" ;
+    rdfs:subClassOf ns1:GO_0042060 .
+
+ns1:WOND_0000261 a owl:Class ;
+    rdfs:label "Regeneratively-healing wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000262 a owl:Class ;
+    rdfs:label "Remodeling process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000263 a owl:Class ;
+    rdfs:label "Tissue repair process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000265 a owl:Class ;
+    rdfs:label "Resorbable thread material" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000266 a owl:Class ;
+    rdfs:label "Ringer solution" ;
+    rdfs:subClassOf ns1:WOND_0000412 .
+
+ns1:WOND_0000267 a owl:Class ;
+    rdfs:label "Robinson drain" ;
+    rdfs:subClassOf ns1:WOND_0000133 .
+
+ns1:WOND_0000268 a owl:Class ;
+    rdfs:label "Sanguine exudate" ;
+    rdfs:subClassOf ns1:WOND_0000404 .
+
+ns1:WOND_0000270 a owl:Class ;
+    rdfs:label "Scarring process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000271 a owl:Class ;
+    rdfs:label "Scratch wound" ;
+    rdfs:subClassOf ns1:WOND_0000339 .
+
+ns1:WOND_0000272 a owl:Class ;
+    rdfs:label "Secondarily-healing wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000273 a owl:Class ;
+    rdfs:label "Secondary dressing" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000274 a owl:Class ;
+    rdfs:label "Wound healing by secondary intention"@en ;
+    rdfs:subClassOf ns1:GO_0042060 .
+
+ns1:WOND_0000275 a owl:Class ;
+    rdfs:label "Semi-open drain" ;
+    rdfs:subClassOf ns1:WOND_0000093 .
+
+ns1:WOND_0000276 a owl:Class ;
+    rdfs:label "Seroma" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000277 a owl:Class ;
+    rdfs:label "Serosanguineous exudate" ;
+    rdfs:subClassOf ns1:WOND_0000404 .
+
+ns1:WOND_0000278 a owl:Class ;
+    rdfs:label "Serous exudate" ;
+    rdfs:subClassOf ns1:WOND_0000404 .
+
+ns1:WOND_0000279 a owl:Class ;
+    rdfs:label "Shea classification of pressure ulcers" ;
+    rdfs:subClassOf ns1:WOND_0000385 .
+
+ns1:WOND_0000282 a owl:Class ;
+    rdfs:label "Silver-containing woud dressing" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000283 a owl:Class ;
+    rdfs:label "Simple interrupted suture" ;
+    rdfs:subClassOf ns1:WOND_0000301 .
+
+ns1:WOND_0000284 a owl:Class ;
+    rdfs:label "Skin color assessment process"@en ;
+    rdfs:subClassOf ns1:WOND_0000395 .
+
+ns1:WOND_0000286 a owl:Class ;
+    rdfs:label "Skin grafting" ;
+    rdfs:subClassOf ns1:WOND_0000200 .
+
+ns1:WOND_0000287 a owl:Class ;
+    rdfs:label "Skin stapling" ;
+    rdfs:subClassOf ns1:WOND_0000389 .
+
+ns1:WOND_0000289 a owl:Class ;
+    rdfs:label "Smoking" ;
+    rdfs:subClassOf ns1:WOND_0000193 .
+
+ns1:WOND_0000290 a owl:Class ;
+    rdfs:label "Softened wound edge" ;
+    rdfs:subClassOf ns1:WOND_0000401 .
+
+ns1:WOND_0000291 a owl:Class ;
+    rdfs:label "Wound odor assessment process"@en ;
+    rdfs:subClassOf ns1:WOND_0000395 .
+
+ns1:WOND_0000292 a owl:Class ;
+    rdfs:label "Split-thickness skin graft" ;
+    rdfs:subClassOf ns1:WOND_0000285 .
+
+ns1:WOND_0000297 a owl:Class ;
+    rdfs:label "Surface disinfection" ;
+    rdfs:subClassOf ns1:WOND_0000030 .
+
+ns1:WOND_0000298 a owl:Class ;
+    rdfs:label "Surgery" ;
+    rdfs:subClassOf ns1:BFO_0000015 .
+
+ns1:WOND_0000299 a owl:Class ;
+    rdfs:label "Surgical wound debridement process"@en ;
+    rdfs:subClassOf ns1:WOND_0000084 .
+
+ns1:WOND_0000300 a owl:Class ;
+    rdfs:label "Surgical excision" ;
+    rdfs:subClassOf ns1:WOND_0000189 .
+
+ns1:WOND_0000302 a owl:Class ;
+    rdfs:label "Suturing" ;
+    rdfs:subClassOf ns1:WOND_0000389 .
+
+ns1:WOND_0000303 a owl:Class ;
+    rdfs:label "Swelling" ;
+    rdfs:subClassOf ns1:BFO_0000019 .
+
+ns1:WOND_0000304 a owl:Class ;
+    rdfs:label "Synthetic foam used as wound dressing" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000305 a owl:Class ;
+    rdfs:label "Systemic antibiotic therapy" ;
+    rdfs:subClassOf ns1:WOND_0000016 .
+
+ns1:WOND_0000306 a owl:Class ;
+    rdfs:label "Taking a wound swab" ;
+    rdfs:subClassOf ns1:WOND_0000089 .
+
+ns1:WOND_0000307 a owl:Class ;
+    rdfs:label "Tertiarily-healing wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000308 a owl:Class ;
+    rdfs:label "Wound healing by tertiary intention"@en ;
+    rdfs:subClassOf ns1:GO_0042060 .
+
+ns1:WOND_0000316 a owl:Class ;
+    rdfs:label "Thread size 0" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000317 a owl:Class ;
+    rdfs:label "Thread size 1" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000318 a owl:Class ;
+    rdfs:label "Thread size 1-0" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000319 a owl:Class ;
+    rdfs:label "Thread size 10-0" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000320 a owl:Class ;
+    rdfs:label "Thread size 11-0" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000321 a owl:Class ;
+    rdfs:label "Thread size 12-0" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000322 a owl:Class ;
+    rdfs:label "Thread size 13-0" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000323 a owl:Class ;
+    rdfs:label "Thread size 2" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000324 a owl:Class ;
+    rdfs:label "Thread size 2-0" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000325 a owl:Class ;
+    rdfs:label "Thread size 3" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000326 a owl:Class ;
+    rdfs:label "Thread size 3-0" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000327 a owl:Class ;
+    rdfs:label "Thread size 4" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000328 a owl:Class ;
+    rdfs:label "Thread size 4-0" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000329 a owl:Class ;
+    rdfs:label "Thread size 5" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000330 a owl:Class ;
+    rdfs:label "Thread size 5-0" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000331 a owl:Class ;
+    rdfs:label "Thread size 6-0" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000332 a owl:Class ;
+    rdfs:label "Thread size 7-0" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000333 a owl:Class ;
+    rdfs:label "Thread size 8-0" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000334 a owl:Class ;
+    rdfs:label "Thread size 9-0" ;
+    rdfs:subClassOf ns1:WOND_0000315 .
+
+ns1:WOND_0000335 a owl:Class ;
+    rdfs:label "Topical antibiotic therapy" ;
+    rdfs:subClassOf ns1:WOND_0000016 .
+
+ns1:WOND_0000336 a owl:Class ;
+    rdfs:label "trace element"@en ;
+    rdfs:subClassOf ns1:WOND_0000217 .
+
+ns1:WOND_0000337 a owl:Class ;
+    rdfs:label "Transparent polyurethane films" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000338 a owl:Class ;
+    rdfs:label "Trauma process"@en ;
+    rdfs:subClassOf ns1:WOND_0000418 .
+
+ns1:WOND_0000341 a owl:Class ;
+    rdfs:label "Tscherne and Oestern wound classification" ;
+    rdfs:subClassOf ns1:WOND_0000385 .
+
+ns1:WOND_0000344 a owl:Class ;
+    rdfs:label "Tympanic drain" ;
+    rdfs:subClassOf ns1:WOND_0000093 .
+
+ns1:WOND_0000346 a owl:Class ;
+    rdfs:label "Ulcus cruris mixtum" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000347 a owl:Class ;
+    rdfs:label "Ulcus cruris venosum" ;
+    rdfs:subClassOf ns1:WOND_0000384 .
+
+ns1:WOND_0000348 a owl:Class ;
+    rdfs:label "Ulcus hypertonicus Martorell" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000351 a owl:Class ;
+    rdfs:label "Undermined wound margin" ;
+    rdfs:subClassOf ns1:WOND_0000401 .
+
+ns1:WOND_0000352 a owl:Class ;
+    rdfs:label "URGE scale" ;
+    rdfs:subClassOf ns1:WOND_0000066 .
+
+ns1:WOND_0000353 a owl:Class ;
+    rdfs:label "Vasoconstriction process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000354 a owl:Class ;
+    rdfs:label "Vasodilation process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000355 a owl:Class ;
+    rdfs:label "Ventricular drain" ;
+    rdfs:subClassOf ns1:WOND_0000093 .
+
+ns1:WOND_0000356 a owl:Class ;
+    rdfs:label "Vertical mattress suture" ;
+    rdfs:subClassOf ns1:WOND_0000301 .
+
+ns1:WOND_0000357 a owl:Class ;
+    rdfs:label "vitamin"@en ;
+    rdfs:subClassOf ns1:WOND_0000217 .
+
+ns1:WOND_0000358 a owl:Class ;
+    rdfs:label "Voltaren gel" ;
+    rdfs:subClassOf ns1:WOND_0000406 .
+
+ns1:WOND_0000359 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 1A" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000360 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 1B" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000361 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 1C" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000362 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 1D" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000363 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 2A" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000364 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 2B" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000365 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 2C" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000366 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 2D" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000367 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 3A" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000368 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 3B" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000369 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 3C" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000370 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 3D" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000371 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 4A" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000372 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 4B" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000373 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 4C" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000374 a owl:Class ;
+    rdfs:label "Wagner and Anderson grade 4D" ;
+    rdfs:subClassOf ns1:WOND_0000376 .
+
+ns1:WOND_0000375 a owl:Class ;
+    rdfs:label "Wagner and Anderson wound classification" ;
+    rdfs:subClassOf ns1:WOND_0000385 .
+
+ns1:WOND_0000377 a owl:Class ;
+    rdfs:label "Water-jet assisted wound debridement process"@en ;
+    rdfs:subClassOf ns1:WOND_0000084 .
+
+ns1:WOND_0000378 a owl:Class ;
+    rdfs:label "Wearing Sterile gloves" ;
+    rdfs:subClassOf ns1:WOND_0000030 .
+
+ns1:WOND_0000379 a owl:Class ;
+    rdfs:label "Woud dehiscene causally related to suture insufficiency" ;
+    rdfs:subClassOf ns1:WOND_0000392 .
+
+ns1:WOND_0000381 a owl:Class ;
+    rdfs:label "Wound and soft tissue drain" ;
+    rdfs:subClassOf ns1:WOND_0000093 .
+
+ns1:WOND_0000383 a owl:Class ;
+    rdfs:label "Wound biofilm" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000388 a owl:Class ;
+    rdfs:label "Wound closure process"@en ;
+    rdfs:subClassOf ns1:WOND_0000423 .
+
+ns1:WOND_0000391 a owl:Class ;
+    rdfs:label "Wound contraction process"@en ;
+    rdfs:subClassOf ns1:WOND_0000409 .
+
+ns1:WOND_0000397 a owl:Class ;
+    rdfs:label "Wound documentation process" ;
+    rdfs:subClassOf ns1:BFO_0000015 .
+
+ns1:WOND_0000399 a owl:Class ;
+    rdfs:label "Wound dressing composed of a polylactide membrane" ;
+    rdfs:subClassOf ns1:WOND_0000427 .
+
+ns1:WOND_0000400 a owl:Class ;
+    rdfs:label "Wound dressing composed of polyurethane foam" ;
+    rdfs:subClassOf ns1:WOND_0000427 .
+
+ns1:WOND_0000402 a owl:Class ;
+    rdfs:label "Wound edge protection process"@en ;
+    rdfs:subClassOf ns1:WOND_0000423 .
+
+ns1:WOND_0000403 a owl:Class ;
+    rdfs:label "Wound expert role"@en ;
+    rdfs:subClassOf ns1:OMRSE_00000012 .
+
+ns1:WOND_0000405 a owl:Class ;
+    rdfs:label "Wound Fabric adhesive" ;
+    rdfs:subClassOf ns1:WOND_0000389 .
+
+ns1:WOND_0000408 a owl:Class ;
+    rdfs:label "Wound healing disorder" ;
+    rdfs:subClassOf ns1:WOND_0000192 .
+
+ns1:WOND_0000410 a owl:Class ;
+    rdfs:label "Wound infection process"@en ;
+    rdfs:subClassOf ns1:WOND_0000390 .
+
+ns1:WOND_0000411 a owl:Class ;
+    rdfs:label "Wound irrigation process"@en ;
+    rdfs:subClassOf ns1:WOND_0000423 .
+
+ns1:WOND_0000413 a owl:Class ;
+    rdfs:label "Wound manager role"@en ;
+    rdfs:subClassOf ns1:OMRSE_00000012 .
+
+ns1:WOND_0000414 a owl:Class ;
+    rdfs:label "Wound development process"@en ;
+    rdfs:subClassOf ns1:BFO_0000015 .
+
+ns1:WOND_0000415 a owl:Class ;
+    rdfs:label "Wound pain" ;
+    rdfs:subClassOf ns1:BFO_0000019 .
+
+ns1:WOND_0000416 a owl:Class ;
+    rdfs:label "Wound palpation" ;
+    rdfs:subClassOf ns1:WOND_0000089 .
+
+ns1:WOND_0000417 a owl:Class ;
+    rdfs:label "Wound pocket" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000420 a owl:Class ;
+    rdfs:label "Wound spacer grid" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000421 a owl:Class ;
+    rdfs:label "Wound staple plastering" ;
+    rdfs:subClassOf ns1:WOND_0000389 .
+
+ns1:WOND_0000422 a owl:Class ;
+    rdfs:label "Wound temperature assessment process"@en ;
+    rdfs:subClassOf ns1:WOND_0000395 .
+
+ns1:WOND_0000425 a owl:Class ;
+    rdfs:label "Wound volumetrics" ;
+    rdfs:subClassOf ns1:WOND_0000419 .
+
+ns1:WOND_0000428 a owl:Class ;
+    rdfs:label "Wound-integrating wound dressings" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000429 a owl:Class ;
+    rdfs:label "Wounds classified according to Gustilo and Anderson" ;
+    rdfs:subClassOf ns1:HP_0032674,
+        ns1:WOND_0000426 .
+
+ns1:WOND_0000430 a owl:Class ;
+    rdfs:label "Wounds classified according to Tscherne and Oestern" ;
+    rdfs:subClassOf ns1:HP_0032674,
+        ns1:WOND_0000426 .
+
+ns1:WOND_0000432 a owl:Class ;
+    rdfs:label "﻿T drain" ;
+    rdfs:subClassOf ns1:WOND_0000002 .
+
+<http://purl.obolibrary.org/obo/wond/ground_truth.owl> a owl:Ontology ;
+    owl:imports <http://purl.obolibrary.org/obo/bfo/2020/bfo-core.owl>,
+        <http://purl.obolibrary.org/obo/cob/releases/2025-12-15/cob.owl>,
+        <http://purl.obolibrary.org/obo/doid/releases/2026-05-30/doid.owl>,
+        <http://purl.obolibrary.org/obo/dron/releases/2026-06-04/dron.owl>,
+        <http://purl.obolibrary.org/obo/go/releases/2026-05-19/go.owl>,
+        <http://purl.obolibrary.org/obo/iao/2026-03-30/iao.owl>,
+        <http://purl.obolibrary.org/obo/obi/2026-03-19/obi.owl>,
+        <http://purl.obolibrary.org/obo/ogms/2021-08-19/ogms.owl> .
+
+ns1:CHEBI_24473 a owl:Class ;
+    rdfs:label "halogen",
+        "halogen"@en ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:COB_0000082 a owl:Class ;
+    rdfs:label "planned process" ;
+    ns1:IAO_0000115 "A process that is initiated by an agent who intends to carry out a plan to achieve an objective through one or more actions as described in a plan specification." .
+
+ns1:DOID_9602 a owl:Class ;
+    rdfs:label "Necrotizing fasciitis",
+        "necrotizing fasciitis" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:IAO_0000109 a owl:Class ;
+    rdfs:label "measurement datum" ;
+    ns1:IAO_0000115 "A measurement datum is an information content entity that is a recording of the output of a measurement such as produced by a device." .
+
+ns1:NCBITaxon_1280 a owl:Class ;
+    rdfs:label "Staphylococcus aureus" ;
+    rdfs:subClassOf ns1:NCBITaxon_2 .
+
+ns1:PATO_0000117 a owl:Class ;
+    rdfs:label "size" ;
+    ns1:IAO_0000115 "A morphology quality inhering in a bearer by virtue of the bearer's physical magnitude." .
+
+ns1:WOND_0000002 a owl:Class ;
+    rdfs:label "Abdominal drain" ;
+    rdfs:subClassOf ns1:WOND_0000093 .
+
+ns1:WOND_0000020 a owl:Class ;
+    rdfs:label "Antiseptic dye" ;
+    rdfs:subClassOf ns1:WOND_0000017 .
+
+ns1:WOND_0000021 a owl:Class ;
+    rdfs:label "Antiseptic halogen-releasing compound" ;
+    rdfs:subClassOf ns1:WOND_0000017 .
+
+ns1:WOND_0000026 a owl:Class ;
+    rdfs:label "Antiseptic solution" ;
+    rdfs:subClassOf ns1:WOND_0000412 .
+
+ns1:WOND_0000040 a owl:Class ;
+    rdfs:label "Biosurgical debridement" ;
+    rdfs:subClassOf ns1:IAO_0000104 .
+
+ns1:WOND_0000133 a owl:Class ;
+    rdfs:label "Gravity drain" ;
+    rdfs:subClassOf ns1:WOND_0000224 .
+
+ns1:WOND_0000145 a owl:Class ;
+    rdfs:label "High-vacuum drain" ;
+    rdfs:subClassOf ns1:WOND_0000006 .
+
+ns1:WOND_0000187 a owl:Class ;
+    rdfs:label "Material used for wound complication prevention" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000191 a owl:Class ;
+    rdfs:label "Medial condition contributing to wound formation" ;
+    rdfs:subClassOf ns1:OGMS_0000031 .
+
+ns1:WOND_0000196 a owl:Class ;
+    rdfs:label "Medicinal honey" ;
+    rdfs:subClassOf ns1:WOND_0000188 .
+
+ns1:WOND_0000199 a owl:Class ;
+    rdfs:label "Method used for wound compoication treatment" ;
+    rdfs:subClassOf ns1:IAO_0000104 .
+
+ns1:WOND_0000296 a owl:Class ;
+    rdfs:label "Substance used for enzymatic wound debridement" ;
+    rdfs:subClassOf ns1:WOND_0000188 .
+
+ns1:WOND_0000310 a owl:Class ;
+    rdfs:label "Thermal wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000350 a owl:Class ;
+    rdfs:label "Ultrasound-assisted wound debridement process"@en ;
+    rdfs:subClassOf ns1:WOND_0000084 .
+
+ns1:WOND_0000384 a owl:Class ;
+    rdfs:label "Wound causally related to impaired venous backflow" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000390 a owl:Class ;
+    rdfs:label "Wound complication process"@en ;
+    rdfs:subClassOf ns1:BFO_0000015 .
+
+ns1:WOND_0000392 a owl:Class ;
+    rdfs:label "Wound dehiscence" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:BFO_0000019 a owl:Class ;
+    rdfs:label "quality" .
+
+ns1:CHEBI_35273 a owl:Class ;
+    rdfs:label "Quaternary ammonium compounds",
+        "quaternary ammonium salt" ;
+    ns1:IAO_0000115 "Derivatives of ammonium compounds, (NH<small><sub>4</sub></small><small><sup>+</small></sup>)Y<small><sup>−</small></sup>, in which all four of the hydrogens bonded to nitrogen have been replaced with univalent (usually organyl) groups." ;
+    rdfs:subClassOf ns1:WOND_0000017 .
+
+ns1:COB_0001300 a owl:Class ;
+    rdfs:label "device" ;
+    ns1:IAO_0000115 "A processed material entity which is designed to be capable of a process." .
+
+ns1:DRON_00000005 a owl:Class ;
+    rdfs:label "clinical drug product" .
+
+ns1:GO_0008150 a owl:Class ;
+    rdfs:label "biological_process" ;
+    ns1:IAO_0000115 "A biological process is the execution of a genetically-encoded biological module or program. It consists of all the steps required to achieve the specific biological objective of the module. A biological process is accomplished by a particular set of molecular functions carried out by specific gene products (or macromolecular complexes), often in a highly regulated manner and in a particular temporal sequence." .
+
+ns1:WOND_0000006 a owl:Class ;
+    rdfs:label "Active drain" ;
+    rdfs:subClassOf ns1:WOND_0000093 .
+
+ns1:WOND_0000016 a owl:Class ;
+    rdfs:label "Antibiotic therapy" ;
+    rdfs:subClassOf ns1:WOND_0000198 .
+
+ns1:WOND_0000019 a owl:Class ;
+    rdfs:label "Antiseptic biguanide" ;
+    rdfs:subClassOf ns1:WOND_0000017 .
+
+ns1:WOND_0000025 a owl:Class ;
+    rdfs:label "Antiseptic phenol derivatives" ;
+    rdfs:subClassOf ns1:WOND_0000017 .
+
+ns1:WOND_0000058 a owl:Class ;
+    rdfs:label "Capillary drain" ;
+    rdfs:subClassOf ns1:WOND_0000224 .
+
+ns1:WOND_0000177 a owl:Class ;
+    rdfs:label "Low-vacuum drain" ;
+    rdfs:subClassOf ns1:WOND_0000006 .
+
+ns1:WOND_0000189 a owl:Class ;
+    rdfs:label "Mechanical debridement" ;
+    rdfs:subClassOf ns1:IAO_0000104 .
+
+ns1:WOND_0000198 a owl:Class ;
+    rdfs:label "Method used for wound complication prevention" ;
+    rdfs:subClassOf ns1:IAO_0000104 .
+
+ns1:WOND_0000269 a owl:Class ;
+    rdfs:label "Scar complication process"@en ;
+    rdfs:subClassOf ns1:BFO_0000015 .
+
+ns1:WOND_0000280 a owl:Class ;
+    rdfs:label "Silicone spacer grid" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000285 a owl:Class ;
+    rdfs:label "Skin graft" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000311 a owl:Class ;
+    rdfs:label "Thoracic drain" ;
+    rdfs:subClassOf ns1:WOND_0000093 .
+
+ns1:WOND_0000387 a owl:Class ;
+    rdfs:label "Wound cleansing process" ;
+    rdfs:subClassOf ns1:WOND_0000423 .
+
+ns1:WOND_0000426 a owl:Class ;
+    rdfs:label "Wound with accompanying fracture" ;
+    rdfs:subClassOf ns1:WOND_0000339,
+        ns1:WOND_0000380 .
+
+ns1:HP_0032674 a owl:Class ;
+    rdfs:label "Cutaneous wound",
+        "Skin wound" ;
+    ns1:IAO_0000115 "A cutaneous wound is a defined as a disruption of normal anatomic structure and function of the skin that occurs owing to an injury of the skin. Wound healing is a dynamic, interactive process involving soluble mediators, blood cells, extracellularmatrix, and parenchymal cells. Wound healing has three phases: inflammation, tissue formation, and tissue remodeling, that overlap in time." ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:OBI_0000938 a owl:Class ;
+    rdfs:label "categorical measurement datum" ;
+    ns1:IAO_0000115 "A measurement datum that is reported on a categorical scale." .
+
+ns1:PATO_0000014 a owl:Class ;
+    rdfs:label "color" ;
+    ns1:IAO_0000115 "A composite chromatic quality composed of hue, saturation and intensity parts." .
+
+ns1:WOND_0000010 a owl:Class ;
+    rdfs:label "Antiseptic alcohol"@en ;
+    rdfs:subClassOf ns1:WOND_0000017 .
+
+ns1:WOND_0000030 a owl:Class ;
+    rdfs:label "Aseptic cuticle" ;
+    rdfs:subClassOf ns1:IAO_0000104 .
+
+ns1:WOND_0000044 a owl:Class ;
+    rdfs:label "Bite wound" ;
+    rdfs:subClassOf ns1:WOND_0000339 .
+
+ns1:WOND_0000066 a owl:Class ;
+    rdfs:label "Wound classification scale"@en ;
+    rdfs:subClassOf ns1:IAO_0000109 .
+
+ns1:WOND_0000112 a owl:Class ;
+    rdfs:label "Fixing bandage" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:WOND_0000210 a owl:Class ;
+    rdfs:label "necrosis"@en ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000217 a owl:Class ;
+    rdfs:label "Nutritional substance" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000224 a owl:Class ;
+    rdfs:label "Passive drain" ;
+    rdfs:subClassOf ns1:WOND_0000093 .
+
+ns1:WOND_0000339 a owl:Class ;
+    rdfs:label "Traumatic wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000419 a owl:Class ;
+    rdfs:label "Wound size measurement process"@en ;
+    rdfs:subClassOf ns1:WOND_0000395 .
+
+ns1:WOND_0000427 a owl:Class ;
+    rdfs:label "Wound-integrating wound dressing" ;
+    rdfs:subClassOf ns1:WOND_0000398 .
+
+ns1:DOID_8717 a owl:Class ;
+    rdfs:label "Pressure ulcer",
+        "decubitus ulcer" ;
+    ns1:IAO_0000115 "A chronic ulcer of skin where the ulcer is an ulceration of tissue deprived of adequate blood supply by prolonged pressure." ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:GO_0042060 a owl:Class ;
+    rdfs:label "wound healing",
+        "wound healing"@en ;
+    ns1:IAO_0000115 "The series of events that restore integrity to a damaged tissue, following an injury." ;
+    ns1:IAO_0000118 "wound healing process"@en ;
+    rdfs:subClassOf ns1:GO_0008150 .
+
+ns1:NCBITaxon_2 a owl:Class ;
+    rdfs:label "Bacteria" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000022 a owl:Class ;
+    rdfs:label "Antiseptic metal ion"@en ;
+    rdfs:subClassOf ns1:WOND_0000017 .
+
+ns1:WOND_0000188 a owl:Class ;
+    rdfs:label "Material used for wound treatment" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000342 a owl:Class ;
+    rdfs:label "Tscherne and Oestern wound classification grade" ;
+    rdfs:subClassOf ns1:OBI_0000938 .
+
+ns1:WOND_0000382 a owl:Class ;
+    rdfs:label "Wound base" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000385 a owl:Class ;
+    rdfs:label "Wound classification" ;
+    rdfs:subClassOf ns1:WOND_0000066 .
+
+ns1:WOND_0000389 a owl:Class ;
+    rdfs:label "Wound closure technique" ;
+    rdfs:subClassOf ns1:IAO_0000104 .
+
+ns1:WOND_0000404 a owl:Class ;
+    rdfs:label "Wound exudate" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000412 a owl:Class ;
+    rdfs:label "Wound irrigation solution" ;
+    rdfs:subClassOf ns1:DRON_00000005 .
+
+ns1:WOND_0000418 a owl:Class ;
+    rdfs:label "Pathologial wound realizing process"@en ;
+    rdfs:subClassOf ns1:BFO_0000015 .
+
+ns1:WOND_0000135 a owl:Class ;
+    rdfs:label "Gustilo and Anderson wound classification grade" ;
+    rdfs:subClassOf ns1:OBI_0000938 .
+
+ns1:WOND_0000193 a owl:Class ;
+    rdfs:label "Medical conditions affecting wound healing" ;
+    rdfs:subClassOf ns1:OGMS_0000031 .
+
+ns1:WOND_0000301 a owl:Class ;
+    rdfs:label "Suture in situ"@en ;
+    rdfs:subClassOf ns1:COB_0001300 .
+
+ns1:WOND_0000309 a owl:Class ;
+    rdfs:label "Thermal or cauterizing wound" ;
+    rdfs:subClassOf ns1:WOND_0000380 .
+
+ns1:WOND_0000401 a owl:Class ;
+    rdfs:label "Wound edge" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:WOND_0000089 a owl:Class ;
+    rdfs:label "Diagnostic process to assess wound characteristics" ;
+    rdfs:subClassOf ns1:BFO_0000015 .
+
+ns1:WOND_0000406 a owl:Class ;
+    rdfs:label "Wound gel/ointment/cream" ;
+    rdfs:subClassOf ns1:DRON_00000005 .
+
+ns1:WOND_0000423 a owl:Class ;
+    rdfs:label "Wound treatment process"@en ;
+    rdfs:subClassOf ns1:COB_0000082 .
+
+ns1:IAO_0000104 a owl:Class ;
+    rdfs:label "plan specification" ;
+    ns1:IAO_0000115 "A directive information entity with action specifications and objective specifications as parts, and that may be concretized as a realizable entity that, if realized, is realized in a process in which the bearer tries to achieve the objectives by taking the actions specified." .
+
+ns1:WOND_0000084 a owl:Class ;
+    rdfs:label "Debridement process"@en ;
+    rdfs:subClassOf ns1:WOND_0000387 .
+
+ns1:WOND_0000192 a owl:Class ;
+    rdfs:label "Medical condition contributing to wound formation" ;
+    rdfs:subClassOf ns1:OGMS_0000031 .
+
+ns1:WOND_0000200 a owl:Class ;
+    rdfs:label "Method used for wound treatment" ;
+    rdfs:subClassOf ns1:IAO_0000104 .
+
+ns1:WOND_0000395 a owl:Class ;
+    rdfs:label "Wound diagnostic process"@en ;
+    rdfs:subClassOf ns1:BFO_0000015 .
+
+ns1:BFO_0000015 a owl:Class ;
+    rdfs:label "process" ;
+    rdfs:subClassOf ns1:BFO_0000015 .
+
+ns1:WOND_0000017 a owl:Class ;
+    rdfs:label "Antiseptic agent" ;
+    rdfs:subClassOf ns1:WOND_0000188 .
+
+ns1:WOND_0000093 a owl:Class ;
+    rdfs:label "Drain" ;
+    rdfs:subClassOf ns1:WOND_0000188 .
+
+ns1:WOND_0000409 a owl:Class ;
+    rdfs:label "Wound healing related physiological process"@en ;
+    rdfs:subClassOf ns1:GO_0008150 .
+
+ns1:WOND_0000376 a owl:Class ;
+    rdfs:label "Wagner and Anderson wound classification grade" ;
+    rdfs:subClassOf ns1:OBI_0000938 .
+
+ns1:WOND_0000398 a owl:Class ;
+    rdfs:label "Wound dressing" ;
+    rdfs:subClassOf ns1:COB_0001300 .
+
+ns1:WOND_0000194 a owl:Class ;
+    rdfs:label "Medical conditions contributing to blistering wounds" ;
+    rdfs:subClassOf ns1:OGMS_0000031 .
+
+ns1:WOND_0000315 a owl:Class ;
+    rdfs:label "Thread size" ;
+    rdfs:subClassOf ns1:PATO_0000117 .
+
+ns1:WOND_0000380 a owl:Class ;
+    rdfs:label "Wound" ;
+    rdfs:subClassOf ns1:BFO_0000040 .
+
+ns1:BFO_0000040 a owl:Class ;
+    rdfs:label "material entity" .
+

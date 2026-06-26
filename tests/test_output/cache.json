@@ -1,0 +1,211 @@
+{
+  "42359340": {
+    "entities": {
+      "Diabetic Wound": {
+        "is_a: Chronic Wound": 1.0,
+        "has_quality: Chronic": 1.0
+      },
+      "Silver Nanoparticle": {
+        "has_quality: Antimicrobial": 1.0
+      },
+      "Chitosan-Based Nanoparticle": {
+        "has_quality: Biocompatible": 1.0,
+        "has_quality: Bioadhesive": 1.0
+      },
+      "Nanoparticle Formulation": {
+        "is_treatment_for: Diabetic Wound": 1.0
+      },
+      "Wound Healing": {
+        "occurs_in: Wound": 1.0
+      },
+      "Tissue Regeneration": {
+        "occurs_in: Wound": 1.0
+      },
+      "Antimicrobial Effect": {
+        "occurs_in: Wound": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260626_1625"
+  },
+  "42359323": {
+    "entities": {
+      "Femoroacetabular Impingement": {
+        "is_a: Condition": 1.0
+      },
+      "Massive Acetabular Labrum Calcification": {
+        "is_a: Pathological Calcification": 1.0
+      },
+      "Restricted Movement": {
+        "is_a: Symptom": 1.0
+      },
+      "Right Hip Arthroscopy": {
+        "is_a: Surgical Procedure": 1.0,
+        "occurs_in: Hip Joint": 1.0
+      },
+      "Removal of Calcified Lesion": {
+        "is_a: Surgical Procedure": 1.0,
+        "part_of: Right Hip Arthroscopy": 1.0,
+        "occurs_in: Acetabular Labrum": 1.0
+      },
+      "Labral Reconstruction": {
+        "is_a: Surgical Procedure": 1.0,
+        "part_of: Right Hip Arthroscopy": 1.0,
+        "occurs_in: Acetabular Labrum": 1.0
+      },
+      "Autologous Gracilis Tendon": {
+        "part_of: Labral Reconstruction": 1.0
+      },
+      "Femoral Head-Neck Reshaping": {
+        "is_a: Surgical Procedure": 1.0,
+        "part_of: Right Hip Arthroscopy": 1.0,
+        "occurs_in: Femur": 1.0
+      },
+      "Nerve Injury": {
+        "has_quality: False": 1.0,
+        "has_quality: True": 0.0
+      },
+      "Vascular Injury": {
+        "has_quality: False": 1.0,
+        "has_quality: True": 0.0
+      },
+      "Wound Infection": {
+        "has_quality: False": 1.0,
+        "is_a: Wound Complication": 1.0,
+        "has_quality: True": 0.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260626_1625"
+  },
+  "42356163": {
+    "entities": {
+      "Wound Infection": {
+        "is_a: Infectious Complication": 1.0,
+        "caused_by: Bacterial Colonization": 1.0,
+        "is_treatment_for: Anastomotic Leakage": 1.0,
+        "part_of: Anastomotic Leakage": 0.0
+      },
+      "Colorectal Resection": {
+        "is_a: Surgical Procedure": 1.0,
+        "part_of: Wound Care Procedure": 1.0
+      },
+      "Surgical Site Infection": {
+        "is_a: Wound Infection": 1.0
+      },
+      "Open Approach": {
+        "is_a: Surgical Approach": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260626_1625"
+  },
+  "42356173": {
+    "entities": {
+      "Surgical Site Infection": {
+        "is_a: Infectious Complication": 1.0
+      },
+      "Incisional Surgical Site Infection": {
+        "is_a: Surgical Site Infection": 1.0
+      },
+      "Organ-space Surgical Site Infection": {
+        "is_a: Surgical Site Infection": 1.0
+      },
+      "Oral Antibiotic Bowel Preparation": {
+        "is_treatment_for: Surgical Site Infection": 1.0
+      },
+      "Standard Intravenous Prophylaxis": {
+        "is_treatment_for: Surgical Site Infection": 1.0
+      },
+      "Metronidazole-Containing Regimen": {
+        "is_a: Antibiotic Regimen": 1.0,
+        "is_treatment_for: Surgical Site Infection": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260626_1625"
+  },
+  "42357378": {
+    "entities": {
+      "Chronic Wound": {
+        "is_a: Wound": 1.0,
+        "has_quality: Chronic": 1.0
+      },
+      "Textilinin-1": {
+        "is_a: Kunitz-type Serine Protease Inhibitor": 1.0,
+        "is_treatment_for: Wound": 1.0,
+        "has_quality: Hemostatic": 1.0
+      },
+      "Wound Healing": {
+        "occurs_in: Wound": 1.0
+      },
+      "Endothelial Cell": {
+        "part_of: Blood Vessel": 1.0,
+        "has_quality: Proliferative": 1.0,
+        "has_quality: Migratory": 1.0
+      },
+      "Wound Contraction": {
+        "part_of: Wound Healing": 1.0,
+        "occurs_in: Wound": 1.0
+      },
+      "Inflammatory Activation": {
+        "occurs_in: Wound": 1.0,
+        "has_quality: M1-like": 1.0
+      },
+      "Hydrogel": {
+        "is_treatment_for: Chronic Wound": 1.0
+      },
+      "Cutaneous Wound": {
+        "is_a: Wound": 1.0,
+        "occurs_in: Skin": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260626_1625"
+  },
+  "42358142": {
+    "entities": {
+      "Diabetic Chronic Wound": {
+        "is_a: Chronic Wound": 1.0
+      },
+      "Macrophage Metabolic Reprogramming": {
+        "occurs_in: Macrophage": 1.0,
+        "caused_by: Hyperglycemic Conditions": 1.0
+      },
+      "Altered Wound Microenvironment": {
+        "has_quality: Altered": 1.0,
+        "part_of: Wound": 1.0,
+        "caused_by: Macrophage Metabolic Reprogramming": 1.0
+      },
+      "Lactate Production": {
+        "occurs_in: Macrophage": 1.0,
+        "caused_by: Macrophage Metabolic Reprogramming": 1.0
+      },
+      "NLRP3 Inflammasome Activation": {
+        "occurs_in: Macrophage": 1.0,
+        "caused_by: Lactate Production": 1.0
+      },
+      "Macrophage Polarization Imbalance": {
+        "occurs_in: Macrophage": 1.0,
+        "caused_by: Macrophage Metabolic Reprogramming": 1.0
+      },
+      "Dichloroacetate": {
+        "is_treatment_for: Diabetic Chronic Wound": 1.0
+      },
+      "Dimethyl Malonate": {
+        "is_treatment_for: Diabetic Chronic Wound": 1.0
+      },
+      "Tanshinone IIA": {
+        "is_treatment_for: Diabetic Chronic Wound": 1.0
+      },
+      "Mitochondria-targeted Antioxidant": {
+        "is_treatment_for: Oxidative Stress": 1.0
+      },
+      "LDHA Inhibition": {
+        "is_treatment_for: Diabetic Chronic Wound": 1.0
+      },
+      "MCT Modulation": {
+        "is_treatment_for: Diabetic Chronic Wound": 1.0
+      },
+      "PKM2 Stabilization": {
+        "is_treatment_for: Diabetic Chronic Wound": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260626_1625"
+  }
+}

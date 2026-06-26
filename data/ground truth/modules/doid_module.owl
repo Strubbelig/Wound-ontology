@@ -1,0 +1,3071 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://purl.obolibrary.org/obo/doid.owl#"
+     xml:base="http://purl.obolibrary.org/obo/doid.owl"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#">
+    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/doid.owl"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000115 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000115"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/OBI_9991118 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/OBI_9991118"/>
+    
+
+
+    <!-- http://purl.org/dc/elements/1.1/type -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/elements/1.1/type"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#creation_date -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#creation_date"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#hasAlternativeId -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasAlternativeId"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#hasDbXref -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasDbXref"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#hasExactSynonym -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasExactSynonym"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#hasOBONamespace -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasOBONamespace"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#hasSynonymType -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasSynonymType"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#id -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#id"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#inSubset -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#inSubset"/>
+    
+
+
+    <!-- http://www.w3.org/2004/02/skos/core#exactMatch -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#exactMatch"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IDO_0000664 -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/IDO_0000664">
+        <obo:IAO_0000115>Relating the disease to it’s causation (disease and disorder).</obo:IAO_0000115>
+        <rdfs:label>has material basis in</rdfs:label>
+    </owl:ObjectProperty>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/IDO_0000664"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget>Relating the disease to it’s causation (disease and disorder).</owl:annotatedTarget>
+        <oboInOwl:hasDbXref>url:http://purl.obolibrary.org/obo/IDO_0000664</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/RO_0002200 -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0002200"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/RO_0002451 -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0002451"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/RO_0002452 -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0002452"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/RO_0004005 -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0004005"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/RO_0004019 -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0004019"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/RO_0004026 -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0004026"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/RO_0004029 -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0004029"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/RO_0007001 -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0007001"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/CHEBI_38265 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_38265"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_0014667 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0014667">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_4"/>
+        <obo:IAO_0000115 xml:lang="en">A disease that involves errors in metabolic processes of building or degradation of molecules.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>ICD10CM:E88.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:277.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D008659</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C3235</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:75934005</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0025517</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">metabolic disease</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:0014667</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_AGR_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_CFDE_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_GXD_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">disease of metabolism</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_0014667"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A disease that involves errors in metabolic processes of building or degradation of molecules.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007646"/>
+        <oboInOwl:hasDbXref>url:http://www.ncbi.nlm.nih.gov/books/NBK22259/</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_0050061 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0050061">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_0050338"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IDO_0000664"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_1648"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002451"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/TRANS_0000007"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 xml:lang="en">A primary bacterial infectious disease that results_in infection located_in skin, has_material_basis_in Erysipelothrix rhusiopathiae, which is transmitted_by contact with infected animals. The infection has_symptom redness of skin, has_symptom tenderness of skin and has_symptom warmth of skin.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>MESH:D004887</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:0050061</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_infectious_disease_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#gram-positive_bacterial_infectious_disease"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#zoonotic_infectious_disease"/>
+        <rdfs:label xml:lang="en">erysipeloid</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_0050061"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A primary bacterial infectious disease that results_in infection located_in skin, has_material_basis_in Erysipelothrix rhusiopathiae, which is transmitted_by contact with infected animals. The infection has_symptom redness of skin, has_symptom tenderness of skin and has_symptom warmth of skin.</owl:annotatedTarget>
+        <oboInOwl:hasDbXref>url:https://en.wikipedia.org/wiki/Erysipeloid</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_0050117 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0050117">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IDO_0000664"/>
+                        <owl:someValuesFrom>
+                            <owl:Class>
+                                <owl:unionOf rdf:parseType="Collection">
+                                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_10239"/>
+                                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_2"/>
+                                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
+                                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_36469"/>
+                                </owl:unionOf>
+                            </owl:Class>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_4"/>
+        <obo:IAO_0000115 xml:lang="en">A disease that is the consequence of the presence of pathogenic microbial agents, including pathogenic viruses, pathogenic bacteria, fungi, protozoa, multicellular parasites, and aberrant proteins known as prions.</obo:IAO_0000115>
+        <obo:OBI_9991118>infectious disease</obo:OBI_9991118>
+        <oboInOwl:hasAlternativeId>DOID:10115</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:11078</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:1304</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:1321</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:2040</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:2288</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:3099</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:4120</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:4620</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:5256</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:945</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:95</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:9532</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:9696</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasDbXref>ICD9CM:079.0</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0001485</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">infectious disease</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:0050117</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_CFDE_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_GXD_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_MGI_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_infectious_disease_slim"/>
+        <rdfs:comment xml:lang="en">DO:wk</rdfs:comment>
+        <rdfs:label xml:lang="en">disease by infectious agent</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_0050117"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A disease that is the consequence of the presence of pathogenic microbial agents, including pathogenic viruses, pathogenic bacteria, fungi, protozoa, multicellular parasites, and aberrant proteins known as prions.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007636"/>
+        <oboInOwl:hasDbXref>url:https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&amp;ns=ncit&amp;code=C26726</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_0050338 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0050338">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_104"/>
+        <obo:IAO_0000115 xml:lang="en">A bacterial infectious disease that results_in infection by bacteria as a result of their presence or activity within the normal, healthy host, and their intrinsic virulence is, in part, a necessary consequence of their need to reproduce and spread.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:0050338</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_FlyBase_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_infectious_disease_slim"/>
+        <rdfs:label xml:lang="en">primary bacterial infectious disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_0050338"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A bacterial infectious disease that results_in infection by bacteria as a result of their presence or activity within the normal, healthy host, and their intrinsic virulence is, in part, a necessary consequence of their need to reproduce and spread.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Infectious_disease</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_0050426 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0050426">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_37"/>
+        <obo:IAO_0000115 xml:lang="en">A skin disease that is characterized by ulceration of less than 10 percent of the surface area of the body. The disease is often precipitated by the use of medications, such as antibiotics or antiepileptics, or onset of infection.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>EFO:0004276</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>GARD:7700</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD10CM:L51.1</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:695.13</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D013262</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C79484</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:73442001</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0038325</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:0050426</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_rare_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">Stevens-Johnson syndrome</rdfs:label>
+        <skos:exactMatch>MESH:D013262</skos:exactMatch>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_0050426"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A skin disease that is characterized by ulceration of less than 10 percent of the surface area of the body. The disease is often precipitated by the use of medications, such as antibiotics or antiepileptics, or onset of infection.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:https://en.wikipedia.org/wiki/Stevens%E2%80%93Johnson_syndrome</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_0050853 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0050853">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_10128"/>
+        <obo:IAO_0000115 xml:lang="en">A venous insufficiency that is characterized by lower extremity swelling, hyperpigmentation, pruritus and venous ulceration caused by blood pooling in the veins.</obo:IAO_0000115>
+        <oboInOwl:creation_date>2014-04-15T03:50:26Z</oboInOwl:creation_date>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:0050853</oboInOwl:id>
+        <rdfs:label xml:lang="en">chronic venous insufficiency</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_0050853"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A venous insufficiency that is characterized by lower extremity swelling, hyperpigmentation, pruritus and venous ulceration caused by blood pooling in the veins.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:https://en.wikipedia.org/wiki/Chronic_venous_insufficiency</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_0060004 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0060004">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_417"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0001017"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_331"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_438"/>
+        <obo:IAO_0000115 xml:lang="en">An autoimmune hypersensitivity disease located_in the central nervous system.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:0060004</oboInOwl:id>
+        <rdfs:label xml:lang="en">autoimmune disease of central nervous system</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_0060004"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An autoimmune hypersensitivity disease located_in the central nervous system.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007646"/>
+        <oboInOwl:hasDbXref>url:https://www.ncbi.nlm.nih.gov/books/NBK459447/</oboInOwl:hasDbXref>
+        <rdfs:comment>ls:IEDB</rdfs:comment>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_0060032 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0060032">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_417"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0002204"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_17"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_417"/>
+        <obo:IAO_0000115 xml:lang="en">An autoimmune disease that is the abnormal functioning of the immune system that causes your immune system to produce antibodies or T cells against cells and/or tissues in the musculoskeletal system.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:0060032</oboInOwl:id>
+        <rdfs:label xml:lang="en">autoimmune disease of musculoskeletal system</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_0060032"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An autoimmune disease that is the abnormal functioning of the immune system that causes your immune system to produce antibodies or T cells against cells and/or tissues in the musculoskeletal system.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007646"/>
+        <oboInOwl:hasDbXref>url:https://www.ncbi.nlm.nih.gov/books/NBK459447/</oboInOwl:hasDbXref>
+        <rdfs:comment>ls:IEDB</rdfs:comment>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_0060033 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0060033">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_417"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0000010"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_438"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_574"/>
+        <obo:IAO_0000115 xml:lang="en">An autoimmune disease of the nervous system that is the abnormal functioning of the immune system that causes your immune system to produce antibodies or T cells against cells and/or tissues in the peripheral nervous system.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:0060033</oboInOwl:id>
+        <rdfs:label xml:lang="en">autoimmune disease of peripheral nervous system</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_0060033"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An autoimmune disease of the nervous system that is the abnormal functioning of the immune system that causes your immune system to produce antibodies or T cells against cells and/or tissues in the peripheral nervous system.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007646"/>
+        <oboInOwl:hasDbXref>url:https://www.ncbi.nlm.nih.gov/books/NBK459447/</oboInOwl:hasDbXref>
+        <rdfs:comment>ls:IEDB</rdfs:comment>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_0060039 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0060039">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_417"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom>
+                            <owl:Class>
+                                <owl:intersectionOf rdf:parseType="Collection">
+                                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/UBERON_0000014"/>
+                                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/UBERON_0002384"/>
+                                </owl:intersectionOf>
+                            </owl:Class>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_0060032"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_37"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_65"/>
+        <obo:IAO_0000115 xml:lang="en">An autoimmune disease that is the abnormal functioning of the immune system that causes your immune system to produce antibodies or T cells against cells and/or tissues in the skin and connective tissue.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:0060039</oboInOwl:id>
+        <rdfs:label xml:lang="en">autoimmune disease of skin and connective tissue</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_0060039"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An autoimmune disease that is the abnormal functioning of the immune system that causes your immune system to produce antibodies or T cells against cells and/or tissues in the skin and connective tissue.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007646"/>
+        <oboInOwl:hasDbXref>url:https://www.ncbi.nlm.nih.gov/books/NBK459447/</oboInOwl:hasDbXref>
+        <rdfs:comment>ls:IEDB</rdfs:comment>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_0060051 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0060051">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_417"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0004535"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_1287"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_417"/>
+        <obo:IAO_0000115 xml:lang="en">An autoimmune disease that is the abnormal functioning of the immune system that causes your immune system to produce antibodies or T cells against cells and/or tissues in the cardiovascular system.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:0060051</oboInOwl:id>
+        <rdfs:label xml:lang="en">autoimmune disease of cardiovascular system</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_0060051"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An autoimmune disease that is the abnormal functioning of the immune system that causes your immune system to produce antibodies or T cells against cells and/or tissues in the cardiovascular system.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007646"/>
+        <oboInOwl:hasDbXref>url:https://www.ncbi.nlm.nih.gov/books/NBK459447/</oboInOwl:hasDbXref>
+        <rdfs:comment>ls:IEDB</rdfs:comment>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_0060158 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0060158">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_0014667"/>
+        <obo:IAO_0000115 xml:lang="en">A disease of metabolism that has_material_basis_in enzyme deficiency or accumulation of enzymes or toxins which interfere with normal function due to an endocrine organ disease, organ malfunction, inadequate intake, dietary deficiency, or malabsorption.</obo:IAO_0000115>
+        <oboInOwl:creation_date>2011-08-24T02:53:03Z</oboInOwl:creation_date>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:0060158</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_MGI_slim"/>
+        <rdfs:label xml:lang="en">acquired metabolic disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_0060158"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A disease of metabolism that has_material_basis_in enzyme deficiency or accumulation of enzymes or toxins which interfere with normal function due to an endocrine organ disease, organ malfunction, inadequate intake, dietary deficiency, or malabsorption.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007636"/>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Inborn_error_of_metabolism</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:http://www.ncbi.nlm.nih.gov/mesh/68008659</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_0060851 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0060851">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_9182"/>
+        <obo:IAO_0000115 xml:lang="en">A pemphigus characterized by autosomal dominant blisters and erosions on the skin and mucous membranes erosions cause by autoantibodies to intercellular cement substance.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>GARD:7355</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD10CM:L10.0</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D010392</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MIM:169610</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C34910</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ORDO:704</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:49420001</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0030809</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">familial pemphigus vulgaris</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:0060851</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_rare_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">pemphigus vulgaris</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_0060851"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A pemphigus characterized by autosomal dominant blisters and erosions on the skin and mucous membranes erosions cause by autoantibodies to intercellular cement substance.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007645"/>
+        <oboInOwl:hasDbXref>url:https://www.ncbi.nlm.nih.gov/pubmed/2217197</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://www.ncbi.nlm.nih.gov/pubmed/4577497</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_0080841 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_0080841">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_0060039"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_8502"/>
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_2723"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000009"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_8410021"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 xml:lang="en">An autoimmune disease of skin and connective tissue that is characterized by subepidermal blistering especially in the lower abdomen, groin, and flexor surfaces of the extremities, creating tense blisters that do not break easily.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:0080841</oboInOwl:id>
+        <rdfs:label xml:lang="en">pemphigoid</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_0080841"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An autoimmune disease of skin and connective tissue that is characterized by subepidermal blistering especially in the lower abdomen, groin, and flexor surfaces of the extremities, creating tense blisters that do not break easily.</owl:annotatedTarget>
+        <oboInOwl:hasDbXref>url:https://rarediseases.org/rare-diseases/pemphigus/</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_10128 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_10128">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_866"/>
+        <obo:IAO_0000115 xml:lang="en">A vein disease that is characterized by impaired flow of blood through the veins.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>ICD9CM:459.81</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D014689</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C127822</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:20696009</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0042485</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">peripheral venous insufficiency</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:10128</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">venous insufficiency</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_10128"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A vein disease that is characterized by impaired flow of blood through the veins.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007640"/>
+        <oboInOwl:hasDbXref>url:http://my.clevelandclinic.org/disorders/venous_insufficiency/hic_venous_insufficiency.aspx</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:http://www.nlm.nih.gov/medlineplus/ency/article/000203.htm</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_104 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_104">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IDO_0000664"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_2"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_0050117"/>
+        <obo:IAO_0000115 xml:lang="en">A disease by infectious agent that results_in infection, has_material_basis_in Bacteria.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>ICD10CM:A49.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D001424</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C2890</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:87628006</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0004623</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:104</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_AGR_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_FlyBase_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_infectious_disease_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">bacterial infectious disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_104"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A disease by infectious agent that results_in infection, has_material_basis_in Bacteria.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Pathogenic_bacteria</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_10881 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_10881">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_934"/>
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0000165"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0002387"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0002398"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IDO_0000664"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_3428500"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002451"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/TRANS_0000007"/>
+                            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/TRANS_0000011"/>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000487"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000613"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0019176"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0020055"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 xml:lang="en">A viral infectious disease that results_in infection located_in skin, has_material_basis_in Enterovirus A (Enterovirus alphacoxsackie), which are transmitted_by contaminated fomites, and transmitted_by contact with nose and throat secretions, saliva, blister fluid and stool of infected persons. The infection has_symptom fever, has_symptom poor appetite, has_symptom malaise, has_symptom sore throat, has_symptom painful sores in the mouth, and has_symptom skin rash on the palms of the hands and soles of the feet.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>ICD10CM:B08.4</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:074.3</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D006232</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C128439</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:175497008</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0018572</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">HFMD</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">Vesicular stomatitis and exanthem</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:10881</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_infectious_disease_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">hand, foot and mouth disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_10881"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A viral infectious disease that results_in infection located_in skin, has_material_basis_in Enterovirus A (Enterovirus alphacoxsackie), which are transmitted_by contaminated fomites, and transmitted_by contact with nose and throat secretions, saliva, blister fluid and stool of infected persons. The infection has_symptom fever, has_symptom poor appetite, has_symptom malaise, has_symptom sore throat, has_symptom painful sores in the mouth, and has_symptom skin rash on the palms of the hands and soles of the feet.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007637"/>
+        <oboInOwl:hasDbXref>url:https://www.cdc.gov/hand-foot-mouth/about/</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://www.ncbi.nlm.nih.gov/books/NBK431082/</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_10881"/>
+        <owl:annotatedProperty rdf:resource="http://www.geneontology.org/formats/oboInOwl#hasExactSynonym"/>
+        <owl:annotatedTarget xml:lang="en">HFMD</owl:annotatedTarget>
+        <oboInOwl:hasSynonymType rdf:resource="http://purl.obolibrary.org/obo/OMO_0003012"/>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_1205 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_1205">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000900"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_2914"/>
+        <obo:IAO_0000115 xml:lang="en">An immune system disease that is an exaggerated immune response to allergens, such as insect venom, dust mites, pollen, pet dander, drugs or some foods.</obo:IAO_0000115>
+        <obo:OBI_9991118>allergic disease</obo:OBI_9991118>
+        <oboInOwl:hasDbXref>ICD10CM:T78.40</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D006967</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C3114</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:257550005</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0020517</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">allergic hypersensitivity disease</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">hypersensitivity</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">hypersensitivity reaction type I disease</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:1205</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">allergic disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_1205"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An immune system disease that is an exaggerated immune response to allergens, such as insect venom, dust mites, pollen, pet dander, drugs or some foods.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Allergy</oboInOwl:hasDbXref>
+        <rdfs:comment>ls:IEDB</rdfs:comment>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_1287 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_1287">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0004535"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_7"/>
+        <obo:IAO_0000115 xml:lang="en">A disease of anatomical entity which occurs in the blood, heart, blood vessels or the lymphatic system that passes nutrients (such as amino acids and electrolytes), gases, hormones, blood cells or lymph to and from cells in the body to help fight diseases and help stabilize body temperature and pH to maintain homeostasis.</obo:IAO_0000115>
+        <oboInOwl:hasAlternativeId>DOID:73</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasDbXref>ICD9CM:429.2</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D002318</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C2931</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:266275004</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0007222</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">disease of subdivision of hemolymphoid system</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:1287</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_AGR_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_CFDE_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_GXD_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_MGI_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_RAD_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">cardiovascular system disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_1287"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A disease of anatomical entity which occurs in the blood, heart, blood vessels or the lymphatic system that passes nutrients (such as amino acids and electrolytes), gases, hormones, blood cells or lymph to and from cells in the body to help fight diseases and help stabilize body temperature and pH to maintain homeostasis.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Circulatory_system</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_13268 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_13268">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_655"/>
+        <obo:IAO_0000115 xml:lang="en">An inherited metabolic disorder that involves certain enzymes in the heme bio-synthetic pathway resulting in the overproduction and accumulation of the porphyrins.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>GARD:10353</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:277.1</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:190912004</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0032708</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">Hematoporphyria</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">Porphyrinopathy</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">disorder of porphyrin and hem metabolism</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">disorder of porphyrin metabolism</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:13268</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_rare_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">porphyria</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_13268"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An inherited metabolic disorder that involves certain enzymes in the heme bio-synthetic pathway resulting in the overproduction and accumulation of the porphyrins.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Porphyria#Subtypes</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://www.genome.gov/Genetic-Disorders/Porphyria</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_13271 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_13271">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_13268"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0000014"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_13268"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_37"/>
+        <oboInOwl:hasDbXref>GARD:4446</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MIM:263700</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:67312003</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0162530</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">Erythropoietic porphyria</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:13271</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_rare_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:comment xml:lang="en">OMIM mapping confirmed by DO. [SN].</rdfs:comment>
+        <rdfs:label xml:lang="en">cutaneous porphyria</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_16 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_16">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0002416"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_7"/>
+        <obo:IAO_0000115 xml:lang="en">A disease of anatomical entity that is located_in the integumentary system comprising the skin and its appendages.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:16</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_AGR_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_CFDE_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_GXD_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_MGI_slim"/>
+        <rdfs:label xml:lang="en">integumentary system disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_16"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A disease of anatomical entity that is located_in the integumentary system comprising the skin and its appendages.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Integumentary_system</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_17 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_17">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0002204"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_7"/>
+        <obo:IAO_0000115 xml:lang="en">A disease of anatomical entity that occurs in the muscular and/or skeletal system.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>MESH:D009140</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C107377</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:268047003</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0026857</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:17</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_AGR_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_CFDE_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_GXD_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_MGI_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">musculoskeletal system disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_17"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A disease of anatomical entity that occurs in the muscular and/or skeletal system.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Human_musculoskeletal_system#Diseases_and_disorders</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_178 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_178">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0007798"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_1287"/>
+        <obo:IAO_0000115 xml:lang="en">A cardiovascular system disease that primarily affects the blood vessels which includes the arteries, veins and capillaries that carry blood to and from the heart.</obo:IAO_0000115>
+        <oboInOwl:hasAlternativeId>DOID:0000405</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:2403</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:2869</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:324</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:325</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:45</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasDbXref>ICD10CM:I72.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:442.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D000783</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D014652</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D020758</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D020760</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C26693</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C35117</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:27550009</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:371029002</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:432119003</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0002940</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0042373</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0752127</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0752130</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">vascular tissue disease</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:178</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_RAD_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">vascular disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_178"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A cardiovascular system disease that primarily affects the blood vessels which includes the arteries, veins and capillaries that carry blood to and from the heart.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Vascular_disease</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_2723 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_2723">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_37"/>
+        <obo:IAO_0000115 xml:lang="en">A skin disease characterized by itchy, erythematous, vesicular, weeping and crusting patches of skin.</obo:IAO_0000115>
+        <oboInOwl:hasAlternativeId>DOID:8614</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:8917</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasDbXref>ICD10CM:L30.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D003872</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C2983</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:238538009</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0011603</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">eczema</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">skin inflammation</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:2723</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">dermatitis</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_2723"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A skin disease characterized by itchy, erythematous, vesicular, weeping and crusting patches of skin.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007644"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Dermatitis</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:http://www.nlm.nih.gov/medlineplus/eczema.html</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_2730 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_2730">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_2731"/>
+        <obo:IAO_0000115 xml:lang="en">A vesiculobullous skin disease that is characterized by formation of blisters with only minor skin trauma, which can cause widespread wounds, dehydration, electrolyte abnormalities, and severe infection, frequently develops_from mutations in connective tissue elements, including genes encoding keratin, collagen, and laminin.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>GARD:6359</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD10CM:Q81</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D004820</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C67383</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:205580008</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0014527</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">acantholysis bullosa</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:2730</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_rare_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">epidermolysis bullosa</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_2730"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A vesiculobullous skin disease that is characterized by formation of blisters with only minor skin trauma, which can cause widespread wounds, dehydration, electrolyte abnormalities, and severe infection, frequently develops_from mutations in connective tissue elements, including genes encoding keratin, collagen, and laminin.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007636"/>
+        <oboInOwl:hasDbXref>url:https://rarediseases.org/rare-diseases/epidermolysis-bullosa/</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_2731 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_2731">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_8502"/>
+        <obo:IAO_0000115 xml:lang="en">A bullous skin disease that is characterized by fluid filled blisters.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>MESH:D012872</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0037275</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:2731</oboInOwl:id>
+        <rdfs:label xml:lang="en">vesiculobullous skin disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_2731"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A bullous skin disease that is characterized by fluid filled blisters.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007645"/>
+        <oboInOwl:hasDbXref>url:https://www.aafp.org/afp/2017/0601/p717.html</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_2773 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_2773">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_2723"/>
+        <oboInOwl:hasDbXref>ICD10CM:L25.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D003877</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C26743</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:156338009</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0011616</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">Contact dermatitis/eczema</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">Contact eczema</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">Dermatitis, venenata</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">dermatitis venenata</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:2773</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">contact dermatitis</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_2914 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_2914">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0002405"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_7"/>
+        <obo:IAO_0000115 xml:lang="en">A disease of anatomical entity that is located_in the immune system.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>EFO:0000540</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD10CM:D89.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:279.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:154782004</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0041806</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:2914</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_AGR_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_CFDE_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_FlyBase_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_GXD_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_MGI_slim"/>
+        <rdfs:label xml:lang="en">immune system disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_2914"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A disease of anatomical entity that is located_in the immune system.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Immune_system</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_2978 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_2978">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_655"/>
+        <obo:IAO_0000115 xml:lang="en">An inherited metabolic disorder that affect the catabolism and anabolism of carbohydrates.</obo:IAO_0000115>
+        <oboInOwl:hasAlternativeId>DOID:9434</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasDbXref>ICD10CM:E74.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D002239</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C97089</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ORDO:79161</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:20957000</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0007001</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0149670</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">disorder of carbohydrate transport and metabolism</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">inborn carbohydrate metabolism disorder</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">inborn errors of carbohydrate metabolism</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:2978</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_CFDE_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_FlyBase_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_rare_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">carbohydrate metabolic disorder</rdfs:label>
+        <skos:exactMatch>MESH:D002239</skos:exactMatch>
+        <skos:exactMatch>NCI:C97089</skos:exactMatch>
+        <skos:exactMatch>ORDO:79161</skos:exactMatch>
+        <skos:exactMatch>UMLS_CUI:C0007001</skos:exactMatch>
+        <skos:exactMatch>UMLS_CUI:C0149670</skos:exactMatch>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_2978"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An inherited metabolic disorder that affect the catabolism and anabolism of carbohydrates.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Inborn_errors_of_carbohydrate_metabolism</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_3042 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_3042">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_1205"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_2773"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000900"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0001003"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0007001"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/CHEBI_38265"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 xml:lang="en">A contact dermatitis that is an allergic skin reaction to foreign chemical or substances leading to red, itchy, weepy reaction where the skin has come into contact with a substance that the immune system recognizes as foreign.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>ICD10CM:L23</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D017449</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C26998</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:200841005</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0162820</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:3042</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">allergic contact dermatitis</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_3042"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A contact dermatitis that is an allergic skin reaction to foreign chemical or substances leading to red, itchy, weepy reaction where the skin has come into contact with a substance that the immune system recognizes as foreign.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Allergic_contact_dermatitis</oboInOwl:hasDbXref>
+        <rdfs:comment>ls:IEDB</rdfs:comment>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_3132 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_3132">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_3133"/>
+        <obo:IAO_0000115 xml:lang="en">An acute porphyria characterized by painful, blistering skin lesions that develop on sun-exposed skin.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>GARD:7433</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD10CM:E80.1</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D017119</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MIM:176090</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MIM:176100</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C27725</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ORDO:101330</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:61860000</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0162566</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:3132</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_rare_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:comment xml:lang="en">Xref MGI. OMIM mapping confirmed by DO. [SN].</rdfs:comment>
+        <rdfs:label xml:lang="en">porphyria cutanea tarda</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_3132"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An acute porphyria characterized by painful, blistering skin lesions that develop on sun-exposed skin.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007636"/>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Porphyria_cutanea_tarda</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://www.rarediseases.org/rare-disease-information/rare-diseases/byID/321/viewAbstract</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_3133 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_3133">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_13268"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000457"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004029"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/DOID_870"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 xml:lang="en">A porphyria that has_symptom abdominal pain, has_symptom neuropathy, has_symptom autonomic instability and has_symptom psychosis.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>MESH:D017094</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MIM:612740</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ORDO:100924</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:55056006</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0162533</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">hepatic porphyria</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:3133</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_rare_slim"/>
+        <rdfs:comment xml:lang="en">Xref MGI.</rdfs:comment>
+        <rdfs:label xml:lang="en">acute porphyria</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_3133"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A porphyria that has_symptom abdominal pain, has_symptom neuropathy, has_symptom autonomic instability and has_symptom psychosis.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007637"/>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Porphyria</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:http://www.merckmanuals.com/professional/endocrine_and_metabolic_disorders/porphyrias/acute_porphyrias.html</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_331 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_331">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0001017"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_863"/>
+        <obo:IAO_0000115 xml:lang="en">A nervous system disease that affects either the spinal cord (myelopathy) or brain (encephalopathy) of the central nervous system.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>ICD10CM:G96.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D002493</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C2934</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:267144009</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0007682</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:331</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_AGR_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_CFDE_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_GXD_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">central nervous system disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_331"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A nervous system disease that affects either the spinal cord (myelopathy) or brain (encephalopathy) of the central nervous system.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Central_nervous_system_disease</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_37 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_37">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0000014"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_16"/>
+        <obo:IAO_0000115 xml:lang="en">An integumentary system disease that is located_in skin.</obo:IAO_0000115>
+        <oboInOwl:hasAlternativeId>DOID:1576</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:1698</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:187</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:6486</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:8948</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasDbXref>ICD9CM:702</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D012871</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D012873</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C156032</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C3371</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:201095006</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:5613003</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:95320005</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0029574</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0037274</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0037277</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">Genodermatosis</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">skin and subcutaneous tissue disease</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:37</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_RAD_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">skin disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_37"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An integumentary system disease that is located_in skin.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Skin_disease</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_374 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_374">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_0060158"/>
+        <obo:IAO_0000115 xml:lang="en">An acquired metabolic disease that is characterized by an insufficient intake of food or of certain nutrients, by an inability of the body to absorb and use nutrients, or by overconsumption of certain foods.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>MESH:D009748</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C26836</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:191077005</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C3714509</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">Nutritional disorder</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:374</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">nutrition disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_374"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An acquired metabolic disease that is characterized by an insufficient intake of food or of certain nutrients, by an inability of the body to absorb and use nutrients, or by overconsumption of certain foods.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007637"/>
+        <oboInOwl:hasDbXref>url:http://www.who.int/topics/nutrition_disorders/en/</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_4 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_4">
+        <obo:IAO_0000115 xml:lang="en">A disease is a disposition (i) to undergo pathological processes that (ii) exists in an organism because of one or more disorders in that organism.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>MESH:D004194</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C2991</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:64572001</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0012634</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:4</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_RAD_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_4"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A disease is a disposition (i) to undergo pathological processes that (ii) exists in an organism because of one or more disorders in that organism.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007645"/>
+        <oboInOwl:hasDbXref>url:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3041577/</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_417 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_417">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_2914"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004005"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/MIM_607836"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004005"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/MIM_608391"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004005"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/MIM_608392"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004005"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/MIM_609400"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004005"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/MIM_613551"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 xml:lang="en">An immune system disease that is an overactive immune response of the body against substances and tissues normally present in the body resulting from an abnormal functioning of the immune system that results in the production of antibodies or T cell directed against the host tissues.</obo:IAO_0000115>
+        <obo:OBI_9991118>autoimmune disease</obo:OBI_9991118>
+        <oboInOwl:hasDbXref>ICD9CM:720</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MIM:109100</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0003089</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">autoimmune hypersensitivity disease</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">hypersensitivity reaction type II disease</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:417</oboInOwl:id>
+        <rdfs:comment xml:lang="en">Xref MGI.</rdfs:comment>
+        <rdfs:label xml:lang="en">autoimmune disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_417"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An immune system disease that is an overactive immune response of the body against substances and tissues normally present in the body resulting from an abnormal functioning of the immune system that results in the production of antibodies or T cell directed against the host tissues.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Autoimmune_disease</oboInOwl:hasDbXref>
+        <rdfs:comment>ls:IEDB</rdfs:comment>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_4194 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_4194">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_2978"/>
+        <obo:IAO_0000115 xml:lang="en">A carbohydrate metabolic disorder that is characterized by blood glucose levels which cannot be maintained within the normal range.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>MESH:D044882</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C53655</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:126877002</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C1257958</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">disorder of glucose metabolism</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:4194</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">glucose metabolism disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_4194"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A carbohydrate metabolic disorder that is characterized by blood glucose levels which cannot be maintained within the normal range.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007645"/>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007646"/>
+        <oboInOwl:hasDbXref>url:https://empendium.com/mcmtextbook/chapter/B31.II.24.11.</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://pubmed.ncbi.nlm.nih.gov/39067965/</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_4347 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_4347">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_75"/>
+        <oboInOwl:hasDbXref>MESH:D008210</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C78442</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:234109007</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0024248</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">Lymph cyst</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:4347</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">lymphocele</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_438 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_438">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_417"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0001016"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_417"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_863"/>
+        <obo:IAO_0000115 xml:lang="en">An autoimmune disease affecting the nervous system.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>MESH:D020274</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C99383</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0751871</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:hasRelatedSynonym xml:lang="en">autoimmune nervous system disorder</oboInOwl:hasRelatedSynonym>
+        <oboInOwl:id>DOID:438</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">autoimmune disease of the nervous system</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_438"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An autoimmune disease affecting the nervous system.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007645"/>
+        <oboInOwl:hasDbXref>url:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1003353/</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://www.ncbi.nlm.nih.gov/pubmed/21619947</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_440 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_440">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_870"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0002204"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_17"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_870"/>
+        <obo:IAO_0000115 xml:lang="en">A neuropathy that affect the nerves that control the voluntary muscles.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>ICD10CM:G70.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:358</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D009468</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C189005</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:1664005</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0027868</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:440</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">neuromuscular disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_440"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A neuropathy that affect the nerves that control the voluntary muscles.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007644"/>
+        <oboInOwl:hasDbXref>url:http://www.nlm.nih.gov/medlineplus/neuromusculardisorders.html</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_574 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_574">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0000010"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_863"/>
+        <obo:IAO_0000115 xml:lang="en">A nervous system disease that affects the peripheral nervous system.</obo:IAO_0000115>
+        <oboInOwl:hasAlternativeId>DOID:13069</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasDbXref>NCI:C119734</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C27587</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0031117</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C1335029</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:hasRelatedSynonym xml:lang="en">peripheral nerve disease</oboInOwl:hasRelatedSynonym>
+        <oboInOwl:hasRelatedSynonym xml:lang="en">peripheral neuropathy</oboInOwl:hasRelatedSynonym>
+        <oboInOwl:id>DOID:574</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_AGR_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_CFDE_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_GXD_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">peripheral nervous system disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_574"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A nervous system disease that affects the peripheral nervous system.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/w/index.php?title=Peripheral_neuropathy&amp;redirect=no</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_630 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_630">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004019"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SO_0001537"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_4"/>
+        <obo:IAO_0000115 xml:lang="en">A disease that has_material_basis_in genetic variations in the human genome.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>MESH:D030342</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C3101</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:32895009</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0019247</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:630</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_CFDE_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_RAD_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">genetic disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_630"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A disease that has_material_basis_in genetic variations in the human genome.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007637"/>
+        <oboInOwl:hasDbXref>url:http://ghr.nlm.nih.gov/</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_649 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_649">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IDO_0000664"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_36469"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_0050117"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_936"/>
+        <obo:IAO_0000115 xml:lang="en">A brain disease that is characterized by brain damage resulting from the abnormal folding, clumping and accumulation of cellular proteins in the brain induced by prion proteins.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>ICD10CM:A81.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>KEGG:05020</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D017096</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C128346</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:20484008</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0162534</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">Prion disease pathway</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">Prion protein disease</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">Spongiform Encephalopathy</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">prion induced disorder</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">transmissible spongiform encephalopathy</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:649</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_FlyBase_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_infectious_disease_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">prion disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_649"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A brain disease that is characterized by brain damage resulting from the abnormal folding, clumping and accumulation of cellular proteins in the brain induced by prion proteins.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007637"/>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Prion</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:http://www.cdc.gov/ncidod/dvrd/prions/</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_65 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_65">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0002384"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_17"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000061"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 xml:lang="en">A musculoskeletal system disease that affects tissues such as skin, tendons, and cartilage.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>MESH:D003240</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C26729</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:201432001</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0009782</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">connective tissue disorder</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">disorder of connective tissue</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:65</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">connective tissue disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_65"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A musculoskeletal system disease that affects tissues such as skin, tendons, and cartilage.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007637"/>
+        <oboInOwl:hasDbXref>url:http://www.niams.nih.gov/Health_Info/Scleroderma/default.asp</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_654 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_654">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_374"/>
+        <obo:IAO_0000115 xml:lang="en">A nutrition disease that is characterized by an excess of a nutritional element, such as a vitamin, mineral, carbohydrate, protein, fat, or general energy content.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>MESH:D044343</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:302872003</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C1257763</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:654</oboInOwl:id>
+        <rdfs:comment xml:lang="en">Updated outdated UMLS CUI.</rdfs:comment>
+        <rdfs:label xml:lang="en">overnutrition</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_654"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A nutrition disease that is characterized by an excess of a nutritional element, such as a vitamin, mineral, carbohydrate, protein, fat, or general energy content.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:https://en.wikipedia.org/wiki/Overnutrition</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_655 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_655">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_0014667"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004019"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SO_0001537"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_0014667"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_630"/>
+        <obo:IAO_0000115 xml:lang="en">A disease of metabolism that is characterized by enzyme deficiency or accumulation of enzymes or toxins which interfere with normal function due to inherited enzyme abnormality.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>MESH:D008661</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C34816</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:86095007</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0025521</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">Inborn Errors of Metabolism</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">Metabolic hereditary disorder</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">inborn metabolism disorder</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:655</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_MGI_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">inherited metabolic disorder</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_655"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A disease of metabolism that is characterized by enzyme deficiency or accumulation of enzymes or toxins which interfere with normal function due to inherited enzyme abnormality.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007636"/>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Inborn_errors_of_metabolism</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:http://www.ncbi.nlm.nih.gov/mesh/68008659</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_6713 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_6713">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_178"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0000955"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_178"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_936"/>
+        <obo:IAO_0000115 xml:lang="en">An vascular disease that is characterized by dysfunction of the blood vessels supplying the brain.</obo:IAO_0000115>
+        <oboInOwl:hasAlternativeId>DOID:12214</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:3455</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:8231</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasDbXref>EFO:0000712</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD10CM:I67.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:437.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D002561</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C2938</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:266312006</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0007820</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">cerebrovascular disorder</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:6713</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:comment xml:lang="en">OMIM mapping confirmed by DO. [SN].</rdfs:comment>
+        <rdfs:label xml:lang="en">cerebrovascular disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_6713"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An vascular disease that is characterized by dysfunction of the blood vessels supplying the brain.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007646"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Cerebrovascular_disease</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:http://www.ncbi.nlm.nih.gov/books/NBK378/</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_7 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_7">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_4"/>
+        <obo:IAO_0000115 xml:lang="en">A disease that manifests in a defined anatomical structure.</obo:IAO_0000115>
+        <oboInOwl:hasAlternativeId>DOID:1</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:2</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:5</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:71</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:72</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:8</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:7</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_RAD_slim"/>
+        <rdfs:label xml:lang="en">disease of anatomical entity</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_7"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A disease that manifests in a defined anatomical structure.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007643"/>
+        <oboInOwl:hasDbXref>url:https://www.merriam-webster.com/medical/anatomic</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_75 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_75">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0001744"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_2914"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000061"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 xml:lang="en">An immune system disease that is located_in the lymphatic system.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>MESH:D008206</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:266326002</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0024228</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">Lymphangiopathy</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">Lymphatic disease</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">disease of lympoid system</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">disorder of lymph node and lymphatics</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">disorder of lymphatic system</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">disorder of lymphoid system</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">lymphatic disorder</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">lympoid system disease</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:75</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_RAD_slim"/>
+        <rdfs:label xml:lang="en">lymphatic system disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_75"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An immune system disease that is located_in the lymphatic system.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007644"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Lymphatic_disease</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:http://www.nlm.nih.gov/medlineplus/lymphaticdiseases.html</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_8502 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_8502">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_2723"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000009"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_2723"/>
+        <obo:IAO_0000115 xml:lang="en">A dermatitis that is characterized by blisters filled with a watery fluid, located_in skin. The disease is associated with the amount of gluten ingested.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:8502</oboInOwl:id>
+        <rdfs:label xml:lang="en">bullous skin disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_8502"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A dermatitis that is characterized by blisters filled with a watery fluid, located_in skin. The disease is associated with the amount of gluten ingested.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Dermatitis_herpetiformis</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_8505 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_8505">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_8502"/>
+        <oboInOwl:hasDbXref>GARD:1917</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD10CM:L13.0</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:694.0</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D003874</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C26742</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:200899006</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0011608</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">Dermatosis herpetiformis</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">Duhring&apos;s disease</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:8505</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_rare_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">dermatitis herpetiformis</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_8506 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_8506">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_0080841"/>
+        <obo:IAO_0000115 xml:lang="en">A pemphigoid that is characterized by large blisters.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>GARD:5972</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD10CM:L12.0</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:694.5</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D010391</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C84389</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:77090002</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0030805</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:8506</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_rare_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">bullous pemphigoid</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_8506"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A pemphigoid that is characterized by large blisters.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007636"/>
+        <oboInOwl:hasDbXref>url:https://rarediseases.org/rare-diseases/bullous-pemphigoid/</oboInOwl:hasDbXref>
+        <rdfs:comment>sn:IEDB</rdfs:comment>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_8536 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_8536">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_863"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_934"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IDO_0000664"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_3050294"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000432"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000435"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000504"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000613"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0019176"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0001016"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 xml:lang="en">A viral infectious disease that results_in infection located_in nerve fiber, has_material_basis_in Human herpesvirus 3 (Varicellovirus humanalpha3), which reactivates after appearing as chickenpox in childhood. The virus is transmitted_by direct contact with the rash, which can develop into chickenpox in newly-infected individuals. The infection has_symptom rash which is followed by blisters, has_symptom headache, has_symptom fever, has_symptom malaise, has_symptom itching, has_symptom burning pain, and has_symptom paresthesia.</obo:IAO_0000115>
+        <oboInOwl:hasAlternativeId>DOID:8554</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:8555</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:8772</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:8801</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:9085</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasDbXref>ICD10CM:B02</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:053</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D006562</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C71079</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:4740000</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0019360</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">Shingles</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">herpes zona</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:8536</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_infectious_disease_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">herpes zoster</rdfs:label>
+        <skos:exactMatch>ICD10CM:B02</skos:exactMatch>
+        <skos:exactMatch>ICD9CM:053</skos:exactMatch>
+        <skos:exactMatch>MESH:D006562</skos:exactMatch>
+        <skos:exactMatch>NCI:C71079</skos:exactMatch>
+        <skos:exactMatch>UMLS_CUI:C0019360</skos:exactMatch>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_8536"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A viral infectious disease that results_in infection located_in nerve fiber, has_material_basis_in Human herpesvirus 3 (Varicellovirus humanalpha3), which reactivates after appearing as chickenpox in childhood. The virus is transmitted_by direct contact with the rash, which can develop into chickenpox in newly-infected individuals. The infection has_symptom rash which is followed by blisters, has_symptom headache, has_symptom fever, has_symptom malaise, has_symptom itching, has_symptom burning pain, and has_symptom paresthesia.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007640"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Herpes_zoster</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://medlineplus.gov/ency/article/000858.htm</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_8566 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_8566">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_934"/>
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IDO_0000664"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_3050292"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IDO_0000664"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_3050293"/>
+                    </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0000165"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0001456"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0002387"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0002398"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0005156"/>
+                    </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002451"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/TRANS_0000007"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 xml:lang="en">A viral infectious disease that results_in_formation_of lesions, located_in mouth, located_in face, located_in genitalia, or located_in hands, has_material_basis_in Human herpesvirus 1 (Simplexvirus humanalpha1) or 2 (Simplexvirus humanalpha2), which are transmitted_by direct contact with an active lesion or body fluid of an infected person.</obo:IAO_0000115>
+        <oboInOwl:hasAlternativeId>DOID:8763</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:9012</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:9239</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasDbXref>ICD10CM:B00.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:054</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D006561</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C155871</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:88594005</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0019348</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">Herpesvirus hominis disease</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:8566</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_infectious_disease_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">herpes simplex</rdfs:label>
+        <skos:exactMatch>ICD10CM:B00.9</skos:exactMatch>
+        <skos:exactMatch>ICD9CM:054</skos:exactMatch>
+        <skos:exactMatch>MESH:D006561</skos:exactMatch>
+        <skos:exactMatch>NCI:C155871</skos:exactMatch>
+        <skos:exactMatch>UMLS_CUI:C0019348</skos:exactMatch>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_8566"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A viral infectious disease that results_in_formation_of lesions, located_in mouth, located_in face, located_in genitalia, or located_in hands, has_material_basis_in Human herpesvirus 1 (Simplexvirus humanalpha1) or 2 (Simplexvirus humanalpha2), which are transmitted_by direct contact with an active lesion or body fluid of an infected person.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Herpes_simplex</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://www.aad.org/public/diseases/a-z/herpes-simplex-overview</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_863 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_863">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0001016"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_7"/>
+        <obo:IAO_0000115 xml:lang="en">A disease of anatomical entity that is located_in the central nervous system or located_in the peripheral nervous system.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>ICD10CM:G98</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:349.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D009422</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C26835</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:155262005</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0027765</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:863</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_CFDE_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_GXD_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_MGI_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">nervous system disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_863"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A disease of anatomical entity that is located_in the central nervous system or located_in the peripheral nervous system.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Nervous_system</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_8659 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_8659">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_934"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IDO_0000664"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_3050294"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002451"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/TRANS_0000007"/>
+                            <rdf:Description rdf:about="http://purl.obolibrary.org/obo/TRANS_0000008"/>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000009"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000458"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000504"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000523"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000613"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0020055"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 xml:lang="en">A viral infectious disease that results_in infection located_in skin, has_material_basis_in Human herpesvirus 3 (Varicellovirus humanalpha3), which is transmitted_by direct contact with secretions from the rash, or transmitted_by droplet spread of respiratory secretions. The infection has_symptom anorexia, has_symptom myalgia, has_symptom nausea, has_symptom fever, has_symptom headache, has_symptom sore throat, and has_symptom blisters.</obo:IAO_0000115>
+        <oboInOwl:hasAlternativeId>DOID:8658</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:8693</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasAlternativeId>DOID:9243</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasDbXref>ICD10CM:B01.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:052</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D002644</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C97132</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:186508005</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0008049</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">varicella</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:8659</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_infectious_disease_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">chickenpox</rdfs:label>
+        <skos:exactMatch>ICD10CM:B01.9</skos:exactMatch>
+        <skos:exactMatch>MESH:D002644</skos:exactMatch>
+        <skos:exactMatch>NCI:C97132</skos:exactMatch>
+        <skos:exactMatch>UMLS_CUI:C0008049</skos:exactMatch>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_8659"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A viral infectious disease that results_in infection located_in skin, has_material_basis_in Human herpesvirus 3 (Varicellovirus humanalpha3), which is transmitted_by direct contact with secretions from the rash, or transmitted_by droplet spread of respiratory secretions. The infection has_symptom anorexia, has_symptom myalgia, has_symptom nausea, has_symptom fever, has_symptom headache, has_symptom sore throat, and has_symptom blisters.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007644"/>
+        <oboInOwl:hasDbXref>url:https://medlineplus.gov/chickenpox.html</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://www.cdc.gov/chickenpox/about/index.html</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://www.ncbi.nlm.nih.gov/books/NBK448191/</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_866 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_866">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0001638"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_178"/>
+        <obo:IAO_0000115 xml:lang="en">A vascular disease that is located_in a vein.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>ICD10CM:I82</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:453</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:195435006</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0155774</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:866</oboInOwl:id>
+        <rdfs:label xml:lang="en">vein disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_866"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A vascular disease that is located_in a vein.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Vein#Venous_diseases</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_870 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_870">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_574"/>
+        <obo:IAO_0000115 xml:lang="en">A nervous system disease that is located_in nerves or nerve cells.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>ICD10CM:G62.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C4731</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:42658009</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0442874</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">peripheral neuropathy</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:870</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">neuropathy</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_870"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A nervous system disease that is located_in nerves or nerve cells.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:http://en.wikipedia.org/wiki/Neuropathy_%28disambiguation%29</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_9182 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_9182">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_0060039"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_8502"/>
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_2723"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000009"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 xml:lang="en">An autoimmune disease of skin and connective tissue that is characterized by blistering of the outer layer of the skin and mucous membranes (mouth, nose, throat, eyes, and genitals), causing lesions and blisters that are easily ruptured.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>GARD:7352</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD10CM:L10</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:694.4</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D010392</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C34909</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:156355008</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0030807</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:9182</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_rare_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">pemphigus</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_9182"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An autoimmune disease of skin and connective tissue that is characterized by blistering of the outer layer of the skin and mucous membranes (mouth, nose, throat, eyes, and genitals), causing lesions and blisters that are easily ruptured.</owl:annotatedTarget>
+        <oboInOwl:hasDbXref>url:https://en.wikipedia.org/wiki/Pemphigus</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://medlineplus.gov/pemphigus.html</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://rarediseases.org/rare-diseases/pemphigus/</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_934 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_934">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/IDO_0000664"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_10239"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_0050117"/>
+        <obo:IAO_0000115 xml:lang="en">A disease by infectious agent that results in infection, has_material_basis_in Viruses.</obo:IAO_0000115>
+        <oboInOwl:hasAlternativeId>DOID:1329</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasDbXref>ICD10CM:A94</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD10CM:B34.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:060-066.99</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D001102</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D014777</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C3439</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C34396</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:34014006</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:40610006</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0003723</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0042769</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">Viral Infection</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">Viral disease</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym xml:lang="en">virus infection</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:934</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_AGR_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_FlyBase_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_infectious_disease_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">viral infectious disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_934"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A disease by infectious agent that results in infection, has_material_basis_in Viruses.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007637"/>
+        <oboInOwl:hasDbXref>url:http://www.merck.com/mmhe/sec17/ch198/ch198a.html</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_9351 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_9351">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_4194"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002200"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/HP_0000818"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0002452"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/SYMP_0000565"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115 xml:lang="en">A glucose metabolism disease that is characterized by chronic hyperglycaemia with disturbances of carbohydrate, fat and protein metabolism resulting from defects in insulin secretion, insulin action, or both.</obo:IAO_0000115>
+        <oboInOwl:hasAlternativeId>DOID:0081062</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasDbXref>ICD10CM:E08-E13</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:250</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D003920</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C2985</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:267467004</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0011849</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">diabetes</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:9351</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">diabetes mellitus</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_9351"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A glucose metabolism disease that is characterized by chronic hyperglycaemia with disturbances of carbohydrate, fat and protein metabolism resulting from defects in insulin secretion, insulin action, or both.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007637"/>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007645"/>
+        <oboInOwl:hasDbXref>url:http://www.who.int/diabetes/action_online/basics/en/</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://en.wikipedia.org/wiki/Diabetes_mellitus</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://medlineplus.gov/diabetes.html</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://www.ncbi.nlm.nih.gov/pubmed/9686693</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_936 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_936">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/DOID_4"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0004026"/>
+                        <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/UBERON_0000955"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_331"/>
+        <obo:IAO_0000115 xml:lang="en">A central nervous system disease that is located_in the brain.</obo:IAO_0000115>
+        <oboInOwl:hasAlternativeId>DOID:8510</oboInOwl:hasAlternativeId>
+        <oboInOwl:hasDbXref>ICD10CM:G93.40</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD10CM:G93.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:348.30</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:348.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D001927</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C26920</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C96413</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:81308009</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0006111</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0085584</oboInOwl:hasDbXref>
+        <oboInOwl:hasExactSynonym xml:lang="en">encephalopathy</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:936</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">brain disease</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_936"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A central nervous system disease that is located_in the brain.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007644"/>
+        <oboInOwl:hasDbXref>url:https://medlineplus.gov/braindiseases.html</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_9598 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_9598">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_65"/>
+        <obo:IAO_0000115 xml:lang="en">A connective tissue disease characterized by inflammation located in the fascia.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>ICD10CM:M72.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:729.4</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D005208</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C50559</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:36948007</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0015645</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:9598</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:label xml:lang="en">fasciitis</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_9598"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">A connective tissue disease characterized by inflammation located in the fascia.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007637"/>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:https://en.wikipedia.org/wiki/Fasciitis</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>url:https://www.mayoclinic.org/diseases-conditions/plantar-fasciitis/symptoms-causes/syc-20354846</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_9602 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_9602">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_9598"/>
+        <oboInOwl:hasDbXref>GARD:6454</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD10CM:M72.6</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:728.86</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D019115</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C84916</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:186428007</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0238124</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:9602</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_rare_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#gram-positive_bacterial_infectious_disease"/>
+        <rdfs:label xml:lang="en">necrotizing fasciitis</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/DOID_9970 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/DOID_9970">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/DOID_654"/>
+        <obo:IAO_0000115 xml:lang="en">An overnutrition that is characterized by excess body fat, traditionally defined as an elevated ratio of weight to height (specifically 30 kilograms per meter squared), has_material_basis_in a multifactorial etiology related to excess nutrition intake, decreased caloric utilization, and genetic susceptibility, and possibly medications and certain disorders of metabolism, endocrine function, and mental illness.</obo:IAO_0000115>
+        <oboInOwl:hasDbXref>EFO:0001073</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD10CM:E66.9</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>ICD9CM:278.00</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MESH:D009765</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>MIM:601665</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>NCI:C159658</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>SNOMEDCT_US_2025_09_01:5476005</oboInOwl:hasDbXref>
+        <oboInOwl:hasDbXref>UMLS_CUI:C0028754</oboInOwl:hasDbXref>
+        <oboInOwl:hasOBONamespace>disease_ontology</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>DOID:9970</oboInOwl:id>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#DO_FlyBase_slim"/>
+        <oboInOwl:inSubset rdf:resource="http://purl.obolibrary.org/obo/doid#NCIthesaurus"/>
+        <rdfs:comment xml:lang="en">OMIM mapping confirmed by DO. [SN].</rdfs:comment>
+        <rdfs:label xml:lang="en">obesity</rdfs:label>
+    </owl:Class>
+    <owl:Axiom>
+        <owl:annotatedSource rdf:resource="http://purl.obolibrary.org/obo/DOID_9970"/>
+        <owl:annotatedProperty rdf:resource="http://purl.obolibrary.org/obo/IAO_0000115"/>
+        <owl:annotatedTarget xml:lang="en">An overnutrition that is characterized by excess body fat, traditionally defined as an elevated ratio of weight to height (specifically 30 kilograms per meter squared), has_material_basis_in a multifactorial etiology related to excess nutrition intake, decreased caloric utilization, and genetic susceptibility, and possibly medications and certain disorders of metabolism, endocrine function, and mental illness.</owl:annotatedTarget>
+        <dc:type rdf:resource="http://purl.obolibrary.org/obo/ECO_0007638"/>
+        <oboInOwl:hasDbXref>url:https://en.wikipedia.org/wiki/Obesity</oboInOwl:hasDbXref>
+    </owl:Axiom>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/HP_0000818 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/HP_0000818"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/MIM_607836 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/MIM_607836"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/MIM_608391 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/MIM_608391"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/MIM_608392 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/MIM_608392"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/MIM_609400 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/MIM_609400"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/MIM_613551 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/MIM_613551"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_10239 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_10239"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_1648 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_1648"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_2 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_2"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_2759 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_2759"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_3050292 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_3050292"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_3050293 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_3050293"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_3050294 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_3050294"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_3428500 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_3428500"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/NCBITaxon_36469 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/NCBITaxon_36469"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SO_0001537 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SO_0001537"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SYMP_0000009 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SYMP_0000009"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SYMP_0000061 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SYMP_0000061"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SYMP_0000432 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SYMP_0000432"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SYMP_0000435 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SYMP_0000435"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SYMP_0000457 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SYMP_0000457"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SYMP_0000458 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SYMP_0000458"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SYMP_0000487 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SYMP_0000487"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SYMP_0000504 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SYMP_0000504"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SYMP_0000523 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SYMP_0000523"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SYMP_0000565 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SYMP_0000565"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SYMP_0000613 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SYMP_0000613"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SYMP_0000900 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SYMP_0000900"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SYMP_0019176 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SYMP_0019176"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/SYMP_0020055 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/SYMP_0020055"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/TRANS_0000007 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/TRANS_0000007"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/TRANS_0000008 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/TRANS_0000008"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/TRANS_0000011 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/TRANS_0000011"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0000010 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0000010"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0000014 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0000014"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0000165 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0000165"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0000955 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0000955"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0001003 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0001003"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0001016 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0001016"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0001017 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0001017"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0001456 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0001456"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0001638 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0001638"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0001744 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0001744"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0002204 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0002204"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0002384 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0002384"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0002387 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0002387"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0002398 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0002398"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0002405 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0002405"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0002416 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0002416"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0004535 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0004535"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0005156 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0005156"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_0007798 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_0007798"/>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/UBERON_8410021 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/UBERON_8410021"/>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.29) https://github.com/owlcs/owlapi -->
+
