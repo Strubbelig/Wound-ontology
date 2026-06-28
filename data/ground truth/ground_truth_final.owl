@@ -7,22 +7,54 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @base <http://purl.obolibrary.org/obo/wond/ground_truth.owl/> .
 
-<http://purl.obolibrary.org/obo/wond/ground_truth.owl> rdf:type owl:Ontology ;
-                                                        owl:imports <http://purl.obolibrary.org/obo/bfo/2020/bfo-core.owl> ,
-                                                                    <http://purl.obolibrary.org/obo/cob/releases/2025-12-15/cob.owl> ,
-                                                                    <http://purl.obolibrary.org/obo/doid/releases/2026-05-30/doid.owl> ,
-                                                                    <http://purl.obolibrary.org/obo/dron/releases/2026-06-04/dron.owl> ,
-                                                                    <http://purl.obolibrary.org/obo/go/releases/2026-05-19/go.owl> ,
-                                                                    <http://purl.obolibrary.org/obo/iao/2026-03-30/iao.owl> ,
-                                                                    <http://purl.obolibrary.org/obo/obi/2026-03-19/obi.owl> ,
-                                                                    <http://purl.obolibrary.org/obo/ogms/2021-08-19/ogms.owl> .
+<http://purl.obolibrary.org/obo/wond/ground_truth.owl> rdf:type owl:Ontology .
 
 #################################################################
 #    Annotation properties
 #################################################################
 
+###  http://purl.obolibrary.org/obo/IAO_0000115
+ns1:IAO_0000115 rdf:type owl:AnnotationProperty .
+
+
 ###  http://purl.obolibrary.org/obo/IAO_0000118
 ns1:IAO_0000118 rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://purl.obolibrary.org/obo/BFO_0000051
+ns1:BFO_0000051 rdf:type owl:ObjectProperty .
+
+
+###  http://purl.obolibrary.org/obo/IAO_0000136
+ns1:IAO_0000136 rdf:type owl:ObjectProperty .
+
+
+###  http://purl.obolibrary.org/obo/OBI_0000295
+ns1:OBI_0000295 rdf:type owl:ObjectProperty .
+
+
+###  http://purl.obolibrary.org/obo/OBI_0000299
+ns1:OBI_0000299 rdf:type owl:ObjectProperty .
+
+
+###  http://purl.obolibrary.org/obo/OBI_0000312
+ns1:OBI_0000312 rdf:type owl:ObjectProperty .
+
+
+###  http://purl.obolibrary.org/obo/RO_0000057
+ns1:RO_0000057 rdf:type owl:ObjectProperty .
+
+
+###  http://purl.obolibrary.org/obo/RO_0000085
+ns1:RO_0000085 rdf:type owl:ObjectProperty .
+
+
+###  http://purl.obolibrary.org/obo/RO_0000091
+ns1:RO_0000091 rdf:type owl:ObjectProperty .
 
 
 #################################################################
@@ -47,6 +79,10 @@ ns1:BFO_0000019 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/BFO_0000023
 ns1:BFO_0000023 rdf:type owl:Class ;
                 rdfs:label "role" .
+
+
+###  http://purl.obolibrary.org/obo/BFO_0000034
+ns1:BFO_0000034 rdf:type owl:Class .
 
 
 ###  http://purl.obolibrary.org/obo/BFO_0000040
@@ -545,10 +581,14 @@ ns1:HP_0100699 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/HP_0100758
 ns1:HP_0100758 rdf:type owl:Class ;
-               rdfs:subClassOf ns1:PATO_0000647 ;
+               rdfs:subClassOf :WOND_120020 ;
                ns1:IAO_0000115 "A serious and potentially life-threatening condition that arises when a considerable mass of body tissue dies (necrosis)." ;
                rdfs:label "gangrene"@en ,
                           "Gangrene" .
+
+
+###  http://purl.obolibrary.org/obo/IAO_0000030
+ns1:IAO_0000030 rdf:type owl:Class .
 
 
 ###  http://purl.obolibrary.org/obo/IAO_0000104
@@ -561,6 +601,14 @@ ns1:IAO_0000104 rdf:type owl:Class ;
 ns1:IAO_0000109 rdf:type owl:Class ;
                 ns1:IAO_0000115 "A measurement datum is an information content entity that is a recording of the output of a measurement such as produced by a device." ;
                 rdfs:label "measurement datum" .
+
+
+###  http://purl.obolibrary.org/obo/IDO_0000528
+ns1:IDO_0000528 rdf:type owl:Class .
+
+
+###  http://purl.obolibrary.org/obo/IDO_0000586
+ns1:IDO_0000586 rdf:type owl:Class .
 
 
 ###  http://purl.obolibrary.org/obo/NCBITaxon_1280
@@ -622,6 +670,14 @@ ns1:OBI_0600044 rdf:type owl:Class ;
                            "lavage" .
 
 
+###  http://purl.obolibrary.org/obo/OGMS_0000031
+ns1:OGMS_0000031 rdf:type owl:Class .
+
+
+###  http://purl.obolibrary.org/obo/OMRSE_00000012
+ns1:OMRSE_00000012 rdf:type owl:Class .
+
+
 ###  http://purl.obolibrary.org/obo/PATO_0000014
 ns1:PATO_0000014 rdf:type owl:Class ;
                  ns1:IAO_0000115 "A composite chromatic quality composed of hue, saturation and intensity parts." ;
@@ -632,14 +688,6 @@ ns1:PATO_0000014 rdf:type owl:Class ;
 ns1:PATO_0000117 rdf:type owl:Class ;
                  ns1:IAO_0000115 "A morphology quality inhering in a bearer by virtue of the bearer's physical magnitude." ;
                  rdfs:label "size" .
-
-
-###  http://purl.obolibrary.org/obo/PATO_0000647
-ns1:PATO_0000647 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 ns1:IAO_0000115 "A structural quality inhering in a bearer by virtue of the bearer's undergoing unprogrammed cell death." ;
-                 rdfs:label "necrosis"@en ,
-                            "necrotic" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0001595
@@ -1102,7 +1150,7 @@ ns1:WOND_0000094 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/WOND_0000095
 ns1:WOND_0000095 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:PATO_0000647 ;
+                 rdfs:subClassOf :WOND_120020 ;
                  rdfs:label "Dry necrosis" .
 
 
@@ -1552,7 +1600,7 @@ ns1:WOND_0000202 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/WOND_0000203
 ns1:WOND_0000203 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:PATO_0000647 ;
+                 rdfs:subClassOf :WOND_120020 ;
                  rdfs:label "Moist necrosis" .
 
 
@@ -2668,7 +2716,7 @@ ns1:WOND_0000432 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120016
 :WOND_120016 rdf:type owl:Class ;
-             rdfs:subClassOf ns1:IAO_0000030 ;
+             rdfs:subClassOf <http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120000> ;
              rdfs:label "wound classification grade"@en .
 
 
@@ -2704,6 +2752,16 @@ ns1:WOND_0000432 rdf:type owl:Class ;
                                  ] ;
              rdfs:subClassOf ns1:IDO_0000528 ;
              rdfs:label "wound infecting pathogen"@en .
+
+
+###  http://purl.obolibrary.org/obo/wond/ground_truth.owl/WOND_120020
+:WOND_120020 rdf:type owl:Class ;
+             rdfs:subClassOf ns1:BFO_0000040 ;
+             rdfs:label "Necrosis"@en .
+
+
+###  http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120000
+<http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120000> rdf:type owl:Class .
 
 
 ###  http://www.semanticweb.org/strubbelig/moritzmilewskisdiseaseproposal/WOND_120047
