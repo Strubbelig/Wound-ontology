@@ -1,14 +1,16 @@
 @prefix : <https://bioportal.bioontology.org/ontologies/WONT/> .
 @prefix ns1: <http://purl.obolibrary.org/obo/> .
-@prefix wont: <https://bioportal.bioontology.org/ontologies/WONT/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix mild: <https://bioportal.bioontology.org/ontologies/MILD/> .
+@prefix wont: <https://bioportal.bioontology.org/ontologies/WONT/> .
 @base <https://bioportal.bioontology.org/ontologies/WONT/> .
 
-<https://bioportal.bioontology.org/ontologies/WONT> rdf:type owl:Ontology .
+<https://bioportal.bioontology.org/ontologies/WONT> rdf:type owl:Ontology ;
+                                                    owl:imports <https://bioportal.bioontology.org/ontologies/MILD> .
 
 #################################################################
 #    Annotation properties
@@ -36,6 +38,16 @@ ns1:IAO_0000136 rdf:type owl:ObjectProperty .
 
 ###  http://purl.obolibrary.org/obo/OBI_0000295
 ns1:OBI_0000295 rdf:type owl:ObjectProperty .
+
+
+###  http://purl.obolibrary.org/obo/RO_0000086
+ns1:RO_0000086 rdf:type owl:ObjectProperty ;
+              rdfs:label "has quality"@en .
+
+
+###  http://purl.obolibrary.org/obo/RO_0000087
+ns1:RO_0000087 rdf:type owl:ObjectProperty ;
+              rdfs:label "has role"@en .
 
 
 ###  http://purl.obolibrary.org/obo/OBI_0000299
@@ -208,10 +220,8 @@ ns1:CHEBI_33229 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/CHEBI_33284
 ns1:CHEBI_33284 rdf:type owl:Class ;
-                rdfs:subClassOf ns1:BFO_0000040 ;
                 ns1:IAO_0000115 "A nutrient is a food component that an organism uses to survive and grow." ;
-                rdfs:label "Nutritional substance" ,
-                           "nutrient" .
+                rdfs:label "nutrient" .
 
 
 ###  http://purl.obolibrary.org/obo/CHEBI_33301
@@ -233,10 +243,12 @@ ns1:CHEBI_35267 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/CHEBI_36080
 ns1:CHEBI_36080 rdf:type owl:Class ;
-                rdfs:subClassOf ns1:CHEBI_33284 ;
+                rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                  owl:onProperty ns1:RO_0000087 ;
+                                  owl:someValuesFrom ns1:CHEBI_33284
+                                ] ;
                 ns1:IAO_0000115 "A biological macromolecule minimally consisting of one polypeptide chain synthesized at the ribosome." ;
-                rdfs:label "protein"@en ,
-                           "protein" .
+                rdfs:label "protein"@en .
 
 
 ###  http://purl.obolibrary.org/obo/CHEBI_3614
@@ -354,7 +366,7 @@ ns1:DOID_3132 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_4347
 ns1:DOID_4347 rdf:type owl:Class ;
-              rdfs:subClassOf ns1:BFO_0000040 ;
+              rdfs:subClassOf mild:MILD_120022 ;
               rdfs:label "Lymphocele" ,
                          "lymphocele" .
 
@@ -408,7 +420,7 @@ ns1:DOID_9351 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_9602
 ns1:DOID_9602 rdf:type owl:Class ;
-              rdfs:subClassOf ns1:BFO_0000040 ;
+              rdfs:subClassOf mild:MILD_120020 ;
               rdfs:label "Necrotizing fasciitis" ,
                          "necrotizing fasciitis" .
 
@@ -544,7 +556,10 @@ ns1:HP_0025615 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/HP_0032326
 ns1:HP_0032326 rdf:type owl:Class ;
-               rdfs:subClassOf ns1:NCBITaxon_1280 ;
+               rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                 owl:onProperty ns1:RO_0000057 ;
+                                 owl:someValuesFrom ns1:NCBITaxon_1280
+                               ] ;
                ns1:IAO_0000115 "Infection with staphylococcus aureus resistant to the antibiotic methicillin (MRSA). MRSA can infect any individual but is more common among hospitalized patients, and can also occur as an opportunistic infection." ;
                rdfs:label "Methicillin-resistant Staphylococcus aureus infection" .
 
@@ -582,7 +597,7 @@ ns1:HP_0100699 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/HP_0100758
 ns1:HP_0100758 rdf:type owl:Class ;
-               rdfs:subClassOf :WONT_120020 ;
+               rdfs:subClassOf wont:WONT_120020 ;
                ns1:IAO_0000115 "A serious and potentially life-threatening condition that arises when a considerable mass of body tissue dies (necrosis)." ;
                rdfs:label "gangrene"@en ,
                           "Gangrene" .
@@ -615,10 +630,9 @@ ns1:IDO_0000586 rdf:type owl:Class .
 ###  http://purl.obolibrary.org/obo/NCBITaxon_1280
 ns1:NCBITaxon_1280 rdf:type owl:Class ;
                    rdfs:subClassOf ns1:NCBITaxon_2 ,
-                                   wont:WONT_0000410 ,
                                    [ rdf:type owl:Restriction ;
                                      owl:onProperty ns1:RO_0000091 ;
-                                     owl:someValuesFrom :WONT_120018
+                                     owl:someValuesFrom wont:WONT_120018
                                    ] ;
                    rdfs:label "Staphylococcus aureus" .
 
@@ -644,7 +658,7 @@ ns1:NCBITaxon_562 rdf:type owl:Class ;
                   rdfs:subClassOf ns1:NCBITaxon_2 ,
                                   [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:RO_0000091 ;
-                                    owl:someValuesFrom :WONT_120018
+                                    owl:someValuesFrom wont:WONT_120018
                                   ] ;
                   rdfs:label "Escherichia coli" .
 
@@ -657,7 +671,7 @@ ns1:OBI_0000938 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/OBI_0600022
 ns1:OBI_0600022 rdf:type owl:Class ;
-                rdfs:subClassOf wont:WONT_0000189 ;
+                rdfs:subClassOf wont:WONT_0000190 ;
                 ns1:IAO_0000115 "the use physical means to remove a portion of a substance from the rest" ;
                 rdfs:label "Surgical excision" ,
                            "excision" .
@@ -693,18 +707,14 @@ ns1:PATO_0000117 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/PATO_0001595
 ns1:PATO_0001595 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000419 ;
                  ns1:IAO_0000115 "A 1-D extent quality inhering in a bearer by virtue of the bearer's downward or backward or inward dimension." ;
-                 rdfs:label "Depth measurement" ,
-                            "depth" .
+                 rdfs:label "depth" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0001764
 ns1:PATO_0001764 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000193 ;
                  ns1:IAO_0000115 "An age which is high relative to the normal or average." ;
-                 rdfs:label "Advanced age" ,
-                            "increased age" .
+                 rdfs:label "increased age" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0001851
@@ -717,2226 +727,2412 @@ ns1:PATO_0001851 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/PATO_0002097
 ns1:PATO_0002097 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000192 ;
                  ns1:IAO_0000115 "A disposition inhering in a tumour by virtue of the bearer's disposition to progress, invade surrounding tissues or metastasize." ;
-                 rdfs:label "Malignancy" ,
-                            "neoplastic, malignant" .
+                 rdfs:label "neoplastic, malignant" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0002104
 ns1:PATO_0002104 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000409 ;
                  ns1:IAO_0000115 "A compositional quality inhering in an bearer by virtue of the bearer's infiltration by leukocytes, local edema and accumulation of plasma proteins." ;
-                 rdfs:label "Inflammation process"@en ,
-                            "inflamed" .
+                 rdfs:label "inflamed" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000001
 wont:WONT_0000001 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000194 ;
-                 rdfs:label "2nd degree burn" .
+                  rdfs:subClassOf wont:WONT_0000194 ;
+                  rdfs:label "2nd degree burn" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000002
 wont:WONT_0000002 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000093 ;
-                 rdfs:label "Abdominal drain" .
+                  rdfs:subClassOf wont:WONT_0000093 ;
+                  rdfs:label "Abdominal drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000004
 wont:WONT_0000004 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000418 ;
-                 rdfs:label "Acidity impact process"@en .
+                  rdfs:subClassOf wont:WONT_0000418 ;
+                  rdfs:label "Acidity impact process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000005
 wont:WONT_0000005 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Activated carbon layer wound dressing" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Activated carbon layer wound dressing" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006
 wont:WONT_0000006 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000093 ;
-                 rdfs:label "Active drain" .
+                  rdfs:subClassOf wont:WONT_0000093 ;
+                  rdfs:label "Active drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000008
 wont:WONT_0000008 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000280 ;
-                 rdfs:label "Adhesive silicone grid" .
+                  rdfs:subClassOf wont:WONT_0000280 ;
+                  rdfs:label "Adhesive silicone grid" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000010
 wont:WONT_0000010 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:CHEBI_48218 ;
-                 rdfs:label "Antiseptic alcohol"@en .
+                  rdfs:subClassOf ns1:CHEBI_48218 ;
+                  rdfs:label "Antiseptic alcohol"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000011
 wont:WONT_0000011 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Alginate containing wound dressing" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Alginate containing wound dressing" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000013
 wont:WONT_0000013 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000192 ;
-                 rdfs:label "ANCA-associated Vasculitis" .
+                  rdfs:subClassOf wont:WONT_0000192 ;
+                  rdfs:label "ANCA-associated Vasculitis" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000015
 wont:WONT_0000015 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Angiopathic wounds" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Angiopathic wounds" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000016
 wont:WONT_0000016 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000198 ;
-                 rdfs:label "Antibiotic therapy" .
+                  rdfs:subClassOf wont:WONT_0000198 ;
+                  rdfs:label "Antibiotic therapy" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020
 wont:WONT_0000020 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:CHEBI_48218 ;
-                 rdfs:label "Antiseptic dye" .
+                  rdfs:subClassOf ns1:CHEBI_48218 ;
+                  rdfs:label "Antiseptic dye" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000021
 wont:WONT_0000021 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:CHEBI_48218 ;
-                 rdfs:label "Antiseptic halogen-releasing compound" .
+                  rdfs:subClassOf ns1:CHEBI_48218 ;
+                  rdfs:label "Antiseptic halogen-releasing compound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000022
 wont:WONT_0000022 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:CHEBI_48218 ;
-                 rdfs:label "Antiseptic metal ion"@en .
+                  rdfs:subClassOf ns1:CHEBI_48218 ;
+                  rdfs:label "Antiseptic metal ion"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000025
 wont:WONT_0000025 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:CHEBI_48218 ;
-                 rdfs:label "Antiseptic phenol derivatives" .
+                  rdfs:subClassOf ns1:CHEBI_48218 ;
+                  rdfs:label "Antiseptic phenol derivatives" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000026
 wont:WONT_0000026 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000412 ;
-                 rdfs:label "Antiseptic solution" .
+                  rdfs:subClassOf wont:WONT_0000412 ;
+                  rdfs:label "Antiseptic solution" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000027
 wont:WONT_0000027 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:HP_0032674 ;
-                 rdfs:label "Arterial leg ulcer" .
+                  rdfs:subClassOf ns1:HP_0032674 ;
+                  rdfs:label "Arterial leg ulcer" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000028
 wont:WONT_0000028 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000066 ;
-                 rdfs:label "ASEPSIS score" .
+                  rdfs:subClassOf wont:WONT_0000066 ;
+                  rdfs:label "ASEPSIS score" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000029
 wont:WONT_0000029 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000200 ;
-                 rdfs:label "Aseptic conditions" .
+                  rdfs:subClassOf wont:WONT_0000200 ;
+                  rdfs:label "Aseptic conditions" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000030
 wont:WONT_0000030 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:IAO_0000104 ;
-                 rdfs:label "Aseptic cuticle" .
+                  rdfs:subClassOf ns1:IAO_0000104 ;
+                  rdfs:label "Aseptic cuticle" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000031
 wont:WONT_0000031 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Aseptic wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Aseptic wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000032
 wont:WONT_0000032 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000089 ;
-                 rdfs:label "Assessing patient's medical history" .
+                  rdfs:subClassOf wont:WONT_0000089 ;
+                  rdfs:label "Assessing patient's medical history" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000033
 wont:WONT_0000033 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Autoimmune disease related wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Autoimmune disease related wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000034
 wont:WONT_0000034 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000084 ;
-                 rdfs:label "Autolytic wound debridement process"@en .
+                  rdfs:subClassOf wont:WONT_0000084 ;
+                  rdfs:label "Autolytic wound debridement process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000037
 wont:WONT_0000037 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000406 ;
-                 rdfs:label "Bepanthen ointment" .
+                  rdfs:subClassOf wont:WONT_0000406 ;
+                  rdfs:label "Bepanthen ointment" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000038
 wont:WONT_0000038 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000040 ;
-                 rdfs:label "Biobag debridement" .
+                  rdfs:subClassOf wont:WONT_0000040 ;
+                  rdfs:label "Biobag debridement" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000039
 wont:WONT_0000039 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000395 ;
-                 rdfs:label "Wound specimen procurement by biopsy process"@en .
+                  rdfs:subClassOf wont:WONT_0000395 ;
+                  rdfs:label "Wound specimen procurement by biopsy process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000040
 wont:WONT_0000040 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:IAO_0000104 ;
-                 rdfs:label "Biosurgical debridement" .
+                  rdfs:subClassOf ns1:IAO_0000104 ;
+                  rdfs:label "Biosurgical debridement" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000041
 wont:WONT_0000041 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000084 ;
-                 rdfs:label "Biosurgical wound debridement process" .
+                  rdfs:subClassOf wont:WONT_0000084 ;
+                  rdfs:label "Biosurgical wound debridement process" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000042
 wont:WONT_0000042 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Biosynthetic cellulose" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Biosynthetic cellulose" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000043
 wont:WONT_0000043 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:CHEBI_48218 ;
-                 rdfs:label "Bismuth III bromide" .
+                  rdfs:subClassOf ns1:CHEBI_48218 ;
+                  rdfs:label "Bismuth III bromide" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000044
 wont:WONT_0000044 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000339 ;
-                 rdfs:label "Bite wound" .
+                  rdfs:subClassOf wont:WONT_0000339 ;
+                  rdfs:label "Bite wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000045
 wont:WONT_0000045 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000177 ;
-                 rdfs:label "Blake drain" .
+                  rdfs:subClassOf wont:WONT_0000177 ;
+                  rdfs:label "Blake drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000046
 wont:WONT_0000046 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:HP_0032674 ;
-                 rdfs:label "Blistering skin wound" .
+                  rdfs:subClassOf ns1:HP_0032674 ;
+                  rdfs:label "Blistering skin wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000047
 wont:WONT_0000047 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000427 ;
-                 rdfs:label "Bovine collagen containing wound dressing" .
+                  rdfs:subClassOf wont:WONT_0000427 ;
+                  rdfs:label "Bovine collagen containing wound dressing" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000048
 wont:WONT_0000048 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000296 ;
-                 rdfs:label "Bromelain" .
+                  rdfs:subClassOf wont:WONT_0000296 ;
+                  rdfs:label "Bromelain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000049
 wont:WONT_0000049 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000194 ;
-                 rdfs:label "Bullosis diabeticorum" .
+                  rdfs:subClassOf wont:WONT_0000194 ;
+                  rdfs:label "Bullosis diabeticorum" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000050
 wont:WONT_0000050 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000194 ;
-                 rdfs:label "Bullous impetigo" .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000052
-wont:WONT_0000052 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000309 ;
-                 rdfs:label "Burn wound Grade I" .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000053
-wont:WONT_0000053 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000309 ;
-                 rdfs:label "Burn wound Grade IIa" .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000054
-wont:WONT_0000054 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000309 ;
-                 rdfs:label "Burn wound Grade IIb" .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000055
-wont:WONT_0000055 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000309 ;
-                 rdfs:label "Burn wound Grade III" .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000056
-wont:WONT_0000056 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000309 ;
-                 rdfs:label "Burn wound Grade IV" .
+                  rdfs:subClassOf wont:WONT_0000194 ;
+                  rdfs:label "Bullous impetigo" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000057
 wont:WONT_0000057 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000311 ;
-                 rdfs:label "Bülau drain" .
+                  rdfs:subClassOf wont:WONT_0000311 ;
+                  rdfs:label "Bülau drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000058
 wont:WONT_0000058 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000224 ;
-                 rdfs:label "Capillary drain" .
+                  rdfs:subClassOf wont:WONT_0000224 ;
+                  rdfs:label "Capillary drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000060
 wont:WONT_0000060 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000044 ;
-                 rdfs:label "Cat bite wound" .
+                  rdfs:subClassOf wont:WONT_0000044 ;
+                  rdfs:label "Cat bite wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000061
 wont:WONT_0000061 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Cellulose acetate mesh impregnated with a petrolatum emulsion" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Cellulose acetate mesh impregnated with a petrolatum emulsion" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000066
 wont:WONT_0000066 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:IAO_0000030 ,
-                                 [ rdf:type owl:Restriction ;
-                                   owl:onProperty ns1:OBI_0000295 ;
-                                   owl:someValuesFrom :WONT_120015
-                                 ] ;
-                 rdfs:label "Wound classification scale"@en .
+                  rdfs:subClassOf ns1:IAO_0000030 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:OBI_0000295 ;
+                                    owl:someValuesFrom wont:WONT_120015
+                                  ] ;
+                  rdfs:label "Wound classification scale"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000067
 wont:WONT_0000067 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Clean contaminated wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Clean contaminated wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000068
 wont:WONT_0000068 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Clean wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Clean wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000069
 wont:WONT_0000069 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000089 ;
-                 rdfs:label "Clinical inspection" .
+                  rdfs:subClassOf wont:WONT_0000089 ;
+                  rdfs:label "Clinical inspection" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000070
 wont:WONT_0000070 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000089 ;
-                 rdfs:label "Clinical wound assessment" .
+                  rdfs:subClassOf wont:WONT_0000089 ;
+                  rdfs:label "Clinical wound assessment" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000071
 wont:WONT_0000071 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000093 ;
-                 rdfs:label "Closed drain" .
+                  rdfs:subClassOf wont:WONT_0000093 ;
+                  rdfs:label "Closed drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000072
 wont:WONT_0000072 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000200 ;
-                 rdfs:label "CO2 bath wound therapy" .
+                  rdfs:subClassOf wont:WONT_0000200 ;
+                  rdfs:label "CO2 bath wound therapy" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000074
 wont:WONT_0000074 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000423 ;
-                 rdfs:label "Cold plasma wound treatment process"@en .
+                  rdfs:subClassOf wont:WONT_0000423 ;
+                  rdfs:label "Cold plasma wound treatment process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000075
 wont:WONT_0000075 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Colonized wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Colonized wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000076
 wont:WONT_0000076 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000189 ;
-                 rdfs:label "Compress debridement" .
+                  rdfs:subClassOf wont:WONT_0000189 ;
+                  rdfs:label "Compress debridement" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000077
 wont:WONT_0000077 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000200 ;
-                 rdfs:label "Compression therapy" .
+                  rdfs:subClassOf wont:WONT_0000200 ;
+                  rdfs:label "Compression therapy" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000078
 wont:WONT_0000078 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Contaminated wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Contaminated wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000079
 wont:WONT_0000079 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000301 ;
-                 rdfs:label "Continuous suture" .
+                  rdfs:subClassOf wont:WONT_0000301 ;
+                  rdfs:label "Continuous suture" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000082
 wont:WONT_0000082 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000350 ;
-                 rdfs:label "CUSA(r) assisted debridement" .
+                  rdfs:subClassOf wont:WONT_0000350 ;
+                  rdfs:label "CUSA(r) assisted debridement" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000084
 wont:WONT_0000084 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000387 ;
-                 rdfs:label "Debridement process"@en .
+                  rdfs:subClassOf wont:WONT_0000387 ;
+                  rdfs:label "Debridement process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000088
 wont:WONT_0000088 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Diabetic wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Diabetic wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000089
 wont:WONT_0000089 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000015 ;
-                 rdfs:label "Diagnostic process to assess wound characteristics" .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000090
-wont:WONT_0000090 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:OMRSE_00000012 ;
-                 rdfs:label "Physician role"@en .
+                  rdfs:subClassOf ns1:BFO_0000015 ;
+                  rdfs:label "Diagnostic process to assess wound characteristics" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000091
 wont:WONT_0000091 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000044 ;
-                 rdfs:label "Dog bite wound" .
+                  rdfs:subClassOf wont:WONT_0000044 ;
+                  rdfs:label "Dog bite wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000092
 wont:WONT_0000092 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000395 ;
-                 rdfs:label "Doppler sonographic diagnostic process"@en .
+                  rdfs:subClassOf wont:WONT_0000395 ;
+                  rdfs:label "Doppler sonographic diagnostic process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000093
 wont:WONT_0000093 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000188 ;
-                 rdfs:label "Drain" .
+                  rdfs:subClassOf wont:WONT_0000188 ;
+                  rdfs:label "Drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000094
 wont:WONT_0000094 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000200 ;
-                 rdfs:label "Dressing change" .
+                  rdfs:subClassOf wont:WONT_0000200 ;
+                  rdfs:label "Dressing change" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000095
 wont:WONT_0000095 rdf:type owl:Class ;
-                 rdfs:subClassOf :WONT_120020 ;
-                 rdfs:label "Dry necrosis" .
+                  rdfs:subClassOf wont:WONT_120020 ;
+                  rdfs:label "Dry necrosis" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000096
 wont:WONT_0000096 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000058 ;
-                 rdfs:label "Easy-Flow drain" .
+                  rdfs:subClassOf wont:WONT_0000058 ;
+                  rdfs:label "Easy-Flow drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000097
 wont:WONT_0000097 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000112 ;
-                 rdfs:label "Elastic bandage" .
+                  rdfs:subClassOf wont:WONT_0000112 ;
+                  rdfs:label "Elastic bandage" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000098
 wont:WONT_0000098 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000084 ;
-                 rdfs:label "Enzymatic wound debridement process" .
+                  rdfs:subClassOf wont:WONT_0000084 ;
+                  rdfs:label "Enzymatic wound debridement process" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000100
 wont:WONT_0000100 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000409 ;
-                 rdfs:label "Epithelialization process"@en .
+                  rdfs:subClassOf wont:WONT_0000409 ;
+                  rdfs:label "Epithelialization process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000101
 wont:WONT_0000101 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000382 ;
-                 rdfs:label "Epithelializing wound bed" .
+                  rdfs:subClassOf wont:WONT_0000382 ;
+                  rdfs:label "Epithelializing wound bed" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000106
 wont:WONT_0000106 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000409 ;
-                 rdfs:label "Exudation process"@en .
+                  rdfs:subClassOf wont:WONT_0000409 ;
+                  rdfs:label "Exudation process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000107
 wont:WONT_0000107 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Fat gauze" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Fat gauze" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000108
 wont:WONT_0000108 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Fibrin coating of the wound"@en .
+                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:label "Fibrin coating of the wound"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000109
 wont:WONT_0000109 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000382 ;
-                 rdfs:label "Fibrin-covered wound bed" .
+                  rdfs:subClassOf wont:WONT_0000382 ;
+                  rdfs:label "Fibrin-covered wound bed" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000110
 wont:WONT_0000110 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "fistula"@en .
+                  rdfs:subClassOf mild:MILD_120022 ;
+                  rdfs:label "fistula"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000111
 wont:WONT_0000111 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000194 ;
-                 rdfs:label "Fixed drug exanthema" .
+                  rdfs:subClassOf wont:WONT_0000194 ;
+                  rdfs:label "Fixed drug exanthema" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000112
 wont:WONT_0000112 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Fixing bandage" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Fixing bandage" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000113
 wont:WONT_0000113 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000406 ;
-                 rdfs:label "Flaminal" .
+                  rdfs:subClassOf wont:WONT_0000406 ;
+                  rdfs:label "Flaminal" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000114
 wont:WONT_0000114 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000200 ;
-                 rdfs:label "Flap plasty" .
+                  rdfs:subClassOf wont:WONT_0000200 ;
+                  rdfs:label "Flap plasty" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000115
 wont:WONT_0000115 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:DOID_9602 ;
-                 rdfs:label "Fournier's gangrene" .
+                  rdfs:subClassOf ns1:DOID_9602 ;
+                  rdfs:label "Fournier's gangrene" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000116
 wont:WONT_0000116 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000194 ;
-                 rdfs:label "Friction bubble" .
+                  rdfs:subClassOf wont:WONT_0000194 ;
+                  rdfs:label "Friction bubble" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000117
 wont:WONT_0000117 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000285 ;
-                 rdfs:label "Full-thickness skin graft" .
+                  rdfs:subClassOf wont:WONT_0000285 ;
+                  rdfs:label "Full-thickness skin graft" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000120
 wont:WONT_0000120 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000112 ;
-                 rdfs:label "Gauze bandage" .
+                  rdfs:subClassOf wont:WONT_0000112 ;
+                  rdfs:label "Gauze bandage" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000121
 wont:WONT_0000121 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000395 ;
-                 rdfs:label "Germ spectrum assessment process"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000123
-wont:WONT_0000123 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:HP_0012399 ;
-                 rdfs:label "Grade I pressure ulcer according to Shea" .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000125
-wont:WONT_0000125 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:HP_0012399 ;
-                 rdfs:label "Grade II pressure ulcer according to Shea" .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000127
-wont:WONT_0000127 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:HP_0012399 ;
-                 rdfs:label "Grade III pressure ulcer according to Shea" .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000129
-wont:WONT_0000129 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:HP_0012399 ;
-                 rdfs:label "Grade IV pressure ulcer according to Shea" .
+                  rdfs:subClassOf wont:WONT_0000395 ;
+                  rdfs:label "Germ spectrum assessment process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000130
 wont:WONT_0000130 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000310 ;
-                 rdfs:label "Graded thermal or cauterizing wound" .
+                  rdfs:subClassOf wont:WONT_0000310 ;
+                  rdfs:label "Graded thermal or cauterizing wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000131
 wont:WONT_0000131 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000382 ;
-                 rdfs:label "Granulating wound bed" .
+                  rdfs:subClassOf wont:WONT_0000382 ;
+                  rdfs:label "Granulating wound bed" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000132
 wont:WONT_0000132 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000409 ;
-                 rdfs:label "Granulation process"@en .
+                  rdfs:subClassOf wont:WONT_0000409 ;
+                  rdfs:label "Granulation process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000133
 wont:WONT_0000133 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000224 ;
-                 rdfs:label "Gravity drain" .
+                  rdfs:subClassOf wont:WONT_0000224 ;
+                  rdfs:label "Gravity drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000134
 wont:WONT_0000134 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000066 ;
-                 rdfs:label "Gustilo and Anderson wound classification" .
+                  rdfs:subClassOf wont:WONT_0000066 ;
+                  rdfs:label "Gustilo and Anderson wound classification" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000135
 wont:WONT_0000135 rdf:type owl:Class ;
-                 rdfs:subClassOf :WONT_120016 ;
-                 rdfs:label "Gustilo and Anderson wound classification grade"@en .
+                  rdfs:subClassOf wont:WONT_120016 ;
+                  rdfs:label "Gustilo and Anderson wound classification grade"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000138
 wont:WONT_0000138 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000030 ;
-                 rdfs:label "Hand disinfection" .
+                  rdfs:subClassOf wont:WONT_0000030 ;
+                  rdfs:label "Hand disinfection" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000140
 wont:WONT_0000140 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000418 ;
-                 rdfs:label "Heat impact process"@en .
+                  rdfs:subClassOf wont:WONT_0000418 ;
+                  rdfs:label "Heat impact process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000141
 wont:WONT_0000141 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Hematoma" .
+                  rdfs:subClassOf mild:MILD_120022 ;
+                  rdfs:label "Hematoma" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000145
 wont:WONT_0000145 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000006 ;
-                 rdfs:label "High-vacuum drain" .
+                  rdfs:subClassOf wont:WONT_0000006 ;
+                  rdfs:label "High-vacuum drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000146
 wont:WONT_0000146 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000395 ;
-                 rdfs:label "Histopathological examination process of wound material"@en .
+                  rdfs:subClassOf wont:WONT_0000395 ;
+                  rdfs:label "Histopathological examination process of wound material"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000147
 wont:WONT_0000147 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000301 ;
-                 rdfs:label "Horizontal mattress suture" .
+                  rdfs:subClassOf wont:WONT_0000301 ;
+                  rdfs:label "Horizontal mattress suture" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000148
 wont:WONT_0000148 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000044 ;
-                 rdfs:label "Human bite wound" .
+                  rdfs:subClassOf wont:WONT_0000044 ;
+                  rdfs:label "Human bite wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000149
 wont:WONT_0000149 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Hydrocolloid containing wound dressing" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Hydrocolloid containing wound dressing" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000150
 wont:WONT_0000150 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Hydrofiber-containing wound dressing" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Hydrofiber-containing wound dressing" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000151
 wont:WONT_0000151 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Hydrogel containing wound dressing" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Hydrogel containing wound dressing" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000152
 wont:WONT_0000152 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000200 ;
-                 rdfs:label "Hyperbaric O2 wound therapy" .
+                  rdfs:subClassOf wont:WONT_0000200 ;
+                  rdfs:label "Hyperbaric O2 wound therapy" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000153
 wont:WONT_0000153 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Hypergranulation" .
+                  rdfs:subClassOf mild:MILD_120022 ;
+                  rdfs:label "Hypergranulation" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000154
 wont:WONT_0000154 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000269 ;
-                 rdfs:label "Hypertrophic scarring process"@en .
+                  rdfs:subClassOf wont:WONT_0000269 ;
+                  rdfs:label "Hypertrophic scarring process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000161
 wont:WONT_0000161 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000193 ;
-                 rdfs:label "Immunosuppression" .
+                  rdfs:subClassOf wont:WONT_0000193 ;
+                  rdfs:label "Immunosuppression" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000162
 wont:WONT_0000162 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000187 ;
-                 rdfs:label "Incision foil" .
+                  rdfs:subClassOf wont:WONT_0000187 ;
+                  rdfs:label "Incision foil" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000163
 wont:WONT_0000163 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Infected wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Infected wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000165
 wont:WONT_0000165 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000401 ;
-                 rdfs:label "Intact wound margin" .
+                  rdfs:subClassOf wont:WONT_0000401 ;
+                  rdfs:label "Intact wound margin" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000166
 wont:WONT_0000166 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000301 ;
-                 rdfs:label "Intracutaneous suture" .
+                  rdfs:subClassOf wont:WONT_0000301 ;
+                  rdfs:label "Intracutaneous suture" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000168
 wont:WONT_0000168 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000406 ;
-                 rdfs:label "Iodine ointment" .
+                  rdfs:subClassOf wont:WONT_0000406 ;
+                  rdfs:label "Iodine ointment" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000170
 wont:WONT_0000170 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000177 ;
-                 rdfs:label "Jackson-Pratt drain" .
+                  rdfs:subClassOf wont:WONT_0000177 ;
+                  rdfs:label "Jackson-Pratt drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000171
 wont:WONT_0000171 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000269 ;
-                 rdfs:label "Keloid development process"@en .
+                  rdfs:subClassOf wont:WONT_0000269 ;
+                  rdfs:label "Keloid development process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000173
 wont:WONT_0000173 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000194 ;
-                 rdfs:label "Linear IgA dermatosis" .
+                  rdfs:subClassOf wont:WONT_0000194 ;
+                  rdfs:label "Linear IgA dermatosis" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000174
 wont:WONT_0000174 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000192 ;
-                 rdfs:label "Livedovasculopathy" .
+                  rdfs:subClassOf wont:WONT_0000192 ;
+                  rdfs:label "Livedovasculopathy" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000175
 wont:WONT_0000175 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000401 ;
-                 rdfs:label "Livider wound margin" .
+                  rdfs:subClassOf wont:WONT_0000401 ;
+                  rdfs:label "Livider wound margin" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000176
 wont:WONT_0000176 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000015 ;
-                 rdfs:label "Process of administering a local anaesthetic agent"@en .
+                  rdfs:subClassOf ns1:BFO_0000015 ;
+                  rdfs:label "Process of administering a local anaesthetic agent"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000177
 wont:WONT_0000177 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000006 ;
-                 rdfs:label "Low-vacuum drain" .
+                  rdfs:subClassOf wont:WONT_0000006 ;
+                  rdfs:label "Low-vacuum drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000178
 wont:WONT_0000178 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Lymphatic fistula" .
+                  rdfs:subClassOf mild:MILD_120022 ;
+                  rdfs:label "Lymphatic fistula" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000180
 wont:WONT_0000180 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Macerated wound edge" .
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000401
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0000086 ;
+                                                               owl:someValuesFrom wont:WONT_0000435
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000401 ;
+                  rdfs:label "Macerated wound edge" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000182
 wont:WONT_0000182 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Malignant wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Malignant wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000184
 wont:WONT_0000184 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000163 ;
-                 rdfs:label "Manifest-infected wound" .
+                  rdfs:subClassOf wont:WONT_0000163 ;
+                  rdfs:label "Manifest-infected wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000185
 wont:WONT_0000185 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000196 ;
-                 rdfs:label "Manuka honey" .
+                  rdfs:subClassOf wont:WONT_0000196 ;
+                  rdfs:label "Manuka honey" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000186
 wont:WONT_0000186 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:HP_0032674 ;
-                 rdfs:label "Marjolin ulcer" .
+                  rdfs:subClassOf ns1:HP_0032674 ;
+                  rdfs:label "Marjolin ulcer" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000187
 wont:WONT_0000187 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Material used for wound complication prevention" .
+                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:label "Material used for wound complication prevention" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000188
 wont:WONT_0000188 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Material used for wound treatment" .
+                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:label "Material used for wound treatment" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000189
 wont:WONT_0000189 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:IAO_0000104 ;
-                 rdfs:label "Mechanical debridement" .
+                  rdfs:subClassOf ns1:IAO_0000104 ;
+                  rdfs:label "Mechanical debridement" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000190
 wont:WONT_0000190 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000084 ;
-                 rdfs:label "Mechanical wound debridement process" .
+                  rdfs:subClassOf wont:WONT_0000084 ;
+                  rdfs:label "Mechanical wound debridement process" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000192
 wont:WONT_0000192 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:OGMS_0000031 ;
-                 rdfs:label "Medical condition contributing to wound formation" .
+                  rdfs:subClassOf ns1:OGMS_0000031 ;
+                  rdfs:label "Medical condition contributing to wound formation" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000193
 wont:WONT_0000193 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:OGMS_0000031 ;
-                 rdfs:label "Medical conditions affecting wound healing" .
+                  rdfs:subClassOf ns1:OGMS_0000031 ;
+                  rdfs:label "Medical conditions affecting wound healing" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000194
 wont:WONT_0000194 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:OGMS_0000031 ;
-                 rdfs:label "Medical conditions contributing to blistering wounds" .
+                  rdfs:subClassOf ns1:OGMS_0000031 ;
+                  rdfs:label "Medical conditions contributing to blistering wounds" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000196
 wont:WONT_0000196 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000188 ;
-                 rdfs:label "Medicinal honey" .
+                  rdfs:subClassOf wont:WONT_0000188 ;
+                  rdfs:label "Medicinal honey" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000198
 wont:WONT_0000198 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:IAO_0000104 ;
-                 rdfs:label "Method used for wound complication prevention" .
+                  rdfs:subClassOf ns1:IAO_0000104 ;
+                  rdfs:label "Method used for wound complication prevention" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000199
 wont:WONT_0000199 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:IAO_0000104 ;
-                 rdfs:label "Method used for wound complication treatment" .
+                  rdfs:subClassOf ns1:IAO_0000104 ;
+                  rdfs:label "Method used for wound complication treatment" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000200
 wont:WONT_0000200 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:IAO_0000104 ;
-                 rdfs:label "Method used for wound treatment" .
+                  rdfs:subClassOf ns1:IAO_0000104 ;
+                  rdfs:label "Method used for wound treatment" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000201
 wont:WONT_0000201 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000192 ;
-                 rdfs:label "Microangiopathy" .
+                  rdfs:subClassOf wont:WONT_0000192 ;
+                  rdfs:label "Microangiopathy" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000202
 wont:WONT_0000202 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000089 ;
-                 rdfs:label "Microbial analysis of the wound swab for wound pathogens" .
+                  rdfs:subClassOf wont:WONT_0000089 ;
+                  rdfs:label "Microbial analysis of the wound swab for wound pathogens" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000203
 wont:WONT_0000203 rdf:type owl:Class ;
-                 rdfs:subClassOf :WONT_120020 ;
-                 rdfs:label "Moist necrosis" .
+                  rdfs:subClassOf wont:WONT_120020 ;
+                  rdfs:label "Moist necrosis" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000204
 wont:WONT_0000204 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000311 ;
-                 rdfs:label "Monaldi drain" .
+                  rdfs:subClassOf wont:WONT_0000311 ;
+                  rdfs:label "Monaldi drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000205
 wont:WONT_0000205 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Monofilament thread material" .
+                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:label "Monofilament thread material" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000207
 wont:WONT_0000207 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000010 ;
-                 rdfs:label "n-propanol" .
+                  rdfs:subClassOf wont:WONT_0000010 ;
+                  rdfs:label "n-propanol" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000208
 wont:WONT_0000208 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000412 ;
-                 rdfs:label "NaCl 0.9%" .
+                  rdfs:subClassOf wont:WONT_0000412 ;
+                  rdfs:label "NaCl 0.9%" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000209
 wont:WONT_0000209 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000412 ;
-                 rdfs:label "NaCl 10%" .
+                  rdfs:subClassOf wont:WONT_0000412 ;
+                  rdfs:label "NaCl 10%" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000211
 wont:WONT_0000211 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000382 ;
-                 rdfs:label "Necrotic wound bed" .
+                  rdfs:subClassOf wont:WONT_0000382 ;
+                  rdfs:label "Necrotic wound bed" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000213
 wont:WONT_0000213 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000200 ;
-                 rdfs:label "Negative pressure wound therapy" .
+                  rdfs:subClassOf wont:WONT_0000200 ;
+                  rdfs:label "Negative pressure wound therapy" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000214
 wont:WONT_0000214 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Neoplastic wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Neoplastic wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000215
 wont:WONT_0000215 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Non-absorbable thread material" .
+                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:label "Non-absorbable thread material" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000216
 wont:WONT_0000216 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000423 ;
-                 rdfs:label "Nutritional status improvement process"@en .
+                  rdfs:subClassOf wont:WONT_0000423 ;
+                  rdfs:label "Nutritional status improvement process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000220
 wont:WONT_0000220 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000406 ;
-                 rdfs:label "Octenidine gel" .
+                  rdfs:subClassOf wont:WONT_0000406 ;
+                  rdfs:label "Octenidine gel" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000221
 wont:WONT_0000221 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000093 ;
-                 rdfs:label "Open drain" .
+                  rdfs:subClassOf wont:WONT_0000093 ;
+                  rdfs:label "Open drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000222
 wont:WONT_0000222 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000199 ;
-                 rdfs:label "Pain management" .
+                  rdfs:subClassOf wont:WONT_0000199 ;
+                  rdfs:label "Pain management" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000224
 wont:WONT_0000224 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000093 ;
-                 rdfs:label "Passive drain" .
+                  rdfs:subClassOf wont:WONT_0000093 ;
+                  rdfs:label "Passive drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000225
 wont:WONT_0000225 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000200 ;
-                 rdfs:label "Patient education" .
+                  rdfs:subClassOf wont:WONT_0000200 ;
+                  rdfs:label "Patient education" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000227
 wont:WONT_0000227 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000058 ;
-                 rdfs:label "Penrose drain" .
+                  rdfs:subClassOf wont:WONT_0000058 ;
+                  rdfs:label "Penrose drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000228
 wont:WONT_0000228 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000198 ;
-                 rdfs:label "Perioperative antimicrobial prophylaxis" .
+                  rdfs:subClassOf wont:WONT_0000198 ;
+                  rdfs:label "Perioperative antimicrobial prophylaxis" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000229
 wont:WONT_0000229 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000192 ;
-                 rdfs:label "Peripheral arterial occlusive disease" .
+                  rdfs:subClassOf wont:WONT_0000192 ;
+                  rdfs:label "Peripheral arterial occlusive disease" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000233
 wont:WONT_0000233 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Phlegmon" .
+                  rdfs:subClassOf mild:MILD_120022 ;
+                  rdfs:label "Phlegmon" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000235
 wont:WONT_0000235 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000224 ;
-                 rdfs:label "Pigtail catheter" .
+                  rdfs:subClassOf wont:WONT_0000224 ;
+                  rdfs:label "Pigtail catheter" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000236
 wont:WONT_0000236 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000419 ;
-                 rdfs:label "Planimetry" .
+                  rdfs:subClassOf wont:WONT_0000419 ;
+                  rdfs:label "Planimetry" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000237
 wont:WONT_0000237 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000112 ;
-                 rdfs:label "Plaster" .
+                  rdfs:subClassOf wont:WONT_0000112 ;
+                  rdfs:label "Plaster" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000238
 wont:WONT_0000238 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:CHEBI_3095 ;
-                 rdfs:label "Polihexanide" .
+                  rdfs:subClassOf ns1:CHEBI_3095 ;
+                  rdfs:label "Polihexanide" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000239
 wont:WONT_0000239 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000026 ;
-                 rdfs:label "Polihexanide containing solution" .
+                  rdfs:subClassOf wont:WONT_0000026 ;
+                  rdfs:label "Polihexanide containing solution" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000240
 wont:WONT_0000240 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000406 ;
-                 rdfs:label "Polihexanide gel" .
+                  rdfs:subClassOf wont:WONT_0000406 ;
+                  rdfs:label "Polihexanide gel" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000241
 wont:WONT_0000241 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Polyfilament thread material" .
+                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:label "Polyfilament thread material" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000243
 wont:WONT_0000243 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000395 ;
-                 rdfs:label "Postoperative wound control process"@en .
+                  rdfs:subClassOf wont:WONT_0000395 ;
+                  rdfs:label "Postoperative wound control process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000245
 wont:WONT_0000245 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000418 ;
-                 rdfs:label "Pressure impact process"@en .
+                  rdfs:subClassOf wont:WONT_0000418 ;
+                  rdfs:label "Pressure impact process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000247
 wont:WONT_0000247 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Primarily-healing wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Primarily-healing wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000248
 wont:WONT_0000248 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:GO_0042060 ;
-                 rdfs:label "Wound healing by primary intention"@en .
+                  rdfs:subClassOf ns1:GO_0042060 ;
+                  rdfs:label "Wound healing by primary intention"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000253
 wont:WONT_0000253 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000404 ;
-                 rdfs:label "Purulent exudate" .
+                  rdfs:subClassOf wont:WONT_0000404 ;
+                  rdfs:label "Purulent exudate" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000256
 wont:WONT_0000256 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000401 ;
-                 rdfs:label "Reddened wound edge" .
+                  rdfs:subClassOf wont:WONT_0000401 ;
+                  rdfs:label "Reddened wound edge" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000257
 wont:WONT_0000257 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:PATO_0000014 ;
-                 rdfs:label "Redness" .
+                  rdfs:subClassOf ns1:PATO_0000014 ;
+                  rdfs:label "Redness" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000258
 wont:WONT_0000258 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000145 ;
-                 rdfs:label "Redon drain" .
+                  rdfs:subClassOf wont:WONT_0000145 ;
+                  rdfs:label "Redon drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000260
 wont:WONT_0000260 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:GO_0042060 ;
-                 rdfs:label "Regenerative wound healing" .
+                  rdfs:subClassOf ns1:GO_0042060 ;
+                  rdfs:label "Regenerative wound healing" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000261
 wont:WONT_0000261 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Regeneratively-healing wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Regeneratively-healing wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000263
 wont:WONT_0000263 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000409 ;
-                 rdfs:label "Tissue repair process"@en .
+                  rdfs:subClassOf wont:WONT_0000409 ;
+                  rdfs:label "Tissue repair process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000265
 wont:WONT_0000265 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Resorbable thread material" .
+                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:label "Resorbable thread material" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000266
 wont:WONT_0000266 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000412 ;
-                 rdfs:label "Ringer solution" .
+                  rdfs:subClassOf wont:WONT_0000412 ;
+                  rdfs:label "Ringer solution" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000267
 wont:WONT_0000267 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000133 ;
-                 rdfs:label "Robinson drain" .
+                  rdfs:subClassOf wont:WONT_0000133 ;
+                  rdfs:label "Robinson drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000268
 wont:WONT_0000268 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000404 ;
-                 rdfs:label "Sanguine exudate" .
+                  rdfs:subClassOf wont:WONT_0000404 ;
+                  rdfs:label "Sanguine exudate" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000269
 wont:WONT_0000269 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000015 ;
-                 rdfs:label "Scar complication process"@en .
+                  rdfs:subClassOf ns1:BFO_0000015 ;
+                  rdfs:label "Pathological scarring process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000271
 wont:WONT_0000271 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000339 ;
-                 rdfs:label "Scratch wound" .
+                  rdfs:subClassOf wont:WONT_0000339 ;
+                  rdfs:label "Scratch wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000272
 wont:WONT_0000272 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Secondarily-healing wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Secondarily-healing wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000273
 wont:WONT_0000273 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Secondary dressing" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Secondary dressing" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000274
 wont:WONT_0000274 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:GO_0042060 ;
-                 rdfs:label "Wound healing by secondary intention"@en .
+                  rdfs:subClassOf ns1:GO_0042060 ;
+                  rdfs:label "Wound healing by secondary intention"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000275
 wont:WONT_0000275 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000093 ;
-                 rdfs:label "Semi-open drain" .
+                  rdfs:subClassOf wont:WONT_0000093 ;
+                  rdfs:label "Semi-open drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000276
 wont:WONT_0000276 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Seroma" .
+                  rdfs:subClassOf mild:MILD_120022 ;
+                  rdfs:label "Seroma" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000277
 wont:WONT_0000277 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000404 ;
-                 rdfs:label "Serosanguineous exudate" .
+                  rdfs:subClassOf wont:WONT_0000404 ;
+                  rdfs:label "Serosanguineous exudate" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000278
 wont:WONT_0000278 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000404 ;
-                 rdfs:label "Serous exudate" .
+                  rdfs:subClassOf wont:WONT_0000404 ;
+                  rdfs:label "Serous exudate" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000279
 wont:WONT_0000279 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000066 ;
-                 rdfs:label "Shea classification of pressure ulcers" .
+                  rdfs:subClassOf wont:WONT_0000066 ;
+                  rdfs:label "Shea classification of pressure ulcers" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000280
 wont:WONT_0000280 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Silicone spacer grid" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Silicone spacer grid" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000282
 wont:WONT_0000282 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Silver-containing wound dressing" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Silver-containing wound dressing" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000283
 wont:WONT_0000283 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000301 ;
-                 rdfs:label "Simple interrupted suture" .
+                  rdfs:subClassOf wont:WONT_0000301 ;
+                  rdfs:label "Simple interrupted suture" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000284
 wont:WONT_0000284 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000395 ;
-                 rdfs:label "Skin color assessment process"@en .
+                  rdfs:subClassOf wont:WONT_0000395 ;
+                  rdfs:label "Skin color assessment process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000285
 wont:WONT_0000285 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Skin graft" .
+                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:label "Skin graft" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000286
 wont:WONT_0000286 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000200 ;
-                 rdfs:label "Skin grafting" .
+                  rdfs:subClassOf wont:WONT_0000200 ;
+                  rdfs:label "Skin grafting" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000287
 wont:WONT_0000287 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000389 ;
-                 rdfs:label "Skin stapling" .
+                  rdfs:subClassOf wont:WONT_0000389 ;
+                  rdfs:label "Skin stapling" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000289
 wont:WONT_0000289 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000193 ;
-                 rdfs:label "Smoking" .
+                  rdfs:subClassOf wont:WONT_0000193 ;
+                  rdfs:label "Smoking" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000290
 wont:WONT_0000290 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000401 ;
-                 rdfs:label "Softened wound edge" .
+                  rdfs:subClassOf wont:WONT_0000401 ;
+                  rdfs:label "Softened wound edge" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000291
 wont:WONT_0000291 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000395 ;
-                 rdfs:label "Wound odor assessment process"@en .
+                  rdfs:subClassOf wont:WONT_0000395 ;
+                  rdfs:label "Wound odor assessment process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000292
 wont:WONT_0000292 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000285 ;
-                 rdfs:label "Split-thickness skin graft" .
+                  rdfs:subClassOf wont:WONT_0000285 ;
+                  rdfs:label "Split-thickness skin graft" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000296
 wont:WONT_0000296 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000188 ;
-                 rdfs:label "Substance used for enzymatic wound debridement" .
+                  rdfs:subClassOf wont:WONT_0000188 ;
+                  rdfs:label "Substance used for enzymatic wound debridement" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000297
 wont:WONT_0000297 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000030 ;
-                 rdfs:label "Surface disinfection" .
+                  rdfs:subClassOf wont:WONT_0000030 ;
+                  rdfs:label "Surface disinfection" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000298
 wont:WONT_0000298 rdf:type owl:Class ;
-                 rdfs:subClassOf <https://bioportal.bioontology.org/ontologies/MILD/MILD_120086> ;
-                 rdfs:label "Surgical treatment process"@en .
+                  rdfs:subClassOf mild:MILD_120086 ;
+                  rdfs:label "Surgical treatment process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000299
 wont:WONT_0000299 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000084 ;
-                 rdfs:label "Surgical wound debridement process"@en .
+                  rdfs:subClassOf wont:WONT_0000084 ;
+                  rdfs:label "Surgical wound debridement process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000301
 wont:WONT_0000301 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:COB_0001300 ;
-                 rdfs:label "Suture in situ"@en .
+                  rdfs:subClassOf ns1:COB_0001300 ;
+                  rdfs:label "Suture in situ"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000302
 wont:WONT_0000302 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000389 ;
-                 rdfs:label "Suturing" .
+                  rdfs:subClassOf wont:WONT_0000389 ;
+                  rdfs:label "Suturing" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000304
 wont:WONT_0000304 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Synthetic wound dressing foam"@en .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Synthetic wound dressing foam"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000305
 wont:WONT_0000305 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000016 ;
-                 rdfs:label "Systemic antibiotic therapy" .
+                  rdfs:subClassOf wont:WONT_0000016 ;
+                  rdfs:label "Systemic antibiotic therapy" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000306
 wont:WONT_0000306 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000089 ;
-                 rdfs:label "Taking a wound swab" .
+                  rdfs:subClassOf wont:WONT_0000089 ;
+                  rdfs:label "Taking a wound swab" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000307
 wont:WONT_0000307 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Tertiarily-healing wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Tertiarily-healing wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000308
 wont:WONT_0000308 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:GO_0042060 ;
-                 rdfs:label "Wound healing by tertiary intention"@en .
+                  rdfs:subClassOf ns1:GO_0042060 ;
+                  rdfs:label "Wound healing by tertiary intention"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000309
 wont:WONT_0000309 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Thermal or cauterizing wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Thermal or cauterizing wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310
 wont:WONT_0000310 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Thermal wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Thermal wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000311
 wont:WONT_0000311 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000093 ;
-                 rdfs:label "Thoracic drain" .
+                  rdfs:subClassOf wont:WONT_0000093 ;
+                  rdfs:label "Thoracic drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000315
 wont:WONT_0000315 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:PATO_0000117 ;
-                 rdfs:label "Thread size" .
+                  rdfs:subClassOf ns1:PATO_0000117 ;
+                  rdfs:label "Thread size" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000316
 wont:WONT_0000316 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 0" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 0" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000317
 wont:WONT_0000317 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 1" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 1" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000318
 wont:WONT_0000318 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 1-0" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 1-0" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000319
 wont:WONT_0000319 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 10-0" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 10-0" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000320
 wont:WONT_0000320 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 11-0" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 11-0" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000321
 wont:WONT_0000321 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 12-0" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 12-0" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000322
 wont:WONT_0000322 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 13-0" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 13-0" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000323
 wont:WONT_0000323 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 2" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 2" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000324
 wont:WONT_0000324 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 2-0" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 2-0" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000325
 wont:WONT_0000325 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 3" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 3" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000326
 wont:WONT_0000326 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 3-0" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 3-0" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000327
 wont:WONT_0000327 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 4" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 4" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000328
 wont:WONT_0000328 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 4-0" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 4-0" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000329
 wont:WONT_0000329 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 5" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 5" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000330
 wont:WONT_0000330 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 5-0" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 5-0" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000331
 wont:WONT_0000331 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 6-0" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 6-0" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000332
 wont:WONT_0000332 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 7-0" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 7-0" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000333
 wont:WONT_0000333 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 8-0" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 8-0" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000334
 wont:WONT_0000334 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000315 ;
-                 rdfs:label "Thread size 9-0" .
+                  rdfs:subClassOf wont:WONT_0000315 ;
+                  rdfs:label "Thread size 9-0" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000335
 wont:WONT_0000335 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000016 ;
-                 rdfs:label "Topical antibiotic therapy" .
+                  rdfs:subClassOf wont:WONT_0000016 ;
+                  rdfs:label "Topical antibiotic therapy" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000336
 wont:WONT_0000336 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:CHEBI_33284 ;
-                 rdfs:label "trace element"@en .
+                  rdfs:subClassOf ns1:CHEBI_33284 ;
+                  rdfs:label "trace element"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000337
 wont:WONT_0000337 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Transparent polyurethane films" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Transparent polyurethane films" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338
 wont:WONT_0000338 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000418 ;
-                 rdfs:label "Trauma process"@en .
+                  rdfs:subClassOf wont:WONT_0000418 ;
+                  ns1:IAO_0000118 "injury"@en ;
+                  rdfs:label "Trauma process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339
 wont:WONT_0000339 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Traumatic wound" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Traumatic wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000341
 wont:WONT_0000341 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000066 ;
-                 rdfs:label "Tscherne and Oestern wound classification" .
+                  rdfs:subClassOf wont:WONT_0000066 ;
+                  rdfs:label "Tscherne and Oestern wound classification" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000342
 wont:WONT_0000342 rdf:type owl:Class ;
-                 rdfs:subClassOf :WONT_120016 ;
-                 rdfs:label "Tscherne and Oestern wound classification grade" .
+                  rdfs:subClassOf wont:WONT_120016 ;
+                  rdfs:label "Tscherne and Oestern wound classification grade" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000344
 wont:WONT_0000344 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000093 ;
-                 rdfs:label "Tympanic drain" .
+                  rdfs:subClassOf wont:WONT_0000093 ;
+                  rdfs:label "Tympanic drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000346
 wont:WONT_0000346 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:HP_0032674 ;
-                 rdfs:label "Ulcus cruris mixtum" .
+                  rdfs:subClassOf ns1:HP_0032674 ;
+                  rdfs:label "Ulcus cruris mixtum" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000347
 wont:WONT_0000347 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:HP_0032674 ,
-                                 wont:WONT_0000384 ;
-                 rdfs:label "Ulcus cruris venosum" .
+                  rdfs:subClassOf ns1:HP_0032674 ,
+                                  wont:WONT_0000384 ;
+                  rdfs:label "Ulcus cruris venosum" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000348
 wont:WONT_0000348 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:HP_0032674 ;
-                 rdfs:label "Ulcus hypertonicus Martorell" .
+                  rdfs:subClassOf ns1:HP_0032674 ;
+                  rdfs:label "Ulcus hypertonicus Martorell" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000350
 wont:WONT_0000350 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000084 ;
-                 rdfs:label "Ultrasound-assisted wound debridement process"@en .
+                  rdfs:subClassOf wont:WONT_0000084 ;
+                  rdfs:label "Ultrasound-assisted wound debridement process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000351
 wont:WONT_0000351 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000401 ;
-                 rdfs:label "Undermined wound margin" .
+                  rdfs:subClassOf wont:WONT_0000401 ;
+                  rdfs:label "Undermined wound margin" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000352
 wont:WONT_0000352 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000066 ;
-                 rdfs:label "URGE scale" .
+                  rdfs:subClassOf wont:WONT_0000066 ;
+                  rdfs:label "URGE scale" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000355
 wont:WONT_0000355 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000093 ;
-                 rdfs:label "Ventricular drain" .
+                  rdfs:subClassOf wont:WONT_0000093 ;
+                  rdfs:label "Ventricular drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000356
 wont:WONT_0000356 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000301 ;
-                 rdfs:label "Vertical mattress suture" .
+                  rdfs:subClassOf wont:WONT_0000301 ;
+                  rdfs:label "Vertical mattress suture" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000358
 wont:WONT_0000358 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000406 ;
-                 rdfs:label "Voltaren gel" .
+                  rdfs:subClassOf wont:WONT_0000406 ;
+                  rdfs:label "Voltaren gel" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000375
 wont:WONT_0000375 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000066 ;
-                 rdfs:label "Wagner and Anderson wound classification" .
+                  rdfs:subClassOf wont:WONT_0000066 ;
+                  rdfs:label "Wagner and Anderson wound classification" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000376
 wont:WONT_0000376 rdf:type owl:Class ;
-                 rdfs:subClassOf :WONT_120016 ;
-                 rdfs:label "Wagner and Anderson wound classification grade" .
+                  rdfs:subClassOf wont:WONT_120016 ;
+                  rdfs:label "Wagner and Anderson wound classification grade" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000377
 wont:WONT_0000377 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000084 ;
-                 rdfs:label "Water-jet assisted wound debridement process"@en .
+                  rdfs:subClassOf wont:WONT_0000084 ;
+                  rdfs:label "Water-jet assisted wound debridement process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000378
 wont:WONT_0000378 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000030 ;
-                 rdfs:label "Wearing Sterile gloves" .
+                  rdfs:subClassOf wont:WONT_0000030 ;
+                  rdfs:label "Wearing Sterile gloves" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000379
 wont:WONT_0000379 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000392 ;
-                 rdfs:label "Wound dehiscence causally related to suture insufficiency" .
+                  rdfs:subClassOf wont:WONT_0000392 ;
+                  rdfs:label "Wound dehiscence causally related to suture insufficiency" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380
 wont:WONT_0000380 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ,
-                                 [ rdf:type owl:Restriction ;
-                                   owl:onProperty ns1:OBI_0000312 ;
-                                   owl:someValuesFrom wont:WONT_0000414
-                                 ] ;
-                 rdfs:label "Wound" .
+                  rdfs:subClassOf mild:MILD_120022 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:OBI_0000312 ;
+                                    owl:someValuesFrom wont:WONT_0000414
+                                  ] ;
+                  rdfs:label "Wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000381
 wont:WONT_0000381 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000093 ;
-                 rdfs:label "Wound and soft tissue drain" .
+                  rdfs:subClassOf wont:WONT_0000093 ;
+                  rdfs:label "Wound and soft tissue drain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000382
 wont:WONT_0000382 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Wound base" .
+                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:label "Wound base" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000383
 wont:WONT_0000383 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Wound biofilm" .
+                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:label "Wound biofilm" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000384
 wont:WONT_0000384 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 rdfs:label "Wound causally related to impaired venous backflow" .
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:label "Wound causally related to impaired venous backflow" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000387
 wont:WONT_0000387 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000423 ;
-                 rdfs:label "Wound cleansing process" .
+                  rdfs:subClassOf wont:WONT_0000423 ;
+                  rdfs:label "Wound cleansing process" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000388
 wont:WONT_0000388 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000423 ;
-                 rdfs:label "Wound closure process"@en .
+                  rdfs:subClassOf wont:WONT_0000423 ;
+                  rdfs:label "Wound closure process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000389
 wont:WONT_0000389 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:IAO_0000104 ;
-                 rdfs:label "Wound closure technique" .
+                  rdfs:subClassOf ns1:IAO_0000104 ;
+                  rdfs:label "Wound closure technique" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000390
 wont:WONT_0000390 rdf:type owl:Class ;
-                 rdfs:subClassOf <https://bioportal.bioontology.org/ontologies/MILD/MILD_120092> ;
-                 rdfs:label "Wound complication process"@en .
+                  rdfs:subClassOf mild:MILD_120092 ;
+                  rdfs:label "Wound complication process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000391
 wont:WONT_0000391 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000409 ;
-                 rdfs:label "Wound contraction process"@en .
+                  rdfs:subClassOf wont:WONT_0000409 ;
+                  rdfs:label "Wound contraction process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000392
 wont:WONT_0000392 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Wound dehiscence" .
+                  rdfs:subClassOf mild:MILD_120022 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:OBI_0000312 ;
+                                    owl:someValuesFrom wont:WONT_0000433
+                                  ] ;
+                  rdfs:label "Wound dehiscence" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000395
 wont:WONT_0000395 rdf:type owl:Class ;
-                 rdfs:subClassOf <https://bioportal.bioontology.org/ontologies/MILD/MILD_120047> ;
-                 rdfs:label "Wound diagnostic process"@en .
+                  rdfs:subClassOf mild:MILD_120047 ;
+                  rdfs:label "Wound diagnostic process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000397
 wont:WONT_0000397 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:COB_0000082 ;
-                 rdfs:label "Wound documentation process" .
+                  rdfs:subClassOf ns1:COB_0000082 ;
+                  rdfs:label "Wound documentation process" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000398
 wont:WONT_0000398 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:COB_0001300 ,
-                                 [ rdf:type owl:Restriction ;
-                                   owl:onProperty ns1:RO_0000085 ;
-                                   owl:someValuesFrom :WONT_120012
-                                 ] ;
-                 rdfs:label "Wound dressing" .
+                  rdfs:subClassOf ns1:COB_0001300 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000085 ;
+                                    owl:someValuesFrom wont:WONT_120012
+                                  ] ;
+                  rdfs:label "Wound dressing" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000399
 wont:WONT_0000399 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000427 ;
-                 rdfs:label "Wound dressing composed of a polylactide membrane" .
+                  rdfs:subClassOf wont:WONT_0000427 ;
+                  rdfs:label "Wound dressing composed of a polylactide membrane" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000400
 wont:WONT_0000400 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000427 ;
-                 rdfs:label "Wound dressing composed of polyurethane foam" .
+                  rdfs:subClassOf wont:WONT_0000427 ;
+                  rdfs:label "Wound dressing composed of polyurethane foam" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000401
 wont:WONT_0000401 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Wound edge" .
+                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:label "Wound edge" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000402
 wont:WONT_0000402 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000423 ;
-                 rdfs:label "Wound edge protection process"@en .
+                  rdfs:subClassOf wont:WONT_0000423 ;
+                  rdfs:label "Wound edge protection process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000403
 wont:WONT_0000403 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:OMRSE_00000012 ;
-                 rdfs:label "Wound expert role"@en .
+                  rdfs:subClassOf ns1:OMRSE_00000012 ;
+                  rdfs:label "Wound expert role"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000404
 wont:WONT_0000404 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Wound exudate" .
+                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:label "Wound exudate" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000405
 wont:WONT_0000405 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000389 ;
-                 rdfs:label "Wound Fabric adhesive" .
+                  rdfs:subClassOf wont:WONT_0000389 ;
+                  rdfs:label "Wound Fabric adhesive" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000406
 wont:WONT_0000406 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:DRON_00000005 ;
-                 rdfs:label "Wound gel/ointment/cream" .
+                  rdfs:subClassOf ns1:DRON_00000005 ;
+                  rdfs:label "Wound gel/ointment/cream" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000408
 wont:WONT_0000408 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000192 ;
-                 rdfs:label "Wound healing disorder" .
+                  rdfs:subClassOf wont:WONT_0000192 ;
+                  rdfs:label "Wound healing disorder" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000409
 wont:WONT_0000409 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:GO_0008150 ;
-                 rdfs:label "Wound healing related physiological process"@en .
+                  rdfs:subClassOf ns1:GO_0008150 ;
+                  rdfs:label "Wound healing related physiological process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000410
 wont:WONT_0000410 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000390 ;
-                 rdfs:label "Wound infection process"@en .
+                  rdfs:subClassOf wont:WONT_0000390 ;
+                  rdfs:label "Wound infection process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000411
 wont:WONT_0000411 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000423 ;
-                 rdfs:label "Wound irrigation process"@en .
+                  rdfs:subClassOf wont:WONT_0000423 ;
+                  rdfs:label "Wound irrigation process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000412
 wont:WONT_0000412 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:DRON_00000005 ;
-                 rdfs:label "Wound irrigation solution" .
+                  rdfs:subClassOf ns1:DRON_00000005 ;
+                  rdfs:label "Wound irrigation solution" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000413
 wont:WONT_0000413 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:OMRSE_00000012 ;
-                 rdfs:label "Wound manager role"@en .
+                  rdfs:subClassOf ns1:OMRSE_00000012 ;
+                  rdfs:label "Wound manager role"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000414
 wont:WONT_0000414 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000015 ;
-                 rdfs:label "Wound development process"@en .
+                  rdfs:subClassOf mild:MILD_120021 ;
+                  rdfs:label "Wound development process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000415
 wont:WONT_0000415 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000019 ;
-                 rdfs:label "Wound pain" .
+                  rdfs:subClassOf ns1:BFO_0000019 ;
+                  rdfs:label "Wound pain" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000416
 wont:WONT_0000416 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000089 ;
-                 rdfs:label "Wound palpation" .
+                  rdfs:subClassOf wont:WONT_0000089 ;
+                  rdfs:label "Wound palpation" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000417
 wont:WONT_0000417 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000040 ;
-                 rdfs:label "Wound pocket" .
+                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:label "Wound pocket" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000418
 wont:WONT_0000418 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000015 ;
-                 rdfs:label "Pathologial wound realizing process"@en .
+                  rdfs:subClassOf mild:MILD_120021 ;
+                  rdfs:label "Pathological wound realizing process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000419
 wont:WONT_0000419 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000395 ;
-                 rdfs:label "Wound size measurement process"@en .
+                  rdfs:subClassOf wont:WONT_0000395 ;
+                  rdfs:label "Wound size measurement process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000420
 wont:WONT_0000420 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Wound spacer grid" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Wound spacer grid" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000421
 wont:WONT_0000421 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000389 ;
-                 rdfs:label "Wound staple plastering" .
+                  rdfs:subClassOf wont:WONT_0000389 ;
+                  rdfs:label "Wound staple plastering" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000422
 wont:WONT_0000422 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000395 ;
-                 rdfs:label "Wound temperature assessment process"@en .
+                  rdfs:subClassOf wont:WONT_0000395 ;
+                  rdfs:label "Wound temperature assessment process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000423
 wont:WONT_0000423 rdf:type owl:Class ;
-                 rdfs:subClassOf <https://bioportal.bioontology.org/ontologies/MILD/MILD_120086> ;
-                 rdfs:label "Wound treatment process"@en .
+                  rdfs:subClassOf mild:MILD_120086 ;
+                  rdfs:label "Wound treatment process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000425
 wont:WONT_0000425 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000419 ;
-                 rdfs:label "Wound volumetrics" .
+                  rdfs:subClassOf wont:WONT_0000419 ;
+                  rdfs:label "Wound volumetrics" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000426
 wont:WONT_0000426 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000339 ,
-                                 wont:WONT_0000380 ;
-                 rdfs:label "Wound with accompanying fracture" .
+                  rdfs:subClassOf wont:WONT_0000339 ,
+                                  wont:WONT_0000380 ;
+                  rdfs:label "Wound with accompanying fracture" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000427
 wont:WONT_0000427 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Wound-integrating wound dressing" .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000428
-wont:WONT_0000428 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000398 ;
-                 rdfs:label "Wound-integrating wound dressings" .
+                  rdfs:subClassOf wont:WONT_0000398 ;
+                  rdfs:label "Wound-integrating wound dressing" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000429
 wont:WONT_0000429 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:HP_0032674 ,
-                                 wont:WONT_0000426 ;
-                 rdfs:label "Wounds classified according to Gustilo and Anderson" .
+                  rdfs:subClassOf ns1:HP_0032674 ,
+                                  wont:WONT_0000426 ;
+                  rdfs:label "Wounds classified according to Gustilo and Anderson" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000430
 wont:WONT_0000430 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:HP_0032674 ,
-                                 wont:WONT_0000426 ;
-                 rdfs:label "Wounds classified according to Tscherne and Oestern" .
+                  rdfs:subClassOf ns1:HP_0032674 ,
+                                  wont:WONT_0000426 ;
+                  rdfs:label "Wounds classified according to Tscherne and Oestern" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000432
 wont:WONT_0000432 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000002 ;
-                 rdfs:label "T drain" .
+                  rdfs:subClassOf wont:WONT_0000002 ;
+                  rdfs:label "T drain" .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000433
+wont:WONT_0000433 rdf:type owl:Class ;
+                  rdfs:subClassOf mild:MILD_120021 ;
+                  ns1:IAO_0000115 "A disorder development process in which previously approximated wound edges separate."@en ;
+                  rdfs:label "Wound dehiscence process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000434
+wont:WONT_0000434 rdf:type owl:Class ;
+                  rdfs:subClassOf ns1:BFO_0000019 ;
+                  ns1:IAO_0000115 "A quality of a wound edge that is the extent to which its tissue has been softened by prolonged exposure to moisture."@en ;
+                  rdfs:label "degree of maceration"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000435
+wont:WONT_0000435 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000434 ;
+                  ns1:IAO_0000115 "A degree of maceration that qualifies its bearer as macerated."@en ;
+                  rdfs:label "macerated"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000436
+wont:WONT_0000436 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000066 ;
+                  ns1:IAO_0000115 "A wound classification scale that stratifies burn wounds by the depth of tissue destroyed."@en ;
+                  rdfs:label "Burn classification scale"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000437
+wont:WONT_0000437 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_120016 ;
+                  ns1:IAO_0000115 "A wound classification grade that is a category of the burn classification scale."@en ;
+                  rdfs:label "Burn classification grade"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000438
+wont:WONT_0000438 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_120016 ;
+                  ns1:IAO_0000115 "A wound classification grade that is a category of the Shea classification of pressure ulcers."@en ;
+                  rdfs:label "Shea classification grade"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000439
+wont:WONT_0000439 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000066 ;
+                  ns1:IAO_0000115 "A wound classification scale that stratifies surgical wounds by degree of intraoperative microbial contamination."@en ;
+                  rdfs:label "CDC surgical wound classification"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000440
+wont:WONT_0000440 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_120016 ;
+                  ns1:IAO_0000115 "A wound classification grade that is a category of the CDC surgical wound classification."@en ;
+                  rdfs:label "CDC surgical wound classification grade"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120000
-:WONT_120000 rdf:type owl:Class ;
-             rdfs:subClassOf ns1:BFO_0000034 ;
-             rdfs:label "wound protection function"@en .
+wont:WONT_120000 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000034 ;
+                 rdfs:label "wound protection function"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120001
-:WONT_120001 rdf:type owl:Class ;
-             rdfs:subClassOf ns1:BFO_0000034 ;
-             rdfs:label "wound signalling function"@en .
+wont:WONT_120001 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000034 ;
+                 rdfs:label "wound signalling function"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120002
-:WONT_120002 rdf:type owl:Class ;
-             rdfs:subClassOf :WONT_120004 ;
-             rdfs:label "first wound dressing layer function"@en .
+wont:WONT_120002 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_120004 ;
+                 rdfs:label "first wound dressing layer function"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120003
-:WONT_120003 rdf:type owl:Class ;
-             rdfs:subClassOf :WONT_120004 ;
-             rdfs:label "second wound dressing layer function"@en .
+wont:WONT_120003 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_120004 ;
+                 rdfs:label "second wound dressing layer function"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120004
-:WONT_120004 rdf:type owl:Class ;
-             rdfs:subClassOf ns1:BFO_0000034 ;
-             rdfs:label "wound dressing layer function"@en .
+wont:WONT_120004 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000034 ;
+                 rdfs:label "wound dressing layer function"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120005
-:WONT_120005 rdf:type owl:Class ;
-             rdfs:subClassOf ns1:BFO_0000034 ;
-             rdfs:label "wound dressing fixation function"@en .
+wont:WONT_120005 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000034 ;
+                 rdfs:label "wound dressing fixation function"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120006
-:WONT_120006 rdf:type owl:Class ;
-             rdfs:subClassOf :WONT_120005 ;
-             rdfs:label "non adhesive wound dressing fixation function"@en .
+wont:WONT_120006 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_120005 ;
+                 rdfs:label "non adhesive wound dressing fixation function"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120007
-:WONT_120007 rdf:type owl:Class ;
-             rdfs:subClassOf ns1:BFO_0000034 ;
-             rdfs:label "wound moisture absorbance function"@en .
+wont:WONT_120007 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000034 ;
+                 rdfs:label "wound moisture absorbance function"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120008
-:WONT_120008 rdf:type owl:Class ;
-             rdfs:subClassOf ns1:BFO_0000034 ;
-             rdfs:label "wound moisture regulation function"@en .
+wont:WONT_120008 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000034 ;
+                 rdfs:label "wound moisture regulation function"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120009
-:WONT_120009 rdf:type owl:Class ;
-             rdfs:subClassOf ns1:BFO_0000034 ;
-             rdfs:label "wound desinfecting function"@en .
+wont:WONT_120009 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000034 ;
+                 rdfs:label "wound desinfecting function"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120010
-:WONT_120010 rdf:type owl:Class ;
-             rdfs:subClassOf ns1:BFO_0000034 ;
-             rdfs:label "wound edge approximating function"@en .
+wont:WONT_120010 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000034 ;
+                 rdfs:label "wound edge approximating function"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120011
-:WONT_120011 rdf:type owl:Class ;
-             rdfs:subClassOf ns1:BFO_0000034 ;
-             rdfs:label "wound inspection facilitation function"@en .
+wont:WONT_120011 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000034 ;
+                 rdfs:label "wound inspection facilitation function"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120012
-:WONT_120012 rdf:type owl:Class ;
-             rdfs:subClassOf ns1:BFO_0000034 ;
-             rdfs:label "wound coverage function"@en .
+wont:WONT_120012 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000034 ;
+                 rdfs:label "wound coverage function"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120013
-:WONT_120013 rdf:type owl:Class ;
-             rdfs:subClassOf wont:WONT_0000423 ,
-                             [ rdf:type owl:Restriction ;
-                               owl:onProperty ns1:OBI_0000299 ;
-                               owl:someValuesFrom :WONT_120014
-                             ] ,
-                             [ rdf:type owl:Restriction ;
-                               owl:onProperty ns1:RO_0000057 ;
-                               owl:someValuesFrom wont:WONT_0000380
-                             ] ,
-                             [ rdf:type owl:Restriction ;
-                               owl:onProperty ns1:RO_0000057 ;
-                               owl:someValuesFrom wont:WONT_0000398
-                             ] ;
-             rdfs:label "Wound dressing process"@en .
+wont:WONT_120013 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000423 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:OBI_0000299 ;
+                                   owl:someValuesFrom wont:WONT_120014
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:RO_0000057 ;
+                                   owl:someValuesFrom wont:WONT_0000380
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:RO_0000057 ;
+                                   owl:someValuesFrom wont:WONT_0000398
+                                 ] ;
+                 rdfs:label "Wound dressing process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120014
-:WONT_120014 rdf:type owl:Class ;
-             rdfs:subClassOf wont:WONT_0000380 ,
-                             [ rdf:type owl:Restriction ;
-                               owl:onProperty ns1:BFO_0000051 ;
-                               owl:someValuesFrom wont:WONT_0000380
-                             ] ,
-                             [ rdf:type owl:Restriction ;
-                               owl:onProperty ns1:BFO_0000051 ;
-                               owl:someValuesFrom wont:WONT_0000398
-                             ] ;
-             rdfs:label "Wound covered by wound dressing"@en .
+wont:WONT_120014 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000380 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:BFO_0000051 ;
+                                   owl:someValuesFrom wont:WONT_0000380
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:BFO_0000051 ;
+                                   owl:someValuesFrom wont:WONT_0000398
+                                 ] ;
+                 rdfs:label "Wound covered by wound dressing"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120015
-:WONT_120015 rdf:type owl:Class ;
-             rdfs:subClassOf <https://bioportal.bioontology.org/ontologies/MILD/MILD_120055> ,
-                             [ rdf:type owl:Restriction ;
-                               owl:onProperty ns1:OBI_0000299 ;
-                               owl:someValuesFrom :WONT_120017
-                             ] ;
-             rdfs:label "Wound classification process"@en .
+wont:WONT_120015 rdf:type owl:Class ;
+                 rdfs:subClassOf mild:MILD_120055 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:OBI_0000299 ;
+                                   owl:someValuesFrom wont:WONT_120017
+                                 ] ;
+                 rdfs:label "Wound classification process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120016
-:WONT_120016 rdf:type owl:Class ;
-             rdfs:subClassOf <https://bioportal.bioontology.org/ontologies/MILD/MILD_120000> ;
-             rdfs:label "wound classification grade"@en .
+wont:WONT_120016 rdf:type owl:Class ;
+                 rdfs:subClassOf mild:MILD_120000 ;
+                 rdfs:label "wound classification grade"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120017
-:WONT_120017 rdf:type owl:Class ;
-             rdfs:subClassOf <https://bioportal.bioontology.org/ontologies/MILD/MILD_120054> ,
-                             [ rdf:type owl:Restriction ;
-                               owl:onProperty ns1:IAO_0000136 ;
-                               owl:someValuesFrom wont:WONT_0000380
-                             ] ,
-                             [ rdf:type owl:Restriction ;
-                               owl:onProperty ns1:OBI_0000312 ;
-                               owl:someValuesFrom :WONT_120015
-                             ] ;
-             rdfs:label "Wound classification result"@en .
+wont:WONT_120017 rdf:type owl:Class ;
+                 rdfs:subClassOf mild:MILD_120054 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:IAO_0000136 ;
+                                   owl:someValuesFrom wont:WONT_0000380
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:OBI_0000312 ;
+                                   owl:someValuesFrom wont:WONT_120015
+                                 ] ;
+                 rdfs:label "Wound classification result"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120018
-:WONT_120018 rdf:type owl:Class ;
-             rdfs:subClassOf ns1:BFO_0000040 ;
-             rdfs:label "wound infecting disposition"@en .
+wont:WONT_120018 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000016 ;
+                 rdfs:label "wound infecting disposition"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120019
-:WONT_120019 rdf:type owl:Class ;
-             owl:equivalentClass [ owl:intersectionOf ( ns1:BFO_0000040
-                                                        [ rdf:type owl:Restriction ;
-                                                          owl:onProperty ns1:RO_0000091 ;
-                                                          owl:someValuesFrom :WONT_120018
-                                                        ]
-                                                      ) ;
-                                   rdf:type owl:Class
-                                 ] ;
-             rdfs:subClassOf ns1:IDO_0000528 ;
-             rdfs:label "wound infecting pathogen"@en .
+wont:WONT_120019 rdf:type owl:Class ;
+                 owl:equivalentClass [ owl:intersectionOf ( ns1:BFO_0000040
+                                                            [ rdf:type owl:Restriction ;
+                                                              owl:onProperty ns1:RO_0000091 ;
+                                                              owl:someValuesFrom wont:WONT_120018
+                                                            ]
+                                                          ) ;
+                                       rdf:type owl:Class
+                                     ] ;
+                 rdfs:subClassOf ns1:IDO_0000528 ;
+                 rdfs:label "wound infecting pathogen"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120020
-:WONT_120020 rdf:type owl:Class ;
-             rdfs:subClassOf ns1:BFO_0000040 ;
-             rdfs:label "Necrosis"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/MILD/MILD_120000
-<https://bioportal.bioontology.org/ontologies/MILD/MILD_120000> rdf:type owl:Class .
-
-
-###  https://bioportal.bioontology.org/ontologies/MILD/MILD_120047
-<https://bioportal.bioontology.org/ontologies/MILD/MILD_120047> rdf:type owl:Class .
-
-
-###  https://bioportal.bioontology.org/ontologies/MILD/MILD_120054
-<https://bioportal.bioontology.org/ontologies/MILD/MILD_120054> rdf:type owl:Class .
-
-
-###  https://bioportal.bioontology.org/ontologies/MILD/MILD_120055
-<https://bioportal.bioontology.org/ontologies/MILD/MILD_120055> rdf:type owl:Class .
-
-
-###  https://bioportal.bioontology.org/ontologies/MILD/MILD_120086
-<https://bioportal.bioontology.org/ontologies/MILD/MILD_120086> rdf:type owl:Class .
-
-
-###  https://bioportal.bioontology.org/ontologies/MILD/MILD_120092
-<https://bioportal.bioontology.org/ontologies/MILD/MILD_120092> rdf:type owl:Class .
+wont:WONT_120020 rdf:type owl:Class ;
+                 rdfs:subClassOf mild:MILD_120022 ;
+                 rdfs:label "Necrosis"@en .
 
 
 #################################################################
 #    Individuals
 #################################################################
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120061
-:WONT_120061 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000342 ;
-             rdfs:label "Tscherne and Oestern wound classification grade I"@en .
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000052
+wont:WONT_0000052 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000437 ;
+                 ns1:IAO_0000118 "Burn wound Grade I"@en ;
+                 rdfs:label "Burn classification grade I"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120062
-:WONT_120062 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000342 ;
-             rdfs:label "Tscherne and Oestern wound classification grade II"@en .
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000053
+wont:WONT_0000053 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000437 ;
+                 ns1:IAO_0000118 "Burn wound Grade IIa"@en ;
+                 rdfs:label "Burn classification grade IIa"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120063
-:WONT_120063 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000342 ;
-             rdfs:label "Tscherne and Oestern wound classification grade III"@en .
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000054
+wont:WONT_0000054 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000437 ;
+                 ns1:IAO_0000118 "Burn wound Grade IIb"@en ;
+                 rdfs:label "Burn classification grade IIb"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120064
-:WONT_120064 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000342 ;
-             rdfs:label "Tscherne and Oestern wound classification grade IV"@en .
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000055
+wont:WONT_0000055 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000437 ;
+                 ns1:IAO_0000118 "Burn wound Grade III"@en ;
+                 rdfs:label "Burn classification grade III"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120065
-:WONT_120065 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 1A"@en .
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000056
+wont:WONT_0000056 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000437 ;
+                 ns1:IAO_0000118 "Burn wound Grade IV"@en ;
+                 rdfs:label "Burn classification grade IV"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120066
-:WONT_120066 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 1B"@en .
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000123
+wont:WONT_0000123 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000438 ;
+                 ns1:IAO_0000118 "Grade I pressure ulcer according to Shea"@en ;
+                 rdfs:label "Shea classification grade I"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120067
-:WONT_120067 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 1C"@en .
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000125
+wont:WONT_0000125 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000438 ;
+                 ns1:IAO_0000118 "Grade II pressure ulcer according to Shea"@en ;
+                 rdfs:label "Shea classification grade II"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120068
-:WONT_120068 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 1D"@en .
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000127
+wont:WONT_0000127 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000438 ;
+                 ns1:IAO_0000118 "Grade III pressure ulcer according to Shea"@en ;
+                 rdfs:label "Shea classification grade III"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120069
-:WONT_120069 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 2A"@en .
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000129
+wont:WONT_0000129 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000438 ;
+                 ns1:IAO_0000118 "Grade IV pressure ulcer according to Shea"@en ;
+                 rdfs:label "Shea classification grade IV"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120070
-:WONT_120070 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 2B"@en .
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120081
+wont:WONT_120081 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000440 ;
+                 rdfs:label "clean wound classification grade"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120071
-:WONT_120071 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 2C"@en .
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120082
+wont:WONT_120082 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000440 ;
+                 rdfs:label "clean-contaminated wound classification grade"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120072
-:WONT_120072 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 2D"@en .
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120083
+wont:WONT_120083 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000440 ;
+                 rdfs:label "contaminated wound classification grade"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120073
-:WONT_120073 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 3A"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120074
-:WONT_120074 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 3B"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120075
-:WONT_120075 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 3C"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120076
-:WONT_120076 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 3D"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120077
-:WONT_120077 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 4A"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120078
-:WONT_120078 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 4B"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120079
-:WONT_120079 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 4C"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120080
-:WONT_120080 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000376 ;
-             rdfs:label "Wagner and Anderson grade 4D"@en .
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120084
+wont:WONT_120084 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000440 ;
+                 rdfs:label "dirty or infected wound classification grade"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120056
-:WONT_120056 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000135 ;
-             rdfs:label "Gustilo and Anderson wound classification grade IIIC"@en .
+wont:WONT_120056 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000135 ;
+                 rdfs:label "Gustilo and Anderson wound classification grade IIIC"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120057
-:WONT_120057 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000135 ;
-             rdfs:label "Gustilo and Anderson wound classification grade IIIB"@en .
+wont:WONT_120057 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000135 ;
+                 rdfs:label "Gustilo and Anderson wound classification grade IIIB"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120058
-:WONT_120058 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000135 ;
-             rdfs:label "Gustilo and Anderson wound classification grade IIIA"@en .
+wont:WONT_120058 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000135 ;
+                 rdfs:label "Gustilo and Anderson wound classification grade IIIA"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120059
-:WONT_120059 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000135 ;
-             rdfs:label "Gustilo and Anderson wound classification grade II"@en .
+wont:WONT_120059 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000135 ;
+                 rdfs:label "Gustilo and Anderson wound classification grade II"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120060
-:WONT_120060 rdf:type owl:NamedIndividual ,
-                      wont:WONT_0000135 ;
-             rdfs:label "Gustilo and Anderson wound classification grade I"@en .
+wont:WONT_120060 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000135 ;
+                 rdfs:label "Gustilo and Anderson wound classification grade I"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120061
+wont:WONT_120061 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000342 ;
+                 rdfs:label "Tscherne and Oestern wound classification grade I"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120062
+wont:WONT_120062 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000342 ;
+                 rdfs:label "Tscherne and Oestern wound classification grade II"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120063
+wont:WONT_120063 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000342 ;
+                 rdfs:label "Tscherne and Oestern wound classification grade III"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120064
+wont:WONT_120064 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000342 ;
+                 rdfs:label "Tscherne and Oestern wound classification grade IV"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120065
+wont:WONT_120065 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 1A"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120066
+wont:WONT_120066 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 1B"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120067
+wont:WONT_120067 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 1C"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120068
+wont:WONT_120068 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 1D"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120069
+wont:WONT_120069 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 2A"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120070
+wont:WONT_120070 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 2B"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120071
+wont:WONT_120071 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 2C"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120072
+wont:WONT_120072 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 2D"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120073
+wont:WONT_120073 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 3A"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120074
+wont:WONT_120074 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 3B"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120075
+wont:WONT_120075 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 3C"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120076
+wont:WONT_120076 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 3D"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120077
+wont:WONT_120077 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 4A"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120078
+wont:WONT_120078 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 4B"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120079
+wont:WONT_120079 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 4C"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120080
+wont:WONT_120080 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000376 ;
+                 rdfs:label "Wagner and Anderson grade 4D"@en .
+
+
+
+
+#################################################################
+#    General axioms
+#################################################################
+
+###  Tier 3 - WONT domain disjointness.
+
+###  grades of Gustilo and Anderson wound classification grade are pairwise distinct
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( wont:WONT_120056
+                  wont:WONT_120057
+                  wont:WONT_120058
+                  wont:WONT_120059
+                  wont:WONT_120060
+                  )
+] .
+
+
+###  grades of Tscherne and Oestern wound classification grade are pairwise distinct
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( wont:WONT_120061
+                  wont:WONT_120062
+                  wont:WONT_120063
+                  wont:WONT_120064
+                  )
+] .
+
+
+###  grades of Wagner and Anderson wound classification grade are pairwise distinct
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( wont:WONT_120065
+                  wont:WONT_120066
+                  wont:WONT_120067
+                  wont:WONT_120068
+                  wont:WONT_120069
+                  wont:WONT_120070
+                  wont:WONT_120071
+                  wont:WONT_120072
+                  wont:WONT_120073
+                  wont:WONT_120074
+                  wont:WONT_120075
+                  wont:WONT_120076
+                  wont:WONT_120077
+                  wont:WONT_120078
+                  wont:WONT_120079
+                  wont:WONT_120080
+                  )
+] .
+
+
+###  grades of Burn classification grade are pairwise distinct
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( wont:WONT_0000052
+                  wont:WONT_0000053
+                  wont:WONT_0000054
+                  wont:WONT_0000055
+                  wont:WONT_0000056
+                  )
+] .
+
+
+###  grades of Shea classification grade are pairwise distinct
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( wont:WONT_0000123
+                  wont:WONT_0000125
+                  wont:WONT_0000127
+                  wont:WONT_0000129
+                  )
+] .
+
+
+###  grades of CDC surgical wound classification grade are pairwise distinct
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( wont:WONT_120081
+                  wont:WONT_120082
+                  wont:WONT_120083
+                  wont:WONT_120084
+                  )
+] .
+
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( wont:WONT_0000380
+                wont:WONT_0000398
+                wont:WONT_120017
+                wont:WONT_0000066
+                )
+] .
+
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( wont:WONT_0000423
+                wont:WONT_0000395
+                wont:WONT_120015
+                )
+] .
+
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( wont:WONT_0000382
+                wont:WONT_0000401
+                wont:WONT_0000417
+                )
+] .
+
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( wont:WONT_0000248
+                wont:WONT_0000274
+                wont:WONT_0000308
+                )
+] .
 
 
 ###  Generated by the OWL API (version 4.5.26.2023-07-17T20:34:13Z) https://github.com/owlcs/owlapi
