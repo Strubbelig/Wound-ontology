@@ -9,6 +9,16 @@ BASE_PATH = PROJECT_ROOT / "data" / "cache"
 OWL_OUTPUT_FILE = PROJECT_ROOT / "output" / "owl" / "ontology_classes.owl"
 PREDEFINED_HIERARCHY_FILE = PROJECT_ROOT / "data" / "raw" / "predefined_concept_hierarchy.csv"
 
+# Ground-truth ontologies. These are the source of truth for the extraction
+# schema (scripts/build_extraction_schema.py) and for the reasoner gate.
+GROUND_TRUTH_TTL = PROJECT_ROOT / "data" / "ground truth" / "ground_truth_final.owl"
+MILD_TTL = PROJECT_ROOT.parent / "Disease ontologies" / "Disease proposal 2.ttl"
+MILD_MODULES_DIR = PROJECT_ROOT.parent / "Disease ontologies" / "Disease ontology modules"
+
+# Where the reasoner gate keeps its cached skeleton TBox and quarantined batches.
+REASONER_SKELETON = PROJECT_ROOT / "output" / "owl" / "skeleton_tbox.ttl"
+QUARANTINE_DIR = PROJECT_ROOT / "output" / "quarantine"
+
 # Local source-ontology files used for external-class label enrichment.
 # Defaults to the shared Import-Ontologien folder one project-level up.
 IMPORT_ONTO_DIR = Path(

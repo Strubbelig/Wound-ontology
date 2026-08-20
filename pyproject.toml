@@ -36,4 +36,5 @@ testpaths = ["tests"]
 pythonpath = ["src", "."]
 markers = [
     "integration: marks tests as integration tests (requires API keys and network)",
+    "reasoner: marks tests that shell out to ROBOT/ELK (slow, needs robot on PATH)",
 ]

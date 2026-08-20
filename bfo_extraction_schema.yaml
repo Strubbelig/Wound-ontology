@@ -1,3 +1,26 @@
+# ============================================================================
+# DEPRECATED - SUPERSEDED, DO NOT USE. Safe to delete.
+#
+# Replaced by config/extraction_schema.yaml, which is GENERATED from MILD and
+# WONT by scripts/build_extraction_schema.py. No pipeline code ever imported
+# this file.
+#
+# It is kept only as the worked example of why the schema is now generated:
+# being hand-maintained, it drifted away from the ontologies it was meant to
+# serve, and nothing could detect that.
+#
+#   line ~160  Disease: is_a: Disposition
+#              MILD models disease as a MATERIAL continuant (MILD_120020),
+#              individuated by disorder-lineage continuity. This line asserts
+#              the OGMS disposition pattern MILD deliberately rejects.
+#   line ~161  id_prefixes: [MONDO]
+#              MONDO is a nosology. Grounding a material disorder to it
+#              reimports the category conflation MILD removes.
+#
+# The generated schema cannot drift this way: MILD says a material disease
+# entity is a material entity, so that is what comes out.
+# ============================================================================
+
 id: https://w3id.org/yourproject/bfo-extraction
 name: bfo-extraction
 title: BFO-rooted extraction schema

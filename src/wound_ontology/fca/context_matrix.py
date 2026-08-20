@@ -2,6 +2,7 @@ from __future__ import annotations
 import asyncio
 import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
+from wound_ontology.utils.string_utils import smart_title
 
 
 class ContextMatrix:
@@ -36,7 +37,7 @@ class ContextMatrix:
         # 1. Standardize casings
         # Rows are formal object names and should look nicer in title case.
         # Columns are predicates/targets and are normalized to lower case for stable grouping.
-        df.index = df.index.astype(str).str.strip().str.title()
+        df.index = df.index.astype(str).map(smart_title)
         df.columns = df.columns.astype(str).str.strip().str.lower()
 
         # 2. Separate attribute and metadata columns
@@ -75,9 +76,88 @@ class ContextMatrix:
         """Column names excluding metadata columns."""
         return [col for col in self.df.columns if not col.startswith("meta_")]
 
+    # ── Undecided cells ────────────────────────────────────────────────────────
+    #
+    # A NaN in this matrix means "not decided", which is NOT the same as "false"
+    # and emphatically not the same as "true". It must never reach the FCA
+    # Context: `concepts` coerces each cell with bool(), and bool(float('nan'))
+    # is True, so every undecided cell would silently assert that the attribute
+    # holds — manufacturing shared intents and therefore invented superclasses.
+
+    UNKNOWN_ABSENT = "absent"     # pessimistic: undecided -> attribute does not hold
+    UNKNOWN_PRESENT = "present"   # optimistic:  undecided -> attribute holds
+
+    def tuples(self, unknown: str = UNKNOWN_ABSENT):
+        """Boolean rows for FCA, with an explicit policy for undecided cells.
+
+        `unknown` must be UNKNOWN_ABSENT or UNKNOWN_PRESENT. There is
+        deliberately no default that lets NaN through.
+        """
+        if unknown not in (self.UNKNOWN_ABSENT, self.UNKNOWN_PRESENT):
+            raise ValueError("unknown must be %r or %r, got %r"
+                             % (self.UNKNOWN_ABSENT, self.UNKNOWN_PRESENT, unknown))
+        fill = 1.0 if unknown == self.UNKNOWN_PRESENT else 0.0
+        block = self.df.loc[:, self.attributes].fillna(fill)
+        rows = [tuple(bool(v) for v in row) for row in block.values]
+        assert not any(v is None for r in rows for v in r)
+        return rows
+
     @property
     def bool_tuples(self):
-        return [tuple(row) for row in self.df.loc[:, self.attributes].values]
+        """Pessimistic boolean rows. Undecided cells are treated as ABSENT.
+
+        Kept for callers that want a single lattice. Prefer `tuples()` with an
+        explicit policy, or ConceptLattice's dual-lattice build, which keeps
+        undecided cells undecided instead of guessing.
+        """
+        n = self.undecided_count
+        if n:
+            print(f"[ContextMatrix] {n} undecided cells treated as ABSENT for this "
+                  f"lattice ({self.undecided_density:.1%} of the matrix). "
+                  f"Use ConceptLattice's dual build to see what they would change.")
+        return self.tuples(self.UNKNOWN_ABSENT)
+
+    @property
+    def undecided_count(self) -> int:
+        """Number of undecided (NaN) attribute cells."""
+        if self.df.empty or not self.attributes:
+            return 0
+        return int(self.df.loc[:, self.attributes].isna().sum().sum())
+
+    @property
+    def undecided_density(self) -> float:
+        if self.df.empty or not self.attributes:
+            return 0.0
+        total = len(self.df.index) * len(self.attributes)
+        return (self.undecided_count / total) if total else 0.0
+
+    def undecided_cells(self) -> list[tuple[str, str]]:
+        """Every (object, attribute) pair whose value is undecided."""
+        if self.df.empty or not self.attributes:
+            return []
+        block = self.df.loc[:, self.attributes]
+        return [
+            (str(block.index[i]), str(block.columns[j]))
+            for i, j in zip(*block.isna().values.nonzero())
+        ]
+
+    def nan_report(self, top: int = 10) -> None:
+        """Print where the undecided cells actually are."""
+        n = self.undecided_count
+        if not n:
+            print("[ContextMatrix] no undecided cells.")
+            return
+        block = self.df.loc[:, self.attributes]
+        by_attr = block.isna().sum().sort_values(ascending=False)
+        by_obj  = block.isna().sum(axis=1).sort_values(ascending=False)
+        print(f"[ContextMatrix] {n} undecided cells "
+              f"({self.undecided_density:.1%} of {len(block.index)}x{len(self.attributes)})")
+        print("  worst attributes:")
+        for a, c in by_attr.head(top).items():
+            if c: print(f"    {int(c):5d}  {a}")
+        print("  worst objects:")
+        for o, c in by_obj.head(top).items():
+            if c: print(f"    {int(c):5d}  {o}")
 
     @property
     def predicates(self) -> list[str]:
@@ -168,25 +248,49 @@ class ContextMatrix:
 
         sem = asyncio.Semaphore(batch_size)
 
+        failed_chunks = 0
+
         async def process_chunk(chunk: dict[str, list[str]], chunk_id: int):
+            nonlocal failed_chunks
             async with sem:
-                result = await llm.fill_nan_batch(chunk)
+                try:
+                    result = await llm.fill_nan_batch(chunk)
+                except Exception as e:
+                    failed_chunks += 1
+                    print(f"  Chunk {chunk_id + 1}/{len(chunks)} FAILED ({type(e).__name__}: {e}) "
+                          f"— {sum(len(v) for v in chunk.values())} cells stay undecided.")
+                    return {}
                 print(f"  Chunk {chunk_id + 1}/{len(chunks)} done ({len(chunk)} entities).")
                 return result
 
         tasks = [process_chunk(chunk, i) for i, chunk in enumerate(chunks)]
         batch_results = await asyncio.gather(*tasks)
 
+        # Three-way write-back. Only an explicit verdict changes a cell; anything
+        # the model did not rule on stays NaN. Writing 0 for "not mentioned"
+        # would record uncertainty as a definite "does not hold".
         current_df = self.df.copy()
+        n_conf = n_deny = 0
         for batch in batch_results:
             if not batch:
                 continue
-            for obj_name, confirmed_list in batch.items():
+            for obj_name, verdict in batch.items():
                 if obj_name not in entity_missing:
                     continue
-                for attr in entity_missing[obj_name]:
-                    # Write 1 for confirmed, 0 for denied. Existing truth values remain unchanged.
-                    current_df.at[obj_name, attr] = 1 if attr in confirmed_list else 0
+                asked = set(entity_missing[obj_name])
+                confirmed = asked & set(verdict.get("confirmed", ()))
+                denied    = asked & set(verdict.get("denied", ())) - confirmed
+                for attr in confirmed:
+                    current_df.at[obj_name, attr] = 1
+                    n_conf += 1
+                for attr in denied:
+                    current_df.at[obj_name, attr] = 0
+                    n_deny += 1
+
+        still_undecided = total_nan - n_conf - n_deny
+        print(f"  verdicts: {n_conf} confirmed, {n_deny} denied, "
+              f"{still_undecided} left undecided"
+              + (f" ({failed_chunks} chunk(s) failed)" if failed_chunks else ""))
 
         meta_col, meta_id = self.dm.get_meta_stamp("llm_fill_nan")
         current_df[meta_col] = meta_id

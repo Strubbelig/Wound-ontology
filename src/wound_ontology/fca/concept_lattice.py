@@ -19,6 +19,11 @@ class ConceptLattice:
         self.file_name = "concept_lattice"
         self.matrix = fca_matrix
         self._lattice = self.dm.load_latest_pickle(self.file_name)
+        # Populated by get_data_and_run_fca(). Intents (frozensets of attribute
+        # names) that survive both readings of the undecided cells vs. those that
+        # depend on reading an undecided cell as "true".
+        self.certain_intents: set = set()
+        self.candidate_intents: set = set()
 
     @property
     def semantic_superclass_names(self):
@@ -51,16 +56,76 @@ class ConceptLattice:
 
     def get_data_and_run_fca(self):
         """
-        Runs FCA: constructs a formal Context from the ContextMatrix and
-        computes the concept lattice via the `concepts` library.
+        Runs FCA over the ContextMatrix, twice, and separates what is certain
+        from what merely depends on an undecided cell.
+
+        A NaN in the matrix means "not decided". Handing it to `concepts` would
+        silently assert the attribute holds, because bool(float('nan')) is True.
+        Instead the context is built under both readings:
+
+          pessimistic  undecided -> attribute ABSENT
+          optimistic   undecided -> attribute PRESENT
+
+        A concept whose intent appears in BOTH lattices is certain: no undecided
+        cell can change it. A concept that appears only in the optimistic lattice
+        is a *candidate* — it exists only if some undecided cell happens to be
+        true. Candidates are reported but must not be committed as superclasses.
+
+        The returned (and persisted) lattice is the pessimistic one, so anything
+        downstream reads only concepts that are actually supported by the data.
         """
         if not self.matrix.objects or not self.matrix.attributes:
             print("ContextMatrix is empty — skipping FCA.")
             return None
+
+        objs, attrs = self.matrix.objects, self.matrix.attributes
+        undecided = self.matrix.undecided_count
+
         print("Constructing concept lattice from FCA matrix...")
-        ctx = Context(self.matrix.objects, self.matrix.attributes, self.matrix.bool_tuples)
-        self.lattice = ctx.lattice
+        pess = Context(objs, attrs, self.matrix.tuples(self.matrix.UNKNOWN_ABSENT)).lattice
+
+        if not undecided:
+            self.certain_intents = {frozenset(c.intent) for c in pess}
+            self.candidate_intents = set()
+            print(f"  no undecided cells — {len(pess)} concepts, all certain.")
+            self.lattice = pess
+            return self._lattice
+
+        opti = Context(objs, attrs, self.matrix.tuples(self.matrix.UNKNOWN_PRESENT)).lattice
+
+        pess_intents = {frozenset(c.intent) for c in pess}
+        opti_intents = {frozenset(c.intent) for c in opti}
+        self.certain_intents = pess_intents & opti_intents
+        self.candidate_intents = opti_intents - pess_intents
+
+        print(f"  undecided cells       : {undecided} "
+              f"({self.matrix.undecided_density:.1%} of the matrix)")
+        print(f"  concepts (pessimistic): {len(pess_intents)}")
+        print(f"  concepts (optimistic) : {len(opti_intents)}")
+        print(f"  certain (in both)     : {len(self.certain_intents)}")
+        print(f"  candidates (optimistic only): {len(self.candidate_intents)} "
+              f"— reported, NOT committed")
+
+        self.lattice = pess
         return self._lattice
+
+    def is_certain(self, concept) -> bool:
+        """True if this concept survives both readings of the undecided cells."""
+        if not self.certain_intents and not self.candidate_intents:
+            return True          # no dual build was run; caller gets old behaviour
+        return frozenset(concept.intent) in self.certain_intents
+
+    def candidate_summary(self, max_display: int = 25) -> None:
+        """Print the concepts that exist only if some undecided cell is true."""
+        if not self.candidate_intents:
+            print("No candidate-only concepts.")
+            return
+        print(f"{len(self.candidate_intents)} concepts depend on an undecided cell:")
+        for i, intent in enumerate(sorted(self.candidate_intents, key=lambda x: (-len(x), sorted(x)))):
+            if i >= max_display:
+                print(f"  ... and {len(self.candidate_intents) - max_display} more.")
+                break
+            print("  {" + ", ".join(sorted(intent)) + "}")
 
     def summary(self, max_display: int = 50) -> None:
         """Print named lattice concepts with extent size and intent preview."""
@@ -91,7 +156,7 @@ class ConceptLattice:
 
         concepts_to_name = [
             c for c in self.lattice
-            if c.intent and len(c.extent) >= min_objects
+            if c.intent and len(c.extent) >= min_objects and self.is_certain(c)
         ]
         print(f"Found {len(concepts_to_name)} concepts requiring naming.")
 

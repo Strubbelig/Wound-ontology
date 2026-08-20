@@ -1,22 +1,179 @@
-,Antibiotic Regimen,Chronic Wound,Condition,Infectious Complication,Kunitz-Type Serine Protease Inhibitor,Pathological Calcification,Surgical Approach,Surgical Procedure,Surgical Site Infection,Symptom,Wound,Wound Complication,Wound Infection
-Acute Wound,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
-Chronic Wound,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
-Colorectal Resection,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
-Cutaneous Wound,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
-Diabetic Chronic Wound,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-Diabetic Wound,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-Femoral Head-Neck Reshaping,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
-Femoroacetabular Impingement,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-Incisional Surgical Site Infection,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
-Labral Reconstruction,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
-Massive Acetabular Labrum Calcification,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-Metronidazole-Containing Regimen,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-Open Approach,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
-Organ-Space Surgical Site Infection,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
-Removal Of Calcified Lesion,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
-Restricted Movement,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0
-Right Hip Arthroscopy,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
-Surgical Site Infection,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0
-Surgical Wound,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
-Textilinin-1,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
-Wound Infection,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0
+,Disposition,Function,ImmaterialEntity,InformationEntity,MaterialEntity,Process,ProcessBoundary,Quality,Tendency,Wound
+Acute Wound,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0
+Adhesive Properties,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Adult Patients,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Advanced Diabetic Wound Management,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Amyloid-Mediated Mechanical Reinforcement,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Amyloid-Reinforced Hyaluronic Acid Composite Hydrogel,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Antibacterial,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Antibacterial Defense,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Antibacterial Protection,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Antibiofilm Activity,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Architecture,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Attrition Analysis,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Bacterial Colonization,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Between-Study Heterogeneity,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Bibliographic Databases,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Bioactive Functionality,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Biofilm-Associated Infections,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Bivariate Tests,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+CSMA,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Care Pathways,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
+Cell Adhesion,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Cellular Interactions,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Chain Entanglement,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Chronic Diabetic Wounds,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Chronic Wound,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0
+Clinically Relevant Factors,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
+ColMA,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Comparative Studies,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
+Complex Wounds,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Component Alignment,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Composite Hydrogel,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Composite Network,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Controlled Drug Delivery,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Conventional M-TKA,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Curcumin,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Curcumin-Enabled Therapeutic Functionality,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Deep Infection,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Deep Infections,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Demographic Comparisons,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Demographic Differences,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Device-Related Adverse Events,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Dressing System,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Dressing-Related Harms,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Early Fracture Healing Status,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Early Non-Union,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Early Union,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Expeditious Soft-Tissue Cover,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Exploratory Subgroup Analyses,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Extracellular Matrix-Mimicking Cues,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Follow-Up Stratified Analyses,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Fracture,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Free-Radical Polymerization,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Gram-Negative Bacteria,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Gram-Positive Bacteria,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Granulation Tissue,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Gustilo-Anderson Grade IIIB Injury,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+HA Matrix,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+HA-Driven Bioactivity,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+HANB,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Healing Outcomes,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Hemocompatibility,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Hemostatic,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Hemostatic Properties,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+High Early Complication Rates,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+High-Energy Trauma,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Hydrogel,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Hydrogen Bonding,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Hydrophobic And Pi-Pi Interactions,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Impaired Early Healing,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Implant Availability,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+In Vitro Studies,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Incisional Negative Pressure Wound Therapy,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Incisional Wound Complications,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Infected Wounds,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Infection,0.0,0.0,0.0,0.0,1.0,1.0,0.0,0.0,0.0,0.0
+Infection Rates,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Infection Risk,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0
+Infection-Related Endpoint,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
+Interpenetrating Protein-Polysaccharide Networks,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+LOHS,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Limited Access To Subspecialist Care,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Long-Term PJI Risk,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+M-TKA,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Manual TKA,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Matrix Reconstruction,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Mechanical Robustness,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Methylacrylamide-Modified Chitosan,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Methylacrylamide-Modified Type I Collagen,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Migratory Capacity,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Modifiable Factors,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Mortality,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0
+Multifunctional Biomaterials,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Multifunctional Self-Adhesive Hydrogel,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Multifunctional Therapeutic Agent,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Near-Infrared Irradiation,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Non-Union,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Nonreinforced Systems,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+O-Nitrobenzene-Modified Hyaluronic Acid,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Open Tibial Fractures,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Open Tibial Shaft Fractures,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Organ-Space SSI,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Overall Infection Rate,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Overall SSI,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Oxidative Stress Biomarkers,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+PJI,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+PROSPERO Database,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Patients,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Periprosthetic Joint Infection,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Persistent Infection,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Persistent Oxidative Stress,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Photothermal Effects,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Physiological Levels,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Postoperative Infection Rates,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Postoperative Infection Risk,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Predictors,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
+Primarily Closed Surgical Incisions,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Pro-Regenerative Microenvironment,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+"Prospective, Observational Study",0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Protein-Polysaccharide Hybrid Hydrogel Platform,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+R-TKA,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Random-Effects Meta-Analytic Framework,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Readmission,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Regenerative Wound Management,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Registration No. CRD420251114140,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
+Reinforcing Scaffolds,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Reoperation,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Resource-Constrained Settings,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Risk,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Robotic-Assisted Total Knee Arthroplasty,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Robust Infection Prevention Protocols,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
+SSI,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+SSI Rate,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+SSI Subtypes,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Schiff Base Reactions,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Selection Criteria,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
+Severe Injury,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Severe Injury Grade,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Short-Term Infection Outcomes,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Single Platform,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Skin Blistering,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Skin Necrosis,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Standard Dressing,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Standard Dressings,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Stimuli-Responsive Therapeutic Delivery,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Streptozotocin-Induced Diabetic Wound Model,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Structural Reinforcement,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Structural Stability,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Studies,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
+Superficial,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Superficial SSI,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Surgical Incisions,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Surgical Site Infection,1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Surgical Wound,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0
+Sustained And pH-Responsive Release,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Swelling Behavior,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Synergistic Dual-Crosslinked Network,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Systemic Improvement,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Targets,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0
+Tertiary Orthopaedic Hospital,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Thermally Induced Bovine Serum Albumin Amyloid Fibrils,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Time To Union,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Timely Patient Presentation,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Tissue,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Tissue Regeneration,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Translational Biomaterial Design,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Trauma Care Delivery,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Treatment,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Treatment Delays,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Viscoelastic Properties,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0
+Wound Bed,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Wound Closure,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Wound Complications,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Wound Dehiscence,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Wound Dressings,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0
+Wound Healing Assay,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0
+Wound Microenvironment,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Zero Infection Events,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0
+iNPWT,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0

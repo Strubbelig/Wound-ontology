@@ -43,7 +43,7 @@ class RobotModuleExtractor:
             onto_dir="path/to/Import-Ontologien",
             modules_dir="output/owl/modules",
         )
-        modules = extractor.run("output/owl/ground_truth_final.owl")
+        modules = extractor.run("data/ground truth/ground_truth_final.owl")
         # → {"CHEBI": Path("output/owl/modules/chebi_module.owl"), ...}
     """
 

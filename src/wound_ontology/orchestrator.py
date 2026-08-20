@@ -3,6 +3,8 @@ from __future__ import annotations
 import asyncio
 import os
 import pandas as pd
+from wound_ontology.utils.string_utils import smart_title
+from wound_ontology.hierarchies.base_hierarchy import SOURCE_FCA as _SOURCE_FCA
 from dotenv import load_dotenv
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.llm.llm_client import LLMClient
@@ -332,6 +334,14 @@ class Orchestrator:
 
         self.class_hier.get_data(self.store)
         self.mere_hier.get_data(self.store)
+
+        # Curated edges were fed through the store so the FCA matrix sees them,
+        # which means get_data() just ingested them as text-asserted. Re-stamp
+        # them so a human-authored edge is distinguishable from — and outranks —
+        # one asserted in an abstract or suggested by a lattice.
+        if predefined_df is not None:
+            self.class_hier.apply_curated(predefined_df)
+
         self.class_hier.save()
         self.mere_hier.save()
 
@@ -339,6 +349,7 @@ class Orchestrator:
               f"roots={self.class_hier.roots[:3]}")
         print(f"MereologicalHierarchy : {len(self.mere_hier.concepts)} concepts, "
               f"roots={self.mere_hier.roots[:3]}")
+        print(f"ClassHierarchy sources: {self.class_hier.provenance_summary()}")
 
     # ── Enrichment ─────────────────────────────────────────────────────────────
 
@@ -362,6 +373,7 @@ class Orchestrator:
         hierarchy=None,
         predicates: list | None = None,
         batch_size: int = 10,
+        commit_fca: bool = False,
     ) -> None:
         """
         Build FCA matrix → concept lattice → FCAHierarchy.
@@ -369,11 +381,18 @@ class Orchestrator:
         subtree_root – restrict entities to the subtree of this concept.
         hierarchy    – which hierarchy to use for subtree lookup (default: class_hier).
         predicates   – restrict to these store predicates; None = all predicates.
+        commit_fca   – write lattice-derived superclasses straight into class_hier.
+                       Default False: FCA does not assert subsumption, it observes
+                       that a set of terms share attributes, which is evidence for
+                       a superclass rather than a statement of one. Suggestions are
+                       recorded as review candidates; promote them with
+                       `class_hier.promote_candidates(...)`.
         """
         hier = hierarchy or self.class_hier
         entities = hier.subtree_of(subtree_root) if subtree_root else None
 
         self.context_matrix.get_data(self.store, entities=entities, predicates=predicates)
+        self.context_matrix.nan_report()
 
         async def _internal():
             self.lattice.get_data_and_run_fca()
@@ -387,21 +406,42 @@ class Orchestrator:
             print(f"FCAHierarchy          : {len(self.fca_hier.concepts)} concepts, "
                   f"roots={self.fca_hier.roots[:3]}")
 
-            added = 0
+            added = skipped_uncertain = proposed = 0
             for concept in self.lattice.lattice:
                 name = getattr(concept, 'name', None)
                 if not isinstance(name, str) or not name:
                     continue
+                # A concept that exists only because an undecided cell was read as
+                # "true" is a candidate, not a fact. It must not become an asserted
+                # superclass. See ConceptLattice.get_data_and_run_fca.
+                if not self.lattice.is_certain(concept):
+                    skipped_uncertain += 1
+                    continue
                 if hasattr(concept, 'name'):
-                    concept.name = name.strip().title()
+                    concept.name = smart_title(name)
                     name = concept.name
                 for entity in concept.extent:
-                    self.class_hier._set_edge(str(entity), name)
-                    added += 1
+                    if commit_fca:
+                        if self.class_hier._set_edge(str(entity), name, source=_SOURCE_FCA):
+                            added += 1
+                    else:
+                        self.class_hier.propose_edge(str(entity), name, _SOURCE_FCA)
+                        proposed += 1
             if added:
                 self.class_hier._df = self.class_hier._df.copy()
                 self.class_hier.save()
-                print(f"FCA → ClassHierarchy  : {added} extent→superclass edges merged.")
+                print(f"FCA → ClassHierarchy  : {added} extent→superclass edges merged "
+                      f"(source='{_SOURCE_FCA}'; curated and text edges were not overwritten).")
+            if proposed:
+                self.class_hier.save()
+                print(f"FCA → candidates      : {proposed} edge(s) proposed for review, "
+                      f"NOT committed. Inspect class_hier.candidates, then "
+                      f"class_hier.promote_candidates().")
+            if skipped_uncertain:
+                print(f"FCA → ClassHierarchy  : {skipped_uncertain} concept(s) withheld "
+                      f"as undecided-dependent.")
+            if self.lattice.candidate_intents:
+                self.lattice.candidate_summary()
         else:
             print("FCAHierarchy          : skipped (empty lattice).")
 
@@ -647,6 +687,140 @@ class Orchestrator:
                 print(f"  ... and {len(result.unmatched) - 20} more")
 
         return result
+
+    # ── Competency questions (C8) ──────────────────────────────────────────
+
+    def run_competency_check(self, ontology_file: str | None = None,
+                             with_imports: bool = True, write_report: bool = True):
+        """Run config/competency_questions.json as executable queries.
+
+        Turns the CQ file from prompt text into a measurement of whether the
+        ontology answers the questions it was built for. Verdicts are PASS,
+        FAIL, UNEXPRESSIBLE (the CQ uses a relation this ontology deliberately
+        rejects, so it can never pass as written), UNRESOLVED (a term in the
+        triple has no class with that label) and DECLARED (out of scope, nothing
+        tested — deliberately NOT counted as a pass).
+        """
+        import rdflib
+        from wound_ontology.evaluation import load_questions, run_suite
+        from wound_ontology.evaluation.competency import (
+            in_scope_score, report as _report,
+        )
+        from config.settings import (
+            GROUND_TRUTH_TTL as _GT, MILD_TTL as _MILD,
+            MILD_MODULES_DIR as _MODS, PROJECT_ROOT as _ROOT,
+        )
+
+        g = rdflib.Graph()
+        if ontology_file:
+            g.parse(str(ontology_file))
+        else:
+            g.parse(str(_GT), format="turtle")
+            g.parse(str(_MILD), format="turtle")
+            if with_imports:
+                for m in sorted(_MODS.glob("*_module.owl")):
+                    try:
+                        g.parse(str(m))
+                    except Exception as exc:
+                        print(f"  ! skipped {m.name}: {exc}")
+
+        results = run_suite(g, load_questions(_ROOT / "config" / "competency_questions.json"))
+        text = _report(results)
+        print(text)
+        if write_report:
+            out = _ROOT / "output" / "competency_report.md"
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text("# Competency question report\n\n```\n" + text + "\n```\n",
+                           encoding="utf-8")
+            print(f"[Orchestrator] Report → {out}")
+        p, n = in_scope_score(results)
+        return results, (p, n)
+
+    # ── Reasoner gate (C7) ─────────────────────────────────────────────────
+
+    def build_reasoner_skeleton(self, force: bool = False) -> str:
+        """Build (or reuse) the skeleton TBox the per-batch gate reasons over.
+
+        MILD + WONT own axioms + an explicit BFO backbone, imports stripped.
+        The full import closure carries 54 pre-existing unsatisfiable classes,
+        so a gate reasoning over it would fire on every batch; the skeleton has
+        none, which means anything it reports was caused by the batch.
+        """
+        from wound_ontology.reasoning.skeleton import build_skeleton
+        from config.settings import (
+            GROUND_TRUTH_TTL as _GT, MILD_TTL as _MILD,
+            REASONER_SKELETON as _SK,
+        )
+        from pathlib import Path as _P
+
+        if _P(_SK).exists() and not force:
+            print(f"[Orchestrator] Reusing skeleton TBox at {_SK}")
+            return str(_SK)
+        path, n = build_skeleton(_GT, _MILD, _SK)
+        print(f"[Orchestrator] Skeleton TBox built: {path} ({n} triples)")
+        return str(path)
+
+    @property
+    def reasoner_gate(self):
+        """Lazily constructed per-batch gate."""
+        if getattr(self, "_gate", None) is None:
+            from wound_ontology.reasoning.gate import ReasonerGate
+            from config.settings import REASONER_SKELETON as _SK
+            self._gate = ReasonerGate(_SK)
+        return self._gate
+
+    def run_gate_hierarchy_edges(self, hierarchy=None, quarantine: bool = True):
+        """Reason over the committed is_a edges and quarantine the inconsistent ones.
+
+        This is where the gate matters most. Extracted relations are already
+        filtered by the category-pair table, but is_a edges are not: the curated
+        CSV and the FCA lattice bypass the extraction schema entirely. The table
+        is also blind to same-category disjointness — `Wound base`, `Wound edge`
+        and `Wound pocket` are all MaterialEntity yet pairwise disjoint.
+        """
+        from wound_ontology.reasoning.gate import ReasonerGate
+        from config.settings import QUARANTINE_DIR as _Q
+
+        hier = hierarchy or self.class_hier
+        edges = [(c, p) for (c, p) in hier._prov.keys()]
+        if not edges:
+            print("[Orchestrator] No committed edges to gate.")
+            return None
+
+        result = self.reasoner_gate.check_edges(edges)
+        print(f"[Orchestrator] {result.summary()}")
+        if result.skipped:
+            return result
+
+        for child, parent in result.quarantined:
+            if child in hier.df.index and parent in hier.df.columns:
+                hier.df.at[child, parent] = 0.0
+            hier._prov.pop((child, parent), None)
+        if result.quarantined:
+            hier.save()
+            if quarantine:
+                d = _Q
+                d.mkdir(parents=True, exist_ok=True)
+                from datetime import datetime as _dt
+                import json as _json
+                p = d / f"edges_{_dt.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
+                p.write_text(_json.dumps({
+                    "unsatisfiable": result.unsatisfiable,
+                    "edges": result.quarantined,
+                    "explanation": result.explanation,
+                }, indent=2), encoding="utf-8")
+                print(f"[Orchestrator] Quarantined edges → {p}")
+        return result
+
+    def run_deep_reason(self, input_file: str, output_file: str) -> None:
+        """On-demand HermiT check over the FULL merge (slow, complements the gate).
+
+        The per-batch gate uses ELK, which cannot express inverse properties,
+        cardinality or universal restrictions. Run this when you want those
+        checked, not on every batch.
+        """
+        print("[Orchestrator] Deep reasoning (HermiT, full merge) — this is slow.")
+        self.reasoner.reason(input_file, output_file)
 
     def run_reason_owl(
         self,

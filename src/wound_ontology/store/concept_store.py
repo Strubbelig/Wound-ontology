@@ -3,7 +3,7 @@ import asyncio
 import re
 import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
-from wound_ontology.utils.string_utils import normalize_term
+from wound_ontology.utils.string_utils import normalize_term, smart_title
 from config.blocklist import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST, is_noise_term as _is_noise_term
 
 
@@ -188,13 +188,13 @@ class ConceptStore:
 
         def clean_entity(term: str) -> str:
             if term in term_map:
-                return term_map[term].strip().title()
-            return normalize_term(self.clean_entity_str(term)).title()
+                return smart_title(term_map[term])
+            return smart_title(normalize_term(self.clean_entity_str(term)))
 
         def clean_target(term: str) -> str:
             if term in term_map:
-                return term_map[term].strip().title()
-            return normalize_term(self.clean_target_str(term)).title()
+                return smart_title(term_map[term])
+            return smart_title(normalize_term(self.clean_target_str(term)))
 
         normalized: dict = {}
         for key, pmid_data in self._dict.items():
@@ -227,6 +227,7 @@ class ConceptStore:
         n_entities = sum(len(d["entities"]) for d in self._dict.values())
         print(f"[ConceptStore] Normalization applied — {n_entities} entity records updated.")
 
+
     async def add_llm_extracts(
         self,
         df_pubmed,
@@ -239,6 +240,7 @@ class ConceptStore:
         max_vocab_hints: int = 300,
         milestone_every: int = 0,
         on_milestone=None,
+        schema_constrained: bool = True,
     ) -> None:
         """
         Extract entities from PubMed abstracts in parallel waves and store results.
@@ -254,6 +256,13 @@ class ConceptStore:
         on_milestone             – async callable(store) invoked at each milestone.
                                    Safe to call: _dict writes only happen in this loop,
                                    which is paused during the await.
+        schema_constrained       – use the two-stage path driven by the MILD/WONT-derived
+                                   schema (config/extraction_schema.yaml). Terms are typed
+                                   to one BFO category, grounded by exact-label lookup
+                                   rather than by the model emitting IRIs, and relations
+                                   are filtered against the category pairs the ontologies
+                                   license. Set False for the legacy single free-text
+                                   prompt, which is kept only for comparison.
         """
         meta_col, meta_id = self.dm.get_meta_stamp("llm_extract")
         top_attrs = self.top_attributes(max_vocab_hints)
@@ -285,6 +294,10 @@ class ConceptStore:
                     return str(int(row['pmid'])), None
                 pmid = str(int(row['pmid']))
                 try:
+                    if schema_constrained:
+                        return pmid, await _extract_schema_constrained(
+                            llm, row['abstract'], meta_id
+                        )
                     extracted = await llm.extract_entities(
                         row['abstract'],
                         allowed_predicates,
@@ -444,18 +457,32 @@ class ConceptStore:
         tasks = [process_chunk(chunk, i) for i, chunk in enumerate(chunks)]
         batch_results = await asyncio.gather(*tasks)
 
-        # Write confirmed → 1.0, unconfirmed → 0.0 back into the store
-        # We add a synthetic "fill" key so provenance is clear
+        # Three-way write-back: confirmed → 1.0, explicitly denied → 0.0, and
+        # anything the model did not rule on is simply NOT written, so it stays
+        # unevaluated rather than being recorded as a definite "does not hold".
+        # We add a synthetic "fill" key so provenance is clear.
         fill_entities: dict[str, dict] = {}
+        n_conf = n_deny = 0
         for batch in batch_results:
             if not batch:
                 continue
-            for entity, confirmed_list in batch.items():
+            for entity, verdict in batch.items():
                 if entity not in entity_missing:
                     continue
+                asked = set(entity_missing[entity])
+                confirmed = asked & set(verdict.get("confirmed", ()))
+                denied    = asked & set(verdict.get("denied", ())) - confirmed
+                if not confirmed and not denied:
+                    continue
                 attr_dict = fill_entities.setdefault(entity, {})
-                for attr in entity_missing[entity]:
-                    attr_dict[attr] = 1.0 if attr in confirmed_list else 0.0
+                for attr in confirmed:
+                    attr_dict[attr] = 1.0
+                    n_conf += 1
+                for attr in denied:
+                    attr_dict[attr] = 0.0
+                    n_deny += 1
+        print(f"[ConceptStore] verdicts: {n_conf} confirmed, {n_deny} denied, "
+              f"{total_missing - n_conf - n_deny} left unevaluated.")
 
         if fill_entities:
             meta_col, meta_id = self.dm.get_meta_stamp("llm_fill")
@@ -474,3 +501,33 @@ class ConceptStore:
             self.dm.save_as_json(self._dict, self.file_name)
         else:
             print("Save skipped: Store is empty.")
+
+async def _extract_schema_constrained(llm, text, meta_id):
+    """One abstract through the MILD/WONT-derived schema.
+
+    Returns the same {"entities": ..., "meta_stamp": ...} payload the legacy path
+    produces, so the store, FCA matrix and hierarchies are unaffected. What is
+    different is upstream: the model made one categorical choice per term instead
+    of picking relations off a 7-item free-text list, grounding was a lookup
+    rather than a generated identifier, and every relation was checked against
+    the category pairs MILD/WONT actually license.
+    """
+    from wound_ontology.llm import extraction_adapter as _ad
+
+    result, report = await llm.extract_two_stage(text)
+    entities_map = {}
+    for label, attrs in _ad.result_to_store_entities(result).items():
+        name = ConceptStore.clean_entity_str(label.strip())
+        if not name or name.lower() in _METHODOLOGY_BLOCKLIST or _is_noise_term(name):
+            continue
+        cleaned = {}
+        for triple, value in attrs.items():
+            pred, target = triple.split(":", 1)
+            cleaned[f"{pred}: {ConceptStore.clean_target_str(target)}"] = value
+        entities_map[name] = cleaned
+
+    payload = {"entities": entities_map, "meta_stamp": meta_id}
+    if any(report.get(k) for k in ("rejected_terms", "rejected_relations",
+                                   "unknown_predicates")):
+        payload["schema_report"] = report
+    return payload

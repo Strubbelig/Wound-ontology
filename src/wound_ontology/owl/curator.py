@@ -207,7 +207,7 @@ class OntologyCurator:
                     s    = str(lbl)
                     norm = re.sub(r"\s+", " ", s).strip() if strip_whitespace else s
                     if title_case:
-                        norm = norm.title()
+                        norm = smart_title(norm)
                     lang = getattr(lbl, "lang", None)
                     if norm != s:
                         new_labels.append(locstr(norm, lang or "en"))

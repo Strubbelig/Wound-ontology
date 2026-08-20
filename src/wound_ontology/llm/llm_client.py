@@ -34,6 +34,7 @@ from wound_ontology.llm.schemas import (
     FillNanBatchResponse, SemanticNameResponse, ScopeCheckResponse,
     MereRelationResult, MereRelationBatchResponse,
     OccursInTargetBatch,
+    TypingResponse, RelationResponse,
 )
 
 _OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -197,6 +198,113 @@ class LLMClient:
         result = await self._execute_with_retry(self._call_json, prompt, ExtractResponse, timeout=240)
         return result.entities
 
+    # ── Two-stage, schema-constrained extraction (C2) ──────────────────────
+    #
+    # Stage 1 asks for ONE categorical choice per term and nothing else.
+    # Stage 2 is handed the categories and a licensing table derived from
+    # MILD/WONT, so the relation is looked up rather than reasoned about.
+    #
+    # The model never emits an IRI. Grounding is an exact-label lookup against
+    # the ontologies, which removes the hallucinated-identifier failure mode
+    # entirely instead of trying to detect it after the fact.
+
+    async def type_terms(self, text, with_definitions: bool = False):
+        """Stage 1 — extract terms and give each exactly one BFO/MILD category.
+
+        Returns (entities, rejected) where rejected is a list of
+        (label, category, reason) for anything that failed validation.
+        """
+        from wound_ontology.llm.extraction_models import BFOCategory, ExtractedEntity
+        from wound_ontology.llm.extraction_prompt import typing_prompt
+
+        prompt = typing_prompt(text, with_definitions=with_definitions)
+        result = await self._execute_with_retry(
+            self._call_json, prompt, TypingResponse, timeout=240
+        )
+
+        valid = {c.value for c in BFOCategory}
+        entities, rejected = [], []
+        for t in result.terms:
+            label = (t.label or "").strip()
+            cat = (t.category or "").strip()
+            if not label:
+                continue
+            if cat not in valid:
+                rejected.append((label, cat, "not a BFO/MILD category"))
+                continue
+            try:
+                entities.append(ExtractedEntity(label=label, category=cat))
+            except Exception as exc:
+                rejected.append((label, cat, str(exc).splitlines()[0]))
+        return entities, rejected
+
+    async def extract_relations(self, text, entities):
+        """Stage 2 — relations among already-typed terms.
+
+        `entities` is the accepted output of stage 1. Returns the candidates the
+        model proposed; category licensing is enforced by ExtractionResult.
+        """
+        from wound_ontology.llm.extraction_prompt import relation_prompt
+
+        if len(entities) < 2:
+            return []
+        typed = {e.label: e.category.value for e in entities}
+        prompt = relation_prompt(text, typed)
+        result = await self._execute_with_retry(
+            self._call_json, prompt, RelationResponse, timeout=240
+        )
+        return result.relations
+
+    async def extract_two_stage(self, text, with_definitions: bool = False):
+        """Full schema-constrained extraction for one document.
+
+        Returns (ExtractionResult, report). Everything the schema refused is in
+        the report rather than silently dropped, so extraction quality is
+        measurable instead of assumed.
+        """
+        from wound_ontology.llm.extraction_models import (
+            ExtractionResult, RelationType,
+        )
+
+        entities, rejected_terms = await self.type_terms(
+            text, with_definitions=with_definitions
+        )
+        if not entities:
+            return ExtractionResult(), {
+                "rejected_terms": rejected_terms,
+                "rejected_relations": [],
+                "unknown_predicates": [],
+            }
+
+        candidates = await self.extract_relations(text, entities)
+
+        known = {r.value for r in RelationType}
+        unknown_predicates, wire_relations = [], []
+        for c in candidates:
+            pred = (c.predicate or "").strip()
+            if pred not in known:
+                unknown_predicates.append((c.subject, pred, c.object))
+                continue
+            wire_relations.append(
+                {"subject": c.subject.strip(),
+                 "predicate": pred,
+                 "object": c.object.strip()}
+            )
+
+        result = ExtractionResult(
+            entities=[e.model_dump() for e in entities],
+            relations=wire_relations,
+        )
+        report = {
+            "rejected_terms": rejected_terms,
+            "rejected_relations": [
+                (r.subject, r.predicate.value, r.object, why)
+                for r, why in result.rejected_relations
+            ],
+            "unknown_predicates": unknown_predicates,
+        }
+        return result, report
+
     async def create_normalization_mapping(self, terms, standards) -> dict:
         prompt = f"""
         You are provided a batch of medical terms which have to be normalized for a clinical ontology.
@@ -236,7 +344,17 @@ class LLMClient:
         result = await self._execute_with_retry(self._call_json, prompt, FillNanResponse, temperature=0.0)
         return result.confirmed_attributes
 
-    async def fill_nan_batch(self, entity_attrs: dict[str, list[str]]) -> dict[str, list[str]]:
+    async def fill_nan_batch(
+        self, entity_attrs: dict[str, list[str]]
+    ) -> dict[str, dict[str, list[str]]]:
+        """Adjudicate undecided (entity, attribute) cells with a THREE-way verdict.
+
+        Returns {entity: {"confirmed": [...], "denied": [...]}}. An attribute in
+        neither list is left undecided by the caller. This matters: the previous
+        prompt told the model to omit attributes that were "incorrect, uncertain,
+        or not defining", and the caller then wrote 0 for everything omitted —
+        so genuine uncertainty was recorded as a definite "does not hold".
+        """
         if not entity_attrs:
             return {}
         body = "\n\n".join(
@@ -244,14 +362,28 @@ class LLMClient:
             for entity, attrs in entity_attrs.items()
         )
         prompt = f"""
-        Act as a clinical ontologist. For each entity below, return ONLY the candidate attributes
-        that are FACTUALLY and CLINICALLY true. Exclude attributes that are incorrect, uncertain,
-        or not defining characteristics. Return results for every entity listed.
+        Act as a clinical ontologist. For each entity below, sort the candidate attributes
+        into exactly one of three groups:
+
+          confirmed_attributes – FACTUALLY and CLINICALLY true of this entity.
+          denied_attributes    – factually FALSE of this entity. Use this only when you
+                                 positively know the attribute does not hold.
+          (omit entirely)      – you are UNSURE, or the attribute is neither clearly true
+                                 nor clearly false. Omitting is the correct answer here and
+                                 carries no penalty; the cell stays undecided.
+
+        Do NOT put an attribute in denied_attributes merely because you are uncertain
+        about it, and do NOT put one in confirmed_attributes merely because it is plausible.
+        Return results for every entity listed.
 
         {body}
         """
         result = await self._execute_with_retry(self._call_json, prompt, FillNanBatchResponse, temperature=0.0, timeout=240)
-        return {r.object_name: r.confirmed_attributes for r in result.results}
+        return {
+            r.object_name: {"confirmed": r.confirmed_attributes,
+                            "denied": r.denied_attributes}
+            for r in result.results
+        }
 
     async def classify_scope_batch(self, candidates: list[tuple[str, int, list[str]]]) -> list[str]:
         """

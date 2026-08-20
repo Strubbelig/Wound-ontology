@@ -35,6 +35,10 @@ class FillNanResponse(BaseModel):
 class FillNanEntityResult(BaseModel):
     object_name: str
     confirmed_attributes: list[str]
+    # Attributes the model positively rules OUT. Anything in neither list is
+    # left undecided rather than being silently written as false — "uncertain"
+    # and "false" are different answers and must not be collapsed.
+    denied_attributes: list[str] = []
 
 class FillNanBatchResponse(BaseModel):
     results: list[FillNanEntityResult]
@@ -63,3 +67,51 @@ class OccursInTargetResult(BaseModel):
 
 class OccursInTargetBatch(BaseModel):
     results: list[OccursInTargetResult]
+
+
+# ── Two-stage schema-driven extraction (C2) ────────────────────────────────
+# Wire models for the schema-constrained path. `category` and `predicate` are
+# plain strings here ON PURPOSE: the permitted values are advertised to the model
+# through json_schema_extra (so the JSON-schema hint still enumerates them) but a
+# single bad value must not fail the whole batch and burn the retry budget.
+# Values are validated locally, and anything unrecognised is dropped and reported
+# rather than coerced — guessing which branch of BFO a bad label meant would be
+# exactly the manufactured certainty this pipeline is trying to remove.
+
+def _category_names() -> list[str]:
+    from wound_ontology.llm.extraction_models import BFOCategory
+    return [c.value for c in BFOCategory]
+
+
+def _relation_names() -> list[str]:
+    from wound_ontology.llm.extraction_models import RelationType
+    return [r.value for r in RelationType]
+
+
+class TypedTerm(BaseModel):
+    """Stage 1 output: one term, one BFO/MILD category. No relations, no IRIs."""
+
+    label: str = Field(description="the term exactly as it appears in the text")
+    category: str = Field(
+        description="exactly one category name from the allowed list",
+        json_schema_extra=lambda s: s.update(enum=_category_names()),
+    )
+
+
+class TypingResponse(BaseModel):
+    terms: list[TypedTerm] = Field(default_factory=list)
+
+
+class RelationCandidate(BaseModel):
+    """Stage 2 output: a relation between two already-typed terms."""
+
+    subject: str
+    predicate: str = Field(
+        description="exactly one relation name from the allowed list",
+        json_schema_extra=lambda s: s.update(enum=_relation_names()),
+    )
+    object: str
+
+
+class RelationResponse(BaseModel):
+    relations: list[RelationCandidate] = Field(default_factory=list)
