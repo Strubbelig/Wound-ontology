@@ -90,7 +90,10 @@ pipeline.mapping_cleaner.list_suspicious_mappings()
 pipeline.mapping_cleaner.review_mappings()
 pipeline.mapping_cleaner.apply(pipeline.store)
 
-# 4. Build hierarchies (with predefined seed edges)
+# 4. Reasoner gate — store relations (before anything consumes them)
+pipeline.run_gate_store_relations()
+
+# 5. Build hierarchies (with predefined seed edges)
 predefined = pd.DataFrame([
     {"Class": "Chronic Wound",  "Parent class": "Wound"},
     {"Class": "Acute Wound",    "Parent class": "Wound"},
@@ -98,13 +101,16 @@ predefined = pd.DataFrame([
 ])
 pipeline.run_build_hierarchies(predefined_df=predefined)
 
-# 5. FCA — group wound entities by shared qualities
+# 6. Reasoner gate — is_a edges (the CSV and the FCA lattice bypass the schema)
+pipeline.run_gate_hierarchy_edges()
+
+# 7. FCA — group wound entities by shared qualities
 pipeline.run_fca(
     subtree_root="Wound",
-    predicates=["has_quality", "occurs_in", "caused_by", "is_treatment_for"],
+    predicates=["has_quality", "part_of", "has_participant", "has_disposition", "inheres_in"],
 )
 
-# 6. Export OWL
+# 8. Export OWL
 pipeline.export_to_owl()
 ```
 

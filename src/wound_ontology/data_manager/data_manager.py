@@ -1,5 +1,5 @@
 from __future__ import annotations
-import os, glob, json, pickle
+import os, glob, json, pickle, re
 from pathlib import Path
 from datetime import datetime
 import pandas as pd
@@ -118,6 +118,19 @@ class DataManager:
         """
         search_pattern = str(self.base_path / f"{prefix}_*.{extension}")
         files = glob.glob(search_pattern)
+
+        # The glob is not specific enough on its own: "class_hierarchy_*" also
+        # matches "class_hierarchy_provenance_*", and because "p" sorts after a
+        # digit the provenance file won sorted()[-1] every time. The hierarchy
+        # then silently loaded the 3-column provenance table in place of its own
+        # matrix, and the reasoner gate died on `df.at[c, p]` returning a Series.
+        # It stayed hidden for as long as no provenance file existed.
+        # Only accept "<prefix>_<YYYY-MM-DD>_<HH-MM>.<ext>" -- nothing between
+        # the prefix and the timestamp.
+        stamped = re.compile(
+            rf"^{re.escape(prefix)}_\d{{4}}-\d{{2}}-\d{{2}}_\d{{2}}-\d{{2}}\.{re.escape(extension)}$"
+        )
+        files = [f for f in files if stamped.match(os.path.basename(f))]
 
         if not files:
             return None

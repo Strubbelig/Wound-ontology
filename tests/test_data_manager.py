@@ -164,3 +164,37 @@ def test_load_latest_owl_returns_path(dm):
 
 def test_load_latest_owl_missing_returns_none(dm):
     assert dm.load_latest_owl_abox("nonexistent_owl") is None
+
+
+# ── a prefix must not swallow a longer one ──────────────────────────────────
+
+def test_prefix_does_not_match_a_longer_sibling_prefix(tmp_path):
+    """``class_hierarchy`` must not resolve to ``class_hierarchy_provenance``.
+
+    The glob was "<prefix>_*.csv" and the pick was sorted()[-1]. Since "p" sorts
+    after any digit, the provenance file won every time, and the hierarchy
+    silently loaded the 3-column provenance table instead of its own matrix --
+    the reasoner gate then died on df.at[c, p] returning a Series. The bug was
+    invisible for as long as no provenance file had ever been written.
+    """
+    from wound_ontology.data_manager.data_manager import DataManager
+    for name in ("class_hierarchy_2026-01-01_00-00.csv",
+                 "class_hierarchy_provenance_2026-12-31_23-59.csv"):
+        (tmp_path / name).write_text("a,b\n1,2\n", encoding="utf-8")
+    dm = DataManager(base_path=tmp_path)
+
+    assert dm._find_latest_path("class_hierarchy", "csv").endswith(
+        "class_hierarchy_2026-01-01_00-00.csv"), (
+        "the newer provenance file must not shadow the hierarchy itself")
+    assert dm._find_latest_path("class_hierarchy_provenance", "csv").endswith(
+        "class_hierarchy_provenance_2026-12-31_23-59.csv")
+
+
+def test_untimestamped_files_are_ignored(tmp_path):
+    """Only "<prefix>_<YYYY-MM-DD>_<HH-MM>.<ext>" counts as a versioned file."""
+    from wound_ontology.data_manager.data_manager import DataManager
+    (tmp_path / "class_hierarchy_backup.csv").write_text("a\n1\n", encoding="utf-8")
+    (tmp_path / "class_hierarchy_2026-01-01_00-00.csv").write_text("a\n1\n", encoding="utf-8")
+    dm = DataManager(base_path=tmp_path)
+    assert dm._find_latest_path("class_hierarchy", "csv").endswith(
+        "class_hierarchy_2026-01-01_00-00.csv")

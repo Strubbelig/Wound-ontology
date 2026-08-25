@@ -131,9 +131,24 @@ class UMLSConnector(BaseConnector):
         params = {"apiKey": self.api_key}
 
         try:
-            res = requests.get(endpoint, params=params)
-            if res.status_code == 200:
-                return res.json().get("result", {}).get("name")
-        except:
+            res = requests.get(endpoint, params=params, timeout=30)
+        except requests.RequestException as exc:
+            # A bare `except: return None` used to make a dead network, a bad API
+            # key and "this CUI genuinely has no preferred name" indistinguishable
+            # to the caller, so a whole failed enrichment run looked like a run
+            # that simply found nothing.
+            print(f"[UMLS] request failed for CUI {cui}: {exc}")
             return None
-        return None
+        if res.status_code == 401:
+            raise PermissionError(
+                f"[UMLS] rejected the API key (HTTP 401) while fetching CUI {cui}. "
+                "Refusing to continue and silently return no labels for everything."
+            )
+        if res.status_code != 200:
+            print(f"[UMLS] HTTP {res.status_code} for CUI {cui}; no label returned.")
+            return None
+        try:
+            return res.json().get("result", {}).get("name")
+        except ValueError as exc:
+            print(f"[UMLS] unparseable JSON for CUI {cui}: {exc}")
+            return None

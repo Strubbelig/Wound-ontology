@@ -1,40 +1,72 @@
-# Data & numerics
-numpy
-pandas
-scipy
-statsmodels
+# Wound ontology — runtime dependencies
+#
+# Rebuilt 2026-08-21 from the project's actual imports (ast scan of src/, config/,
+# scripts/, tests/ and notebooks/). The previous file was inverted: it omitted 11
+# packages the code imports — including rdflib, torch, transformers and
+# scikit-learn — and listed 16 it never imports. `pip install -r requirements.txt`
+# into a clean environment therefore produced one where the project could not
+# import at all, and nothing said so until the first traceback.
+#
+# ── The pin chain, in the order it is forced ──────────────────────────────────
+# 1. torch is capped at 2.2.2 on macOS x86_64 — the last release with Intel Mac
+#    wheels. Verified: `pip index versions torch` offers nothing newer here.
+# 2. torch 2.2.2 is built against the NumPy 1.x C API, so numpy>=2 breaks
+#    `tensor.numpy()` with "RuntimeError: Numpy is not available" and every
+#    SapBERT call dies.                                        => numpy<2
+# 3. transformers 5.x requires torch>=2.5 and silently DISABLES PyTorch below
+#    that, reporting "AutoModel requires the PyTorch library but it was not
+#    found" — which does not read as a version problem.        => transformers<5
+# All three were unpinned. On Apple Silicon the whole chain can be raised at once
+# (torch>=2.4 + numpy>=2 + transformers>=5); raise them together, never singly.
 
-# Visualisation
-matplotlib
-seaborn
-tabulate
-adjustText
-xlsxwriter
-
-# Bayesian modelling
-pymc
-arviz
-jax
-jaxlib
-numpyro
-blackjax
-
-# LLM / Google AI
-google-genai
-google-api-core
-
-# Ontology
+# ── Core: ontology ────────────────────────────────────────────────────────────
+rdflib
 owlready2
-concepts
+owlrl
+concepts                 # Formal Concept Analysis lattices
 
-# PubMed / Bioinformatics
-biopython
+# ── Core: data ────────────────────────────────────────────────────────────────
+numpy<2
+pandas
+scipy                    # required by scikit-learn
+scikit-learn
+networkx
+rapidfuzz
 
-# Async & utilities
-nest-asyncio
+# ── Core: embeddings (SapBERT) ────────────────────────────────────────────────
+torch>=2.2,<2.3
+transformers>=4.40,<5
+
+# ── LLM / APIs ────────────────────────────────────────────────────────────────
+openai                   # OpenRouter is called through the OpenAI client
 requests
-pydantic
+pydantic>=2
 python-dotenv
 
-# Notebook
+# ── PubMed ────────────────────────────────────────────────────────────────────
+biopython                # imported as `Bio` (Entrez, Medline)
+
+# ── Notebook & visualisation ──────────────────────────────────────────────────
+nest-asyncio
 ipython
+pyvis                    # interactive hierarchy graphs
+
+# ── Tests ─────────────────────────────────────────────────────────────────────
+pytest
+pytest-asyncio           # without it every async test is silently skipped
+
+# ── Optional ──────────────────────────────────────────────────────────────────
+# ontogpt is imported lazily inside OntologyMapper/OntoGPTExtractor methods, so
+# the pipeline runs without it. Only `run_map_ontology(method="ontogpt")` needs
+# it. Left out of the default install because it pulls a large dependency tree.
+# ontogpt
+
+# ── Removed 2026-08-21, listed here so nothing is lost silently ───────────────
+# None of these is imported anywhere in the project (verified by ast scan). They
+# appear to be leftovers from a sibling project that shared the environment, and
+# jax/jaxlib/pytensor actively conflict with the numpy<2 pin above:
+#   jax, jaxlib, numpyro, pymc, arviz, blackjax, statsmodels
+#   matplotlib, seaborn, tabulate, adjustText, xlsxwriter
+#   google-genai, google-api-core
+# If you do need the Bayesian stack, give it its own environment — it cannot
+# coexist with torch on an Intel Mac.

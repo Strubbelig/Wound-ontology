@@ -117,9 +117,23 @@ def test_relation_with_unknown_endpoint_is_rejected():
     assert res.relations == []
 
 
-def test_quality_to_material_licenses_nothing():
-    """A quality does not have parts; the schema must say so."""
-    assert relations_for("Quality", "MaterialEntity") == []
+def test_a_quality_has_no_material_parts():
+    """A quality is not made of material, so no part/whole relation may connect
+    the two — but it certainly inheres in a material bearer, so the pair is not
+    empty. It became non-empty on 2026-08-20 when 'Wound pain' was retyped from a
+    disposition of the wound to a quality of the patient (∃inheres_in.Homo
+    sapiens, ∃causally_influenced_by.Wound). The schema is generated from the
+    TTLs, so it learned that by itself."""
+    licensed = relations_for("Quality", "MaterialEntity")
+    assert "has part" not in licensed
+    assert "part of" not in licensed
+    assert "inheres in" in licensed
+
+
+def test_a_quality_bears_no_relation_to_a_process():
+    """Genuinely empty pair: nothing in MILD/WONT connects a quality to an
+    occurrent, so the schema must offer the model nothing at all."""
+    assert relations_for("Quality", "Process") == []
 
 
 # ── prompt rendering ───────────────────────────────────────────────────────
@@ -130,7 +144,7 @@ def test_definitions_reach_the_prompt():
 
 
 def test_relation_block_states_when_nothing_is_licensed():
-    assert "NO relation" in ep.relation_block("Quality", "MaterialEntity")
+    assert "NO relation" in ep.relation_block("Quality", "Process")
 
 
 def test_relation_block_collapses_to_one_option():

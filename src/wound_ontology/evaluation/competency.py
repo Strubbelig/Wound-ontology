@@ -33,9 +33,11 @@ from enum import Enum
 from pathlib import Path
 
 import rdflib
+from rdflib.namespace import RDF, RDFS, OWL
 from rdflib import RDFS
 
 OBO = "http://purl.obolibrary.org/obo/"
+MILD = "https://bioportal.bioontology.org/ontologies/MILD/"
 
 
 class Verdict(str, Enum):
@@ -61,6 +63,12 @@ PREDICATE_MAP: dict[str, tuple[str, str] | None] = {
     "occurs_in": ("restriction", OBO + "BFO_0000066"),
     "has_part": ("restriction", OBO + "BFO_0000051"),
     "is_treatment_for": ("restriction", OBO + "RO_0002606"),
+    # The relation MILD actually licenses in place of aetiology. "X co_located_with
+    # Y" asks whether the ontology says X and Y are parts of one material disease
+    # entity in one patient -- which is assertable -- rather than whether Y caused
+    # X, which model commitment 4 refuses. This is the target form for every CQ
+    # that was originally written with caused_by.
+    "co_located_with": ("colocation", MILD + "MILD_120020"),
     # ---- deliberately unexpressible ----
     "affects": None,      # no IRI; removed in C3 as unmappable
     "caused_by": None,    # MILD commitment 4: aetiology is not asserted causally
@@ -71,7 +79,8 @@ UNEXPRESSIBLE_REASON: dict[str, str] = {
                 "Rewrite the CQ using a located-in or participates-in relation."),
     "caused_by": ("MILD model commitment 4 rejects causal aetiology: what a "
                   "disease causes cannot be reliably separated from what it is. "
-                  "Rewrite the CQ as co-location, or as a predisposition."),
+                  "Rewrite the CQ with 'co_located_with', which asks the "
+                  "assertable question, or as a predisposition."),
 }
 
 
@@ -145,6 +154,18 @@ def compile_ask(subject_iri: str, predicate: str, object_iri: str) -> str | None
             "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
             f"ASK {{ <{subject_iri}> rdfs:subClassOf* <{object_iri}> }}"
         )
+    if kind == "colocation":
+        # Returned for display and provenance only. Co-location is evaluated by
+        # colocation_holds() below, not by SPARQL: the pattern needs two
+        # unbounded rdfs:subClassOf* walks plus a list traversal, and over the
+        # ~220k-triple import closure rdflib's path evaluation does not finish.
+        # A hand-written traversal that starts from the (very few) MILD_120020
+        # intersections is milliseconds instead.
+        return (
+            f"# co-location check (evaluated natively, not via SPARQL)\n"
+            f"# ASK: <{subject_iri}> subClassOf/equivalentClass\n"
+            f"#        Wound and part_of some (<{prop}> and has_part some <{object_iri}>)"
+        )
     return (
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
         "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
@@ -154,6 +175,93 @@ def compile_ask(subject_iri: str, predicate: str, object_iri: str) -> str | None
         f"  ?target rdfs:subClassOf* <{object_iri}> .\n"
         "}"
     )
+
+
+
+def _list_members(graph: rdflib.Graph, node) -> list:
+    """Members of an owl:intersectionOf / rdf:List, flattened one level."""
+    out, seen = [], set()
+    for coll in graph.objects(node, OWL.intersectionOf):
+        cur = coll
+        while cur and cur != RDF.nil and cur not in seen:
+            seen.add(cur)
+            for item in graph.objects(cur, RDF.first):
+                out.append(item)
+            cur = graph.value(cur, RDF.rest)
+    return out
+
+
+def _ancestors(graph: rdflib.Graph, node, limit: int = 5000) -> set:
+    """Named rdfs:subClassOf* ancestors of node, including node itself."""
+    seen, stack = {node}, [node]
+    while stack and len(seen) < limit:
+        cur = stack.pop()
+        for parent in graph.objects(cur, RDFS.subClassOf):
+            if isinstance(parent, rdflib.URIRef) and parent not in seen:
+                seen.add(parent)
+                stack.append(parent)
+    return seen
+
+
+def colocation_holds(graph: rdflib.Graph, subject_iri, object_iri,
+                     disease_cls=None) -> bool:
+    """Does the ontology assert subject and object are co-located?
+
+    True when subject is asserted (or inherits) an axiom of the Structure-2
+    shape used throughout WONT:
+
+        subject  =  Wound and part_of some (material disease entity
+                                            and has_part some object)
+
+    This is the relation MILD licenses in place of aetiology. It is emphatically
+    not a causal claim -- it says only that the two are parts of one material
+    disease entity in one patient.
+    """
+    disease_cls = disease_cls or rdflib.URIRef(MILD + "MILD_120020")
+    part_of = rdflib.URIRef(OBO + "BFO_0000050")
+    has_part = rdflib.URIRef(OBO + "BFO_0000051")
+    subject_iri = rdflib.URIRef(str(subject_iri))
+    object_iri = rdflib.URIRef(str(object_iri))
+
+    # Start from the handful of intersections mentioning MILD_120020 -- the most
+    # selective anchor in the graph -- and keep the ones whose has_part filler
+    # subsumes the object.
+    good_disease = set()
+    for node in set(graph.subjects(OWL.intersectionOf, None)):
+        members = _list_members(graph, node)
+        if disease_cls not in members:
+            continue
+        for m in members:
+            if isinstance(m, rdflib.URIRef):
+                continue
+            if graph.value(m, OWL.onProperty) != has_part:
+                continue
+            filler = graph.value(m, OWL.someValuesFrom)
+            if filler is None:
+                continue
+            if object_iri in _ancestors(graph, filler):
+                good_disease.add(node)
+    if not good_disease:
+        return False
+
+    # Restrictions part_of-ing one of those disease intersections.
+    good_restr = {
+        r for r in graph.subjects(OWL.onProperty, part_of)
+        if graph.value(r, OWL.someValuesFrom) in good_disease
+    }
+    if not good_restr:
+        return False
+
+    # Reachable from the subject, directly or through a named ancestor, and
+    # through either subClassOf or equivalentClass, flattening intersections.
+    for cls in _ancestors(graph, subject_iri):
+        for side in (RDFS.subClassOf, OWL.equivalentClass):
+            for expr in graph.objects(cls, side):
+                if expr in good_restr:
+                    return True
+                if any(m in good_restr for m in _list_members(graph, expr)):
+                    return True
+    return False
 
 
 def _answerable(graph: rdflib.Graph, idx: dict, cq: CompetencyQuestion):
@@ -183,7 +291,10 @@ def _answerable(graph: rdflib.Graph, idx: dict, cq: CompetencyQuestion):
         return Verdict.UNRESOLVED, "no class labelled " + ", ".join(hints), ""
 
     q = compile_ask(str(s_iri), pred, str(o_iri))
-    ok = bool(graph.query(q).askAnswer)
+    if PREDICATE_MAP[pred][0] == "colocation":
+        ok = colocation_holds(graph, s_iri, o_iri)
+    else:
+        ok = bool(graph.query(q).askAnswer)
     return (Verdict.PASS if ok else Verdict.FAIL,
             "" if ok else "query returned false", q)
 

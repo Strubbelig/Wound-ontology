@@ -678,7 +678,19 @@ class OntologyMapper:
                 try:
                     idx_entry = self._load_index(tgt_prefix).get(_norm(c["target_label"]))
                     tgt_def   = idx_entry[2] if idx_entry else None
-                except Exception:
+                except Exception as exc:
+                    # Swallowing this produced mappings with no definition that
+                    # were indistinguishable from targets that genuinely have
+                    # none. Reported once per prefix so a broken index is
+                    # visible without spamming the loop.
+                    seen = getattr(self, "_index_load_failures", None)
+                    if seen is None:
+                        seen = self._index_load_failures = set()
+                    if tgt_prefix not in seen:
+                        seen.add(tgt_prefix)
+                        print(f"[OntologyMapper] WARNING: could not load the "
+                              f"{tgt_prefix!r} index ({exc}). Definitions from this "
+                              "source will be missing for every match.")
                     tgt_def = None
                 matches.append(MapMatch(
                     source_iri=src_iri, source_label=src_lbl,

@@ -3,7 +3,7 @@
 
 Regenerate with:  python scripts/build_extraction_schema.py
 Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)
-Generated:        2026-08-19
+Generated:        2026-08-20
 
 Mirrors config/extraction_schema.yaml. Emitted directly rather than via
 `gen-pydantic` so the pipeline has no hard dependency on the linkml generator;
@@ -358,6 +358,7 @@ GROUNDING: dict[str, dict[str, str]] = {
         'Thread size 7-0': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000332',
         'Thread size 8-0': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000333',
         'Thread size 9-0': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000334',
+        'degree of wound pain': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000415',
         'degree of maceration': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000434',
         'macerated': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000435',
         'tissue firmness': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000450',
@@ -374,10 +375,10 @@ GROUNDING: dict[str, dict[str, str]] = {
         'necrotic': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000461',
         'fibrin-covered': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000462',
         'epithelialized': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000463',
+        'painful': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000474',
     },
     'Disposition': {
         'Immunosuppression': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000161',
-        'Wound pain': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000415',
         'wound infecting disposition': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120018',
     },
     'Function': {
@@ -615,9 +616,10 @@ DEFINITIONS: dict[str, str] = {
     'Autoimmune tissue disorder': "A pathological disorder consisting in tissue of a patient that has been damaged by an immune response directed against constituents normally present in that patient's own body.",
     'Lymphocele': 'A pathological disorder consisting in a collection of lymphatic fluid within a non-epithelialised cavity in a bodily structure.',
     'Abscess': 'A pathological disorder consisting in a localised collection of purulent material within a bodily structure, surrounded by inflamed and granulating tissue.',
-    'Mucosal blister': 'A pathological disorder consisting in a fluid-filled separation of the epithelium of a mucous membrane from the tissue beneath it.',
+    'Mucosal blister': 'A pathological disorder that is part of a mucosa and consists in a fluid-filled separation of the epithelium of that mucosa from the tissue beneath it.',
     'Wound covered by wound dressing': 'A wound that has as part a wound and a wound dressing.',
     'wound infecting pathogen': 'A pathogen that bears a wound infecting disposition.',
+    'degree of wound pain': 'A quality that inheres in a patient, that is the extent of the pain that patient feels, and that is causally influenced by a wound.',
     'degree of maceration': 'A quality of a wound edge that is the extent to which its tissue has been softened by prolonged exposure to moisture.',
     'macerated': 'A degree of maceration that qualifies its bearer as macerated.',
     'tissue firmness': 'A quality of a bodily tissue that is the degree of resistance it offers to deformation.',
@@ -634,7 +636,7 @@ DEFINITIONS: dict[str, str] = {
     'necrotic': 'A degree of necrosis that qualifies its bearer as necrotic.',
     'fibrin-covered': 'A degree of fibrin coverage that qualifies its bearer as fibrin-covered.',
     'epithelialized': 'A degree of epithelialization that qualifies its bearer as epithelialized.',
-    'Wound pain': "A disposition that inheres in a wound and that is realized in processes in which the bearer's host experiences pain.",
+    'painful': 'A degree of wound pain that qualifies its bearer as painful.',
     'Physician role': 'A healthcare provider role that inheres in a person in virtue of that person being licensed to practise medicine.',
     'tendency': 'A realizable entity that inheres in a material entity and that, in virtue of the physical makeup of its bearer, inclines that bearer toward participating in processes of a certain type — such that the inclination raises the objective probability of, but does not necessitate, the occurrence of those processes; that may be counteracted or reinforced by other tendencies of the same bearer without thereby ceasing to exist; and that may be realized to varying degrees, or not at all.',
     'genetic predisposition': 'A disease predisposition that has as material basis a pathogenic genetic variant.',
@@ -679,6 +681,7 @@ DEFINITIONS: dict[str, str] = {
 class RelationType(str, Enum):
     """Object properties actually used by MILD/WONT."""
 
+    CAUSALLY_INFLUENCED_BY = 'causally influenced by'
     CONCRETIZES = 'concretizes'
     HAS_A_MATERIAL_BASIS = 'has a material basis'
     HAS_AS_PROCESS_BOUNDARY_AT_END = 'has as process boundary at end'
@@ -708,6 +711,7 @@ class RelationType(str, Enum):
 
 
 RELATION_IRI: dict[str, str] = {
+    RelationType.CAUSALLY_INFLUENCED_BY.value: 'http://purl.obolibrary.org/obo/RO_0002559',
     RelationType.CONCRETIZES.value: 'http://purl.obolibrary.org/obo/RO_0000059',
     RelationType.HAS_A_MATERIAL_BASIS.value: 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120094',
     RelationType.HAS_AS_PROCESS_BOUNDARY_AT_END.value: 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120085',
@@ -741,6 +745,9 @@ RELATION_IRI: dict[str, str] = {
 # categories are known the relation is largely forced, so the model is never
 # asked to choose between occurs_in / part_of / inheres_in on BFO grounds.
 RELATION_DOMAINS: dict[str, set[tuple[str, str]]] = {
+    RelationType.CAUSALLY_INFLUENCED_BY.value: {
+        ('Quality', 'MaterialEntity'),
+    },
     RelationType.CONCRETIZES.value: {
         ('RealizableEntity', 'InformationEntity'),
     },
@@ -794,7 +801,7 @@ RELATION_DOMAINS: dict[str, set[tuple[str, str]]] = {
         ('Process', 'Process'),
     },
     RelationType.INHERES_IN.value: {
-        ('Disposition', 'MaterialEntity'),
+        ('Quality', 'MaterialEntity'),
         ('RealizableEntity', 'MaterialEntity'),
         ('Tendency', 'MaterialEntity'),
     },

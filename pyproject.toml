@@ -19,8 +19,10 @@ dependencies = [
     "python-dotenv",
     "networkx",
     "rdflib",
-    "torch",
-    "transformers",
+    "torch>=2.2,<2.3",       # last release with macOS x86_64 wheels
+    "numpy<2",               # torch 2.2.2 is built against the NumPy 1.x C API
+    "transformers>=4.40,<5", # transformers 5 needs torch>=2.5 and silently
+                             # disables PyTorch below it; see requirements.txt
     "scikit-learn",
     "rapidfuzz",
     "pytest-asyncio",

@@ -78,6 +78,10 @@ class BaseHierarchy(ABC):
             self._df = pd.DataFrame(dtype=float)
         # (child, parent) -> source. Persisted next to the matrix.
         self._prov: dict[tuple[str, str], str] = {}
+        #: False until provenance is actually loaded. Consulted by
+        #: provenance_summary() so "no conflicts" can never be confused
+        #: with "precedence was never in force".
+        self._prov_loaded: bool = False
         # Edges proposed but not committed, e.g. FCA suggestions awaiting review.
         self._candidates: dict[tuple[str, str], str] = {}
         self._load_provenance()
@@ -89,18 +93,57 @@ class BaseHierarchy(ABC):
         return f"{self.file_name}_provenance"
 
     def _load_provenance(self) -> None:
+        """Load edge provenance, or say clearly that it is not in force.
+
+        This used to swallow every exception into ``raw = None`` and return on a
+        column mismatch without a word. The consequence was not "no provenance
+        metadata" -- it was that ``source_of`` returned None for every edge, so
+        the rank check in ``_set_edge`` never fired and FCA-suggested edges could
+        overwrite curated ones. The whole curated > text > fca guarantee switched
+        itself off and every run still looked normal.
+
+        A missing file is fine and expected on a first run. A file that exists
+        and cannot be read is not, and raises.
+        """
         try:
             raw = self.dm.load_latest_csv(self._prov_file)
-        except Exception:
+        except FileNotFoundError:
             raw = None
+        except Exception as exc:
+            raise RuntimeError(
+                f"[{type(self).__name__}] provenance file for {self._prov_file!r} "
+                f"exists but could not be read: {exc}. Refusing to continue with "
+                "provenance silently disabled — the curated > text > fca precedence "
+                "would not be enforced."
+            ) from exc
+
         if raw is None or raw.empty:
+            self._prov_loaded = False
+            print(f"[{type(self).__name__}] no provenance for {self._prov_file!r}; "
+                  "edge precedence is NOT in force until edges are stamped.")
             return
+
         cols = {c.lower(): c for c in raw.columns}
         need = ("child", "parent", "source")
-        if not all(k in cols for k in need):
-            return
+        missing = [k for k in need if k not in cols]
+        if missing:
+            raise ValueError(
+                f"[{type(self).__name__}] provenance CSV for {self._prov_file!r} is "
+                f"missing column(s) {missing}; found {sorted(cols)}. Refusing to "
+                "continue with provenance silently disabled."
+            )
+
+        unknown = 0
         for _, r in raw.iterrows():
-            self._prov[(str(r[cols["child"]]), str(r[cols["parent"]]))] = str(r[cols["source"]])
+            source = str(r[cols["source"]])
+            if source not in SOURCE_RANK:
+                unknown += 1
+            self._prov[(str(r[cols["child"]]), str(r[cols["parent"]]))] = source
+        self._prov_loaded = True
+        if unknown:
+            print(f"[{type(self).__name__}] WARNING: {unknown} provenance row(s) name a "
+                  f"source outside {sorted(SOURCE_RANK)}; those edges cannot be ranked.")
+        print(f"[{type(self).__name__}] provenance loaded: {len(self._prov)} edge(s).")
 
     def save_provenance(self) -> None:
         if not self._prov:
@@ -118,9 +161,20 @@ class BaseHierarchy(ABC):
         return sorted(k for k, v in self._prov.items() if v == source)
 
     def provenance_summary(self) -> dict[str, int]:
+        """Edge counts per source.
+
+        An empty dict is ambiguous on its own -- it means either "no edges are
+        stamped" or "provenance never loaded, so precedence is not enforced".
+        The ``_unstamped`` key makes the second case visible rather than letting
+        a caller read silence as health.
+        """
         counts: dict[str, int] = {}
         for v in self._prov.values():
             counts[v] = counts.get(v, 0) + 1
+        stamped = sum(counts.values())
+        total = int((self.df == 1.0).to_numpy().sum()) if not self.df.empty else 0
+        if total > stamped:
+            counts["_unstamped"] = total - stamped
         return counts
 
     @property

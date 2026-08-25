@@ -44,8 +44,17 @@ class OntologyCurator:
         class_hierarchy=None,
         mereological_hierarchy=None,
         fca_hierarchy=None,
+        store=None,
     ) -> None:
-        """Populate the ontology from BaseHierarchy objects (additive)."""
+        """Populate the ontology from BaseHierarchy objects (additive).
+
+        ``store`` is optional and carries the relations that live nowhere else.
+        Until 2026-08-20 only is_a and part_of were exported, so has_quality,
+        occurs_in and is_treatment_for were extracted, stored, used for FCA and
+        then silently dropped -- roughly 11,800 assertions that never reached
+        OWL. Passing the store emits them as existential restrictions on real
+        OBO properties.
+        """
         cls_reg: dict[str, object] = {}
         if class_hierarchy is not None and not class_hierarchy.df.empty:
             self._export_hierarchy(cls_reg, class_hierarchy, "ClassHierarchy")
@@ -53,6 +62,8 @@ class OntologyCurator:
             self._export_mereological(cls_reg, mereological_hierarchy)
         if fca_hierarchy is not None and not fca_hierarchy.df.empty:
             self._export_hierarchy(cls_reg, fca_hierarchy, "FCAHierarchy")
+        if store is not None:
+            self._export_store_relations(cls_reg, store)
         self.ontology._invalidate_caches()
 
     # ── External imports ──────────────────────────────────────────────────────
@@ -254,13 +265,75 @@ class OntologyCurator:
                             print(f"[OntologyCurator] Skipped cycle: {child} → {parent}")
         print(f"[OntologyCurator] {label}: {len(hierarchy.df.index)} concepts exported.")
 
+    # Surface predicate -> the OBO property it actually means. Anything absent
+    # here is deliberately not exportable: 'affects' has no IRI, and 'caused_by'
+    # is refused by MILD model commitment 4. See config/settings.py.
+    RELATION_IRIS: dict[str, tuple[str, str, bool]] = {
+        # predicate:        (IRI,                                       label,              transitive)
+        "part_of":          ("http://purl.obolibrary.org/obo/BFO_0000050", "part of",          True),
+        "has_quality":      ("http://purl.obolibrary.org/obo/RO_0000086",  "has quality",      False),
+        "occurs_in":        ("http://purl.obolibrary.org/obo/BFO_0000066", "occurs in",        False),
+        "is_treatment_for": ("http://purl.obolibrary.org/obo/RO_0002606",  "is treatment for", False),
+    }
+
+    def _get_or_create_prop(self, iri: str, label: str, transitive: bool = False):
+        """Fetch an object property by its real IRI, creating it if absent.
+
+        The old code did ``search_one(iri="*part_of")`` and, finding nothing,
+        minted a fresh local ``part_of`` in the ontology's own namespace. Every
+        exported mereological restriction then pointed at an invented property
+        instead of BFO_0000050, which no downstream reasoner or ontology would
+        recognise. Binding by IRI removes that failure mode.
+        """
+        onto = self.ontology.onto
+        existing = onto.world[iri]
+        if existing is not None:
+            return existing
+        local = iri.rsplit("/", 1)[-1].rsplit("#", 1)[-1]
+        bases = (ObjectProperty, TransitiveProperty) if transitive else (ObjectProperty,)
+        with onto:
+            prop = python_types.new_class(local, bases)
+            prop.iri = iri
+            prop.label = [label]
+        return prop
+
+    def _export_store_relations(self, cls_reg: dict, store) -> None:
+        """Emit existential restrictions for the store's non-taxonomic relations."""
+        onto = self.ontology.onto
+        counts: dict[str, int] = {}
+        skipped: dict[str, int] = {}
+        with onto:
+            for record in getattr(store, "dict", {}).values():
+                for subject, attrs in record.get("entities", {}).items():
+                    for attr, conf in attrs.items():
+                        if conf != 1.0 or ":" not in attr:
+                            continue
+                        pred, target = (x.strip() for x in attr.split(":", 1))
+                        if pred == "is_a" or not target:
+                            continue          # taxonomy comes from the hierarchy
+                        spec = self.RELATION_IRIS.get(pred)
+                        if spec is None:
+                            skipped[pred] = skipped.get(pred, 0) + 1
+                            continue
+                        iri, label, transitive = spec
+                        prop = self._get_or_create_prop(iri, label, transitive)
+                        subj_cls = self._get_or_create_cls(cls_reg, subject)
+                        targ_cls = self._get_or_create_cls(cls_reg, target)
+                        restriction = prop.some(targ_cls)
+                        if restriction not in subj_cls.is_a:
+                            subj_cls.is_a.append(restriction)
+                            counts[pred] = counts.get(pred, 0) + 1
+        summary = ", ".join(f"{k}={v}" for k, v in sorted(counts.items())) or "none"
+        print(f"[OntologyCurator] StoreRelations: {summary}")
+        if skipped:
+            detail = ", ".join(f"{k}={v}" for k, v in sorted(skipped.items()))
+            print(f"[OntologyCurator] StoreRelations skipped (no IRI): {detail}")
+
     def _export_mereological(self, cls_reg: dict, mere_hier) -> None:
         onto = self.ontology.onto
         with onto:
-            part_of = onto.search_one(iri="*part_of")
-            if part_of is None:
-                class part_of(ObjectProperty, TransitiveProperty):
-                    namespace = onto
+            iri, label, transitive = self.RELATION_IRIS["part_of"]
+            part_of = self._get_or_create_prop(iri, label, transitive)
             for branch in mere_hier.df.index:
                 for root in mere_hier.df.columns:
                     if mere_hier.df.at[branch, root] != 1.0:

@@ -1,7 +1,7 @@
 # GENERATED FILE - DO NOT EDIT BY HAND.
 # Regenerate with:  python scripts/build_extraction_schema.py
 # Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)
-# Generated:        2026-08-19
+# Generated:        2026-08-20
 id: https://w3id.org/wont/extraction
 name: wont-extraction
 title: WONT/MILD-derived extraction schema
@@ -754,7 +754,7 @@ enums:
       MUCOSAL_BLISTER:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000473
         title: "Mucosal blister"
-        description: "A pathological disorder consisting in a fluid-filled separation of the epithelium of a mucous membrane from the tissue beneath it."
+        description: "A pathological disorder that is part of a mucosa and consists in a fluid-filled separation of the epithelium of that mucosa from the tissue beneath it."
       WOUND_COVERED_BY_WOUND_DRESSING:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120014
         title: "Wound covered by wound dressing"
@@ -834,6 +834,11 @@ enums:
       THREAD_SIZE_9_0:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000334
         title: "Thread size 9-0"
+      DEGREE_OF_WOUND_PAIN:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000415
+        title: "degree of wound pain"
+        description: "A quality that inheres in a patient, that is the extent of the pain that patient feels, and that is causally influenced by a wound."
+        aliases: ["Wound pain"]
       DEGREE_OF_MACERATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000434
         title: "degree of maceration"
@@ -898,6 +903,10 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000463
         title: "epithelialized"
         description: "A degree of epithelialization that qualifies its bearer as epithelialized."
+      PAINFUL:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000474
+        title: "painful"
+        description: "A degree of wound pain that qualifies its bearer as painful."
   DispositionTerm:
     description: >-
       Existing Disposition classes in MILD/WONT. Ground to one of these when the
@@ -906,10 +915,6 @@ enums:
       IMMUNOSUPPRESSION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000161
         title: "Immunosuppression"
-      WOUND_PAIN:
-        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000415
-        title: "Wound pain"
-        description: "A disposition that inheres in a wound and that is realized in processes in which the bearer's host experiences pain."
       WOUND_INFECTING_DISPOSITION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120018
         title: "wound infecting disposition"
@@ -1510,6 +1515,10 @@ enums:
       object categories are derived from how each property is used there, so a
       relation cannot be applied across a category boundary the ontologies reject.
     permissible_values:
+      CAUSALLY_INFLUENCED_BY:
+        meaning: http://purl.obolibrary.org/obo/RO_0002559
+        title: "causally influenced by"
+        description: "Permitted category pairs: Quality -> MaterialEntity"
       CONCRETIZES:
         meaning: http://purl.obolibrary.org/obo/RO_0000059
         title: "concretizes"
@@ -1577,7 +1586,7 @@ enums:
       INHERES_IN:
         meaning: http://purl.obolibrary.org/obo/BFO_0000197
         title: "inheres in"
-        description: "Permitted category pairs: Disposition -> MaterialEntity; RealizableEntity -> MaterialEntity; Tendency -> MaterialEntity"
+        description: "Permitted category pairs: Quality -> MaterialEntity; RealizableEntity -> MaterialEntity; Tendency -> MaterialEntity"
       IS_ABOUT:
         meaning: http://purl.obolibrary.org/obo/IAO_0000136
         title: "is about"

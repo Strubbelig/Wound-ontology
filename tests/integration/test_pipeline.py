@@ -19,6 +19,9 @@ import pytest
 
 from wound_ontology.orchestrator import Orchestrator
 
+# Every test here drives the live LLM pipeline.
+pytestmark = pytest.mark.needs_llm
+
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 

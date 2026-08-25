@@ -21,6 +21,8 @@ from wound_ontology.evaluation.competency import (
     summarize,
 )
 
+from config.settings import COMPETENCY_QUESTIONS_FILE as CQ_FILE
+
 EX = "http://example.org/"
 OBO = "http://purl.obolibrary.org/obo/"
 
@@ -166,14 +168,13 @@ def test_out_of_scope_claim_that_IS_answerable_fails(graph):
 
 # ── the real CQ file ───────────────────────────────────────────────────────
 def test_real_cq_file_loads():
-    qs = load_questions("config/competency_questions.json")
+    qs = load_questions(CQ_FILE)
     assert len(qs) > 60
     assert any(q.in_scope for q in qs) and any(not q.in_scope for q in qs)
 
 
 def test_report_renders():
-    text = report(run_suite(rdflib.Graph(), load_questions(
-        "config/competency_questions.json")))
+    text = report(run_suite(rdflib.Graph(), load_questions(CQ_FILE)))
     assert "in-scope score" in text
 
 
@@ -181,32 +182,57 @@ def test_report_renders():
 #
 # The current score is 0/51: the ontology answers NONE of its own in-scope
 # competency questions as written. That is the measurement, not a target — most
-# of the gap is the CQ file and the ontology having drifted apart (28 of 47
-# unresolved terms are label mismatches, not missing concepts). This test pins
-# the numbers so the score can only be improved, never silently regressed.
+# of the gap is the CQ file and the ontology having drifted apart. These pin the
+# numbers so the score can only be improved, never silently regressed.
+#
+# 2026-08-20: 0/51 -> 6/65. Ten CQ terms were realigned to the labels the
+# ontology actually uses, three wound-part classes gained the part_of Wound
+# axiom their names always implied, and the 14 CQs written with 'affects' or
+# 'caused_by' were rewritten against relations this ontology licenses. The
+# denominator GREW because those 14 stopped being exempt from scoring -- the
+# score percentage barely moved, but 14 questions went from "not counted" to
+# "actually measured", which is the point.
 
-BASELINE_PASS = 0
-BASELINE_TESTABLE = 51
-BASELINE_UNEXPRESSIBLE = 14
+BASELINE_PASS = 6
+BASELINE_TESTABLE = 65
+BASELINE_UNEXPRESSIBLE = 0
 
 
 @pytest.fixture(scope="module")
 def real_graph():
+    """The full closure: WONT + MILD + every MILD module.
+
+    The module loop used to be ``except Exception: pass``. A module that failed
+    to parse was dropped without a word, and the competency score was then
+    computed against a graph missing classes it was expected to reach -- a
+    regression in the modules would have shown up as CQs mysteriously not
+    answering, never as a parse error. Failures are collected and raised
+    together, so one broken module names itself instead of moving the baseline.
+    """
     from config.settings import GROUND_TRUTH_TTL, MILD_TTL, MILD_MODULES_DIR
     g = rdflib.Graph()
     g.parse(str(GROUND_TRUTH_TTL), format="turtle")
     g.parse(str(MILD_TTL), format="turtle")
-    for m in sorted(MILD_MODULES_DIR.glob("*_module.owl")):
+    modules = sorted(MILD_MODULES_DIR.glob("*_module.owl"))
+    assert modules, f"no MILD modules found under {MILD_MODULES_DIR}"
+    broken = []
+    for m in modules:
         try:
             g.parse(str(m))
-        except Exception:
-            pass
+        except Exception as exc:                      # noqa: BLE001 -- re-raised below
+            broken.append(f"{m.name}: {type(exc).__name__}: {exc}")
+    if broken:
+        raise RuntimeError(
+            "MILD modules failed to parse, so the competency score would be "
+            "measured against an incomplete closure:\n  "
+            + "\n  ".join(broken)
+        )
     return g
 
 
 @pytest.fixture(scope="module")
 def real_results(real_graph):
-    return run_suite(real_graph, load_questions("config/competency_questions.json"))
+    return run_suite(real_graph, load_questions(CQ_FILE))
 
 
 def test_in_scope_score_does_not_regress(real_results):
@@ -221,7 +247,23 @@ def test_unexpressible_count_does_not_grow(real_results):
     assert n <= BASELINE_UNEXPRESSIBLE, f"UNEXPRESSIBLE grew to {n}"
 
 
-def test_the_rejected_relations_are_exactly_affects_and_caused_by(real_results):
+def test_no_new_relation_becomes_unexpressible(real_results):
+    """The only relations this ontology may refuse are the two it refuses on
+    principle. Anything else showing up here means a CQ was written against a
+    relation nobody decided to reject — drift, not a commitment."""
     preds = {r.cq.triple[1] for r in real_results
              if r.verdict is Verdict.UNEXPRESSIBLE and r.cq.triple}
-    assert preds == {"affects", "caused_by"}
+    assert preds <= {"affects", "caused_by"}, f"unexpected unexpressible: {preds}"
+
+
+def test_colocation_is_not_vacuous(real_graph):
+    """co_located_with must distinguish. If it answered true for any pair it
+    would manufacture passes rather than measure anything."""
+    from wound_ontology.evaluation.competency import colocation_holds, label_index
+    idx = label_index(real_graph)
+    yes = ("diabetic wound", "diabetic metabolic disorder")
+    no = ("diabetic wound", "autoimmune tissue disorder")
+    assert colocation_holds(real_graph, idx[yes[0]], idx[yes[1]]) is True
+    assert colocation_holds(real_graph, idx[no[0]], idx[no[1]]) is False
+    # a bare Wound is co-located with nothing in particular
+    assert colocation_holds(real_graph, idx["wound"], idx["diabetic metabolic disorder"]) is False

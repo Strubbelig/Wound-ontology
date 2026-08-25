@@ -15,6 +15,13 @@ GROUND_TRUTH_TTL = PROJECT_ROOT / "data" / "ground truth" / "ground_truth_final.
 MILD_TTL = PROJECT_ROOT.parent / "Disease ontologies" / "Disease proposal 2.ttl"
 MILD_MODULES_DIR = PROJECT_ROOT.parent / "Disease ontologies" / "Disease ontology modules"
 
+# The competency questions, resolved absolutely. They used to be opened as the
+# relative "config/competency_questions.json", which only works when the
+# interpreter happens to be started from PROJECT_ROOT -- so the competency tests
+# passed from a terminal and errored under the VS Code Test Explorer, which runs
+# from the workspace root one level up.
+COMPETENCY_QUESTIONS_FILE = PROJECT_ROOT / "config" / "competency_questions.json"
+
 # Where the reasoner gate keeps its cached skeleton TBox and quarantined batches.
 REASONER_SKELETON = PROJECT_ROOT / "output" / "owl" / "skeleton_tbox.ttl"
 QUARANTINE_DIR = PROJECT_ROOT / "output" / "quarantine"
@@ -36,8 +43,11 @@ OBI_OWL_URL = "http://purl.obolibrary.org/obo/obi.owl"
 
 # Output ontology identity
 # Change these to your own IRI/CURIE when publishing.
-ONTOLOGY_BASE_IRI = "http://purl.obolibrary.org/obo/WOND_"  # base for class IRIs
-ONTOLOGY_ID_PREFIX = "WOND"                                  # CURIE prefix
+# WOND_ was the ontology's earlier namespace and has been retired -- the 16
+# import modules were already scrubbed of it. The exporter was still minting it,
+# so every newly discovered class got an IRI in a namespace nothing resolves.
+ONTOLOGY_BASE_IRI = "https://bioportal.bioontology.org/ontologies/WONT/WONT_"
+ONTOLOGY_ID_PREFIX = "WONT"                                  # CURIE prefix
 ONTOLOGY_ID_START  = 1                                       # first numeric ID
 
 # PubMed / NCBI
@@ -52,15 +62,53 @@ BATCH_SIZE = 40
 CACHE_MAX_FILES_PER_PREFIX = 10
 
 # Ontology predicates
+# StoreCleaner STRIPS any store attribute whose predicate is not listed here,
+# so this list is the pipeline's real relation vocabulary. It used to hold only
+# the legacy extractor's five entries -- which meant that after the switch to
+# two-stage extraction, 24 of the 26 relation types the extractor can emit were
+# deleted from the store before anything downstream ever saw them.
+#
+# Kept explicit rather than imported, so the vocabulary is readable in one place;
+# test_predicate_vocabularies_agree fails if it drifts from the extractor's
+# RELATION_IRI or from owl/extend.py's export table.
 ALLOWED_PREDICATES = [
     "is_a",
-    "part_of",
+    # ── emitted by two-stage extraction (RelationType / RELATION_IRI) ─────────
+    "causally_influenced_by",
+    "concretizes",
+    "has_a_material_basis",
+    "has_as_process_boundary_at_end",
+    "has_as_process_boundary_at_start",
+    "has_disposition",
+    "has_function",
+    "has_input",
+    "has_output",
+    "has_part",
+    "has_participant",
     "has_quality",
+    "has_realization",
+    "has_role",
+    "has_specified_input",
+    "has_specified_output",
+    "immediately_causally_downstream_of",
+    "inheres_in",
+    "is_about",
+    "is_specified_input_of",
+    "is_specified_output_of",
+    "occupies_temporal_region",
+    "output_of",
+    "part_of",
+    "participates_in",
+    "realizes",
+    # ── legacy stores only; no RelationType produces these ────────────────────
     "occurs_in",
-    "affects",
-    "caused_by",
     "is_treatment_for",
 ]
+# 'affects' and 'caused_by' were removed (C3). 'affects' had no IRI at all, so
+# every affects edge was unmappable on export. 'caused_by' is refused by MILD
+# model commitment 4: what a disease causes cannot be reliably separated from
+# what it is. Anatomical involvement of a disorder is BFO_0000050 part_of; of a
+# process, BFO_0000066 occurs_in. Aetiology has no replacement by design.
 
 # Predicate definitions — used to build the LLM extraction prompt dynamically.
 PREDICATE_DEFINITIONS = {
@@ -112,35 +160,10 @@ PREDICATE_DEFINITIONS = {
         ],
         "no": [
             "NEVER two occurrents: 'Wound Healing occurs_in Postoperative Period' is WRONG — a time period is an occurrent; use part_of for process-in-process.",
-            "NEVER two continuants: 'Wound Infection occurs_in Diabetic Foot' is WRONG — Wound Infection is a condition (continuant); use affects.",
-            "NEVER two continuants: 'Surgical Site Infection occurs_in Surgical Site' is WRONG — SSI is a condition (continuant); use affects.",
-            "NEVER two continuants: 'Pressure Injury occurs_in Subcutaneous Tissue' is WRONG — both are continuants; use affects.",
-            "TEST: Is X a process/event AND Y a material site or organ? → occurs_in. Is X a condition/lesion? → affects.",
-        ],
-    },
-    "affects": {
-        "summary": "ANATOMICAL INVOLVEMENT. Connects a CONTINUANT (wound, condition, lesion) to the CONTINUANT (tissue, anatomical structure) it involves or damages. NEVER for processes — use occurs_in.",
-        "yes": [
-            "Pressure Injury affects Subcutaneous Tissue  (lesion affects anatomical site — correct)",
-            "Diabetic Foot Ulcer affects Plantar Foot  (condition affects body region — correct)",
-            "Necrotizing Fasciitis affects Fascia  (condition affects tissue — correct)",
-            "Burn Injury affects Epidermis  (wound affects skin layer — correct)",
-        ],
-        "no": [
-            "NEVER for processes: 'Wound Healing affects Dermis' is WRONG — use occurs_in.",
-            "NEVER for taxonomic membership: 'Pressure Injury affects Chronic Wound' is WRONG — use is_a.",
-            "NEVER for causal relationships: 'Ischemia affects Wound Healing' is WRONG — use caused_by.",
-            "TEST: Is X a material lesion/condition AND Y the anatomical site it involves? → affects. If X is a process → occurs_in.",
-        ],
-    },
-    "caused_by": {
-        "summary": "DIRECT CAUSAL AGENT. Use when Y is the necessary causal agent or mechanism of X.",
-        "yes": [
-            "Wound Infection caused_by Bacterial Colonization",
-            "Mitochondrial Dysfunction caused_by Oxidative Stress",
-        ],
-        "no": [
-            "Avoid if the causal link is indirect or merely correlational.",
+            "NEVER two continuants: 'Wound Infection occurs_in Diabetic Foot' is WRONG — Wound Infection is a condition (continuant); use part_of.",
+            "NEVER two continuants: 'Surgical Site Infection occurs_in Surgical Site' is WRONG — SSI is a condition (continuant); use part_of.",
+            "NEVER two continuants: 'Pressure Injury occurs_in Subcutaneous Tissue' is WRONG — both are continuants; use part_of.",
+            "TEST: Is X a process/event AND Y a material site or organ? → occurs_in. Is X a disorder/lesion? → part_of.",
         ],
     },
     "is_treatment_for": {

@@ -24,7 +24,9 @@ from __future__ import annotations
 from wound_ontology.llm.extraction_models import (
     CATEGORY_IRI,
     COARSE_CATEGORIES,
+    BFOCategory,
     ExtractionResult,
+    RelationType,
 )
 
 
@@ -108,3 +110,157 @@ def summarize(result: ExtractionResult, report: dict | None = None) -> str:
                 f"unknown predicates dropped: {len(report['unknown_predicates'])}"
             )
     return "; ".join(lines)
+
+
+# ── the reverse direction: store -> gate inputs ───────────────────────────────
+#
+# `result_to_store_entities` above flattens typed objects into the store's
+# "<pred>: <target>" strings. The reasoner gate needs them back: `ReasonerGate
+# .check` wants ExtractedEntity/ExtractedRelation, because it has to know each
+# term's BFO category to anchor it in the skeleton TBox.
+#
+# The round trip is lossy in one direction only. A term's category survives as
+# its `is_a: <BFOCategory>` attribute, so typing is recoverable. What is NOT
+# recoverable is a term that never carried one -- a legacy free-text entity, or
+# a bare relation target that was never itself extracted as an entity. Those
+# cannot be gated at all, and the gate would otherwise skip them in silence
+# (`build_batch_graph` drops any relation whose endpoint it cannot resolve).
+# So every exclusion is counted and returned in `report` rather than dropped.
+
+_CATEGORY_VALUES = frozenset(c.value for c in BFOCategory)
+
+
+def _predicate_lookup() -> dict[str, "RelationType"]:
+    """Store predicate key -> RelationType ("part_of" -> RelationType.PART_OF)."""
+    return {normalize_predicate(r.value): r for r in RelationType}
+
+
+def _iter_store_attributes(store_data: dict):
+    """Yield (entity_label, attribute_string) for every asserted store cell.
+
+    The store is keyed by DOCUMENT, not by term:
+    ``{pmid: {"entities": {label: {"pred: target": 1.0}}, "meta_stamp": ...}}``.
+    A term therefore appears once per abstract that mentioned it, and the same
+    term can be typed differently by two abstracts -- which is the disagreement
+    this module has to surface rather than let the last writer win.
+    """
+    for doc in store_data.values():
+        if not isinstance(doc, dict):
+            continue
+        for label, attrs in doc.get("entities", {}).items():
+            if not isinstance(attrs, dict):
+                continue
+            for attr, value in attrs.items():
+                if value == 1.0:
+                    yield label, str(attr)
+
+
+def store_to_gate_inputs(store_data: dict) -> tuple[list, list, dict]:
+    """Recover (entities, relations, report) from the ConceptStore dictionary.
+
+    `report` is the point of this function as much as the two lists are. It
+    separates "the gate looked and found nothing wrong" from "the gate could not
+    look", which are otherwise the same outcome from the caller's side:
+
+        untyped            terms carrying no `is_a: <BFOCategory>` at all
+        conflicting        terms two abstracts typed DIFFERENTLY -- the
+                           cross-abstract disagreement stage-1 typing is meant
+                           to make impossible
+        unknown_predicate  predicate keys with no RelationType, counted per key
+        untyped_object     relations whose target is not a typed term
+        unlicensed         relations whose (subject cat, object cat) pair
+                           MILD/WONT does not license
+    """
+    from wound_ontology.llm.extraction_models import (
+        RELATION_DOMAINS,
+        ExtractedEntity,
+        ExtractedRelation,
+    )
+
+    preds = _predicate_lookup()
+    report: dict = {
+        "untyped": [],
+        "conflicting": {},
+        "unknown_predicate": {},
+        "untyped_object": {},
+        "unlicensed": [],
+    }
+
+    # ── pass 1: typing ────────────────────────────────────────────────────
+    seen: set[str] = set()
+    found: dict[str, set[str]] = {}
+    for label, attr in _iter_store_attributes(store_data):
+        seen.add(label)
+        pred, sep, target = attr.partition(": ")
+        if sep and pred.strip() == "is_a" and target.strip() in _CATEGORY_VALUES:
+            found.setdefault(label, set()).add(target.strip())
+
+    categories: dict[str, str] = {}
+    for label in sorted(seen):
+        cats = found.get(label, set())
+        if not cats:
+            report["untyped"].append(label)
+        elif len(cats) > 1:
+            report["conflicting"][label] = sorted(cats)
+        else:
+            categories[label] = next(iter(cats))
+
+    entities = [
+        ExtractedEntity(label=lab, category=BFOCategory(cat))
+        for lab, cat in sorted(categories.items())
+    ]
+
+    # ── pass 2: relations between two typed terms ─────────────────────────
+    # De-duplicated: the same triple asserted by twelve abstracts is one axiom,
+    # and feeding it twelve times would inflate every count the gate reports.
+    triples: set[tuple[str, str, str]] = set()
+    for label, attr in _iter_store_attributes(store_data):
+        if label not in categories:
+            continue                      # subject untyped or conflicting
+        pred, sep, target = attr.partition(": ")
+        pred, target = pred.strip(), target.strip()
+        if not sep or pred == "is_a":
+            continue                      # subsumption: the OTHER gate's job
+        rel = preds.get(pred)
+        if rel is None:
+            report["unknown_predicate"][pred] = \
+                report["unknown_predicate"].get(pred, 0) + 1
+            continue
+        if target not in categories:
+            report["untyped_object"][target] = \
+                report["untyped_object"].get(target, 0) + 1
+            continue
+        triples.add((label, rel.value, target))
+
+    relations = []
+    for subj, pred_value, obj in sorted(triples):
+        pair = (categories[subj], categories[obj])
+        if pair not in RELATION_DOMAINS.get(pred_value, set()):
+            report["unlicensed"].append((subj, pred_value, obj))
+        relations.append(
+            ExtractedRelation(subject=subj, predicate=RelationType(pred_value),
+                              object=obj)
+        )
+
+    return entities, relations, report
+
+
+def describe_gate_inputs(entities, relations, report: dict) -> str:
+    """Human-readable account of what is gateable and what is not.
+
+    Counts are printed even when zero, so silence never reads as success.
+    """
+    lines = [
+        f"gateable: {len(entities)} typed term(s), {len(relations)} relation(s)",
+        f"NOT gateable -- no BFO category: {len(report['untyped'])} term(s)",
+        f"NOT gateable -- conflicting categories: "
+        f"{len(report['conflicting'])} term(s)",
+        f"NOT gateable -- predicate has no RelationType: "
+        f"{sum(report['unknown_predicate'].values())} edge(s) across "
+        f"{len(report['unknown_predicate'])} predicate(s)",
+        f"NOT gateable -- target is not a typed term: "
+        f"{sum(report['untyped_object'].values())} edge(s)",
+        f"licensing violations (gated anyway, reported): "
+        f"{len(report['unlicensed'])}",
+    ]
+    return "\n".join(lines)

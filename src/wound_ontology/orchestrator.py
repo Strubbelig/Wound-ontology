@@ -34,7 +34,17 @@ try:
         RO_OWL_URL as _RO_URL,
         OBI_OWL_URL as _OBI_URL,
     )
-except ImportError:
+except ImportError as _exc:
+    # Not harmless. _PREDICATE_DEFINITIONS feeds the extraction prompt's rule
+    # block; empty means the model is asked to pick predicates with no guidance
+    # at all, and the only symptom is worse extraction nobody attributes to this.
+    import warnings as _warnings
+    _warnings.warn(
+        f"config.settings could not be imported ({_exc}). Falling back to EMPTY "
+        "predicate definitions and no predefined hierarchy — extraction prompts "
+        "will carry no predicate rules. Fix the import before trusting any run.",
+        RuntimeWarning, stacklevel=2,
+    )
     _PREDICATE_DEFINITIONS = {}
     _PREDEFINED_HIERARCHY_FILE = None
     _BFO_URL = "http://purl.obolibrary.org/obo/bfo.owl"
@@ -42,9 +52,8 @@ except ImportError:
     _OBI_URL = "http://purl.obolibrary.org/obo/obi.owl"
 
 _DEFAULT_ALLOWED_PREDICATES = [
-    "is_a", "part_of", "has_quality", "occurs_in",
-    "caused_by", "is_treatment_for",
-]
+    "is_a", "part_of", "has_quality", "occurs_in", "is_treatment_for",
+]  # 'affects' and 'caused_by' removed in C3 — see config/settings.py
 
 
 class Orchestrator:
@@ -89,8 +98,35 @@ class Orchestrator:
     # ── Internal helpers ───────────────────────────────────────────────────────
 
     def _run_sync(self, coroutine):
-        loop = asyncio.get_event_loop()
-        return loop.run_until_complete(coroutine)
+        """Run a coroutine from sync code, in a notebook or under pytest.
+
+        The old body was ``asyncio.get_event_loop().run_until_complete(...)``.
+        ``get_event_loop()`` is deprecated and no longer creates a loop when the
+        thread has none — it raises ``RuntimeError: There is no current event
+        loop``. That never showed up in a notebook (Jupyter always has a loop,
+        and cell 4 calls ``nest_asyncio.apply()``) but it breaks under pytest as
+        soon as pytest-asyncio has torn its loop down, which made the failure
+        depend on test *order*: these tests passed alone and failed in the full
+        suite. Nobody saw it because the integration tests that trigger it were
+        being skipped.
+
+        Inside a running loop we must use ``run_until_complete`` rather than
+        ``asyncio.run`` — that is the re-entrant path nest_asyncio patches, and
+        ``asyncio.run`` would refuse outright.
+        """
+        try:
+            running = asyncio.get_running_loop()
+        except RuntimeError:  # silent-ok: asyncio offers no has_running_loop();
+            running = None    # the RuntimeError IS the answer "no loop", and the
+                              # next line branches on it rather than continuing.
+
+        if running is not None:
+            # Notebook / nest_asyncio: re-enter the loop we are already inside.
+            return running.run_until_complete(coroutine)
+
+        # No loop in this thread: asyncio.run creates one and disposes of it
+        # cleanly, which is what pytest between-test teardown expects.
+        return asyncio.run(coroutine)
 
     def _ensure_embedder(self) -> Embedder:
         if self._embedder is None:
@@ -298,23 +334,6 @@ class Orchestrator:
         report = cleaner.clean(self.store)
         StoreCleaner.print_report(report)
 
-    def run_fix_occurs_in(self, batch_size: int = 60, dry_run: bool = False) -> None:
-        """Fix occurs_in misuse via LLM-based anatomical target classification.
-
-        Conditions with anatomical targets → renamed to affects.
-        Conditions or any subject with non-anatomical targets → dropped.
-        Process subjects with anatomical targets → left unchanged (correct BFO).
-
-        dry_run: classify and print decisions but do not modify the store.
-        """
-        stats = self._run_sync(
-            self.cleaner.fix_occurs_in(self.store, self.llm, batch_size=batch_size, dry_run=dry_run)
-        )
-        if not dry_run:
-            print(f"[Orchestrator] Store saved — {stats}")
-
-    # ── Hierarchies ────────────────────────────────────────────────────────────
-
     def run_build_hierarchies(self, predefined_df: pd.DataFrame | None = None) -> None:
         """
         Build ClassHierarchy and MereologicalHierarchy from the ConceptStore.
@@ -521,8 +540,49 @@ class Orchestrator:
     def export_to_owl(self, output_file=None) -> None:
         """Export ClassHierarchy, MereologicalHierarchy, and FCAHierarchy to OWL."""
         onto = OWLOntology.create()
-        OntologyCurator(onto).from_hierarchies(self.class_hier, self.mere_hier, self.fca_hier)
+        OntologyCurator(onto).from_hierarchies(
+            self.class_hier, self.mere_hier, self.fca_hier, store=self.store,
+        )
         onto.save(self.dm, output_file)
+
+    def run_extend_ground_truth(
+        self,
+        output_file: str | None = None,
+        touch_existing: bool = False,
+        include_fca: bool = False,
+    ):
+        """Merge pipeline findings into a copy of the WONT ground truth.
+
+        This is the step that was missing: ``export_to_owl`` builds a parallel
+        ontology from nothing, so the pipeline never actually extended WONT.
+        Here the ground truth is the base, existing terms resolve to their real
+        IRIs, and only genuinely new terms are minted -- in the WONT namespace,
+        continuing from the highest id in use.
+
+        ``touch_existing`` is False by default: an extraction run may not add,
+        restate or contradict an axiom on a curated class. Those edges are
+        counted in the report instead of applied.
+        """
+        from pathlib import Path as _Path
+
+        from wound_ontology.owl.extend import extend_ground_truth
+        from config.settings import GROUND_TRUTH_TTL, PROJECT_ROOT
+
+        out = _Path(output_file) if output_file else (
+            _Path(PROJECT_ROOT) / "output" / "owl" / "wont_extended.ttl"
+        )
+        report = extend_ground_truth(
+            ground_truth=GROUND_TRUTH_TTL,
+            output=out,
+            class_hier=self.class_hier,
+            mere_hier=self.mere_hier,
+            store=self.store,
+            fca_hier=self.fca_hier if include_fca else None,
+            touch_existing=touch_existing,
+        )
+        print(f"[Orchestrator] Extended ground truth -> {out}")
+        print(report.summary())
+        return report
 
     def run_curate_owl(
         self,
@@ -769,6 +829,108 @@ class Orchestrator:
             self._gate = ReasonerGate(_SK)
         return self._gate
 
+    def run_gate_store_relations(self, store=None, quarantine: bool = True,
+                                 apply: bool = True):
+        """Reason over the store's RELATIONS, before any hierarchy is built.
+
+        The sibling gate, `run_gate_hierarchy_edges`, runs at the other end of
+        the pipeline and checks `is_a` edges. The two are not redundant: they see
+        different axioms and they fail at different costs.
+
+        * This gate sees `∃R.Filler` restrictions and nothing else -- `Wound
+          has_quality Debridement` is a continuant/occurrent clash the reasoner
+          rejects instantly, and it is invisible to a gate that only reads is_a.
+        * The edge gate sees subsumption, which arrives from three sources
+          (curated CSV, text, FCA) that never pass through the extraction schema.
+
+        Running here also means a bad relation is caught BEFORE it feeds the FCA
+        lattice and the hierarchies. A relation quarantined at the far end has
+        already shaped the concept lattice that produced the is_a edges, so the
+        damage outlives the axiom that caused it.
+        """
+        from config.settings import QUARANTINE_DIR as _Q
+        from wound_ontology.llm.extraction_adapter import (
+            describe_gate_inputs,
+            normalize_predicate,
+            store_to_gate_inputs,
+        )
+
+        st = store or self.store
+        entities, relations, report = store_to_gate_inputs(st.dict)
+        print("[Orchestrator] " + describe_gate_inputs(entities, relations, report)
+              .replace("\n", "\n[Orchestrator] "))
+
+        if report["conflicting"]:
+            print(f"[Orchestrator] *** {len(report['conflicting'])} term(s) carry more "
+                  f"than one BFO category. Stage-1 typing is supposed to make this "
+                  f"impossible; these came from somewhere else and are NOT gated: ***")
+            for lab, cats in sorted(report["conflicting"].items())[:20]:
+                print(f"[Orchestrator]     {lab}: {', '.join(cats)}")
+        if report["unlicensed"]:
+            print(f"[Orchestrator] *** {len(report['unlicensed'])} relation(s) violate "
+                  f"the category-pair licensing table. They are still gated -- the "
+                  f"reasoner is the authority -- but the schema disagrees: ***")
+            for s_, p_, o_ in report["unlicensed"][:20]:
+                print(f"[Orchestrator]     {s_} --{p_}--> {o_}")
+
+        if not relations:
+            print("[Orchestrator] No gateable relations. This is NOT a clean result "
+                  "unless the store is genuinely empty -- see the counts above.")
+            return None
+
+        result = self.reasoner_gate.check(entities, relations)
+        print(f"[Orchestrator] {result.summary()}")
+        if result.skipped:
+            print(f"[Orchestrator] *** GATE DID NOT RUN: {result.skipped} ***\n"
+                  f"[Orchestrator] *** All {len(relations)} relation(s) were accepted "
+                  f"WITHOUT being checked. This is not a clean result. ***")
+            return result
+
+        if apply and (result.quarantined_relations or result.quarantined_entities):
+            # A quarantined triple is ONE axiom but many store cells: the store is
+            # keyed by document, so the same assertion sits under every abstract
+            # that made it. All of them have to go, or the next get_data rebuild
+            # puts the edge straight back.
+            doomed = {(r.subject, f"{normalize_predicate(r.predicate.value)}: {r.object}")
+                      for r in result.quarantined_relations}
+            data = st.dict
+            removed = 0
+            hit: set = set()
+            for doc in data.values():
+                if not isinstance(doc, dict):
+                    continue
+                for label, attrs in doc.get("entities", {}).items():
+                    if not isinstance(attrs, dict):
+                        continue
+                    for key in [k for k in attrs if (label, str(k)) in doomed]:
+                        del attrs[key]
+                        removed += 1
+                        hit.add((label, str(key)))
+            st.dict = data
+            st.save()
+            print(f"[Orchestrator] Removed {removed} store cell(s) for "
+                  f"{len(hit)} quarantined triple(s), across all documents "
+                  f"asserting them.")
+            missed = doomed - hit
+            if missed:
+                print(f"[Orchestrator] *** {len(missed)} quarantined triple(s) were "
+                      f"NOT found in the store and could not be removed. The gate "
+                      f"and the store disagree about what is in it: ***")
+                for lab, key in sorted(missed)[:20]:
+                    print(f"[Orchestrator]     {lab} | {key}")
+            if result.quarantined_entities:
+                print(f"[Orchestrator] {len(result.quarantined_entities)} term(s) were "
+                      f"quarantined by the reasoner but LEFT IN THE STORE -- removing a "
+                      f"term is a curation decision, not a reasoning one. See the "
+                      f"quarantine file.")
+
+        if quarantine:
+            from wound_ontology.reasoning.gate import ReasonerGate as _RG
+            path = _RG.write_quarantine(result, _Q, tag="store_relations")
+            if path:
+                print(f"[Orchestrator] Quarantined relations → {path}")
+        return result
+
     def run_gate_hierarchy_edges(self, hierarchy=None, quarantine: bool = True):
         """Reason over the committed is_a edges and quarantine the inconsistent ones.
 
@@ -782,14 +944,34 @@ class Orchestrator:
         from config.settings import QUARANTINE_DIR as _Q
 
         hier = hierarchy or self.class_hier
-        edges = [(c, p) for (c, p) in hier._prov.keys()]
+
+        # Edges come from the dataframe, which is what is actually committed.
+        # This used to read hier._prov, i.e. only edges carrying provenance --
+        # and provenance is absent on a first run or whenever the CSV is missing.
+        # On live data that meant 5054 committed edges, 0 in _prov, so the gate
+        # printed "No committed edges to gate", returned clean, and had inspected
+        # nothing at all. A gate that reports success without looking is worse
+        # than no gate.
+        df = hier.df
+        edges = [] if df.empty else [
+            (str(c), str(p))
+            for c in df.index for p in df.columns
+            if df.at[c, p] == 1.0 and str(c) != str(p)
+        ]
         if not edges:
-            print("[Orchestrator] No committed edges to gate.")
+            print("[Orchestrator] No committed edges in the hierarchy — nothing to gate. "
+                  "If you expected edges here, the hierarchy did not load.")
             return None
+        stamped = sum(1 for e in edges if e in hier._prov)
+        print(f"[Orchestrator] Gating {len(edges)} committed edge(s); "
+              f"{stamped} carry provenance, {len(edges) - stamped} do not.")
 
         result = self.reasoner_gate.check_edges(edges)
         print(f"[Orchestrator] {result.summary()}")
         if result.skipped:
+            print(f"[Orchestrator] *** GATE DID NOT RUN: {result.skipped} ***\n"
+                  f"[Orchestrator] *** All {len(edges)} edge(s) were accepted WITHOUT "
+                  f"being checked. This is not a clean result. ***")
             return result
 
         for child, parent in result.quarantined:
@@ -1011,20 +1193,6 @@ class Orchestrator:
 
         added = append_to_whitelist(promoted, wl_path)
         print(f"  ✓ whitelist.py: {added} new terms added")
-
-    def run_scan_occurs_in(self, show_all: bool = False) -> dict:
-        """Scan the concept store for occurs_in misuse and print a report.
-
-        Classifies every occurs_in (subject, target) pair as:
-          process  — correct BFO usage (left unchanged)
-          condition — should use 'affects' (flagged)
-          uncertain — manual review recommended
-
-        Returns the report dict.  To apply fixes use run_fix_occurs_in().
-        """
-        report = self.cleaner.scan_occurs_in(self.store, show_all=show_all)
-        StoreCleaner.print_occurs_in_report(report)
-        return report
 
     # ── PubMed query validation ────────────────────────────────────────────────
 

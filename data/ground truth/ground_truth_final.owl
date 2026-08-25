@@ -45,6 +45,10 @@ ns1:BFO_0000050 rdf:type owl:ObjectProperty .
 ns1:BFO_0000051 rdf:type owl:ObjectProperty .
 
 
+###  http://purl.obolibrary.org/obo/RO_0002559
+ns1:RO_0002559 rdf:type owl:ObjectProperty .
+
+
 ###  http://purl.obolibrary.org/obo/IAO_0000136
 ns1:IAO_0000136 rdf:type owl:ObjectProperty .
 
@@ -2573,7 +2577,12 @@ wont:WONT_0000381 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000382
 wont:WONT_0000382 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:subClassOf ns1:BFO_0000040 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:BFO_0000050 ;
+                                    owl:someValuesFrom wont:WONT_0000380
+                                  ] ;
+                  ns1:IAO_0000116 "Structural axiom, not a definition. This class was label-only under a bare BFO_0000040, so nothing in the ontology said it had anything to do with a wound - the mereology lived only in the class name. Asserting part_of some Wound makes the name's claim checkable and is what CQ025 was failing on. No genus-differentia definition is written here; per the C6 decision the axiom is left to carry the content."@en ;
                   rdfs:label "Wound base" .
 
 
@@ -2685,7 +2694,12 @@ wont:WONT_0000400 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000401
 wont:WONT_0000401 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:subClassOf ns1:BFO_0000040 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:BFO_0000050 ;
+                                    owl:someValuesFrom wont:WONT_0000380
+                                  ] ;
+                  ns1:IAO_0000116 "Structural axiom, not a definition. This class was label-only under a bare BFO_0000040, so nothing in the ontology said it had anything to do with a wound - the mereology lived only in the class name. Asserting part_of some Wound makes the name's claim checkable and is what CQ025 was failing on. No genus-differentia definition is written here; per the C6 decision the axiom is left to carry the content."@en ;
                   rdfs:label "Wound edge" .
 
 
@@ -2765,14 +2779,20 @@ wont:WONT_0000414 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000415
 wont:WONT_0000415 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:BFO_0000016 ,
+                  rdfs:subClassOf ns1:BFO_0000019 ,
                                   [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:BFO_0000197 ;
+                                    owl:someValuesFrom ns1:NCBITaxon_9606
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0002559 ;
                                     owl:someValuesFrom wont:WONT_0000380
                                   ] ;
-                  ns1:IAO_0000115 "A disposition that inheres in a wound and that is realized in processes in which the bearer's host experiences pain."@en ;
-                  ns1:IAO_0000112 "Realized in a debridement process or a dressing change."@en ;
-                  rdfs:label "Wound pain" .
+                  ns1:IAO_0000115 "A quality that inheres in a patient, that is the extent of the pain that patient feels, and that is causally influenced by a wound."@en ;
+                  ns1:IAO_0000118 "Wound pain"@en ;
+                  ns1:IAO_0000116 "Retyped from BFO_0000016 disposition to BFO_0000019 quality, and the bearer moved from the wound to the patient. Wound pain is pain felt by a patient; a wound does not feel, so it cannot be the bearer. There is always some degree of pain inhering in the patient, which is what makes this a quality rather than a disposition waiting to be realized - so the IAO_0000112 note about realization in debridement or dressing change was dropped with the disposition typing, because qualities are not realized. The single qualifying value is WONT_0000474 painful, mirroring macerated under degree of maceration."@en ;
+                  ns1:IAO_0000232 "ON MILD MODEL COMMITMENT 4. Commitment 4 forbids asserting a causal relation between ONE DISORDER AND ANOTHER, on the ground that what a disease causes cannot be separated from what it is. This axiom is outside that scope: the wound is a disorder, but the pain is a quality of the patient, not a second disorder, so no disorder-to-disorder aetiology is claimed and no co-location rewrite is needed. RO_0002559 causally influenced by was chosen over RO_0002452 has symptom and RO_0004023, both of which carry rdfs:domain OGMS_0000031 and would silently infer the OGMS disposition-based disease model that MILD rejects. RO_0002559 has no domain or range axiom, so it carries the intended content with no side effect."@en ;
+                  rdfs:label "degree of wound pain"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000416
@@ -2783,7 +2803,12 @@ wont:WONT_0000416 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000417
 wont:WONT_0000417 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:BFO_0000040 ;
+                  rdfs:subClassOf ns1:BFO_0000040 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:BFO_0000050 ;
+                                    owl:someValuesFrom wont:WONT_0000380
+                                  ] ;
+                  ns1:IAO_0000116 "Structural axiom, not a definition. This class was label-only under a bare BFO_0000040, so nothing in the ontology said it had anything to do with a wound - the mereology lived only in the class name. Asserting part_of some Wound makes the name's claim checkable and is what CQ025 was failing on. No genus-differentia definition is written here; per the C6 decision the axiom is left to carry the content."@en ;
                   rdfs:label "Wound pocket" .
 
 
@@ -3229,10 +3254,22 @@ wont:WONT_0000472 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000473
 wont:WONT_0000473 rdf:type owl:Class ;
-                  rdfs:subClassOf mild:MILD_120022 ;
-                  ns1:IAO_0000115 "A pathological disorder consisting in a fluid-filled separation of the epithelium of a mucous membrane from the tissue beneath it."@en ;
+                  rdfs:subClassOf mild:MILD_120022 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:BFO_0000050 ;
+                                    owl:someValuesFrom ns1:UBERON_0000344
+                                  ] ;
+                  ns1:IAO_0000115 "A pathological disorder that is part of a mucosa and consists in a fluid-filled separation of the epithelium of that mucosa from the tissue beneath it."@en ;
+                  ns1:IAO_0000116 "The anatomical location uses BFO_0000050 part_of rather than RO_0004026 disease has location, deliberately. RO_0004026 carries rdfs:domain OGMS_0000031, the disposition-based disease class that MILD refuses as a parent; asserting it of a MILD_120022 pathological disorder would infer that subsumption and silently reimport the OGMS commitment this ontology was built to avoid. That is the same domain trap already documented on BFO_0000218 in MILD. Plain mereology carries the intended content with no such side effect, and stays in the EL profile."@en ;
                   rdfs:comment "Minted so that the blistering diseases of the mucosa can be composed out of the disorders that actually constitute them, rather than asserted as unanalysed nosological labels. Deliberately not restricted to autoimmune blistering: friction, thermal and drug-induced mucosal blisters are instances too. The autoimmune reading is added at the point of use by intersecting this class with WONT_0000469."@en ;
                   rdfs:label "Mucosal blister"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000474
+wont:WONT_0000474 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000415 ;
+                  ns1:IAO_0000115 "A degree of wound pain that qualifies its bearer as painful."@en ;
+                  rdfs:label "painful"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120000

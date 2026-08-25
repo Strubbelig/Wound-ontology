@@ -7,42 +7,80 @@
         {
           "id": "CQ001",
           "question": "Is a diabetic foot ulcer a type of wound?",
-          "example_triple": ["Diabetic Foot Ulcer", "is_a", "Chronic Wound"]
+          "example_triple": [
+            "Diabetic Foot Ulcer",
+            "is_a",
+            "Chronic Wound"
+          ]
         },
         {
           "id": "CQ002",
           "question": "Is a pressure injury a type of wound?",
-          "example_triple": ["Pressure Injury", "is_a", "Chronic Wound"]
+          "example_triple": [
+            "pressure ulcer",
+            "is_a",
+            "Chronic Wound"
+          ],
+          "label_fix": {
+            "Pressure Injury": "pressure ulcer"
+          }
         },
         {
           "id": "CQ003",
           "question": "Is a surgical site infection a type of wound complication?",
-          "example_triple": ["Surgical Site Infection", "is_a", "Wound Complication"]
+          "example_triple": [
+            "Surgical Site Infection",
+            "is_a",
+            "wound complication process"
+          ],
+          "label_fix": {
+            "Wound Complication": "wound complication process"
+          }
         },
         {
           "id": "CQ004",
           "question": "Is a burn injury a type of traumatic wound?",
-          "example_triple": ["Burn Injury", "is_a", "Traumatic Wound"]
+          "example_triple": [
+            "Burn Injury",
+            "is_a",
+            "Traumatic Wound"
+          ]
         },
         {
           "id": "CQ005",
           "question": "Is necrotizing fasciitis a type of wound?",
-          "example_triple": ["Necrotizing Fasciitis", "is_a", "Soft Tissue Wound"]
+          "example_triple": [
+            "Necrotizing Fasciitis",
+            "is_a",
+            "Soft Tissue Wound"
+          ]
         },
         {
           "id": "CQ006",
           "question": "Is a venous leg ulcer a type of chronic wound?",
-          "example_triple": ["Venous Leg Ulcer", "is_a", "Chronic Wound"]
+          "example_triple": [
+            "Venous Leg Ulcer",
+            "is_a",
+            "Chronic Wound"
+          ]
         },
         {
           "id": "CQ007",
           "question": "Is an abscess a type of wound?",
-          "example_triple": ["Abscess", "is_a", "Wound"]
+          "example_triple": [
+            "Abscess",
+            "is_a",
+            "Wound"
+          ]
         },
         {
           "id": "CQ008",
           "question": "Is a laceration a type of acute wound?",
-          "example_triple": ["Laceration", "is_a", "Acute Wound"]
+          "example_triple": [
+            "Laceration",
+            "is_a",
+            "Acute Wound"
+          ]
         }
       ],
       "out_of_scope": [
@@ -64,22 +102,38 @@
         {
           "id": "CQ010",
           "question": "What intrinsic quality characterises a large wound?",
-          "example_triple": ["Large Wound", "has_quality", "Large"]
+          "example_triple": [
+            "Large Wound",
+            "has_quality",
+            "Large"
+          ]
         },
         {
           "id": "CQ011",
           "question": "What quality distinguishes a full-thickness wound from a partial-thickness wound?",
-          "example_triple": ["Full-Thickness Wound", "has_quality", "Full-Thickness"]
+          "example_triple": [
+            "Full-Thickness Wound",
+            "has_quality",
+            "Full-Thickness"
+          ]
         },
         {
           "id": "CQ012",
           "question": "What quality characterises a deep wound?",
-          "example_triple": ["Deep Wound", "has_quality", "Deep"]
+          "example_triple": [
+            "Deep Wound",
+            "has_quality",
+            "Deep"
+          ]
         },
         {
           "id": "CQ013",
           "question": "What quality characterises an open wound versus a closed wound?",
-          "example_triple": ["Open Wound", "has_quality", "Open"]
+          "example_triple": [
+            "Open Wound",
+            "has_quality",
+            "Open"
+          ]
         }
       ]
     },
@@ -89,32 +143,65 @@
         {
           "id": "CQ020",
           "question": "In which anatomical structure does wound healing occur?",
-          "example_triple": ["Wound Healing", "occurs_in", "Dermis"]
+          "example_triple": [
+            "Wound Healing",
+            "occurs_in",
+            "Dermis"
+          ]
         },
         {
           "id": "CQ021",
           "question": "Which tissue does a pressure injury affect?",
-          "example_triple": ["Pressure Injury", "affects", "Subcutaneous Tissue"]
+          "example_triple": [
+            "pressure ulcer",
+            "part_of",
+            "Subcutaneous Tissue"
+          ],
+          "label_fix": {
+            "Pressure Injury": "pressure ulcer"
+          },
+          "rewrite": "'affects' -> 'part_of'. The disorder is a material part of the anatomical structure; 'affects' had no IRI at all."
         },
         {
           "id": "CQ022",
           "question": "Which tissue does necrotizing fasciitis affect?",
-          "example_triple": ["Necrotizing Fasciitis", "affects", "Fascia"]
+          "example_triple": [
+            "Necrotizing Fasciitis",
+            "part_of",
+            "Fascia"
+          ],
+          "rewrite": "'affects' -> 'part_of'. The disorder is a material part of the anatomical structure; 'affects' had no IRI at all."
         },
         {
           "id": "CQ023",
           "question": "Which anatomical site does a diabetic foot ulcer affect?",
-          "example_triple": ["Diabetic Foot Ulcer", "affects", "Plantar Foot"]
+          "example_triple": [
+            "Diabetic Foot Ulcer",
+            "part_of",
+            "Plantar Foot"
+          ],
+          "rewrite": "'affects' -> 'part_of'. The disorder is a material part of the anatomical structure; 'affects' had no IRI at all."
         },
         {
           "id": "CQ024",
           "question": "Is the dermis part of the skin?",
-          "example_triple": ["Dermis", "part_of", "Skin"]
+          "example_triple": [
+            "Dermis",
+            "part_of",
+            "Skin"
+          ]
         },
         {
           "id": "CQ025",
           "question": "Is the wound bed part of the wound?",
-          "example_triple": ["Wound Bed", "part_of", "Wound"]
+          "example_triple": [
+            "wound base",
+            "part_of",
+            "Wound"
+          ],
+          "label_fix": {
+            "Wound Bed": "wound base"
+          }
         }
       ]
     },
@@ -124,27 +211,59 @@
         {
           "id": "CQ030",
           "question": "What causes a pressure injury?",
-          "example_triple": ["Pressure Injury", "caused_by", "Sustained Mechanical Load"]
+          "example_triple": [
+            "pressure ulcer",
+            "co_located_with",
+            "Sustained Mechanical Load"
+          ],
+          "label_fix": {
+            "Pressure Injury": "pressure ulcer"
+          },
+          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
         },
         {
           "id": "CQ031",
           "question": "What causes a diabetic foot ulcer?",
-          "example_triple": ["Diabetic Foot Ulcer", "caused_by", "Peripheral Neuropathy"]
+          "example_triple": [
+            "Diabetic Foot Ulcer",
+            "co_located_with",
+            "Peripheral Neuropathy"
+          ],
+          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
         },
         {
           "id": "CQ032",
           "question": "What causes a venous leg ulcer?",
-          "example_triple": ["Venous Leg Ulcer", "caused_by", "Chronic Venous Insufficiency"]
+          "example_triple": [
+            "Wound co-located with impaired venous backflow",
+            "co_located_with",
+            "Venous insufficiency disorder"
+          ],
+          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient.",
+          "label_fix": {
+            "Venous Leg Ulcer": "Wound co-located with impaired venous backflow",
+            "Chronic Venous Insufficiency": "Venous insufficiency disorder"
+          }
         },
         {
           "id": "CQ033",
           "question": "What causes an ischemic wound?",
-          "example_triple": ["Ischemic Wound", "caused_by", "Peripheral Artery Disease"]
+          "example_triple": [
+            "Ischemic Wound",
+            "co_located_with",
+            "Peripheral Artery Disease"
+          ],
+          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
         },
         {
           "id": "CQ034",
           "question": "What causes impaired wound healing?",
-          "example_triple": ["Impaired Wound Healing", "caused_by", "Diabetes Mellitus"]
+          "example_triple": [
+            "Impaired Wound Healing",
+            "co_located_with",
+            "Diabetes Mellitus"
+          ],
+          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
         }
       ]
     },
@@ -154,32 +273,63 @@
         {
           "id": "CQ040",
           "question": "What quality characterises a contaminated wound?",
-          "example_triple": ["Contaminated Wound", "has_quality", "Contaminated"]
+          "example_triple": [
+            "Contaminated Wound",
+            "has_quality",
+            "Contaminated"
+          ]
         },
         {
           "id": "CQ041",
           "question": "What quality characterises a sterile wound?",
-          "example_triple": ["Clean Wound", "has_quality", "Sterile"]
+          "example_triple": [
+            "Clean Wound",
+            "has_quality",
+            "Sterile"
+          ]
         },
         {
           "id": "CQ042",
           "question": "What contaminates a wound with bacteria?",
-          "example_triple": ["Wound Infection", "caused_by", "Bacterial Colonization"]
+          "example_triple": [
+            "wound infection process",
+            "co_located_with",
+            "Bacterial Colonization"
+          ],
+          "label_fix": {
+            "Wound Infection": "wound infection process"
+          },
+          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
         },
         {
           "id": "CQ043",
           "question": "What causes a foreign body wound?",
-          "example_triple": ["Foreign Body Wound", "caused_by", "Foreign Body"]
+          "example_triple": [
+            "Foreign Body Wound",
+            "co_located_with",
+            "Foreign Body"
+          ],
+          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
         },
         {
           "id": "CQ044",
           "question": "What pathogen causes necrotizing fasciitis?",
-          "example_triple": ["Necrotizing Fasciitis", "caused_by", "Group A Streptococcus"]
+          "example_triple": [
+            "Necrotizing Fasciitis",
+            "co_located_with",
+            "Group A Streptococcus"
+          ],
+          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
         },
         {
           "id": "CQ045",
           "question": "What causes biofilm formation in a wound?",
-          "example_triple": ["Wound Biofilm", "caused_by", "Bacterial Colonization"]
+          "example_triple": [
+            "Wound Biofilm",
+            "co_located_with",
+            "Bacterial Colonization"
+          ],
+          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
         }
       ]
     },
@@ -189,42 +339,90 @@
         {
           "id": "CQ050",
           "question": "Which intervention treats chronic wounds?",
-          "example_triple": ["Negative Pressure Wound Therapy", "is_treatment_for", "Chronic Wound"]
+          "example_triple": [
+            "Negative Pressure Wound Therapy",
+            "is_treatment_for",
+            "Chronic Wound"
+          ]
         },
         {
           "id": "CQ051",
           "question": "Which dressing treats diabetic foot ulcers?",
-          "example_triple": ["Hydrogel Dressing", "is_treatment_for", "Diabetic Foot Ulcer"]
+          "example_triple": [
+            "hydrogel containing wound dressing",
+            "is_treatment_for",
+            "Diabetic Foot Ulcer"
+          ],
+          "label_fix": {
+            "Hydrogel Dressing": "hydrogel containing wound dressing"
+          }
         },
         {
           "id": "CQ052",
           "question": "Which antibiotic treats wound infections?",
-          "example_triple": ["Vancomycin", "is_treatment_for", "Wound Infection"]
+          "example_triple": [
+            "Vancomycin",
+            "is_treatment_for",
+            "wound infection process"
+          ],
+          "label_fix": {
+            "Wound Infection": "wound infection process"
+          }
         },
         {
           "id": "CQ053",
           "question": "Which procedure treats necrotizing fasciitis?",
-          "example_triple": ["Surgical Debridement", "is_treatment_for", "Necrotizing Fasciitis"]
+          "example_triple": [
+            "Surgical Debridement",
+            "is_treatment_for",
+            "Necrotizing Fasciitis"
+          ]
         },
         {
           "id": "CQ054",
           "question": "Which therapy treats venous leg ulcers?",
-          "example_triple": ["Compression Therapy", "is_treatment_for", "Venous Leg Ulcer"]
+          "example_triple": [
+            "Compression Therapy",
+            "is_treatment_for",
+            "Venous Leg Ulcer"
+          ]
         },
         {
           "id": "CQ055",
           "question": "Which intervention treats pressure injuries?",
-          "example_triple": ["Pressure Offloading", "is_treatment_for", "Pressure Injury"]
+          "example_triple": [
+            "Pressure Offloading",
+            "is_treatment_for",
+            "pressure ulcer"
+          ],
+          "label_fix": {
+            "Pressure Injury": "pressure ulcer"
+          }
         },
         {
           "id": "CQ056",
           "question": "Is debridement part of wound care?",
-          "example_triple": ["Debridement", "part_of", "Wound Care Procedure"]
+          "example_triple": [
+            "debridement process",
+            "part_of",
+            "Wound Care Procedure"
+          ],
+          "label_fix": {
+            "Debridement": "debridement process"
+          }
         },
         {
           "id": "CQ057",
           "question": "Is wound irrigation part of wound cleansing?",
-          "example_triple": ["Wound Irrigation", "part_of", "Wound Cleansing"]
+          "example_triple": [
+            "wound irrigation process",
+            "part_of",
+            "wound cleansing process"
+          ],
+          "label_fix": {
+            "Wound Irrigation": "wound irrigation process",
+            "Wound Cleansing": "wound cleansing process"
+          }
         }
       ]
     },
@@ -234,32 +432,62 @@
         {
           "id": "CQ060",
           "question": "Is primary intention healing a type of wound healing?",
-          "example_triple": ["Primary Intention Healing", "is_a", "Wound Healing"]
+          "example_triple": [
+            "wound healing by primary intention",
+            "is_a",
+            "Wound Healing"
+          ],
+          "label_fix": {
+            "Primary Intention Healing": "wound healing by primary intention"
+          }
         },
         {
           "id": "CQ061",
           "question": "Is secondary intention healing a type of wound healing?",
-          "example_triple": ["Secondary Intention Healing", "is_a", "Wound Healing"]
+          "example_triple": [
+            "wound healing by secondary intention",
+            "is_a",
+            "Wound Healing"
+          ],
+          "label_fix": {
+            "Secondary Intention Healing": "wound healing by secondary intention"
+          }
         },
         {
           "id": "CQ062",
           "question": "Is granulation tissue formation a phase of wound healing?",
-          "example_triple": ["Granulation Tissue Formation", "is_a", "Wound Healing Phase"]
+          "example_triple": [
+            "Granulation Tissue Formation",
+            "is_a",
+            "Wound Healing Phase"
+          ]
         },
         {
           "id": "CQ063",
           "question": "Is re-epithelialization a phase of wound healing?",
-          "example_triple": ["Re-Epithelialization", "is_a", "Wound Healing Phase"]
+          "example_triple": [
+            "Re-Epithelialization",
+            "is_a",
+            "Wound Healing Phase"
+          ]
         },
         {
           "id": "CQ064",
           "question": "Is the inflammatory phase part of wound healing?",
-          "example_triple": ["Inflammatory Phase", "part_of", "Wound Healing"]
+          "example_triple": [
+            "Inflammatory Phase",
+            "part_of",
+            "Wound Healing"
+          ]
         },
         {
           "id": "CQ065",
           "question": "Is the proliferative phase part of wound healing?",
-          "example_triple": ["Proliferative Phase", "part_of", "Wound Healing"]
+          "example_triple": [
+            "Proliferative Phase",
+            "part_of",
+            "Wound Healing"
+          ]
         }
       ]
     },
@@ -269,32 +497,69 @@
         {
           "id": "CQ070",
           "question": "Is wound infection a type of wound complication?",
-          "example_triple": ["Wound Infection", "is_a", "Wound Complication"]
+          "example_triple": [
+            "wound infection process",
+            "is_a",
+            "wound complication process"
+          ],
+          "label_fix": {
+            "Wound Infection": "wound infection process",
+            "Wound Complication": "wound complication process"
+          }
         },
         {
           "id": "CQ071",
           "question": "Is sepsis a type of wound complication?",
-          "example_triple": ["Sepsis", "is_a", "Infectious Complication"]
+          "example_triple": [
+            "Sepsis",
+            "is_a",
+            "Infectious Complication"
+          ]
         },
         {
           "id": "CQ072",
           "question": "Is wound dehiscence a type of wound complication?",
-          "example_triple": ["Wound Dehiscence", "is_a", "Wound Complication"]
+          "example_triple": [
+            "Wound Dehiscence",
+            "is_a",
+            "Wound Complication"
+          ],
+          "note": "REVERTED a label fix. Mapping 'Wound Complication' to 'wound complication process' made this triple a category error: Wound dehiscence is a MILD_120022 pathological disorder, not a process, so it can never be a subclass of a process. The ontology's material counterpart is 'material complication disease entity' - but choosing it is a modelling decision, not a label fix, so it is left for review."
         },
         {
           "id": "CQ073",
           "question": "Is osteomyelitis a complication of an open wound?",
-          "example_triple": ["Osteomyelitis", "is_a", "Wound Complication"]
+          "example_triple": [
+            "Osteomyelitis",
+            "is_a",
+            "wound complication process"
+          ],
+          "label_fix": {
+            "Wound Complication": "wound complication process"
+          }
         },
         {
           "id": "CQ074",
           "question": "What causes wound dehiscence?",
-          "example_triple": ["Wound Dehiscence", "caused_by", "Wound Infection"]
+          "example_triple": [
+            "Wound Dehiscence",
+            "co_located_with",
+            "wound infection process"
+          ],
+          "label_fix": {
+            "Wound Infection": "wound infection process"
+          },
+          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
         },
         {
           "id": "CQ075",
           "question": "What causes hypertrophic scar formation?",
-          "example_triple": ["Hypertrophic Scar", "caused_by", "Excessive Collagen Deposition"]
+          "example_triple": [
+            "Hypertrophic Scar",
+            "co_located_with",
+            "Excessive Collagen Deposition"
+          ],
+          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
         }
       ]
     },
@@ -304,17 +569,32 @@
         {
           "id": "CQ080",
           "question": "Which intervention prevents surgical site infection?",
-          "example_triple": ["Prophylactic Antibiotic", "is_treatment_for", "Surgical Site Infection"]
+          "example_triple": [
+            "Prophylactic Antibiotic",
+            "is_treatment_for",
+            "Surgical Site Infection"
+          ]
         },
         {
           "id": "CQ081",
           "question": "Which measure prevents pressure injury?",
-          "example_triple": ["Pressure Redistribution Mattress", "is_treatment_for", "Pressure Injury"]
+          "example_triple": [
+            "Pressure Redistribution Mattress",
+            "is_treatment_for",
+            "pressure ulcer"
+          ],
+          "label_fix": {
+            "Pressure Injury": "pressure ulcer"
+          }
         },
         {
           "id": "CQ082",
           "question": "Which intervention prevents diabetic foot ulcer recurrence?",
-          "example_triple": ["Therapeutic Footwear", "is_treatment_for", "Diabetic Foot Ulcer"]
+          "example_triple": [
+            "Therapeutic Footwear",
+            "is_treatment_for",
+            "Diabetic Foot Ulcer"
+          ]
         }
       ]
     },
@@ -324,22 +604,38 @@
         {
           "id": "CQ090",
           "question": "What quality characterises a chronic non-healing wound?",
-          "example_triple": ["Chronic Non-Healing Wound", "has_quality", "Chronic"]
+          "example_triple": [
+            "Chronic Non-Healing Wound",
+            "has_quality",
+            "Chronic"
+          ]
         },
         {
           "id": "CQ091",
           "question": "What quality characterises a malignant wound?",
-          "example_triple": ["Malignant Wound", "has_quality", "Malignant"]
+          "example_triple": [
+            "Malignant Wound",
+            "has_quality",
+            "Malignant"
+          ]
         },
         {
           "id": "CQ092",
           "question": "What quality characterises an ischemic wound?",
-          "example_triple": ["Ischemic Wound", "has_quality", "Ischemic"]
+          "example_triple": [
+            "Ischemic Wound",
+            "has_quality",
+            "Ischemic"
+          ]
         },
         {
           "id": "CQ093",
           "question": "What quality characterises an infected wound?",
-          "example_triple": ["Infected Wound", "has_quality", "Infected"]
+          "example_triple": [
+            "Infected Wound",
+            "has_quality",
+            "Infected"
+          ]
         }
       ]
     },
@@ -349,27 +645,60 @@
         {
           "id": "CQ100",
           "question": "Where does wound assessment take place?",
-          "example_triple": ["Wound Assessment", "occurs_in", "Wound"]
+          "example_triple": [
+            "clinical wound assessment",
+            "occurs_in",
+            "Wound"
+          ],
+          "label_fix": {
+            "Wound Assessment": "clinical wound assessment"
+          }
         },
         {
           "id": "CQ101",
           "question": "Is bacterial culture a type of wound diagnostic?",
-          "example_triple": ["Bacterial Culture", "is_a", "Wound Diagnostic"]
+          "example_triple": [
+            "Bacterial Culture",
+            "is_a",
+            "wound diagnostic process"
+          ],
+          "label_fix": {
+            "Wound Diagnostic": "wound diagnostic process"
+          }
         },
         {
           "id": "CQ102",
           "question": "Is ankle-brachial index a diagnostic for vascular wounds?",
-          "example_triple": ["Ankle-Brachial Index", "is_a", "Vascular Assessment"]
+          "example_triple": [
+            "Ankle-Brachial Index",
+            "is_a",
+            "Vascular Assessment"
+          ]
         },
         {
           "id": "CQ103",
           "question": "Is wound biopsy a type of wound diagnostic?",
-          "example_triple": ["Wound Biopsy", "is_a", "Wound Diagnostic"]
+          "example_triple": [
+            "wound specimen procurement by biopsy process",
+            "is_a",
+            "wound diagnostic process"
+          ],
+          "label_fix": {
+            "Wound Diagnostic": "wound diagnostic process",
+            "Wound Biopsy": "wound specimen procurement by biopsy process"
+          }
         },
         {
           "id": "CQ104",
           "question": "Is wound photography a type of wound documentation?",
-          "example_triple": ["Wound Photography", "is_a", "Wound Documentation"]
+          "example_triple": [
+            "Wound Photography",
+            "is_a",
+            "wound documentation process"
+          ],
+          "label_fix": {
+            "Wound Documentation": "wound documentation process"
+          }
         }
       ]
     },
@@ -379,22 +708,38 @@
         {
           "id": "CQ110",
           "question": "What quality characterises a fully healed wound?",
-          "example_triple": ["Healed Wound", "has_quality", "Epithelialized"]
+          "example_triple": [
+            "Healed Wound",
+            "has_quality",
+            "Epithelialized"
+          ]
         },
         {
           "id": "CQ111",
           "question": "What quality characterises a non-healing wound?",
-          "example_triple": ["Non-Healing Wound", "has_quality", "Chronic"]
+          "example_triple": [
+            "Non-Healing Wound",
+            "has_quality",
+            "Chronic"
+          ]
         },
         {
           "id": "CQ112",
           "question": "What quality characterises complete wound closure?",
-          "example_triple": ["Closed Wound", "has_quality", "Closed"]
+          "example_triple": [
+            "Closed Wound",
+            "has_quality",
+            "Closed"
+          ]
         },
         {
           "id": "CQ113",
           "question": "Is complete epithelialization a criterion for wound healing?",
-          "example_triple": ["Complete Epithelialization", "is_a", "Wound Healing Criterion"]
+          "example_triple": [
+            "Complete Epithelialization",
+            "is_a",
+            "Wound Healing Criterion"
+          ]
         }
       ]
     }

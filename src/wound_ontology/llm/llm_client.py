@@ -12,8 +12,15 @@ def _build_cq_block() -> str:
     """Load competency_questions.json and return a compact prompt section."""
     try:
         data = json.loads(_CQ_PATH.read_text())
-    except Exception:
+    except FileNotFoundError:
+        print(f"[LLMClient] WARNING: no competency questions at {_CQ_PATH}. "
+              "The extraction prompt will carry NO ontology scope section.")
         return ""
+    except json.JSONDecodeError as exc:
+        raise ValueError(
+            f"[LLMClient] {_CQ_PATH} is not valid JSON ({exc}). Refusing to build a "
+            "prompt with the scope section silently missing — fix the file."
+        ) from exc
     in_lines: list[str] = []
     for theme in data.get("clinical_themes", []):
         cqs = theme.get("in_scope", [])
@@ -187,10 +194,9 @@ class LLMClient:
         Object: "Pressure Injury"
         true_attributes:
           - predicate: "is_a", target: "Chronic Wound"
-          - predicate: "affects", target: "Subcutaneous Tissue"
-          - predicate: "caused_by", target: "Sustained Mechanical Load"
+          - predicate: "part_of", target: "Subcutaneous Tissue"
         false_attributes:
-          - predicate: "occurs_in", target: "Subcutaneous Tissue"  (wrong — affects two continuants, not a process)
+          - predicate: "occurs_in", target: "Subcutaneous Tissue"  (wrong — occurs_in needs a process subject)
           - predicate: "part_of", target: "Chronic Wound"  (wrong — use is_a for taxonomy)
 
         TEXT: {text}
@@ -228,6 +234,7 @@ class LLMClient:
             label = (t.label or "").strip()
             cat = (t.category or "").strip()
             if not label:
+                rejected.append((t.label or "", cat, "empty label"))
                 continue
             if cat not in valid:
                 rejected.append((label, cat, "not a BFO/MILD category"))
@@ -474,51 +481,3 @@ class LLMClient:
         result = await self._execute_with_retry(self._call_json, prompt, SemanticNameResponse, temperature=0.3)
         return result.superclass_name
 
-    async def classify_anatomical_targets(
-        self,
-        terms: list[str],
-        batch_size: int = 60,
-    ) -> dict[str, bool]:
-        """Classify terms as ANATOMICAL (True) or NOT_ANATOMICAL (False).
-
-        Used by the occurs_in fixer to decide which targets are valid BFO
-        process locations versus conditions, patient types, time periods, etc.
-        Returns {term: is_anatomical} for every term in *terms*.
-        """
-        import json as _json
-        schema = OccursInTargetBatch.model_json_schema()
-        results: dict[str, bool] = {}
-
-        for i in range(0, len(terms), batch_size):
-            batch     = terms[i : i + batch_size]
-            term_list = "\n".join(f"- {t}" for t in batch)
-            prompt = f"""You are a biomedical ontologist. Classify each term below as ANATOMICAL or NOT_ANATOMICAL.
-
-ANATOMICAL = a physical body structure, tissue, organ, anatomical region, or wound site.
-Examples: Foot, Dermis, Sacrum, Lower Limb, Wound Bed, Surgical Site, Fascia, Skin, Bone,
-          Subcutaneous Tissue, Plantar Foot, Nasal Region, Cornea, Axilla, Perineum
-
-NOT_ANATOMICAL = everything else: diseases, conditions, patient types, time periods,
-countries, institutions, clinical endpoints, populations, psychological concepts.
-Examples: Diabetes, Patient, UK, Postoperative Period, Hospital, Chronic Wound,
-          People With Diabetes, Bedridden, End Of Life, Type 2 Diabetes Mellitus,
-          Venous Leg Ulcer, Post-Thrombotic Syndrome, Diverse Populations
-
-Terms to classify:
-{term_list}
-
-Respond with valid JSON only matching this schema exactly:
-{_json.dumps(schema, indent=2)}"""
-
-            parsed = await self._execute_with_retry(
-                self._call_json, prompt, OccursInTargetBatch, temperature=0.0
-            )
-            for r in parsed.results:
-                results[r.term] = r.anatomical
-            print(
-                f"  Classified {min(i + batch_size, len(terms))}/{len(terms)} targets...",
-                end="\r",
-            )
-
-        print()
-        return results

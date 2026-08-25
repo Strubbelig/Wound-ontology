@@ -10,7 +10,7 @@ Scope
 - Queries marked (REVISED) were rewritten by the LLM validator after failing
   scope review. Queries marked (NEW) were added to fill lifecycle gaps.
 - Queries are grouped by ontological domain so the LLM extraction is well-seeded
-  for every predicate: is_a, part_of, has_quality, occurs_in, caused_by,
+  for every predicate: is_a, part_of, has_quality, occurs_in,
   is_treatment_for.
 
 Filter helper
