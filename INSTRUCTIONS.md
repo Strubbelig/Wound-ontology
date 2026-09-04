@@ -89,6 +89,42 @@ FCA in particular is a **suggestion**: it observes that terms share attributes,
 which is evidence for a superclass, not an assertion of one. `commit_fca`
 defaults to `False` and stays that way.
 
+### Rank governs removal too, not only writing
+
+*Added 2026-09-04.*
+
+When a reasoner finds a contradiction, the edges it implicates are **not** equal.
+Drop the **lowest-ranked** evidence first, re-check, and only escalate if the
+clash survives. A curated edge is quarantined only when the curated edges are
+inconsistent *among themselves*.
+
+The motivating failure: WONT asserts `Necrosis subClassOf pathological disorder`
+and nothing else. Two abstracts typed Necrosis as a `Process`. BFO makes
+continuant and occurrent disjoint, so the reasoner derives `Necrosis ⊑ ⊥` — and
+the gate quarantined **both** edges, the curated one included. A text assertion
+had removed a ground-truth axiom, which is the exact thing the ranks exist to
+prevent. It cost the hierarchy 6 curated edges and produced a report claiming
+WONT was internally inconsistent, when WONT was correct.
+
+Two details that the first fix got wrong, both worth keeping in mind:
+
+- Tier **globally**, not per child. `Dry Necrosis is_a Necrosis` is curated and
+  is that child's only edge, so per child it looked like the weakest evidence
+  available and went — while the text edge that made `Necrosis` unsatisfiable in
+  the first place was still present. Its child was unsatisfiable only by
+  inheritance. Drop one whole rank at a time across all implicated edges, so a
+  cause is removed before its consequences are judged.
+- An edge the caller could not stamp counts as the **lowest** rank of all: an
+  edge nothing claims is the first thing to give up.
+
+Rank buys precedence, not immunity — if the ground truth really does contradict
+itself, the gate must still say so.
+
+*Enforced by:* `ReasonerGate.check_edges(edges, sources=…)`, given
+`hier._prov` by `Orchestrator.run_gate_hierarchy_edges`. The result reports
+`quarantined_sources` and the higher-ranked edges it `spared`, so a rank-blind
+regression is visible in the run output rather than only in the totals.
+
 ## 5. Quarantine, don't drop
 
 *Decided long-standing.*

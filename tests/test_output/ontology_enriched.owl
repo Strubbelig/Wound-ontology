@@ -11,15 +11,6 @@
   <owl:imports rdf:resource="http://purl.obolibrary.org/obo/ro.owl"/>
 </owl:Ontology>
 
-<owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/BFO_0000050">
-  <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">part of</rdfs:label>
-</owl:ObjectProperty>
-
-<owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/RO_0000086">
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">has quality</rdfs:label>
-</owl:ObjectProperty>
-
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000001">
   <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000002"/>
   <rdfs:label xml:lang="en">Acute Wound</rdfs:label>
@@ -32,525 +23,217 @@
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000003">
   <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Adjuvant Antifibrotic Therapy</rdfs:label>
+  <rdfs:label xml:lang="en">Adjuvant Chemotherapy</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000004">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000005"/>
-  <rdfs:label xml:lang="en">Affected Areas</rdfs:label>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000034"/>
+  <rdfs:label xml:lang="en">Anti-Inflammatory Effects</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000005">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label xml:lang="en">ImmaterialEntity</rdfs:label>
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006"/>
+  <rdfs:label xml:lang="en">Benign Lesions</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000005"/>
-  <rdfs:label xml:lang="en">Airway Lumen</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000007">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000008"/>
-  <rdfs:label xml:lang="en">Amputation Risks</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000008">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label xml:lang="en">Tendency</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000009">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Antioxidant Mechanisms</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000010">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PATO_0000001"/>
-  <rdfs:label xml:lang="en">Bioavailability</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000011">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Bovhyaluronidase Azoximer</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
   <rdfs:label xml:lang="en">MaterialEntity</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000013">
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000007">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+  <rdfs:label xml:lang="en">Bone Union</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000008">
   <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000002"/>
   <rdfs:label xml:lang="en">Chronic Wound</rdfs:label>
 </owl:Class>
 
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000009">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PATO_0000001"/>
+  <rdfs:label xml:lang="en">Complete Fusion</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000010">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+  <rdfs:label xml:lang="en">Fibular Free Flap Reconstruction</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000011">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+  <rdfs:label xml:lang="en">Fusion</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012">
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006"/>
+  <rdfs:label xml:lang="en">Immunosenescence-Associated Kidney Injury</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000013">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000023"/>
+  <rdfs:label xml:lang="en">Indications</rdfs:label>
+</owl:Class>
+
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000014">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Cicatricial Stenosis</rdfs:label>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+  <rdfs:label xml:lang="en">Invasion</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000015">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Clinical Development</rdfs:label>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000034"/>
+  <rdfs:label xml:lang="en">Kidney Function</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000016">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000023"/>
-  <rdfs:label xml:lang="en">Clinical Needs</rdfs:label>
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006"/>
+  <rdfs:label xml:lang="en">Kidney Injury</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000017">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000005"/>
-  <rdfs:label xml:lang="en">Clinical Settings</rdfs:label>
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006"/>
+  <rdfs:label xml:lang="en">Malignant Lesions</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000018">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Complete Decannulation</rdfs:label>
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006"/>
+  <rdfs:label xml:lang="en">Mandible</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000019">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020"/>
-  <rdfs:label xml:lang="en">Complication Rates</rdfs:label>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+  <rdfs:label xml:lang="en">Mandibular Free Flap Reconstruction</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label xml:lang="en">InformationEntity</rdfs:label>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+  <rdfs:label xml:lang="en">Mandibular Reconstruction</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000021">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Complications</rdfs:label>
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006"/>
+  <rdfs:label xml:lang="en">Non-Union</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000022">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
-      <owl:someValuesFrom rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000023"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
-      <owl:someValuesFrom rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000024"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label xml:lang="en">DFUs</rdfs:label>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+  <rdfs:label xml:lang="en">Osseous Fusion</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000023">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label xml:lang="en">healing time</rdfs:label>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+  <rdfs:label xml:lang="en">Osseous Union</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000024">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label xml:lang="en">healing rates</rdfs:label>
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006"/>
+  <rdfs:label xml:lang="en">Osteoradionecrosis</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000025">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PATO_0000001"/>
-  <rdfs:label xml:lang="en">Deliverability</rdfs:label>
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006"/>
+  <rdfs:label xml:lang="en">P2RX7 Antagonist</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000026">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Delivery Mechanisms</rdfs:label>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PATO_0000001"/>
+  <rdfs:label xml:lang="en">Partial Fusion</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000027">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020"/>
-  <rdfs:label xml:lang="en">Delivery Methods</rdfs:label>
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006"/>
+  <rdfs:label xml:lang="en">Pathological Damage</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000028">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020"/>
-  <rdfs:label xml:lang="en">Developed Regimen</rdfs:label>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+  <rdfs:label xml:lang="en">Perioperative Steroid Use</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000029">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Diabetic Clients</rdfs:label>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+  <rdfs:label xml:lang="en">Prior Radiotherapy</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000030">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Diabetic Complication</rdfs:label>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+  <rdfs:label xml:lang="en">Proliferation</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000031">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Diabetic Foot Ulcers</rdfs:label>
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+  <rdfs:label xml:lang="en">Repairing</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000032">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Drugs</rdfs:label>
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006"/>
+  <rdfs:label xml:lang="en">Reparative Macrophages</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000033">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000023"/>
-  <rdfs:label xml:lang="en">Economic Burdens</rdfs:label>
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000034"/>
+  <rdfs:label xml:lang="en">Risk Factors</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000034">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PATO_0000001"/>
-  <rdfs:label xml:lang="en">Efficiency</rdfs:label>
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label xml:lang="en">Tendency</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000035">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Endoscopic Monitoring</rdfs:label>
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006"/>
+  <rdfs:label xml:lang="en">Small-Molecule P2RX7 Antagonist</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000036">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Extracellular Matrix Remodeling</rdfs:label>
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006"/>
+  <rdfs:label xml:lang="en">Steroids</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000037">
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000038"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Exudation Phase</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000038">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label xml:lang="en">Healing Process</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000039">
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000038"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Fibrin Reorganization</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000040">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Formulations</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000041">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Granulation Tissue</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000042">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Healing</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000043">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PATO_0000001"/>
-  <rdfs:label xml:lang="en">Healing Rates</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000044">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Immunomodulatory System</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000045">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020"/>
-  <rdfs:label xml:lang="en">Incidence Of Restenosis</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000046">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Injections</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000047">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Laryngotracheoplasty</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000048">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Larynx</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000049">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000005"/>
-  <rdfs:label xml:lang="en">Lumen</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000050">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PATO_0000001"/>
-  <rdfs:label xml:lang="en">Microbial Counts</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000051">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Micronutrients</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000052">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PATO_0000001"/>
-  <rdfs:label xml:lang="en">Morbidity</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000053">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020"/>
-  <rdfs:label xml:lang="en">Multipurpose Approach</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000054">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Nanoparticle-Based Systems</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000055">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Nanoparticles</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000056">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020"/>
-  <rdfs:label xml:lang="en">Paradigm</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000057">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000023"/>
-  <rdfs:label xml:lang="en">Patients</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000058">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020"/>
-  <rdfs:label xml:lang="en">Physical Functioning Scale</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000059">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020"/>
-  <rdfs:label xml:lang="en">Postoperative Outcomes</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000060">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000008"/>
-  <rdfs:label xml:lang="en">Potential Influence</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000061">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PATO_0000001"/>
-  <rdfs:label xml:lang="en">Quality Of Life</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000062">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Reintegration Into Social Life</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000063">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Restenosis</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000064">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020"/>
-  <rdfs:label xml:lang="en">Restenosis Rate</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000065">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000008"/>
-  <rdfs:label xml:lang="en">Risks</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000066">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020"/>
-  <rdfs:label xml:lang="en">SF-36 Quality Of Life Questionnaire</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000067">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Selenium</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000068">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020"/>
-  <rdfs:label xml:lang="en">Social Functioning Scale</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000069">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PATO_0000001"/>
-  <rdfs:label xml:lang="en">Stability</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000070">
-  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Standard Postoperative Therapy</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000071">
   <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000002"/>
   <rdfs:label xml:lang="en">Surgical Wound</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000072">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020"/>
-  <rdfs:label xml:lang="en">Therapeutic Integration Approach</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000073">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Trachea</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000074">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020"/>
-  <rdfs:label xml:lang="en">Treatment Algorithm</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000075">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Treatment Facilities</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000076">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Triamcinolone</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000077">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Vascular Endothelial Growth Factors</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000078">
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000038">
   <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Visual Control Of Healing</rdfs:label>
+  <rdfs:label xml:lang="en">Surveillance Imaging</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000079">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Vitamins A, C, D, And E</rdfs:label>
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000039">
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006"/>
+  <rdfs:label xml:lang="en">T4 Lesions</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000080">
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000040">
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000041"/>
+  <rdfs:label xml:lang="en">Timing Of Fusion</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000041">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label xml:lang="en">SpecificallyDependentContinuant</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000042">
   <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Wound Healing Assays</rdfs:label>
+  <rdfs:label xml:lang="en">Transient Delays</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000081">
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000043">
+  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000006"/>
+  <rdfs:label xml:lang="en">Trauma</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000044">
   <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-  <rdfs:label xml:lang="en">Wound Repair</rdfs:label>
+  <rdfs:label xml:lang="en">Wound Healing</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000082">
-  <rdfs:subClassOf rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000012"/>
-  <rdfs:label xml:lang="en">Zinc</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000083">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000084"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label xml:lang="en">exudation phase</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000084">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label xml:lang="en">healing process</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000085">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000084"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label xml:lang="en">fibrin reorganization</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000086">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
-      <owl:someValuesFrom rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000087"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
-      <owl:someValuesFrom rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000088"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
-      <owl:someValuesFrom rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000089"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
-      <owl:someValuesFrom rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000090"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label xml:lang="en">nanoparticle-based systems</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000087">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label xml:lang="en">bioavailability</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000088">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label xml:lang="en">stability</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000089">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label xml:lang="en">deliverability</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000090">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label xml:lang="en">efficiency</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000091">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
-      <owl:someValuesFrom rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000089"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
-      <owl:someValuesFrom rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000088"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
-      <owl:someValuesFrom rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000087"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label xml:lang="en">bovhyaluronidase azoximer</rdfs:label>
+<owl:Class rdf:about="https://bioportal.bioontology.org/ontologies/WONT/WONT_0000045">
+  <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+  <rdfs:label xml:lang="en">Wound-Healing</rdfs:label>
 </owl:Class>
 
 

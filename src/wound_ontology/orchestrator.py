@@ -1119,8 +1119,24 @@ class Orchestrator:
         print(f"[Orchestrator] Gating {len(edges)} committed edge(s); "
               f"{stamped} carry provenance, {len(edges) - stamped} do not.")
 
-        result = self.reasoner_gate.check_edges(edges)
+        # Hand the gate the provenance so a clash is resolved by dropping the
+        # weakest evidence first. Without it the gate is rank-blind: WONT's
+        # curated `Necrosis subClassOf pathological disorder` was quarantined
+        # alongside the text-asserted `Necrosis is_a Process` that contradicted
+        # it, which is a lower-ranked source overriding a higher one.
+        result = self.reasoner_gate.check_edges(edges, sources=dict(hier._prov))
         print(f"[Orchestrator] {result.summary()}")
+        if result.quarantined_sources:
+            import collections as _c
+            by_src = _c.Counter(v or "unstamped"
+                                for v in result.quarantined_sources.values())
+            print(f"[Orchestrator] quarantined by provenance: {dict(by_src)}")
+        if result.spared:
+            print(f"[Orchestrator] {len(result.spared)} higher-ranked edge(s) kept "
+                  f"because a weaker edge on the same child was dropped instead:")
+            for child, parent in result.spared[:10]:
+                src = hier._prov.get((child, parent), "unstamped")
+                print(f"[Orchestrator]     {child} is_a {parent}  [{src}]")
         if result.skipped:
             print(f"[Orchestrator] *** GATE DID NOT RUN: {result.skipped} ***\n"
                   f"[Orchestrator] *** All {len(edges)} edge(s) were accepted WITHOUT "

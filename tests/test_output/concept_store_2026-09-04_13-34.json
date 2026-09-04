@@ -1,0 +1,162 @@
+{
+    "42694877": {
+        "entities": {
+            "wound-healing": {
+                "is_a: Process": 1.0
+            },
+            "invasion": {
+                "is_a: Process": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260904_1218"
+    },
+    "42694797": {
+        "entities": {
+            "Adjuvant chemotherapy": {
+                "is_a: Process": 1.0
+            },
+            "benign lesions": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "bone union": {
+                "is_a: Process": 1.0
+            },
+            "complete fusion": {
+                "is_a: Quality": 1.0,
+                "inheres_in: mandible": 1.0
+            },
+            "fibular free flap reconstruction": {
+                "is_a: Process": 1.0
+            },
+            "fusion": {
+                "is_a: Process": 1.0
+            },
+            "indications": {
+                "is_a: Role": 1.0
+            },
+            "Malignant lesions": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: fusion": 1.0
+            },
+            "mandible": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: fusion": 1.0,
+                "participates_in: osseous fusion": 1.0,
+                "participates_in: osseous union": 1.0,
+                "participates_in: bone union": 1.0,
+                "participates_in: mandibular free flap reconstruction": 1.0,
+                "participates_in: fibular free flap reconstruction": 1.0,
+                "participates_in: mandibular reconstruction": 1.0
+            },
+            "mandibular free flap reconstruction": {
+                "is_a: Process": 1.0
+            },
+            "mandibular reconstruction": {
+                "is_a: Process": 1.0
+            },
+            "non-union": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "osseous fusion": {
+                "is_a: Process": 1.0
+            },
+            "osseous union": {
+                "is_a: Process": 1.0
+            },
+            "osteoradionecrosis": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "partial fusion": {
+                "is_a: Quality": 1.0,
+                "inheres_in: mandible": 1.0
+            },
+            "perioperative steroid use": {
+                "is_a: Process": 1.0
+            },
+            "prior radiotherapy": {
+                "is_a: Process": 1.0
+            },
+            "risk factors": {
+                "is_a: Tendency": 1.0
+            },
+            "steroids": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "surveillance imaging": {
+                "is_a: Process": 1.0
+            },
+            "T4 lesions": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: fusion": 1.0
+            },
+            "timing of fusion": {
+                "is_a: SpecificallyDependentContinuant": 1.0
+            },
+            "transient delays": {
+                "is_a: Process": 1.0,
+                "immediately_causally_downstream_of: prior radiotherapy": 1.0,
+                "immediately_causally_downstream_of: perioperative steroid use": 1.0
+            },
+            "trauma": {
+                "is_a: MaterialEntity": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260904_1218",
+        "schema_report": {
+            "rejected_terms": [],
+            "rejected_relations": [
+                [
+                    "transient delays",
+                    "immediately causally downstream of",
+                    "adjuvant chemotherapy",
+                    "endpoint not among extracted entities"
+                ]
+            ],
+            "unknown_predicates": []
+        }
+    },
+    "42694692": {
+        "entities": {
+            "wound healing": {
+                "is_a: Process": 1.0
+            },
+            "proliferation": {
+                "is_a: Process": 1.0
+            },
+            "anti-inflammatory effects": {
+                "is_a: Function": 1.0
+            },
+            "repairing": {
+                "is_a: Process": 1.0
+            },
+            "reparative macrophages": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: wound healing": 1.0,
+                "participates_in: migration": 1.0,
+                "participates_in: proliferation": 1.0,
+                "participates_in: repairing": 1.0,
+                "has_function: anti-inflammatory effects": 1.0
+            },
+            "kidney injury": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "pathological damage": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "kidney function": {
+                "is_a: Function": 1.0
+            },
+            "small-molecule P2RX7 antagonist": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "P2RX7 antagonist": {
+                "is_a: MaterialEntity": 1.0,
+                "has_function: anti-inflammatory effects": 1.0
+            },
+            "immunosenescence-associated kidney injury": {
+                "is_a: MaterialEntity": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260904_1218"
+    }
+}

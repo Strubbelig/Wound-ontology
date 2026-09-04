@@ -36,7 +36,7 @@ from wound_ontology.llm.extraction_models import CATEGORY_IRI, RELATION_IRI
 
 BATCH_NS = "urn:wont:batch#"
 _UNSAT_RE = re.compile(r"unsatisfiable:\s*(\S+)")
-_MAX_PASSES = 3
+_MAX_PASSES = 6   # tiered dropping needs a pass per provenance tier
 
 
 @dataclass
@@ -48,6 +48,10 @@ class EdgeGateResult:
     unsatisfiable: list[str] = field(default_factory=list)
     explanation: str = ""
     skipped: str | None = None
+    #: quarantined edge -> the provenance it carried, when the caller supplied one.
+    quarantined_sources: dict = field(default_factory=dict)
+    #: edges kept because a lower-ranked edge on the same child was dropped instead.
+    spared: list = field(default_factory=list)
 
     @property
     def clean(self) -> bool:
@@ -349,21 +353,46 @@ class ReasonerGate:
             g.add((c, RDFS.subClassOf, p))
         return g
 
-    def check_edges(self, edges) -> EdgeGateResult:
-        """Reason over candidate subsumption edges; quarantine the inconsistent ones."""
+    def check_edges(self, edges, sources=None) -> EdgeGateResult:
+        """Reason over candidate subsumption edges; quarantine the inconsistent ones.
+
+        `sources` maps (child, parent) -> provenance. When given, a clash is
+        resolved by dropping the LOWEST-ranked edges on the offending child
+        first, then re-checking; a higher-ranked edge is dropped only if the
+        clash survives without any lower-ranked company.
+
+        Without it the gate is provenance-blind, and that is not a cosmetic
+        difference. WONT asserts `Necrosis subClassOf pathological disorder` and
+        nothing else; two abstracts typed Necrosis as a Process; BFO makes
+        continuant and occurrent disjoint, so the reasoner derives ⊥ — and the
+        gate quarantined *both* edges, including the curated one. A text
+        assertion had silently overridden the ground truth, which is exactly what
+        the provenance ranks exist to prevent.
+
+        An edge the caller could not stamp is treated as the lowest rank of all:
+        an edge nothing claims is the first thing to give up.
+        """
         why = self.available()
         if why:
             return EdgeGateResult(accepted=list(edges), skipped=why)
 
+        from wound_ontology.hierarchies.base_hierarchy import SOURCE_RANK
+
         idx = self._label_index()
         kept = list(edges)
         dropped: list = []
+        spared: list = []
         unsat_seen: set[str] = set()
         explanation = ""
 
         def resolve(label: str) -> str:
             hit = idx.get(str(label).strip().lower())
             return str(hit) if hit is not None else BATCH_NS + _slug(str(label))
+
+        def rank(edge) -> int:
+            if not sources:
+                return 0
+            return SOURCE_RANK.get(sources.get(tuple(edge)), 0)
 
         for _ in range(_MAX_PASSES):
             g = self.build_edge_graph(kept, label_index=idx)
@@ -376,19 +405,40 @@ class ReasonerGate:
             # An edge is culpable when its CHILD is unsatisfiable: the child is
             # what the edge constrains. A parent going unsatisfiable is a
             # consequence, handled on the next pass.
-            still, now_bad = [], []
-            for child, parent in kept:
-                (now_bad if resolve(child) in unsat else still).append((child, parent))
-            if not now_bad:
+            culprits = [e for e in kept if resolve(e[0]) in unsat]
+            if not culprits:
                 break                       # cannot attribute further
+
+            # Drop the weakest evidence FIRST, and globally rather than per
+            # child. Per-child was not enough: `Dry Necrosis is_a Necrosis` is
+            # curated and its only edge, so on its own it looked like the weakest
+            # evidence available and went — while the text edge that had made
+            # Necrosis unsatisfiable in the first place was still present. Its
+            # child was only unsatisfiable by inheritance. Dropping one whole
+            # rank at a time and re-checking lets the cause go before its
+            # consequences are judged.
+            lowest = min(rank(e) for e in culprits)
+            now_bad = [e for e in culprits if rank(e) == lowest]
+            spared += [e for e in culprits if rank(e) != lowest]
+            if not now_bad:
+                break
+
             dropped += now_bad
-            kept = still
+            bad = {tuple(e) for e in now_bad}
+            kept = [e for e in kept if tuple(e) not in bad]
+
+        # Anything "spared" that survived to the end really was spared; anything
+        # dropped on a later pass was not.
+        dropped_set = {tuple(e) for e in dropped}
+        spared = [e for e in dict.fromkeys(map(tuple, spared)) if e not in dropped_set]
 
         return EdgeGateResult(
             accepted=kept,
             quarantined=dropped,
             unsatisfiable=sorted(unsat_seen),
             explanation=explanation,
+            quarantined_sources={tuple(e): (sources or {}).get(tuple(e)) for e in dropped},
+            spared=spared,
         )
 
     # ── persistence ────────────────────────────────────────────────────────
