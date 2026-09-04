@@ -139,6 +139,23 @@ class DataManager:
         return sorted(files)[-1]
     
 
+    def list_prefixes(self, pattern: str, extension: str) -> list[str]:
+        """Distinct versioned prefixes on disk matching a glob pattern.
+
+        Per-analysis artifacts are named per subtree ("concept_lattice_wound"),
+        so a later run has to be able to find the ones an earlier run wrote
+        without being told their names.
+        """
+        stamped = re.compile(
+            rf"^(?P<prefix>.+)_\d{{4}}-\d{{2}}-\d{{2}}_\d{{2}}-\d{{2}}\.{re.escape(extension)}$"
+        )
+        found = set()
+        for path in glob.glob(str(self.base_path / f"{pattern}_*.{extension}")):
+            m = stamped.match(os.path.basename(path))
+            if m:
+                found.add(m.group("prefix"))
+        return sorted(found)
+
     # ── OWL I/O (explicit path) ───────────────────────────────────────────────
 
     def _owl_uri(self, source: str) -> str:

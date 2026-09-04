@@ -43,11 +43,9 @@ def pipeline(tmp_data_dir):
 
 @pytest.fixture(scope="module")
 def predefined_df():
-    """Load the real predefined hierarchy from data/raw — same data the production pipeline uses."""
-    raw = Path(__file__).resolve().parents[2] / "data" / "raw" / "predefined_concept_hierarchy.csv"
-    if raw.exists():
-        return pd.read_csv(raw, usecols=["Class", "Parent class"])
-    # Fallback so tests can run even without the file
+    """A small curated overlay. The old data/raw/predefined_concept_hierarchy.csv
+    is gone — that table is merged into WONT and MILD — so curated edges now
+    reach run_build_hierarchies() only when passed explicitly."""
     return pd.DataFrame([
         {"Class": "Chronic Wound",  "Parent class": "Wound"},
         {"Class": "Acute Wound",    "Parent class": "Wound"},
@@ -80,14 +78,14 @@ def test_extract_to_cache(pipeline):
 
 @pytest.mark.integration
 def test_build_hierarchies(pipeline, predefined_df):
-    # Pass None — orchestrator auto-loads from data/raw/predefined_concept_hierarchy.csv.
-    # The predefined_df fixture is kept so it can be inspected in other assertions.
-    pipeline.run_build_hierarchies(predefined_df=None)
+    # Passed explicitly to keep this test off the real WONT/MILD files;
+    # predefined_df=None would read them via curated_seed.load_curated_edges.
+    pipeline.run_build_hierarchies(predefined_df=predefined_df)
 
-    # Predefined hierarchy has 415 edges — normalization may rename concepts,
-    # so check size rather than specific (potentially renamed) names.
-    assert len(pipeline.class_hier.concepts) > 50, \
-        "ClassHierarchy has too few concepts — predefined file may not have loaded"
+    # Normalization may rename concepts, so check size rather than specific
+    # (potentially renamed) names.
+    assert len(pipeline.class_hier.concepts) > 3, \
+        "ClassHierarchy has too few concepts — the store may not have loaded"
     # At least one root must exist (top-level parents have no parent of their own)
     assert len(pipeline.class_hier.roots) > 0
     # All values in the DataFrame must be numeric
@@ -161,7 +159,16 @@ def test_fca_on_subtree(pipeline, tmp_data_dir):
     # FCAHierarchy must be a valid DataFrame
     assert isinstance(pipeline.fca_hier.df, pd.DataFrame)
 
-    # Named FCA superclasses must now appear in ClassHierarchy as parents
+    # Every named FCA superclass must be accounted for in ClassHierarchy —
+    # either committed as an edge or recorded as a review candidate.
+    #
+    # This used to assert membership in .concepts outright, which run_fca stopped
+    # honouring when commit_fca gained its False default: FCA observes that terms
+    # share attributes, which is evidence for a superclass rather than an
+    # assertion of one, so suggestions go to .candidates for review. The stale
+    # assertion survived only because a three-abstract corpus produced no FCA
+    # columns at all, so the loop never had a name to check. Conceptual scaling
+    # gives the context an is_a column, so it does now.
     lattice = pipeline.lattice.lattice
     if lattice is not None:
         fca_names = [
@@ -171,9 +178,12 @@ def test_fca_on_subtree(pipeline, tmp_data_dir):
         # _set_edge Title-cases names, so normalise before checking
         fca_names_title = [n.strip().title() for n in fca_names]
         print(f"\nFCA superclass names: {fca_names_title}")
+        proposed_parents = {p for _, p in pipeline.class_hier.candidates}
         for name in fca_names_title:
-            assert name in pipeline.class_hier.concepts, \
-                f"FCA superclass '{name}' not found in ClassHierarchy"
+            assert (name in pipeline.class_hier.concepts
+                    or name in proposed_parents), \
+                (f"FCA superclass '{name}' reached neither ClassHierarchy nor its "
+                 f"review candidates — it was named and then dropped")
 
     # Re-export OWL with FCA results merged in and verify FCA names appear
     owl_out = tmp_data_dir / "ontology_with_fca.owl"
@@ -182,9 +192,19 @@ def test_fca_on_subtree(pipeline, tmp_data_dir):
     content = owl_out.read_text()
 
     if lattice is not None:
-        for name in fca_names_title:
+        # Only *committed* names can be in the OWL. This is the same stale
+        # expectation the .concepts assertion above carried: under
+        # commit_fca=False a named superclass is a review candidate, so its
+        # absence from the export is the contract working, not a lost edge.
+        # That a candidate was recorded rather than dropped is asserted above;
+        # this checks the other half — a committed one really is written out.
+        committed = [n for n in fca_names_title if n in pipeline.class_hier.concepts]
+        for name in committed:
             safe = name.strip().replace(" ", "_")
             assert safe in content, f"FCA superclass '{safe}' not found in OWL"
+        pending = [n for n in fca_names_title if n not in committed]
+        if pending:
+            print(f"FCA names awaiting review (correctly absent from OWL): {pending}")
     print(f"\nOWL with FCA → {owl_out} ({owl_out.stat().st_size} bytes)")
 
 

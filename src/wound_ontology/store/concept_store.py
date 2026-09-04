@@ -1,5 +1,6 @@
 from __future__ import annotations
 import asyncio
+import warnings
 import re
 import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
@@ -247,10 +248,14 @@ class ConceptStore:
 
         extra_targets            – additional target candidates (e.g. BFO anchor names) passed
                                    to the LLM alongside already-known targets.
+                                   DEPRECATED free-text path only: the schema-constrained
+                                   path sends the generated category tree instead and
+                                   ignores this, saying so on stdout when it is supplied.
         max_consecutive_failures – circuit breaker: abort and raise if this many results in a
                                    row are permanent failures (all retries exhausted).
         max_vocab_hints          – cap on how many targets/attributes are sent per prompt.
                                    Uses the most frequent entries to keep prompt size bounded.
+                                   DEPRECATED free-text path only; see extra_targets.
         milestone_every          – trigger on_milestone after every N new entity mentions.
                                    0 = disabled.
         on_milestone             – async callable(store) invoked at each milestone.
@@ -265,9 +270,21 @@ class ConceptStore:
                                    prompt, which is kept only for comparison.
         """
         meta_col, meta_id = self.dm.get_meta_stamp("llm_extract")
-        top_attrs = self.top_attributes(max_vocab_hints)
-        top_targets = list({a.split(':', 1)[1].strip() for a in top_attrs if ':' in a})
-        combined_targets = top_targets + (list(extra_targets) if extra_targets else [])
+        if schema_constrained:
+            # The two-stage prompts carry the generated category tree (and, when
+            # with_definitions is on, the grounding table). They never carry store
+            # vocabulary, so computing hints here would be dead work and accepting
+            # them silently would advertise an effect this path does not have.
+            if extra_targets or allowed_predicates or predicate_definitions:
+                print("[ConceptStore] schema_constrained=True: vocabulary hints are NOT "
+                      "sent to the model - the generated schema is the vocabulary. "
+                      "extra_targets, allowed_predicates, predicate_definitions and "
+                      "max_vocab_hints apply to the deprecated free-text path only.")
+            top_attrs, top_targets, combined_targets = [], [], []
+        else:
+            top_attrs = self.top_attributes(max_vocab_hints)
+            top_targets = list({a.split(':', 1)[1].strip() for a in top_attrs if ':' in a})
+            combined_targets = top_targets + (list(extra_targets) if extra_targets else [])
         current = self.dict
 
         to_process = [
@@ -298,6 +315,20 @@ class ConceptStore:
                         return pmid, await _extract_schema_constrained(
                             llm, row['abstract'], meta_id
                         )
+                    # DEPRECATED path. The model picks relations off a free-text
+                    # list and emits its own identifiers, so nothing is typed to
+                    # a BFO category and nothing is checked against the pairs
+                    # MILD/WONT license. Kept for comparison against the
+                    # schema-constrained path, not for production runs.
+                    warnings.warn(
+                        "schema_constrained=False uses the legacy free-text "
+                        "extraction prompt: terms are not typed to a BFO "
+                        "category, grounding is a generated identifier rather "
+                        "than a label lookup, and relations are not filtered "
+                        "against the category pairs the ontologies license. "
+                        "Kept only for comparison.",
+                        DeprecationWarning, stacklevel=2,
+                    )
                     extracted = await llm.extract_entities(
                         row['abstract'],
                         allowed_predicates,
@@ -364,11 +395,15 @@ class ConceptStore:
                                   f"({succeeded}/{len(to_process)} PMIDs). Running normalization...")
                             await on_milestone(self)
                             entities_since_milestone = 0
-                            # Refresh vocab hints so subsequent extractions use updated terms
-                            top_attrs[:] = self.top_attributes(max_vocab_hints)
-                            top_targets[:] = list({a.split(':', 1)[1].strip() for a in top_attrs if ':' in a})
-                            combined_targets[:] = top_targets + (list(extra_targets) if extra_targets else [])
-                            print("[ConceptStore] Vocab hints refreshed. Resuming extraction.\n")
+                            if schema_constrained:
+                                # Nothing to refresh: this path sends no vocab hints.
+                                print("[ConceptStore] Normalization applied. Resuming extraction.\n")
+                            else:
+                                # Refresh vocab hints so subsequent extractions use updated terms
+                                top_attrs[:] = self.top_attributes(max_vocab_hints)
+                                top_targets[:] = list({a.split(':', 1)[1].strip() for a in top_attrs if ':' in a})
+                                combined_targets[:] = top_targets + (list(extra_targets) if extra_targets else [])
+                                print("[ConceptStore] Vocab hints refreshed. Resuming extraction.\n")
                 if abort.is_set():
                     for t in tasks:
                         t.cancel()
@@ -382,6 +417,48 @@ class ConceptStore:
             llm._max_consec_errors = 0
 
         print(f"Batch extraction complete. {succeeded}/{len(to_process)} abstracts processed.")
+
+    def merge_entity_records(self, entities: dict[str, dict[str, float]], *, kind: str) -> int:
+        """Merge derived entity records into a synthetic store record.
+
+        Everything downstream -- the hierarchies, the FCA view -- is rebuilt from
+        this store, so anything that must survive a rebuild has to arrive here.
+        This is the door for the things that are not extracted from an abstract:
+        LLM verdicts on undecided cells ("llm_fill", "llm_fill_nan") and FCA
+        edges a human promoted ("fca_promoted"). `kind` becomes the record key,
+        so their provenance stays visible beside the PMIDs.
+
+        This used to be a plain assignment, so a second fill replaced the first
+        one's verdicts wholesale and said nothing. Merging keeps both. The one
+        way a value can still be lost -- the same (entity, attribute) decided
+        differently on two runs -- is counted and reported instead of happening
+        quietly.
+
+        Returns the number of verdicts written.
+        """
+        if not entities:
+            return 0
+        record = self._dict.get(kind) or {}
+        existing = dict(record.get("entities", {}))
+        written = changed = 0
+        for entity, attrs in entities.items():
+            dest = dict(existing.get(entity, {}))
+            for triple, value in attrs.items():
+                if triple in dest and dest[triple] != value:
+                    changed += 1
+                dest[triple] = value
+                written += 1
+            existing[entity] = dest
+
+        _, meta_id = self.dm.get_meta_stamp(kind)
+        self._dict[kind] = {"entities": existing, "meta_stamp": meta_id}
+        self.save()
+        if changed:
+            print(f"[ConceptStore] {changed} verdict(s) overwrote an earlier and "
+                  f"different verdict for the same attribute.")
+        print(f"[ConceptStore] {written} verdict(s) merged into '{kind}' "
+              f"across {len(existing)} entities. Stamp: {meta_id}")
+        return written
 
     async def fill_missing_attributes(
         self,
@@ -485,14 +562,12 @@ class ConceptStore:
               f"{total_missing - n_conf - n_deny} left unevaluated.")
 
         if fill_entities:
-            meta_col, meta_id = self.dm.get_meta_stamp("llm_fill")
-            self._dict["llm_fill"] = {"entities": fill_entities, "meta_stamp": meta_id}
-            self.save()
+            self.merge_entity_records(fill_entities, kind="llm_fill")
             confirmed_total = sum(
                 sum(1 for v in d.values() if v == 1.0) for d in fill_entities.values()
             )
-            print(f"[ConceptStore] Fill complete — {confirmed_total} new confirmed attributes. "
-                  f"Stamp: {meta_id}")
+            # The stamp is printed by merge_entity_records, which owns it now.
+            print(f"[ConceptStore] Fill complete — {confirmed_total} new confirmed attributes.")
 
     # ── Persistence ───────────────────────────────────────────────────────────
 

@@ -104,12 +104,27 @@ def test_already_committed_edge_is_not_proposed(hier):
     assert hier.candidates == {}
 
 
-def test_get_data_preserves_curated_attribution(hier):
-    """Rebuilding from the store must not silently demote curated edges."""
-    hier._set_edge("Chronic Wound", "Wound", source=SOURCE_CURATED)
-    hier.get_data(FakeStore())
+def test_curated_attribution_comes_from_the_curated_source(hier):
+    """Curated edges are read from WONT and MILD, not carried over from the last
+    build. Rebuilding therefore restores the stamp from the source itself.
+
+    This used to assert that get_data *preserved* a curated stamp already in
+    _prov, which was how the old design survived pushing curated edges through
+    the store and re-stamping them afterwards. Now the source is read directly,
+    so the stamp is derived rather than remembered."""
+    import pandas as pd
+    curated = pd.DataFrame([{"Class": "Chronic Wound", "Parent class": "Wound"}])
+    hier.get_data(FakeStore(), curated=curated)
     assert hier.source_of("Chronic Wound", "Wound") == SOURCE_CURATED
     assert hier.source_of("Acute Wound", "Wound") == SOURCE_TEXT
+
+
+def test_a_curated_edge_no_source_still_holds_is_not_carried_over(hier):
+    """The other half: an edge nothing asserts any more must not survive on the
+    strength of having once been curated."""
+    hier._set_edge("Chronic Wound", "Ulcer", source=SOURCE_CURATED)
+    hier.get_data(FakeStore())
+    assert hier.source_of("Chronic Wound", "Ulcer") is None
 
 
 def test_provenance_round_trips_through_save(hier):

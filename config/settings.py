@@ -7,7 +7,11 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 # Paths
 BASE_PATH = PROJECT_ROOT / "data" / "cache"
 OWL_OUTPUT_FILE = PROJECT_ROOT / "output" / "owl" / "ontology_classes.owl"
-PREDEFINED_HIERARCHY_FILE = PROJECT_ROOT / "data" / "raw" / "predefined_concept_hierarchy.csv"
+# NOTE: there is no PREDEFINED_HIERARCHY_FILE any more. The curated seed
+# hierarchy that used to live in data/raw/predefined_concept_hierarchy.csv was
+# merged into the WONT and MILD ontologies below, and is read back out of them
+# by hierarchies/curated_seed.py -- GROUND_TRUTH_TTL and MILD_TTL are therefore
+# load-bearing for the hierarchy build, not just for the reasoner gate.
 
 # Ground-truth ontologies. These are the source of truth for the extraction
 # schema (scripts/build_extraction_schema.py) and for the reasoner gate.

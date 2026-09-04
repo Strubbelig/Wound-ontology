@@ -23,10 +23,14 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from functools import lru_cache
 from pathlib import Path
 
 import rdflib
 from rdflib.namespace import OWL, RDF, RDFS
+
+from wound_ontology.utils.label_match import LabelIndex
+from wound_ontology.utils.rdf_io import parse_graph
 
 WONT_NS = "https://bioportal.bioontology.org/ontologies/WONT/"
 OBO = "http://purl.obolibrary.org/obo/"
@@ -71,6 +75,9 @@ class ExtendReport:
 
     minted: dict[str, str] = field(default_factory=dict)
     resolved: dict[str, str] = field(default_factory=dict)
+    resolved_imported: dict[str, str] = field(default_factory=dict)
+    resolved_variant: dict[str, str] = field(default_factory=dict)
+    ambiguous: dict[str, int] = field(default_factory=dict)
     subclass_added: int = 0
     restrictions_added: dict[str, int] = field(default_factory=dict)
     withheld_existing: list[tuple[str, str, str]] = field(default_factory=list)
@@ -84,6 +91,12 @@ class ExtendReport:
         lines = [
             f"minted            {len(self.minted)} new WONT classes",
             f"resolved          {len(self.resolved)} terms to curated WONT classes",
+            f"resolved imported {len(self.resolved_imported)} terms to imported IRIs "
+            f"(BFO/MILD/OBI... — not minted as WONT twins)",
+            f"matched on variant {len(self.resolved_variant)} terms (plural, "
+            f"punctuation or a stated synonym)",
+            f"ambiguous         {len(self.ambiguous)} terms matched >1 class and "
+            f"were minted rather than guessed",
             f"subClassOf added  {self.subclass_added}",
             f"restrictions      {rel or 'none'}",
             f"withheld          {len(self.withheld_existing)} (subject is a curated class)",
@@ -94,15 +107,33 @@ class ExtendReport:
         return "\n".join("  " + line for line in lines)
 
 
-def label_index(graph: rdflib.Graph) -> dict[str, rdflib.URIRef]:
-    """``{lowercased label: IRI}``; preferred labels win over alternative terms."""
-    idx: dict[str, rdflib.URIRef] = {}
-    for subj, _, obj in graph.triples((None, ALT_TERM, None)):
+#: Predicates that state another surface form of the SAME class. Narrow, broad
+#: and related synonyms are excluded on purpose: they name a *different*
+#: concept, so matching through them would merge classes the source deliberately
+#: kept apart -- worse than minting a duplicate.
+SAME_CONCEPT_PREDICATES = (
+    ALT_TERM,                                                          # IAO_0000118
+    rdflib.URIRef("http://www.geneontology.org/formats/oboInOwl#hasExactSynonym"),
+    rdflib.URIRef("http://www.w3.org/2004/02/skos/core#altLabel"),
+)
+
+
+def label_index(graph: rdflib.Graph) -> LabelIndex:
+    """Label -> IRI for one graph; preferred labels win over synonyms.
+
+    Returns a :class:`LabelIndex`, which still behaves like the dict this used
+    to be (``idx[key]``, ``.items()``, ``.values()``) but additionally matches
+    through normalization and singularization -- so "material entities" finds
+    BFO_0000040 instead of minting a WONT twin of it.
+    """
+    idx = LabelIndex()
+    for pred in SAME_CONCEPT_PREDICATES:
+        for subj, obj in graph.subject_objects(pred):
+            if isinstance(subj, rdflib.URIRef):
+                idx.add(str(obj), subj, preferred=False)
+    for subj, obj in graph.subject_objects(RDFS.label):
         if isinstance(subj, rdflib.URIRef):
-            idx.setdefault(str(obj).strip().lower(), subj)
-    for subj, _, obj in graph.triples((None, RDFS.label, None)):
-        if isinstance(subj, rdflib.URIRef):
-            idx[str(obj).strip().lower()] = subj
+            idx.add(str(obj), subj, preferred=True)
     return idx
 
 
@@ -165,11 +196,21 @@ def extend_ground_truth(
     id_width: int = 7,
     touch_existing: bool = False,
     provenance: str = "wound-ontology-pipeline",
+    lexicon=None,
 ) -> ExtendReport:
     """Merge pipeline findings into a copy of the ground truth.
 
     Returns an :class:`ExtendReport`. The ground truth file itself is never
     written to -- ``output`` must be a different path.
+
+    ``lexicon`` names files searched for labels the ground truth does not carry,
+    defaulting to MILD plus the import modules. Without it every term whose IRI
+    lives in an import is unresolvable here, and ``resolve`` mints a WONT twin
+    for it: "Function" becomes a fresh WONT class rather than BFO_0000034, even
+    though the output already ``owl:imports`` the module that defines it. That
+    only started to bite once curated seed edges reached ``class_hier``, which
+    is where BFO/MILD parents come from. Pass ``lexicon=()`` for the old
+    mint-everything behaviour.
     """
     ground_truth, output = Path(ground_truth), Path(output)
     if ground_truth.resolve() == output.resolve():
@@ -186,18 +227,41 @@ def extend_ground_truth(
     taken = existing_ids(g, namespace)
     counter = next_free_id(g, namespace)
 
+    # Labels the ground truth does not define, but its imports do. These are
+    # looked up only on a miss, and an IRI found here is untouchable for the
+    # same reason a curated WONT class is: an extraction run does not get to
+    # add parents to BFO_0000040.
+    if lexicon is None:
+        lexicon = default_lexicon()
+    imported_idx = lexicon_index(lexicon)
+
     def resolve(term: str) -> rdflib.URIRef:
         """Existing IRI for a label, or a freshly minted WONT class."""
         nonlocal counter
         key = term.strip().lower()
-        hit = idx.get(key)
-        if hit is not None:
+        hit, how = idx.get(key)
+        if hit is None and how != "ambiguous":
+            imported, how = imported_idx.get(key)
+            if imported is not None:
+                idx.add(key, imported)             # remember for the next term
+                existing_iris.add(str(imported))   # imports are not ours to edit
+                report.resolved_imported[term] = str(imported)
+                if how == "variant":
+                    report.resolved_variant[term] = str(imported)
+                return imported
+        if how == "ambiguous":
+            # Several classes answer to this label. Picking one attaches every
+            # downstream axiom to a coin flip, so mint instead and say so.
+            report.ambiguous[term] = report.ambiguous.get(term, 0) + 1
+        elif hit is not None:
             # Only count it as resolved if it matched a class that was already in
             # the ground truth. Newly minted classes are added to the index too,
             # so without this check a term minted a moment ago would be reported
             # as having matched curated content.
             if str(hit) in existing_iris:
                 report.resolved[term] = str(hit)
+            if how == "variant":
+                report.resolved_variant[term] = str(hit)
             return hit
         while counter in taken:      # never reuse an id from either series
             counter += 1
@@ -211,7 +275,7 @@ def extend_ground_truth(
             "Minted by the extraction pipeline, not curated. It carries a label and "
             "whatever relations the text supported; it has no BFO anchor until one is "
             "assigned, so it is not yet usable as ground truth.", lang="en")))
-        idx[key] = iri
+        idx.add(key, iri)
         report.minted[term] = str(iri)
         return iri
 
@@ -270,6 +334,77 @@ def extend_ground_truth(
     g.serialize(destination=str(output), format="turtle")
     report.catalog = _copy_catalog(ground_truth, output)
     return report
+
+
+@lru_cache(maxsize=8)
+def _lexicon_index_cached(key: tuple[tuple[str, float, int], ...]) -> LabelIndex:
+    idx = LabelIndex()
+    for path_str, _mtime, _size in key:
+        # preferred=False so the FIRST file to claim a label keeps it. The list
+        # is MILD then the modules alphabetically, which is arbitrary but fixed
+        # -- 193 labels are claimed by two imports at once ("quality" by both
+        # BFO and PATO, "skin" by FMA and UBERON), and a stable answer beats one
+        # that depends on dict iteration order.
+        idx.update(
+            label_index(parse_graph(Path(path_str), context="lexicon")),
+            preferred=False,
+        )
+    return idx
+
+
+def lexicon_index(lexicon) -> LabelIndex:
+    """Merged label index for `lexicon`, cached on (path, mtime, size).
+
+    Parsing this costs ~12 s, almost all of it obi_module.owl at 16 MB, and the
+    same files are read on every export and by every test that does not pass its
+    own lexicon. The cache key carries mtime and size so editing a module still
+    takes effect.
+    """
+    key = []
+    for path in [Path(p) for p in lexicon]:
+        if not path.exists():
+            raise FileNotFoundError(
+                f"lexicon file {path} does not exist. It is consulted so terms "
+                f"defined in an import resolve to their real IRI instead of "
+                f"being minted as a WONT duplicate; skipping it would show up "
+                f"only as a larger 'minted' count."
+            )
+        st = path.stat()
+        key.append((str(path), st.st_mtime, st.st_size))
+    return _lexicon_index_cached(tuple(key))
+
+
+def default_lexicon() -> list[Path]:
+    """MILD + the import modules: everything the extended file already imports.
+
+    Missing config or a missing modules directory yields an empty lexicon rather
+    than an error -- callers that pass their own never touch this path.
+    """
+    import warnings
+
+    try:
+        from config.settings import MILD_TTL, MILD_MODULES_DIR
+    except ImportError as exc:
+        warnings.warn(
+            f"config.settings could not be imported ({exc}), so the extend lexicon "
+            "is empty. Every term defined in an import will be minted as a WONT "
+            "duplicate instead of resolving to its own IRI.",
+            RuntimeWarning, stacklevel=2,
+        )
+        return []
+    mods = Path(MILD_MODULES_DIR)
+    found = [Path(MILD_TTL)] if Path(MILD_TTL).exists() else []
+    if mods.exists():
+        found += sorted(mods.glob("*_module.owl")) + sorted(mods.glob("*_stub.owl"))
+    if not found:
+        warnings.warn(
+            f"no lexicon files found (MILD_TTL={MILD_TTL}, "
+            f"MILD_MODULES_DIR={MILD_MODULES_DIR}). Terms defined in an import "
+            "will be minted as WONT duplicates rather than resolving to their "
+            "own IRI; check the 'minted' count before trusting the output.",
+            RuntimeWarning, stacklevel=2,
+        )
+    return found
 
 
 def _copy_catalog(ground_truth: Path, output: Path) -> str | None:

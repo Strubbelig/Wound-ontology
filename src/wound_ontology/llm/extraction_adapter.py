@@ -155,7 +155,7 @@ def _iter_store_attributes(store_data: dict):
                     yield label, str(attr)
 
 
-def store_to_gate_inputs(store_data: dict) -> tuple[list, list, dict]:
+def store_to_gate_inputs(store_data: dict, resolve_conflict=None) -> tuple[list, list, dict]:
     """Recover (entities, relations, report) from the ConceptStore dictionary.
 
     `report` is the point of this function as much as the two lists are. It
@@ -163,9 +163,18 @@ def store_to_gate_inputs(store_data: dict) -> tuple[list, list, dict]:
     look", which are otherwise the same outcome from the caller's side:
 
         untyped            terms carrying no `is_a: <BFOCategory>` at all
-        conflicting        terms two abstracts typed DIFFERENTLY -- the
-                           cross-abstract disagreement stage-1 typing is meant
-                           to make impossible
+        conflicting        terms two abstracts typed DIFFERENTLY that could NOT
+                           be reconciled -- the cross-abstract disagreement
+                           stage-1 typing cannot prevent, since it types each
+                           abstract independently
+        reconciled         {label: (proposed, agreed)} for conflicts retreated to
+                           a common ancestor by `resolve_conflict`. These ARE
+                           gated, at the category all the abstracts agree on.
+
+    `resolve_conflict(categories) -> category | None` decides what a term typed
+    several ways becomes; pass `ReasonerGate.least_common_category` to retreat to
+    the most specific category MILD says subsumes them all. Without it every
+    conflict is simply excluded (the safe default, but it discards real terms).
         unknown_predicate  predicate keys with no RelationType, counted per key
         untyped_object     relations whose target is not a typed term
         unlicensed         relations whose (subject cat, object cat) pair
@@ -184,6 +193,7 @@ def store_to_gate_inputs(store_data: dict) -> tuple[list, list, dict]:
         "unknown_predicate": {},
         "untyped_object": {},
         "unlicensed": [],
+        "reconciled": {},
     }
 
     # ── pass 1: typing ────────────────────────────────────────────────────
@@ -201,7 +211,12 @@ def store_to_gate_inputs(store_data: dict) -> tuple[list, list, dict]:
         if not cats:
             report["untyped"].append(label)
         elif len(cats) > 1:
-            report["conflicting"][label] = sorted(cats)
+            agreed = resolve_conflict(cats) if resolve_conflict else None
+            if agreed is None:
+                report["conflicting"][label] = sorted(cats)
+            else:
+                report["reconciled"][label] = (sorted(cats), agreed)
+                categories[label] = agreed
         else:
             categories[label] = next(iter(cats))
 
@@ -253,8 +268,10 @@ def describe_gate_inputs(entities, relations, report: dict) -> str:
     lines = [
         f"gateable: {len(entities)} typed term(s), {len(relations)} relation(s)",
         f"NOT gateable -- no BFO category: {len(report['untyped'])} term(s)",
-        f"NOT gateable -- conflicting categories: "
+        f"NOT gateable -- irreconcilable categories: "
         f"{len(report['conflicting'])} term(s)",
+        f"reconciled to a common ancestor (gated): "
+        f"{len(report.get('reconciled', {}))} term(s)",
         f"NOT gateable -- predicate has no RelationType: "
         f"{sum(report['unknown_predicate'].values())} edge(s) across "
         f"{len(report['unknown_predicate'])} predicate(s)",

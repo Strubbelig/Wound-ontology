@@ -1,5 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+import warnings
+
 import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.utils.string_utils import smart_title
@@ -10,7 +12,9 @@ from wound_ontology.utils.string_utils import smart_title
 # Subsumption reaches this hierarchy from three places, and until now they
 # landed in the same 0/1 matrix with no record of which produced an edge:
 #
-#   curated  a human-authored CSV (data/raw/predefined_concept_hierarchy.csv)
+#   curated  human-authored subsumption from WONT + MILD, read by
+#            hierarchies/curated_seed.py (it used to be a CSV, until that
+#            table was merged into the ontologies themselves)
 #   text     asserted in a document, via schema-constrained extraction
 #   fca      suggested by the concept lattice
 #
@@ -28,6 +32,8 @@ SOURCE_RANK: dict[str, int] = {
     SOURCE_TEXT: 2,
     SOURCE_FCA: 1,
 }
+
+
 
 # OWL annotation property used when exporting provenance onto the axiom.
 # oboInOwl:source is the OBO convention for "where this axiom came from".
@@ -66,8 +72,13 @@ class BaseHierarchy(ABC):
 
     # ── Lifecycle ──────────────────────────────────────────────────────────────
 
-    def __init__(self, data_manager: 'DataManager'):
+    def __init__(self, data_manager: 'DataManager', file_name: str | None = None):
         self.dm = data_manager
+        # Analysis artifacts are per-analysis (rule 6): an FCA hierarchy built for
+        # the Wound subtree must not share a file -- and therefore a reload -- with
+        # one built for a different subtree.
+        if file_name is not None:
+            self.file_name = file_name
         raw = self.dm.load_latest_csv(self.file_name)
         if raw is not None:
             if "Unnamed: 0" in raw.columns:
@@ -192,17 +203,45 @@ class BaseHierarchy(ABC):
             return                      # already committed by some source
         self._candidates[(specific, general)] = source
 
-    def promote_candidates(self, only: set[tuple[str, str]] | None = None) -> int:
-        """Commit reviewed candidates into the matrix. Returns how many landed."""
+    def promote_candidates(self, only: set[tuple[str, str]] | None = None,
+                           lattice=None) -> int:
+        """Commit reviewed candidates into the matrix. Returns how many landed.
+
+        `lattice` is where the review is *recorded*. The accepted edges form a
+        slice of that lattice, and the slice is what get_data reads back as the
+        `fca` source on the next build. Without it the promotion lasts only as
+        long as this session: the hierarchy is rebuilt from its sources every
+        run, and unlike a curated edge, an accepted FCA edge has no ontology to
+        be re-read from.
+
+        The acceptance does not go into the ConceptStore. The store holds what
+        was extracted from documents; an edge a lattice suggested and a human
+        waved through is neither, and writing it there would make the store
+        assert something it never saw.
+        """
         n = 0
+        accepted: list[tuple[str, str]] = []
         for (child, parent), source in list(self._candidates.items()):
             if only is not None and (child, parent) not in only:
                 continue
-            self._set_edge(child, parent, source=source)
+            if self._set_edge(child, parent, source=source):
+                accepted.append((child, parent))
             # _set_edge clears the candidate itself; pop defensively so a
             # rejected write (outranked by an existing edge) still de-queues.
             self._candidates.pop((child, parent), None)
             n += 1
+
+        if accepted:
+            if lattice is not None:
+                lattice.accept(accepted)
+            else:
+                warnings.warn(
+                    f"{len(accepted)} promoted edge(s) were not recorded on a "
+                    f"lattice. get_data() rebuilds this hierarchy from its "
+                    f"sources, so they will be gone after the next "
+                    f"run_build_hierarchies(). Pass lattice=... to keep them.",
+                    RuntimeWarning, stacklevel=2,
+                )
         return n
 
     def provenance_axioms(self) -> list[tuple[str, str, str, str]]:
@@ -248,11 +287,40 @@ class BaseHierarchy(ABC):
 
     # ── Public methods ─────────────────────────────────────────────────────────
 
-    def get_data(self, store) -> None:
-        """Populate the hierarchy from a ConceptStore (already normalized).
-        Always rebuilds from scratch so stale persisted data does not bleed in."""
-        edges: list[tuple[str, str]] = []
+    def get_data(self, store, curated=None, fca=()) -> None:
+        """Populate the hierarchy by reading its sources. Rebuilds from scratch.
 
+        This is a *reader*, not a merge point. Each source keeps its own identity
+        all the way through, and an edge's provenance is decided by which source
+        it came from -- not by anything written into the source beforehand.
+
+        store   – ConceptStore (already normalized). Everything here was asserted
+                  by a document, so it is stamped `text`.
+        curated – DataFrame with 'Class' and 'Parent class' columns, read straight
+                  from WONT and MILD. Stamped `curated`.
+        fca     – iterable of accepted lattice slices, each a sequence of
+                  (child, parent) pairs. Stamped `fca`.
+
+        Curated edges used to be pushed *through* the store first, which made the
+        store assert 459 edges it had never extracted and required a second pass
+        to correct the attribution afterwards. Reading each source in its own
+        right removes both. Rank still decides collisions: an edge that is both
+        curated and text-asserted is curated; one that is both text and fca is
+        text.
+        """
+        edges: list[tuple[str, str]] = []
+        edge_source: dict[tuple[str, str], str] = {}
+
+        def _note(pair, source):
+            specific, general = pair
+            if not specific or not general or specific == general:
+                return
+            edges.append(pair)
+            prev = edge_source.get(pair)
+            if prev is None or SOURCE_RANK[source] > SOURCE_RANK[prev]:
+                edge_source[pair] = source
+
+        source = SOURCE_TEXT
         for pmid_data in store.dict.values():
             for entity, attrs in pmid_data.get("entities", {}).items():
                 for triple, value in attrs.items():
@@ -262,19 +330,38 @@ class BaseHierarchy(ABC):
                     pred = pred.strip().lower().replace(" ", "_")
                     target = target.strip()
                     if pred in self._direct_predicates:
-                        edges.append((
-                            smart_title(entity),
-                            smart_title(target),
-                        ))
+                        _note((smart_title(entity), smart_title(target)), source)
                     elif pred in self._inverse_predicates:
-                        edges.append((
-                            smart_title(target),
-                            smart_title(entity),
-                        ))
+                        _note((smart_title(target), smart_title(entity)), source)
+        from_store = len(edges)
+
+        if curated is not None and not getattr(curated, "empty", True):
+            cols = {c.lower().strip(): c for c in curated.columns}
+            child_col, parent_col = cols.get("class"), cols.get("parent class")
+            if child_col is None or parent_col is None:
+                raise ValueError(
+                    f"[{self.__class__.__name__}] curated source needs 'Class' and "
+                    f"'Parent class' columns, got {list(curated.columns)}. Silently "
+                    f"building without the curated tier would leave FCA free to "
+                    f"contradict hand-authored parents."
+                )
+            for _, row in curated.iterrows():
+                child, parent = row[child_col], row[parent_col]
+                if pd.isna(child) or pd.isna(parent):
+                    continue
+                _note((smart_title(str(child)), smart_title(str(parent))),
+                      SOURCE_CURATED)
+        from_curated = len(edges) - from_store
+
+        for accepted in fca or ():
+            for child, parent in accepted:
+                _note((smart_title(str(child)), smart_title(str(parent))), SOURCE_FCA)
+        from_fca = len(edges) - from_store - from_curated
 
         if not edges:
             self._df = pd.DataFrame(dtype=float)
-            print(f"[{self.__class__.__name__}] 0 edges added from store.")
+            self._prov = {}
+            print(f"[{self.__class__.__name__}] 0 edges from any source.")
             return
 
         # Build the full index/column sets first, then allocate once
@@ -289,13 +376,33 @@ class BaseHierarchy(ABC):
         # get_data rebuilds from scratch, so provenance is rebuilt with it.
         # Everything reaching the store from documents is text-asserted; curated
         # edges are re-stamped afterwards by apply_curated(), which outranks this.
-        kept_curated = {k: v for k, v in self._prov.items() if v == SOURCE_CURATED}
-        self._prov = {}
-        for specific, general in edges:
-            if specific != general:
-                self._prov[(specific, general)] = SOURCE_TEXT
-        self._prov.update(kept_curated)
-        print(f"[{self.__class__.__name__}] {len(edges)} edges added from store.")
+        # Provenance is rebuilt with the matrix, from the sources themselves.
+        # Nothing is carried over: an edge that no source still asserts is gone,
+        # which is the point of rebuilding rather than merging.
+        self._prov = dict(edge_source)
+        counts = {src: sum(1 for v in self._prov.values() if v == src)
+                  for src in (SOURCE_CURATED, SOURCE_TEXT, SOURCE_FCA)}
+        print(f"[{self.__class__.__name__}] {len(self._prov)} edges from "
+              f"{from_store} store + {from_curated} curated + {from_fca} accepted-FCA "
+              f"assertions — after rank: "
+              + ", ".join(f"{n} {src}" for src, n in counts.items() if n))
+
+    def concepts_from(self, sources) -> list[str]:
+        """Concepts named by at least one edge from one of these sources.
+
+        Lets a consumer ask for the concepts a *particular* source asserts, which
+        is not the same question as `concepts`. The FCA view needs it: curated
+        concepts must be objects in the context even when no abstract mentions
+        them, while concepts known only from FCA must not be, or the analysis
+        would be fed its own output.
+        """
+        wanted = set(sources)
+        out: set[str] = set()
+        for (specific, general), src in self._prov.items():
+            if src in wanted:
+                out.add(specific)
+                out.add(general)
+        return sorted(out)
 
     def apply_curated(self, predefined_df) -> int:
         """Overlay human-authored edges, outranking anything already present.
@@ -352,6 +459,34 @@ class BaseHierarchy(ABC):
             queue.extend(self.children_of(node))
         return visited
 
+    def ancestors_of(self, concept: str) -> set:
+        """All concepts `concept` is transitively specific to, excluding itself.
+
+        The upward mirror of :meth:`subtree_of`. Used for conceptual scaling of
+        the FCA context, where an object's superclasses become attributes so the
+        lattice cannot order it against the hierarchy.
+
+        A hierarchy is not guaranteed acyclic -- FCA suggestions and text edges
+        both write into it -- so the walk carries a visited set rather than
+        recursing.
+
+        `concept` is smart_title-normalized first, because the index is: only
+        302 of the 4180 entity names in a real store match it verbatim, and
+        looking up the other 3878 raw returned "no ancestors" rather than an
+        error. In the FCA context that silently scaled 7% of objects and left
+        the rest bare, which manufactured order violations instead of removing
+        them.
+        """
+        concept = smart_title(concept)
+        visited, queue = set(), list(self.parents_of(concept))
+        while queue:
+            node = queue.pop()
+            if node in visited or node == concept:
+                continue
+            visited.add(node)
+            queue.extend(self.parents_of(node))
+        return visited
+
     # ── Private methods ────────────────────────────────────────────────────────
 
     def _set_edge(self, specific: str, general: str,
@@ -383,6 +518,16 @@ class BaseHierarchy(ABC):
             self._df = pd.concat([self._df, new_row])
         if specific == general:
             return False  # self-loop: entity registered but no edge written
+        # A cycle is not a weak edge, it is an impossible one: `Wound is_a Skin
+        # Defect is_a Wound` says both are strict generalisations of the other.
+        # Only self-loops were caught before, so a two-step cycle was written and
+        # persisted without complaint -- FCA produced one as soon as two distinct
+        # lattice concepts were given the same name and collapsed onto one node.
+        if specific in self.ancestors_of(general):
+            print(f"[{self.__class__.__name__}] refused '{specific} is_a {general}': "
+                  f"'{specific}' is already an ancestor of '{general}', so the edge "
+                  f"would close a cycle.")
+            return False
         self._df.at[specific, general] = 1.0
         if existing is None or SOURCE_RANK.get(source, 0) > SOURCE_RANK.get(existing, 0):
             self._prov[(specific, general)] = source

@@ -19,6 +19,7 @@ class's actual axioms rather than against a fresh, unconstrained stand-in.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import shutil
@@ -91,7 +92,22 @@ class GateResult:
 
 
 def _slug(label: str) -> str:
-    return re.sub(r"[^0-9a-zA-Z]+", "_", label).strip("_") or "term"
+    """Batch-local IRI fragment for a term label. INJECTIVE by construction.
+
+    The readable part alone is not: "wound care practice" and "wound-care
+    practice" both reduce to `wound_care_practice`, and on a real 142-abstract
+    batch they did. Two distinct store terms then shared one IRI, which
+    collected BOTH their category parents -- material entity AND process -- and
+    ELK duly reported the merged class unsatisfiable. The gate blamed the terms
+    for a contradiction it had manufactured itself.
+
+    Merging near-duplicate surface forms is the term mapper's job, upstream and
+    reviewable. The gate must reason about exactly the terms it was given, so
+    the fragment carries a digest of the ORIGINAL label and stays unique.
+    """
+    readable = re.sub(r"[^0-9a-zA-Z]+", "_", label).strip("_") or "term"
+    digest = hashlib.sha1(label.encode("utf-8")).hexdigest()[:8]
+    return f"{readable}_{digest}"
 
 
 class ReasonerGate:
@@ -106,6 +122,64 @@ class ReasonerGate:
         self.robot_cmd = robot_cmd
         self.reasoner = reasoner
         self.timeout = timeout
+
+    # ── category reconciliation ────────────────────────────────────────────
+    #
+    # Stage-1 typing makes ONE categorical choice per term per abstract. It
+    # cannot stop two abstracts choosing differently, and on a 142-abstract
+    # pilot 61 terms were typed two or more ways. Dropping them loses real
+    # content; last-writer-wins invents agreement that does not exist.
+    #
+    # The honest third option is to retreat to what the abstracts DO agree on:
+    # the most specific category that subsumes every one they proposed. That
+    # ancestor is read out of the skeleton TBox, so MILD decides it, not a table
+    # written here. `Process` + `ProcessBoundary` agree on `Occurrent`;
+    # `MaterialEntity` + `Process` agree on nothing below `entity` and stay
+    # excluded, because there is no honest answer for them.
+
+    def _category_ancestors(self) -> dict[str, set[str]]:
+        """{category value -> IRIs subsuming it, itself included}, from the skeleton."""
+        if getattr(self, "_cat_anc", None) is not None:
+            return self._cat_anc
+        g = rdflib.Graph()
+        g.parse(str(self.skeleton_path), format="turtle")
+
+        def ancestors(iri: str) -> set[str]:
+            seen, stack = {iri}, [URIRef(iri)]
+            while stack:
+                for parent in g.objects(stack.pop(), RDFS.subClassOf):
+                    if isinstance(parent, URIRef) and str(parent) not in seen:
+                        seen.add(str(parent))
+                        stack.append(parent)
+            return seen
+
+        self._cat_anc = {name: ancestors(iri) for name, iri in CATEGORY_IRI.items()}
+        return self._cat_anc
+
+    def least_common_category(self, categories) -> str | None:
+        """Most specific BFO category subsuming all of `categories`, or None.
+
+        None means the disagreement is irreconcilable at category level -- the
+        proposed types share no common ancestor that is itself one of the
+        categories the extractor can assign. Those stay out of the gate and get
+        reported, rather than being forced to a value nobody proposed.
+        """
+        cats = sorted(set(categories))
+        if not cats:
+            return None
+        if len(cats) == 1:
+            return cats[0]
+        anc = self._category_ancestors()
+        if any(c not in anc for c in cats):
+            return None
+        shared = set.intersection(*(anc[c] for c in cats))
+        # Keep only shared IRIs that are themselves assignable categories, then
+        # take the most specific: the one with the longest ancestor chain.
+        by_iri = {iri: name for name, iri in CATEGORY_IRI.items()}
+        options = [by_iri[i] for i in shared if i in by_iri]
+        if not options:
+            return None
+        return max(options, key=lambda n: len(anc[n]))
 
     # ── availability ───────────────────────────────────────────────────────
     def available(self) -> str | None:

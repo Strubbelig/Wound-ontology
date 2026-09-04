@@ -17,9 +17,9 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">has quality</rdfs:label>
 </owl:ObjectProperty>
 
-<owl:Class rdf:about="#AAV-Mediated_Keratinocyte-Specific_Atf7_Overexpression">
+<owl:Class rdf:about="#Absorption">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AAV-Mediated Keratinocyte-Specific Atf7 Overexpression</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Absorption</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Process">
@@ -27,61 +27,9 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Process</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#AMoW-SP">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AMoW-SP</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#MaterialEntity">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MaterialEntity</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#ATF7">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Diabetic_Wounds"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#diabetic_wounds"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ATF7</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#ATF7_Target">
-  <rdfs:subClassOf rdf:resource="#Role"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ATF7 Target</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Role">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Role</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#ATF7-Overexpressing_Keratinocyte_Exosomes">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ATF7-Overexpressing Keratinocyte Exosomes</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#ATF7NOTCH1Exosome_Axis">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ATF7/NOTCH1/Exosome Axis</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Aberrant_Changes">
+<owl:Class rdf:about="#Achilles_Repairs">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Aberrant Changes</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Acquired">
-  <rdfs:subClassOf rdf:resource="#Role"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Acquired</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Achilles Repairs</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Acute_Wound">
@@ -91,153 +39,62 @@
 
 <owl:Class rdf:about="#Wound">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:subClassOf rdf:resource="#Injury"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Adaptive_Moist_Wound_Sensing_Patch">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Adaptive Moist Wound Sensing Patch</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Adults">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Adults</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Altered_Extracellular_Matrix">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Altered Extracellular Matrix</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Atf7">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Atf7</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Bacterial_Control">
-  <rdfs:subClassOf rdf:resource="#Function"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bacterial Control</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Function">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Function</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Biliary_Epithelial_Cells">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biliary Epithelial Cells</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Biliary_Tract_Cancers">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biliary Tract Cancers</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Biochemical_Signals">
+<owl:Class rdf:about="#Advanced_Reconstruction">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biochemical Signals</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Advanced Reconstruction</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Biomechanical_Signals">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Biomechanical Signals</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Bony_Fixation_Points">
-  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bony Fixation Points</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#ImmaterialEntity">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ImmaterialEntity</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Broad-Strokes_Characterisation">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Broad-Strokes Characterisation</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#CDC-Classified_SSI">
+<owl:Class rdf:about="#AgNPr">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
   <rdfs:subClassOf>
     <owl:Restriction>
       <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#SSI"/>
+      <owl:someValuesFrom rdf:resource="#AgNZeo-LASE_Films"/>
     </owl:Restriction>
   </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CDC-Classified SSI</rdfs:label>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#AgNZeo-LASE_films"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AgNPr</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Calibration">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Calibration</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#InformationEntity">
+<owl:Class rdf:about="#MaterialEntity">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">InformationEntity</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MaterialEntity</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Cholangiocarcinoma">
+<owl:Class rdf:about="#AgNZeo">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cholangiocarcinoma</rdfs:label>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#AgNZeo-LASE_Films"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#AgNZeo-LASE_films"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AgNZeo</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Cholangiocytes">
+<owl:Class rdf:about="#AgNZeo-LASE_Films">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cholangiocytes</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AgNZeo-LASE Films</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Cholangiopathies">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cholangiopathies</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Chronic_Diseases">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chronic Diseases</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Chronic_Wound">
-  <rdfs:subClassOf rdf:resource="#Wound"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chronic Wound</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Chronic_Wounds">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chronic Wounds</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Chronic_Non-Healing_Wounds">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chronic, Non-Healing Wounds</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Class_III_And_IV_Wounds">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Class III And IV Wounds</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Class_IIIIV_Wounds">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Class III/IV Wounds</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Clinic">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinic</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Clinical_Outcomes">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinical Outcomes</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Clinical_Structural_Instability">
+<owl:Class rdf:about="#Amputation-Free_Survival">
   <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Clinical Structural Instability</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Amputation-Free Survival</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Quality">
@@ -245,218 +102,34 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Quality</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Closed_Cohort">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Closed Cohort</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Closed_Skin">
-  <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Closed Skin</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Closed_Skin_Management">
+<owl:Class rdf:about="#Amputations">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Closed Skin Management</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Amputations</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Complications">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Complications</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Congenital">
-  <rdfs:subClassOf rdf:resource="#Role"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Congenital</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Contracting_Wound_Site">
-  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Contracting Wound Site</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Current_Perspectives">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Current Perspectives</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#DbDb_Diabetic_Mice">
+<owl:Class rdf:about="#Angiogenic_Factor">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Db/Db Diabetic Mice</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Angiogenic Factor</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Debridement">
+<owl:Class rdf:about="#Angiogenic_Factor_Expression">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Reconstruction"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Debridement</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Angiogenic Factor Expression</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Decision_Curve">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Decision Curve</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Deposition">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Deposition</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Diabetes">
+<owl:Class rdf:about="#Angiopathy">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetes</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Angiopathy</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Diabetic_Complication">
+<owl:Class rdf:about="#Antibacterial_Agents">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetic Complication</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antibacterial Agents</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Diabetic_Wound_Closure">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetic Wound Closure</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Diabetic_Wound_Healing">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetic Wound Healing</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Diabetic_Wounds">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetic Wounds</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Direct_Observation">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Direct Observation</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Disease_Progression">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Disease Progression</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Diseased_Bile_Ducts">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diseased Bile Ducts</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Diseases">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Cholangiopathies"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diseases</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Dressings">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dressings</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Ductular_Cells">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ductular Cells</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Economic_Evaluations">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Prospective_Multi-Centre_RCTs"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Economic Evaluations</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Epithelialisation_Time">
-  <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Epithelialisation Time</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Exosmcal_N1ICD_Secretion">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Exosmcal N1ICD Secretion</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Exosomes_From_ATF7-Overexpressing_Keratinocytes">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Exosomes From ATF7-Overexpressing Keratinocytes</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#External_Soft-Tissue_Envelope">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">External Soft-Tissue Envelope</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Exudate_Absorption">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Exudate Absorption</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Fibrosis">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fibrosis</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Fibrotic_Scarring">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Diseased_Bile_Ducts"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fibrotic Scarring</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Fixation_Failure">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fixation Failure</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Flap_Dimensions">
-  <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Flap Dimensions</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Folded_Vascularized_Flap_Tissue">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Folded Vascularized Flap Tissue</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Follow-Up_Duration">
-  <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Follow-Up Duration</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Functional_And_Aesthetic_Outcomes">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Functional And Aesthetic Outcomes</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Functional_And_Aesthetic_Subscale_Scores">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Functional And Aesthetic Subscale Scores</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Future_Perspectives">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Future Perspectives</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Good_Biocompatibility">
+<owl:Class rdf:about="#Antibacterial_Properties">
   <rdfs:subClassOf rdf:resource="#Disposition"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Good Biocompatibility</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Antibacterial Properties</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Disposition">
@@ -464,19 +137,245 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Disposition</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Granulation_Tissue_Formation">
+<owl:Class rdf:about="#Aspirated_Seroma">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Aspirated Seroma</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Aspirated_Seromas">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Aspirated Seromas</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Bama_Pig">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bama Pig</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Bioinspired_Therapeutic_Strategy">
+  <rdfs:subClassOf rdf:resource="#RealizableEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bioinspired Therapeutic Strategy</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#RealizableEntity">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">RealizableEntity</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Bioresorbable_Synthetic_Polymers">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bioresorbable Synthetic Polymers</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Broad-Spectrum_Antibacterial_Ability">
+  <rdfs:subClassOf rdf:resource="#Function"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Broad-Spectrum Antibacterial Ability</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Function">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Function</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#CSMA">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CSMA</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#CSP">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CSP</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#CSP_Hydrogel">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CSP Hydrogel</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#CSPMSC">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CSP@MSC</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Cellular_Infiltration">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Granulation Tissue Formation</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cellular Infiltration</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#H3K9me3">
+<owl:Class rdf:about="#Chinese_Mesona">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H3K9me3</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chinese Mesona</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#HaCaT_KeratinocyteTHP-1_Macrophage_Cocultures">
+<owl:Class rdf:about="#Chronic_Wound">
+  <rdfs:subClassOf rdf:resource="#Wound"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chronic Wound</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Chronic_Wound_Healing">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chronic Wound Healing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Chronic_Wounds">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">HaCaT Keratinocyte/THP-1 Macrophage Cocultures</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chronic Wounds</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Closure_Devices">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Closure Devices</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Closure_Rates">
+  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Closure Rates</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#InformationEntity">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">InformationEntity</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Combined_Photothermal_And_Zn-Related_Effects">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Combined Photothermal And Zn-Related Effects</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Commercial_Antibacterial_Sutures">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Commercial Antibacterial Sutures</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Complications">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Complications</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Composite_Wound_Complication">
+  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Composite Wound Complication</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Composite_Wound_Outcome">
+  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Composite Wound Outcome</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Conventional_Noble-Metal_Photothermal_Materials">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Conventional Noble-Metal Photothermal Materials</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Degloving_Injuries">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Degloving Injuries</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Dehiscence">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dehiscence</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Diabetes_Mellitus">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetes Mellitus</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Diabetic_And_Obese_Mice">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetic And Obese Mice</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Diabetic_Mice">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetic Mice</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Diabetic_Patients">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetic Patients</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Diabetic_Wounds">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Diabetic Wounds</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Distal_Limb_Perfusion">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Distal Limb Perfusion</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Drug-Resistant_Bacterial_Infection">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Drug-Resistant Bacterial Infection</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Drug-Resistant_Wound_Infection">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Drug-Resistant Wound Infection</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Endogenous_Polyphenols">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Endogenous Polyphenols</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Endothelial_Cell">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Endothelial Cell</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Endothelial_Progenitor_Cell_Mobilization">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Endothelial Progenitor Cell Mobilization</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#External_Fixator">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">External Fixator</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Extracellular_Matrix_Synthesis">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Extracellular Matrix Synthesis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Extracellular_Matrix-Related_Signaling">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Extracellular Matrix-Related Signaling</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Fibroblast-Like_Pro-Regenerative_Functions">
+  <rdfs:subClassOf rdf:resource="#Function"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fibroblast-Like Pro-Regenerative Functions</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Full-Thickness_Incisional_Wounds">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#Mice"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Full-Thickness Incisional Wounds</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Full-Thickness_Skin_Defects">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Full-Thickness Skin Defects</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Growth_Factor_Release">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Growth Factor Release</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Haematoma">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Haematoma</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Healing">
@@ -484,96 +383,60 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Healing</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Hepatic_Bile_Ducts">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Liver"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hepatic Bile Ducts</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#High_Flexibility">
+<owl:Class rdf:about="#Hierarchical_Pore_Sizes">
   <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">High Flexibility</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hierarchical Pore Sizes</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#High_Glucose">
-  <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">High Glucose</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#High-Risk_Cases">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">High-Risk Cases</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#High-Risk_Patients">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Adults"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">High-Risk Patients</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Hospial_Stay">
-  <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hospial Stay</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Hybrid_Lining">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hybrid Lining</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Hybrid_Nasal_Lining">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hybrid Nasal Lining</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Hydrocolloid_Dressings">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hydrocolloid Dressings</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Impedance_Measuring">
+<owl:Class rdf:about="#Hot_Spring_Effect">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Impedance Measuring</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hot Spring Effect</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Impedance_Sensor">
+<owl:Class rdf:about="#Hot_Spring_Effect-Inspired_Thermo-Ionic_Hydrogel_Microspheres">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Impedance Sensor</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hot Spring Effect-Inspired Thermo-Ionic Hydrogel Microspheres</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Incision_Length">
-  <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Incision Length</rdfs:label>
+<owl:Class rdf:about="#Human_Skin">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Human Skin</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Increased_Likelihood">
-  <rdfs:subClassOf rdf:resource="#Tendency"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Increased Likelihood</rdfs:label>
+<owl:Class rdf:about="#Hydrogel">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hydrogel</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Tendency">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Tendency</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Individual_Cell_Types">
+<owl:Class rdf:about="#Ilizarovs_Distraction_Osteogenesis_Principles">
   <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Individual Cell Types</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ilizarov's Distraction Osteogenesis Principles</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Individual_SSI_Risk">
-  <rdfs:subClassOf rdf:resource="#Tendency"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Individual SSI Risk</rdfs:label>
+<owl:Class rdf:about="#Immunohistochemical_Analyses">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Immunohistochemical Analyses</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#In_Vitro_Antimicrobial_Susceptibility_Assays">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">In Vitro Antimicrobial Susceptibility Assays</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#In_Vitro_Passing_Results">
+  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">In Vitro Passing Results</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Incisional_Wounds">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#Diabetic_And_Obese_Mice"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Incisional Wounds</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Infection">
@@ -581,478 +444,488 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Infection</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Infections">
+<owl:Class rdf:about="#Ischemic_Lower_Limb">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Infections</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ischemic Lower Limb</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Inhibition_Of_M1_Polarization">
+<owl:Class rdf:about="#Key_Pro-Healing_Pathways">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Inhibition Of M1 Polarization</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Key Pro-Healing Pathways</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Internal_Lining">
+<owl:Class rdf:about="#LASE">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Internal Lining</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Islanded_Paramedian_Forehead_Flap">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Islanded Paramedian Forehead Flap</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Keratinocyte-Derived_Exosomes">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Keratinocyte-Derived Exosomes</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Keratinocyte-Specific_Atf7_Overexpression">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Keratinocyte-Specific Atf7 Overexpression</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Limited_Plate_Exposure">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Limited Plate Exposure</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Liquid">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Liquid</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Liver">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Liver</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Liver_Transplantations">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Liver Transplantations</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Local_Injection">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Local Injection</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Longitudinal_And_Transverse_Titanium_Miniplates">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Longitudinal And Transverse Titanium Miniplates</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Macrophage_M1_Polarization">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Macrophage M1 Polarization</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Mechainsms">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mechainsms</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Microsurgical_Reconstruction">
-  <rdfs:subClassOf rdf:resource="#Process"/>
   <rdfs:subClassOf>
     <owl:Restriction>
       <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Reconstruction"/>
+      <owl:someValuesFrom rdf:resource="#AgNZeo-LASE_Films"/>
     </owl:Restriction>
   </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microsurgical Reconstruction</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Moist_Healing">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Moist Healing</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Moist_Wound_Dressings">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Moist Wound Dressings</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Moist_Wound_Environment">
-  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Moist Wound Environment</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Moist_Wound_Environments">
-  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Moist Wound Environments</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Moist_Wound_Healing">
-  <rdfs:subClassOf rdf:resource="#Process"/>
   <rdfs:subClassOf>
     <owl:Restriction>
       <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Skin_Wound_Treatment"/>
+      <owl:someValuesFrom rdf:resource="#AgNZeo-LASE_films"/>
     </owl:Restriction>
   </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Moist Wound Healing</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LASE</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Molecular_Composition">
+<owl:Class rdf:about="#Laser_Irradiation">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Laser Irradiation</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Laser-Activated_Sealant">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Laser-Activated Sealant</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Local_Heat">
   <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Molecular Composition</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Local Heat</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Molecular_Pathology">
+<owl:Class rdf:about="#MCP">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MCP</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#MCP-Ms">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
   <rdfs:subClassOf>
     <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Cholangiopathies"/>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
+      <owl:someValuesFrom rdf:resource="#local_heat"/>
     </owl:Restriction>
   </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Molecular Pathology</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MCP-Ms</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Multiomics_Screening">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Multiomics Screening</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Multistage_Reconstruction">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Reconstruction"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Multistage Reconstruction</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#N1ICD">
+<owl:Class rdf:about="#MRSA-Infected_Chronic_Wounds">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Keratinocyte-Derived_Exosomes"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#keratinocyte-derived_exosomes"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">N1ICD</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MRSA-Infected Chronic Wounds</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#N1ICD_Transfer">
+<owl:Class rdf:about="#MSC">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MSC</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#MSC-Loaded_CSPMSC">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MSC-Loaded CSP@MSC</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#MSCs">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">MSCs</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Macropores">
+  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Macropores</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#ImmaterialEntity">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ImmaterialEntity</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Macrovascular_Anatomy">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Macrovascular Anatomy</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Mastectomy">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">N1ICD Transfer</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mastectomy</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#NAFEQ">
+<owl:Class rdf:about="#Mastectomy_Wounds">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mastectomy Wounds</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Mechanical_Reinforcement">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mechanical Reinforcement</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Mechano-Instructive_Stiffness">
+  <rdfs:subClassOf rdf:resource="#Quality"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mechano-Instructive Stiffness</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Mesenchymal_Stem_Cells">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mesenchymal Stem Cells</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Mesona_Chinensis">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mesona Chinensis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Mesona_Chinensis_Polysaccharide">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mesona Chinensis Polysaccharide</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Mesopores">
+  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mesopores</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Methacryloylated_Chitosan">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Methacryloylated Chitosan</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Methacryloylated_Silk_Fibroin">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Methacryloylated Silk Fibroin</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Methicillin-Resistant_Staphylococcus_Aureus_Bacteria">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Methicillin-Resistant Staphylococcus Aureus Bacteria</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Mice">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mice</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Microcirculatory_Regeneration">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microcirculatory Regeneration</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Microenvironment">
+  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Microenvironment</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Micropores">
+  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Micropores</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Multi-Scale_Porous_Structure">
+  <rdfs:subClassOf rdf:resource="#Quality"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Multi-Scale Porous Structure</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Multidisciplinary_Limb_Salvage_Pathways">
   <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NAFEQ</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Multidisciplinary Limb Salvage Pathways</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#NOTCH1_Promoter">
-  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NOTCH1 Promoter</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#NOTCH1_Protein">
+<owl:Class rdf:about="#Multifunctional_Bioactive_Hydrogel_Scaffold">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Keratinocyte-Derived_Exosomes"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NOTCH1 Protein</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Multifunctional Bioactive Hydrogel Scaffold</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#NOTCH1_Transcription">
+<owl:Class rdf:about="#NIR">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NOTCH1 Transcription</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NIR</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Nasal_Appearance_And_Function_Evaluation_Questionnaire">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Nasal Appearance And Function Evaluation Questionnaire</rdfs:label>
+<owl:Class rdf:about="#NPWT">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NPWT</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Nasal_Defect">
+<owl:Class rdf:about="#Near-Infrared_Irradiation">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Near-Infrared Irradiation</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Near-Infrared_Light">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Near-Infrared Light</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Negative_Pressure_Wound_Therapy">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Negative Pressure Wound Therapy</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Neutrophil_Recruitment">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Neutrophil Recruitment</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Non-Healing_Wounds">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Nasal Defect</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Non-Healing Wounds</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Nasocutaneous_Fistula">
-  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Nasocutaneous Fistula</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#New_Treatments">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">New Treatments</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Non-Primary_Closure">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Non-Primary Closure</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Normal_Wounds">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Normal Wounds</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Obesity">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Obesity</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Opaque">
-  <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Opaque</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Open_Abdominal_Surgery">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Open Abdominal Surgery</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Open_Cohort">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Open Cohort</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Open_Emergent_Abdominal_Cases">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Open Emergent Abdominal Cases</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Open_Skin_Management">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Open Skin Management</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Organ_SSI">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Organ SSI</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Organ_Space_SSI">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Organ Space SSI</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Partial_Flap_Necrosis">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Partial Flap Necrosis</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Pedicle_Division">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Reconstruction"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pedicle Division</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Personalised_Prophylaxis">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Personalised Prophylaxis</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Plate_Displacement">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Plate Displacement</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Plate_Removal">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Reconstruction"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Plate Removal</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Point-Of-Care_Nature">
+<owl:Class rdf:about="#Nosocomial_Causative_Agent">
   <rdfs:subClassOf rdf:resource="#Role"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Point-Of-Care Nature</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Nosocomial Causative Agent</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Postoperative_Length_Of_Stay">
-  <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Postoperative Length Of Stay</rdfs:label>
+<owl:Class rdf:about="#Role">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Role</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Primary_Skin_Closure">
+<owl:Class rdf:about="#Oncoplastic_Breast_Surgery">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Primary Skin Closure</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Oncoplastic Breast Surgery</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Prophylactic_Negative-Pressure_Wound_Therapy">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Prophylactic Negative-Pressure Wound Therapy</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Prospective_Multi-Centre_RCTs">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Prospective Multi-Centre RCTs</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Rare_Pathologies">
+<owl:Class rdf:about="#Open_Fractures">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Rare Pathologies</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Open Fractures</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Reconstruction_Time">
-  <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Reconstruction Time</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Recovery_Quality">
-  <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Recovery Quality</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Reduced_Liver_Function">
-  <rdfs:subClassOf rdf:resource="#Function"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Reduced Liver Function</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Remodelling">
+<owl:Class rdf:about="#Organized_Tissue_Regeneration">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Remodelling</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Organized Tissue Regeneration</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Roles">
-  <rdfs:subClassOf rdf:resource="#Role"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Roles</rdfs:label>
+<owl:Class rdf:about="#Orthopedic_Trauma">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Orthopedic Trauma</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#PI3K-Akt">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PI3K-Akt</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Pathological_Conditions">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pathological Conditions</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Photopolymerization">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Photopolymerization</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Photothermal_Conversion">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#Combined_Photothermal_And_Zn-Related_Effects"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Photothermal Conversion</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Polysaccharides">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#Chinese_Mesona"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#Mesona_Chinensis"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Polysaccharides</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Post-Mastectomy_Wound_Complications">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#Complications"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Post-Mastectomy Wound Complications</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Post-Operative_Dressing">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Post-Operative Dressing</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Potent_Antibacterial_Activity">
+  <rdfs:subClassOf rdf:resource="#Disposition"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Potent Antibacterial Activity</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Primary_Closures">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Primary Closures</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Proliferation">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Proliferation</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Prospective_Randomized_Trials">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Prospective Randomized Trials</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Protection_Against_Oxidative_Stress">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Protection Against Oxidative Stress</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Proximal_Tibial_Cortical_Bone_Window">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Proximal Tibial Cortical Bone Window</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Rat">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Rat</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Regeneration">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Regeneration</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Regenerative_Repair">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Regenerative Repair</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Repair">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Repair</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Risk">
+  <rdfs:subClassOf rdf:resource="#Tendency"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Risk</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Tendency">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Tendency</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#S._Aureus">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">S. Aureus</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#SEFM">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SEFM</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#SEFMs">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SEFMs</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#SSI">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:subClassOf rdf:resource="#Process"/>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SSI</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#SSI_Incidence">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SSI Incidence</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#SSI_Predictors">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SSI Predictors</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#SSI_Risk_Prediction_Nomogram">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SSI Risk Prediction Nomogram</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#SSIs">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SSIs</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Screw_Loosening">
+<owl:Class rdf:about="#Scarring">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Screw Loosening</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Scarring</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Single-Stage_Approach">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Single-Stage Approach</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Single-Stage_Reconstructive_Option">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Single-Stage Reconstructive Option</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Skin_Profile">
-  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin Profile</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Skin_Wound_Treatment">
+<owl:Class rdf:about="#Sealing">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Skin Wound Treatment</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sealing</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Smartphone">
+<owl:Class rdf:about="#SiMA">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Smartphone</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SiMA</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Specific_Therapies">
+<owl:Class rdf:about="#Silk_Fibroin-Based_Laser-Activated_Sealant">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#AgNZeo-LASE_Films"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Silk Fibroin-Based Laser-Activated Sealant</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Silver_Ion-Exchanged_Nanostructured_Zeolites">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Silver Ion-Exchanged Nanostructured Zeolites</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Silver_Ion-Loaded_Nanozeolites">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Silver Ion-Loaded Nanozeolites</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Silver_Nanoprisms">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Silver Nanoprisms</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Simple_Mastectomy">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Specific Therapies</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Simple Mastectomy</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Spectrum">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Spectrum</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Split-Thickness_Skin_Graft">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Split-Thickness Skin Graft</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Sprial_Parallel_Electrodes">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Sprial Parallel Electrodes</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Standard_Dressing">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Standard Dressing</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Standard_Dressings">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Standard Dressings</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Structural_Framework">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Structural Framework</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Structural_Support">
-  <rdfs:subClassOf rdf:resource="#Function"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Structural Support</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Subcutaneous_Tunnel">
-  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Subcutaneous Tunnel</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Substrate">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Substrate</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Subtotal_Defects">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Subtotal Defects</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Superficial_SSI">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Superficial SSI</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Surgical_And_Physiological_Burden">
+<owl:Class rdf:about="#Simulated_High-Glucose_Conditions">
   <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical And Physiological Burden</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Simulated High-Glucose Conditions</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Soft-Tissue_Management">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Soft-Tissue Management</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Standardized_International_Protocols">
+  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Standardized International Protocols</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Subdermal">
+  <rdfs:subClassOf rdf:resource="#Role"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Subdermal</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Surgical_Site">
+  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Site</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Surgical_Site_Infection">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#Wound_Complications"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Site Infection</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Surgical_Site_Infections">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Site Infections</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Surgical_Site_MRSA_Infections">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Site MRSA Infections</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Surgical_Technique">
+  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Technique</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Surgical_Wound">
@@ -1060,88 +933,99 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical Wound</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Surgical-Site_Infections">
+<owl:Class rdf:about="#Suture_Controls">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Surgical-Site Infections</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Suture Controls</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Suv39h1">
+<owl:Class rdf:about="#Synthetic_Electrospun_Fiber_Materials">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Suv39h1</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Synthetic Electrospun Fiber Materials</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Targeted_Therapies">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Targeted Therapies</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Therapeutic_Strategies">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Therapeutic Strategies</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Therapeutic_Target">
-  <rdfs:subClassOf rdf:resource="#Role"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Therapeutic Target</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Time_To_Complete_Epithialization">
+<owl:Class rdf:about="#Tensile_Strength">
   <rdfs:subClassOf rdf:resource="#Quality"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Time To Complete Epithialization</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Tensile Strength</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Tissue-Level_Regeneration">
+<owl:Class rdf:about="#Tissue">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Tissue</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Tissue_Adhesiveness">
+  <rdfs:subClassOf rdf:resource="#Disposition"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Tissue Adhesiveness</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Topical">
+  <rdfs:subClassOf rdf:resource="#Role"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Topical</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Topical_Infection_Control">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Tissue-Level Regeneration</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Topical Infection Control</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Titanium_Framework">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Titanium Framework</rdfs:label>
+<owl:Class rdf:about="#Traditional_Treatment_Methods">
+  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Traditional Treatment Methods</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Titanium_Miniplate_Framework">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Titanium Miniplate Framework</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Total_And_Subtotal_Full-Thickness_Nasal_Defects">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total And Subtotal Full-Thickness Nasal Defects</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Total_Defects">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total Defects</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Total_Flap_Loss">
+<owl:Class rdf:about="#Transverse_Tibial_Transport">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total Flap Loss</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Transverse Tibial Transport</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Total_Or_Subtotal_Full-Thickness_Nasal_Defects">
-  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Total Or Subtotal Full-Thickness Nasal Defects</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Underlying_Mechanisms">
+<owl:Class rdf:about="#Treatment">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Underlying Mechanisms</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Treatment</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Visual_Readout">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Visual Readout</rdfs:label>
+<owl:Class rdf:about="#Unfavorable_Wound_Microenvironment">
+  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Unfavorable Wound Microenvironment</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Wireless_Communication_And_Power_Circuit">
+<owl:Class rdf:about="#Unhealing_Chronic_Diabetic_Wounds">
   <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wireless Communication And Power Circuit</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Unhealing Chronic Diabetic Wounds</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#United_States_Pharmacopeia_51_Antimicrobial_Effectiveness_Standards">
+  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">United States Pharmacopeia &lt;51&gt; Antimicrobial Effectiveness Standards</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Wound_Approximation">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Approximation</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Wound_Closure">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Closure</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Wound_Complication">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Complication</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Wound_Complications">
+  <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Complications</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Wound_Dehiscence">
   <rdfs:subClassOf rdf:resource="#Process"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#Wound_Complications"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Dehiscence</rdfs:label>
 </owl:Class>
 
@@ -1150,14 +1034,14 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Healing</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Wound_Healing_Status">
-  <rdfs:subClassOf rdf:resource="#InformationEntity"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Healing Status</rdfs:label>
+<owl:Class rdf:about="#Wound_Infection_Models">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Infection Models</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Wound_Recovery">
-  <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Recovery</rdfs:label>
+<owl:Class rdf:about="#Wound_Microenvironment">
+  <rdfs:subClassOf rdf:resource="#ImmaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wound Microenvironment</rdfs:label>
 </owl:Class>
 
 <owl:Class rdf:about="#Wounds">
@@ -1165,240 +1049,245 @@
   <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wounds</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#pNPWT">
+<owl:Class rdf:about="#Zn">
+  <rdfs:subClassOf rdf:resource="#MaterialEntity"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zn</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Zn_Release">
   <rdfs:subClassOf rdf:resource="#Process"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pNPWT</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zn Release</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Reconstruction">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Reconstruction</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#diseases">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+<owl:Class rdf:about="#Zn-Related_Effects">
+  <rdfs:subClassOf rdf:resource="#Process"/>
   <rdfs:subClassOf>
     <owl:Restriction>
       <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Cholangiopathies"/>
+      <owl:someValuesFrom rdf:resource="#Combined_Photothermal_And_Zn-Related_Effects"/>
     </owl:Restriction>
   </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diseases</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zn-Related Effects</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#hepatic_bile_ducts">
+<owl:Class rdf:about="#Injury">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#liver"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hepatic bile ducts</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Injury</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#liver">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">liver</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Fibrotic_scarring">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#diseased_bile_ducts"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Fibrotic scarring</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#diseased_bile_ducts">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diseased bile ducts</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#molecular_pathology">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Cholangiopathies"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">molecular pathology</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#Moist_wound_healing">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#skin_wound_treatment"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Moist wound healing</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#skin_wound_treatment">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">skin wound treatment</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#hydrocolloid_dressings">
+<owl:Class rdf:about="#Synthetic_electrospun_fiber_materials">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
   <rdfs:subClassOf>
     <owl:Restriction>
       <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
-      <owl:someValuesFrom rdf:resource="#opaque"/>
+      <owl:someValuesFrom rdf:resource="#tensile_strength"/>
     </owl:Restriction>
   </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hydrocolloid dressings</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Synthetic electrospun fiber materials</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#opaque">
+<owl:Class rdf:about="#tensile_strength">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">opaque</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">tensile strength</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#substrate">
+<owl:Class rdf:about="#post-mastectomy_wound_complications">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#complications"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">post-mastectomy wound complications</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#complications">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">complications</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#wound_dehiscence">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#wound_complications"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">wound dehiscence</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#wound_complications">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">wound complications</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#surgical_site_infection">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#wound_complications"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">surgical site infection</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#CSP_hydrogel">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
   <rdfs:subClassOf>
     <owl:Restriction>
       <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
-      <owl:someValuesFrom rdf:resource="#high_flexibility"/>
+      <owl:someValuesFrom rdf:resource="#hierarchical_pore_sizes"/>
     </owl:Restriction>
   </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">substrate</rdfs:label>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
+      <owl:someValuesFrom rdf:resource="#multi-scale_porous_structure"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
+      <owl:someValuesFrom rdf:resource="#mechano-instructive_stiffness"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CSP hydrogel</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#high_flexibility">
+<owl:Class rdf:about="#hierarchical_pore_sizes">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">high flexibility</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">hierarchical pore sizes</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#high-risk_patients">
+<owl:Class rdf:about="#multi-scale_porous_structure">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multi-scale porous structure</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#mechano-instructive_stiffness">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mechano-instructive stiffness</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#multifunctional_bioactive_hydrogel_scaffold">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/RO_0000086"/>
+      <owl:someValuesFrom rdf:resource="#hierarchical_pore_sizes"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multifunctional bioactive hydrogel scaffold</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#AgNZeo-LASE_films">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">AgNZeo-LASE films</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#silk_fibroin-based_laser-activated_sealant">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
   <rdfs:subClassOf>
     <owl:Restriction>
       <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#adults"/>
+      <owl:someValuesFrom rdf:resource="#AgNZeo-LASE_films"/>
     </owl:Restriction>
   </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">high-risk patients</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">silk fibroin-based laser-activated sealant</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#adults">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">adults</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#CDC-classified_SSI">
+<owl:Class rdf:about="#full-thickness_incisional_wounds">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
   <rdfs:subClassOf>
     <owl:Restriction>
       <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#SSI"/>
+      <owl:someValuesFrom rdf:resource="#mice"/>
     </owl:Restriction>
   </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CDC-classified SSI</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">full-thickness incisional wounds</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#economic_evaluations">
+<owl:Class rdf:about="#mice">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">mice</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#incisional_wounds">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
   <rdfs:subClassOf>
     <owl:Restriction>
       <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#Prospective_multi-centre_RCTs"/>
+      <owl:someValuesFrom rdf:resource="#diabetic_and_obese_mice"/>
     </owl:Restriction>
   </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">economic evaluations</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">incisional wounds</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#Prospective_multi-centre_RCTs">
+<owl:Class rdf:about="#diabetic_and_obese_mice">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Prospective multi-centre RCTs</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diabetic and obese mice</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#diabetic_wounds">
+<owl:Class rdf:about="#local_heat">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">diabetic wounds</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">local heat</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#NOTCH1_protein">
+<owl:Class rdf:about="#photothermal_conversion">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
   <rdfs:subClassOf>
     <owl:Restriction>
       <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#keratinocyte-derived_exosomes"/>
+      <owl:someValuesFrom rdf:resource="#combined_photothermal_and_Zn-related_effects"/>
     </owl:Restriction>
   </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NOTCH1 protein</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">photothermal conversion</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#keratinocyte-derived_exosomes">
+<owl:Class rdf:about="#combined_photothermal_and_Zn-related_effects">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">keratinocyte-derived exosomes</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">combined photothermal and Zn-related effects</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#debridement">
+<owl:Class rdf:about="#polysaccharides">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
   <rdfs:subClassOf>
     <owl:Restriction>
       <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#reconstruction"/>
+      <owl:someValuesFrom rdf:resource="#Chinese_mesona"/>
     </owl:Restriction>
   </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">debridement</rdfs:label>
+  <rdfs:subClassOf>
+    <owl:Restriction>
+      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+      <owl:someValuesFrom rdf:resource="#Mesona_chinensis"/>
+    </owl:Restriction>
+  </rdfs:subClassOf>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">polysaccharides</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#reconstruction">
+<owl:Class rdf:about="#Chinese_mesona">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">reconstruction</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Chinese mesona</rdfs:label>
 </owl:Class>
 
-<owl:Class rdf:about="#microsurgical_reconstruction">
+<owl:Class rdf:about="#Mesona_chinensis">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mesona chinensis</rdfs:label>
+</owl:Class>
+
+<owl:Class rdf:about="#Zn-related_effects">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
   <rdfs:subClassOf>
     <owl:Restriction>
       <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#reconstruction"/>
+      <owl:someValuesFrom rdf:resource="#combined_photothermal_and_Zn-related_effects"/>
     </owl:Restriction>
   </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">microsurgical reconstruction</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#multistage_reconstruction">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#reconstruction"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">multistage reconstruction</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#pedicle_division">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#reconstruction"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">pedicle division</rdfs:label>
-</owl:Class>
-
-<owl:Class rdf:about="#plate_removal">
-  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-  <rdfs:subClassOf>
-    <owl:Restriction>
-      <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
-      <owl:someValuesFrom rdf:resource="#reconstruction"/>
-    </owl:Restriction>
-  </rdfs:subClassOf>
-  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">plate removal</rdfs:label>
+  <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Zn-related effects</rdfs:label>
 </owl:Class>
 
 

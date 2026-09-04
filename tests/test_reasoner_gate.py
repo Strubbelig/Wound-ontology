@@ -14,6 +14,7 @@ from rdflib import OWL, RDF, RDFS, URIRef
 from wound_ontology.llm.extraction_models import ExtractionResult
 from wound_ontology.reasoning.gate import (
     BATCH_NS,
+    _slug,
     EdgeGateResult,
     GateResult,
     ReasonerGate,
@@ -87,7 +88,7 @@ def test_clean_batch_is_accepted_untouched(tiny_skeleton):
 
 
 def test_offending_term_is_quarantined_and_the_rest_survive(tiny_skeleton):
-    g = StubGate(tiny_skeleton, [{BATCH_NS + "Bad_Term"}, set()])
+    g = StubGate(tiny_skeleton, [{BATCH_NS + _slug("Bad Term")}, set()])
     res = _result()
     out = g.check(res.entities, res.relations)
     assert [e.label for e in out.quarantined_entities] == ["Bad Term"]
@@ -134,7 +135,7 @@ def test_passes_are_bounded(tiny_skeleton):
 
 # ── subsumption-edge gate ──────────────────────────────────────────────────
 def test_disjoint_parents_are_caught(tiny_skeleton):
-    g = StubGate(tiny_skeleton, [{BATCH_NS + "Weird_Thing"}, set()])
+    g = StubGate(tiny_skeleton, [{BATCH_NS + _slug("Weird Thing")}, set()])
     out = g.check_edges([("Chronic Wound", "Wound Base"),
                          ("Weird Thing", "Wound Base"),
                          ("Weird Thing", "Wound Edge")])
@@ -165,7 +166,7 @@ def test_edge_gate_skips_gracefully(tmp_path):
 
 # ── quarantine file ────────────────────────────────────────────────────────
 def test_quarantine_file_records_what_and_why(tiny_skeleton, tmp_path):
-    g = StubGate(tiny_skeleton, [{BATCH_NS + "Bad_Term"}, set()])
+    g = StubGate(tiny_skeleton, [{BATCH_NS + _slug("Bad Term")}, set()])
     res = _result()
     out = g.check(res.entities, res.relations)
     path = ReasonerGate.write_quarantine(out, tmp_path, tag="t1")

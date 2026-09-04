@@ -2,6 +2,7 @@ from __future__ import annotations
 """Orchestrator glue code for the wound ontology pipeline."""
 import asyncio
 import os
+import re
 import pandas as pd
 from wound_ontology.utils.string_utils import smart_title
 from wound_ontology.hierarchies.base_hierarchy import SOURCE_FCA as _SOURCE_FCA
@@ -28,8 +29,8 @@ load_dotenv()
 
 try:
     from config.settings import (
+        ALLOWED_PREDICATES as _DEFAULT_ALLOWED_PREDICATES,
         PREDICATE_DEFINITIONS as _PREDICATE_DEFINITIONS,
-        PREDEFINED_HIERARCHY_FILE as _PREDEFINED_HIERARCHY_FILE,
         BFO_OWL_URL as _BFO_URL,
         RO_OWL_URL as _RO_URL,
         OBI_OWL_URL as _OBI_URL,
@@ -41,19 +42,32 @@ except ImportError as _exc:
     import warnings as _warnings
     _warnings.warn(
         f"config.settings could not be imported ({_exc}). Falling back to EMPTY "
-        "predicate definitions and no predefined hierarchy — extraction prompts "
-        "will carry no predicate rules. Fix the import before trusting any run.",
+        "predicate definitions — extraction prompts will carry no predicate "
+        "rules. Fix the import before trusting any run.",
         RuntimeWarning, stacklevel=2,
     )
+    _DEFAULT_ALLOWED_PREDICATES = ["is_a"]
     _PREDICATE_DEFINITIONS = {}
-    _PREDEFINED_HIERARCHY_FILE = None
     _BFO_URL = "http://purl.obolibrary.org/obo/bfo.owl"
     _RO_URL  = "http://purl.obolibrary.org/obo/ro.owl"
     _OBI_URL = "http://purl.obolibrary.org/obo/obi.owl"
 
-_DEFAULT_ALLOWED_PREDICATES = [
-    "is_a", "part_of", "has_quality", "occurs_in", "is_treatment_for",
-]  # 'affects' and 'caused_by' removed in C3 — see config/settings.py
+# NOTE: _DEFAULT_ALLOWED_PREDICATES now comes from config.settings above. It used
+# to be a five-entry literal defined right here, whose own comment pointed at
+# config/settings.py without importing it. StoreCleaner DELETES any attribute
+# whose predicate is not on this list, so that literal silently deleted 19 of the
+# 26 relation types two-stage extraction emits -- has_part, participates_in,
+# inheres_in, has_disposition, the BFO backbone MILD is built on -- leaving only
+# is_a, part_of and has_quality. Measured on a 142-abstract pilot: 316 relation
+# cells destroyed, reported only as a "rogue predicate" tally nobody reads.
+# On the import-failure path the fallback is now ["is_a"] rather than a plausible
+# short list: losing everything is noticed, losing 19 of 26 is not.
+
+
+def _slugify(name: str) -> str:
+    """Subtree root -> a file-name fragment. Used to scope per-analysis artifacts."""
+    slug = re.sub(r"[^a-z0-9]+", "_", str(name).strip().lower()).strip("_")
+    return slug or "unnamed"
 
 
 class Orchestrator:
@@ -85,9 +99,14 @@ class Orchestrator:
         self.cleaner       = StoreCleaner(self.allowed_predicates)
         self.class_hier    = ClassHierarchy(self.dm)
         self.mere_hier     = MereologicalHierarchy(self.dm)
-        self.fca_hier      = FCAHierarchy(self.dm)
         self.context_matrix = ContextMatrix(self.dm, "context_matrix")
+        # Replaced per analysis by run_fca; these are the "no analysis yet" ones.
+        # `lattices` / `fca_hiers` keep every analysis of this session by subtree,
+        # while `lattice` / `fca_hier` always point at the most recent.
+        self.fca_hier      = FCAHierarchy(self.dm)
         self.lattice       = ConceptLattice(self.dm, self.context_matrix)
+        self.lattices: dict[str, ConceptLattice] = {}
+        self.fca_hiers: dict[str, FCAHierarchy] = {}
         _term_mapping        = TermMapping(self.dm, file_name="term_mapping")
         self.term_mapper     = TermMapper(_term_mapping, name="Term mapper")
         self.mapping_cleaner = MappingCleaner(self.term_mapper, allowed_predicates=self.allowed_predicates)
@@ -187,10 +206,22 @@ class Orchestrator:
         Noise terms (units, pure symbols, abbreviations) are filtered
         automatically via the milestone callback every normalize_every mentions.
         Set normalize_every=0 to disable mid-extraction filtering.
+
+        use_bfo_attributes and max_vocab_hints are inert here: this always runs the
+        schema-constrained two-stage path, which prompts with the generated BFO
+        category tree rather than with store vocabulary. Both are kept in the
+        signature because the deprecated free-text path still consumes them, and
+        both announce their inertness rather than pretending to work.
         """
-        bfo_anchors = list(OWLOntology.load(_BFO_URL, self.dm).labels.keys()) if use_bfo_attributes else []
-        if bfo_anchors:
-            print(f"Using BFO anchor classes as is_a target candidates: {bfo_anchors}")
+        # add_llm_extracts runs the schema-constrained two-stage path, whose prompts
+        # carry the generated BFO category tree rather than store vocabulary. Loading
+        # bfo.owl here (~11s) only to pass labels nothing reads would be dead work, so
+        # the load is skipped and the inert flag is stated rather than left implied.
+        bfo_anchors: list[str] = []
+        if use_bfo_attributes:
+            print("[Orchestrator] use_bfo_attributes has no effect on the "
+                  "schema-constrained path: the model is given the generated BFO "
+                  "category tree, not store vocabulary hints. bfo.owl not loaded.")
         print("Starting LLM Extraction...")
         self._run_sync(self.store.add_llm_extracts(
             self.pubcon.database, self.llm, self.allowed_predicates, batch_size,
@@ -334,32 +365,75 @@ class Orchestrator:
         report = cleaner.clean(self.store)
         StoreCleaner.print_report(report)
 
-    def run_build_hierarchies(self, predefined_df: pd.DataFrame | None = None) -> None:
+    def accepted_fca_slices(self) -> list[list[tuple[str, str]]]:
+        """Every reviewed lattice slice on disk, one list per subtree analysis.
+
+        FCA output is a suggestion until a human accepts it; the acceptance is
+        recorded as a slice of the lattice it came from (see
+        ConceptLattice.accept). Those slices are this hierarchy's `fca` source.
+        Read from disk rather than from this session's objects, so a build picks
+        up reviews done in an earlier session.
+        """
+        slices: list[list[tuple[str, str]]] = []
+        for prefix in self.dm.list_prefixes("concept_lattice_*_accepted", "json"):
+            raw = self.dm.load_latest_json(prefix) or []
+            if raw:
+                slices.append([(str(a), str(b)) for a, b in raw])
+        if slices:
+            total = sum(len(x) for x in slices)
+            print(f"[Orchestrator] {total} accepted FCA edge(s) from "
+                  f"{len(slices)} reviewed lattice slice(s).")
+        return slices
+
+    def run_build_hierarchies(
+        self,
+        predefined_df: pd.DataFrame | None = None,
+        curated_sources=None,
+        curated_label_sources=None,
+    ) -> None:
         """
         Build ClassHierarchy and MereologicalHierarchy from the ConceptStore.
 
-        predefined_df – optional DataFrame with 'Class' and 'Parent class' columns.
-                        When None, loads from PREDEFINED_HIERARCHY_FILE if configured.
+        predefined_df – DataFrame with 'Class' and 'Parent class' columns. When
+                        None (the default) the curated seed edges are read from
+                        the ontologies named by `curated_sources`. Pass an empty
+                        DataFrame to build with no curated edges at all.
+        curated_sources       – ontologies to read subsumption from.
+                                Default: WONT ground truth + MILD.
+        curated_label_sources – files consulted for LABELS only, so imported
+                                parents (BFO, COB, IAO, OBI...) can be named.
+                                Default: the MILD import modules.
+
+        There is no predefined-hierarchy CSV any more. The table that used to
+        live at data/raw/predefined_concept_hierarchy.csv was merged into WONT
+        and MILD, and for a while nothing read it back: the curated tier of the
+        curated > text > fca precedence sat empty, so an FCA suggestion could
+        contradict a hand-authored parent with no rank check to stop it.
         """
-        if predefined_df is None and _PREDEFINED_HIERARCHY_FILE is not None:
-            from pathlib import Path as _Path
-            p = _Path(_PREDEFINED_HIERARCHY_FILE)
-            if p.exists():
-                predefined_df = pd.read_csv(p, usecols=["Class", "Parent class"])
-                print(f"[Orchestrator] Loaded {len(predefined_df)} predefined edges from {p.name}")
+        if predefined_df is None:
+            from wound_ontology.hierarchies.curated_seed import (
+                load_curated_edges, default_curated_sources,
+            )
+            if curated_sources is None:
+                curated_sources, _default_labels = default_curated_sources()
+                if curated_label_sources is None:
+                    curated_label_sources = _default_labels
+            predefined_df, _rep = load_curated_edges(
+                curated_sources, curated_label_sources or (), report=True,
+            )
+            print("[Orchestrator] Curated seed edges read from "
+                  f"{', '.join(os.path.basename(str(s)) for s in curated_sources)}:")
+            print(_rep.summary())
 
-        if predefined_df is not None:
-            self.store.get_data(predefined_df)
-
-        self.class_hier.get_data(self.store)
+        # Each source is read in its own right and stamped by where it came from.
+        # Curated edges used to be pushed through the ConceptStore first, which
+        # made the store assert 459 edges it had never extracted and then needed
+        # a second pass to correct the attribution. The original reason for that
+        # detour — so the FCA matrix would see curated edges — is gone: conceptual
+        # scaling supplies those is_a attributes from the hierarchy itself.
+        fca_slices = self.accepted_fca_slices()
+        self.class_hier.get_data(self.store, curated=predefined_df, fca=fca_slices)
         self.mere_hier.get_data(self.store)
-
-        # Curated edges were fed through the store so the FCA matrix sees them,
-        # which means get_data() just ingested them as text-asserted. Re-stamp
-        # them so a human-authored edge is distinguishable from — and outranks —
-        # one asserted in an abstract or suggested by a lattice.
-        if predefined_df is not None:
-            self.class_hier.apply_curated(predefined_df)
 
         self.class_hier.save()
         self.mere_hier.save()
@@ -393,6 +467,7 @@ class Orchestrator:
         predicates: list | None = None,
         batch_size: int = 10,
         commit_fca: bool = False,
+        scale: bool = True,
     ) -> None:
         """
         Build FCA matrix → concept lattice → FCAHierarchy.
@@ -405,12 +480,49 @@ class Orchestrator:
                        that a set of terms share attributes, which is evidence for
                        a superclass rather than a statement of one. Suggestions are
                        recorded as review candidates; promote them with
-                       `class_hier.promote_candidates(...)`.
+                       `class_hier.promote_candidates(lattice=self.lattice)`. Pass
+                       the lattice: the acceptance is recorded as a slice of it,
+                       and that slice is the `fca` source the next
+                       run_build_hierarchies() reads back.
+        scale        – conceptual scaling: add each object's superclasses to the
+                       context as `is_a:` attributes. Default True.
+
+                       Without it the hierarchy only ever chose which *rows*
+                       appeared; it had no say in the result, because FCA orders
+                       objects by attribute-set containment alone. Two entities
+                       in a curated subclass relation that share no measured
+                       attribute came out as unrelated siblings, so the lattice
+                       could propose a structure cutting straight across the
+                       taxonomy. With scaling, a subclass's attributes are a
+                       strict superset of its parent's and the order is forced
+                       to agree, while FCA stays free to find structure between
+                       and below the asserted edges.
+
+                       Pass scale=False for the unscaled context, e.g. to see
+                       what the attributes alone suggest.
         """
         hier = hierarchy or self.class_hier
         entities = hier.subtree_of(subtree_root) if subtree_root else None
 
-        self.context_matrix.get_data(self.store, entities=entities, predicates=predicates)
+        # One lattice and one FCA hierarchy per analysis (rule 6). Reusing a
+        # single instance across subtrees unioned unrelated analyses: the FCA
+        # hierarchy never cleared itself, so a Wound-subtree run was still
+        # present while a different subtree was being analysed, and the saved
+        # CSV was the union of every analysis ever run.
+        slug = _slugify(subtree_root) if subtree_root else "all"
+        self.lattice = ConceptLattice(self.dm, self.context_matrix,
+                                      f"concept_lattice_{slug}")
+        self.fca_hier = FCAHierarchy(self.dm, f"fca_hierarchy_{slug}")
+        self.lattices[slug] = self.lattice
+        self.fca_hiers[slug] = self.fca_hier
+        print(f"[Orchestrator] FCA analysis '{slug}': "
+              f"lattice='{self.lattice.file_name}', "
+              f"hierarchy='{self.fca_hier.file_name}'.")
+
+        self.context_matrix.get_data(
+            self.store, entities=entities, predicates=predicates,
+            scale_hierarchy=hier if scale else None,
+        )
         self.context_matrix.nan_report()
 
         async def _internal():
@@ -455,7 +567,7 @@ class Orchestrator:
                 self.class_hier.save()
                 print(f"FCA → candidates      : {proposed} edge(s) proposed for review, "
                       f"NOT committed. Inspect class_hier.candidates, then "
-                      f"class_hier.promote_candidates().")
+                      f"class_hier.promote_candidates(lattice=pipeline.lattice).")
             if skipped_uncertain:
                 print(f"FCA → ClassHierarchy  : {skipped_uncertain} concept(s) withheld "
                       f"as undecided-dependent.")
@@ -465,10 +577,15 @@ class Orchestrator:
             print("FCAHierarchy          : skipped (empty lattice).")
 
     def run_matrix_nan_fill(self, batch_size: int = 20, entity_batch: int = 5) -> None:
-        """Fallback: fill NaNs directly on the FCA context matrix (post-FCA)."""
+        """Resolve the undecided cells of the current FCA view (post-FCA).
+
+        The verdicts go into the ConceptStore, not into the matrix: the matrix is
+        a view and is rebuilt from the store afterwards, so a verdict kept only
+        here would not survive the next run_fca.
+        """
         print(f"Evaluating missing relations (concurrency={batch_size}, entity_batch={entity_batch})...")
         self._run_sync(self.context_matrix.fill_nan(
-            self.llm, batch_size=batch_size, entity_batch=entity_batch,
+            self.llm, store=self.store, batch_size=batch_size, entity_batch=entity_batch,
         ))
 
     def review_mere_relations(self, batch_size: int = 50) -> None:
@@ -538,7 +655,29 @@ class Orchestrator:
     # ── Export ─────────────────────────────────────────────────────────────────
 
     def export_to_owl(self, output_file=None) -> None:
-        """Export ClassHierarchy, MereologicalHierarchy, and FCAHierarchy to OWL."""
+        """Export the hierarchies to a standalone OWL file.
+
+        .. deprecated::
+           Use :meth:`run_extend_ground_truth` instead.
+
+        This builds a *parallel* ontology from an empty ``OWLOntology.create()``:
+        it never reads ``ground_truth_final.owl``, so every class is minted with
+        a fresh WONT id counting from 1, including ones WONT already curates and
+        ones the imports already define. "Wound" comes out as a new class rather
+        than WONT_0000380, and nothing merges back into WONT. There is also no
+        lexicon here, so the BFO/MILD duplicate-minting that
+        ``extend_ground_truth`` now avoids is unavoidable on this path.
+
+        Kept working because stored outputs and tests still reference it.
+        """
+        import warnings
+        warnings.warn(
+            "Orchestrator.export_to_owl builds a parallel ontology from an empty "
+            "one: every class is minted afresh, existing WONT ids are not reused, "
+            "and imported classes are duplicated. Use run_extend_ground_truth(), "
+            "which uses the ground truth as its base and resolves against it.",
+            DeprecationWarning, stacklevel=2,
+        )
         onto = OWLOntology.create()
         OntologyCurator(onto).from_hierarchies(
             self.class_hier, self.mere_hier, self.fca_hier, store=self.store,
@@ -550,6 +689,7 @@ class Orchestrator:
         output_file: str | None = None,
         touch_existing: bool = False,
         include_fca: bool = False,
+        lexicon=None,
     ):
         """Merge pipeline findings into a copy of the WONT ground truth.
 
@@ -562,6 +702,10 @@ class Orchestrator:
         ``touch_existing`` is False by default: an extraction run may not add,
         restate or contradict an axiom on a curated class. Those edges are
         counted in the report instead of applied.
+
+        ``lexicon`` defaults to MILD + the import modules, so a term defined in
+        an import resolves to its own IRI instead of being minted as a WONT
+        duplicate. Pass ``lexicon=()`` to mint everything unresolved.
         """
         from pathlib import Path as _Path
 
@@ -579,6 +723,7 @@ class Orchestrator:
             store=self.store,
             fca_hier=self.fca_hier if include_fca else None,
             touch_existing=touch_existing,
+            lexicon=lexicon,
         )
         print(f"[Orchestrator] Extended ground truth -> {out}")
         print(report.summary())
@@ -856,14 +1001,22 @@ class Orchestrator:
         )
 
         st = store or self.store
-        entities, relations, report = store_to_gate_inputs(st.dict)
+        entities, relations, report = store_to_gate_inputs(
+            st.dict, resolve_conflict=self.reasoner_gate.least_common_category)
         print("[Orchestrator] " + describe_gate_inputs(entities, relations, report)
               .replace("\n", "\n[Orchestrator] "))
 
+        if report.get("reconciled"):
+            print(f"[Orchestrator] {len(report['reconciled'])} term(s) were typed "
+                  f"differently by different abstracts and retreated to the category "
+                  f"MILD says subsumes them all. They ARE gated, at that category:")
+            for lab, (cats, agreed) in sorted(report["reconciled"].items())[:20]:
+                print(f"[Orchestrator]     {lab}: {', '.join(cats)} -> {agreed}")
         if report["conflicting"]:
-            print(f"[Orchestrator] *** {len(report['conflicting'])} term(s) carry more "
-                  f"than one BFO category. Stage-1 typing is supposed to make this "
-                  f"impossible; these came from somewhere else and are NOT gated: ***")
+            print(f"[Orchestrator] *** {len(report['conflicting'])} term(s) were typed "
+                  f"in ways with NO common ancestor among the assignable categories "
+                  f"(e.g. continuant vs occurrent). There is no honest category for "
+                  f"them, so they are NOT gated: ***")
             for lab, cats in sorted(report["conflicting"].items())[:20]:
                 print(f"[Orchestrator]     {lab}: {', '.join(cats)}")
         if report["unlicensed"]:

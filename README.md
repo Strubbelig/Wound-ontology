@@ -9,10 +9,10 @@ The pipeline fetches PubMed abstracts, extracts biomedical entities and relation
 ```
 PubMed abstracts
       ↓ LLM extraction
-ConceptStore  ←  predefined edges (e.g. Chronic Wound is_a Wound)
+ConceptStore  ←  curated edges from WONT + MILD (e.g. Chronic Wound is_a Wound)
       ↓ normalize (TermMapper + Title Case)
 ClassHierarchy  +  MereologicalHierarchy
-      ↓ FCA on wound subtree
+      ↓ FCA on wound subtree (conceptually scaled by the hierarchy)
 ConceptLattice  →  named superclasses  →  ClassHierarchy (merged)
       ↓
 OWL export (RDF/XML)
@@ -74,7 +74,6 @@ ENTREZ_EMAIL=your@email.com
 
 ```python
 from wound_ontology.orchestrator import Orchestrator
-import pandas as pd
 
 pipeline = Orchestrator()
 
@@ -93,25 +92,33 @@ pipeline.mapping_cleaner.apply(pipeline.store)
 # 4. Reasoner gate — store relations (before anything consumes them)
 pipeline.run_gate_store_relations()
 
-# 5. Build hierarchies (with predefined seed edges)
-predefined = pd.DataFrame([
-    {"Class": "Chronic Wound",  "Parent class": "Wound"},
-    {"Class": "Acute Wound",    "Parent class": "Wound"},
-    {"Class": "Surgical Wound", "Parent class": "Wound"},
-])
-pipeline.run_build_hierarchies(predefined_df=predefined)
+# 5. Build hierarchies
+#    Curated seed edges are read from WONT + MILD by default (they used to come
+#    from a CSV, which has since been merged into those ontologies). Pass
+#    predefined_df=<DataFrame> to override, or an empty one for no curated edges.
+pipeline.run_build_hierarchies()
 
-# 6. Reasoner gate — is_a edges (the CSV and the FCA lattice bypass the schema)
+# 6. Reasoner gate — is_a edges (curated edges and the FCA lattice bypass the schema)
 pipeline.run_gate_hierarchy_edges()
 
 # 7. FCA — group wound entities by shared qualities
+#    scale=True (default) applies conceptual scaling: each object gets its
+#    superclasses as is_a: attributes and inherits their attributes, so the
+#    lattice cannot order two entities against the curated hierarchy.
 pipeline.run_fca(
     subtree_root="Wound",
     predicates=["has_quality", "part_of", "has_participant", "has_disposition", "inheres_in"],
 )
 
-# 8. Export OWL
-pipeline.export_to_owl()
+# 8. Merge findings into WONT
+#    Uses ground_truth_final.owl as the base: existing terms resolve to their
+#    real IRIs (including through plurals, punctuation and stated synonyms),
+#    imported classes resolve to BFO/MILD/OBI rather than being duplicated, and
+#    only genuinely new terms are minted.
+pipeline.run_extend_ground_truth()
+
+# export_to_owl() is DEPRECATED: it builds a parallel ontology from an empty
+# one, minting a fresh id for every class including those WONT already curates.
 ```
 
 ## Key Design Decisions

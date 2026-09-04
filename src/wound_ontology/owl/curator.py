@@ -48,6 +48,14 @@ class OntologyCurator:
     ) -> None:
         """Populate the ontology from BaseHierarchy objects (additive).
 
+        .. deprecated::
+           This is the engine behind :meth:`Orchestrator.export_to_owl`, and
+           carries the same problem: it writes into whatever ontology it is
+           handed, minting a fresh id per label, with no notion of a curated
+           base to resolve against. ``owl.extend.extend_ground_truth`` replaces
+           it for pipeline output. Still used directly by tests, and still the
+           right tool if you genuinely want a standalone ontology.
+
         ``store`` is optional and carries the relations that live nowhere else.
         Until 2026-08-20 only is_a and part_of were exported, so has_quality,
         occurs_in and is_treatment_for were extracted, stored, used for FCA and

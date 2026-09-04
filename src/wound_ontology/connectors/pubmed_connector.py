@@ -25,7 +25,14 @@ class PubmedConnector(BaseConnector):
     def get_data(self, queries: str | list[str], max_abstracts_per_query: int = 1000):
         """
         Fetch abstracts for one or more PubMed queries, merging all results
-        into the local database. Duplicate PMIDs are dropped automatically.
+        into the local database.
+
+        Rows are deduplicated, PMIDs are NOT. A paper matched by three queries is
+        kept as three rows differing only in `query` / `meta_abstract_query_id`,
+        because that is how we know which query found it. Downstream this is
+        harmless -- `add_llm_extracts` keys the store by PMID and skips one it has
+        already seen -- but it means len(database) is a ROW count, and the corpus
+        is smaller than it looks. Both numbers are printed for that reason.
 
         queries                 – a single query string or a list of query strings
         max_abstracts_per_query – retmax applied to each individual query
@@ -35,7 +42,11 @@ class PubmedConnector(BaseConnector):
         for i, query in enumerate(queries, 1):
             print(f"[{i}/{len(queries)}] Querying: {query!r}")
             self._fetch_abstracts(query, max_abstracts_per_query)
-        print(f"Done. Total unique abstracts in database: {len(self.database)}")
+        db = self.database
+        rows, uniq = len(db), db["pmid"].nunique() if "pmid" in db else 0
+        print(f"Done. {rows} rows in database; {uniq} unique abstracts"
+              + (f" ({rows - uniq} rows are the same paper found by another query)."
+                 if rows != uniq else "."))
         return self.database
 
 
@@ -70,7 +81,8 @@ class PubmedConnector(BaseConnector):
         # 3. Optional: Remove exact duplicates if necessary
         self._database = updated_df.drop_duplicates().reset_index(drop=True)
         self.save()
-        print(f"Database updated. New total rows: {len(self._database)}")
+        print(f"Database updated. New total rows: {len(self._database)} "
+              f"({self._database['pmid'].nunique()} unique PMIDs)")
 
 
 

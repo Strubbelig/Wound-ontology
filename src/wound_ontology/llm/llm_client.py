@@ -468,15 +468,72 @@ class LLMClient:
         )
         return result.results
 
-    async def generate_semantic_name(self, intent_attributes, superclass_names) -> str:
+    async def generate_semantic_name(self, intent_attributes, superclass_names,
+                                     extent_categories=(), parent_names=(),
+                                     differentia=(), extent_sample=()) -> str:
+        """Name a formal concept. Returns the name.
+
+        `extent_categories` is shown so the name is of the right kind, but it is
+        not asked back: what the group is comes from the concept's intent, and a
+        category the model declares about its own new label is a claim, not a
+        lookup. The caller checks the name against the ontologies instead.
+        """
+        from wound_ontology.llm.extraction_models import CATEGORY_GLOSS
+
+        cats = sorted(extent_categories)
+
+        # Naming runs top-down, so the parents are already named. A formal concept
+        # named in isolation is a guess about what a set of attributes means; named
+        # under a parent it is a much smaller question — what distinguishes THIS
+        # group from the more general one it sits inside.
+        place = ""
+        if parent_names:
+            place = f"""
+        This class sits DIRECTLY BELOW: {', '.join(sorted(parent_names))}.
+        It is a MORE SPECIFIC kind of that. Name the distinction, not the parent
+        again: a subclass name may never be more general than its parent's, and
+        must not be the parent's name.
+        """
+            if differentia:
+                place += f"""
+        What sets it apart from that parent: {sorted(differentia)}
+        """
+        else:
+            place = """
+        This is a TOP-LEVEL class: nothing in this analysis is more general than
+        it. Name the widest thing all its members are.
+        """
+
+        members = ""
+        if extent_sample:
+            members = f"""
+        Members of this class include: {sorted(extent_sample)[:12]}
+        """
+
+        kind = ""
+        if cats:
+            gloss = "\n".join(f"          {c}: {CATEGORY_GLOSS.get(c, '')}" for c in cats)
+            kind = f"""
+        Every member of this class is typed as: {', '.join(cats)}
+{gloss}
+
+        A superclass is the SAME KIND of thing as its members, only more general.
+        Name a grouping of that kind. Do not name a disorder, a process or a
+        quality as the superclass of material entities, or vice versa.
+        """
+
         prompt = f"""
         You are a biomedical ontologist. These attributes describe a formal concept class:
         {list(intent_attributes)}
-
-        Existing superclass names (avoid duplicates): {superclass_names}
-
+{members}{place}
+        Names ALREADY USED in this analysis — yours must differ from every one of
+        them, because each names a different class: {sorted(superclass_names)}
+{kind}
         Generate ONE concise medical superclass name — maximum 5 words, noun phrase only.
-        It must be a meaningful biomedical grouping, not a description of the attributes.
+        It must be a meaningful biomedical grouping, not a description of the
+        attributes, and NOT the name of a BFO category: "Material entity",
+        "Process", "Quality" and the like are the constraint, not an answer.
+        Name what these members have in common as medicine would name it.
         """
         result = await self._execute_with_retry(self._call_json, prompt, SemanticNameResponse, temperature=0.3)
         return result.superclass_name
