@@ -235,21 +235,63 @@ class Orchestrator:
 
     # ── Phase 2: Mapping ───────────────────────────────────────────────────────
 
-    def run_build_term_mapping(self, similarity_threshold: float = 0.95) -> dict:
+    def ontology_labels(self, sources=None) -> set[str]:
+        """Every class label WONT and MILD already carry.
+
+        Used as SapBERT anchors, so a store term that means the same as an
+        existing class is mapped onto it rather than minted beside it.
+        """
+        from rdflib import RDFS
+
+        from wound_ontology.utils.rdf_io import parse_graph
+        if sources is None:
+            from wound_ontology.hierarchies.curated_seed import default_curated_sources
+            sources, _ = default_curated_sources()
+        labels: set[str] = set()
+        for src in sources:
+            g = parse_graph(src)
+            for _, _, o in g.triples((None, RDFS.label, None)):
+                text = str(o).strip()
+                if text:
+                    labels.add(text)
+        return labels
+
+    def run_build_term_mapping(self, similarity_threshold: float = 0.95,
+                               use_ontology_anchors: bool = True) -> dict:
         """
         Build a SapBERT cosine-similarity mapping that clusters near-duplicate terms.
 
-        The most frequent term in each cluster becomes the canonical form.
+        The most frequent term in each cluster becomes the canonical form — unless
+        the cluster contains an ONTOLOGY LABEL, which always wins.
+
+        Anchoring on WONT and MILD labels closes a gap that had been open in both
+        directions: SapBERT was given only store terms, so it could merge
+        "Complication" with "Complications" but never reach WONT's existing
+        "Wound complication process"; and the merge-time lexicon knew the ontology
+        labels but matched them by string alone, so "Granulation" never reached
+        "Granulation process". Terms fell between the two and were minted as twins
+        of classes that already existed.
+
+        Pass use_ontology_anchors=False for the old store-only behaviour.
+
         Follow up with review_mapping(), then run_apply_mapping().
         """
         freq = self._collect_store_terms_with_freq()
+        anchors: set[str] = set()
+        terms = list(freq.keys())
+        if use_ontology_anchors:
+            anchors = self.ontology_labels() - set(terms)
+            terms += sorted(anchors)
+            print(f"[Orchestrator] {len(anchors)} ontology label(s) added as anchors "
+                  f"— a store term clustering with one is mapped onto it.")
         print(f"[Orchestrator] Building term mapping from {len(freq)} unique store terms "
               f"(threshold={similarity_threshold})...")
         mapping = self.term_mapper.build_from_embeddings(
-            list(freq.keys()),
+            terms,
             embedder=self._ensure_embedder(),
             similarity_threshold=similarity_threshold,
             frequencies=freq,
+            anchors=anchors,
         )
         print("[Orchestrator] Mapping built — call review_mapping() to inspect and curate.")
         return mapping
@@ -432,7 +474,15 @@ class Orchestrator:
         # detour — so the FCA matrix would see curated edges — is gone: conceptual
         # scaling supplies those is_a attributes from the hierarchy itself.
         fca_slices = self.accepted_fca_slices()
-        self.class_hier.get_data(self.store, curated=predefined_df, fca=fca_slices)
+        # Stage-1 typing runs per abstract, so one term can arrive with several
+        # BFO categories. Emitting all of them made the hierarchy contradict
+        # itself by construction and left the reasoner to clean up: 42 of 48
+        # quarantined edges were exactly that. Reconcile to the category MILD
+        # says subsumes them all, and give no category edge where there is none.
+        self.class_hier.get_data(
+            self.store, curated=predefined_df, fca=fca_slices,
+            reconcile_categories=self.reasoner_gate.least_common_category,
+        )
         self.mere_hier.get_data(self.store)
 
         self.class_hier.save()

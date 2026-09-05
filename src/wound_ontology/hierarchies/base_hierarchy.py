@@ -287,7 +287,7 @@ class BaseHierarchy(ABC):
 
     # ── Public methods ─────────────────────────────────────────────────────────
 
-    def get_data(self, store, curated=None, fca=()) -> None:
+    def get_data(self, store, curated=None, fca=(), reconcile_categories=None) -> None:
         """Populate the hierarchy by reading its sources. Rebuilds from scratch.
 
         This is a *reader*, not a merge point. Each source keeps its own identity
@@ -300,6 +300,30 @@ class BaseHierarchy(ABC):
                   from WONT and MILD. Stamped `curated`.
         fca     – iterable of accepted lattice slices, each a sequence of
                   (child, parent) pairs. Stamped `fca`.
+        reconcile_categories
+                – callable(categories) -> category | None, deciding which single
+                  BFO category a term typed several ways actually gets. Pass
+                  `ReasonerGate.least_common_category` to retreat to the most
+                  specific category MILD says subsumes them all.
+
+                  Stage-1 typing runs per abstract, so nothing stops two
+                  abstracts typing one term differently: `Necrosis` arrived as
+                  `MaterialEntity` from one and `Process` from two others. Both
+                  became edges, BFO makes continuant and occurrent disjoint, and
+                  the reasoner had to clean up afterwards -- 42 of 48 quarantined
+                  edges were this, across 16 terms. Reconciling here builds a
+                  hierarchy that is coherent by construction instead.
+
+                  A term whose typings share no common ancestor gets NO category
+                  edge and is recorded in `self.irreconcilable`: `Mortality` as
+                  both `Process` and `Tendency` spans continuant and occurrent,
+                  and there is no honest category for it. That list is a review
+                  queue, not a failure -- usually one label covering several
+                  things.
+
+                  The store keeps every abstract's opinion either way. The
+                  disagreement is data; what may not survive is an incoherent
+                  hierarchy built from it.
 
         Curated edges used to be pushed *through* the store first, which made the
         store assert 459 edges it had never extracted and required a second pass
@@ -320,6 +344,36 @@ class BaseHierarchy(ABC):
             if prev is None or SOURCE_RANK[source] > SOURCE_RANK[prev]:
                 edge_source[pair] = source
 
+        # Which BFO categories each term was given, across the whole corpus.
+        # Collected first so a term's category edge can be decided once, rather
+        # than one edge per abstract that happened to mention it.
+        from wound_ontology.llm.extraction_models import CATEGORY_PARENT
+        typings: dict[str, set[str]] = {}
+        if reconcile_categories is not None:
+            for pmid_data in store.dict.values():
+                for entity, attrs in pmid_data.get("entities", {}).items():
+                    for triple, value in attrs.items():
+                        if value != 1.0 or ":" not in triple:
+                            continue
+                        pred, target = triple.split(":", 1)
+                        if pred.strip().lower().replace(" ", "_") not in self._direct_predicates:
+                            continue
+                        target = target.strip()
+                        if target in CATEGORY_PARENT:
+                            typings.setdefault(smart_title(entity), set()).add(target)
+
+        self.irreconcilable: dict[str, set[str]] = {}
+        agreed: dict[str, str] = {}
+        for term, cats in typings.items():
+            if len(cats) == 1:
+                agreed[term] = next(iter(cats))
+                continue
+            winner = reconcile_categories(cats)
+            if winner is None:
+                self.irreconcilable[term] = cats
+            else:
+                agreed[term] = winner
+
         source = SOURCE_TEXT
         for pmid_data in store.dict.values():
             for entity, attrs in pmid_data.get("entities", {}).items():
@@ -330,10 +384,36 @@ class BaseHierarchy(ABC):
                     pred = pred.strip().lower().replace(" ", "_")
                     target = target.strip()
                     if pred in self._direct_predicates:
+                        # Category edges for a reconciled term are emitted once,
+                        # below. Skipping them here rather than filtering for the
+                        # agreed one matters: the agreed category is often one no
+                        # abstract proposed -- Process and ProcessBoundary agree
+                        # on Occurrent, which neither of them said.
+                        if target in CATEGORY_PARENT and smart_title(entity) in typings:
+                            continue
                         _note((smart_title(entity), smart_title(target)), source)
                     elif pred in self._inverse_predicates:
                         _note((smart_title(target), smart_title(entity)), source)
+
+        for term, category in agreed.items():
+            _note((term, smart_title(category)), source)
         from_store = len(edges)
+
+        if reconcile_categories is not None:
+            merged = sum(len(c) - 1 for c in typings.values() if len(c) > 1)
+            if merged or self.irreconcilable:
+                print(f"[{self.__class__.__name__}] category reconciliation: "
+                      f"{len(typings)} typed term(s); "
+                      f"{merged} conflicting category edge(s) collapsed to the "
+                      f"category MILD says subsumes them.")
+            if self.irreconcilable:
+                print(f"[{self.__class__.__name__}] *** {len(self.irreconcilable)} "
+                      f"term(s) were typed in ways with NO common ancestor. They get "
+                      f"no category edge — there is no honest one — and are listed "
+                      f"in .irreconcilable: ***")
+                for term, cats in sorted(self.irreconcilable.items())[:15]:
+                    print(f"[{self.__class__.__name__}]     {term}: "
+                          f"{', '.join(sorted(cats))}")
 
         if curated is not None and not getattr(curated, "empty", True):
             cols = {c.lower().strip(): c for c in curated.columns}

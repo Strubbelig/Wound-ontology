@@ -227,8 +227,23 @@ class KeywordList(BaseList):
     """Substring containment match against a stored set of lowercase keywords."""
 
     def match(self, term: str) -> bool:
+        """True if any keyword occurs at a word start in `term`.
+
+        Plain substring matching let a three-character entry whitelist a third of
+        the vocabulary: `cti` matched "pra*cti*ces", "mortality predi*cti*on",
+        "Antibacterial fun*cti*onality" and 284 other store terms, all of them
+        exempted from the blocklist by coincidence. Measured on the live store,
+        1191 of 3725 terms were keyword-whitelisted; 288 of those only through a
+        mid-word hit.
+
+        Requiring a word boundary at the START keeps what the lists are for --
+        `burn` still matches "burn wound" and "burns", `wound` still matches
+        "wound bed" -- while a keyword can no longer fire from inside another
+        word. Twenty other entries of four characters or fewer carried the same
+        hazard: `male` matched "fe*male*", `race` matched "t*race*ability".
+        """
         lower = term.strip().lower()
-        return any(kw in lower for kw in self._terms)
+        return any(_starts_a_word(kw, lower) for kw in self._terms)
 
 
 # ── Concrete list classes ─────────────────────────────────────────────────────
@@ -590,6 +605,18 @@ class WhiteList(TermList):
         if n:
             self.load()
         return n
+
+
+def _starts_a_word(keyword: str, text: str) -> bool:
+    """True if `keyword` occurs in `text` at the start of a word."""
+    start = 0
+    while True:
+        i = text.find(keyword, start)
+        if i < 0:
+            return False
+        if i == 0 or not (text[i - 1].isalnum() or text[i - 1] == "_"):
+            return True
+        start = i + 1
 
 
 class BlockKeywordList(KeywordList):

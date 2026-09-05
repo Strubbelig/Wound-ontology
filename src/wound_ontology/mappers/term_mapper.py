@@ -81,6 +81,7 @@ class TermMapper:
         embedder,
         similarity_threshold: float = 0.95,
         frequencies: dict[str, int] | None = None,
+        anchors: set[str] | None = None,
     ) -> dict[str, str]:
         """Synonym clustering via SapBERT cosine similarity + complete-linkage.
 
@@ -90,6 +91,19 @@ class TermMapper:
 
         Generic single-word terms additionally require string_sim >= 0.90 to
         prevent common biomedical context words from absorbing unrelated terms.
+
+        ANCHORS — labels of classes that already exist in WONT or MILD. They are
+        clustered like any other term but always win canonicality, so a store term
+        that lands in a cluster with one is mapped ONTO the existing class instead
+        of the other way round.
+
+        This is the gap the pipeline had. SapBERT only ever saw store terms, so it
+        could merge "Complication" with "Complications" and never notice that WONT
+        already had "Wound complication process"; the merge-time lexicon matched
+        ontology labels but only by string, so "Granulation" never reached
+        "Granulation process" either. A term sat between a semantic matcher that
+        was not given the ontology and an ontology matcher with no semantics, and
+        was minted as a twin of a class that already existed.
 
         CLUSTERING: complete-linkage — two clusters merge only when EVERY
         cross-cluster pair independently passes the merge condition, preventing
@@ -102,6 +116,14 @@ class TermMapper:
             return self._term_mapping.data
 
         freq = frequencies or {}
+        anchor_set = {a for a in (anchors or set())}
+        # An anchor outranks any store term on frequency, and one anchor outranks
+        # another by being the shorter, more general label.
+        def _rank(t: str):
+            return (1 if t in anchor_set else 0,
+                    freq.get(t, 0),
+                    len(normalize_term(t).split()),
+                    -len(t))
 
         # ── Step 0: pre-merge by normalized form (no SapBERT) ────────────────
         norm_groups: dict[str, list[str]] = defaultdict(list)
@@ -111,10 +133,7 @@ class TermMapper:
         pre_merged: dict[str, str] = {}
         embed_terms: list[str] = []
         for members in norm_groups.values():
-            canonical = max(
-                members,
-                key=lambda t: (freq.get(t, 0), len(normalize_term(t).split()), -len(t)),
-            )
+            canonical = max(members, key=_rank)
             embed_terms.append(canonical)
             for t in members:
                 if t != canonical:
@@ -169,10 +188,7 @@ class TermMapper:
         # ── Step 3: pick canonical per cluster ───────────────────────────────
         assignment: dict[str, str] = {}
         for members in clusters.values():
-            canonical = max(
-                members,
-                key=lambda t: (freq.get(t, 0), len(normalize_term(t).split()), -len(t)),
-            )
+            canonical = max(members, key=_rank)
             for t in members:
                 assignment[t] = canonical
 

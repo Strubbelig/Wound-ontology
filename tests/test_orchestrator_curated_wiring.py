@@ -51,9 +51,10 @@ class _FakeHier:
         self.concepts, self.roots = [], []
         self._prov = {}
 
-    def get_data(self, store, curated=None, fca=()):
+    def get_data(self, store, curated=None, fca=(), reconcile_categories=None):
         self.curated = curated
         self.fca = list(fca)
+        self.reconciler = reconcile_categories
         if curated is None or curated.empty:
             return
         for _, row in curated.iterrows():
@@ -176,3 +177,13 @@ def test_a_subtree_gets_its_own_artifact_names():
     assert _slugify("Chronic Wound") == "chronic_wound"
     assert _slugify("CO2 Wound") == "co2_wound"
     assert _slugify("  ") == "unnamed"
+
+
+def test_the_class_hierarchy_is_given_a_category_resolver(pipeline, onto):
+    """Without it the hierarchy contradicts itself by construction: one term
+    typed several ways across abstracts becomes several category edges, and the
+    reasoner has to clean up afterwards."""
+    pipeline.run_build_hierarchies(curated_sources=[onto])
+    assert pipeline.class_hier.reconciler is not None
+    assert pipeline.mere_hier.reconciler is None, \
+        "mereological edges carry no BFO category to reconcile"

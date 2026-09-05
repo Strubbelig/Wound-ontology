@@ -70,6 +70,29 @@ def contains_blocked_keyword(term: str) -> bool:
 
 
 METHODOLOGY_BLOCKLIST: set[str] = {
+    # ── study-endpoint and report vocabulary ────────────────────────────────────
+    # Added 2026-09-04. These reached the store as clinical entities and were
+    # typed irreconcilably across abstracts -- "outcomes" as InformationEntity,
+    # Occurrent, ProcessBoundary and Quality; "adverse events" as four categories
+    # at once. They are not clinical entities typed badly, they are the vocabulary
+    # a paper uses to describe its own design and results, and the ontology has no
+    # place for them. Surfaced by BaseHierarchy.irreconcilable; see INSTRUCTIONS
+    # rule 9.
+    "adverse events",
+    "amputation-free survival",
+    "clinical outcomes",
+    "follow-up periods",
+    "late lumen loss",
+    "mortality",
+    "mortality prediction",
+    "narrative review",
+    "outcomes",
+    "practices",
+    "research",
+    "studies",
+    "technique",
+    "wound area reduction",
+
     # ── seamc · fibroblast · inductive mesenchymal fibroblasts ──────────────────────
     "24-deoxysericoside",
     "25-hydroxyvitamin d",

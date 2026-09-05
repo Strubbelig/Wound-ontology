@@ -418,6 +418,118 @@ class ConceptStore:
 
         print(f"Batch extraction complete. {succeeded}/{len(to_process)} abstracts processed.")
 
+    @staticmethod
+    def _category_phrase(category: str) -> str:
+        """`MaterialEntity` -> `Material Entity`, for use inside a class label."""
+        import re as _re
+        return _re.sub(r"(?<!^)(?=[A-Z])", " ", category)
+
+    def split_irreconcilable_terms(self, resolve_conflict) -> dict:
+        """One label typed several irreconcilable ways is several classes.
+
+        `Necrosis` arrived as `MaterialEntity` from one abstract and `Process`
+        from two others. That is not one class typed badly: necrosis genuinely is
+        a pathological process, and a material entity, and arguably a disposition
+        of tissue realised by trauma. Forcing one category loses a sense; forcing
+        none — which is what the reconciler does when the typings share no
+        ancestor — loses the term.
+
+        So each mention is renamed to `<Term> <Category>` using the category THAT
+        abstract gave it: `Necrosis Process`, `Necrosis Material Entity`. Every
+        resulting term then carries exactly one category by construction, and the
+        relations an abstract asserted stay attached to the sense it meant. The
+        label says which superclass it belongs under, which is also how a reader
+        tells the two apart.
+
+        Only irreconcilable terms are split. A conflict with an honest common
+        ancestor (`Process` and `ProcessBoundary` agree on `Occurrent`) is
+        reconciled instead — there is one concept there, described at two
+        granularities.
+
+        Returns a report: {split: {term: {category: new_label}}, mentions: n,
+        unsensed: {term: count}}.
+        """
+        from wound_ontology.llm.extraction_models import CATEGORY_PARENT
+
+        typings: dict[str, set[str]] = {}
+        for rec in self.dict.values():
+            for entity, attrs in rec.get("entities", {}).items():
+                for triple, value in attrs.items():
+                    if value != 1.0 or ":" not in triple:
+                        continue
+                    pred, target = triple.split(":", 1)
+                    if pred.strip().lower().replace(" ", "_") not in ("is_a", "subclass_of"):
+                        continue
+                    target = target.strip()
+                    if target in CATEGORY_PARENT:
+                        typings.setdefault(entity.strip(), set()).add(target)
+
+        splittable = {t: c for t, c in typings.items()
+                      if len(c) > 1 and resolve_conflict(c) is None}
+        report: dict = {"split": {}, "mentions": 0, "unsensed": {}}
+        if not splittable:
+            print("[ConceptStore] no irreconcilable terms to split.")
+            return report
+
+        for term, cats in splittable.items():
+            report["split"][term] = {
+                c: f"{term} {self._category_phrase(c)}" for c in sorted(cats)
+            }
+
+        def renamed(label: str, sense: dict) -> str:
+            return sense.get(label.strip(), label)
+
+        for rec in self.dict.values():
+            entities = rec.get("entities", {})
+            # Which sense each splittable term carries IN THIS abstract.
+            sense: dict[str, str] = {}
+            for entity, attrs in entities.items():
+                key = entity.strip()
+                if key not in splittable:
+                    continue
+                here = {t.split(":", 1)[1].strip()
+                        for t, v in attrs.items()
+                        if v == 1.0 and ":" in t
+                        and t.split(":", 1)[0].strip().lower().replace(" ", "_")
+                        in ("is_a", "subclass_of")
+                        and t.split(":", 1)[1].strip() in CATEGORY_PARENT}
+                if len(here) == 1:
+                    sense[key] = report["split"][key][next(iter(here))]
+                else:
+                    # No category here, or two at once: no sense to assign, so
+                    # the mention is left alone rather than guessed at.
+                    report["unsensed"][key] = report["unsensed"].get(key, 0) + 1
+
+            if not sense:
+                continue
+            rebuilt: dict[str, dict] = {}
+            for entity, attrs in entities.items():
+                new_entity = renamed(entity, sense)
+                if new_entity != entity:
+                    report["mentions"] += 1
+                dest = rebuilt.setdefault(new_entity, {})
+                for triple, value in attrs.items():
+                    if ":" in triple:
+                        # split(":", 1) leaves the separator's space on the
+                        # target, so strip before re-joining or the rebuilt key
+                        # is "is_a:  Process" and no longer matches anything.
+                        pred, target = triple.split(":", 1)
+                        triple = f"{pred.strip()}: {renamed(target.strip(), sense)}"
+                    dest[triple] = max(dest.get(triple, 0.0), value)
+            rec["entities"] = rebuilt
+
+        self.save()
+        print(f"[ConceptStore] split {len(report['split'])} irreconcilable term(s) "
+              f"into {sum(len(v) for v in report['split'].values())} sense(s) "
+              f"across {report['mentions']} mention(s).")
+        for term, senses in sorted(report["split"].items()):
+            print(f"[ConceptStore]     {term} -> {', '.join(sorted(senses.values()))}")
+        if report["unsensed"]:
+            print(f"[ConceptStore] {len(report['unsensed'])} term(s) were mentioned "
+                  f"without a category in some abstract and left unsplit there: "
+                  f"{dict(sorted(report['unsensed'].items())[:8])}")
+        return report
+
     def merge_entity_records(self, entities: dict[str, dict[str, float]], *, kind: str) -> int:
         """Merge derived entity records into a synthetic store record.
 

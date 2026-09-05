@@ -18,7 +18,7 @@ Companion documents:
   end to end: <https://claude.ai/code/artifact/57125e2f-667b-42fe-9b15-e1002c981517>
 - `ontology_pipeline_upgrade_plan.md` — historical plan. Where it disagrees with
   this file or with the code, this file and the code win; the plan is not
-  authoritative and is known to be wrong in places (see rule 14).
+  authoritative and is known to be wrong in places (see rule 15).
 
 ---
 
@@ -273,7 +273,45 @@ context's `is_a: <Category>` columns by `ConceptLattice.extent_categories`,
 which ignores the `is_a: <ancestor>` columns conceptual scaling writes — those
 are classes, not types, and reading one as a type would license anything.
 
-## 9. Undecided is not false
+## 9. A term has one category, decided once
+
+*Decided 2026-09-04.*
+
+Stage-1 typing runs per abstract, so nothing stops two abstracts typing the same
+term differently. Those disagreements may **not** each become an edge. A term
+gets **one** category edge, decided across the whole corpus: the most specific
+category MILD says subsumes every typing it received. Where the typings share no
+common ancestor, the term gets **no** category edge and goes on a review list.
+
+Otherwise the hierarchy contradicts itself by construction and the reasoner is
+left to clean up after it. `Necrosis` arrived as `MaterialEntity` from one
+abstract and `Process` from two others; both became edges; BFO makes continuant
+and occurrent disjoint. Measured: **42 of 48 quarantined edges were this, across
+16 terms**. With reconciliation the quarantine drops to **1** — a single text
+assertion contradicting a curated parent, which is a different problem and
+belongs to the gate.
+
+The store keeps every abstract's opinion. The disagreement is *data*, and rule 3
+forbids a derived artifact rewriting its source; what may not survive is an
+incoherent hierarchy built from it.
+
+The irreconcilable list is the product, not the failure. It is short (27 terms)
+and it is coherent: `Granulation` is both the tissue and the process that forms
+it, `Infection` is a process and a disposition and a material colony,
+`Adverse Events` and `Clinical Outcomes` are study-endpoint vocabulary rather
+than clinical entities. Each needs splitting into distinct classes or
+blocklisting — a curation decision, surfaced as 27 named terms instead of a
+reasoner failure spread across 42 edges.
+
+Note that the reconciled category is often one **no abstract proposed**:
+`Process` and `ProcessBoundary` agree on `Occurrent`, which neither of them said.
+So it is emitted, not selected from what was asserted.
+
+*Enforced by:* `BaseHierarchy.get_data(..., reconcile_categories=…)`, given
+`ReasonerGate.least_common_category` by `Orchestrator.run_build_hierarchies`.
+The terms with no honest category land in `hier.irreconcilable` and are printed.
+
+## 10. Undecided is not false
 
 *Decided long-standing.*
 
@@ -291,7 +329,7 @@ leaving a gap: an `is_a:` column is closed-world for every object the hierarchy
 places, and leaving those cells undecided made scaling strictly worse than not
 scaling at all.
 
-## 10. The schema is generated from the ontologies, never hand-written
+## 11. The schema is generated from the ontologies, never hand-written
 
 *Decided long-standing.*
 
@@ -303,7 +341,7 @@ The model never emits an IRI. Grounding is an **exact-label lookup** against the
 ontologies, which removes the hallucinated-identifier failure mode rather than
 trying to detect it afterwards.
 
-## 11. Ambiguity is refused, never guessed
+## 12. Ambiguity is refused, never guessed
 
 *Decided long-standing.*
 
@@ -312,7 +350,7 @@ minted, not resolved to a coin flip. Merging through a *narrow*, *broad* or
 *related* synonym is worse than a duplicate, so only exact-synonym predicates are
 indexed as the same concept.
 
-## 12. Names are normalised in exactly one way
+## 13. Names are normalised in exactly one way
 
 *Decided long-standing.*
 
@@ -325,7 +363,7 @@ inheritance pass that silently inherited nothing.
 **Normalise both sides of every comparison**, and prefer a helper that cannot be
 called with only one side normalised.
 
-## 13. Superseded paths are deprecated, not deleted — and warn before doing work
+## 14. Superseded paths are deprecated, not deleted — and warn before doing work
 
 *Decided 2026-08-30.*
 
@@ -334,7 +372,7 @@ The `DeprecationWarning` must fire **before** any of the work runs, otherwise a
 run learns it used the wrong path only after the file is written. The warning
 text names the replacement and says what the old path does wrong.
 
-## 14. Measured, not estimated
+## 15. Measured, not estimated
 
 *Decided long-standing.*
 
@@ -347,7 +385,7 @@ claims that adding superclasses as attributes means FCA "cannot contradict" the
 hierarchy. It can. Superclass attributes alone left 29 hierarchy edges violated;
 only with attribute inheritance did it reach 482 of 482 respected.
 
-## 15. Tests must be capable of failing
+## 16. Tests must be capable of failing
 
 *Decided 2026-09-01.*
 
@@ -361,7 +399,7 @@ because concept naming is a live LLM call that only sometimes produces a name.
 - When a test is corrected, the comment says what it used to assert and why that
   was wrong, so the distinction stays visible.
 
-## 16. The pipeline reference stays current
+## 17. The pipeline reference stays current
 
 *Decided 2026-08-31.*
 
