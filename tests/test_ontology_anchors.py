@@ -36,19 +36,21 @@ def mapper():
     class _Mapping:
         def __init__(self): self.data = {}
         def add_batch(self, assignment, metadata):
-            # keep only the non-identity mappings, which is what callers read
-            self.data = {k: v for k, v in assignment.items() if k != v}
+            # merges, as the real one does: the mapping persists across builds
+            self.data.update({k: v for k, v in assignment.items() if k != v})
+        def remove(self, *terms):
+            for t in terms: self.data.pop(t, None)
     m = TermMapper.__new__(TermMapper)
     m.name = "test"
     m._term_mapping = _Mapping()
     return m
 
 
-def _build(mapper, terms, anchors=None, freq=None, groups=None):
+def _build(mapper, terms, anchors=None, freq=None, groups=None, accept=None):
     return mapper.build_from_embeddings(
         terms, embedder=_Embedder(groups or []),
         similarity_threshold=0.95,
-        frequencies=freq or {}, anchors=anchors,
+        frequencies=freq or {}, anchors=anchors, accept_mapping=accept,
     )
 
 
@@ -103,3 +105,103 @@ def test_the_orchestrator_collects_real_ontology_labels():
     for expected in ("Granulation process", "Wound complication process",
                      "Wound infection process", "Necrosis"):
         assert expected in labels, expected
+
+
+# ── the categorical guard ───────────────────────────────────────────────────
+
+def test_a_rejected_mapping_leaves_the_term_alone(mapper):
+    """SapBERT cannot tell a process from its material bearer — the labels are
+    nearly identical — so it proposed `Necrosis Process -> Necrosis`. Raising the
+    threshold does not help: the bad matches are semantically close, which is
+    exactly why the embedding likes them."""
+    out = _build(
+        mapper,
+        ["Necrosis", "Necrosis Process"],
+        anchors={"Necrosis"},
+        groups=[["necrosis"]],
+        accept=lambda term, canonical: False,     # a process is not its bearer
+    )
+    assert out.get("Necrosis Process") in (None, "Necrosis Process")
+    assert ("Necrosis Process", "Necrosis") in mapper.refused_mappings
+
+
+def test_an_accepted_mapping_still_goes_through(mapper):
+    out = _build(
+        mapper,
+        ["Granulation process", "Granulation Process"],
+        anchors={"Granulation process"},
+        groups=[["granulation"]],
+    )
+    assert out.get("Granulation Process") == "Granulation process"
+    assert mapper.refused_mappings == []
+
+
+def test_the_guard_only_applies_to_anchors(mapper):
+    """Store-to-store clustering is unchanged; the guard is about claiming a term
+    means an existing class."""
+    calls = []
+    mapper.build_from_embeddings(
+        ["wounds", "wound"], embedder=_Embedder([["wound"]]),
+        similarity_threshold=0.95, frequencies={"wound": 9},
+        anchors=set(), accept_mapping=lambda t, c: calls.append((t, c)) or False,
+    )
+    assert calls == [], "the validator was consulted for a non-anchor canonical"
+
+
+def test_the_real_guard_refuses_a_process_mapped_onto_its_bearer():
+    """Wired end to end against the live skeleton and store."""
+    import wound_ontology.orchestrator as orch
+    p = orch.Orchestrator()
+    accept = p._category_compatible_mapping(set(p.ontology_categories()))
+    assert not accept("Necrosis Process", "Necrosis")
+    assert not accept("Skin grafting", "Skin graft")
+    assert accept("chronic wounds", "Chronic wound")
+
+
+def test_bfo_category_names_are_never_mapped():
+    """They appear in the store as `is_a: Process` targets; lowercasing them to
+    BFO's `process` would stop category detection recognising them, and every
+    reconciliation and split downstream reads those keys."""
+    import wound_ontology.orchestrator as orch
+    p = orch.Orchestrator()
+    accept = p._category_compatible_mapping(set(p.ontology_categories()))
+    for name in ("Process", "Quality", "Disposition", "Tendency"):
+        assert not accept(name, name.lower()), name
+
+
+def test_the_pre_merge_path_is_guarded_too(mapper):
+    """`Process` and BFO's `process` share a normalised form, so they were merged
+    before clustering ever ran — through the one door the validator was not
+    watching, and the one mapping guaranteed to break category detection."""
+    out = _build(
+        mapper,
+        ["process", "Process"],
+        anchors={"process"},
+        groups=[["process"]],
+        accept=lambda term, canonical: False,
+    )
+    assert out.get("Process") in (None, "Process")
+    assert ("Process", "process") in mapper.refused_mappings
+
+
+def test_a_refused_mapping_recorded_earlier_is_withdrawn(mapper):
+    """The mapping persists across builds, so a pair refused now may still be
+    present from a build that had no validator. The guard must not be defeated by
+    the file."""
+    mapper._term_mapping.data["Necrosis Process"] = "Necrosis"
+    _build(
+        mapper,
+        ["Necrosis", "Necrosis Process"],
+        anchors={"Necrosis"},
+        groups=[["necrosis"]],
+        accept=lambda term, canonical: False,
+    )
+    assert "Necrosis Process" not in mapper._term_mapping.data
+
+
+def test_curated_mappings_are_not_disturbed(mapper):
+    """Only the exact refused pair is withdrawn; anything else in the file stays."""
+    mapper._term_mapping.data["some curated term"] = "its canonical form"
+    _build(mapper, ["Necrosis", "Necrosis Process"], anchors={"Necrosis"},
+           groups=[["necrosis"]], accept=lambda t, c: False)
+    assert mapper._term_mapping.data["some curated term"] == "its canonical form"

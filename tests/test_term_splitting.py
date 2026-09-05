@@ -140,3 +140,55 @@ def test_the_rebuilt_triples_keep_the_stores_format(resolver):
             for triple in attrs:
                 assert ":  " not in triple, triple
                 assert triple == triple.strip()
+
+
+# ── what is not a sense ─────────────────────────────────────────────────────
+
+def test_a_coarse_category_is_not_a_sense(resolver):
+    """`Continuant` and `Occurrent` are the model retreating up the tree, not a
+    meaning. Splitting on them gave "complications Continuant" beside three real
+    senses — a class that asserts nothing."""
+    data = {
+        "1": {"entities": {"Complications": {"is_a: MaterialEntity": 1.0}}},
+        "2": {"entities": {"Complications": {"is_a: Process": 1.0}}},
+        "3": {"entities": {"Complications": {"is_a: Continuant": 1.0}}},
+        "4": {"entities": {"Complications": {"is_a: Occurrent": 1.0}}},
+    }
+    s = _store(data)
+    rep = s.split_irreconcilable_terms(resolver)
+    assert set(rep["split"]["Complications"]) == {"MaterialEntity", "Process"}
+
+
+def test_a_term_typed_only_coarsely_is_still_considered(resolver):
+    """Dropping coarse categories must not empty the set and hide the conflict."""
+    data = {"1": {"entities": {"Thing": {"is_a: Continuant": 1.0}}},
+            "2": {"entities": {"Thing": {"is_a: Occurrent": 1.0}}}}
+    s = _store(data)
+    rep = s.split_irreconcilable_terms(resolver)
+    assert set(rep["split"]["Thing"]) == {"Continuant", "Occurrent"}
+
+
+def test_labels_are_normalised_so_one_sense_is_one_class(resolver):
+    """Store keys arrive in whatever case the abstract used; without normalising
+    the whole label, "necrosis" and "Necrosis" yield two classes for one sense."""
+    data = {"1": {"entities": {"necrosis": {"is_a: MaterialEntity": 1.0}}},
+            "2": {"entities": {"necrosis": {"is_a: Process": 1.0}}}}
+    s = _store(data)
+    rep = s.split_irreconcilable_terms(resolver)
+    assert set(rep["split"]["Necrosis"].values()) == {
+        "Necrosis Material Entity", "Necrosis Process"}
+
+
+def test_case_variants_of_one_term_are_one_conflict(resolver):
+    """The split grouped by raw store key while the hierarchy groups by
+    normalised name, so "granulation" carrying MaterialEntity and "Granulation"
+    carrying Process each looked consistent — and the term reached the hierarchy
+    irreconcilable and unsplit. Rule 13: normalise both sides."""
+    data = {"1": {"entities": {"granulation": {"is_a: MaterialEntity": 1.0}}},
+            "2": {"entities": {"Granulation": {"is_a: Process": 1.0}}}}
+    s = _store(data)
+    rep = s.split_irreconcilable_terms(resolver)
+    assert set(rep["split"]["Granulation"].values()) == {
+        "Granulation Material Entity", "Granulation Process"}
+    names = {e for rec in s.dict.values() for e in rec["entities"]}
+    assert names == {"Granulation Material Entity", "Granulation Process"}

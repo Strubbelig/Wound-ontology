@@ -82,6 +82,7 @@ class TermMapper:
         similarity_threshold: float = 0.95,
         frequencies: dict[str, int] | None = None,
         anchors: set[str] | None = None,
+        accept_mapping=None,
     ) -> dict[str, str]:
         """Synonym clustering via SapBERT cosine similarity + complete-linkage.
 
@@ -104,6 +105,16 @@ class TermMapper:
         "Granulation process" either. A term sat between a semantic matcher that
         was not given the ontology and an ontology matcher with no semantics, and
         was minted as a twin of a class that already existed.
+
+        ACCEPT_MAPPING — optional callable(term, canonical) -> bool, consulted
+        before a term is mapped onto an ANCHOR. SapBERT at 0.95 cannot tell a
+        process from its material bearer, because their labels are lexically
+        almost identical: it proposed `Necrosis Process -> Necrosis`,
+        `Skin grafting -> Skin graft` and `wound dehiscence -> Wound dehiscence
+        process`. That is the continuant/occurrent distinction the whole pipeline
+        exists to respect, and raising the threshold does not fix it -- the bad
+        matches are semantically close, which is exactly why the embedding likes
+        them. A rejected term keeps its own name and is reported.
 
         CLUSTERING: complete-linkage — two clusters merge only when EVERY
         cross-cluster pair independently passes the merge condition, preventing
@@ -132,12 +143,22 @@ class TermMapper:
 
         pre_merged: dict[str, str] = {}
         embed_terms: list[str] = []
+        self.refused_mappings: list[tuple[str, str]] = []
         for members in norm_groups.values():
             canonical = max(members, key=_rank)
             embed_terms.append(canonical)
             for t in members:
-                if t != canonical:
-                    pre_merged[t] = canonical
+                if t == canonical:
+                    continue
+                # The validator has to run here as well as on the clustered path.
+                # It did not, and `Process` was mapped to BFO's `process` by
+                # normalised-form pre-merge -- the one mapping guaranteed to break
+                # category detection, arriving through the door nobody was watching.
+                if (accept_mapping is not None and canonical in anchor_set
+                        and not accept_mapping(t, canonical)):
+                    self.refused_mappings.append((t, canonical))
+                    continue
+                pre_merged[t] = canonical
 
         if pre_merged:
             print(f"[{self.name}] Pre-merged {len(pre_merged)} terms by normalized form.")
@@ -189,6 +210,13 @@ class TermMapper:
         assignment: dict[str, str] = {}
         for members in clusters.values():
             canonical = max(members, key=_rank)
+            if accept_mapping is not None and canonical in anchor_set:
+                kept = [t for t in members
+                        if t == canonical or accept_mapping(t, canonical)]
+                for t in members:
+                    if t not in kept:
+                        self.refused_mappings.append((t, canonical))
+                members = kept
             for t in members:
                 assignment[t] = canonical
 
@@ -222,4 +250,15 @@ class TermMapper:
             }
 
         self._term_mapping.add_batch(assignment, metadata_batch)
+
+        # The mapping persists across builds, so a mapping this build refuses may
+        # still be present from an earlier one that had no validator. Withdraw it
+        # rather than let the guard be silently defeated by the file -- but only
+        # that exact pair, so curation done in review_mapping is untouched.
+        stale = [t for t, canonical in self.refused_mappings
+                 if self._term_mapping.data.get(t) == canonical]
+        if stale:
+            self._term_mapping.remove(*stale)
+            print(f"[{self.name}] withdrew {len(stale)} refused mapping(s) recorded "
+                  f"by an earlier build.")
         return self._term_mapping.data

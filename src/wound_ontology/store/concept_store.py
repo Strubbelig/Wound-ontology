@@ -449,7 +449,10 @@ class ConceptStore:
         Returns a report: {split: {term: {category: new_label}}, mentions: n,
         unsensed: {term: count}}.
         """
-        from wound_ontology.llm.extraction_models import CATEGORY_PARENT
+        from wound_ontology.llm.extraction_models import (
+            COARSE_CATEGORIES, CATEGORY_PARENT,
+        )
+        from wound_ontology.utils.string_utils import smart_title
 
         typings: dict[str, set[str]] = {}
         for rec in self.dict.values():
@@ -462,7 +465,20 @@ class ConceptStore:
                         continue
                     target = target.strip()
                     if target in CATEGORY_PARENT:
-                        typings.setdefault(entity.strip(), set()).add(target)
+                        # Group by the NORMALISED name, as the hierarchy does.
+                        # Grouping by the raw store key hid every conflict whose
+                        # mentions differed in case: "granulation" carried
+                        # MaterialEntity and "Granulation" carried Process, so
+                        # each looked consistent here while the hierarchy — which
+                        # smart_titles — saw one term typed two irreconcilable
+                        # ways. Rule 13: normalise both sides of a comparison.
+                        typings.setdefault(smart_title(entity.strip()), set()).add(target)
+
+        # A coarse category is the model declining to answer, not a sense. Splitting
+        # on one produced `complications Continuant` and `complications Occurrent`
+        # beside three real senses -- classes that assert nothing. Drop them first
+        # and judge the term on what it was actually typed as.
+        typings = {t: (c - COARSE_CATEGORIES) or c for t, c in typings.items()}
 
         splittable = {t: c for t, c in typings.items()
                       if len(c) > 1 and resolve_conflict(c) is None}
@@ -472,19 +488,24 @@ class ConceptStore:
             return report
 
         for term, cats in splittable.items():
+            # smart_title on the whole label: store keys arrive in whatever case
+            # the abstract used, so without it one term yields "necrosis Material
+            # Entity" and another "Necrosis Material Entity" -- two classes for
+            # one sense.
             report["split"][term] = {
-                c: f"{term} {self._category_phrase(c)}" for c in sorted(cats)
+                c: smart_title(f"{term} {self._category_phrase(c)}")
+                for c in sorted(cats)
             }
 
         def renamed(label: str, sense: dict) -> str:
-            return sense.get(label.strip(), label)
+            return sense.get(smart_title(label.strip()), label)
 
         for rec in self.dict.values():
             entities = rec.get("entities", {})
             # Which sense each splittable term carries IN THIS abstract.
             sense: dict[str, str] = {}
             for entity, attrs in entities.items():
-                key = entity.strip()
+                key = smart_title(entity.strip())
                 if key not in splittable:
                     continue
                 here = {t.split(":", 1)[1].strip()
@@ -493,11 +514,14 @@ class ConceptStore:
                         and t.split(":", 1)[0].strip().lower().replace(" ", "_")
                         in ("is_a", "subclass_of")
                         and t.split(":", 1)[1].strip() in CATEGORY_PARENT}
-                if len(here) == 1:
-                    sense[key] = report["split"][key][next(iter(here))]
+                chosen = next(iter(here)) if len(here) == 1 else None
+                target = report["split"][key].get(chosen) if chosen else None
+                if target is not None:
+                    sense[key] = target
                 else:
-                    # No category here, or two at once: no sense to assign, so
-                    # the mention is left alone rather than guessed at.
+                    # No category here, two at once, or only a coarse one — which
+                    # is not a sense and so has no split to map to. The mention is
+                    # left alone rather than guessed at.
                     report["unsensed"][key] = report["unsensed"].get(key, 0) + 1
 
             if not sense:

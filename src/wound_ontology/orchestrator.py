@@ -256,6 +256,113 @@ class Orchestrator:
                     labels.add(text)
         return labels
 
+    def ontology_categories(self, skeleton=None) -> dict[str, str]:
+        """{ontology label -> BFO category}, read from the skeleton TBox.
+
+        WONT and MILD alone do not resolve: `Necrosis` reaches its category only
+        through BFO classes that live in the import closure. The skeleton already
+        carries that backbone for the reasoner gate, so it is what answers here.
+
+        A label whose chain reaches no category is simply absent — unknown, not
+        uncategorised, and callers must treat it that way.
+        """
+        from pathlib import Path
+
+        from rdflib import RDFS, URIRef
+
+        from wound_ontology.llm.extraction_models import CATEGORY_IRI
+        from wound_ontology.utils.rdf_io import parse_graph
+
+        path = skeleton or (Path(__file__).resolve().parents[2]
+                            / "output" / "owl" / "skeleton_tbox.ttl")
+        g = parse_graph(path)
+        by_iri = {v: k for k, v in CATEGORY_IRI.items()}
+        out: dict[str, str] = {}
+        for subj, _, obj in g.triples((None, RDFS.label, None)):
+            label = str(obj).strip()
+            if not label or label in out:
+                continue
+            seen, stack = set(), [subj]
+            while stack:
+                node = stack.pop()
+                if str(node) in by_iri:
+                    out[label] = by_iri[str(node)]
+                    break
+                for parent in g.objects(node, RDFS.subClassOf):
+                    if isinstance(parent, URIRef) and parent not in seen:
+                        seen.add(parent)
+                        stack.append(parent)
+        return out
+
+    def store_categories(self) -> dict[str, str]:
+        """{store term -> its reconciled BFO category}, or absent if undecided."""
+        from wound_ontology.llm.extraction_models import CATEGORY_PARENT
+        from wound_ontology.utils.string_utils import smart_title
+
+        typings: dict[str, set[str]] = {}
+        for rec in self.store.dict.values():
+            for entity, attrs in rec.get("entities", {}).items():
+                for triple, value in attrs.items():
+                    if value != 1.0 or ":" not in triple:
+                        continue
+                    pred, target = triple.split(":", 1)
+                    if pred.strip().lower().replace(" ", "_") not in ("is_a", "subclass_of"):
+                        continue
+                    target = target.strip()
+                    if target in CATEGORY_PARENT:
+                        typings.setdefault(smart_title(entity.strip()), set()).add(target)
+        out: dict[str, str] = {}
+        for term, cats in typings.items():
+            agreed = (next(iter(cats)) if len(cats) == 1
+                      else self.reasoner_gate.least_common_category(cats))
+            if agreed:
+                out[term] = agreed
+        return out
+
+    def _category_compatible_mapping(self, anchors: set[str]):
+        """Refuse an anchor mapping that crosses a categorical boundary.
+
+        SapBERT cannot separate a process from its material bearer — their labels
+        are nearly identical — so it proposed `Necrosis Process -> Necrosis`,
+        `Skin grafting -> Skin graft`, `wound dehiscence -> Wound dehiscence
+        process`. Mapping is synonymy, so the two must not sit in disjoint
+        branches; one being an ancestor of the other is fine, since that is the
+        same thing said more coarsely.
+
+        Where either side's category is unknown the mapping is ALLOWED: there is
+        no information to refuse on, and refusing on a guess would throw away the
+        lexical variants the anchors exist to catch.
+
+        BFO category names are never mapped at all. They appear in the store as
+        `is_a: Process` targets, and lowercasing `Process` to BFO's `process`
+        would stop category detection recognising them — every reconciliation and
+        split downstream reads those keys.
+        """
+        from wound_ontology.llm.extraction_models import CATEGORY_PARENT
+        from wound_ontology.utils.string_utils import smart_title
+
+        onto_cat = self.ontology_categories()
+        store_cat = self.store_categories()
+        category_names = {c.lower() for c in CATEGORY_PARENT}
+
+        def ancestors(cat: str) -> set[str]:
+            chain, cur = {cat}, CATEGORY_PARENT.get(cat)
+            while cur:
+                chain.add(cur)
+                cur = CATEGORY_PARENT.get(cur)
+            return chain
+
+        def accept(term: str, canonical: str) -> bool:
+            if term.strip().lower() in category_names:
+                return False
+            a = store_cat.get(smart_title(term.strip()))
+            b = onto_cat.get(canonical.strip())
+            if a is None or b is None:
+                return True
+            return b in ancestors(a) or a in ancestors(b)
+
+        return accept
+
     def run_build_term_mapping(self, similarity_threshold: float = 0.95,
                                use_ontology_anchors: bool = True) -> dict:
         """
@@ -286,13 +393,23 @@ class Orchestrator:
                   f"— a store term clustering with one is mapped onto it.")
         print(f"[Orchestrator] Building term mapping from {len(freq)} unique store terms "
               f"(threshold={similarity_threshold})...")
+        accept = None
+        if anchors:
+            accept = self._category_compatible_mapping(anchors)
         mapping = self.term_mapper.build_from_embeddings(
             terms,
             embedder=self._ensure_embedder(),
             similarity_threshold=similarity_threshold,
             frequencies=freq,
             anchors=anchors,
+            accept_mapping=accept,
         )
+        refused = getattr(self.term_mapper, "refused_mappings", [])
+        if refused:
+            print(f"[Orchestrator] {len(refused)} anchor mapping(s) refused as the "
+                  f"wrong kind of thing:")
+            for term, onto in refused[:15]:
+                print(f"[Orchestrator]     {term!r} -> {onto!r}")
         print("[Orchestrator] Mapping built — call review_mapping() to inspect and curate.")
         return mapping
 
