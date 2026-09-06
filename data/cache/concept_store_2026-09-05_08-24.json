@@ -28,9 +28,6 @@
             "electrodiagnostic": {
                 "is_a: Quality": 1.0
             },
-            "clinical outcomes": {
-                "is_a: InformationEntity": 1.0
-            },
             "time course": {
                 "is_a: InformationEntity": 1.0
             },
@@ -285,9 +282,6 @@
             "wound care practitioners": {
                 "is_a: MaterialEntity": 1.0
             },
-            "practices": {
-                "is_a: MaterialEntity": 1.0
-            },
             "wound care practice": {
                 "is_a: MaterialEntity": 1.0
             },
@@ -315,7 +309,7 @@
             "wounds": {
                 "is_a: MaterialEntity": 1.0
             },
-            "infection": {
+            "Infection Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "amputation": {
@@ -337,13 +331,10 @@
             "flap- or graft-based salvage procedures": {
                 "is_a: Process": 1.0
             },
-            "complications": {
+            "Complications Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "patient access": {
-                "is_a: Quality": 1.0
-            },
-            "outcomes": {
                 "is_a: Quality": 1.0
             },
             "site-of-care neutrality": {
@@ -572,9 +563,6 @@
             "morbidity": {
                 "is_a: Quality": 1.0
             },
-            "mortality": {
-                "is_a: ProcessBoundary": 1.0
-            },
             "diabetes": {
                 "is_a: MaterialEntity": 1.0
             },
@@ -591,9 +579,6 @@
             "precision medicine": {
                 "is_a: InformationEntity": 1.0
             },
-            "narrative review": {
-                "is_a: InformationEntity": 1.0
-            },
             "DFU prevalence": {
                 "is_a: Quality": 1.0
             },
@@ -603,14 +588,11 @@
             "recurrence": {
                 "is_a: Process": 1.0
             },
-            "infection": {
+            "Infection Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "lower extremity amputation": {
                 "is_a: Process": 1.0
-            },
-            "outcomes": {
-                "is_a: Quality": 1.0
             },
             "lifetime prevalence": {
                 "is_a: Quality": 1.0
@@ -667,8 +649,7 @@
                 "is_a: Quality": 1.0
             },
             "deep bone infections": {
-                "is_a: MaterialEntity": 1.0,
-                "has_quality: outcomes": 1.0
+                "is_a: MaterialEntity": 1.0
             },
             "diabetes-related foot infections": {
                 "is_a: MaterialEntity": 1.0
@@ -1054,11 +1035,11 @@
             "acid corrosive injuries": {
                 "is_a: MaterialEntity": 1.0
             },
-            "injury": {
+            "Injury Material Entity": {
                 "is_a: MaterialEntity": 1.0,
                 "has_quality: severity of injury": 1.0
             },
-            "injuries": {
+            "Injuries Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "wound": {
@@ -1115,7 +1096,7 @@
             "diabetes mellitus": {
                 "is_a: MaterialEntity": 1.0
             },
-            "infection": {
+            "Infection Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "elevated skin temperature": {
@@ -1191,14 +1172,14 @@
             },
             "CN-related infections": {
                 "is_a: MaterialEntity": 1.0,
-                "part_of: infection": 1.0
+                "part_of: Infection Material Entity": 1.0
             },
             "elbow": {
                 "is_a: MaterialEntity": 1.0
             },
-            "secondary infection": {
+            "Secondary Infection Material Entity": {
                 "is_a: MaterialEntity": 1.0,
-                "part_of: infection": 1.0,
+                "part_of: Infection Material Entity": 1.0,
                 "part_of: CN-related infections": 1.0
             },
             "elbow CN": {
@@ -1315,9 +1296,6 @@
             "worsening": {
                 "is_a: Process": 1.0
             },
-            "clinical outcomes": {
-                "is_a: Quality": 1.0
-            },
             "treatment-related adverse events": {
                 "is_a: Process": 1.0
             },
@@ -1408,9 +1386,6 @@
             "clinical data": {
                 "is_a: InformationEntity": 1.0
             },
-            "clinical outcomes": {
-                "is_a: ProcessBoundary": 1.0
-            },
             "CRP level": {
                 "is_a: InformationEntity": 1.0
             },
@@ -1467,9 +1442,6 @@
             },
             "morbidity": {
                 "is_a: Quality": 1.0
-            },
-            "mortality": {
-                "is_a: ProcessBoundary": 1.0
             },
             "NLR": {
                 "is_a: InformationEntity": 1.0
@@ -1895,8 +1867,7 @@
                 "is_a: Process": 1.0
             },
             "angioplasty": {
-                "is_a: Process": 1.0,
-                "part_of: revascularization": 1.0
+                "is_a: Process": 1.0
             },
             "restenosis": {
                 "is_a: Process": 1.0,
@@ -1950,8 +1921,7 @@
                 "is_a: Tendency": 1.0
             },
             "endovascular revascularization": {
-                "is_a: Process": 1.0,
-                "part_of: revascularization": 1.0
+                "is_a: Process": 1.0
             },
             "limb salvage outcomes": {
                 "is_a: InformationEntity": 1.0
@@ -2096,9 +2066,6 @@
             },
             "Radiographs": {
                 "is_a: MaterialEntity": 1.0
-            },
-            "pain-free thumb function": {
-                "is_a: Disposition": 1.0
             },
             "tetanic muscle contraction": {
                 "is_a: Process": 1.0
@@ -2311,10 +2278,6 @@
             "remission": {
                 "is_a: ProcessBoundary": 1.0
             },
-            "adverse events": {
-                "is_a: MaterialEntity": 1.0,
-                "has_quality: antibiotic duration": 1.0
-            },
             "people": {
                 "is_a: MaterialEntity": 1.0
             },
@@ -2356,7 +2319,7 @@
             "wound healing": {
                 "is_a: Process": 1.0
             },
-            "infection": {
+            "Infection Material Entity": {
                 "is_a: MaterialEntity": 1.0,
                 "has_quality: antibiotic duration": 1.0
             },
@@ -2798,10 +2761,6 @@
                 "is_a: Process": 1.0,
                 "part_of: healing": 1.0
             },
-            "adverse events": {
-                "is_a: Process": 1.0,
-                "part_of: treatment": 1.0
-            },
             "compression treatment": {
                 "is_a: Process": 1.0,
                 "part_of: treatment": 1.0
@@ -3033,9 +2992,6 @@
             "morbidity": {
                 "is_a: MaterialEntity": 1.0
             },
-            "mortality": {
-                "is_a: ProcessBoundary": 1.0
-            },
             "prevention guidelines": {
                 "is_a: InformationEntity": 1.0
             },
@@ -3047,9 +3003,6 @@
             },
             "search": {
                 "is_a: Process": 1.0
-            },
-            "studies": {
-                "is_a: MaterialEntity": 1.0
             },
             "intervention effectiveness": {
                 "is_a: Quality": 1.0
@@ -3077,9 +3030,6 @@
             },
             "prevention bundles": {
                 "is_a: MaterialEntity": 1.0
-            },
-            "outcomes": {
-                "is_a: ProcessBoundary": 1.0
             },
             "consistency": {
                 "is_a: Quality": 1.0
@@ -3141,13 +3091,7 @@
             "framework": {
                 "is_a: InformationEntity": 1.0
             },
-            "research": {
-                "is_a: Process": 1.0
-            },
             "policy development": {
-                "is_a: Process": 1.0
-            },
-            "healthcare practice": {
                 "is_a: Process": 1.0
             },
             "burden": {
@@ -3250,7 +3194,7 @@
             },
             "stage 3 PIs": {
                 "is_a: MaterialEntity": 1.0,
-                "has_quality: wound area reduction": 1.0,
+                "has_quality: Wound Area Reduction Quality": 1.0,
                 "part_of: heels": 1.0
             },
             "treatment plans": {
@@ -3268,7 +3212,7 @@
             "Wound size": {
                 "is_a: Quality": 1.0
             },
-            "wound area reduction": {
+            "Wound Area Reduction Quality": {
                 "is_a: Quality": 1.0
             },
             "time to closure": {
@@ -3292,9 +3236,6 @@
             "complete closure": {
                 "is_a: Process": 1.0,
                 "part_of: wound closure": 1.0
-            },
-            "follow-up periods": {
-                "is_a: Process": 1.0
             },
             "quality of life": {
                 "is_a: Quality": 1.0
@@ -3419,7 +3360,7 @@
     },
     "42615775": {
         "entities": {
-            "injury": {
+            "Injury Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "breastfeeding": {
@@ -3553,9 +3494,6 @@
             },
             "documentation issues": {
                 "is_a: Quality": 1.0
-            },
-            "surveillance of surgical site infections": {
-                "is_a: Process": 1.0
             },
             "antimicrobial resistance": {
                 "is_a: Disposition": 1.0
@@ -3743,9 +3681,6 @@
                 "is_a: Process": 1.0,
                 "part_of: LT procedures": 1.0
             },
-            "Clinical outcomes": {
-                "is_a: InformationEntity": 1.0
-            },
             "pre-transplant HLA testing": {
                 "is_a: Process": 1.0
             },
@@ -3770,7 +3705,7 @@
             "skin biopsy": {
                 "is_a: Process": 1.0
             },
-            "diagnosis": {
+            "Diagnosis Information Entity": {
                 "is_a: InformationEntity": 1.0
             },
             "acute GVHD": {
@@ -4032,7 +3967,7 @@
             "venous leg ulcers": {
                 "is_a: MaterialEntity": 1.0
             },
-            "treatments": {
+            "Treatments Process": {
                 "is_a: Process": 1.0
             },
             "ceramic dressings": {
@@ -4107,7 +4042,7 @@
             "microbial identification": {
                 "is_a: Process": 1.0
             },
-            "diagnosis": {
+            "Diagnosis Process": {
                 "is_a: Process": 1.0
             }
         },
@@ -4328,7 +4263,7 @@
             "complete wound healing": {
                 "is_a: Process": 1.0
             },
-            "amputation-free survival": {
+            "Amputation-Free Survival Process": {
                 "is_a: Process": 1.0
             },
             "AFS": {
@@ -4782,9 +4717,6 @@
             "biologics": {
                 "is_a: MaterialEntity": 1.0
             },
-            "animal model selection": {
-                "is_a: Process": 1.0
-            },
             "WRAHPS criteria": {
                 "is_a: InformationEntity": 1.0
             },
@@ -4940,7 +4872,7 @@
             "Wound healing": {
                 "is_a: Process": 1.0
             },
-            "infection": {
+            "Infection Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "acute compartment syndrome": {
@@ -4949,13 +4881,13 @@
             "clinical reassessment": {
                 "is_a: Process": 1.0
             },
-            "diagnosis": {
+            "Diagnosis Process": {
                 "is_a: Process": 1.0
             },
             "complete fasciotomy": {
                 "is_a: Process": 1.0
             },
-            "complications": {
+            "Complications Material Entity": {
                 "is_a: MaterialEntity": 1.0
             }
         },
@@ -5250,9 +5182,6 @@
             "diabetic foot ulcers": {
                 "is_a: MaterialEntity": 1.0
             },
-            "outcomes": {
-                "is_a: Occurrent": 1.0
-            },
             "DFUs treatment": {
                 "is_a: Process": 1.0
             },
@@ -5389,9 +5318,6 @@
             "management strategies": {
                 "is_a: InformationEntity": 1.0
             },
-            "outcomes": {
-                "is_a: Quality": 1.0
-            },
             "patients": {
                 "is_a: MaterialEntity": 1.0
             },
@@ -5428,7 +5354,7 @@
             "red-flag features": {
                 "is_a: InformationEntity": 1.0
             },
-            "necrosis": {
+            "Necrosis Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "atypical appearance": {
@@ -5704,12 +5630,6 @@
             "hospitalisations": {
                 "is_a: Process": 1.0
             },
-            "technique": {
-                "is_a: Process": 1.0
-            },
-            "outcomes": {
-                "is_a: ProcessBoundary": 1.0
-            },
             "compromised vascularisation": {
                 "is_a: Quality": 1.0
             }
@@ -5802,7 +5722,7 @@
             "surgical wound debridement": {
                 "is_a: Process": 1.0
             },
-            "infection": {
+            "Infection Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "implant removal": {
@@ -5951,9 +5871,6 @@
             },
             "safe and clinically viable approach": {
                 "is_a: Quality": 1.0
-            },
-            "prospective comparative investigations": {
-                "is_a: Process": 1.0
             }
         },
         "meta_stamp": "llm_extract_2_20260825_1920"
@@ -6141,7 +6058,7 @@
             "TMA": {
                 "is_a: ProcessBoundary": 1.0
             },
-            "infection": {
+            "Infection Disposition": {
                 "is_a: Disposition": 1.0
             },
             "staged wound care approach": {
@@ -6225,7 +6142,7 @@
             "patients": {
                 "is_a: MaterialEntity": 1.0
             },
-            "diagnosis": {
+            "Diagnosis Information Entity": {
                 "is_a: InformationEntity": 1.0
             },
             "CEAP stage 6 venous insufficiency": {
@@ -6240,7 +6157,7 @@
             "subsidized": {
                 "is_a: Role": 1.0
             },
-            "treatments": {
+            "Treatments Process": {
                 "is_a: Process": 1.0
             },
             "descriptive": {
@@ -6360,7 +6277,7 @@
             "left heel": {
                 "is_a: MaterialEntity": 1.0
             },
-            "complications": {
+            "Complications Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "biopsied": {
@@ -6598,7 +6515,7 @@
             "blistering": {
                 "is_a: Process": 1.0
             },
-            "necrosis": {
+            "Necrosis Process": {
                 "is_a: Process": 1.0
             },
             "delayed wound repair": {
@@ -6998,11 +6915,8 @@
             "hard-to-heal wounds": {
                 "is_a: MaterialEntity": 1.0
             },
-            "diagnosis": {
+            "Diagnosis Process Boundary": {
                 "is_a: ProcessBoundary": 1.0
-            },
-            "multicentre, retrospective study": {
-                "is_a: Process": 1.0
             },
             "clinical and histological data": {
                 "is_a: InformationEntity": 1.0
@@ -7103,16 +7017,13 @@
             },
             "clinical and histological characteristics": {
                 "is_a: InformationEntity": 1.0
-            },
-            "prospective, multicentre study": {
-                "is_a: Process": 1.0
             }
         },
         "meta_stamp": "llm_extract_2_20260825_1920"
     },
     "42430362": {
         "entities": {
-            "infection": {
+            "Infection Process": {
                 "is_a: Process": 1.0
             },
             "Severe Acute Respiratory Syndrome Coronavirus 2": {
@@ -7173,7 +7084,7 @@
             "oblique strain": {
                 "is_a: Disposition": 1.0
             },
-            "injury": {
+            "Injury Disposition": {
                 "is_a: Disposition": 1.0
             },
             "performance outcomes": {
@@ -7269,7 +7180,7 @@
             "necrotic tissue": {
                 "is_a: MaterialEntity": 1.0
             },
-            "granulation": {
+            "Granulation Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "wound secretion": {
@@ -7319,7 +7230,7 @@
                 "is_a: MaterialEntity": 1.0,
                 "has_quality: abundances": 1.0
             },
-            "infection": {
+            "Infection Process": {
                 "is_a: Process": 1.0
             },
             "wound healing": {
@@ -7896,7 +7807,7 @@
             "Pressure ulcers": {
                 "is_a: MaterialEntity": 1.0
             },
-            "ischemia": {
+            "Ischemia Process": {
                 "is_a: Process": 1.0
             },
             "extracellular matrix disruption": {
@@ -8045,7 +7956,7 @@
             "periprosthetic joint infection": {
                 "is_a: Disposition": 1.0
             },
-            "complications": {
+            "Complications Disposition": {
                 "is_a: Disposition": 1.0
             },
             "total hip and knee arthroplasty": {
@@ -8082,7 +7993,7 @@
             "neuroendocrine stress responses": {
                 "is_a: Process": 1.0
             },
-            "oxygenation": {
+            "Oxygenation Process": {
                 "is_a: Process": 1.0
             },
             "postoperative analgesic requirements": {
@@ -8177,9 +8088,6 @@
             },
             "anesthetic decision-making": {
                 "is_a: Process": 1.0
-            },
-            "surgical, nursing, and infection-control measures": {
-                "is_a: Process": 1.0
             }
         },
         "meta_stamp": "llm_extract_2_20260825_1920",
@@ -8221,9 +8129,6 @@
             },
             "reconstructive challenge": {
                 "is_a: Role": 1.0
-            },
-            "sequencing of reconstruction": {
-                "is_a: Process": 1.0
             },
             "multifocal defects": {
                 "is_a: MaterialEntity": 1.0
@@ -8817,18 +8722,11 @@
             "PCT-ALLY": {
                 "is_a: InformationEntity": 1.0
             },
-            "mortality prediction": {
-                "is_a: Process": 1.0
-            },
             "patients": {
-                "is_a: MaterialEntity": 1.0
-            },
-            "retrospective cohort": {
                 "is_a: MaterialEntity": 1.0
             },
             "surgically treated patients": {
                 "is_a: MaterialEntity": 1.0,
-                "part_of: retrospective cohort": 1.0,
                 "part_of: patients": 1.0
             },
             "Preoperative laboratory data": {
@@ -8872,17 +8770,11 @@
                 "is_a: Process": 1.0,
                 "part_of: Discrimination": 1.0
             },
-            "Mortality": {
-                "is_a: Process": 1.0
-            },
             "independent predictors": {
                 "is_a: InformationEntity": 1.0
             },
             "Immuno-nutritional indices": {
                 "is_a: InformationEntity": 1.0
-            },
-            "Prospective multicenter validation": {
-                "is_a: Process": 1.0
             }
         },
         "meta_stamp": "llm_extract_2_20260825_1920"
@@ -8946,13 +8838,7 @@
             "comparable percentage of deep burns": {
                 "is_a: InformationEntity": 1.0
             },
-            "outcomes": {
-                "is_a: InformationEntity": 1.0
-            },
             "data analysis": {
-                "is_a: Process": 1.0
-            },
-            "effective pain control": {
                 "is_a: Process": 1.0
             },
             "AgF dressing": {
@@ -9376,9 +9262,6 @@
             "Univariable analysis": {
                 "is_a: Process": 1.0
             },
-            "combined predictive performance": {
-                "is_a: Disposition": 1.0
-            },
             "intervention analysis": {
                 "is_a: Process": 1.0
             },
@@ -9402,9 +9285,6 @@
             },
             "extended operative time": {
                 "is_a: Quality": 1.0
-            },
-            "combined predictive model": {
-                "is_a: InformationEntity": 1.0
             },
             "low-": {
                 "is_a: InformationEntity": 1.0
@@ -9595,10 +9475,6 @@
             "Nurses' knowledge levels": {
                 "is_a: Quality": 1.0
             },
-            "practices": {
-                "is_a: Process": 1.0,
-                "part_of: evidence-based practices": 1.0
-            },
             "pressure ulcers": {
                 "is_a: MaterialEntity": 1.0
             },
@@ -9607,9 +9483,6 @@
             },
             "university hospital": {
                 "is_a: MaterialEntity": 1.0
-            },
-            "evidence-based practices": {
-                "is_a: Process": 1.0
             },
             "self-efficacy levels": {
                 "is_a: Quality": 1.0
@@ -9630,9 +9503,6 @@
                 "is_a: ImmaterialEntity": 1.0
             },
             "Pressure Ulcer Management Self-Efficacy Scale": {
-                "is_a: InformationEntity": 1.0
-            },
-            "Evidence-Based Clinical Practice Assessment Form": {
                 "is_a: InformationEntity": 1.0
             },
             "mean pressure ulcer self-efficacy score": {
@@ -9790,7 +9660,7 @@
             "shear stress": {
                 "is_a: Quality": 1.0
             },
-            "ischemia": {
+            "Ischemia Material Entity": {
                 "is_a: MaterialEntity": 1.0
             }
         },
@@ -9851,7 +9721,7 @@
             "flap size": {
                 "is_a: Quality": 1.0
             },
-            "complications": {
+            "Complications Disposition": {
                 "is_a: Disposition": 1.0
             },
             "wound healing": {
@@ -10131,7 +10001,7 @@
             "neointimal hyperplasia": {
                 "is_a: MaterialEntity": 1.0
             },
-            "complications": {
+            "Complications Process": {
                 "is_a: Process": 1.0
             },
             "economic analyses": {
@@ -10171,7 +10041,7 @@
             "amputation": {
                 "is_a: Process": 1.0
             },
-            "amputation-free survival": {
+            "Amputation-Free Survival Quality": {
                 "is_a: Quality": 1.0
             },
             "secondary vessel patency": {
@@ -10211,9 +10081,6 @@
                 "is_a: Process": 1.0
             },
             "antiplatelet regimens": {
-                "is_a: Process": 1.0
-            },
-            "late lumen loss": {
                 "is_a: Process": 1.0
             },
             "anatomic endpoints": {
@@ -10317,7 +10184,7 @@
                 "has_quality: wound-specific design": 1.0,
                 "has_quality: compatibility": 1.0
             },
-            "complications": {
+            "Complications Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "wound management": {
@@ -10370,9 +10237,6 @@
             },
             "biochemical wound parameters": {
                 "is_a: Quality": 1.0
-            },
-            "outcomes": {
-                "is_a: InformationEntity": 1.0
             },
             "implementation processes": {
                 "is_a: Process": 1.0
@@ -10730,7 +10594,7 @@
     },
     "42499040": {
         "entities": {
-            "injuries": {
+            "Injuries Process": {
                 "is_a: Process": 1.0
             },
             "global health burden": {
@@ -10762,9 +10626,6 @@
             },
             "Global Burden of Disease 2021 data": {
                 "is_a: InformationEntity": 1.0
-            },
-            "mortality": {
-                "is_a: Process": 1.0
             },
             "fire, heat, and hot substances": {
                 "is_a: MaterialEntity": 1.0
@@ -10915,9 +10776,6 @@
             "databases": {
                 "is_a: MaterialEntity": 1.0
             },
-            "studies": {
-                "is_a: InformationEntity": 1.0
-            },
             "general symptoms": {
                 "is_a: Quality": 1.0
             },
@@ -10940,9 +10798,6 @@
                 "is_a: InformationEntity": 1.0
             },
             "Clinical": {
-                "is_a: InformationEntity": 1.0
-            },
-            "Research": {
                 "is_a: InformationEntity": 1.0
             },
             "psychometric validation": {
@@ -10972,12 +10827,8 @@
             "measures": {
                 "is_a: InformationEntity": 1.0
             },
-            "outcomes": {
-                "is_a: Quality": 1.0
-            },
             "patients": {
-                "is_a: MaterialEntity": 1.0,
-                "has_quality: outcomes": 1.0
+                "is_a: MaterialEntity": 1.0
             }
         },
         "meta_stamp": "llm_extract_2_20260825_1920",
@@ -11078,9 +10929,6 @@
             },
             "second-degree burns": {
                 "is_a: Disposition": 1.0
-            },
-            "single-centre retrospective cohort study": {
-                "is_a: Process": 1.0
             },
             "isolated single-region subgroup": {
                 "is_a: MaterialEntity": 1.0,
@@ -11310,9 +11158,6 @@
                 "is_a: MaterialEntity": 1.0,
                 "has_quality: radiological extent grade": 1.0
             },
-            "mortality": {
-                "is_a: ProcessBoundary": 1.0
-            },
             "critical care": {
                 "is_a: Process": 1.0
             },
@@ -11320,9 +11165,6 @@
                 "is_a: Role": 1.0
             },
             "prognostic indices": {
-                "is_a: InformationEntity": 1.0
-            },
-            "mortality prediction": {
                 "is_a: InformationEntity": 1.0
             },
             "medical records": {
@@ -11471,9 +11313,6 @@
             "triage": {
                 "is_a: Process": 1.0
             },
-            "Prospective multicenter studies": {
-                "is_a: Process": 1.0
-            },
             "clinical utility": {
                 "is_a: Quality": 1.0
             }
@@ -11504,13 +11343,13 @@
             "reconstructive strategy": {
                 "is_a: InformationEntity": 1.0
             },
-            "Impaired healing": {
+            "Impaired Healing Process": {
                 "is_a: Process": 1.0
             },
-            "infection": {
+            "Infection Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
-            "ischemia": {
+            "Ischemia Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "systemic factors": {
@@ -11520,8 +11359,7 @@
                 "is_a: Tendency": 1.0
             },
             "chronic wounds": {
-                "is_a: MaterialEntity": 1.0,
-                "has_quality: outcomes": 1.0
+                "is_a: MaterialEntity": 1.0
             },
             "adverse scarring": {
                 "is_a: MaterialEntity": 1.0
@@ -11559,16 +11397,13 @@
             "closure": {
                 "is_a: ProcessBoundary": 1.0
             },
-            "outcomes": {
-                "is_a: Quality": 1.0
-            },
             "algorithmic approach": {
                 "is_a: InformationEntity": 1.0
             },
             "wound management": {
                 "is_a: Process": 1.0
             },
-            "complications": {
+            "Complications Material Entity": {
                 "is_a: MaterialEntity": 1.0
             }
         },
@@ -11971,9 +11806,6 @@
             "fracture risk prediction": {
                 "is_a: Process": 1.0
             },
-            "prediction-oriented modeling": {
-                "is_a: Process": 1.0
-            },
             "endocrine bone health management": {
                 "is_a: Process": 1.0
             },
@@ -12221,9 +12053,6 @@
             "quality of recovery": {
                 "is_a: Quality": 1.0
             },
-            "adverse events": {
-                "is_a: Process": 1.0
-            },
             "dexmedetomidine group": {
                 "is_a: MaterialEntity": 1.0
             },
@@ -12373,7 +12202,7 @@
             "white blood cell": {
                 "is_a: MaterialEntity": 1.0
             },
-            "oxygenation": {
+            "Oxygenation Quality": {
                 "is_a: Quality": 1.0
             },
             "PaO/FiO ratio": {
@@ -12437,12 +12266,6 @@
             "causality": {
                 "is_a: Tendency": 1.0
             },
-            "retrospective design": {
-                "is_a: Quality": 1.0
-            },
-            "prospective multicenter studies": {
-                "is_a: Process": 1.0
-            },
             "results": {
                 "is_a: InformationEntity": 1.0
             }
@@ -12458,9 +12281,6 @@
                 "is_a: MaterialEntity": 1.0
             },
             "amputation": {
-                "is_a: Process": 1.0
-            },
-            "mortality": {
                 "is_a: Process": 1.0
             },
             "endovascular devices": {
@@ -12480,7 +12300,6 @@
             },
             "drug-coated balloons": {
                 "is_a: MaterialEntity": 1.0,
-                "has_quality: late lumen loss": 1.0,
                 "has_quality: in-lesion diameter stenosis": 1.0
             },
             "DCBs": {
@@ -12512,9 +12331,6 @@
             },
             "target lesion binary restenosis": {
                 "is_a: MaterialEntity": 1.0
-            },
-            "late lumen loss": {
-                "is_a: Quality": 1.0
             },
             "in-lesion diameter stenosis": {
                 "is_a: Quality": 1.0
@@ -12681,9 +12497,6 @@
             },
             "bioactive growth factors": {
                 "is_a: MaterialEntity": 1.0
-            },
-            "clinical outcomes": {
-                "is_a: InformationEntity": 1.0
             },
             "timing": {
                 "is_a: InformationEntity": 1.0
@@ -13071,9 +12884,6 @@
             "PCMP": {
                 "is_a: MaterialEntity": 1.0
             },
-            "retrospective matched cohort study": {
-                "is_a: Process": 1.0
-            },
             "Medicare Fee-for-Service Standard Analytic Files": {
                 "is_a: InformationEntity": 1.0
             },
@@ -13087,8 +12897,7 @@
                 "is_a: ProcessBoundary": 1.0
             },
             "Wilcoxon signed-rank tests": {
-                "is_a: Process": 1.0,
-                "part_of: retrospective matched cohort study": 1.0
+                "is_a: Process": 1.0
             },
             "six-month post-index amputation rates": {
                 "is_a: InformationEntity": 1.0
@@ -13097,8 +12906,7 @@
                 "is_a: InformationEntity": 1.0
             },
             "Stratified analysis": {
-                "is_a: Process": 1.0,
-                "part_of: retrospective matched cohort study": 1.0
+                "is_a: Process": 1.0
             },
             "follow-up applications": {
                 "is_a: Process": 1.0
@@ -13177,9 +12985,6 @@
             },
             "treatment duration": {
                 "is_a: Quality": 1.0
-            },
-            "prospective, single-arm cohort": {
-                "is_a: MaterialEntity": 1.0
             },
             "females": {
                 "is_a: MaterialEntity": 1.0,
@@ -13460,9 +13265,6 @@
             "harmonised guidelines": {
                 "is_a: InformationEntity": 1.0
             },
-            "Good Manufacturing Practices": {
-                "is_a: InformationEntity": 1.0
-            },
             "Good Agricultural and Collection Practices": {
                 "is_a: InformationEntity": 1.0
             },
@@ -13536,16 +13338,12 @@
             },
             "necrotising fasciitis": {
                 "is_a: MaterialEntity": 1.0,
-                "has_quality: morbidity": 1.0,
-                "has_quality: mortality": 1.0
+                "has_quality: morbidity": 1.0
             },
             "NF": {
                 "is_a: MaterialEntity": 1.0
             },
             "morbidity": {
-                "is_a: Quality": 1.0
-            },
-            "mortality": {
                 "is_a: Quality": 1.0
             },
             "heavy smoker": {
@@ -13596,7 +13394,7 @@
             "Streptococcus anginosus": {
                 "is_a: MaterialEntity": 1.0
             },
-            "complications": {
+            "Complications Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "early recognition": {
@@ -13665,9 +13463,6 @@
             "orthosis types": {
                 "is_a: MaterialEntity": 1.0
             },
-            "follow-up periods": {
-                "is_a: Quality": 1.0
-            },
             "clinical application": {
                 "is_a: Process": 1.0
             }
@@ -13697,9 +13492,6 @@
             "amputation rates": {
                 "is_a: InformationEntity": 1.0
             },
-            "mortality": {
-                "is_a: ProcessBoundary": 1.0
-            },
             "anatomical": {
                 "is_a: Quality": 1.0
             },
@@ -13726,9 +13518,6 @@
             },
             "diabetic foot": {
                 "is_a: MaterialEntity": 1.0
-            },
-            "narrative review": {
-                "is_a: Process": 1.0
             },
             "consensus statements": {
                 "is_a: InformationEntity": 1.0
@@ -13995,9 +13784,6 @@
             },
             "FDI-specific ulnar fibers": {
                 "is_a: MaterialEntity": 1.0
-            },
-            "prospective studies": {
-                "is_a: Process": 1.0
             }
         },
         "meta_stamp": "llm_extract_2_20260825_1920",
@@ -14142,9 +13928,6 @@
             },
             "grafts": {
                 "is_a: MaterialEntity": 1.0
-            },
-            "adverse events": {
-                "is_a: Occurrent": 1.0
             },
             "granulation tissue coverage": {
                 "is_a: MaterialEntity": 1.0
@@ -14376,7 +14159,7 @@
             "cultures": {
                 "is_a: Process": 1.0
             },
-            "diagnosis": {
+            "Diagnosis Process": {
                 "is_a: Process": 1.0
             },
             "elective surgery": {
@@ -14487,9 +14270,6 @@
             "trauma care delivery": {
                 "is_a: Process": 1.0
             },
-            "prospective, observational study": {
-                "is_a: Process": 1.0
-            },
             "adult patients": {
                 "is_a: MaterialEntity": 1.0
             },
@@ -14544,7 +14324,7 @@
             "LOHS": {
                 "is_a: Quality": 1.0
             },
-            "infection": {
+            "Infection Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "severe injury": {
@@ -14602,7 +14382,7 @@
             "systemic diseases": {
                 "is_a: MaterialEntity": 1.0
             },
-            "diagnosis": {
+            "Diagnosis Information Entity": {
                 "is_a: InformationEntity": 1.0
             },
             "pediatric population": {
@@ -14621,7 +14401,7 @@
             "minor trauma": {
                 "is_a: Process": 1.0
             },
-            "infection": {
+            "Infection Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "surgical debridement": {
@@ -14738,9 +14518,6 @@
             "immunocompromised states": {
                 "is_a: MaterialEntity": 1.0
             },
-            "Mortality": {
-                "is_a: Tendency": 1.0
-            },
             "surgical debridement": {
                 "is_a: Process": 1.0
             },
@@ -14778,7 +14555,7 @@
             "postoperative management": {
                 "is_a: Process": 1.0
             },
-            "necrosis": {
+            "Necrosis Process": {
                 "is_a: Process": 1.0
             },
             "perforation": {
@@ -14799,7 +14576,7 @@
             "staged repairs": {
                 "is_a: Process": 1.0
             },
-            "Granulation": {
+            "Granulation Process": {
                 "is_a: Process": 1.0
             },
             "pelvic wound": {
@@ -14828,7 +14605,7 @@
             "Diabetic foot ulcers": {
                 "is_a: MaterialEntity": 1.0
             },
-            "complications": {
+            "Complications Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "diabetes": {
@@ -15017,7 +14794,7 @@
             "Pressure injuries": {
                 "is_a: MaterialEntity": 1.0
             },
-            "complications": {
+            "Complications Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "morbidity": {
@@ -15055,9 +14832,6 @@
             },
             "presence": {
                 "is_a: Quality": 1.0
-            },
-            "multicenter cross-sectional study": {
-                "is_a: Process": 1.0
             },
             "patients": {
                 "is_a: MaterialEntity": 1.0
@@ -15426,15 +15200,11 @@
             "challenging and complex VLUs": {
                 "is_a: MaterialEntity": 1.0
             },
-            "prospective, multicentre, randomised controlled trial": {
-                "is_a: Process": 1.0
-            },
             "patients": {
                 "is_a: MaterialEntity": 1.0
             },
             "four-week run-in period": {
-                "is_a: Process": 1.0,
-                "part_of: prospective, multicentre, randomised controlled trial": 1.0
+                "is_a: Process": 1.0
             },
             "wound closure": {
                 "is_a: ProcessBoundary": 1.0
@@ -15535,10 +15305,10 @@
             "interleukin 6": {
                 "is_a: MaterialEntity": 1.0
             },
-            "complications": {
+            "Complications Process": {
                 "is_a: Process": 1.0
             },
-            "postoperative complications": {
+            "Postoperative Complications Process": {
                 "is_a: Process": 1.0
             }
         },
@@ -15555,7 +15325,7 @@
             "chronic wounds": {
                 "is_a: MaterialEntity": 1.0
             },
-            "infection": {
+            "Infection Material Entity": {
                 "is_a: MaterialEntity": 1.0
             },
             "bacterial loads": {
@@ -15587,7 +15357,7 @@
             "positive fluorescence": {
                 "is_a: Quality": 1.0
             },
-            "wound area reduction": {
+            "Wound Area Reduction Process": {
                 "is_a: Process": 1.0
             },
             "patients": {
@@ -15718,7 +15488,7 @@
             "DFUs": {
                 "is_a: MaterialEntity": 1.0
             },
-            "impaired healing": {
+            "Impaired Healing Disposition": {
                 "is_a: Disposition": 1.0
             },
             "Macrophage imbalance": {
@@ -16008,8 +15778,7 @@
                 "is_a: Disposition": 1.0
             },
             "direct revascularization": {
-                "is_a: Process": 1.0,
-                "part_of: Revascularization": 1.0
+                "is_a: Process": 1.0
             },
             "healing": {
                 "is_a: Process": 1.0
@@ -16018,14 +15787,10 @@
                 "is_a: MaterialEntity": 1.0
             },
             "patient mortality": {
-                "is_a: Process": 1.0,
-                "part_of: mortality": 1.0
+                "is_a: Process": 1.0
             },
             "femoropopliteal bypass": {
                 "is_a: MaterialEntity": 1.0
-            },
-            "prospective clinical cohort study": {
-                "is_a: Process": 1.0
             },
             "patients": {
                 "is_a: MaterialEntity": 1.0
@@ -16040,8 +15805,7 @@
                 "is_a: InformationEntity": 1.0
             },
             "indirect revascularization": {
-                "is_a: Process": 1.0,
-                "part_of: Revascularization": 1.0
+                "is_a: Process": 1.0
             },
             "defect healing": {
                 "is_a: Process": 1.0,
@@ -16052,12 +15816,6 @@
             },
             "femoropopliteal bypasses": {
                 "is_a: MaterialEntity": 1.0
-            },
-            "mortality": {
-                "is_a: Process": 1.0
-            },
-            "predictive power": {
-                "is_a: Disposition": 1.0
             },
             "femoropopliteal bypass targets": {
                 "is_a: MaterialEntity": 1.0
@@ -16253,11 +16011,9 @@
         "entities": {
             "Negative Pressure Wound Therapy with Instillation": {
                 "is_a: Process": 1.0,
-                "has_input: polyhexanide 0.2% solution": 1.0,
                 "has_participant: infected chronic trauma-related wounds": 1.0,
                 "has_participant: open fractures": 1.0,
                 "has_participant: posttraumatic osteomyelitis": 1.0,
-                "has_participant: osteomyelitis": 1.0,
                 "has_participant: orthopaedic implant infections": 1.0,
                 "has_participant: vacuum-assisted dressing": 1.0,
                 "has_participant: soft tissue infections": 1.0,
@@ -16294,7 +16050,6 @@
             },
             "reinfection": {
                 "is_a: Process": 1.0,
-                "has_participant: osteomyelitis": 1.0,
                 "has_participant: open fracture": 1.0
             },
             "open fracture": {
@@ -16332,9 +16087,6 @@
             },
             "cardiovascular conditions": {
                 "is_a: MaterialEntity": 1.0
-            },
-            "retrospective design": {
-                "is_a: Quality": 1.0
             },
             "small sample size": {
                 "is_a: Quality": 1.0
@@ -16379,7 +16131,7 @@
             "platelet activation": {
                 "is_a: Process": 1.0
             },
-            "injury": {
+            "Injury Process Boundary": {
                 "is_a: ProcessBoundary": 1.0
             },
             "NOX enzymes": {
@@ -16393,7 +16145,6 @@
             },
             "differentiation": {
                 "is_a: Process": 1.0,
-                "has_input: monocytes": 1.0,
                 "has_output: macrophages": 1.0
             },
             "macrophages": {
@@ -16409,8 +16160,7 @@
                 "is_a: MaterialEntity": 1.0
             },
             "collagen balance": {
-                "is_a: Quality": 1.0,
-                "causally_influenced_by: Reactive oxygen species": 1.0
+                "is_a: Quality": 1.0
             },
             "disorders": {
                 "is_a: MaterialEntity": 1.0
@@ -16460,7 +16210,7 @@
             "clinical effects": {
                 "is_a: Quality": 1.0
             },
-            "treatments": {
+            "Treatments Material Entity": {
                 "is_a: MaterialEntity": 1.0,
                 "has_part: H2O2": 1.0,
                 "has_part: povidone-iodine": 1.0,
@@ -16468,9 +16218,7 @@
                 "has_part: alkaloids": 1.0,
                 "has_part: polyphenols": 1.0,
                 "has_part: phytomodulators": 1.0,
-                "has_part: N-acetylcysteine": 1.0,
-                "has_part: honey": 1.0,
-                "has_part: silver": 1.0
+                "has_part: N-acetylcysteine": 1.0
             },
             "active ingredients": {
                 "is_a: MaterialEntity": 1.0,
@@ -16480,9 +16228,7 @@
                 "has_part: alkaloids": 1.0,
                 "has_part: polyphenols": 1.0,
                 "has_part: phytomodulators": 1.0,
-                "has_part: N-acetylcysteine": 1.0,
-                "has_part: honey": 1.0,
-                "has_part: silver": 1.0
+                "has_part: N-acetylcysteine": 1.0
             },
             "H2O2": {
                 "is_a: MaterialEntity": 1.0
@@ -16547,10 +16293,6 @@
             },
             "reducing scarring": {
                 "is_a: Process": 1.0
-            },
-            "personalized use": {
-                "is_a: Process": 1.0,
-                "has_input: antioxidant and anti-inflammatory topical active ingredient therapies": 1.0
             },
             "antioxidant and anti-inflammatory topical active ingredient therapies": {
                 "is_a: MaterialEntity": 1.0
@@ -16633,12 +16375,6 @@
             },
             "scar tissue formation": {
                 "is_a: Process": 1.0
-            },
-            "single-cell RNA sequencing": {
-                "is_a: Process": 1.0
-            },
-            "technique": {
-                "is_a: InformationEntity": 1.0
             },
             "subpopulations of fibroblasts": {
                 "is_a: MaterialEntity": 1.0
@@ -16820,8 +16556,7 @@
             },
             "patients": {
                 "is_a: MaterialEntity": 1.0,
-                "has_disposition: clinical and biological responsiveness": 1.0,
-                "has_quality: age": 1.0
+                "has_disposition: clinical and biological responsiveness": 1.0
             },
             "2'-FL": {
                 "is_a: MaterialEntity": 1.0
@@ -16855,9 +16590,6 @@
             "treatment effect": {
                 "is_a: Disposition": 1.0
             },
-            "conventional clinical indices": {
-                "is_a: InformationEntity": 1.0
-            },
             "2'-FL exposure": {
                 "is_a: Process": 1.0,
                 "has_input: 2'-FL": 1.0,
@@ -16870,8 +16602,7 @@
                 "is_a: Quality": 1.0
             },
             "effect size": {
-                "is_a: InformationEntity": 1.0,
-                "has_part: 95% CI": 1.0
+                "is_a: InformationEntity": 1.0
             },
             "Fecal metabolite profiles": {
                 "is_a: InformationEntity": 1.0
@@ -16901,10 +16632,6 @@
             "cross-compartmental host-microbial metabolic profile modifications": {
                 "is_a: Process": 1.0,
                 "immediately_causally_downstream_of: 2'-FL exposure": 1.0
-            },
-            "Clinicaltrials.gov number": {
-                "is_a: InformationEntity": 1.0,
-                "has_part: NCT06050811": 1.0
             },
             "NCT06050811": {
                 "is_a: InformationEntity": 1.0
@@ -17127,21 +16854,17 @@
         "entities": {
             "Malignant Fungating Wound": {
                 "is_a: MaterialEntity": 1.0,
-                "has_quality: Pain": 1.0,
-                "has_quality: Odor": 1.0,
                 "part_of: locally advanced breast cancer": 1.0,
                 "has_disposition: reduced activity": 1.0
             },
-            "secondary infection": {
+            "Secondary Infection Process": {
                 "is_a: Process": 1.0
             },
             "Hemorrhage": {
                 "is_a: Process": 1.0
             },
             "Exudate": {
-                "is_a: MaterialEntity": 1.0,
-                "has_quality: Odor": 1.0,
-                "has_quality: Pain": 1.0
+                "is_a: MaterialEntity": 1.0
             },
             "Superficial infections": {
                 "is_a: MaterialEntity": 1.0
@@ -17160,9 +16883,6 @@
                 "participates_in: wound repairment": 1.0
             },
             "wound repairment": {
-                "is_a: Process": 1.0
-            },
-            "pre and post-test randomized controlled trial": {
                 "is_a: Process": 1.0
             },
             "locally advanced breast cancer": {
@@ -17331,13 +17051,10 @@
             "CD-TLR": {
                 "is_a: Process": 1.0
             },
-            "Kaplan-Meier methods": {
-                "is_a: InformationEntity": 1.0
-            },
             "Log rank test": {
                 "is_a: InformationEntity": 1.0
             },
-            "amputation-free survival": {
+            "Amputation-Free Survival Disposition": {
                 "is_a: Disposition": 1.0
             },
             "reintervention": {
@@ -17345,9 +17062,6 @@
             },
             "limb outcomes": {
                 "is_a: Occurrent": 1.0
-            },
-            "ClinicalTrials.gov number": {
-                "is_a: InformationEntity": 1.0
             },
             "NCT02276313": {
                 "is_a: InformationEntity": 1.0
@@ -17386,12 +17100,10 @@
                 "is_a: MaterialEntity": 1.0
             },
             "preventive dressings": {
-                "is_a: MaterialEntity": 1.0,
-                "participates_in: surgery": 1.0
+                "is_a: MaterialEntity": 1.0
             },
             "intraoperative acquired pressure injuries": {
-                "is_a: MaterialEntity": 1.0,
-                "has_quality: pain": 1.0
+                "is_a: MaterialEntity": 1.0
             },
             "IAPIs": {
                 "is_a: MaterialEntity": 1.0
@@ -17421,10 +17133,6 @@
             },
             "post-operative skin": {
                 "is_a: MaterialEntity": 1.0
-            },
-            "post-operative pain incidence": {
-                "is_a: InformationEntity": 1.0,
-                "is_about: pain": 1.0
             },
             "risk": {
                 "is_a: Tendency": 1.0,
@@ -17480,17 +17188,13 @@
             "Diabetic foot ulcers": {
                 "is_a: MaterialEntity": 1.0,
                 "has_quality: depth": 1.0,
-                "has_quality: infection status": 1.0,
                 "has_quality: exudate level": 1.0,
-                "has_quality: perfusion": 1.0,
                 "has_quality: wound characteristics": 1.0
             },
             "DFUs": {
                 "is_a: MaterialEntity": 1.0,
                 "has_quality: depth": 1.0,
-                "has_quality: infection status": 1.0,
                 "has_quality: exudate level": 1.0,
-                "has_quality: perfusion": 1.0,
                 "has_quality: wound characteristics": 1.0
             },
             "diabetic patients": {
@@ -17503,11 +17207,8 @@
                 "is_a: Tendency": 1.0,
                 "inheres_in: Diabetic foot ulcers": 1.0,
                 "inheres_in: DFUs": 1.0,
-                "has_realization: chronic inflammation": 1.0,
-                "has_realization: oxidative stress": 1.0,
                 "has_realization: poor angiogenesis": 1.0,
                 "has_a_material_basis: Bioactive compounds": 1.0,
-                "has_a_material_basis: Conventional drugs": 1.0,
                 "has_a_material_basis: natural product extracts": 1.0,
                 "has_a_material_basis: curcumin": 1.0,
                 "has_a_material_basis: flavonoids": 1.0,
@@ -17538,64 +17239,53 @@
             "Bioactive compounds": {
                 "is_a: MaterialEntity": 1.0,
                 "has_disposition: antibacterial": 1.0,
-                "has_disposition: anti-inflammatory": 1.0,
                 "has_disposition: antioxidant": 1.0,
                 "has_disposition: regenerative properties": 1.0,
-                "has_quality: variability": 1.0,
-                "has_quality: instability": 1.0
+                "has_quality: variability": 1.0
             },
             "curcumin": {
                 "is_a: MaterialEntity": 1.0,
                 "has_disposition: antibacterial": 1.0,
-                "has_disposition: anti-inflammatory": 1.0,
                 "has_disposition: antioxidant": 1.0,
                 "has_disposition: regenerative properties": 1.0
             },
             "flavonoids": {
                 "is_a: MaterialEntity": 1.0,
                 "has_disposition: antibacterial": 1.0,
-                "has_disposition: anti-inflammatory": 1.0,
                 "has_disposition: antioxidant": 1.0,
                 "has_disposition: regenerative properties": 1.0
             },
             "tannins": {
                 "is_a: MaterialEntity": 1.0,
                 "has_disposition: antibacterial": 1.0,
-                "has_disposition: anti-inflammatory": 1.0,
                 "has_disposition: antioxidant": 1.0,
                 "has_disposition: regenerative properties": 1.0
             },
             "polyphenols": {
                 "is_a: MaterialEntity": 1.0,
                 "has_disposition: antibacterial": 1.0,
-                "has_disposition: anti-inflammatory": 1.0,
                 "has_disposition: antioxidant": 1.0,
                 "has_disposition: regenerative properties": 1.0
             },
             "proteins": {
                 "is_a: MaterialEntity": 1.0,
                 "has_disposition: antibacterial": 1.0,
-                "has_disposition: anti-inflammatory": 1.0,
                 "has_disposition: antioxidant": 1.0,
                 "has_disposition: regenerative properties": 1.0
             },
             "natural product extracts": {
                 "is_a: MaterialEntity": 1.0,
                 "has_disposition: antibacterial": 1.0,
-                "has_disposition: anti-inflammatory": 1.0,
                 "has_disposition: antioxidant": 1.0,
                 "has_disposition: regenerative properties": 1.0,
-                "has_quality: variability": 1.0,
-                "has_quality: instability": 1.0
+                "has_quality: variability": 1.0
             },
             "NPEs": {
                 "is_a: MaterialEntity": 1.0,
                 "has_disposition: antibacterial": 1.0,
-                "has_disposition: anti-inflammatory": 1.0,
                 "has_disposition: antioxidant": 1.0,
                 "has_disposition: regenerative properties": 1.0,
-                "has_quality: variability": 1.0,
-                "has_quality: instability": 1.0
+                "has_quality: variability": 1.0
             },
             "antibacterial": {
                 "is_a: Disposition": 1.0
@@ -17608,12 +17298,6 @@
             },
             "variability": {
                 "is_a: Quality": 1.0
-            },
-            "Conventional drugs": {
-                "is_a: MaterialEntity": 1.0,
-                "has_disposition: regenerative capacity": 1.0,
-                "participates_in: targeted infection management": 1.0,
-                "participates_in: metabolic modulation": 1.0
             },
             "targeted infection management": {
                 "is_a: Process": 1.0
@@ -17666,9 +17350,7 @@
                 "is_a: InformationEntity": 1.0,
                 "is_about: wound characteristics": 1.0,
                 "is_about: depth": 1.0,
-                "is_about: infection status": 1.0,
-                "is_about: exudate level": 1.0,
-                "is_about: perfusion": 1.0
+                "is_about: exudate level": 1.0
             },
             "propolis-charcoal bandages": {
                 "is_a: MaterialEntity": 1.0,
@@ -17980,14 +17662,7 @@
             "total health workforce": {
                 "is_a: MaterialEntity": 1.0
             },
-            "spatiotemporal Gaussian process regression": {
-                "is_a: Process": 1.0,
-                "part_of: Global Burden of Diseases, Injuries, and Risk Factors study": 1.0
-            },
             "Global Burden of Diseases, Injuries, and Risk Factors study": {
-                "is_a: Process": 1.0
-            },
-            "stochastic frontier meta-regression": {
                 "is_a: Process": 1.0
             },
             "minimum density": {
@@ -18108,8 +17783,7 @@
                 "is_a: Process": 1.0
             },
             "unconscious": {
-                "is_a: Quality": 1.0,
-                "inheres_in: patient": 1.0
+                "is_a: Quality": 1.0
             },
             "house fire": {
                 "is_a: Process": 1.0,
@@ -18123,12 +17797,10 @@
             },
             "clinical course": {
                 "is_a: Process": 1.0,
-                "has_participant: patient": 1.0,
                 "has_participant: massive bilateral pulmonary embolism": 1.0
             },
             "massive bilateral pulmonary embolism": {
-                "is_a: MaterialEntity": 1.0,
-                "participates_in: development": 1.0
+                "is_a: MaterialEntity": 1.0
             },
             "thromboprophylaxis": {
                 "is_a: Process": 1.0
@@ -18228,9 +17900,6 @@
             "patient safety": {
                 "is_a: Quality": 1.0
             },
-            "burden on healthcare resources": {
-                "is_a: Quality": 1.0
-            },
             "preoperative skin antisepsis": {
                 "is_a: Process": 1.0,
                 "has_participant: chlorhexidine in alcohol": 1.0,
@@ -18247,15 +17916,8 @@
             "aqueous povidone-iodine": {
                 "is_a: MaterialEntity": 1.0
             },
-            "randomized controlled trials": {
-                "is_a: Process": 1.0,
-                "part_of: meta-analysis": 1.0
-            },
             "incidence of surgical site infections": {
                 "is_a: InformationEntity": 1.0
-            },
-            "adverse events": {
-                "is_a: Disposition": 1.0
             },
             "chlorhexidine concentration": {
                 "is_a: Quality": 1.0,
@@ -18269,12 +17931,6 @@
             },
             "statistical threshold": {
                 "is_a: InformationEntity": 1.0
-            },
-            "trial sequential analysis": {
-                "is_a: Process": 1.0,
-                "has_specified_input: required information size": 1.0,
-                "has_output: required information size": 1.0,
-                "part_of: meta-analysis": 1.0
             },
             "SSI risk": {
                 "is_a: Tendency": 1.0,
@@ -18477,7 +18133,7 @@
             "condylar resorption severity": {
                 "is_a: Quality": 1.0
             },
-            "postoperative complications": {
+            "Postoperative Complications Disposition": {
                 "is_a: Disposition": 1.0
             },
             "disc length": {
@@ -18518,7 +18174,6 @@
             "digital technologies": {
                 "is_a: MaterialEntity": 1.0,
                 "participates_in: wound assessment": 1.0,
-                "participates_in: monitoring": 1.0,
                 "participates_in: treatment": 1.0
             },
             "mobile applications": {
@@ -18531,9 +18186,6 @@
             "treatment": {
                 "is_a: Process": 1.0
             },
-            "outcomes": {
-                "is_a: Quality": 1.0
-            },
             "costs": {
                 "is_a: Quality": 1.0
             },
@@ -18544,8 +18196,7 @@
                 "is_a: Process": 1.0
             },
             "shared decision-making tools": {
-                "is_a: MaterialEntity": 1.0,
-                "participates_in: shared decision-making": 1.0
+                "is_a: MaterialEntity": 1.0
             },
             "care strategies": {
                 "is_a: InformationEntity": 1.0,
@@ -18556,9 +18207,6 @@
             },
             "roles": {
                 "is_a: Role": 1.0
-            },
-            "caregiver engagement": {
-                "is_a: Process": 1.0
             },
             "digital platforms": {
                 "is_a: MaterialEntity": 1.0
@@ -18576,9 +18224,6 @@
                 "is_a: InformationEntity": 1.0,
                 "is_about: digital platforms": 1.0,
                 "is_about: shared decision-making tools": 1.0
-            },
-            "studies": {
-                "is_a: Process": 1.0
             },
             "full-text": {
                 "is_a: Quality": 1.0
@@ -18604,16 +18249,10 @@
             "critical appraisal tools": {
                 "is_a: MaterialEntity": 1.0
             },
-            "randomised-controlled trials": {
-                "is_a: Process": 1.0
-            },
             "quasi-experimental studies": {
                 "is_a: Process": 1.0
             },
             "qualitative studies": {
-                "is_a: Process": 1.0
-            },
-            "cohort studies": {
                 "is_a: Process": 1.0
             },
             "cross-sectional studies": {
@@ -18622,10 +18261,8 @@
             "digital tools": {
                 "is_a: MaterialEntity": 1.0,
                 "participates_in: wound management": 1.0,
-                "participates_in: patient education": 1.0,
                 "participates_in: remote consultation": 1.0,
-                "participates_in: wound monitoring": 1.0,
-                "participates_in: education": 1.0
+                "participates_in: wound monitoring": 1.0
             },
             "wound types": {
                 "is_a: MaterialEntity": 1.0
@@ -18647,9 +18284,6 @@
             },
             "remote consultation": {
                 "is_a: Process": 1.0
-            },
-            "clinical outcomes": {
-                "is_a: Quality": 1.0
             },
             "wound healing time": {
                 "is_a: Quality": 1.0,
@@ -18682,10 +18316,6 @@
             },
             "wound monitoring": {
                 "is_a: Process": 1.0
-            },
-            "caregivers": {
-                "is_a: MaterialEntity": 1.0,
-                "participates_in: patient care": 1.0
             },
             "patient care": {
                 "is_a: Process": 1.0
@@ -19062,11 +18692,6 @@
             "experiences": {
                 "is_a: InformationEntity": 1.0,
                 "is_specified_input_of: qualitative studies": 1.0
-            },
-            "evidence-based implementation": {
-                "is_a: Process": 1.0,
-                "immediately_causally_downstream_of: cost-effectiveness analyses": 1.0,
-                "immediately_causally_downstream_of: qualitative studies": 1.0
             }
         },
         "meta_stamp": "llm_extract_2_20260825_1920"
@@ -19082,9 +18707,6 @@
             },
             "suture material": {
                 "is_a: MaterialEntity": 1.0
-            },
-            "technique": {
-                "is_a: InformationEntity": 1.0
             },
             "count": {
                 "is_a: InformationEntity": 1.0
@@ -19120,9 +18742,6 @@
                 "part_of: wound management": 1.0
             },
             "clinical decision-support": {
-                "is_a: Role": 1.0
-            },
-            "educational tool": {
                 "is_a: Role": 1.0
             },
             "AI systems": {
@@ -19217,6 +18836,749 @@
                     "has role",
                     "educational tool",
                     "MaterialEntity -> Role not licensed"
+                ]
+            ],
+            "unknown_predicates": []
+        }
+    },
+    "42548069": {
+        "entities": {
+            "degloving injuries": {
+                "is_a: Process": 1.0
+            },
+            "associated fracture": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "definitive treatment": {
+                "is_a: Process": 1.0
+            },
+            "case": {
+                "is_a: InformationEntity": 1.0
+            },
+            "role": {
+                "is_a: Role": 1.0
+            },
+            "chimeric superficial circumflex iliac artery perforator flap": {
+                "is_a: MaterialEntity": 1.0,
+                "has_part: sartorius muscle component": 1.0,
+                "participates_in: dead-space obliteration": 1.0,
+                "participates_in: soft-tissue resurfacing": 1.0
+            },
+            "sartorius muscle component": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "dead-space obliteration": {
+                "is_a: Process": 1.0,
+                "part_of: osteomyelitis treatment": 1.0
+            },
+            "soft-tissue resurfacing": {
+                "is_a: Process": 1.0
+            },
+            "free anterolateral thigh flap coverage": {
+                "is_a: Process": 1.0,
+                "immediately_causally_downstream_of: medial ankle degloving injury": 1.0
+            },
+            "medial ankle degloving injury": {
+                "is_a: Process": 1.0
+            },
+            "flap": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "local debridements": {
+                "is_a: Process": 1.0
+            },
+            "ultrasound": {
+                "is_a: Process": 1.0,
+                "part_of: imaging": 1.0
+            },
+            "computed tomography": {
+                "is_a: Process": 1.0,
+                "part_of: imaging": 1.0
+            },
+            "sinus tract": {
+                "is_a: MaterialEntity": 1.0,
+                "has_part: purulent tissue": 1.0
+            },
+            "navicular bone": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "definitive debridement": {
+                "is_a: Process": 1.0,
+                "has_output: soft-tissue defect": 1.0
+            },
+            "retained anchor fragment": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "navicular fistula": {
+                "is_a: MaterialEntity": 1.0,
+                "has_part: retained anchor fragment": 1.0
+            },
+            "purulent tissue": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "soft-tissue defect": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "intraosseous dead space": {
+                "is_a: ImmaterialEntity": 1.0
+            },
+            "single-stage reconstruction": {
+                "is_a: Process": 1.0,
+                "has_participant: chimeric SCIP flap": 1.0
+            },
+            "chimeric SCIP flap": {
+                "is_a: MaterialEntity": 1.0,
+                "has_part: skin paddle": 1.0,
+                "has_part: sartorius muscle segment": 1.0,
+                "participates_in: osteomyelitis treatment": 1.0
+            },
+            "skin paddle": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "sartorius muscle segment": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "muscle component": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: dead-space obliteration": 1.0
+            },
+            "navicular cavity": {
+                "is_a: ImmaterialEntity": 1.0
+            },
+            "medial ankle defect": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "Culture": {
+                "is_a: Process": 1.0
+            },
+            "targeted antibiotics": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "Healing": {
+                "is_a: Process": 1.0
+            },
+            "recurrence": {
+                "is_a: Process": 1.0
+            },
+            "normal range": {
+                "is_a: InformationEntity": 1.0
+            },
+            "resolution": {
+                "is_a: Process": 1.0,
+                "has_input: navicular marrow edema": 1.0
+            },
+            "navicular marrow edema": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "imaging": {
+                "is_a: Process": 1.0
+            },
+            "recurrent wound problems": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "degloving injury": {
+                "is_a: Process": 1.0
+            },
+            "initial injury": {
+                "is_a: Process": 1.0,
+                "has_participant: soft tissue": 1.0
+            },
+            "soft tissue": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "osteomyelitis treatment": {
+                "is_a: Process": 1.0
+            },
+            "thin soft-tissue coverage": {
+                "is_a: Process": 1.0,
+                "part_of: osteomyelitis treatment": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_2_20260825_1920"
+    },
+    "42447083": {
+        "entities": {
+            "pressure injury": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "advanced-stage pressure injury": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "classification": {
+                "is_a: InformationEntity": 1.0,
+                "is_about: pressure injury": 1.0
+            },
+            "demographic factors": {
+                "is_a: InformationEntity": 1.0
+            },
+            "clinical factors": {
+                "is_a: InformationEntity": 1.0
+            },
+            "hospitalised patients": {
+                "is_a: MaterialEntity": 1.0,
+                "has_quality: length of hospital stay": 1.0
+            },
+            "Health Insurance Review and Assessment Service patient sample database": {
+                "is_a: InformationEntity": 1.0,
+                "is_about: hospitalised patients": 1.0,
+                "is_about: pressure injury": 1.0
+            },
+            "secondary data analysis": {
+                "is_a: Process": 1.0,
+                "has_participant: SAS Enterprise Guide": 1.0
+            },
+            "Institutional Review Board": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "Public data": {
+                "is_a: InformationEntity": 1.0,
+                "is_about: hospitalised patients": 1.0,
+                "is_about: pressure injury": 1.0
+            },
+            "SAS Enterprise Guide": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "data security": {
+                "is_a: Quality": 1.0
+            },
+            "confidentiality requirements": {
+                "is_a: InformationEntity": 1.0
+            },
+            "secondary analysis": {
+                "is_a: Process": 1.0,
+                "has_participant: SAS Enterprise Guide": 1.0
+            },
+            "mild-stage group": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "Stages 1-2": {
+                "is_a: InformationEntity": 1.0,
+                "is_about: mild-stage group": 1.0
+            },
+            "advanced-stage group": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "Stages 3-4": {
+                "is_a: InformationEntity": 1.0,
+                "is_about: advanced-stage group": 1.0
+            },
+            "Male patients": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "advanced-stage pressure injuries": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "female patients": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "hospitalisation": {
+                "is_a: Process": 1.0,
+                "has_participant: hospitalised patients": 1.0
+            },
+            "urinary incontinence": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "early identification": {
+                "is_a: Process": 1.0,
+                "has_output: management strategies": 1.0
+            },
+            "targeted assessment": {
+                "is_a: Process": 1.0,
+                "has_participant: advanced-stage pressure injuries": 1.0,
+                "has_participant: mild-stage group": 1.0
+            },
+            "management strategies": {
+                "is_a: InformationEntity": 1.0
+            },
+            "cross-sectional administrative claims data": {
+                "is_a: InformationEntity": 1.0
+            },
+            "temporal progression": {
+                "is_a: Process": 1.0
+            },
+            "causation": {
+                "is_a: InformationEntity": 1.0
+            },
+            "secondary administrative data": {
+                "is_a: InformationEntity": 1.0,
+                "is_about: hospitalised patients": 1.0,
+                "is_about: pressure injury": 1.0
+            },
+            "nationally representative sample": {
+                "is_a: InformationEntity": 1.0
+            },
+            "de-identified administrative claims data": {
+                "is_a: InformationEntity": 1.0,
+                "is_about: hospitalised patients": 1.0,
+                "is_about: pressure injury": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_2_20260825_1920",
+        "schema_report": {
+            "rejected_terms": [],
+            "rejected_relations": [
+                [
+                    "advanced-stage pressure injury classification",
+                    "is about",
+                    "advanced-stage pressure injuries",
+                    "endpoint not among extracted entities"
+                ],
+                [
+                    "advanced-stage pressure injury classification",
+                    "is about",
+                    "Stages 3-4",
+                    "endpoint not among extracted entities"
+                ],
+                [
+                    "classification",
+                    "has part",
+                    "mild-stage group",
+                    "InformationEntity -> MaterialEntity not licensed"
+                ],
+                [
+                    "classification",
+                    "has part",
+                    "advanced-stage group",
+                    "InformationEntity -> MaterialEntity not licensed"
+                ],
+                [
+                    "odds ratios",
+                    "is about",
+                    "confidence intervals",
+                    "InformationEntity -> InformationEntity not licensed"
+                ],
+                [
+                    "secondary analysis",
+                    "has participant",
+                    "Health Insurance Review and Assessment Service (HIRA) patient sample database",
+                    "Process -> InformationEntity not licensed"
+                ],
+                [
+                    "secondary data analysis",
+                    "has participant",
+                    "Health Insurance Review and Assessment Service (HIRA) patient sample database",
+                    "Process -> InformationEntity not licensed"
+                ],
+                [
+                    "data security",
+                    "inheres in",
+                    "Public data",
+                    "Quality -> InformationEntity not licensed"
+                ],
+                [
+                    "confidentiality requirements",
+                    "inheres in",
+                    "Public data",
+                    "InformationEntity -> InformationEntity not licensed"
+                ],
+                [
+                    "management strategies",
+                    "has part",
+                    "targeted assessment",
+                    "InformationEntity -> Process not licensed"
+                ]
+            ],
+            "unknown_predicates": []
+        }
+    },
+    "42601947": {
+        "entities": {
+            "Diabetic foot ulcers": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "ulcers": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "adjunctive therapies": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "oxygen-based therapies": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: ulcer area reduction": 1.0,
+                "participates_in: complete healing": 1.0,
+                "participates_in: amputation": 1.0,
+                "part_of: adjunctive therapies": 1.0
+            },
+            "device-based and physical wound therapies": {
+                "is_a: MaterialEntity": 1.0,
+                "part_of: adjunctive therapies": 1.0
+            },
+            "growth factor and blood-derived therapies": {
+                "is_a: MaterialEntity": 1.0,
+                "part_of: adjunctive therapies": 1.0
+            },
+            "placental and perinatal tissue-derived products": {
+                "is_a: MaterialEntity": 1.0,
+                "part_of: adjunctive therapies": 1.0
+            },
+            "acellular matrix/skin substitute/scaffold products": {
+                "is_a: MaterialEntity": 1.0,
+                "part_of: adjunctive therapies": 1.0
+            },
+            "cell-based and adipose-derived therapies": {
+                "is_a: MaterialEntity": 1.0,
+                "part_of: adjunctive therapies": 1.0
+            },
+            "topical pharmacologic and bioactive agents": {
+                "is_a: MaterialEntity": 1.0,
+                "part_of: adjunctive therapies": 1.0
+            },
+            "nanotechnology-based, natural product, and bioactive dressing therapies": {
+                "is_a: MaterialEntity": 1.0,
+                "part_of: adjunctive therapies": 1.0
+            },
+            "ulcer area reduction": {
+                "is_a: Process": 1.0,
+                "part_of: healing outcomes": 1.0
+            },
+            "complete healing": {
+                "is_a: Process": 1.0,
+                "part_of: healing outcomes": 1.0
+            },
+            "time to healing": {
+                "is_a: Quality": 1.0
+            },
+            "amputation": {
+                "is_a: Process": 1.0,
+                "part_of: healing outcomes": 1.0
+            },
+            "healing-related outcomes": {
+                "is_a: Process": 1.0
+            },
+            "Device-based therapies": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "placental products": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: ulcer area reduction": 1.0,
+                "participates_in: complete healing": 1.0,
+                "part_of: placental and perinatal tissue-derived products": 1.0
+            },
+            "growth factor/blood-derived therapies": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: ulcer area reduction": 1.0,
+                "participates_in: complete healing": 1.0,
+                "participates_in: amputation": 1.0,
+                "part_of: growth factor and blood-derived therapies": 1.0
+            },
+            "matrix/skin substitute products": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: ulcer area reduction": 1.0,
+                "participates_in: complete healing": 1.0,
+                "part_of: acellular matrix/skin substitute/scaffold products": 1.0
+            },
+            "topical pharmacologic/bioactive agents": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: complete healing": 1.0,
+                "part_of: topical pharmacologic and bioactive agents": 1.0
+            },
+            "Cell-based/adipose-derived therapies": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "amputation risk": {
+                "is_a: Tendency": 1.0,
+                "has_realization: amputation": 1.0
+            },
+            "healing outcomes": {
+                "is_a: Process": 1.0,
+                "part_of: healing-related outcomes": 1.0
+            },
+            "clinical endpoints": {
+                "is_a: InformationEntity": 1.0
+            },
+            "sparse networks": {
+                "is_a: Quality": 1.0
+            },
+            "variable certainty of evidence": {
+                "is_a: Quality": 1.0
+            },
+            "limited direct comparisons": {
+                "is_a: Quality": 1.0
+            },
+            "treatment hierarchy": {
+                "is_a: InformationEntity": 1.0,
+                "is_about: adjunctive therapies": 1.0,
+                "has_part: clinical endpoints": 1.0
+            },
+            "adequate follow-up": {
+                "is_a: Quality": 1.0
+            },
+            "DFU management": {
+                "is_a: Process": 1.0,
+                "has_input: ulcers": 1.0,
+                "has_participant: adjunctive therapies": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_2_20260825_1920",
+        "schema_report": {
+            "rejected_terms": [],
+            "rejected_relations": [
+                [
+                    "standardized outcome definitions",
+                    "is about",
+                    "healing outcomes",
+                    "InformationEntity -> Process not licensed"
+                ],
+                [
+                    "clinical endpoints",
+                    "is about",
+                    "healing outcomes",
+                    "InformationEntity -> Process not licensed"
+                ],
+                [
+                    "standardized outcome definitions",
+                    "is about",
+                    "ulcer area reduction",
+                    "InformationEntity -> Process not licensed"
+                ],
+                [
+                    "standardized outcome definitions",
+                    "is about",
+                    "complete healing",
+                    "InformationEntity -> Process not licensed"
+                ],
+                [
+                    "standardized outcome definitions",
+                    "is about",
+                    "adverse events",
+                    "InformationEntity -> Process not licensed"
+                ],
+                [
+                    "standardized outcome definitions",
+                    "is about",
+                    "amputation",
+                    "InformationEntity -> Process not licensed"
+                ],
+                [
+                    "device-based therapies",
+                    "participates in",
+                    "ulcer area reduction",
+                    "endpoint not among extracted entities"
+                ],
+                [
+                    "device-based therapies",
+                    "participates in",
+                    "complete healing",
+                    "endpoint not among extracted entities"
+                ],
+                [
+                    "cell-based/adipose-derived therapies",
+                    "participates in",
+                    "time to healing",
+                    "endpoint not among extracted entities"
+                ],
+                [
+                    "growth factor/blood-derived therapies",
+                    "participates in",
+                    "time to healing",
+                    "MaterialEntity -> Quality not licensed"
+                ],
+                [
+                    "matrix/skin substitute products",
+                    "participates in",
+                    "time to healing",
+                    "MaterialEntity -> Quality not licensed"
+                ],
+                [
+                    "heterogeneity",
+                    "inheres in",
+                    "randomized trials",
+                    "Quality -> Process not licensed"
+                ],
+                [
+                    "sparse networks",
+                    "inheres in",
+                    "randomized trials",
+                    "Quality -> Process not licensed"
+                ],
+                [
+                    "variable certainty of evidence",
+                    "inheres in",
+                    "randomized trials",
+                    "Quality -> Process not licensed"
+                ],
+                [
+                    "limited direct comparisons",
+                    "inheres in",
+                    "randomized trials",
+                    "Quality -> Process not licensed"
+                ],
+                [
+                    "adequate follow-up",
+                    "inheres in",
+                    "randomized trials",
+                    "Quality -> Process not licensed"
+                ],
+                [
+                    "DFU management",
+                    "has participant",
+                    "standard of care",
+                    "Process -> Process not licensed"
+                ],
+                [
+                    "time to healing",
+                    "part of",
+                    "healing outcomes",
+                    "Quality -> Process not licensed"
+                ],
+                [
+                    "device-based therapies",
+                    "part of",
+                    "device-based and physical wound therapies",
+                    "endpoint not among extracted entities"
+                ],
+                [
+                    "cell-based/adipose-derived therapies",
+                    "part of",
+                    "cell-based and adipose-derived therapies",
+                    "endpoint not among extracted entities"
+                ]
+            ],
+            "unknown_predicates": []
+        }
+    },
+    "42419051": {
+        "entities": {
+            "Burn wounds": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "Infection Material Entity": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "scaffolds": {
+                "is_a: MaterialEntity": 1.0,
+                "has_quality: microstructure": 1.0,
+                "has_quality: thermal stability": 1.0,
+                "has_quality: chemistry": 1.0,
+                "participates_in: degradation": 1.0,
+                "participates_in: water absorption": 1.0,
+                "participates_in: mass loss": 1.0,
+                "has_function: Antibacterial functionality": 1.0,
+                "has_quality: loadings": 1.0,
+                "participates_in: inhibition": 1.0
+            },
+            "tissue regeneration": {
+                "is_a: Process": 1.0
+            },
+            "infection risk": {
+                "is_a: Tendency": 1.0
+            },
+            "interpenetrating polymer network hydrogel": {
+                "is_a: MaterialEntity": 1.0,
+                "has_part: polyacrylamide": 1.0,
+                "has_part: hyaluronic-acid/methyl-cellulose matrix": 1.0
+            },
+            "polyacrylamide": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "hyaluronic-acid/methyl-cellulose matrix": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "Antibacterial functionality": {
+                "is_a: Function": 1.0
+            },
+            "amoxicillin": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "loadings": {
+                "is_a: Quality": 1.0
+            },
+            "ink's rheology": {
+                "is_a: Quality": 1.0
+            },
+            "shear-thinning behavior": {
+                "is_a: Disposition": 1.0
+            },
+            "layer-by-layer deposition": {
+                "is_a: Process": 1.0
+            },
+            "viscosity": {
+                "is_a: Quality": 1.0
+            },
+            "printability": {
+                "is_a: Quality": 1.0
+            },
+            "microstructure": {
+                "is_a: Quality": 1.0
+            },
+            "thermal stability": {
+                "is_a: Quality": 1.0
+            },
+            "chemistry": {
+                "is_a: Quality": 1.0
+            },
+            "degradation": {
+                "is_a: Process": 1.0
+            },
+            "water absorption": {
+                "is_a: Process": 1.0
+            },
+            "mass loss": {
+                "is_a: Process": 1.0
+            },
+            "Antibacterial tests": {
+                "is_a: Process": 1.0
+            },
+            "inhibition": {
+                "is_a: Process": 1.0,
+                "part_of: Antibacterial tests": 1.0,
+                "has_participant: Escherichia coli": 1.0
+            },
+            "Escherichia coli": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "drug-free control": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: activity": 1.0
+            },
+            "activity": {
+                "is_a: Process": 1.0
+            },
+            "HA": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "Cytocompatibility studies": {
+                "is_a: Process": 1.0
+            },
+            "0.5 wt% AMX scaffold": {
+                "is_a: MaterialEntity": 1.0,
+                "has_quality: performance": 1.0,
+                "has_part: amoxicillin": 1.0
+            },
+            "performance": {
+                "is_a: Quality": 1.0
+            },
+            "HA/MC/AAm IPN hydrogels": {
+                "is_a: MaterialEntity": 1.0,
+                "has_disposition: shear-thinning behavior": 1.0,
+                "has_quality: viscosity": 1.0,
+                "has_quality: printability": 1.0
+            },
+            "structural integrity": {
+                "is_a: Quality": 1.0
+            },
+            "sustained antibiotic release": {
+                "is_a: Process": 1.0
+            },
+            "cell support": {
+                "is_a: Function": 1.0
+            },
+            "candidates": {
+                "is_a: Role": 1.0
+            },
+            "burn wound management": {
+                "is_a: Process": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_2_20260825_1920",
+        "schema_report": {
+            "rejected_terms": [],
+            "rejected_relations": [
+                [
+                    "HA/MC/AAm IPN hydrogels",
+                    "has quality",
+                    "rheology",
+                    "endpoint not among extracted entities"
                 ]
             ],
             "unknown_predicates": []

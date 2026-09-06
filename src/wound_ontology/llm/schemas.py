@@ -121,3 +121,30 @@ class RelationCandidate(BaseModel):
 
 class RelationResponse(BaseModel):
     relations: list[RelationCandidate] = Field(default_factory=list)
+
+
+# ── Anchor-mapping adjudication ────────────────────────────────────────────
+# `verdict` is a plain string for the same reason `category` above is: the
+# allowed values are advertised through json_schema_extra, but one bad value
+# must not fail a batch of twenty good ones. Unrecognised verdicts are refused
+# locally and reported -- never coerced into the accepting value.
+
+def _verdict_names() -> list[str]:
+    from wound_ontology.mappers.mapping_adjudicator import VERDICTS
+    return list(VERDICTS)
+
+
+class MappingVerdict(BaseModel):
+    """Whether a store term and an existing ontology class name the same class."""
+
+    store_term: str
+    ontology_class: str
+    verdict: str = Field(
+        description="exactly one verdict name from the allowed list",
+        json_schema_extra=lambda s: s.update(enum=_verdict_names()),
+    )
+    reason: str = Field(default="", description="one short clause, for the report")
+
+
+class MappingVerdictBatch(BaseModel):
+    results: list[MappingVerdict] = Field(default_factory=list)

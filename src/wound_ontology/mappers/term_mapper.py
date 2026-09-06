@@ -73,6 +73,72 @@ class TermMapper:
         """Explicit save — delegates to TermMapping."""
         self._term_mapping.save()
 
+    def withdraw(self, *terms: str) -> int:
+        """Remove entries from the mapping. Returns how many were actually there.
+
+        The mapping file accumulates across builds, so a mapping that a later
+        step refuses may already be recorded from an earlier run that had no such
+        check. Withdrawing is how a refusal reaches the file rather than being
+        quietly outvoted by it.
+        """
+        return self._term_mapping.remove(*terms)
+
+    def prune(self, live_terms: set[str], ontology_labels=frozenset(),
+              *, dry_run: bool = False) -> dict:
+        """Drop entries that can no longer map anything onto anything.
+
+        The mapping file accumulates across builds and never forgets. Measured on
+        2026-09-06 it held 26625 entries against a store of 3727 terms, and the
+        shape of the excess was two distinct problems:
+
+          * 24441 IDENTITY entries (term maps to itself). `get()` already returns
+            an unmapped term unchanged, so these never did anything at all -- but
+            they are 92% of the file, and they are why the mapping looked like an
+            unreviewable 26k-entry artifact rather than the ~200 real decisions it
+            actually contains.
+          * 1969 non-identity entries -- 90% of them -- whose CANONICAL is neither
+            a live store term nor an ontology label. `-125 mmHg -> -125 mm Hg`,
+            `18% -> 18`. Both ends are gone. Firing one would rename a term onto a
+            target that exists nowhere.
+
+        A term being absent from the store is NOT grounds for removal on its own:
+        after run_apply_mapping the mapped term is gone by design, and the entry
+        has to survive so a later abstract reintroducing it is normalised the same
+        way. It is the canonical having died that makes an entry inert.
+
+        Chains are followed rather than assumed away: `A -> B -> C` keeps A when C
+        is alive. Exactly one chain exists in the current file and it resolves to
+        nothing, but correctness here should not rest on that staying true.
+        """
+        data = self._term_mapping.data
+        alive = set(live_terms) | set(ontology_labels)
+
+        def resolves(canonical: str) -> bool:
+            seen, cur = set(), canonical
+            while cur not in seen:
+                if cur in alive:
+                    return True
+                seen.add(cur)
+                nxt = data.get(cur)
+                if nxt is None or nxt == cur:
+                    return False
+                cur = nxt
+            return False
+
+        identity = [t for t, c in data.items() if t == c]
+        dead     = [t for t, c in data.items() if t != c and not resolves(c)]
+        report = {"identity": len(identity), "dead": len(dead),
+                  "kept": len(data) - len(identity) - len(dead)}
+        if dry_run:
+            print(f"[{self.name}] prune (dry run): would drop {report['identity']} "
+                  f"identity and {report['dead']} dead entr(ies); {report['kept']} kept.")
+            return report
+        self._term_mapping.remove(*identity, *dead)
+        print(f"[{self.name}] pruned {report['identity']} identity entr(ies) that "
+              f"never mapped anything and {report['dead']} whose target no longer "
+              f"exists; {report['kept']} live mapping(s) kept.")
+        return report
+
     # ── SapBERT clustering ────────────────────────────────────────────────────
 
     def build_from_embeddings(
@@ -249,7 +315,13 @@ class TermMapper:
                 "method": "sapbert_cluster",
             }
 
-        self._term_mapping.add_batch(assignment, metadata_batch)
+        # Only real merges are persisted. An identity entry is a no-op -- get()
+        # already returns an unmapped term unchanged -- but writing one per
+        # canonical made the file 92% no-op (24441 of 26625 entries) and buried
+        # the ~200 decisions a curator actually has to look at.
+        merges = {t: c for t, c in assignment.items() if t != c}
+        self._term_mapping.add_batch(
+            merges, {t: metadata_batch[t] for t in merges if t in metadata_batch})
 
         # The mapping persists across builds, so a mapping this build refuses may
         # still be present from an earlier one that had no validator. Withdraw it
@@ -261,4 +333,8 @@ class TermMapper:
             self._term_mapping.remove(*stale)
             print(f"[{self.name}] withdrew {len(stale)} refused mapping(s) recorded "
                   f"by an earlier build.")
-        return self._term_mapping.data
+        # This build's decision about the terms it was given, identities included,
+        # so a caller can ask what happened to any input term. It is deliberately
+        # NOT the persisted mapping: the file holds only merges, and it also holds
+        # entries from earlier builds that these terms say nothing about.
+        return assignment

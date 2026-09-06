@@ -294,6 +294,55 @@ class Orchestrator:
                         stack.append(parent)
         return out
 
+    def ontology_definitions(self, sources=None) -> dict[str, str]:
+        """{ontology label -> its IAO_0000115 textual definition}.
+
+        This is what the anchor adjudication judges on. The LABEL is what misled
+        SapBERT into proposing `clean wound classification grade` ->
+        `clean-contaminated wound classification grade`; the definition is where
+        the two come apart. A class with no definition is simply absent, and the
+        adjudicator is told so rather than shown an empty string.
+        """
+        from rdflib import RDFS, URIRef
+
+        from wound_ontology.utils.rdf_io import parse_graph
+        if sources is None:
+            from wound_ontology.hierarchies.curated_seed import default_curated_sources
+            sources, _ = default_curated_sources()
+        iao = URIRef("http://purl.obolibrary.org/obo/IAO_0000115")
+        out: dict[str, str] = {}
+        for src in sources:
+            g = parse_graph(src)
+            for subj, _, obj in g.triples((None, iao, None)):
+                text = str(obj).strip()
+                if not text:
+                    continue
+                for label in g.objects(subj, RDFS.label):
+                    key = str(label).strip()
+                    if key and key not in out:
+                        out[key] = text
+        return out
+
+    def ontology_parents(self) -> dict[str, list[str]]:
+        """{ontology label -> the labels of its named superclasses}.
+
+        Context for the anchor adjudication where a class carries no textual
+        definition — only 8 of the 20 classes in the current content bucket do.
+        A parent is weaker evidence than a definition but it is the ontology's
+        own word on what kind of thing the class is, which is exactly what the
+        model is being asked to weigh the label against.
+        """
+        from wound_ontology.hierarchies.curated_seed import (
+            default_curated_sources, load_curated_edges,
+        )
+
+        sources, label_sources = default_curated_sources()
+        df = load_curated_edges(sources, label_sources)
+        out: dict[str, list[str]] = {}
+        for child, parent in zip(df["Class"], df["Parent class"]):
+            out.setdefault(str(child), []).append(str(parent))
+        return out
+
     def store_categories(self) -> dict[str, str]:
         """{store term -> its reconciled BFO category}, or absent if undecided."""
         from wound_ontology.llm.extraction_models import CATEGORY_PARENT
@@ -364,7 +413,8 @@ class Orchestrator:
         return accept
 
     def run_build_term_mapping(self, similarity_threshold: float = 0.95,
-                               use_ontology_anchors: bool = True) -> dict:
+                               use_ontology_anchors: bool = True,
+                               readjudicate: bool = False) -> dict:
         """
         Build a SapBERT cosine-similarity mapping that clusters near-duplicate terms.
 
@@ -379,10 +429,30 @@ class Orchestrator:
         "Granulation process". Terms fell between the two and were minted as twins
         of classes that already existed.
 
-        Pass use_ontology_anchors=False for the old store-only behaviour.
+        Pass use_ontology_anchors=False for the old store-only behaviour. That
+        is not a way around the adjudication below: with no anchors the mapping
+        makes no claim about an existing class at all, so there is nothing to
+        adjudicate — only store terms merging with each other, which
+        review_mapping() can still undo.
+
+        Every anchor mapping SapBERT proposes is then ADJUDICATED by the LLM
+        unless the two labels differ only by case, punctuation or plural. The
+        model is not an optional refinement here: mapping a store term onto an
+        existing class is an identity claim that cannot be undone downstream, and
+        cosine similarity was measured to be incapable of making it. If the model
+        cannot be reached, this raises rather than returning a mapping nobody
+        checked. Pass readjudicate=True to re-ask pairs already in the cache.
 
         Follow up with review_mapping(), then run_apply_mapping().
         """
+        if not self.llm.has_credentials:
+            raise RuntimeError(
+                "[Orchestrator] run_build_term_mapping needs the LLM: anchor "
+                "mappings are adjudicated by it, and no OPENROUTER_API_KEY is set. "
+                "Set the key — there is no offline mode for this step, because a "
+                "mapping built without it would silently absorb store terms into "
+                "the wrong existing classes."
+            )
         freq = self._collect_store_terms_with_freq()
         anchors: set[str] = set()
         terms = list(freq.keys())
@@ -396,7 +466,7 @@ class Orchestrator:
         accept = None
         if anchors:
             accept = self._category_compatible_mapping(anchors)
-        mapping = self.term_mapper.build_from_embeddings(
+        self.term_mapper.build_from_embeddings(
             terms,
             embedder=self._ensure_embedder(),
             similarity_threshold=similarity_threshold,
@@ -410,8 +480,104 @@ class Orchestrator:
                   f"wrong kind of thing:")
             for term, onto in refused[:15]:
                 print(f"[Orchestrator]     {term!r} -> {onto!r}")
+        self._adjudicate_anchor_mappings(anchors, readjudicate=readjudicate)
+        # The file never forgot: entries survive every rebuild, so one written
+        # against a store that has since been re-extracted still fires. Dropping
+        # the provably inert ones is what makes the rest reviewable.
+        self.term_mapper.prune(set(freq), self.ontology_labels() if anchors else frozenset())
+        mapping = self.term_mapper.mapping
         print("[Orchestrator] Mapping built — call review_mapping() to inspect and curate.")
         return mapping
+
+    def _adjudicate_anchor_mappings(self, anchors: set[str],
+                                    readjudicate: bool = False) -> dict:
+        """Send the anchor mappings SapBERT cannot decide to the LLM.
+
+        Anchor mappings are the irreversible ones: absorbing a store term into an
+        existing WONT or MILD class is a permanent identity claim. Cosine distance
+        cannot make it. On the 2026-09-05 build the good and bad proposals were
+        interleaved between 0.96 and 0.98, so no threshold separates them — but
+        what the labels differ BY does. 28 of 50 differed only by case,
+        punctuation or plural, and every one of those was right; all seven wrong
+        ones were among the 22 where a real word changed. Only content-differing
+        pairs are asked about, with the ontology's own definition attached.
+
+        Store-to-store merges are adjudicated as well, in a SECOND call that
+        passes no categories. They were excluded at first on the grounds that a
+        wrong one is reversible through review_mapping() -- which assumes somebody
+        walks 2141 non-identity entries, and nobody has. Measured over the 52
+        live content-differing pairs: 14 were not synonyms, among them
+        `diabetes mellitus -> diabetes` and `hip and knee arthroplasty -> hip or
+        knee arthroplasty`.
+
+        The categories are withheld on purpose. There is no ontology side here, so
+        the only categories available are the store's own per-abstract typings --
+        the noisy input the pipeline exists to reconcile. Passing them in the slot
+        the anchor path fills from the skeleton TBox pushed the model into
+        refusing on "store term is MaterialEntity, ontology class LIKELY Process",
+        and it threw out `haemorrhage -> Hemorrhage` as a category clash. Same 52
+        pairs, no categories: 46% not-synonymous became 27%.
+        """
+        from wound_ontology.mappers import mapping_adjudicator as adj
+
+        # Read from the FILE, not from what this build returned: the file
+        # accumulates, so entries written by an earlier build are equally capable
+        # of firing and equally in need of a verdict.
+        mapping = self.term_mapper.mapping
+        live = set(self._collect_store_terms_with_freq())
+        non_identity = {t: c for t, c in mapping.items() if t != c}
+        anchor_pairs = {t: c for t, c in non_identity.items() if c in anchors}
+        # A store-to-store pair is only worth a call while both ends can still
+        # occur: 1969 of the file's non-identity entries point at a canonical that
+        # no longer exists anywhere, and adjudicating those would spend the budget
+        # on decisions that can never fire.
+        store_pairs = {t: c for t, c in non_identity.items()
+                       if c not in anchors and (t in live or c in live)}
+        if not anchor_pairs and not store_pairs:
+            return mapping
+        cache = {} if readjudicate else (self.dm.load_latest_json("mapping_adjudication") or {})
+        report = self._run_sync(adj.adjudicate(
+            anchor_pairs, self.llm,
+            store_categories=self.store_categories(),
+            ontology_categories=self.ontology_categories(),
+            definitions=self.ontology_definitions(),
+            parents=self.ontology_parents(),
+            cache=cache,
+        ))
+        # No categories on this path, deliberately. See the docstring: the store's
+        # own per-abstract typings are not an ontology, and passing them here made
+        # the model refuse `haemorrhage -> Hemorrhage` on a category clash.
+        report.extend(self._run_sync(adj.adjudicate(
+            store_pairs, self.llm, cache=cache,
+        )))
+        if cache:
+            self.dm.save_as_json(cache, "mapping_adjudication")
+        print(f"[Orchestrator] Anchor adjudication: {report.summary()}.")
+
+        withdrawn = [t for t, _, _, _ in report.refused + report.subsumption_candidates]
+        if withdrawn:
+            n = self.term_mapper.withdraw(*withdrawn)
+            print(f"[Orchestrator] withdrew {n} anchor mapping(s) the model did not "
+                  f"confirm as the same class.")
+        for term, onto, verdict, reason in report.refused:
+            print(f"[Orchestrator]   REFUSED   {term!r} -> {onto!r}  [{verdict}] {reason}")
+        for term, onto, verdict, reason in report.subsumption_candidates:
+            arrow = "is_a" if verdict == "narrower" else "has subclass"
+            print(f"[Orchestrator]   SUBCLASS  {term!r} {arrow} {onto!r}  — {reason}")
+        if report.subsumption_candidates:
+            # Written in the hierarchy's own 'Class' / 'Parent class' shape, the
+            # specific one first, so the file can be read straight into a review
+            # without re-deriving which way round the verdict pointed.
+            df = pd.DataFrame(
+                [{"Class": (t if v == "narrower" else c),
+                  "Parent class": (c if v == "narrower" else t),
+                  "store term": t, "ontology class": c,
+                  "verdict": v, "reason": r}
+                 for t, c, v, r in report.subsumption_candidates])
+            self.dm.save_as_csv(df, "mapping_subsumption_candidates")
+            print(f"[Orchestrator] {len(df)} subsumption candidate(s) saved — these "
+                  f"are not synonyms but they are not nothing; review before minting.")
+        return self.term_mapper.mapping
 
     def review_mapping(self) -> None:
         """

@@ -409,6 +409,138 @@ Republish to the same URL. Keep the favicon 🩹 and the title stable.
 
 ---
 
+## 18. An identity claim is adjudicated, never inferred from distance
+
+*Decided 2026-09-06.*
+
+Mapping a store term onto an existing WONT or MILD class asserts that the two
+**are the same class**. It is not a similarity ranking, and it does not get a
+second look downstream: once applied, the store term is gone and every axiom
+built afterwards hangs off the ontology's IRI. Nothing that irreversible may
+rest on a cosine number.
+
+The measurement that settles it, over the 50 anchor mappings SapBERT proposed on
+the 2026-09-05 build:
+
+    chronic wounds            -> Chronic wound                        0.9785  right
+    clean wound class. grade  -> clean-contaminated wound class.grade 0.9736  WRONG
+    E. coli                   -> Escherichia coli                     0.9708  right
+    Horizontal mattress suture-> Vertical mattress suture             0.9604  WRONG
+
+The right and wrong proposals are interleaved, so no threshold separates them —
+and raising it loses the good matches first, because the bad ones are
+*semantically close*, which is exactly why the embedding likes them. Differential
+similarity over the differing tokens was tried and fails too: it separates
+horizontal/vertical (0.8466) but collapses on added tokens, word order and
+abbreviations (`e` vs `escherichia` = 0.5028).
+
+What does separate them is **what the labels differ by**:
+
+    identical tokens (case/punctuation only) : 18 pairs, 0 wrong
+    differ only by inflection (plural)       : 10 pairs, 0 wrong
+    differ by CONTENT                        : 22 pairs, 7 wrong
+
+SapBERT is exactly reliable on surface variance and exactly unreliable once a
+real word changes. So `label_difference` draws that line and only the
+content-differing pairs are adjudicated by the LLM, which is shown the ontology's
+own `IAO_0000115` definition — the *label* is what misled the embedding, so the
+label cannot also be the evidence. Where a class has no definition its named
+superclasses stand in.
+
+The model answers from a fixed enum and never emits an IRI (rule 11). Only
+`same_class` becomes a mapping. `narrower` and `broader` are not failures: they
+are candidate subsumption edges, saved as `mapping_subsumption_candidates` rather
+than discarded (rule 5). Anything else, including a verdict outside the enum, is
+refused and reported.
+
+**The model is integral, not an enhancement.** `run_build_term_mapping` raises
+when no key is configured, and `adjudicate` raises when a pair comes back
+undecided twice — because the alternative is a mapping that stands only because
+nobody looked at it. There is no offline mode for this step.
+
+The deterministic guards run *first*: a mapping already refused by
+`_category_compatible_mapping` never reaches the model, so the cheap check stays
+authoritative and the call budget goes to genuinely undecided pairs.
+
+Store-to-store merges are adjudicated too, but **without category hints**. This
+was measured on 2026-09-06 and the first answer was wrong twice over. The
+population was first quoted as 941 content-differing pairs; that counted the
+whole mapping file, 86% of which is residue from earlier builds, and only **52**
+of those pairs touch a term the store still holds. The first run over those 52
+then reported 46% not-synonymous — inflated, because it passed the store's own
+per-abstract typings in the slot where the anchor path passes the reasoner-backed
+skeleton TBox, and the model started refusing on "store term is MaterialEntity,
+ontology class *likely* Process". It refused `haemorrhage -> Hemorrhage` as
+different BFO types. There is no ontology side on this path, so there is no
+category to show: judged on labels alone the real figure is **14 of 52, 27%** —
+`diabetes mellitus -> diabetes`, `deep second-degree burns -> deep second- to
+third-degree burns`, `hip and knee arthroplasty -> hip or knee arthroplasty`.
+
+The reversibility argument that had excluded them does not survive contact with
+that number. It rested on `review_mapping()` undoing a bad merge, which assumes
+someone walks 2141 non-identity entries; nobody ever has. Closing it costs three
+model calls.
+
+Live result over both paths, 2026-09-06: 148 pairs kept on surface form with no
+call, 67 adjudicated → 45 same class, 12 subsumption candidates, 10 refused, 22
+withdrawn. All seven known-bad anchor pairs were caught and no correct one lost.
+The subsumption candidates are the substantive catch: `diabetes mellitus is_a
+diabetes`, `deep second-degree burns is_a deep second- to third-degree burns`,
+`hip and knee arthroplasty is_a hip or knee arthroplasty` — three merges that
+would each have destroyed a real distinction.
+
+**Known limitation: the verdicts are not perfectly reproducible.** At
+temperature 0.0, `antiseptic preparation -> antiseptic drug` came back
+`same_class` on one run and `different` on the next, with the same definition in
+front of it. Three of the ten refusals are hedged in their own reason text
+("may", "potential", "probable"). This is why verdicts are cached rather than
+re-derived: a pair is decided once and the decision is kept. Use
+`readjudicate=True` deliberately, knowing a borderline pair may flip, and treat
+refusals as a review queue rather than a final answer — refusing costs one
+duplicate class, which a curator can still merge.
+
+Enforced by: `mappers/mapping_adjudicator.py` (`label_difference`, `triage`,
+`adjudicate`), `LLMClient.adjudicate_mappings_batch`,
+`Orchestrator._adjudicate_anchor_mappings`, `Orchestrator.ontology_definitions`.
+Verdicts are cached in `mapping_adjudication`; re-ask with `readjudicate=True`
+after the ontologies' definitions change.
+
+## 19. The mapping is pruned to what can still fire
+
+*Decided 2026-09-06.*
+
+The term mapping accumulates across builds and never forgets. On 2026-09-06 it
+held 26625 entries against a store of 3727 terms, and that excess was doing two
+different kinds of harm.
+
+24441 were IDENTITY entries — a term mapped to itself, which `get()` already does
+for anything unmapped. They changed no behaviour, but they were 92% of the file,
+and they are why the mapping looked like an unreviewable 26k artifact rather than
+the ~200 real decisions it contains. `review_mapping()` has never once been run
+over it; that number is the reason. `build_from_embeddings` no longer writes them
+— it persists merges only, and returns the full assignment so a caller can still
+ask what happened to any term it was given.
+
+1969 of the 2184 non-identity entries pointed at a canonical that is neither a
+live store term nor an ontology label: `-125 mmHg -> -125 mm Hg`, `18% -> 18`.
+Both ends had been cleaned out builds ago. Such an entry is not merely useless —
+when a later abstract reintroduces the term, it renames it onto a target that
+exists nowhere.
+
+**A missing term is not the test.** After `run_apply_mapping` the mapped term is
+absent from the store *by design*, and the entry must survive so the same
+normalisation happens the next time that term appears. It is the CANONICAL having
+died that makes an entry inert. Chains are followed rather than assumed away:
+`A -> B -> C` is kept when C is alive. Exactly one chain exists in the current
+file and it resolves to nothing, but correctness must not rest on that.
+
+After pruning: **193 entries, all real merges, 177 of which can fire on a term
+the store holds today.** That is what makes rule 18's review step possible at all.
+
+Enforced by: `TermMapper.prune` (with `dry_run=True` to look first),
+`TermMapper.build_from_embeddings`, called from
+`Orchestrator.run_build_term_mapping`.
+
 ## Adding to this file
 
 When a universal design choice is made:

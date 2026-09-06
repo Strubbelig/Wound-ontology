@@ -93,7 +93,12 @@ def test_anchors_do_not_map_onto_store_terms(mapper):
         freq={"granulation processes": 99},
         groups=[["granulation"]],
     )
-    assert "Granulation process" not in out
+    # The store term moves onto the ontology label, and the ontology label stays
+    # where it is. Asserting the direction is what this test is for; asserting the
+    # anchor is merely absent would also pass if it had been mapped away and the
+    # entry filtered out somewhere downstream.
+    assert out["granulation processes"] == "Granulation process"
+    assert out.get("Granulation process") == "Granulation process"
 
 
 def test_the_orchestrator_collects_real_ontology_labels():

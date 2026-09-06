@@ -42,6 +42,7 @@ from wound_ontology.llm.schemas import (
     MereRelationResult, MereRelationBatchResponse,
     OccursInTargetBatch,
     TypingResponse, RelationResponse,
+    MappingVerdict, MappingVerdictBatch,
 )
 
 _OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
@@ -67,6 +68,16 @@ class LLMClient:
         self.abort_event: asyncio.Event | None = None
         self._consec_errors: int = 0
         self._max_consec_errors: int = 0
+
+    @property
+    def has_credentials(self) -> bool:
+        """Whether this client could reach the model at all.
+
+        Steps that cannot degrade gracefully without the model check this up
+        front and raise, rather than discovering it mid-run after an hour of
+        embedding work.
+        """
+        return bool(getattr(self._client, "api_key", ""))
 
     # ── Retry wrapper ──────────────────────────────────────────────────────────
 
@@ -538,3 +549,95 @@ class LLMClient:
         result = await self._execute_with_retry(self._call_json, prompt, SemanticNameResponse, temperature=0.3)
         return result.superclass_name
 
+
+    async def adjudicate_mappings_batch(
+        self, candidates: list[dict]
+    ) -> list[MappingVerdict]:
+        """Decide whether each (store term, ontology class) pair names ONE class.
+
+        SapBERT has already said the two labels are close; that question is
+        settled and asking it again would only reproduce the error. What is asked
+        here is the ontological one it cannot answer: same class, or one narrower
+        than the other, or simply different.
+
+        Each candidate is a dict with `store_term`, `ontology_class`, and
+        optionally `store_category`, `ontology_category`, `ontology_definition`.
+        The definition is the point of the exercise -- the LABEL is what fooled
+        the embedding, so the class is judged by what the ontology says it is.
+
+        Returns one verdict per pair. A pair the model omits is NOT decided, and
+        the caller must treat it as such rather than defaulting either way.
+        """
+        if not candidates:
+            return []
+
+        blocks = []
+        for i, c in enumerate(candidates, 1):
+            lines = [f'{i}. store term    : "{c["store_term"]}"',
+                     f'   ontology class: "{c["ontology_class"]}"']
+            if c.get("store_category"):
+                lines.append(f'   the store types the store term as: {c["store_category"]}')
+            if c.get("ontology_category"):
+                lines.append(f'   the ontology types the class as  : {c["ontology_category"]}')
+            if c.get("ontology_definition"):
+                lines.append(f'   the ontology DEFINES the class as: {c["ontology_definition"]}')
+            elif c.get("ontology_parents"):
+                lines.append("   the ontology gives no definition, but places the class under: "
+                             + ", ".join(sorted(c["ontology_parents"])))
+            else:
+                lines.append("   the ontology gives no definition for this class.")
+            blocks.append("\n".join(lines))
+        body = "\n\n".join(blocks)
+
+        prompt = f"""
+        You are a biomedical ontologist curating a wound care ontology built on BFO.
+
+        Each pair below was proposed by an embedding model as a SYNONYM match: the
+        claim is that the store term and the existing ontology class are two names
+        for the SAME class, and that the store term should therefore be absorbed
+        into the existing one rather than minted as a new class beside it.
+
+        The embedding is good at surface variance and bad at meaning. It has
+        proposed pairs like "Horizontal mattress suture" / "Vertical mattress
+        suture" and "clean wound classification grade" / "clean-contaminated wound
+        classification grade" — labels that differ by a single word which is the
+        whole distinction. Your job is to catch exactly those.
+
+        Judge each pair by what the ontology DEFINITION says the class is, not by
+        how similar the two labels look. For each pair return one verdict:
+
+          same_class — the two are the same class under different names, including
+                       abbreviation/expansion ("E. coli" / "Escherichia coli") and
+                       ordinary lexical variants. Absorbing the store term loses
+                       NOTHING.
+          narrower   — the store term is a genuine SUBTYPE of the ontology class
+                       ("Skin scarring" under "Scarring"). Real information would
+                       be lost by merging them.
+          broader    — the store term is more general than the ontology class
+                       ("clean wound classification grade" is not the same as
+                       "clean-contaminated wound classification grade"; where
+                       neither contains the other, use `different`).
+          different  — neither names the other, or they are siblings that merely
+                       share most of their words.
+
+        A BFO note that decides several of these: a PROCESS and the material
+        entity it acts on are never the same class, however similar the labels.
+        "Debridement" the procedure and "Debridement process" MAY be the same
+        class stated twice; "Skin graft" the material and "Skin grafting" the
+        process are NOT.
+
+        When you are unsure, answer `different`. A refused mapping costs one
+        duplicate class that a curator can merge later; a wrong `same_class`
+        silently destroys a distinction and cannot be recovered.
+
+        Give `reason` as one short clause. Use the EXACT store term and ontology
+        class strings from the input — do not paraphrase them.
+
+        PAIRS:
+        {body}
+        """
+        result = await self._execute_with_retry(
+            self._call_json, prompt, MappingVerdictBatch,
+            temperature=0.0, timeout=360,
+        )
+        return result.results
