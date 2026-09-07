@@ -1,673 +1,906 @@
 {
-  "42701476": {
+  "42703471": {
     "entities": {
-      "chronic skin wounds": {
+      "young adult men": {
         "is_a: MaterialEntity": 1.0
       },
-      "inflammatory skin diseases": {
+      "recurrence": {
+        "is_a: Process": 1.0,
+        "realizes: morbidity": 1.0
+      },
+      "morbidity": {
+        "is_a: Tendency": 1.0
+      },
+      "surgical techniques": {
+        "is_a: InformationEntity": 1.0
+      },
+      "complications": {
         "is_a: MaterialEntity": 1.0
       },
-      "conventional dressings": {
+      "quality-of-life outcomes": {
+        "is_a: InformationEntity": 1.0
+      },
+      "patients": {
+        "is_a: MaterialEntity": 1.0,
+        "has_quality: male predominance": 1.0,
+        "participates_in: simple excision": 1.0,
+        "participates_in: flap procedures": 1.0
+      },
+      "simple excision": {
+        "is_a: Process": 1.0
+      },
+      "Limberg flap": {
         "is_a: MaterialEntity": 1.0
       },
-      "wound microenvironment": {
-        "is_a: ImmaterialEntity": 1.0
+      "Keystone flap reconstruction": {
+        "is_a: Process": 1.0
       },
-      "neuro-immune-skin axis": {
+      "tertiary care center": {
+        "is_a: MaterialEntity": 1.0,
+        "participates_in: flap procedures": 1.0
+      },
+      "operative time": {
+        "is_a: Quality": 1.0
+      },
+      "hospital stay": {
+        "is_a: Process": 1.0
+      },
+      "Clavien-Dindo": {
         "is_a: InformationEntity": 1.0,
-        "is_about: peripheral neurons": 1.0,
-        "is_about: cutaneous immune cells": 1.0,
-        "is_about: neuropeptides": 1.0,
-        "is_about: neurotransmitters": 1.0,
-        "is_about: cytokines": 1.0
+        "is_about: complications": 1.0
       },
-      "peripheral neurons": {
-        "is_a: MaterialEntity": 1.0,
-        "participates_in: bidirectional communication": 1.0
-      },
-      "cutaneous immune cells": {
-        "is_a: MaterialEntity": 1.0,
-        "participates_in: bidirectional communication": 1.0
-      },
-      "neuropeptides": {
-        "is_a: MaterialEntity": 1.0,
-        "participates_in: bidirectional communication": 1.0
-      },
-      "neurotransmitters": {
-        "is_a: MaterialEntity": 1.0,
-        "participates_in: bidirectional communication": 1.0
-      },
-      "cytokines": {
-        "is_a: MaterialEntity": 1.0,
-        "participates_in: bidirectional communication": 1.0
-      },
-      "advanced wound management": {
-        "is_a: Process": 1.0
-      },
-      "neuroimmunology": {
+      "recurrence rates": {
         "is_a: InformationEntity": 1.0
       },
-      "wound biomaterials": {
-        "is_a: MaterialEntity": 1.0
+      "scar quality": {
+        "is_a: Quality": 1.0
       },
-      "molecular events": {
-        "is_a: Process": 1.0,
-        "part_of: triadic interplay": 1.0
+      "Vancouver Scar Scale": {
+        "is_a: InformationEntity": 1.0,
+        "is_about: scar quality": 1.0
       },
-      "cellular events": {
-        "is_a: Process": 1.0,
-        "part_of: triadic interplay": 1.0
+      "patient satisfaction": {
+        "is_a: Quality": 1.0
       },
-      "triadic interplay": {
-        "is_a: Process": 1.0
+      "Likert scale": {
+        "is_a: InformationEntity": 1.0,
+        "is_about: patient satisfaction": 1.0
       },
-      "neural signals": {
-        "is_a: MaterialEntity": 1.0,
-        "has_part: substance P": 1.0,
-        "has_part: CGRP": 1.0,
-        "participates_in: triadic interplay": 1.0
+      "QoL": {
+        "is_a: Quality": 1.0
       },
-      "substance P": {
-        "is_a: MaterialEntity": 1.0
+      "WHO‑QoL‑BREF": {
+        "is_a: InformationEntity": 1.0,
+        "has_part: physical scores": 1.0,
+        "has_part: psychological scores": 1.0,
+        "has_part: social domains": 1.0,
+        "has_part: environmental domains": 1.0
       },
-      "CGRP": {
-        "is_a: MaterialEntity": 1.0
+      "male predominance": {
+        "is_a: Quality": 1.0
       },
-      "immune cells": {
-        "is_a: MaterialEntity": 1.0,
-        "has_part: cutaneous immune cells": 1.0,
-        "participates_in: triadic interplay": 1.0
-      },
-      "immune mediators": {
-        "is_a: MaterialEntity": 1.0,
-        "has_part: cytokines": 1.0
-      },
-      "neural cells": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "skin cells": {
-        "is_a: MaterialEntity": 1.0,
-        "participates_in: triadic interplay": 1.0
-      },
-      "feedback loops": {
-        "is_a: Process": 1.0,
-        "part_of: triadic interplay": 1.0
-      },
-      "biomaterial advances": {
-        "is_a: Process": 1.0
-      },
-      "closed-loop regulatory approaches": {
+      "mean age": {
         "is_a: InformationEntity": 1.0
       },
-      "neuro-immune crosstalk modulation": {
+      "flap procedures": {
         "is_a: Process": 1.0
       },
-      "oxidative stress management": {
+      "extensive disease": {
+        "is_a: Quality": 1.0
+      },
+      "longer hospital stay": {
+        "is_a: Quality": 1.0
+      },
+      "median healing time": {
+        "is_a: Quality": 1.0
+      },
+      "return to work": {
         "is_a: Process": 1.0
       },
-      "pathology-triggered drug release": {
-        "is_a: Process": 1.0
+      "scar outcomes": {
+        "is_a: Quality": 1.0
       },
-      "disease models": {
+      "higher patient satisfaction": {
+        "is_a: Quality": 1.0
+      },
+      "physical scores": {
         "is_a: InformationEntity": 1.0
       },
-      "passive coverage": {
-        "is_a: Process": 1.0,
-        "immediately_causally_downstream_of: active intervention": 1.0
+      "psychological scores": {
+        "is_a: InformationEntity": 1.0
       },
-      "active intervention": {
-        "is_a: Process": 1.0
+      "social domains": {
+        "is_a: InformationEntity": 1.0
       },
-      "wound healing": {
-        "is_a: Process": 1.0,
-        "part_of: neuroimmune-coordinated regeneration": 1.0
+      "environmental domains": {
+        "is_a: InformationEntity": 1.0
       },
-      "neuroimmune-coordinated regeneration": {
-        "is_a: Process": 1.0
+      "long-term outcomes": {
+        "is_a: InformationEntity": 1.0
       },
-      "AI-assisted design": {
-        "is_a: Process": 1.0
+      "cosmesis": {
+        "is_a: Quality": 1.0
       },
-      "organoid-on-chip platforms": {
+      "off-midline flap techniques": {
+        "is_a: InformationEntity": 1.0
+      },
+      "complex pilonidal sinus disease": {
         "is_a: MaterialEntity": 1.0
       },
-      "smart closed-loop dressings": {
+      "recurrent pilonidal sinus disease": {
         "is_a: MaterialEntity": 1.0
-      },
-      "translational hurdles": {
-        "is_a: Role": 1.0
-      },
-      "scalable manufacturing": {
-        "is_a: Process": 1.0
-      },
-      "standardized evaluation": {
-        "is_a: Process": 1.0
-      },
-      "bidirectional communication": {
-        "is_a: Process": 1.0
       }
     },
-    "meta_stamp": "llm_extract_1_20260906_1450",
+    "meta_stamp": "llm_extract_1_20260907_1336",
     "schema_report": {
       "rejected_terms": [],
       "rejected_relations": [
         [
-          "neuro-immune-skin axis",
-          "is about",
-          "bidirectional communication",
-          "InformationEntity -> Process not licensed"
+          "pilonidal sinus",
+          "has quality",
+          "chronic inflammatory condition",
+          "MaterialEntity -> MaterialEntity not licensed"
         ],
         [
-          "neuro-immune-skin axis",
-          "is about",
-          "advanced wound management",
-          "InformationEntity -> Process not licensed"
-        ],
-        [
-          "neuroimmunology",
-          "is about",
-          "neuro-immune-skin axis",
-          "InformationEntity -> InformationEntity not licensed"
-        ],
-        [
-          "wound biomaterials",
-          "is about",
-          "neuro-immune-skin axis",
+          "patients",
+          "has quality",
+          "mean age",
           "MaterialEntity -> InformationEntity not licensed"
         ],
         [
-          "closed-loop regulatory approaches",
-          "is about",
-          "neuro-immune crosstalk modulation",
+          "flap procedures",
+          "has output",
+          "longer operative time",
+          "Process -> Quality not licensed"
+        ],
+        [
+          "flap procedures",
+          "has output",
+          "longer hospital stay",
+          "Process -> Quality not licensed"
+        ],
+        [
+          "simple excision",
+          "has output",
+          "median healing time",
+          "Process -> Quality not licensed"
+        ],
+        [
+          "flap procedures",
+          "has output",
+          "superior scar outcomes",
+          "endpoint not among extracted entities"
+        ],
+        [
+          "flap procedures",
+          "has output",
+          "higher patient satisfaction",
+          "Process -> Quality not licensed"
+        ],
+        [
+          "simple excision",
+          "has output",
+          "recurrence",
+          "Process -> Process not licensed"
+        ],
+        [
+          "complications",
+          "has quality",
+          "seroma",
+          "MaterialEntity -> MaterialEntity not licensed"
+        ],
+        [
+          "off-midline flap techniques",
+          "has part",
+          "Limberg flap",
+          "InformationEntity -> MaterialEntity not licensed"
+        ],
+        [
+          "off-midline flap techniques",
+          "has part",
+          "Keystone flap reconstruction",
           "InformationEntity -> Process not licensed"
         ],
         [
-          "closed-loop regulatory approaches",
-          "is about",
-          "oxidative stress management",
-          "InformationEntity -> Process not licensed"
-        ],
-        [
-          "closed-loop regulatory approaches",
-          "is about",
-          "pathology-triggered drug release",
-          "InformationEntity -> Process not licensed"
-        ],
-        [
-          "disease models",
-          "is about",
-          "neuro-immune crosstalk modulation",
-          "InformationEntity -> Process not licensed"
-        ],
-        [
-          "disease models",
-          "is about",
-          "oxidative stress management",
-          "InformationEntity -> Process not licensed"
-        ],
-        [
-          "disease models",
-          "is about",
-          "pathology-triggered drug release",
-          "InformationEntity -> Process not licensed"
-        ],
-        [
-          "conventional dressings",
+          "recurrence",
           "part of",
-          "passive coverage",
-          "MaterialEntity -> Process not licensed"
+          "long-term outcomes",
+          "Process -> InformationEntity not licensed"
         ],
         [
-          "smart closed-loop dressings",
+          "cosmesis",
           "part of",
-          "active intervention",
-          "MaterialEntity -> Process not licensed"
+          "long-term outcomes",
+          "Quality -> InformationEntity not licensed"
         ],
         [
-          "AI-assisted design",
-          "has specified input",
-          "translational hurdles",
-          "Process -> Role not licensed"
-        ],
-        [
-          "organoid-on-chip platforms",
-          "has specified input",
-          "translational hurdles",
-          "MaterialEntity -> Role not licensed"
-        ],
-        [
-          "smart closed-loop dressings",
-          "has specified input",
-          "translational hurdles",
-          "MaterialEntity -> Role not licensed"
-        ],
-        [
-          "scalable manufacturing",
-          "has specified input",
-          "translational hurdles",
-          "Process -> Role not licensed"
-        ],
-        [
-          "standardized evaluation",
-          "has specified input",
-          "translational hurdles",
-          "Process -> Role not licensed"
+          "patient satisfaction",
+          "part of",
+          "long-term outcomes",
+          "Quality -> InformationEntity not licensed"
         ]
       ],
       "unknown_predicates": []
     }
   },
-  "42701537": {
+  "42704302": {
     "entities": {
-      "Surgical site infections": {
-        "is_a: MaterialEntity": 1.0
+      "antibiotic treatment": {
+        "is_a: Process": 1.0,
+        "immediately_causally_downstream_of: leg wound infection": 1.0
       },
-      "SSIs": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "SSI": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "caesarean section": {
-        "is_a: Process": 1.0
-      },
-      "CS": {
-        "is_a: Process": 1.0
-      },
-      "symptom onset": {
-        "is_a: ProcessBoundary": 1.0
-      },
-      "clinician notification": {
-        "is_a: Process": 1.0
-      },
-      "risk factors": {
+      "higher risk": {
         "is_a: Tendency": 1.0
-      },
-      "early intervention": {
-        "is_a: Process": 1.0
-      },
-      "duration of surgery": {
-        "is_a: Quality": 1.0
-      },
-      "wound discharge": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "localized swelling": {
-        "is_a: Quality": 1.0
-      },
-      "clinician notifications": {
-        "is_a: Process": 1.0
-      },
-      "postdischarge surveillance": {
-        "is_a: Process": 1.0,
-        "has_as_process_boundary_at_start: discharge": 1.0
-      },
-      "early follow-up": {
-        "is_a: Process": 1.0
-      },
-      "SSI detection": {
-        "is_a: Process": 1.0,
-        "has_input: SSI": 1.0
-      },
-      "maternal outcomes": {
-        "is_a: Quality": 1.0
-      },
-      "surgical site": {
-        "is_a: ImmaterialEntity": 1.0
-      }
-    },
-    "meta_stamp": "llm_extract_1_20260906_1450"
-  },
-  "42701690": {
-    "entities": {
-      "Diabetic foot ulcers": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "DFUs": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "diabetes mellitus": {
-        "is_a: MaterialEntity": 1.0
       },
       "infection": {
         "is_a: Process": 1.0
       },
-      "limb amputation": {
+      "infectious complications": {
         "is_a: Process": 1.0
       },
-      "non-surgical management": {
+      "leg wound infection": {
         "is_a: Process": 1.0
       },
-      "surgical interventions": {
-        "is_a: Process": 1.0,
-        "part_of: surgical management": 1.0
-      },
-      "debridement": {
-        "is_a: Process": 1.0,
-        "part_of: surgical interventions": 1.0
-      },
-      "minor procedures": {
-        "is_a: Process": 1.0,
-        "part_of: surgical interventions": 1.0
-      },
-      "non-surgical care": {
-        "is_a: Process": 1.0,
-        "has_participant: dressings": 1.0,
-        "has_participant: antibiotics": 1.0,
-        "part_of: non-surgical management": 1.0
-      },
-      "dressings": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "antibiotics": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "glycemic control": {
-        "is_a: Process": 1.0,
-        "part_of: non-surgical care": 1.0
-      },
-      "duration of recovery": {
-        "is_a: Quality": 1.0
-      },
-      "complication rates": {
-        "is_a: InformationEntity": 1.0,
-        "is_about: complication": 1.0
-      },
-      "healing": {
-        "is_a: Process": 1.0,
-        "immediately_causally_downstream_of: surgical management": 1.0
-      },
-      "mild ulcers": {
-        "is_a: MaterialEntity": 1.0,
-        "part_of: DFUs": 1.0
-      },
-      "tailored treatment strategies": {
-        "is_a: RealizableEntity": 1.0
-      },
-      "DFU outcomes": {
-        "is_a: Occurrent": 1.0
-      }
-    },
-    "meta_stamp": "llm_extract_1_20260906_1450"
-  },
-  "42700800": {
-    "entities": {
-      "biofilm-associated infections": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "chronic wounds": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "implant infections": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "hydrogel delivery": {
+      "leg wound infections": {
         "is_a: Process": 1.0
       },
-      "bacteriophage therapy": {
+      "no-touch harvesting technique": {
         "is_a: Process": 1.0
       },
-      "phage therapy": {
+      "no-touch saphenous vein harvesting": {
         "is_a: Process": 1.0
       },
-      "phages": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "controlled release": {
+      "no-touch technique": {
         "is_a: Process": 1.0
       },
-      "fracture-related infection": {
-        "is_a: MaterialEntity": 1.0
+      "no-touch techniques": {
+        "is_a: Process": 1.0
       },
-      "burn wound": {
-        "is_a: MaterialEntity": 1.0
+      "no-touch vein harvesting technique": {
+        "is_a: Process": 1.0
       },
-      "prosthetic joint infection": {
-        "is_a: MaterialEntity": 1.0
+      "open saphenous vein graft harvesting": {
+        "is_a: Process": 1.0
       },
-      "phage preparations": {
-        "is_a: MaterialEntity": 1.0
+      "risk": {
+        "is_a: Tendency": 1.0
       },
-      "hydrogels": {
-        "is_a: MaterialEntity": 1.0,
-        "has_part: phage preparations": 1.0
-      },
-      "compassionate use": {
+      "risk factors": {
         "is_a: Role": 1.0
       },
-      "surgical debridement": {
+      "risk of infection": {
+        "is_a: Tendency": 1.0
+      },
+      "saphenous vein harvesting": {
         "is_a: Process": 1.0
       },
-      "systemic antibiotics": {
+      "surgical site infection": {
+        "is_a: Process": 1.0
+      },
+      "vein harvest site": {
+        "is_a: ImmaterialEntity": 1.0
+      },
+      "vein harvest technique": {
+        "is_a: Process": 1.0
+      },
+      "wound healing disturbance": {
+        "is_a: Process": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260907_1336"
+  },
+  "42703985": {
+    "entities": {
+      "Healthcare-associated infections": {
         "is_a: MaterialEntity": 1.0
       },
-      "recurrence": {
-        "is_a: Process": 1.0
+      "HAIs": {
+        "is_a: MaterialEntity": 1.0
       },
-      "locally applied phages": {
+      "surgical site infection": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "SSI": {
         "is_a: MaterialEntity": 1.0,
-        "has_quality: surgical compatibility": 1.0,
-        "participates_in: in vivo release": 1.0
+        "has_quality: perioperative outcome": 1.0
       },
-      "in vivo release": {
-        "is_a: Process": 1.0
-      },
-      "surgical compatibility": {
+      "perioperative outcome": {
         "is_a: Quality": 1.0
       },
-      "hydrogel-phage component": {
-        "is_a: MaterialEntity": 1.0,
-        "has_part: hydrogels": 1.0,
-        "has_part: phages": 1.0
+      "Observed SSI incidence": {
+        "is_a: InformationEntity": 1.0,
+        "is_specified_output_of: surveillance": 1.0
       },
-      "bacterial species": {
+      "surveillance definition": {
+        "is_a: InformationEntity": 1.0
+      },
+      "case finding": {
+        "is_a: Process": 1.0,
+        "part_of: surveillance": 1.0
+      },
+      "infections": {
         "is_a: MaterialEntity": 1.0
       },
-      "topical delivery": {
-        "is_a: Process": 1.0,
-        "has_participant: phages": 1.0
-      },
-      "injected delivery": {
-        "is_a: Process": 1.0,
-        "has_participant: phages": 1.0
-      },
-      "intraoperative delivery": {
-        "is_a: Process": 1.0,
-        "has_participant: phages": 1.0
-      },
-      "oral delivery": {
-        "is_a: Process": 1.0,
-        "has_participant: phages": 1.0
-      },
-      "irrigation delivery": {
-        "is_a: Process": 1.0,
-        "has_participant: phages": 1.0
-      },
-      "burn models": {
+      "HAI definitions": {
         "is_a: InformationEntity": 1.0,
-        "is_about: bacterial load": 1.0
+        "is_about: HAIs": 1.0
       },
-      "wound/soft-tissue models": {
+      "audit": {
+        "is_a: Process": 1.0
+      },
+      "antimicrobial resistance": {
+        "is_a: Disposition": 1.0
+      },
+      "perioperative prevention": {
+        "is_a: Process": 1.0
+      },
+      "appropriate antimicrobial prophylaxis": {
+        "is_a: Process": 1.0,
+        "part_of: perioperative prevention": 1.0
+      },
+      "alcohol-containing skin antisepsis": {
+        "is_a: Process": 1.0,
+        "part_of: perioperative prevention": 1.0
+      },
+      "avoidance of peri-operative hypothermia": {
+        "is_a: Process": 1.0,
+        "part_of: perioperative prevention": 1.0
+      },
+      "peri-operative hypothermia": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "aseptic practice": {
+        "is_a: Process": 1.0,
+        "part_of: perioperative prevention": 1.0
+      },
+      "post-discharge case finding": {
+        "is_a: Process": 1.0,
+        "part_of: case finding": 1.0,
+        "part_of: perioperative prevention": 1.0
+      },
+      "care bundles": {
         "is_a: InformationEntity": 1.0,
-        "is_about: bacterial load": 1.0
+        "is_about: SSI": 1.0
       },
-      "bacterial load": {
+      "concise audit dashboard": {
+        "is_a: InformationEntity": 1.0,
+        "is_specified_input_of: audit": 1.0
+      },
+      "adaptable perioperative prevention bundle": {
+        "is_a: InformationEntity": 1.0,
+        "is_specified_input_of: perioperative prevention": 1.0
+      },
+      "digital surveillance": {
+        "is_a: Process": 1.0
+      },
+      "surveillance workload": {
         "is_a: Quality": 1.0
       },
-      "healing": {
-        "is_a: Process": 1.0
-      },
-      "survival": {
-        "is_a: Process": 1.0
-      },
-      "bone/joint models": {
-        "is_a: InformationEntity": 1.0
-      },
-      "pathogen reduction": {
-        "is_a: Process": 1.0
-      },
-      "colitis": {
-        "is_a: MaterialEntity": 1.0,
-        "participates_in: pathogen reduction": 1.0
-      },
-      "bacterial markers": {
-        "is_a: InformationEntity": 1.0,
-        "is_about: endodontic infection": 1.0
-      },
-      "inflammatory markers": {
-        "is_a: InformationEntity": 1.0,
-        "is_about: endodontic infection": 1.0
-      },
-      "endodontic infection": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "hydrogel-based local phage therapy": {
+      "local validation": {
         "is_a: Process": 1.0,
-        "part_of: bacteriophage therapy": 1.0
+        "part_of: digital surveillance": 1.0
       },
-      "adverse effects": {
-        "is_a: Process": 1.0
-      },
-      "clinical trials": {
-        "is_a: InformationEntity": 1.0
-      },
-      "delivery": {
-        "is_a: Process": 1.0
-      },
-      "dosing": {
-        "is_a: Process": 1.0
-      },
-      "hydrogel-mediated phage delivery": {
+      "human case confirmation": {
         "is_a: Process": 1.0,
-        "part_of: bacteriophage therapy": 1.0
+        "part_of: digital surveillance": 1.0
       },
-      "local delivery": {
-        "is_a: Process": 1.0
-      },
-      "bacteriophages": {
+      "established surveillance systems": {
         "is_a: MaterialEntity": 1.0
       }
     },
-    "meta_stamp": "llm_extract_1_20260906_1450"
+    "meta_stamp": "llm_extract_1_20260907_1336"
   },
-  "42700038": {
+  "42704073": {
     "entities": {
-      "Silver-containing dressings": {
+      "arthroscopic surgery": {
+        "is_a: Process": 1.0,
+        "has_specified_output: findings": 1.0
+      },
+      "postoperative infection": {
         "is_a: MaterialEntity": 1.0,
-        "has_function: antimicrobial properties": 1.0,
-        "participates_in: postoperative wound care": 1.0,
-        "participates_in: chronic wound care": 1.0,
-        "participates_in: long-term silver dressing use": 1.0
+        "has_part: deep infection": 1.0
       },
-      "postoperative wound care": {
-        "is_a: Process": 1.0
-      },
-      "chronic wound care": {
-        "is_a: Process": 1.0
-      },
-      "wound care": {
-        "is_a: Process": 1.0
-      },
-      "antimicrobial properties": {
-        "is_a: Function": 1.0
-      },
-      "chronic open wounds": {
+      "knee": {
         "is_a: MaterialEntity": 1.0
       },
-      "local retention": {
-        "is_a: Process": 1.0,
-        "has_participant: silver-containing material": 1.0,
-        "has_participant: dressing-related material": 1.0
-      },
-      "deposition": {
-        "is_a: Process": 1.0,
-        "has_output: dressing-related material": 1.0
-      },
-      "silver-containing material": {
+      "hip": {
         "is_a: MaterialEntity": 1.0
       },
-      "nonhealing wound": {
+      "shoulder": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "arthroplasty": {
+        "is_a: Process": 1.0
+      },
+      "risk": {
+        "is_a: Tendency": 1.0
+      },
+      "risks": {
+        "is_a: Tendency": 1.0
+      },
+      "overall infection": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "deep infection": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "infection": {
         "is_a: MaterialEntity": 1.0,
-        "output_of: pilonidal sinus excision": 1.0
+        "has_part: overall infection": 1.0,
+        "has_part: postoperative infection": 1.0
       },
-      "pilonidal sinus excision": {
-        "is_a: Process": 1.0
-      },
-      "delayed wound healing": {
-        "is_a: Process": 1.0
-      },
-      "sacrococcygeal region": {
-        "is_a: ImmaterialEntity": 1.0
-      },
-      "wound-related material": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "debridement": {
-        "is_a: Process": 1.0
-      },
-      "fistulous tract": {
-        "is_a: ImmaterialEntity": 1.0
-      },
-      "anal canal": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "previous wound site": {
-        "is_a: ImmaterialEntity": 1.0
-      },
-      "anal fistula": {
-        "is_a: ImmaterialEntity": 1.0
-      },
-      "chronic nonhealing postoperative wound": {
-        "is_a: MaterialEntity": 1.0
-      },
-      "wound debridement": {
+      "knee arthroscopy": {
         "is_a: Process": 1.0,
-        "has_participant: wound-related material": 1.0,
-        "has_participant: silver-containing dressing-associated material": 1.0
+        "part_of: arthroscopic surgery": 1.0
       },
-      "fistula surgery": {
-        "is_a: Process": 1.0
+      "shoulder arthroscopy": {
+        "is_a: Process": 1.0,
+        "part_of: arthroscopic surgery": 1.0
       },
-      "surgical treatment": {
-        "is_a: Process": 1.0
+      "hip arthroscopy": {
+        "is_a: Process": 1.0,
+        "part_of: arthroscopic surgery": 1.0
       },
+      "postoperative infection risks": {
+        "is_a: Tendency": 1.0,
+        "inheres_in: joint": 1.0
+      },
+      "infection risk": {
+        "is_a: Tendency": 1.0,
+        "inheres_in: joint": 1.0
+      },
+      "joint": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "joints": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "treatment plans": {
+        "is_a: InformationEntity": 1.0
+      },
+      "findings": {
+        "is_a: InformationEntity": 1.0
+      },
+      "incidence rates": {
+        "is_a: InformationEntity": 1.0,
+        "is_about: infection": 1.0
+      },
+      "postoperative infection rates": {
+        "is_a: InformationEntity": 1.0,
+        "is_about: infection": 1.0
+      },
+      "joint-specific risk": {
+        "is_a: Tendency": 1.0,
+        "inheres_in: joint": 1.0
+      },
+      "shoulder joint": {
+        "is_a: MaterialEntity": 1.0,
+        "part_of: shoulder": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260907_1336",
+    "schema_report": {
+      "rejected_terms": [],
+      "rejected_relations": [
+        [
+          "findings",
+          "is about",
+          "infection risk",
+          "InformationEntity -> Tendency not licensed"
+        ],
+        [
+          "treatment plans",
+          "is about",
+          "joint-specific risk",
+          "InformationEntity -> Tendency not licensed"
+        ],
+        [
+          "joint arthroscopy",
+          "has output",
+          "incidence rates",
+          "endpoint not among extracted entities"
+        ],
+        [
+          "joint-specific risk",
+          "has realization",
+          "postoperative infection",
+          "Tendency -> MaterialEntity not licensed"
+        ],
+        [
+          "infection risk",
+          "has realization",
+          "infection",
+          "Tendency -> MaterialEntity not licensed"
+        ],
+        [
+          "postoperative infection risks",
+          "has realization",
+          "postoperative infection",
+          "Tendency -> MaterialEntity not licensed"
+        ]
+      ],
+      "unknown_predicates": []
+    }
+  },
+  "42703435": {
+    "entities": {
       "wound healing": {
         "is_a: Process": 1.0
       },
-      "silver deposition": {
-        "is_a: Process": 1.0,
-        "has_output: silver-containing material": 1.0
-      },
       "chronic wounds": {
         "is_a: MaterialEntity": 1.0
       },
-      "long-term silver dressing use": {
-        "is_a: Process": 1.0,
-        "has_participant: chronic open wounds": 1.0,
-        "has_participant: Silver-containing dressings": 1.0,
-        "part_of: postoperative wound care": 1.0
+      "refractory wounds": {
+        "is_a: MaterialEntity": 1.0
       },
-      "wound assessment": {
+      "infection": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "necrosis": {
         "is_a: Process": 1.0
       },
-      "removal of wound-related material": {
-        "is_a: Process": 1.0,
-        "part_of: debridement": 1.0
+      "amputation": {
+        "is_a: Process": 1.0
       },
-      "removal of residual wound-related material": {
-        "is_a: Process": 1.0,
-        "has_participant: residual wound-related material": 1.0
-      },
-      "residual wound-related material": {
+      "cell derivatives": {
         "is_a: MaterialEntity": 1.0
       },
-      "dressing-related material": {
+      "extracellular vesicles": {
         "is_a: MaterialEntity": 1.0
       },
-      "silver-containing dressing-associated material": {
+      "EVs": {
+        "is_a: MaterialEntity": 1.0,
+        "part_of: cell derivatives": 1.0,
+        "has_quality: structural complexity": 1.0,
+        "has_quality: functional diversity": 1.0
+      },
+      "mesenchymal stem cells": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "cell-free therapeutic agents": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "regenerative medicine": {
+        "is_a: InformationEntity": 1.0,
+        "is_about: structural complexity": 1.0,
+        "is_about: functional diversity": 1.0
+      },
+      "sEVs": {
+        "is_a: MaterialEntity": 1.0,
+        "part_of: extracellular vesicles": 1.0,
+        "has_disposition: therapeutic potential": 1.0,
+        "has_quality: stability": 1.0,
+        "has_quality: therapeutic lifespan": 1.0,
+        "participates_in: tissue engineering": 1.0,
+        "participates_in: wound repair": 1.0,
+        "participates_in: wound healing": 1.0,
+        "output_of: isolation": 1.0,
+        "output_of: purification": 1.0,
+        "output_of: characterization": 1.0,
+        "output_of: scalable manufacturing": 1.0,
+        "output_of: regulatory approval": 1.0,
+        "output_of: release": 1.0,
+        "has_part: extracellular particles": 1.0
+      },
+      "EV types": {
+        "is_a: InformationEntity": 1.0
+      },
+      "Global Regulatory Framework": {
+        "is_a: InformationEntity": 1.0,
+        "has_part: Iranian Food and Drug Administration guideline": 1.0
+      },
+      "GRF": {
+        "is_a: InformationEntity": 1.0
+      },
+      "isolation": {
+        "is_a: Process": 1.0
+      },
+      "purification": {
+        "is_a: Process": 1.0
+      },
+      "characterization": {
+        "is_a: Process": 1.0
+      },
+      "sEV-based therapies": {
+        "is_a: Process": 1.0,
+        "part_of: EV-based therapies": 1.0
+      },
+      "tissue engineering": {
+        "is_a: Process": 1.0
+      },
+      "EV-based therapies": {
+        "is_a: Process": 1.0
+      },
+      "Iranian Food and Drug Administration guideline": {
+        "is_a: InformationEntity": 1.0,
+        "is_about: EVs": 1.0
+      },
+      "IFDA guideline": {
+        "is_a: InformationEntity": 1.0
+      },
+      "extracellular particles": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "structural complexity": {
+        "is_a: Quality": 1.0
+      },
+      "functional diversity": {
+        "is_a: Quality": 1.0
+      },
+      "therapeutic potential": {
+        "is_a: Disposition": 1.0
+      },
+      "wound repair": {
+        "is_a: Process": 1.0
+      },
+      "tissue remodeling": {
+        "is_a: Process": 1.0
+      },
+      "stability": {
+        "is_a: Quality": 1.0
+      },
+      "therapeutic lifespan": {
+        "is_a: Quality": 1.0
+      },
+      "advanced delivery systems": {
+        "is_a: MaterialEntity": 1.0,
+        "has_quality: structural integrity": 1.0,
+        "has_quality: physicochemical stability": 1.0,
+        "has_quality: biological functionality": 1.0,
+        "has_quality: morphological characteristics": 1.0,
+        "has_part: hydrogels": 1.0,
+        "has_part: nanofibers": 1.0,
+        "has_part: biomatrices": 1.0
+      },
+      "hydrogels": {
+        "is_a: MaterialEntity": 1.0,
+        "part_of: advanced delivery systems": 1.0
+      },
+      "nanofibers": {
+        "is_a: MaterialEntity": 1.0,
+        "part_of: advanced delivery systems": 1.0
+      },
+      "biomatrices": {
+        "is_a: MaterialEntity": 1.0,
+        "part_of: advanced delivery systems": 1.0
+      },
+      "structural integrity": {
+        "is_a: Quality": 1.0
+      },
+      "physicochemical stability": {
+        "is_a: Quality": 1.0
+      },
+      "biological functionality": {
+        "is_a: Quality": 1.0
+      },
+      "morphological characteristics": {
+        "is_a: Quality": 1.0
+      },
+      "release": {
+        "is_a: Process": 1.0
+      },
+      "injury site": {
+        "is_a: ImmaterialEntity": 1.0
+      },
+      "scalable manufacturing": {
+        "is_a: Process": 1.0
+      },
+      "regulatory approval": {
+        "is_a: Process": 1.0
+      },
+      "sEV-based therapeutics": {
+        "is_a: Process": 1.0,
+        "part_of: sEV-based therapies": 1.0
+      },
+      "biocompatible": {
+        "is_a: Quality": 1.0
+      },
+      "versatile platform": {
         "is_a: MaterialEntity": 1.0
       }
     },
-    "meta_stamp": "llm_extract_1_20260906_1450"
+    "meta_stamp": "llm_extract_1_20260907_1336",
+    "schema_report": {
+      "rejected_terms": [],
+      "rejected_relations": [
+        [
+          "IFDA guideline",
+          "part of",
+          "Global Regulatory Framework",
+          "InformationEntity -> InformationEntity not licensed"
+        ],
+        [
+          "Global Regulatory Framework",
+          "is about",
+          "EV types",
+          "InformationEntity -> InformationEntity not licensed"
+        ],
+        [
+          "sEV-based therapeutics",
+          "has quality",
+          "biocompatible",
+          "Process -> Quality not licensed"
+        ],
+        [
+          "sEV-based therapeutics",
+          "has quality",
+          "cost-effective",
+          "Process -> Quality not licensed"
+        ],
+        [
+          "injury site",
+          "is specified input of",
+          "release",
+          "ImmaterialEntity -> Process not licensed"
+        ]
+      ],
+      "unknown_predicates": []
+    }
+  },
+  "42703032": {
+    "entities": {
+      "Cell-laden skin equivalents": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "chronic wound repair": {
+        "is_a: Process": 1.0
+      },
+      "therapeutic efficacy": {
+        "is_a: Quality": 1.0
+      },
+      "susceptibility to bacterial invasion": {
+        "is_a: Tendency": 1.0,
+        "inheres_in: Cell-laden skin equivalents": 1.0
+      },
+      "multifunctional bilayer skin substitute": {
+        "is_a: MaterialEntity": 1.0,
+        "has_part: piezoelectric poly/carbon nanotube electrospun membrane": 1.0,
+        "has_part: conductive gelatin-hyaluronic acid methacryloyl hydrogel dermis": 1.0
+      },
+      "piezoelectric poly/carbon nanotube electrospun membrane": {
+        "is_a: MaterialEntity": 1.0,
+        "has_disposition: antibacterial activity": 1.0,
+        "has_quality: therapeutic efficacy": 1.0
+      },
+      "artificial epidermis": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "conductive gelatin-hyaluronic acid methacryloyl hydrogel dermis": {
+        "is_a: MaterialEntity": 1.0,
+        "has_disposition: antioxidant protection": 1.0
+      },
+      "fibroblasts": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "protocatechualdehyde": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "stimulation": {
+        "is_a: Process": 1.0
+      },
+      "vibration": {
+        "is_a: Process": 1.0
+      },
+      "outputs": {
+        "is_a: InformationEntity": 1.0
+      },
+      "piezocatalytic reactive oxygen species production": {
+        "is_a: Process": 1.0
+      },
+      "Escherichia coli": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "methicillin-resistant S. aureus": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "conductive hydrogel": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "bioelectric signals": {
+        "is_a: InformationEntity": 1.0
+      },
+      "encapsulated fibroblasts": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "sustained PA release": {
+        "is_a: Process": 1.0,
+        "part_of: chronic wound therapy": 1.0
+      },
+      "antioxidant protection": {
+        "is_a: Disposition": 1.0
+      },
+      "network pharmacology": {
+        "is_a: InformationEntity": 1.0,
+        "has_part: outputs": 1.0
+      },
+      "synergistic electrical and biochemical cues": {
+        "is_a: InformationEntity": 1.0,
+        "is_specified_input_of: fibroblast migration": 1.0,
+        "is_specified_input_of: collagen remodeling": 1.0
+      },
+      "HIF-1": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "MAPK": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "FoxO pathways": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "collagen remodeling": {
+        "is_a: Process": 1.0
+      },
+      "infected diabetic wound model": {
+        "is_a: MaterialEntity": 1.0,
+        "has_part: bilayer construct": 1.0
+      },
+      "bilayer construct": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "wound closure": {
+        "is_a: Process": 1.0
+      },
+      "IL-6 expression": {
+        "is_a: Process": 1.0
+      },
+      "povidone-iodine": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "bacterial clearance": {
+        "is_a: Process": 1.0
+      },
+      "self-powered bioelectronic platform": {
+        "is_a: MaterialEntity": 1.0
+      },
+      "regenerative stimulation": {
+        "is_a: Process": 1.0
+      },
+      "chronic wound therapy": {
+        "is_a: Process": 1.0
+      }
+    },
+    "meta_stamp": "llm_extract_1_20260907_1336",
+    "schema_report": {
+      "rejected_terms": [],
+      "rejected_relations": [
+        [
+          "conductive gelatin-hyaluronic acid methacryloyl (Gel-HAMA) hydrogel dermis",
+          "has participant",
+          "encapsulated fibroblasts",
+          "MaterialEntity -> MaterialEntity not licensed"
+        ],
+        [
+          "self-powered bioelectronic platform",
+          "has part",
+          "infection control",
+          "MaterialEntity -> Process not licensed"
+        ],
+        [
+          "self-powered bioelectronic platform",
+          "has part",
+          "regenerative stimulation",
+          "MaterialEntity -> Process not licensed"
+        ],
+        [
+          "oxidative stress",
+          "inheres in",
+          "cell viability",
+          "Quality -> Quality not licensed"
+        ],
+        [
+          "antibacterial activity",
+          "realizes",
+          "piezocatalytic reactive oxygen species (ROS) production",
+          "Disposition -> Process not licensed"
+        ],
+        [
+          "antioxidant protection",
+          "realizes",
+          "sustained PA release",
+          "Disposition -> Process not licensed"
+        ]
+      ],
+      "unknown_predicates": []
+    }
   }
 }

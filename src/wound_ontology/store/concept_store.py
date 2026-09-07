@@ -8,6 +8,33 @@ from wound_ontology.utils.string_utils import normalize_term, smart_title
 from config.blocklist import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST, is_noise_term as _is_noise_term
 
 
+def _declared_category(term: str) -> str | None:
+    """The BFO category `term` names, spelled the one way it is allowed to be.
+
+    A category name is a value from a closed vocabulary, not a piece of prose,
+    and normalising it is only ever destructive. `normalize_term` lowercases, and
+    `smart_title` cannot put CamelCase back, so `MaterialEntity` came out of
+    normalisation as `Materialentity` -- which is not in `CATEGORY_PARENT`, so
+    the hierarchy stopped recognising it as a category typing and the one term,
+    one category reconciliation silently stopped applying to it. Measured on the
+    2026-09-07 run: 40 classes ended up under two disjoint BFO branches, against
+    12 before the store was normalised, and `Surgical Site Infection` came out
+    both a disposition and a material entity.
+
+    Matching case-insensitively repairs a store that has already been damaged.
+    """
+    return _CATEGORY_BY_KEY.get(term.strip().lower())
+
+
+def _category_keys() -> dict[str, str]:
+    from wound_ontology.llm.extraction_models import CATEGORY_PARENT
+
+    return {name.strip().lower(): name for name in CATEGORY_PARENT}
+
+
+_CATEGORY_BY_KEY: dict[str, str] = _category_keys()
+
+
 class ConceptStore:
     """
     Single staging area for all concept data — LLM extractions and predefined edges alike.
@@ -187,14 +214,48 @@ class ConceptStore:
         """
         term_map = mapper.mapping if mapper else {}
 
-        def clean_entity(term: str) -> str:
+        # This method title-cases the store, so from the second run onwards the
+        # store's spelling is no longer the extraction spelling the mapping is
+        # keyed by, and an exact lookup silently stops finding anything: 12 of
+        # 3574 live terms were an exact key where 68 matched on a normalised one.
+        # The mapping could therefore only ever be applied ONCE, and every later
+        # correction to it -- a withdrawn merge, a re-pointed canonical -- was
+        # unreachable. Rule 13: normalise both sides, never one.
+        folded_map: dict[str, str] = {}
+        collisions: dict[str, set[str]] = {}
+        for k, v in term_map.items():
+            key = normalize_term(k)
+            prev = folded_map.setdefault(key, v)
+            if prev != v:
+                collisions.setdefault(key, {prev}).add(v)
+        if collisions:
+            shown = "; ".join(f"{k!r}->{sorted(v)}" for k, v in
+                              sorted(collisions.items())[:3])
+            print(f"[ConceptStore] WARNING: {len(collisions)} normalised mapping "
+                  f"key(s) claim more than one canonical; the first is used. {shown}")
+
+        def canonical_of(term: str) -> str | None:
+            """The mapping's answer for `term`, whatever spelling it arrived in."""
             if term in term_map:
-                return smart_title(term_map[term])
+                return term_map[term]
+            return folded_map.get(normalize_term(term))
+
+        def clean_entity(term: str) -> str:
+            declared = _declared_category(term)
+            if declared is not None:
+                return declared
+            hit = canonical_of(term)
+            if hit is not None:
+                return smart_title(hit)
             return smart_title(normalize_term(self.clean_entity_str(term)))
 
         def clean_target(term: str) -> str:
-            if term in term_map:
-                return smart_title(term_map[term])
+            declared = _declared_category(term)
+            if declared is not None:
+                return declared
+            hit = canonical_of(term)
+            if hit is not None:
+                return smart_title(hit)
             return smart_title(normalize_term(self.clean_target_str(term)))
 
         normalized: dict = {}

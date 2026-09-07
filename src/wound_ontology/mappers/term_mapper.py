@@ -13,6 +13,7 @@ import pandas as pd
 from rapidfuzz.fuzz import ratio as _fuzz_ratio
 
 from wound_ontology.mappers.term_mapping import TermMapping
+from wound_ontology.utils.label_match import fold, singularize
 from wound_ontology.utils.string_utils import normalize_term
 
 _GENERIC_TERMS: frozenset[str] = frozenset({
@@ -202,6 +203,33 @@ class TermMapper:
                     len(normalize_term(t).split()),
                     -len(t))
 
+        def _canonical(members: list[str]) -> str:
+            """Pick the cluster's canonical, then take the singular spelling of it.
+
+            The canonical becomes a class LABEL in the exported ontology, and an
+            OBO class label is singular. `_rank` decides on frequency, and the
+            corpus says the plural more often for anything a paper counts, so it
+            chose `Diabetic foot ulcers` over `Diabetic foot ulcer` and `ulcers`
+            over `ulcer` -- 10 of the 193 live entries. That was invisible until
+            `run_apply_mapping` propagated the plural into the store, and the
+            merge then labelled the class `Diabetic Foot Ulcers`, which cost
+            CQ001, CQ006, CQ051 and CQ054 the term they resolve on.
+
+            Only spellings of the SAME term are considered: `fold` folds
+            punctuation and singularizes, so this can never trade one concept for
+            another, only one spelling of one concept for another. An anchor is
+            exempt -- an ontology's own label is canonical however it is spelled.
+            """
+            best = max(members, key=_rank)
+            if best in anchor_set:
+                return best
+            def _is_singular(m: str) -> bool:
+                words = m.split()
+                return bool(words) and singularize(words[-1]) == words[-1].lower()
+
+            same = [m for m in members if fold(m) == fold(best) and _is_singular(m)]
+            return max(same, key=_rank) if same else best
+
         # ── Step 0: pre-merge by normalized form (no SapBERT) ────────────────
         norm_groups: dict[str, list[str]] = defaultdict(list)
         for t in unique_terms:
@@ -211,7 +239,7 @@ class TermMapper:
         embed_terms: list[str] = []
         self.refused_mappings: list[tuple[str, str]] = []
         for members in norm_groups.values():
-            canonical = max(members, key=_rank)
+            canonical = _canonical(members)
             embed_terms.append(canonical)
             for t in members:
                 if t == canonical:
@@ -275,7 +303,7 @@ class TermMapper:
         # ── Step 3: pick canonical per cluster ───────────────────────────────
         assignment: dict[str, str] = {}
         for members in clusters.values():
-            canonical = max(members, key=_rank)
+            canonical = _canonical(members)
             if accept_mapping is not None and canonical in anchor_set:
                 kept = [t for t in members
                         if t == canonical or accept_mapping(t, canonical)]

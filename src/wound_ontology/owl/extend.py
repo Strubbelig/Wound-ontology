@@ -66,6 +66,28 @@ def _exportable_relations() -> dict[str, str]:
 
 RELATION_IRIS: dict[str, str] = _exportable_relations()
 
+
+#: The BFO category a term is typed with is a closed vocabulary with an IRI
+#: already declared for every member, so it must never go through label
+#: matching. It did, and the matching quietly half-worked: the LabelIndex folds
+#: punctuation and plurals but not CamelCase, so the one-word names hit
+#: ("Process" -> BFO_0000015, "Quality" -> BFO_0000019) and every multi-word one
+#: missed. `MaterialEntity` does not match the BFO label `material entity`, so
+#: it was minted as a fresh WONT class carrying the "no BFO anchor" note -- and
+#: so were InformationEntity, ImmaterialEntity, ProcessBoundary and
+#: RealizableEntity. Measured on output/owl/wont_extended.ttl: 1770 classes hung
+#: under those five roots (MaterialEntity alone had 1124 children), and each
+#: root subclasses nothing, so none of them is reachable from BFO by a reasoner
+#: or a query. Reading the category's own IRI removes the whole class of miss.
+def _category_iris() -> dict[str, rdflib.URIRef]:
+    from wound_ontology.llm.extraction_models import CATEGORY_IRI
+
+    return {name.strip().lower(): rdflib.URIRef(iri)
+            for name, iri in CATEGORY_IRI.items()}
+
+
+CATEGORY_IRIS: dict[str, rdflib.URIRef] = _category_iris()
+
 _ID_RE = re.compile(r"WONT_(\d+)$")
 
 
@@ -76,8 +98,18 @@ class ExtendReport:
     minted: dict[str, str] = field(default_factory=dict)
     resolved: dict[str, str] = field(default_factory=dict)
     resolved_imported: dict[str, str] = field(default_factory=dict)
+    resolved_category: dict[str, str] = field(default_factory=dict)
     resolved_variant: dict[str, str] = field(default_factory=dict)
     ambiguous: dict[str, int] = field(default_factory=dict)
+    #: IRI -> the distinct pipeline terms that all resolved to it. Matching folds
+    #: punctuation and plurals, so two terms the hierarchy kept apart can land on
+    #: one class here and their axioms are unioned. That is usually right
+    #: ("wounds" and "Wound" are one class) and occasionally not: `Bacterial Load`
+    #: was typed Quality and `Bacterial Loads` MaterialEntity, and folding them
+    #: gave one class two disjoint BFO parents. Either way the merge happens at
+    #: export, after every upstream review, so it is reported rather than left to
+    #: be discovered in a reasoner run.
+    folded: dict[str, list[str]] = field(default_factory=dict)
     subclass_added: int = 0
     restrictions_added: dict[str, int] = field(default_factory=dict)
     withheld_existing: list[tuple[str, str, str]] = field(default_factory=list)
@@ -93,10 +125,14 @@ class ExtendReport:
             f"resolved          {len(self.resolved)} terms to curated WONT classes",
             f"resolved imported {len(self.resolved_imported)} terms to imported IRIs "
             f"(BFO/MILD/OBI... — not minted as WONT twins)",
+            f"resolved category {len(self.resolved_category)} BFO category names to "
+            f"their declared IRI (never label-matched)",
             f"matched on variant {len(self.resolved_variant)} terms (plural, "
             f"punctuation or a stated synonym)",
             f"ambiguous         {len(self.ambiguous)} terms matched >1 class and "
             f"were minted rather than guessed",
+            f"folded            {len(self.folded)} class(es) claimed by >1 pipeline "
+            f"term; their axioms are unioned",
             f"subClassOf added  {self.subclass_added}",
             f"restrictions      {rel or 'none'}",
             f"withheld          {len(self.withheld_existing)} (subject is a curated class)",
@@ -235,10 +271,38 @@ def extend_ground_truth(
         lexicon = default_lexicon()
     imported_idx = lexicon_index(lexicon)
 
+    # A category IRI belongs to BFO or MILD, so it is as untouchable as anything
+    # else resolved out of an import: an extraction run does not get to hang an
+    # axiom on BFO_0000040 itself.
+    existing_iris.update(str(u) for u in CATEGORY_IRIS.values())
+
+    #: str(IRI) -> the first term key that claimed it. See ExtendReport.folded.
+    claims: dict[str, str] = {}
+
     def resolve(term: str) -> rdflib.URIRef:
-        """Existing IRI for a label, or a freshly minted WONT class."""
+        """Existing IRI for a label, or a freshly minted WONT class.
+
+        Records which terms share an IRI on the way out: matching folds plurals
+        and punctuation, so two terms the hierarchy kept apart end up as one
+        class here, and every axiom on either becomes an axiom on both.
+        """
+        iri = _resolve(term)
+        key = term.strip().lower()
+        first = claims.setdefault(str(iri), key)
+        if first != key:
+            shared = report.folded.setdefault(str(iri), [first])
+            if key not in shared:
+                shared.append(key)
+        return iri
+
+    def _resolve(term: str) -> rdflib.URIRef:
         nonlocal counter
         key = term.strip().lower()
+        declared = CATEGORY_IRIS.get(key)
+        if declared is not None:
+            # Declared, not matched. See CATEGORY_IRIS.
+            report.resolved_category[term] = str(declared)
+            return declared
         hit, how = idx.get(key)
         if hit is None and how != "ambiguous":
             imported, how = imported_idx.get(key)

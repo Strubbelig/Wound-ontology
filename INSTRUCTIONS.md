@@ -541,6 +541,170 @@ Enforced by: `TermMapper.prune` (with `dry_run=True` to look first),
 `TermMapper.build_from_embeddings`, called from
 `Orchestrator.run_build_term_mapping`.
 
+## 20. A BFO category is declared, never matched
+
+*Decided 2026-09-07.*
+
+Every extracted term is typed with one of the 15 BFO categories, and
+`CATEGORY_IRI` already says which class each category name means. The exporter
+must read that declaration. It may **not** look the category name up in the
+label index, because a closed vocabulary with a known IRI has nothing to gain
+from fuzzy matching and everything to lose from it.
+
+It did look them up, and the lookup half-worked, which is the worst outcome:
+`LabelIndex` folds punctuation and plurals but does not split CamelCase, so the
+one-word names hit their BFO label (`Process` -> BFO_0000015, `Quality` ->
+BFO_0000019, and six others) and every multi-word one missed. `MaterialEntity`
+does not match `material entity`. Five categories were therefore minted as fresh
+WONT classes carrying the pipeline's own "it has no BFO anchor" note:
+
+| minted twin | id | children |
+|---|---|---|
+| MaterialEntity | WONT_0000477 | 1124 |
+| InformationEntity | WONT_0000483 | 543 |
+| ImmaterialEntity | WONT_0000519 | 64 |
+| ProcessBoundary | WONT_0000505 | 37 |
+| RealizableEntity | WONT_0001322 | 2 |
+
+Each of those roots subclasses nothing, so the **1770** classes hanging under
+them were unreachable from BFO. Measured on the same inputs with the fix off and
+on: WONT classes with no asserted path to `BFO_0000001 entity` fall from **1769
+to 43**, and 7 fewer classes are minted. No competency verdict changed — this
+repairs structure, not coverage.
+
+The category IRIs are added to `existing_iris`, so the rule in section 3 covers
+them too: an extraction run does not get to hang an axiom on BFO_0000040.
+
+Enforced by: `owl/extend.py::CATEGORY_IRIS` and the `_resolve` short-circuit;
+`test_category_names_resolve_to_their_declared_iri`,
+`test_the_category_class_is_never_given_a_parent`,
+`test_every_category_name_has_a_declared_iri`.
+
+## 21. Two terms landing on one class is a merge, and is reported
+
+*Decided 2026-09-07.*
+
+`resolve()` folds plurals and punctuation, so two terms the hierarchy kept apart
+can arrive at the same IRI — and when they do, every axiom on either becomes an
+axiom on both. This is usually right (`wounds` and `Wound` are one class) and
+occasionally not, but it is always a **merge**, performed at export, after every
+upstream review has finished. A merge nobody is told about is exactly what rule
+1 forbids, so `ExtendReport.folded` records it and the run summary counts it.
+
+Measured on the current caches: **98 classes were claimed by two terms**, almost
+all singular/plural pairs. Of the 12 classes that sit under two disjoint BFO
+branches in the extended ontology, **11 are folds** — `Bacterial Load` typed
+Quality meeting `Bacterial Loads` typed MaterialEntity, `CRP Level`
+(InformationEntity) meeting `CRP Levels` (Quality), `Improvement` (Process)
+meeting `Improvements` (Quality). The twelfth, `hormone`, arrives already
+incoherent from the imports and is not ours. Rule 9 reconciles the categories of
+*one* term; it cannot see two terms that only become one downstream.
+
+The report is not the repair. Applying the mapping and rebuilding is, and doing
+it took **98 folds to 20** and the branch clashes from 12 to 4 — but only after
+rules 22, 23 and 24, each of which the re-run itself uncovered. Of the 20 that
+remain, three are a category name meeting its own BFO label
+(`['materialentity', 'material entity'] -> BFO_0000040`), which is the mechanism
+working; several more are real synonym merges the lexicon should make
+(`diabetes`/`diabetes mellitus` -> DOID_9351). The 3 folds that still produce an
+incoherent class are plain plurals `normalize_term` does not singularize:
+`Challenge`/`Challenges`, `Experience`/`Experiences`,
+`Stress Concentration`/`Stress Concentrations`.
+
+Enforced by: `ExtendReport.folded` and the `resolve`/`_resolve` split in
+`owl/extend.py`; `test_two_terms_landing_on_one_class_are_reported`,
+`test_a_term_resolving_to_itself_twice_is_not_a_fold`,
+`test_folding_is_what_puts_one_class_under_two_categories`.
+
+## 22. The store never normalises a category name either
+
+*Decided 2026-09-07.*
+
+Rule 20 says the exporter reads a BFO category rather than matching it. The same
+holds one stage earlier: `ConceptStore.normalize` may not normalise a category
+name. It did, and it was worse than the exporter's version of the bug, because
+nothing downstream could tell.
+
+`normalize_term` lowercases and `smart_title` cannot put CamelCase back, so
+`MaterialEntity` came out of normalisation as `Materialentity`. Seven of the 15
+categories are multi-word and all seven were destroyed. `get_data` decides
+whether an edge is a category typing by testing `target in CATEGORY_PARENT`, and
+`Materialentity` is not in it -- so **rule 9's reconciliation stopped seeing
+those edges at all**. Measured across the 2026-09-07 runs:
+
+| | store not re-mapped | after `run_apply_mapping` | with the guard |
+|---|---|---|---|
+| terms reconciliation sees | 1802 | 1802 | **3559** |
+| conflicting typings collapsed | — | 9 | **56** |
+| classes under two disjoint BFO branches | 12 | 40 | **4** |
+
+`Surgical Site Infection` came out both a disposition and a material entity. The
+guard matches case-insensitively, so it also **repairs** a store already damaged.
+
+Enforced by: `store/concept_store.py::_declared_category`;
+`test_every_category_name_survives_normalization` (parametrised over all 15),
+`test_normalization_repairs_a_category_already_damaged`,
+`test_a_category_name_is_never_renamed_by_the_mapper`.
+
+## 23. The canonical is the singular spelling, and is never itself a key
+
+*Decided 2026-09-07.*
+
+A canonical becomes a class **label** in the exported ontology, and an OBO class
+label is singular. `_rank` decides canonicality on corpus frequency, and a paper
+says the plural more often for anything it counts, so the mapping held
+`diabetic foot ulcer -> Diabetic foot ulcers`, `ulcer -> ulcers`,
+`symptom -> symptoms`: 9 pairs among the live entries.
+
+This was inert while the store still carried both spellings. The moment
+`run_apply_mapping` reached it, the class came out labelled
+`Diabetic Foot Ulcers` and **CQ001, CQ006, CQ051 and CQ054 lost the term they
+resolve on** — the whole measured value of the extension dropping from 10
+resolved terms to 6. Only spellings of the same term compete (`fold` folds
+punctuation and singularizes), so the rule can never trade one concept for
+another; an anchor is exempt, because an ontology's own label is not ours to
+re-spell.
+
+**A canonical is never itself a key.** Re-pointing `A -> B` to `B -> A` while
+leaving the old entry in place makes a 2-cycle, and a resolver that walks it
+writes each term onto itself — which is how a repair pass turned 9 pairs into 18
+identity entries, the exact artifact rule 19 exists to remove. Remove the old
+entry; do not add beside it. The invariant to check after any edit is
+`data[data[k]] == data[k]` for every k, and no `k == data[k]`.
+
+Enforced by: `TermMapper._canonical`;
+`test_the_singular_spelling_is_canonical_even_when_rarer`,
+`test_an_anchor_stays_canonical_however_it_is_spelled`,
+`test_the_rule_never_trades_one_concept_for_another`, and
+`test_without_anchors_the_frequent_store_term_wins` rewritten onto a case pair so
+it still tests frequency rather than this rule.
+
+## 24. The mapping has to survive being applied
+
+*Decided 2026-09-07.*
+
+`run_apply_mapping` must be runnable more than once, and a correction made to the
+mapping afterwards must still reach the store. Neither was true.
+
+`ConceptStore.normalize` title-cases the store and then, on the next run, looks
+the title-cased name up in a mapping keyed by the raw extraction spelling —
+exact-key lookup, one side normalised, which is precisely the failure rule 13
+names. Measured on the live store: **12 of 3574 terms were an exact mapping key,
+where 68 matched on a normalised one.** Four fifths of the mapping's reach was
+gone and nothing said so. A whole re-run of apply → build → gate → merge
+collapsed 0 terms and produced a byte-identical artifact, which is what made it
+visible at all.
+
+The lookup now tries the exact key first and falls back to `normalize_term` on
+both sides. A normalised key claimed by two different canonicals is **reported**,
+not silently resolved to whichever came first.
+
+Enforced by: `ConceptStore.normalize`'s `canonical_of`;
+`test_the_mapping_still_applies_after_the_store_was_normalized`,
+`test_targets_are_remapped_after_normalization_too`,
+`test_the_exact_key_still_wins_over_the_normalised_one`,
+`test_a_normalised_key_claimed_twice_is_reported`.
+
 ## Adding to this file
 
 When a universal design choice is made:

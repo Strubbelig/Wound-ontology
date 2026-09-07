@@ -1,0 +1,180 @@
+{
+    "42704132": {
+        "entities": {
+            "antibacterial": {
+                "is_a: Disposition": 1.0
+            },
+            "wound healing": {
+                "is_a: Process": 1.0
+            },
+            "hemostatic": {
+                "is_a: Disposition": 1.0
+            },
+            "wound-healing": {
+                "is_a: Process": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260907_1328"
+    },
+    "42704302": {
+        "entities": {
+            "surgical site infection": {
+                "is_a: Process": 1.0
+            },
+            "leg wound infection": {
+                "is_a: Process": 1.0
+            },
+            "wound healing disturbance": {
+                "is_a: Process": 1.0
+            },
+            "antibiotic treatment": {
+                "is_a: Process": 1.0
+            },
+            "leg wound infections": {
+                "is_a: Process": 1.0
+            },
+            "infectious complications": {
+                "is_a: Process": 1.0
+            },
+            "vein harvest site": {
+                "is_a: ImmaterialEntity": 1.0
+            },
+            "infection": {
+                "is_a: Process": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260907_1328"
+    },
+    "42704059": {
+        "entities": {
+            "deep partial-thickness": {
+                "is_a: Quality": 1.0
+            },
+            "full-thickness thermal burns": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "thermal burns": {
+                "is_a: MaterialEntity": 1.0,
+                "has_quality: deep partial-thickness": 1.0,
+                "participates_in: eschar removal": 1.0
+            },
+            "eschar removal": {
+                "is_a: Process": 1.0
+            },
+            "enzymatic eschar removal": {
+                "is_a: Process": 1.0,
+                "has_participant: thermal burns": 1.0,
+                "part_of: eschar removal": 1.0
+            },
+            "surgical excision": {
+                "is_a: Process": 1.0,
+                "has_input: viable dermis": 1.0,
+                "has_participant: operating-room resources": 1.0
+            },
+            "viable dermis": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "blood loss": {
+                "is_a: Process": 1.0,
+                "immediately_causally_downstream_of: surgical excision": 1.0
+            },
+            "operating-room resources": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "Anacaulase-bcdb": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: enzymatic eschar removal": 1.0,
+                "participates_in: eschar removal": 1.0
+            },
+            "proteolytic biologic": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "biological origin": {
+                "is_a: Quality": 1.0
+            },
+            "composition": {
+                "is_a: Quality": 1.0
+            },
+            "mechanism of action": {
+                "is_a: InformationEntity": 1.0
+            },
+            "regulatory status": {
+                "is_a: InformationEntity": 1.0
+            },
+            "administration": {
+                "is_a: InformationEntity": 1.0
+            },
+            "place in therapy": {
+                "is_a: Role": 1.0
+            },
+            "DETECT trial": {
+                "is_a: InformationEntity": 1.0
+            },
+            "CIDS trial": {
+                "is_a: InformationEntity": 1.0
+            },
+            "systematic reviews": {
+                "is_a: InformationEntity": 1.0
+            },
+            "consensus guidance": {
+                "is_a: InformationEntity": 1.0
+            },
+            "prescribing information": {
+                "is_a: InformationEntity": 1.0
+            },
+            "postmarketing studies": {
+                "is_a: InformationEntity": 1.0
+            },
+            "debridement-related blood loss": {
+                "is_a: Process": 1.0,
+                "part_of: blood loss": 1.0
+            },
+            "conservative healing": {
+                "is_a: Process": 1.0
+            },
+            "grafting": {
+                "is_a: Process": 1.0
+            },
+            "procedural pain": {
+                "is_a: Quality": 1.0
+            },
+            "hypersensitivity": {
+                "is_a: Disposition": 1.0
+            },
+            "eligibility criteria": {
+                "is_a: InformationEntity": 1.0
+            },
+            "specialist-team requirements": {
+                "is_a: InformationEntity": 1.0
+            },
+            "tissue-sparing adjunct": {
+                "is_a: Role": 1.0
+            },
+            "burn surgery": {
+                "is_a: Process": 1.0
+            },
+            "burn-center pathways": {
+                "is_a: InformationEntity": 1.0
+            },
+            "comparative effectiveness": {
+                "is_a: Quality": 1.0
+            },
+            "real-world safety": {
+                "is_a: Quality": 1.0
+            },
+            "patient selection": {
+                "is_a: Process": 1.0
+            },
+            "operative burden": {
+                "is_a: Quality": 1.0
+            },
+            "health-system outcomes": {
+                "is_a: InformationEntity": 1.0
+            },
+            "limitations": {
+                "is_a: Quality": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260907_1328"
+    }
+}

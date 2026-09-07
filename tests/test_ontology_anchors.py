@@ -67,14 +67,60 @@ def test_the_ontology_label_wins_canonicality(mapper):
 
 
 def test_without_anchors_the_frequent_store_term_wins(mapper):
-    """The old behaviour, pinned so the difference stays visible."""
+    """The old behaviour, pinned so the difference stays visible.
+
+    The pair differs by case, not by plural: frequency is what decides here, and
+    the singular-spelling rule below must not be what settles it.
+    """
     out = _build(
         mapper,
-        ["Granulation process", "granulation processes"],
-        freq={"granulation processes": 99},
+        ["Granulation process", "granulation process"],
+        freq={"granulation process": 99},
         groups=[["granulation"]],
     )
-    assert out.get("Granulation process") == "granulation processes"
+    assert out.get("Granulation process") == "granulation process"
+
+
+# ── the canonical is the singular spelling ───────────────────────────────────
+#
+# The canonical becomes a class LABEL, and an OBO class label is singular.
+# Frequency alone picked the plural for anything a paper counts: 10 of the 193
+# live entries mapped a singular onto a plural, and once `run_apply_mapping`
+# propagated them the merge labelled the class `Diabetic Foot Ulcers` — costing
+# CQ001, CQ006, CQ051 and CQ054 the term they resolve on.
+
+def test_the_singular_spelling_is_canonical_even_when_rarer(mapper):
+    out = _build(
+        mapper,
+        ["diabetic foot ulcer", "diabetic foot ulcers"],
+        freq={"diabetic foot ulcers": 99, "diabetic foot ulcer": 1},
+        groups=[["diabetic foot ulcer"]],
+    )
+    assert out.get("diabetic foot ulcers") == "diabetic foot ulcer"
+
+
+def test_an_anchor_stays_canonical_however_it_is_spelled(mapper):
+    """An ontology's own label is not ours to re-spell."""
+    out = _build(
+        mapper,
+        ["Wound complications", "wound complication"],
+        anchors={"Wound complications"},
+        freq={"wound complication": 99},
+        groups=[["wound complication"]],
+    )
+    assert out.get("wound complication") == "Wound complications"
+
+
+def test_the_rule_never_trades_one_concept_for_another(mapper):
+    """Only spellings of the same term compete; a different term is untouched."""
+    out = _build(
+        mapper,
+        ["pressure ulcers", "pressure ulcer", "pressure injury"],
+        freq={"pressure ulcers": 99},
+        groups=[["pressure ulcer"], ["pressure injury"]],
+    )
+    assert out.get("pressure ulcers") == "pressure ulcer"
+    assert out.get("pressure injury") in (None, "pressure injury")
 
 
 def test_an_unmatched_store_term_is_left_alone(mapper):

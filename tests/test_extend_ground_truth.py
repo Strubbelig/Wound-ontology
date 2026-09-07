@@ -284,3 +284,103 @@ def test_every_export_iri_is_a_real_ontology_iri():
     assert all(v.startswith(("http://purl.obolibrary.org/obo/",
                              "https://bioportal.bioontology.org/ontologies/MILD/"))
                for v in RELATION_IRIS.values())
+
+
+# ── BFO categories are declared, never label-matched ─────────────────────────
+#
+# Every extracted term is typed with one of the BFO categories, and every
+# category has an IRI declared in CATEGORY_IRI. Resolving those names through
+# the label index half-worked: one-word names matched their BFO label, and the
+# CamelCase multi-word ones could not, because normalization folds punctuation
+# and plurals but does not split words. Five categories were therefore minted as
+# unanchored WONT twins, and on output/owl/wont_extended.ttl 1770 classes hung
+# under roots that subclass nothing.
+
+@pytest.mark.parametrize("category,iri", [
+    ("MaterialEntity", OBO + "BFO_0000040"),
+    ("InformationEntity", OBO + "BFO_0000031"),
+    ("ImmaterialEntity", OBO + "BFO_0000141"),
+    ("ProcessBoundary", OBO + "BFO_0000035"),
+    ("RealizableEntity", OBO + "BFO_0000017"),
+    ("Process", OBO + "BFO_0000015"),
+])
+def test_category_names_resolve_to_their_declared_iri(gt, tmp_path, category, iri):
+    out = tmp_path / "out.ttl"
+    report = extend_ground_truth(gt, out, class_hier=_hier([("Wound", category)]),
+                                 lexicon=())
+    assert report.resolved_category[category] == iri
+    assert category not in report.minted
+
+    g = rdflib.Graph()
+    g.parse(str(out), format="turtle")
+    # No WONT twin was minted for the category...
+    twins = [s for s, _, o in g.triples((None, RDFS.label, None))
+             if str(o) == category and str(s).startswith(WONT_NS)]
+    assert twins == []
+    # ...and the edge points at the real class.
+    assert (rdflib.URIRef(WONT_NS + "WONT_0000380"),
+            RDFS.subClassOf, rdflib.URIRef(iri)) in g or report.withheld_existing
+
+
+def test_the_category_class_is_never_given_a_parent(gt, tmp_path):
+    """BFO_0000040 belongs to BFO. An extraction run may not add axioms to it."""
+    out = tmp_path / "out.ttl"
+    report = extend_ground_truth(
+        gt, out, class_hier=_hier([("MaterialEntity", "Wound")]), lexicon=())
+    assert ("MaterialEntity", "is_a", "Wound") in report.withheld_existing
+    g = rdflib.Graph()
+    g.parse(str(out), format="turtle")
+    assert list(g.objects(rdflib.URIRef(OBO + "BFO_0000040"), RDFS.subClassOf)) == []
+
+
+def test_every_category_name_has_a_declared_iri():
+    """A category the exporter cannot place is a term it would mint unanchored."""
+    from wound_ontology.llm.extraction_models import CATEGORY_PARENT
+    from wound_ontology.owl.extend import CATEGORY_IRIS
+
+    missing = sorted(c for c in CATEGORY_PARENT if c.strip().lower() not in CATEGORY_IRIS)
+    assert missing == [], f"categories with no export IRI: {missing}"
+
+
+# ── two terms, one class ─────────────────────────────────────────────────────
+#
+# Matching folds punctuation and plurals, so terms the hierarchy kept apart can
+# arrive at the same IRI, and every axiom on either becomes an axiom on both.
+# Measured on the full run: 11 classes were claimed by two terms, and each of
+# the 10 classes that ended up under two disjoint BFO branches was one of them
+# -- `Bacterial Load` typed Quality meeting `Bacterial Loads` typed
+# MaterialEntity. The merge happens after every upstream review, so the run has
+# to say it happened.
+
+def test_two_terms_landing_on_one_class_are_reported(gt, tmp_path):
+    report = extend_ground_truth(
+        gt, tmp_path / "out.ttl",
+        class_hier=_hier([("Wound", "Quality"), ("wounds", "MaterialEntity")]),
+        lexicon=())
+    iri = WONT_NS + "WONT_0000380"
+    assert report.folded[iri] == ["wound", "wounds"]
+    assert "folded            1 class" in report.summary()
+
+
+def test_a_term_resolving_to_itself_twice_is_not_a_fold(gt, tmp_path):
+    report = extend_ground_truth(
+        gt, tmp_path / "out.ttl",
+        class_hier=_hier([("Wound", "Quality"), ("Wound", "Process")]),
+        lexicon=())
+    assert report.folded == {}
+
+
+def test_folding_is_what_puts_one_class_under_two_categories(gt, tmp_path):
+    """The report and the graph have to agree about why the class is incoherent."""
+    out = tmp_path / "out.ttl"
+    report = extend_ground_truth(
+        gt, out,
+        class_hier=_hier([("Bacterial Load", "Quality"),
+                          ("Bacterial Loads", "MaterialEntity")]),
+        lexicon=())
+    assert len(report.folded) == 1
+    folded_iri = next(iter(report.folded))
+    g = rdflib.Graph()
+    g.parse(str(out), format="turtle")
+    parents = {str(p) for p in g.objects(rdflib.URIRef(folded_iri), RDFS.subClassOf)}
+    assert parents == {OBO + "BFO_0000019", OBO + "BFO_0000040"}
