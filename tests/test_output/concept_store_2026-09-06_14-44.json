@@ -1,0 +1,75 @@
+{
+    "42701786": {
+        "entities": {
+            "intraoral incisions": {
+                "is_a: MaterialEntity": 1.0,
+                "has_part: incision": 1.0
+            },
+            "scalpel": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: mandibular fracture surgery": 1.0
+            },
+            "diathermy": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: mandibular fracture surgery": 1.0
+            },
+            "operative efficiency": {
+                "is_a: Quality": 1.0
+            },
+            "blood loss": {
+                "is_a: Quality": 1.0,
+                "causally_influenced_by: diathermy": 1.0
+            },
+            "healing": {
+                "is_a: Process": 1.0
+            },
+            "incision": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "incision time": {
+                "is_a: Quality": 1.0,
+                "causally_influenced_by: diathermy": 1.0
+            },
+            "total operating time": {
+                "is_a: Quality": 1.0
+            },
+            "wound healing": {
+                "is_a: Process": 1.0,
+                "has_output: wound healing outcomes": 1.0
+            },
+            "postoperative pain scores": {
+                "is_a: InformationEntity": 1.0,
+                "is_about: postoperative pain": 1.0
+            },
+            "wound healing scores": {
+                "is_a: InformationEntity": 1.0
+            },
+            "incision-related bleeding": {
+                "is_a: Process": 1.0,
+                "has_participant: incision": 1.0,
+                "part_of: mandibular fracture surgery": 1.0
+            },
+            "early postoperative pain": {
+                "is_a: Quality": 1.0,
+                "causally_influenced_by: scalpel": 1.0,
+                "causally_influenced_by: diathermy": 1.0
+            },
+            "mandibular fracture": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "mandibular fractures": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "mandibular fracture surgery": {
+                "is_a: Process": 1.0,
+                "has_participant: intraoral incisions": 1.0,
+                "has_participant: mandibular fractures": 1.0
+            },
+            "wound healing outcomes": {
+                "is_a: InformationEntity": 1.0,
+                "has_part: wound healing scores": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260906_1441"
+    }
+}

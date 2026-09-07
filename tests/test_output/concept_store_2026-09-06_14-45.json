@@ -1,0 +1,261 @@
+{
+    "42701786": {
+        "entities": {
+            "intraoral incisions": {
+                "is_a: MaterialEntity": 1.0,
+                "has_part: incision": 1.0
+            },
+            "scalpel": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: mandibular fracture surgery": 1.0
+            },
+            "diathermy": {
+                "is_a: MaterialEntity": 1.0,
+                "participates_in: mandibular fracture surgery": 1.0
+            },
+            "operative efficiency": {
+                "is_a: Quality": 1.0
+            },
+            "blood loss": {
+                "is_a: Quality": 1.0,
+                "causally_influenced_by: diathermy": 1.0
+            },
+            "healing": {
+                "is_a: Process": 1.0
+            },
+            "incision": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "incision time": {
+                "is_a: Quality": 1.0,
+                "causally_influenced_by: diathermy": 1.0
+            },
+            "total operating time": {
+                "is_a: Quality": 1.0
+            },
+            "wound healing": {
+                "is_a: Process": 1.0,
+                "has_output: wound healing outcomes": 1.0
+            },
+            "postoperative pain scores": {
+                "is_a: InformationEntity": 1.0,
+                "is_about: postoperative pain": 1.0
+            },
+            "wound healing scores": {
+                "is_a: InformationEntity": 1.0
+            },
+            "incision-related bleeding": {
+                "is_a: Process": 1.0,
+                "has_participant: incision": 1.0,
+                "part_of: mandibular fracture surgery": 1.0
+            },
+            "early postoperative pain": {
+                "is_a: Quality": 1.0,
+                "causally_influenced_by: scalpel": 1.0,
+                "causally_influenced_by: diathermy": 1.0
+            },
+            "mandibular fracture": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "mandibular fractures": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "mandibular fracture surgery": {
+                "is_a: Process": 1.0,
+                "has_participant: intraoral incisions": 1.0,
+                "has_participant: mandibular fractures": 1.0
+            },
+            "wound healing outcomes": {
+                "is_a: InformationEntity": 1.0,
+                "has_part: wound healing scores": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260906_1441"
+    },
+    "42701890": {
+        "entities": {
+            "wound care": {
+                "is_a: Process": 1.0,
+                "has_participant: copper oxide nanoparticles": 1.0,
+                "has_participant: nano-formulation": 1.0
+            },
+            "infection risks": {
+                "is_a: Tendency": 1.0,
+                "has_a_material_basis: Gram-negative pathogens": 1.0,
+                "has_a_material_basis: MRSA": 1.0,
+                "has_a_material_basis: Escherichia coli": 1.0,
+                "has_a_material_basis: Pseudomonas aeruginosa": 1.0,
+                "has_a_material_basis: Staphylococcus aureus": 1.0
+            },
+            "coagulation disorders": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "copper oxide nanoparticles": {
+                "is_a: MaterialEntity": 1.0,
+                "has_function: anticoagulant activity": 1.0,
+                "has_function: anticoagulant properties": 1.0,
+                "has_function: antimicrobial efficacy": 1.0,
+                "part_of: topical delivery systems": 1.0,
+                "part_of: wound dressings": 1.0,
+                "participates_in: wound care": 1.0,
+                "is_specified_output_of: antibacterial action": 1.0
+            },
+            "CuO-NPs": {
+                "is_a: MaterialEntity": 1.0,
+                "has_function: anticoagulant activity": 1.0,
+                "has_function: anticoagulant properties": 1.0,
+                "has_function: antimicrobial efficacy": 1.0,
+                "part_of: nano-formulation": 1.0,
+                "has_quality: hemolysis rates": 1.0
+            },
+            "topical delivery systems": {
+                "is_a: MaterialEntity": 1.0,
+                "has_part: copper oxide nanoparticles": 1.0
+            },
+            "wound dressings": {
+                "is_a: MaterialEntity": 1.0,
+                "has_function: antimicrobial efficacy": 1.0,
+                "has_part: polymeric dressings": 1.0,
+                "has_part: copper oxide nanoparticles": 1.0
+            },
+            "anticoagulant activity": {
+                "is_a: Function": 1.0
+            },
+            "tissue regeneration potential": {
+                "is_a: Tendency": 1.0,
+                "has_realization: fibroblast proliferation": 1.0,
+                "inheres_in: nano-formulation": 1.0
+            },
+            "hemocompatibility": {
+                "is_a: Disposition": 1.0
+            },
+            "hemolysis rates": {
+                "is_a: Quality": 1.0,
+                "inheres_in: copper oxide nanoparticles": 1.0
+            },
+            "polymeric dressings": {
+                "is_a: MaterialEntity": 1.0,
+                "has_function: antimicrobial efficacy": 1.0,
+                "part_of: wound dressings": 1.0
+            },
+            "Escherichia coli": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "anticoagulant properties": {
+                "is_a: Function": 1.0
+            },
+            "intrinsic coagulation pathway": {
+                "is_a: Process": 1.0
+            },
+            "nano-formulation": {
+                "is_a: MaterialEntity": 1.0,
+                "has_part: CuO-NPs": 1.0,
+                "has_function: anticoagulant activity": 1.0,
+                "has_function: anticoagulant properties": 1.0,
+                "has_function: antimicrobial efficacy": 1.0,
+                "participates_in: wound care": 1.0
+            },
+            "hemocompatibility trials": {
+                "is_a: Process": 1.0
+            },
+            "antibacterial action": {
+                "is_a: Process": 1.0,
+                "has_output: copper oxide nanoparticles": 1.0
+            },
+            "Gram-negative pathogens": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "wound healing therapeutics": {
+                "is_a: MaterialEntity": 1.0
+            },
+            "advanced formulation": {
+                "is_a: MaterialEntity": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260906_1441",
+        "schema_report": {
+            "rejected_terms": [],
+            "rejected_relations": [
+                [
+                    "CuO-NPs",
+                    "participates in",
+                    "coagulation disorders",
+                    "MaterialEntity -> MaterialEntity not licensed"
+                ],
+                [
+                    "antimicrobial efficacy",
+                    "has realization",
+                    "antibacterial action",
+                    "Function -> Process not licensed"
+                ],
+                [
+                    "hemocompatibility",
+                    "has realization",
+                    "hemocompatibility trials",
+                    "Disposition -> Process not licensed"
+                ],
+                [
+                    "infection risks",
+                    "inheres in",
+                    "wound care",
+                    "Tendency -> Process not licensed"
+                ],
+                [
+                    "coagulation disorders",
+                    "inheres in",
+                    "wound care",
+                    "MaterialEntity -> Process not licensed"
+                ],
+                [
+                    "anticoagulant activity",
+                    "inheres in",
+                    "copper oxide nanoparticles",
+                    "Function -> MaterialEntity not licensed"
+                ],
+                [
+                    "anticoagulant properties",
+                    "inheres in",
+                    "copper oxide nanoparticles",
+                    "Function -> MaterialEntity not licensed"
+                ],
+                [
+                    "antimicrobial efficacy",
+                    "inheres in",
+                    "copper oxide nanoparticles",
+                    "Function -> MaterialEntity not licensed"
+                ],
+                [
+                    "anticoagulant activity",
+                    "inheres in",
+                    "nano-formulation",
+                    "Function -> MaterialEntity not licensed"
+                ],
+                [
+                    "anticoagulant properties",
+                    "inheres in",
+                    "nano-formulation",
+                    "Function -> MaterialEntity not licensed"
+                ],
+                [
+                    "antimicrobial efficacy",
+                    "inheres in",
+                    "polymeric dressings",
+                    "Function -> MaterialEntity not licensed"
+                ],
+                [
+                    "hemocompatibility",
+                    "inheres in",
+                    "copper oxide nanoparticles",
+                    "Disposition -> MaterialEntity not licensed"
+                ],
+                [
+                    "hemocompatibility",
+                    "inheres in",
+                    "nano-formulation",
+                    "Disposition -> MaterialEntity not licensed"
+                ]
+            ],
+            "unknown_predicates": []
+        }
+    }
+}
