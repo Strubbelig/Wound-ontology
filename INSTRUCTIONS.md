@@ -813,6 +813,79 @@ particular `test_normalisation_leaves_every_category_name_alone` and
 rename rests on — plus
 `test_a_cache_written_under_the_old_spelling_still_reads`.
 
+## 26. A term the ontology has a class for is not methodology
+
+*Decided 2026-09-08.*
+
+`METHODOLOGY_BLOCKLIST` exists to drop study-design vocabulary — "randomised
+controlled trial", "inclusion criteria" — and `run_clean_store` **deletes** what
+it matches rather than quarantining it. It had grown to hold **33** terms that
+WONT or MILD assert a class for:
+
+| term | class |
+|---|---|
+| `skin` | FMA_7163 |
+| `gangrene` | HP_0100758 |
+| `Staphylococcus aureus` | NCBITaxon_1280 |
+| `Compression therapy` | WONT_0000077 |
+| `Malignancy` | WONT_0000465 |
+| `Pain management` | WONT_0000222 |
+| …28 more | GO, DOID, HP, CHEBI, NCBITaxon, MILD, WONT |
+
+Nothing reported it, because a deletion by blocklist looks exactly like a term
+the abstracts never mentioned. Three were live in the store (`Compression
+Therapy`, `Malignancy`, `Protein`); the rest were latent.
+
+The criterion is the ontology's own testimony and nothing softer, which is why
+it can be a test rather than a one-off tidy: **if a curated source asserts a
+class with this label, the term is domain vocabulary.** Moving them is not
+enough on its own — the **whitelist** is what frees a term, because
+`Blocker.is_blocked` consults it before both the term and keyword lists, and
+`pain management`, `patient education` and `painful` are caught by the
+KEYWORD_BLOCKLIST entries `pain` and `education` as well. Those keywords stay:
+`pain score` really is a study instrument.
+
+Live store terms blocked: **9 → 6**, and the remaining six are ML methodology.
+
+Six curated labels are still rejected, all by the **noise regex** rather than a
+list: `NaCl 0.9%`, `NaCl 10%` and `Wagner and Anderson grade 1D`–`4D`, where the
+`\d+ ... d|day|days` rule fires on the `D` of `1D`. `is_noise` runs *before* the
+whitelist, so a heuristic currently outranks an explicit human decision and
+whitelisting cannot free them. Latent — 0 live store terms match the noise regex
+— and pinned in `NOISE_FALSE_POSITIVES` so the gap is named rather than
+rediscovered.
+
+Enforced by: `tests/test_blocklist_respects_the_ontology.py`, in particular
+`test_no_curated_class_label_is_blocked_in_effect`.
+
+## 27. A name is matched whole, never as a substring
+
+*Decided 2026-09-08.*
+
+This is the third time the same bug has been written in this codebase, so it is
+now a rule:
+
+| where | the loose match | what it cost |
+|---|---|---|
+| `KEYWORD_WHITELIST` | `cti` matched inside a word | 287 of 3725 store terms whitelisted by coincidence — "practices", "mortality prediction" |
+| `_cleanup_old_files` | `class_hierarchy_*` also matched `class_hierarchy_provenance_*` | the matrix files were always the ones deleted; the cache held 0 of them and 10 provenance files |
+| `term_lists._find_block_end` | `var_name in line` matched `WHITELIST` inside `KEYWORD_WHITELIST` | every add and remove aimed at WHITELIST landed in the keyword list |
+
+The third is the worst of the three, because the two lists behave differently: a
+keyword list matches on a word *inside* a term, so `skin` written there exempts
+`skin graft`, `skin substitute` and everything else containing the word. The
+list silently widens far past what was curated, and the curated list it was
+meant for stays empty.
+
+**Anchor the match.** A variable name matches a declaration, a prefix matches a
+filename stem, a keyword matches on word boundaries. Where two names are in play
+and one contains the other, assume they will be confused unless something stops
+it — and prefer the check that cannot be written loosely over the one that
+happens to be written correctly today.
+
+Enforced by: `term_lists._declares`;
+`TestListNameIsMatchedExactly` in `tests/test_term_lists_and_blocker.py`.
+
 ## Adding to this file
 
 When a universal design choice is made:

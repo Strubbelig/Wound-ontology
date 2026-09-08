@@ -1,0 +1,375 @@
+{
+    "42709491": {
+        "entities": {
+            "Diabetic foot ulcers": {
+                "is_a: material entity": 1.0,
+                "part_of: ulcer": 1.0
+            },
+            "DFUs": {
+                "is_a: material entity": 1.0,
+                "part_of: ulcer": 1.0
+            },
+            "diabetes mellitus": {
+                "is_a: material entity": 1.0
+            },
+            "dyslipidaemia": {
+                "is_a: material entity": 1.0
+            },
+            "cardiovascular events": {
+                "is_a: process": 1.0
+            },
+            "pleiotropic effects": {
+                "is_a: process": 1.0
+            },
+            "endothelial function": {
+                "is_a: function": 1.0
+            },
+            "angiogenesis": {
+                "is_a: process": 1.0,
+                "has_participant: vascular endothelial growth factor": 1.0
+            },
+            "diabetic wound healing": {
+                "is_a: process": 1.0
+            },
+            "potential role": {
+                "is_a: role": 1.0
+            },
+            "DFUs management": {
+                "is_a: process": 1.0
+            },
+            "Experimental studies": {
+                "is_a: process": 1.0,
+                "has_specified_output: evidence": 1.0
+            },
+            "wound healing": {
+                "is_a: process": 1.0,
+                "has_participant: nitric oxide": 1.0,
+                "has_participant: vascular endothelial growth factor": 1.0
+            },
+            "mechanisms": {
+                "is_a: process": 1.0
+            },
+            "nitric oxide bioavailability": {
+                "is_a: quality": 1.0
+            },
+            "drug-delivery strategies": {
+                "is_a: realizable entity": 1.0
+            },
+            "topical formulations": {
+                "is_a: material entity": 1.0,
+                "has_quality: therapeutic efficacy": 1.0
+            },
+            "tissue-engineered scaffolds": {
+                "is_a: material entity": 1.0,
+                "has_quality: therapeutic efficacy": 1.0
+            },
+            "therapeutic efficacy": {
+                "is_a: quality": 1.0
+            },
+            "Clinical evidence": {
+                "is_a: information entity": 1.0
+            },
+            "Observational studies": {
+                "is_a: process": 1.0,
+                "has_specified_output: inconsistent findings": 1.0
+            },
+            "inconsistent findings": {
+                "is_a: information entity": 1.0
+            },
+            "randomised controlled trials": {
+                "is_a: process": 1.0,
+                "has_specified_output: evidence": 1.0
+            },
+            "ulcer recurrence": {
+                "is_a: process": 1.0
+            },
+            "ulcer": {
+                "is_a: material entity": 1.0
+            },
+            "biological rationale": {
+                "is_a: information entity": 1.0
+            },
+            "adjunctive therapy": {
+                "is_a: process": 1.0
+            },
+            "dosage": {
+                "is_a: information entity": 1.0
+            },
+            "route of administration": {
+                "is_a: information entity": 1.0
+            },
+            "treatment duration": {
+                "is_a: quality": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260908_1839",
+        "schema_report": {
+            "rejected_terms": [],
+            "rejected_relations": [
+                [
+                    "ulcer",
+                    "is about",
+                    "complication",
+                    "material entity -> material entity not licensed"
+                ],
+                [
+                    "evidence",
+                    "is about",
+                    "potential role",
+                    "information entity -> role not licensed"
+                ],
+                [
+                    "evidence",
+                    "is about",
+                    "statins",
+                    "endpoint not among extracted entities"
+                ],
+                [
+                    "review",
+                    "is about",
+                    "DFUs management",
+                    "information entity -> process not licensed"
+                ],
+                [
+                    "endothelial function",
+                    "inheres in",
+                    "Statins",
+                    "function -> material entity not licensed"
+                ],
+                [
+                    "drug-delivery strategies",
+                    "has a material basis",
+                    "topical formulations",
+                    "realizable entity -> material entity not licensed"
+                ],
+                [
+                    "drug-delivery strategies",
+                    "has a material basis",
+                    "tissue-engineered scaffolds",
+                    "realizable entity -> material entity not licensed"
+                ],
+                [
+                    "Clinical evidence",
+                    "is about",
+                    "statins",
+                    "endpoint not among extracted entities"
+                ],
+                [
+                    "statins",
+                    "participates in",
+                    "ulcer recurrence",
+                    "endpoint not among extracted entities"
+                ],
+                [
+                    "evidence",
+                    "is about",
+                    "biological rationale",
+                    "information entity -> information entity not licensed"
+                ],
+                [
+                    "biological rationale",
+                    "is about",
+                    "adjunctive therapy",
+                    "information entity -> process not licensed"
+                ],
+                [
+                    "adjunctive therapy",
+                    "has participant",
+                    "statins",
+                    "endpoint not among extracted entities"
+                ],
+                [
+                    "dosage",
+                    "is about",
+                    "statins",
+                    "endpoint not among extracted entities"
+                ],
+                [
+                    "route of administration",
+                    "is about",
+                    "statins",
+                    "endpoint not among extracted entities"
+                ],
+                [
+                    "treatment duration",
+                    "inheres in",
+                    "statins",
+                    "endpoint not among extracted entities"
+                ]
+            ],
+            "unknown_predicates": []
+        }
+    },
+    "42709355": {
+        "entities": {
+            "wound healing assays": {
+                "is_a: process": 1.0
+            },
+            "wound healing rate": {
+                "is_a: quality": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260908_1839"
+    },
+    "42709547": {
+        "entities": {
+            "chronic, non-healing wounds": {
+                "is_a: material entity": 1.0,
+                "has_part: Staphylococcus aureus biofilms": 1.0
+            },
+            "Staphylococcus aureus biofilms": {
+                "is_a: material entity": 1.0
+            },
+            "biofilm": {
+                "is_a: material entity": 1.0
+            },
+            "immune cells": {
+                "is_a: material entity": 1.0
+            },
+            "injury": {
+                "is_a: material entity": 1.0
+            },
+            "biofilm-derived soluble cues": {
+                "is_a: material entity": 1.0
+            },
+            "bacterial contact": {
+                "is_a: process": 1.0
+            },
+            "biofilm-associated macrophage": {
+                "is_a: material entity": 1.0
+            },
+            "BAM": {
+                "is_a: material entity": 1.0,
+                "has_part: MARCO": 1.0,
+                "has_part: MERTK": 1.0,
+                "has_quality: hybrid CD64CD163 state": 1.0
+            },
+            "Macrophage receptor with collagenous structure": {
+                "is_a: material entity": 1.0
+            },
+            "MARCO": {
+                "is_a: material entity": 1.0
+            },
+            "MERTK": {
+                "is_a: material entity": 1.0,
+                "participates_in: sensing": 1.0
+            },
+            "apoptotic cells": {
+                "is_a: material entity": 1.0
+            },
+            "engulfment": {
+                "is_a: process": 1.0,
+                "immediately_causally_downstream_of: sensing": 1.0,
+                "has_input: apoptotic cells": 1.0
+            },
+            "isogenic S. aureus USA300 variants": {
+                "is_a: material entity": 1.0,
+                "has_disposition: biofilm capacity": 1.0
+            },
+            "biofilm capacity": {
+                "is_a: disposition": 1.0
+            },
+            "biofilm-conditioned medium": {
+                "is_a: material entity": 1.0,
+                "has_part: biofilm-derived soluble cues": 1.0
+            },
+            "human macrophages": {
+                "is_a: material entity": 1.0
+            },
+            "MARCO neutralization": {
+                "is_a: process": 1.0
+            },
+            "corpse clearance": {
+                "is_a: process": 1.0,
+                "immediately_causally_downstream_of: MARCO neutralization": 1.0,
+                "has_input: apoptotic cells": 1.0
+            },
+            "biofilm factors": {
+                "is_a: material entity": 1.0,
+                "has_part: biofilm-derived soluble cues": 1.0
+            },
+            "phospho-C/EBPbeta": {
+                "is_a: material entity": 1.0,
+                "part_of: nucleus": 1.0
+            },
+            "nucleus": {
+                "is_a: material entity": 1.0
+            },
+            "sensing": {
+                "is_a: process": 1.0,
+                "has_input: apoptotic cells": 1.0
+            },
+            "Single-cell": {
+                "is_a: process": 1.0,
+                "has_participant: BAMs": 1.0
+            },
+            "Xenium spatial transcriptomics": {
+                "is_a: process": 1.0,
+                "has_participant: BAMs": 1.0
+            },
+            "cytometry by time of flight": {
+                "is_a: process": 1.0
+            },
+            "CyTOF": {
+                "is_a: process": 1.0,
+                "has_participant: BAMs": 1.0
+            },
+            "PhenoCycler": {
+                "is_a: process": 1.0,
+                "has_participant: BAMs": 1.0
+            },
+            "BAMs": {
+                "is_a: material entity": 1.0,
+                "part_of: infected chronic wounds": 1.0
+            },
+            "biofilm-proximal niches": {
+                "is_a: immaterial entity": 1.0
+            },
+            "hybrid CD64CD163 state": {
+                "is_a: quality": 1.0
+            },
+            "M1/M2 categories": {
+                "is_a: information entity": 1.0
+            },
+            "infected chronic wounds": {
+                "is_a: material entity": 1.0
+            },
+            "myeloid-restricted MARCO overexpression": {
+                "is_a: process": 1.0,
+                "immediately_causally_downstream_of: tissue nanotransfection": 1.0
+            },
+            "tissue nanotransfection": {
+                "is_a: process": 1.0
+            },
+            "efferocytosis": {
+                "is_a: process": 1.0,
+                "has_input: apoptotic cells": 1.0
+            },
+            "MARCOMERTK macrophages": {
+                "is_a: material entity": 1.0,
+                "part_of: biofilm-associated disease": 1.0
+            },
+            "druggable checkpoint": {
+                "is_a: role": 1.0
+            },
+            "biofilm-associated disease": {
+                "is_a: material entity": 1.0
+            },
+            "Staphylococcus aureus": {
+                "is_a: material entity": 1.0
+            },
+            "S. aureus": {
+                "is_a: material entity": 1.0
+            },
+            "USA300": {
+                "is_a: material entity": 1.0
+            },
+            "impaired efferocytosis": {
+                "is_a: process": 1.0,
+                "immediately_causally_downstream_of: myeloid-restricted MARCO overexpression": 1.0,
+                "has_input: apoptotic cells": 1.0
+            }
+        },
+        "meta_stamp": "llm_extract_1_20260908_1839"
+    }
+}

@@ -14,6 +14,7 @@ BaseList
 
 from __future__ import annotations
 
+import functools
 import re
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -24,13 +25,34 @@ _CONFIG_DIR = Path(__file__).resolve().parents[3] / "config"
 
 # ── Generic file-level persistence helpers ────────────────────────────────────
 
+def _declares(line: str, var_name: str) -> bool:
+    """True if `line` opens the set literal for exactly `var_name`.
+
+    The match is anchored, not a substring test. It was a substring test, and
+    `WHITELIST` is a substring of `KEYWORD_WHITELIST` -- which is declared FIRST
+    in config/whitelist.py, so every add and remove aimed at WHITELIST landed in
+    the keyword list instead. That is not a near miss: the keyword list matches
+    on a word inside a term, so whitelisting `skin` there exempts `skin graft`,
+    `skin substitute` and everything else containing the word.
+
+    Same family as the `cti` keyword bug and the `class_hierarchy_*` cache glob:
+    a name matched loosely against a longer name that contains it.
+    """
+    return bool(_re_decl(var_name).match(line)) and "{" in line
+
+
+@functools.lru_cache(maxsize=None)
+def _re_decl(var_name: str) -> re.Pattern[str]:
+    return re.compile(rf"\s*{re.escape(var_name)}\s*(?::|=)")
+
+
 def _find_block_end(lines: list[str], var_name: str) -> int:
     """Return the line index of the closing brace of var_name's set literal."""
     in_block = False
     depth    = 0
     for i, line in enumerate(lines):
         if not in_block:
-            if var_name in line and "{" in line:
+            if _declares(line, var_name):
                 in_block = True
                 depth += line.count("{") - line.count("}")
         else:
@@ -65,7 +87,7 @@ def _pylist_remove(path: Path, var_name: str, terms: set[str]) -> int:
     removed    = 0
     for line in lines:
         if not in_block:
-            if var_name in line and "{" in line:
+            if _declares(line, var_name):
                 in_block = True
                 depth += line.count("{") - line.count("}")
             filtered.append(line)
@@ -202,7 +224,7 @@ class TermList(BaseList):
         src   = self._PATH.read_text()
         lines = src.splitlines()
         start = next(i for i, l in enumerate(lines)
-                     if self._VAR_NAME in l and "{" in l)
+                     if _declares(l, self._VAR_NAME))
         end   = _find_block_end(lines, self._VAR_NAME)
 
         new_lines = [f"{self._VAR_NAME}{self._DECL_SUFFIX}"]
@@ -559,7 +581,7 @@ class BlockList(TermList):
         lines = src.splitlines()
         start = next(
             i for i, l in enumerate(lines)
-            if self._VAR_NAME in l and "{" in l
+            if _declares(l, self._VAR_NAME)
         )
         end = _find_block_end(lines, self._VAR_NAME)
 

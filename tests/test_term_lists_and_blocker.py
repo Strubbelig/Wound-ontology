@@ -260,3 +260,87 @@ class TestBaseListInterface:
         wl._terms = frozenset({"wound"})
         assert "wound" in wl
         assert "scar" not in wl
+
+
+# ── a list name is matched exactly, not as a substring ────────────────────────
+#
+# `_find_block_end` and `_pylist_remove` located a set literal with
+# `var_name in line`, and `WHITELIST` is a substring of `KEYWORD_WHITELIST` --
+# which config/whitelist.py declares FIRST. So every add and remove aimed at
+# WHITELIST landed in the keyword list. Not a near miss: a keyword list matches
+# on a word inside a term, so `skin` written there exempts `skin graft`, `skin
+# substitute` and everything else containing the word, silently widening the
+# whitelist far past what was curated. Found 2026-09-08 while moving 33 curated
+# class labels off METHODOLOGY_BLOCKLIST.
+
+TWO_LISTS = '''\
+KEYWORD_WHITELIST: frozenset[str] = frozenset({
+    "alpha",
+})
+
+
+WHITELIST: frozenset[str] = frozenset({
+    "beta",
+})
+'''
+
+
+def _split_at_whitelist(text: str) -> tuple[str, str]:
+    """(everything before the WHITELIST declaration, everything from it on).
+
+    Split on the newline-anchored declaration: splitting on the bare name finds
+    it inside `KEYWORD_WHITELIST` first, which is the very confusion under test.
+    """
+    marker = "\nWHITELIST: frozenset[str] = frozenset({"
+    assert marker in text, text
+    head, tail = text.split(marker, 1)
+    return head, marker + tail
+
+
+class TestListNameIsMatchedExactly:
+    def _file(self, tmp_path: Path) -> Path:
+        p = tmp_path / "whitelist.py"
+        p.write_text(TWO_LISTS)
+        return p
+
+    def test_adding_to_whitelist_leaves_the_keyword_whitelist_alone(self, tmp_path):
+        p = self._file(tmp_path)
+        assert _pylist_add(p, "WHITELIST", frozenset({"beta"}), {"gamma"}) == 1
+        kw, wl = _split_at_whitelist(p.read_text())
+        assert "gamma" not in kw, "written into KEYWORD_WHITELIST"
+        assert "gamma" in wl
+
+    def test_removing_from_whitelist_leaves_the_keyword_whitelist_alone(self, tmp_path):
+        p = tmp_path / "whitelist.py"
+        p.write_text(TWO_LISTS.replace('    "alpha",', '    "alpha",\n    "beta",'))
+        assert _pylist_remove(p, "WHITELIST", {"beta"}) == 1
+        kw, wl = _split_at_whitelist(p.read_text())
+        assert '"beta",' in kw, "removed from KEYWORD_WHITELIST instead"
+        assert '"beta",' not in wl, "not removed from WHITELIST"
+
+    def test_the_block_end_is_the_right_block(self, tmp_path):
+        lines = TWO_LISTS.splitlines()
+        kw_end = _find_block_end(lines, "KEYWORD_WHITELIST")
+        wl_end = _find_block_end(lines, "WHITELIST")
+        assert kw_end < wl_end, (kw_end, wl_end)
+        assert lines[kw_end] == "})" and lines[wl_end] == "})"
+
+    def test_a_name_that_is_a_suffix_of_another_is_not_confused(self, tmp_path):
+        """The general shape, not just the pair that bit."""
+        from wound_ontology.store.term_lists import _declares
+
+        line = "KEYWORD_WHITELIST: frozenset[str] = frozenset({"
+        assert _declares(line, "KEYWORD_WHITELIST")
+        assert not _declares(line, "WHITELIST")
+        assert _declares("WHITELIST: frozenset[str] = frozenset({", "WHITELIST")
+        assert _declares("METHODOLOGY_BLOCKLIST: set[str] = {", "METHODOLOGY_BLOCKLIST")
+        assert not _declares("# mentions WHITELIST in prose {", "WHITELIST")
+
+    def test_the_real_whitelist_file_has_both_and_they_are_distinct(self):
+        """The condition that made the bug reachable is still true, so the
+        regression above is guarding something live."""
+        import config.whitelist as w
+
+        assert hasattr(w, "KEYWORD_WHITELIST") and hasattr(w, "WHITELIST")
+        assert "WHITELIST" in "KEYWORD_WHITELIST"
+        assert set(w.WHITELIST) != set(w.KEYWORD_WHITELIST)
