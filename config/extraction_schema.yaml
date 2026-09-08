@@ -1,7 +1,7 @@
 # GENERATED FILE - DO NOT EDIT BY HAND.
 # Regenerate with:  python scripts/build_extraction_schema.py
 # Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)
-# Generated:        2026-08-20
+# Generated:        2026-09-08
 id: https://w3id.org/wont/extraction
 name: wont-extraction
 title: WONT/MILD-derived extraction schema
@@ -28,97 +28,97 @@ enums:
     description: >-
       The one categorical choice made per extracted term. Pick exactly one.
     permissible_values:
-      Continuant:
+      continuant:
         meaning: http://purl.obolibrary.org/obo/BFO_0000002
         description: "FALLBACK. Something that persists through time and is wholly present whenever it exists. Use only when you cannot tell which kind of continuant it is."
         annotations:
           precision: coarse
-      Occurrent:
+      occurrent:
         meaning: http://purl.obolibrary.org/obo/BFO_0000003
         description: "FALLBACK. Something that happens or unfolds in time. Use only when you cannot tell which kind of occurrent it is."
         annotations:
           precision: coarse
-      IndependentContinuant:
+      independent continuant:
         meaning: http://purl.obolibrary.org/obo/BFO_0000004
         description: "FALLBACK. A continuant that does not depend on a bearer. Use only when you cannot tell material from immaterial."
-        is_a: Continuant
+        is_a: continuant
         annotations:
           precision: coarse
-      SpecificallyDependentContinuant:
+      specifically dependent continuant:
         meaning: http://purl.obolibrary.org/obo/BFO_0000020
         description: "FALLBACK. A continuant that must inhere in a bearer. Use only when you cannot tell which kind of dependent continuant it is."
-        is_a: Continuant
+        is_a: continuant
         annotations:
           precision: coarse
-      RealizableEntity:
+      realizable entity:
         meaning: http://purl.obolibrary.org/obo/BFO_0000017
-        description: "A dependent continuant realized in a process. Use directly only for things like plans; otherwise prefer Disposition, Function, Role or Tendency."
-        is_a: SpecificallyDependentContinuant
+        description: "A dependent continuant realized in a process. Use directly only for things like plans; otherwise prefer disposition, function, role or tendency."
+        is_a: specifically dependent continuant
         annotations:
           precision: coarse
-      MaterialEntity:
+      material entity:
         meaning: http://purl.obolibrary.org/obo/BFO_0000040
         description: "A material thing: a body part, an organism, a substance, a disorder, a device."
-        is_a: IndependentContinuant
+        is_a: independent continuant
         annotations:
           precision: precise
-      ImmaterialEntity:
+      immaterial entity:
         meaning: http://purl.obolibrary.org/obo/BFO_0000141
         description: "An immaterial continuant such as a cavity, a site or a boundary."
-        is_a: IndependentContinuant
+        is_a: independent continuant
         annotations:
           precision: precise
-      Quality:
+      quality:
         meaning: http://purl.obolibrary.org/obo/BFO_0000019
         description: "A way a thing is, fully exhibited whenever it is present: a colour, a size, a degree."
-        is_a: SpecificallyDependentContinuant
+        is_a: specifically dependent continuant
         annotations:
           precision: precise
-      Disposition:
+      disposition:
         meaning: http://purl.obolibrary.org/obo/BFO_0000016
         description: "A tendency to behave a certain way under given conditions, grounded in physical makeup; it may never be realized."
-        is_a: RealizableEntity
+        is_a: realizable entity
         annotations:
           precision: precise
-      Function:
+      function:
         meaning: http://purl.obolibrary.org/obo/BFO_0000034
         description: "A disposition the bearer exists in order to have, by design or by selection."
-        is_a: Disposition
+        is_a: disposition
         annotations:
           precision: precise
-      Role:
+      role:
         meaning: http://purl.obolibrary.org/obo/BFO_0000023
         description: "Something a thing has only because of context or convention, and could lose without changing."
-        is_a: RealizableEntity
+        is_a: realizable entity
         annotations:
           precision: precise
-      Tendency:
+      tendency:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120005
         description: "Raises the objective probability of an outcome without necessitating it. Use for predispositions and risk factors."
-        is_a: RealizableEntity
+        is_a: realizable entity
         annotations:
           precision: precise
-      InformationEntity:
+      information entity:
         meaning: http://purl.obolibrary.org/obo/BFO_0000031
         description: "Information: a datum, a specification, a classification result, a scale, a plan specification."
-        is_a: Continuant
+        is_a: continuant
         annotations:
           precision: precise
-      Process:
+      process:
         meaning: http://purl.obolibrary.org/obo/BFO_0000015
         description: "Something that happens and unfolds over time; it has temporal parts."
-        is_a: Occurrent
+        is_a: occurrent
         annotations:
           precision: precise
-      ProcessBoundary:
+      process boundary:
         meaning: http://purl.obolibrary.org/obo/BFO_0000035
         description: "The instantaneous start or end of a process."
-        is_a: Occurrent
+        is_a: occurrent
         annotations:
           precision: precise
   RealizableEntityTerm:
     description: >-
-      Existing RealizableEntity classes in MILD/WONT. Ground to one of these when the
+      Existing 'realizable entity' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
       TREATMENT_PLAN:
@@ -127,7 +127,7 @@ enums:
         description: "A plan that inheres in a Homo sapiens that bears the role physician role and that concretizes a treatment plan specification."
   MaterialEntityTerm:
     description: >-
-      Existing MaterialEntity classes in MILD/WONT. Ground to one of these when the
+      Existing 'material entity' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
       DEVELOPED_MATERIAL_DISEASE_ENTITY:
@@ -768,7 +768,7 @@ enums:
         title: "Necrosis"
   QualityTerm:
     description: >-
-      Existing Quality classes in MILD/WONT. Ground to one of these when the
+      Existing 'quality' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
       REDNESS:
@@ -909,7 +909,7 @@ enums:
         description: "A degree of wound pain that qualifies its bearer as painful."
   DispositionTerm:
     description: >-
-      Existing Disposition classes in MILD/WONT. Ground to one of these when the
+      Existing 'disposition' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
       IMMUNOSUPPRESSION:
@@ -920,7 +920,7 @@ enums:
         title: "wound infecting disposition"
   FunctionTerm:
     description: >-
-      Existing Function classes in MILD/WONT. Ground to one of these when the
+      Existing 'function' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
       WOUND_PROTECTION_FUNCTION:
@@ -964,7 +964,7 @@ enums:
         title: "wound coverage function"
   RoleTerm:
     description: >-
-      Existing Role classes in MILD/WONT. Ground to one of these when the
+      Existing 'role' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
       PHYSICIAN_ROLE:
@@ -979,7 +979,7 @@ enums:
         title: "Wound manager role"
   TendencyTerm:
     description: >-
-      Existing Tendency classes in MILD/WONT. Ground to one of these when the
+      Existing 'tendency' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
       TENDENCY:
@@ -1012,7 +1012,7 @@ enums:
         description: "A disease predisposition that inheres in a human being of advanced age and whose realization impairs wound healing."
   InformationEntityTerm:
     description: >-
-      Existing InformationEntity classes in MILD/WONT. Ground to one of these when the
+      Existing 'information entity' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
       DISEASE_CLASSIFICATION_STAGE:
@@ -1237,7 +1237,7 @@ enums:
         description: "A disease stage classification result that is about a wound and that is the specified output of a wound classification process."
   ProcessTerm:
     description: >-
-      Existing Process classes in MILD/WONT. Ground to one of these when the
+      Existing 'process' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
       INTENDED_DISORDER_ELIMINATION_PROCESS:
@@ -1502,7 +1502,7 @@ enums:
         description: "A disease classification process that has as specified output a wound classification result."
   ProcessBoundaryTerm:
     description: >-
-      Existing ProcessBoundary classes in MILD/WONT. Ground to one of these when the
+      Existing 'process boundary' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
       THRESHOLD_CROSSING_EVENT:
@@ -1518,111 +1518,111 @@ enums:
       CAUSALLY_INFLUENCED_BY:
         meaning: http://purl.obolibrary.org/obo/RO_0002559
         title: "causally influenced by"
-        description: "Permitted category pairs: Quality -> MaterialEntity"
+        description: "Permitted category pairs: quality -> material entity"
       CONCRETIZES:
         meaning: http://purl.obolibrary.org/obo/RO_0000059
         title: "concretizes"
-        description: "Permitted category pairs: RealizableEntity -> InformationEntity"
+        description: "Permitted category pairs: realizable entity -> information entity"
       HAS_A_MATERIAL_BASIS:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120094
         title: "has a material basis"
-        description: "Permitted category pairs: Tendency -> MaterialEntity"
+        description: "Permitted category pairs: tendency -> material entity"
       HAS_AS_PROCESS_BOUNDARY_AT_END:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120085
         title: "has as process boundary at end"
-        description: "Permitted category pairs: Process -> ProcessBoundary"
+        description: "Permitted category pairs: process -> process boundary"
       HAS_AS_PROCESS_BOUNDARY_AT_START:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120084
         title: "has as process boundary at start"
-        description: "Permitted category pairs: Process -> ProcessBoundary"
+        description: "Permitted category pairs: process -> process boundary"
       HAS_DISPOSITION:
         meaning: http://purl.obolibrary.org/obo/RO_0000091
         title: "has disposition"
-        description: "Permitted category pairs: MaterialEntity -> Disposition"
+        description: "Permitted category pairs: material entity -> disposition"
       HAS_FUNCTION:
         meaning: http://purl.obolibrary.org/obo/RO_0000085
         title: "has function"
-        description: "Permitted category pairs: MaterialEntity -> Function"
+        description: "Permitted category pairs: material entity -> function"
       HAS_INPUT:
         meaning: http://purl.obolibrary.org/obo/RO_0002233
         title: "has input"
-        description: "Permitted category pairs: Process -> MaterialEntity"
+        description: "Permitted category pairs: process -> material entity"
       HAS_OUTPUT:
         meaning: http://purl.obolibrary.org/obo/RO_0002234
         title: "has output"
-        description: "Permitted category pairs: Process -> InformationEntity; Process -> MaterialEntity"
+        description: "Permitted category pairs: process -> information entity; process -> material entity"
       HAS_PART:
         meaning: http://purl.obolibrary.org/obo/BFO_0000051
         title: "has part"
-        description: "Permitted category pairs: InformationEntity -> InformationEntity; MaterialEntity -> MaterialEntity"
+        description: "Permitted category pairs: information entity -> information entity; material entity -> material entity"
       HAS_PARTICIPANT:
         meaning: http://purl.obolibrary.org/obo/RO_0000057
         title: "has participant"
-        description: "Permitted category pairs: Process -> MaterialEntity; ProcessBoundary -> InformationEntity"
+        description: "Permitted category pairs: process -> material entity; process boundary -> information entity"
       HAS_QUALITY:
         meaning: http://purl.obolibrary.org/obo/RO_0000086
         title: "has quality"
-        description: "Permitted category pairs: MaterialEntity -> Quality"
+        description: "Permitted category pairs: material entity -> quality"
       HAS_REALIZATION:
         meaning: http://purl.obolibrary.org/obo/BFO_0000054
         title: "has realization"
-        description: "Permitted category pairs: Tendency -> Process"
+        description: "Permitted category pairs: tendency -> process"
       HAS_ROLE:
         meaning: http://purl.obolibrary.org/obo/RO_0000087
         title: "has role"
-        description: "Permitted category pairs: MaterialEntity -> SpecificallyDependentContinuant"
+        description: "Permitted category pairs: material entity -> specifically dependent continuant"
       HAS_SPECIFIED_INPUT:
         meaning: http://purl.obolibrary.org/obo/OBI_0000293
         title: "has specified input"
-        description: "Permitted category pairs: Process -> InformationEntity"
+        description: "Permitted category pairs: process -> information entity"
       HAS_SPECIFIED_OUTPUT:
         meaning: http://purl.obolibrary.org/obo/OBI_0000299
         title: "has specified output"
-        description: "Permitted category pairs: Process -> InformationEntity; Process -> MaterialEntity"
+        description: "Permitted category pairs: process -> information entity; process -> material entity"
       IMMEDIATELY_CAUSALLY_DOWNSTREAM_OF:
         meaning: http://purl.obolibrary.org/obo/RO_0002405
         title: "immediately causally downstream of"
-        description: "Permitted category pairs: Process -> Process"
+        description: "Permitted category pairs: process -> process"
       INHERES_IN:
         meaning: http://purl.obolibrary.org/obo/BFO_0000197
         title: "inheres in"
-        description: "Permitted category pairs: Quality -> MaterialEntity; RealizableEntity -> MaterialEntity; Tendency -> MaterialEntity"
+        description: "Permitted category pairs: quality -> material entity; realizable entity -> material entity; tendency -> material entity"
       IS_ABOUT:
         meaning: http://purl.obolibrary.org/obo/IAO_0000136
         title: "is about"
-        description: "Permitted category pairs: InformationEntity -> MaterialEntity; InformationEntity -> Quality; InformationEntity -> RealizableEntity; InformationEntity -> SpecificallyDependentContinuant"
+        description: "Permitted category pairs: information entity -> material entity; information entity -> quality; information entity -> realizable entity; information entity -> specifically dependent continuant"
       IS_SPECIFIED_INPUT_OF:
         meaning: http://purl.obolibrary.org/obo/OBI_0000295
         title: "is specified input of"
-        description: "Permitted category pairs: InformationEntity -> Process"
+        description: "Permitted category pairs: information entity -> process"
       IS_SPECIFIED_OUTPUT_OF:
         meaning: http://purl.obolibrary.org/obo/OBI_0000312
         title: "is specified output of"
-        description: "Permitted category pairs: InformationEntity -> Process; MaterialEntity -> Process"
+        description: "Permitted category pairs: information entity -> process; material entity -> process"
       OCCUPIES_TEMPORAL_REGION:
         meaning: http://purl.obolibrary.org/obo/BFO_0000199
         title: "occupies temporal region"
-        description: "Permitted category pairs: ProcessBoundary -> Occurrent"
+        description: "Permitted category pairs: process boundary -> occurrent"
       OUTPUT_OF:
         meaning: http://purl.obolibrary.org/obo/RO_0002353
         title: "output of"
-        description: "Permitted category pairs: MaterialEntity -> Process"
+        description: "Permitted category pairs: material entity -> process"
       PART_OF:
         meaning: http://purl.obolibrary.org/obo/BFO_0000050
         title: "part of"
-        description: "Permitted category pairs: MaterialEntity -> MaterialEntity; Process -> Process"
+        description: "Permitted category pairs: material entity -> material entity; process -> process"
       PARTICIPATES_IN:
         meaning: http://purl.obolibrary.org/obo/BFO_0000056
         title: "participates in"
-        description: "Permitted category pairs: MaterialEntity -> Process"
+        description: "Permitted category pairs: material entity -> process"
       PARTICIPATES_IN_2:
         meaning: http://purl.obolibrary.org/obo/RO_0000056
         title: "participates in"
-        description: "Permitted category pairs: MaterialEntity -> Process"
+        description: "Permitted category pairs: material entity -> process"
       REALIZES:
         meaning: http://purl.obolibrary.org/obo/BFO_0000055
         title: "realizes"
-        description: "Permitted category pairs: Process -> RealizableEntity; Process -> Tendency"
+        description: "Permitted category pairs: process -> realizable entity; process -> tendency"
 
 slots:
   label:

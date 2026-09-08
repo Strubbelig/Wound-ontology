@@ -145,20 +145,56 @@ def test_normalization_repairs_a_category_already_damaged(empty_store):
         mapping = {}
 
     empty_store.normalize(mapper=IdentityMapper())
-    assert "is_a: MaterialEntity" in empty_store.dict["1"]["entities"]["Some Term"]
+    assert "is_a: material entity" in empty_store.dict["1"]["entities"]["Some Term"]
 
 
 def test_a_category_name_is_never_renamed_by_the_mapper(empty_store):
     """The mapping may not redefine a closed vocabulary either."""
-    raw = {"1": {"entities": {"some term": {"is_a: MaterialEntity": 1.0}},
+    raw = {"1": {"entities": {"some term": {"is_a: material entity": 1.0}},
                  "meta_stamp": "x"}}
     empty_store.get_data(raw)
 
     class BadMapper:
-        mapping = {"MaterialEntity": "Material Thing"}
+        mapping = {"material entity": "Material Thing"}
 
     empty_store.normalize(mapper=BadMapper())
-    assert "is_a: MaterialEntity" in empty_store.dict["1"]["entities"]["Some Term"]
+    assert "is_a: material entity" in empty_store.dict["1"]["entities"]["Some Term"]
+
+
+def test_a_term_that_maps_onto_a_category_gets_the_declared_spelling(empty_store):
+    """The other direction of rule 22, and the one the rename created.
+
+    The live mapping holds `roles -> Role`. `Role` was the category spelling
+    until 2026-09-08 and is now just a title-cased string, so without declaring
+    the RESULT of a mapping the store would carry `Role` for the mapped term and
+    `role` for the bare one -- two spellings of the one category, which is
+    exactly the split the rename exists to end.
+    """
+    raw = {"1": {"entities": {"roles": {"is_a: process": 1.0},
+                              "Role": {"is_a: process": 1.0}},
+                 "meta_stamp": "x"}}
+    empty_store.get_data(raw)
+
+    class RolesMapper:
+        mapping = {"roles": "Role"}
+
+    empty_store.normalize(mapper=RolesMapper())
+    names = set(empty_store.dict["1"]["entities"])
+    assert names == {"role"}, names
+
+
+def test_a_mapped_target_is_declared_too(empty_store):
+    """Targets go through the same door as entities, and are what the category
+    reconciliation actually reads."""
+    raw = {"1": {"entities": {"some term": {"is_a: roles": 1.0}},
+                 "meta_stamp": "x"}}
+    empty_store.get_data(raw)
+
+    class RolesMapper:
+        mapping = {"roles": "Role"}
+
+    empty_store.normalize(mapper=RolesMapper())
+    assert "is_a: role" in empty_store.dict["1"]["entities"]["Some Term"]
 
 
 # ── the mapping must be applicable more than once ────────────────────────────

@@ -28,16 +28,16 @@ def test_reads_the_document_keyed_shape_not_a_flat_dict():
     """The store is {pmid: {entities: {...}}}. Reading the top level as terms
     yields zero typed terms and a report blaming the abstracts, which is how
     this was caught the first time."""
-    store = {"111": _doc({"Wound": {"is_a: MaterialEntity": 1.0}})}
+    store = {"111": _doc({"Wound": {"is_a: material entity": 1.0}})}
     entities, _, report = store_to_gate_inputs(store)
     assert [e.label for e in entities] == ["Wound"]
     assert report["untyped"] == []
 
 
 def test_zero_valued_cells_are_not_assertions():
-    store = {"111": _doc({"Wound": {"is_a: MaterialEntity": 1.0,
+    store = {"111": _doc({"Wound": {"is_a: material entity": 1.0,
                                     "part_of: Skin": 0.0},
-                          "Skin": {"is_a: MaterialEntity": 1.0}})}
+                          "Skin": {"is_a: material entity": 1.0}})}
     _, relations, _ = store_to_gate_inputs(store)
     assert relations == []
 
@@ -46,16 +46,16 @@ def test_zero_valued_cells_are_not_assertions():
 def test_a_term_typed_differently_by_two_abstracts_is_reported_not_resolved():
     """Last-writer-wins would silently pick one. The disagreement IS the finding."""
     store = {
-        "1": _doc({"Wound": {"is_a: MaterialEntity": 1.0}}),
-        "2": _doc({"Wound": {"is_a: Quality": 1.0}}),
+        "1": _doc({"Wound": {"is_a: material entity": 1.0}}),
+        "2": _doc({"Wound": {"is_a: quality": 1.0}}),
     }
     entities, _, report = store_to_gate_inputs(store)
     assert entities == []
-    assert report["conflicting"] == {"Wound": ["MaterialEntity", "Quality"]}
+    assert report["conflicting"] == {"Wound": ["material entity", "quality"]}
 
 
 def test_the_same_typing_from_many_abstracts_is_agreement_not_conflict():
-    store = {str(i): _doc({"Wound": {"is_a: MaterialEntity": 1.0}}) for i in range(5)}
+    store = {str(i): _doc({"Wound": {"is_a: material entity": 1.0}}) for i in range(5)}
     entities, _, report = store_to_gate_inputs(store)
     assert [e.label for e in entities] == ["Wound"]
     assert report["conflicting"] == {}
@@ -79,7 +79,7 @@ def test_untyped_terms_are_counted_not_dropped():
 
 # ── relations ─────────────────────────────────────────────────────────────────
 def test_a_relation_needs_both_endpoints_typed():
-    store = {"1": _doc({"Wound": {"is_a: MaterialEntity": 1.0,
+    store = {"1": _doc({"Wound": {"is_a: material entity": 1.0,
                                   "part_of: Skin": 1.0}})}
     _, relations, report = store_to_gate_inputs(store)
     assert relations == []
@@ -89,8 +89,8 @@ def test_a_relation_needs_both_endpoints_typed():
 def test_a_predicate_with_no_relationtype_is_counted_per_predicate():
     """`occurs_in` and `is_treatment_for` are legacy-only: no RelationType emits
     them, so they cannot become an OWL restriction and must be reported."""
-    store = {"1": _doc({"A": {"is_a: Process": 1.0, "occurs_in: B": 1.0},
-                        "B": {"is_a: MaterialEntity": 1.0}})}
+    store = {"1": _doc({"A": {"is_a: process": 1.0, "occurs_in: B": 1.0},
+                        "B": {"is_a: material entity": 1.0}})}
     _, relations, report = store_to_gate_inputs(store)
     assert relations == []
     assert report["unknown_predicate"] == {"occurs_in": 1}
@@ -99,16 +99,16 @@ def test_a_predicate_with_no_relationtype_is_counted_per_predicate():
 def test_is_a_never_becomes_a_relation():
     """Subsumption belongs to run_gate_hierarchy_edges. Emitting it here too
     would gate the same edge twice and double every quarantine count."""
-    store = {"1": _doc({"Wound": {"is_a: MaterialEntity": 1.0},
-                        "Skin": {"is_a: MaterialEntity": 1.0}})}
+    store = {"1": _doc({"Wound": {"is_a: material entity": 1.0},
+                        "Skin": {"is_a: material entity": 1.0}})}
     _, relations, _ = store_to_gate_inputs(store)
     assert relations == []
 
 
 def test_the_same_triple_from_many_abstracts_is_one_relation():
-    store = {str(i): _doc({"Wound": {"is_a: MaterialEntity": 1.0,
+    store = {str(i): _doc({"Wound": {"is_a: material entity": 1.0,
                                      "part_of: Skin": 1.0},
-                           "Skin": {"is_a: MaterialEntity": 1.0}})
+                           "Skin": {"is_a: material entity": 1.0}})
              for i in range(7)}
     _, relations, _ = store_to_gate_inputs(store)
     assert len(relations) == 1
@@ -118,9 +118,9 @@ def test_the_same_triple_from_many_abstracts_is_one_relation():
 
 def test_store_predicate_keys_map_back_to_relation_types():
     """result_to_store_entities writes "part_of"; this must read it back."""
-    store = {"1": _doc({"Wound": {"is_a: MaterialEntity": 1.0,
+    store = {"1": _doc({"Wound": {"is_a: material entity": 1.0,
                                   "has_quality: Chronicity": 1.0},
-                        "Chronicity": {"is_a: Quality": 1.0}})}
+                        "Chronicity": {"is_a: quality": 1.0}})}
     _, relations, report = store_to_gate_inputs(store)
     assert report["unknown_predicate"] == {}
     assert [r.predicate.value for r in relations] == ["has quality"]
@@ -133,9 +133,9 @@ def test_the_round_trip_from_extraction_survives_the_store():
         ExtractedEntity, ExtractedRelation, ExtractionResult, RelationType,
     )
     result = ExtractionResult(
-        entities=[ExtractedEntity(label="Wound Healing", category="Process"),
+        entities=[ExtractedEntity(label="Wound Healing", category="process"),
                   ExtractedEntity(label="Granulation Tissue",
-                                  category="MaterialEntity")],
+                                  category="material entity")],
         relations=[ExtractedRelation(subject="Wound Healing",
                                      predicate=RelationType.HAS_PARTICIPANT,
                                      object="Granulation Tissue")],
@@ -152,9 +152,9 @@ def test_the_round_trip_from_extraction_survives_the_store():
 def test_unlicensed_relations_are_reported_but_still_gated():
     """The reasoner is the authority; the table is a second opinion. A relation
     the table refuses is still handed to ELK, and the disagreement is printed."""
-    store = {"1": _doc({"Anti-Inflammatory Function": {"is_a: Function": 1.0,
+    store = {"1": _doc({"Anti-Inflammatory Function": {"is_a: function": 1.0,
                                                        "part_of: Wound Repair": 1.0},
-                        "Wound Repair": {"is_a: Process": 1.0}})}
+                        "Wound Repair": {"is_a: process": 1.0}})}
     _, relations, report = store_to_gate_inputs(store)
     assert len(relations) == 1
     assert report["unlicensed"] == [
@@ -165,7 +165,7 @@ def test_unlicensed_relations_are_reported_but_still_gated():
 def test_every_count_is_printed_even_when_zero():
     """Absence of a message must never mean absence of a problem."""
     entities, relations, report = store_to_gate_inputs(
-        {"1": _doc({"Wound": {"is_a: MaterialEntity": 1.0}})})
+        {"1": _doc({"Wound": {"is_a: material entity": 1.0}})})
     text = describe_gate_inputs(entities, relations, report)
     for phrase in ("no BFO category", "irreconcilable categories", "reconciled",
                    "no RelationType", "not a typed term", "licensing violations"):
@@ -239,35 +239,35 @@ def test_every_emitted_relation_survives_the_cleaner():
 def test_a_conflict_retreats_to_the_common_ancestor_when_a_resolver_is_given():
     """Two abstracts calling a term Process and ProcessBoundary agree it is an
     Occurrent. Gating it there asserts only what both actually support."""
-    store = {"1": _doc({"closure": {"is_a: Process": 1.0}}),
-             "2": _doc({"closure": {"is_a: ProcessBoundary": 1.0}})}
+    store = {"1": _doc({"closure": {"is_a: process": 1.0}}),
+             "2": _doc({"closure": {"is_a: process boundary": 1.0}})}
     entities, _, report = store_to_gate_inputs(
-        store, resolve_conflict=lambda cats: "Occurrent")
-    assert [(e.label, e.category.value) for e in entities] == [("closure", "Occurrent")]
+        store, resolve_conflict=lambda cats: "occurrent")
+    assert [(e.label, e.category.value) for e in entities] == [("closure", "occurrent")]
     assert report["conflicting"] == {}
     assert report["reconciled"] == {
-        "closure": (["Process", "ProcessBoundary"], "Occurrent")}
+        "closure": (["process", "process boundary"], "occurrent")}
 
 
 def test_an_irreconcilable_conflict_is_still_excluded():
     """A resolver returning None means there is no honest category. The term
     must stay out of the gate rather than be forced to something nobody said."""
-    store = {"1": _doc({"complications": {"is_a: MaterialEntity": 1.0}}),
-             "2": _doc({"complications": {"is_a: Process": 1.0}})}
+    store = {"1": _doc({"complications": {"is_a: material entity": 1.0}}),
+             "2": _doc({"complications": {"is_a: process": 1.0}})}
     entities, _, report = store_to_gate_inputs(
         store, resolve_conflict=lambda cats: None)
     assert entities == []
-    assert report["conflicting"] == {"complications": ["MaterialEntity", "Process"]}
+    assert report["conflicting"] == {"complications": ["material entity", "process"]}
     assert report["reconciled"] == {}
 
 
 def test_without_a_resolver_nothing_is_reconciled():
     """The default must not silently start rewriting categories."""
-    store = {"1": _doc({"x": {"is_a: Process": 1.0}}),
-             "2": _doc({"x": {"is_a: ProcessBoundary": 1.0}})}
+    store = {"1": _doc({"x": {"is_a: process": 1.0}}),
+             "2": _doc({"x": {"is_a: process boundary": 1.0}})}
     _, _, report = store_to_gate_inputs(store)
     assert report["reconciled"] == {}
-    assert report["conflicting"] == {"x": ["Process", "ProcessBoundary"]}
+    assert report["conflicting"] == {"x": ["process", "process boundary"]}
 
 
 # ── batch IRIs ────────────────────────────────────────────────────────────────
@@ -291,8 +291,8 @@ def test_the_reasoner_gate_resolver_agrees_with_mild():
     if not pathlib.Path(REASONER_SKELETON).exists():
         pytest.skip("skeleton TBox not built")
     g = ReasonerGate(REASONER_SKELETON)
-    assert g.least_common_category(["Process", "ProcessBoundary"]) == "Occurrent"
-    assert g.least_common_category(["Disposition", "Role"]) == "RealizableEntity"
-    assert g.least_common_category(["MaterialEntity", "Process"]) is None
-    assert g.least_common_category(["Quality"]) == "Quality"
+    assert g.least_common_category(["process", "process boundary"]) == "occurrent"
+    assert g.least_common_category(["disposition", "role"]) == "realizable entity"
+    assert g.least_common_category(["material entity", "process"]) is None
+    assert g.least_common_category(["quality"]) == "quality"
 

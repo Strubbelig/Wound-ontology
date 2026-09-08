@@ -3,7 +3,7 @@
 
 Regenerate with:  python scripts/build_extraction_schema.py
 Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)
-Generated:        2026-08-20
+Generated:        2026-09-08
 
 Mirrors config/extraction_schema.yaml. Emitted directly rather than via
 `gen-pydantic` so the pipeline has no hard dependency on the linkml generator;
@@ -20,88 +20,88 @@ from pydantic import BaseModel, Field, model_validator
 class BFOCategory(str, Enum):
     """The one categorical choice made per extracted term."""
 
-    Continuant = 'Continuant'
-    Occurrent = 'Occurrent'
-    IndependentContinuant = 'IndependentContinuant'
-    SpecificallyDependentContinuant = 'SpecificallyDependentContinuant'
-    RealizableEntity = 'RealizableEntity'
-    MaterialEntity = 'MaterialEntity'
-    ImmaterialEntity = 'ImmaterialEntity'
-    Quality = 'Quality'
-    Disposition = 'Disposition'
-    Function = 'Function'
-    Role = 'Role'
-    Tendency = 'Tendency'
-    InformationEntity = 'InformationEntity'
-    Process = 'Process'
-    ProcessBoundary = 'ProcessBoundary'
+    Continuant = 'continuant'
+    Occurrent = 'occurrent'
+    IndependentContinuant = 'independent continuant'
+    SpecificallyDependentContinuant = 'specifically dependent continuant'
+    RealizableEntity = 'realizable entity'
+    MaterialEntity = 'material entity'
+    ImmaterialEntity = 'immaterial entity'
+    Quality = 'quality'
+    Disposition = 'disposition'
+    Function = 'function'
+    Role = 'role'
+    Tendency = 'tendency'
+    InformationEntity = 'information entity'
+    Process = 'process'
+    ProcessBoundary = 'process boundary'
 
 
 CATEGORY_IRI: dict[str, str] = {
-    'Continuant': 'http://purl.obolibrary.org/obo/BFO_0000002',
-    'Occurrent': 'http://purl.obolibrary.org/obo/BFO_0000003',
-    'IndependentContinuant': 'http://purl.obolibrary.org/obo/BFO_0000004',
-    'SpecificallyDependentContinuant': 'http://purl.obolibrary.org/obo/BFO_0000020',
-    'RealizableEntity': 'http://purl.obolibrary.org/obo/BFO_0000017',
-    'MaterialEntity': 'http://purl.obolibrary.org/obo/BFO_0000040',
-    'ImmaterialEntity': 'http://purl.obolibrary.org/obo/BFO_0000141',
-    'Quality': 'http://purl.obolibrary.org/obo/BFO_0000019',
-    'Disposition': 'http://purl.obolibrary.org/obo/BFO_0000016',
-    'Function': 'http://purl.obolibrary.org/obo/BFO_0000034',
-    'Role': 'http://purl.obolibrary.org/obo/BFO_0000023',
-    'Tendency': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120005',
-    'InformationEntity': 'http://purl.obolibrary.org/obo/BFO_0000031',
-    'Process': 'http://purl.obolibrary.org/obo/BFO_0000015',
-    'ProcessBoundary': 'http://purl.obolibrary.org/obo/BFO_0000035',
+    'continuant': 'http://purl.obolibrary.org/obo/BFO_0000002',
+    'occurrent': 'http://purl.obolibrary.org/obo/BFO_0000003',
+    'independent continuant': 'http://purl.obolibrary.org/obo/BFO_0000004',
+    'specifically dependent continuant': 'http://purl.obolibrary.org/obo/BFO_0000020',
+    'realizable entity': 'http://purl.obolibrary.org/obo/BFO_0000017',
+    'material entity': 'http://purl.obolibrary.org/obo/BFO_0000040',
+    'immaterial entity': 'http://purl.obolibrary.org/obo/BFO_0000141',
+    'quality': 'http://purl.obolibrary.org/obo/BFO_0000019',
+    'disposition': 'http://purl.obolibrary.org/obo/BFO_0000016',
+    'function': 'http://purl.obolibrary.org/obo/BFO_0000034',
+    'role': 'http://purl.obolibrary.org/obo/BFO_0000023',
+    'tendency': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120005',
+    'information entity': 'http://purl.obolibrary.org/obo/BFO_0000031',
+    'process': 'http://purl.obolibrary.org/obo/BFO_0000015',
+    'process boundary': 'http://purl.obolibrary.org/obo/BFO_0000035',
 }
 
 CATEGORY_GLOSS: dict[str, str] = {
-    'Continuant': 'FALLBACK. Something that persists through time and is wholly present whenever it exists. Use only when you cannot tell which kind of continuant it is.',
-    'Occurrent': 'FALLBACK. Something that happens or unfolds in time. Use only when you cannot tell which kind of occurrent it is.',
-    'IndependentContinuant': 'FALLBACK. A continuant that does not depend on a bearer. Use only when you cannot tell material from immaterial.',
-    'SpecificallyDependentContinuant': 'FALLBACK. A continuant that must inhere in a bearer. Use only when you cannot tell which kind of dependent continuant it is.',
-    'RealizableEntity': 'A dependent continuant realized in a process. Use directly only for things like plans; otherwise prefer Disposition, Function, Role or Tendency.',
-    'MaterialEntity': 'A material thing: a body part, an organism, a substance, a disorder, a device.',
-    'ImmaterialEntity': 'An immaterial continuant such as a cavity, a site or a boundary.',
-    'Quality': 'A way a thing is, fully exhibited whenever it is present: a colour, a size, a degree.',
-    'Disposition': 'A tendency to behave a certain way under given conditions, grounded in physical makeup; it may never be realized.',
-    'Function': 'A disposition the bearer exists in order to have, by design or by selection.',
-    'Role': 'Something a thing has only because of context or convention, and could lose without changing.',
-    'Tendency': 'Raises the objective probability of an outcome without necessitating it. Use for predispositions and risk factors.',
-    'InformationEntity': 'Information: a datum, a specification, a classification result, a scale, a plan specification.',
-    'Process': 'Something that happens and unfolds over time; it has temporal parts.',
-    'ProcessBoundary': 'The instantaneous start or end of a process.',
+    'continuant': 'FALLBACK. Something that persists through time and is wholly present whenever it exists. Use only when you cannot tell which kind of continuant it is.',
+    'occurrent': 'FALLBACK. Something that happens or unfolds in time. Use only when you cannot tell which kind of occurrent it is.',
+    'independent continuant': 'FALLBACK. A continuant that does not depend on a bearer. Use only when you cannot tell material from immaterial.',
+    'specifically dependent continuant': 'FALLBACK. A continuant that must inhere in a bearer. Use only when you cannot tell which kind of dependent continuant it is.',
+    'realizable entity': 'A dependent continuant realized in a process. Use directly only for things like plans; otherwise prefer disposition, function, role or tendency.',
+    'material entity': 'A material thing: a body part, an organism, a substance, a disorder, a device.',
+    'immaterial entity': 'An immaterial continuant such as a cavity, a site or a boundary.',
+    'quality': 'A way a thing is, fully exhibited whenever it is present: a colour, a size, a degree.',
+    'disposition': 'A tendency to behave a certain way under given conditions, grounded in physical makeup; it may never be realized.',
+    'function': 'A disposition the bearer exists in order to have, by design or by selection.',
+    'role': 'Something a thing has only because of context or convention, and could lose without changing.',
+    'tendency': 'Raises the objective probability of an outcome without necessitating it. Use for predispositions and risk factors.',
+    'information entity': 'Information: a datum, a specification, a classification result, a scale, a plan specification.',
+    'process': 'Something that happens and unfolds over time; it has temporal parts.',
+    'process boundary': 'The instantaneous start or end of a process.',
 }
 
 # The BFO subsumption tree over the categories. Every extracted term is
 # subsumed under one of these, so a new discovery always lands somewhere in BFO.
 CATEGORY_PARENT: dict[str, str | None] = {
-    'Continuant': None,
-    'Occurrent': None,
-    'IndependentContinuant': 'Continuant',
-    'SpecificallyDependentContinuant': 'Continuant',
-    'RealizableEntity': 'SpecificallyDependentContinuant',
-    'MaterialEntity': 'IndependentContinuant',
-    'ImmaterialEntity': 'IndependentContinuant',
-    'Quality': 'SpecificallyDependentContinuant',
-    'Disposition': 'RealizableEntity',
-    'Function': 'Disposition',
-    'Role': 'RealizableEntity',
-    'Tendency': 'RealizableEntity',
-    'InformationEntity': 'Continuant',
-    'Process': 'Occurrent',
-    'ProcessBoundary': 'Occurrent',
+    'continuant': None,
+    'occurrent': None,
+    'independent continuant': 'continuant',
+    'specifically dependent continuant': 'continuant',
+    'realizable entity': 'specifically dependent continuant',
+    'material entity': 'independent continuant',
+    'immaterial entity': 'independent continuant',
+    'quality': 'specifically dependent continuant',
+    'disposition': 'realizable entity',
+    'function': 'disposition',
+    'role': 'realizable entity',
+    'tendency': 'realizable entity',
+    'information entity': 'continuant',
+    'process': 'occurrent',
+    'process boundary': 'occurrent',
 }
 
 # Coarse categories are legitimate answers, not failures: a model unsure
-# whether something is a Process or a MaterialEntity should retreat to
-# Occurrent or Continuant rather than guess. They are flagged for refinement.
+# whether something is a process or a material entity should retreat to
+# occurrent or continuant rather than guess. They are flagged for refinement.
 COARSE_CATEGORIES: frozenset[str] = frozenset({
-    'Continuant',
-    'Occurrent',
-    'IndependentContinuant',
-    'SpecificallyDependentContinuant',
-    'RealizableEntity',
+    'continuant',
+    'occurrent',
+    'independent continuant',
+    'specifically dependent continuant',
+    'realizable entity',
 })
 
 
@@ -135,10 +135,10 @@ def is_refinement_of(fine: str, coarse: str) -> bool:
 # ── Grounding vocabularies, one per category ──────────────────────────────
 # label -> IRI, for terms that already exist in MILD/WONT.
 GROUNDING: dict[str, dict[str, str]] = {
-    'RealizableEntity': {
+    'realizable entity': {
         'treatment plan': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120090',
     },
-    'MaterialEntity': {
+    'material entity': {
         'Developed material disease entity': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120001',
         'unknown-disorder disease': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120007',
         'genetic variant': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120009',
@@ -336,7 +336,7 @@ GROUNDING: dict[str, dict[str, str]] = {
         'wound infecting pathogen': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120019',
         'Necrosis': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120020',
     },
-    'Quality': {
+    'quality': {
         'Redness': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000257',
         'Thread size': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000315',
         'Thread size 0': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000316',
@@ -377,11 +377,11 @@ GROUNDING: dict[str, dict[str, str]] = {
         'epithelialized': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000463',
         'painful': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000474',
     },
-    'Disposition': {
+    'disposition': {
         'Immunosuppression': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000161',
         'wound infecting disposition': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120018',
     },
-    'Function': {
+    'function': {
         'wound protection function': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120000',
         'wound signalling function': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120001',
         'first wound dressing layer function': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120002',
@@ -396,12 +396,12 @@ GROUNDING: dict[str, dict[str, str]] = {
         'wound inspection facilitation function': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120011',
         'wound coverage function': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120012',
     },
-    'Role': {
+    'role': {
         'Physician role': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120093',
         'Wound expert role': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000403',
         'Wound manager role': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000413',
     },
-    'Tendency': {
+    'tendency': {
         'tendency': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120005',
         'genetic predisposition': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120008',
         'predisposition from an existing disorder': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120010',
@@ -410,7 +410,7 @@ GROUNDING: dict[str, dict[str, str]] = {
         'perpetuation tendency': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120034',
         'advanced age wound-healing predisposition': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000449',
     },
-    'InformationEntity': {
+    'information entity': {
         'disease classification stage': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120000',
         'disease diagnostic result': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120024',
         'confirmed disease diagnostic result by not completely objective criteria': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120026',
@@ -480,7 +480,7 @@ GROUNDING: dict[str, dict[str, str]] = {
         'wound classification grade': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120016',
         'Wound classification result': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120017',
     },
-    'Process': {
+    'process': {
         'intended disorder elimination process': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120011',
         'predisposition realizing disorder development process': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120012',
         'disorder development process': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120021',
@@ -563,7 +563,7 @@ GROUNDING: dict[str, dict[str, str]] = {
         'Wound dressing process': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120013',
         'Wound classification process': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120015',
     },
-    'ProcessBoundary': {
+    'process boundary': {
         'threshold crossing event': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120031',
     },
 }
@@ -746,97 +746,97 @@ RELATION_IRI: dict[str, str] = {
 # asked to choose between occurs_in / part_of / inheres_in on BFO grounds.
 RELATION_DOMAINS: dict[str, set[tuple[str, str]]] = {
     RelationType.CAUSALLY_INFLUENCED_BY.value: {
-        ('Quality', 'MaterialEntity'),
+        ('quality', 'material entity'),
     },
     RelationType.CONCRETIZES.value: {
-        ('RealizableEntity', 'InformationEntity'),
+        ('realizable entity', 'information entity'),
     },
     RelationType.HAS_A_MATERIAL_BASIS.value: {
-        ('Tendency', 'MaterialEntity'),
+        ('tendency', 'material entity'),
     },
     RelationType.HAS_AS_PROCESS_BOUNDARY_AT_END.value: {
-        ('Process', 'ProcessBoundary'),
+        ('process', 'process boundary'),
     },
     RelationType.HAS_AS_PROCESS_BOUNDARY_AT_START.value: {
-        ('Process', 'ProcessBoundary'),
+        ('process', 'process boundary'),
     },
     RelationType.HAS_DISPOSITION.value: {
-        ('MaterialEntity', 'Disposition'),
+        ('material entity', 'disposition'),
     },
     RelationType.HAS_FUNCTION.value: {
-        ('MaterialEntity', 'Function'),
+        ('material entity', 'function'),
     },
     RelationType.HAS_INPUT.value: {
-        ('Process', 'MaterialEntity'),
+        ('process', 'material entity'),
     },
     RelationType.HAS_OUTPUT.value: {
-        ('Process', 'InformationEntity'),
-        ('Process', 'MaterialEntity'),
+        ('process', 'information entity'),
+        ('process', 'material entity'),
     },
     RelationType.HAS_PART.value: {
-        ('InformationEntity', 'InformationEntity'),
-        ('MaterialEntity', 'MaterialEntity'),
+        ('information entity', 'information entity'),
+        ('material entity', 'material entity'),
     },
     RelationType.HAS_PARTICIPANT.value: {
-        ('Process', 'MaterialEntity'),
-        ('ProcessBoundary', 'InformationEntity'),
+        ('process', 'material entity'),
+        ('process boundary', 'information entity'),
     },
     RelationType.HAS_QUALITY.value: {
-        ('MaterialEntity', 'Quality'),
+        ('material entity', 'quality'),
     },
     RelationType.HAS_REALIZATION.value: {
-        ('Tendency', 'Process'),
+        ('tendency', 'process'),
     },
     RelationType.HAS_ROLE.value: {
-        ('MaterialEntity', 'SpecificallyDependentContinuant'),
+        ('material entity', 'specifically dependent continuant'),
     },
     RelationType.HAS_SPECIFIED_INPUT.value: {
-        ('Process', 'InformationEntity'),
+        ('process', 'information entity'),
     },
     RelationType.HAS_SPECIFIED_OUTPUT.value: {
-        ('Process', 'InformationEntity'),
-        ('Process', 'MaterialEntity'),
+        ('process', 'information entity'),
+        ('process', 'material entity'),
     },
     RelationType.IMMEDIATELY_CAUSALLY_DOWNSTREAM_OF.value: {
-        ('Process', 'Process'),
+        ('process', 'process'),
     },
     RelationType.INHERES_IN.value: {
-        ('Quality', 'MaterialEntity'),
-        ('RealizableEntity', 'MaterialEntity'),
-        ('Tendency', 'MaterialEntity'),
+        ('quality', 'material entity'),
+        ('realizable entity', 'material entity'),
+        ('tendency', 'material entity'),
     },
     RelationType.IS_ABOUT.value: {
-        ('InformationEntity', 'MaterialEntity'),
-        ('InformationEntity', 'Quality'),
-        ('InformationEntity', 'RealizableEntity'),
-        ('InformationEntity', 'SpecificallyDependentContinuant'),
+        ('information entity', 'material entity'),
+        ('information entity', 'quality'),
+        ('information entity', 'realizable entity'),
+        ('information entity', 'specifically dependent continuant'),
     },
     RelationType.IS_SPECIFIED_INPUT_OF.value: {
-        ('InformationEntity', 'Process'),
+        ('information entity', 'process'),
     },
     RelationType.IS_SPECIFIED_OUTPUT_OF.value: {
-        ('InformationEntity', 'Process'),
-        ('MaterialEntity', 'Process'),
+        ('information entity', 'process'),
+        ('material entity', 'process'),
     },
     RelationType.OCCUPIES_TEMPORAL_REGION.value: {
-        ('ProcessBoundary', 'Occurrent'),
+        ('process boundary', 'occurrent'),
     },
     RelationType.OUTPUT_OF.value: {
-        ('MaterialEntity', 'Process'),
+        ('material entity', 'process'),
     },
     RelationType.PART_OF.value: {
-        ('MaterialEntity', 'MaterialEntity'),
-        ('Process', 'Process'),
+        ('material entity', 'material entity'),
+        ('process', 'process'),
     },
     RelationType.PARTICIPATES_IN.value: {
-        ('MaterialEntity', 'Process'),
+        ('material entity', 'process'),
     },
     RelationType.PARTICIPATES_IN_2.value: {
-        ('MaterialEntity', 'Process'),
+        ('material entity', 'process'),
     },
     RelationType.REALIZES.value: {
-        ('Process', 'RealizableEntity'),
-        ('Process', 'Tendency'),
+        ('process', 'realizable entity'),
+        ('process', 'tendency'),
     },
 }
 
@@ -846,7 +846,7 @@ def relations_for(subject_category: str, object_category: str) -> list[str]:
 
     A coarse category stands for any of its descendants, so the answer widens
     to their union: asking about Continuant -> Process returns everything
-    licensed for MaterialEntity -> Process, Quality -> Process and so on. That is
+    licensed for 'material entity' -> 'process', 'quality' -> 'process' and so on.
     the open-world reading — we know less, so fewer things are ruled out. Use
     `relations_are_certain()` to tell a confirmed relation from a possible one.
     """

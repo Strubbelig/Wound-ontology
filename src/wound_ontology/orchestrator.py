@@ -345,7 +345,7 @@ class Orchestrator:
 
     def store_categories(self) -> dict[str, str]:
         """{store term -> its reconciled BFO category}, or absent if undecided."""
-        from wound_ontology.llm.extraction_models import CATEGORY_PARENT
+        from wound_ontology.llm.category_vocab import declared_category
         from wound_ontology.utils.string_utils import smart_title
 
         typings: dict[str, set[str]] = {}
@@ -357,9 +357,9 @@ class Orchestrator:
                     pred, target = triple.split(":", 1)
                     if pred.strip().lower().replace(" ", "_") not in ("is_a", "subclass_of"):
                         continue
-                    target = target.strip()
-                    if target in CATEGORY_PARENT:
-                        typings.setdefault(smart_title(entity.strip()), set()).add(target)
+                    declared = declared_category(target.strip())
+                    if declared is not None:
+                        typings.setdefault(smart_title(entity.strip()), set()).add(declared)
         out: dict[str, str] = {}
         for term, cats in typings.items():
             agreed = (next(iter(cats)) if len(cats) == 1
@@ -383,16 +383,17 @@ class Orchestrator:
         lexical variants the anchors exist to catch.
 
         BFO category names are never mapped at all. They appear in the store as
-        `is_a: Process` targets, and lowercasing `Process` to BFO's `process`
-        would stop category detection recognising them — every reconciliation and
-        split downstream reads those keys.
+        `is_a: process` targets, and mapping one onto a term would hand every
+        reconciliation and split downstream a name that is no longer a category.
+        The test is separator-blind, so it also catches a store still carrying
+        the pre-2026-09-08 CamelCase spelling.
         """
+        from wound_ontology.llm.category_vocab import is_category
         from wound_ontology.llm.extraction_models import CATEGORY_PARENT
         from wound_ontology.utils.string_utils import smart_title
 
         onto_cat = self.ontology_categories()
         store_cat = self.store_categories()
-        category_names = {c.lower() for c in CATEGORY_PARENT}
 
         def ancestors(cat: str) -> set[str]:
             chain, cur = {cat}, CATEGORY_PARENT.get(cat)
@@ -402,7 +403,7 @@ class Orchestrator:
             return chain
 
         def accept(term: str, canonical: str) -> bool:
-            if term.strip().lower() in category_names:
+            if is_category(term):
                 return False
             a = store_cat.get(smart_title(term.strip()))
             b = onto_cat.get(canonical.strip())
@@ -514,7 +515,7 @@ class Orchestrator:
         the only categories available are the store's own per-abstract typings --
         the noisy input the pipeline exists to reconcile. Passing them in the slot
         the anchor path fills from the skeleton TBox pushed the model into
-        refusing on "store term is MaterialEntity, ontology class LIKELY Process",
+        refusing on "store term is a material entity, ontology class LIKELY a process",
         and it threw out `haemorrhage -> Hemorrhage` as a category clash. Same 52
         pairs, no categories: 46% not-synonymous became 27%.
         """
@@ -1424,7 +1425,7 @@ class Orchestrator:
         filtered by the category-pair table, but is_a edges are not: the curated
         CSV and the FCA lattice bypass the extraction schema entirely. The table
         is also blind to same-category disjointness — `Wound base`, `Wound edge`
-        and `Wound pocket` are all MaterialEntity yet pairwise disjoint.
+        and `Wound pocket` are all `material entity` yet pairwise disjoint.
         """
         from wound_ontology.reasoning.gate import ReasonerGate
         from config.settings import QUARANTINE_DIR as _Q

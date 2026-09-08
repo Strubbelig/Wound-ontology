@@ -71,8 +71,8 @@ class StubGate(ReasonerGate):
 def _result():
     return ExtractionResult(
         entities=[
-            {"label": "Wound", "category": "MaterialEntity"},
-            {"label": "Bad Term", "category": "MaterialEntity"},
+            {"label": "Wound", "category": "material entity"},
+            {"label": "Bad Term", "category": "material entity"},
         ],
         relations=[],
     )
@@ -99,7 +99,7 @@ def test_offending_term_is_quarantined_and_the_rest_survive(tiny_skeleton):
 def test_grounded_terms_use_their_real_iri(tiny_skeleton):
     """A relation on a known class must be checked against that class's axioms."""
     g = StubGate(tiny_skeleton, [])
-    res = ExtractionResult(entities=[{"label": "Wound", "category": "MaterialEntity"}])
+    res = ExtractionResult(entities=[{"label": "Wound", "category": "material entity"}])
     iri = str(g._iri_for(res.entities[0]))
     assert iri.endswith("WONT_0000380")
     assert not iri.startswith(BATCH_NS)
@@ -107,7 +107,7 @@ def test_grounded_terms_use_their_real_iri(tiny_skeleton):
 
 def test_new_terms_get_a_batch_local_iri(tiny_skeleton):
     g = StubGate(tiny_skeleton, [])
-    res = ExtractionResult(entities=[{"label": "Brand New", "category": "Process"}])
+    res = ExtractionResult(entities=[{"label": "Brand New", "category": "process"}])
     assert str(g._iri_for(res.entities[0])).startswith(BATCH_NS)
 
 

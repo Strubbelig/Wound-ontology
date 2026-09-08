@@ -252,8 +252,7 @@ class ConceptLattice:
         `is_a: <ancestor>` columns for hierarchy ancestors, which are ordinary
         classes and not types.
         """
-        from wound_ontology.llm.extraction_models import CATEGORY_PARENT
-        by_lower = {c.lower(): c for c in CATEGORY_PARENT}
+        from wound_ontology.llm.category_vocab import declared_category
 
         df = self.matrix.df
         cats: set[str] = set()
@@ -264,9 +263,9 @@ class ConceptLattice:
             for col, value in row.items():
                 if value != 1.0 or not str(col).startswith("is_a:"):
                     continue
-                target = str(col).split(":", 1)[1].strip().lower()
-                if target in by_lower:
-                    cats.add(by_lower[target])
+                declared = declared_category(str(col).split(":", 1)[1])
+                if declared is not None:
+                    cats.add(declared)
         return cats
 
     @staticmethod
@@ -287,17 +286,13 @@ class ConceptLattice:
         category itself. That is not a biomedical grouping, it is the constraint
         read back, and as a superclass it says nothing.
         """
-        import re
+        from wound_ontology.llm.category_vocab import is_category
 
-        from wound_ontology.llm.extraction_models import CATEGORY_PARENT
-
-        # The categories are CamelCase ("MaterialEntity") and the model answers in
-        # prose ("Material entity"), so compare with separators removed or the
-        # check passes exactly the answers it exists to catch.
-        def squash(x: str) -> str:
-            return re.sub(r"[^a-z0-9]", "", x.lower())
-
-        if squash(name) in {squash(c) for c in CATEGORY_PARENT}:
+        # The comparison is separator-blind on purpose: the vocabulary spells it
+        # `material entity`, the model may answer "Material Entity" or the old
+        # "MaterialEntity", and a naive match passes exactly the answers this
+        # check exists to catch.
+        if is_category(name):
             return False, "names the BFO category rather than a biomedical grouping"
         return True, ""
 
@@ -344,7 +339,7 @@ class ConceptLattice:
         A label the ontologies do not know cannot be judged this way at all, and
         is allowed through. Asking the model to declare a category for its own new
         label looked like a check and was not one: unverifiable by construction,
-        and satisfied by answering "MaterialEntity" whatever the name meant. Over
+        and satisfied by answering "material entity" whatever the name meant. Over
         five live runs it refused no bad name and lost one good one. What keeps
         new names honest is naming top-down under an already-named parent, not a
         self-reported type.

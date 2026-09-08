@@ -58,21 +58,30 @@ def resolver(tmp_path):
 
 
 CONFLICTED = {
-    "1": {"entities": {"Necrosis": {"is_a: MaterialEntity": 1.0}}},
-    "2": {"entities": {"Necrosis": {"is_a: Process": 1.0}}},
+    "1": {"entities": {"Necrosis": {"is_a: material entity": 1.0}}},
+    "2": {"entities": {"Necrosis": {"is_a: process": 1.0}}},
 }
 
 
 def test_without_a_resolver_both_categories_become_edges():
-    """The old behaviour, pinned so the difference stays visible."""
+    """The old behaviour, pinned so the difference stays visible.
+
+    Two spellings are in play and both are correct. The STORE holds the
+    declared vocabulary (`material entity`); the HIERARCHY holds class labels,
+    which it title-cases like every other label, so the same category reads
+    back as `Material Entity` -- the spelling the curated seed also gives
+    BFO_0000040. That is what makes the seed edge and the extracted edge one
+    edge instead of two. Recognition is separator-blind, so it is still a
+    category on the way back in.
+    """
     h = _hier()
     h.get_data(_store(CONFLICTED))
-    assert set(h.parents_of("Necrosis")) == {"MaterialEntity", "Process"}
+    assert set(h.parents_of("Necrosis")) == {"Material Entity", "Process"}
 
 
 RECONCILABLE = {
-    "1": {"entities": {"Closure": {"is_a: Process": 1.0}}},
-    "2": {"entities": {"Closure": {"is_a: ProcessBoundary": 1.0}}},
+    "1": {"entities": {"Closure": {"is_a: process": 1.0}}},
+    "2": {"entities": {"Closure": {"is_a: process boundary": 1.0}}},
 }
 
 
@@ -86,10 +95,10 @@ def test_a_conflict_collapses_to_the_common_ancestor(resolver):
 
 def test_an_agreed_term_keeps_its_own_category(resolver):
     h = _hier()
-    h.get_data(_store({"1": {"entities": {"Wound": {"is_a: MaterialEntity": 1.0}}},
-                       "2": {"entities": {"Wound": {"is_a: MaterialEntity": 1.0}}}}),
+    h.get_data(_store({"1": {"entities": {"Wound": {"is_a: material entity": 1.0}}},
+                       "2": {"entities": {"Wound": {"is_a: material entity": 1.0}}}}),
                reconcile_categories=resolver)
-    assert h.parents_of("Wound") == ["MaterialEntity"]
+    assert h.parents_of("Wound") == ["Material Entity"]
 
 
 def test_an_irreconcilable_term_gets_no_category_edge(resolver):
@@ -100,7 +109,7 @@ def test_an_irreconcilable_term_gets_no_category_edge(resolver):
     h = _hier()
     h.get_data(_store(CONFLICTED), reconcile_categories=resolver)
     assert h.parents_of("Necrosis") == []
-    assert h.irreconcilable["Necrosis"] == {"MaterialEntity", "Process"}
+    assert h.irreconcilable["Necrosis"] == {"material entity", "process"}
 
 
 def test_the_irreconcilable_list_is_announced(resolver, capsys):
@@ -114,8 +123,8 @@ def test_non_category_is_a_edges_are_untouched(resolver):
     ordinary subsumption and must survive alongside whatever category the term
     also carries."""
     store = _store({"1": {"entities": {"Chronic Wound": {"is_a: Wound": 1.0,
-                                                         "is_a: MaterialEntity": 1.0}}},
-                    "2": {"entities": {"Chronic Wound": {"is_a: Process": 1.0}}}})
+                                                         "is_a: material entity": 1.0}}},
+                    "2": {"entities": {"Chronic Wound": {"is_a: process": 1.0}}}})
     h = _hier()
     h.get_data(store, reconcile_categories=resolver)
     assert "Wound" in h.parents_of("Chronic Wound")

@@ -552,25 +552,33 @@ label index, because a closed vocabulary with a known IRI has nothing to gain
 from fuzzy matching and everything to lose from it.
 
 It did look them up, and the lookup half-worked, which is the worst outcome:
-`LabelIndex` folds punctuation and plurals but does not split CamelCase, so the
-one-word names hit their BFO label (`Process` -> BFO_0000015, `Quality` ->
-BFO_0000019, and six others) and every multi-word one missed. `MaterialEntity`
-does not match `material entity`. Five categories were therefore minted as fresh
-WONT classes carrying the pipeline's own "it has no BFO anchor" note:
+`LabelIndex` folds punctuation and plurals but does not split CamelCase, and the
+vocabulary was CamelCase (see rule 25), so the one-word names hit their BFO
+label (`Process` -> BFO_0000015, `Quality` -> BFO_0000019, and six others) and
+every multi-word one missed. `MaterialEntity` does not match `material entity`.
+For those five, `resolve()` fell through to minting — creating a **duplicate of
+a BFO class it already had**, as a fresh WONT class carrying the pipeline's own
+"it has no BFO anchor" note:
 
-| minted twin | id | children |
-|---|---|---|
-| MaterialEntity | WONT_0000477 | 1124 |
-| InformationEntity | WONT_0000483 | 543 |
-| ImmaterialEntity | WONT_0000519 | 64 |
-| ProcessBoundary | WONT_0000505 | 37 |
-| RealizableEntity | WONT_0001322 | 2 |
+| minted twin | id | children | the real class it duplicated | its children |
+|---|---|---|---|---|
+| MaterialEntity | WONT_0000477 | 1124 | BFO_0000040 `material entity` | 15 |
+| InformationEntity | WONT_0000483 | 543 | BFO_0000031 | — |
+| ImmaterialEntity | WONT_0000519 | 64 | BFO_0000141 | — |
+| ProcessBoundary | WONT_0000505 | 37 | BFO_0000035 | — |
+| RealizableEntity | WONT_0001322 | 2 | BFO_0000017 | — |
 
-Each of those roots subclasses nothing, so the **1770** classes hanging under
-them were unreachable from BFO. Measured on the same inputs with the fix off and
-on: WONT classes with no asserted path to `BFO_0000001 entity` fall from **1769
-to 43**, and 7 fewer classes are minted. No competency verdict changed — this
-repairs structure, not coverage.
+**This was never a defect in WONT or in BFO.** WONT is BFO-based throughout: it
+parents 15 classes directly on `BFO_0000040`, uses 5 distinct BFO parents, and
+contains no class labelled `MaterialEntity` at all. `material entity` was not
+floating anywhere. The twins existed only in the generated
+`output/owl/wont_extended.ttl`, alongside the real classes, and each twin
+subclasses nothing — so the **1770** extracted classes hanging under them were
+unreachable from BFO while the real BFO classes kept only their curated
+children. Measured on the same inputs with the fix off and on: WONT classes with
+no asserted path to `BFO_0000001 entity` fall from **1769 to 43**, 7 fewer
+classes are minted, and BFO_0000040's children go from 15 to 1103. No competency
+verdict changed — this repairs structure, not coverage.
 
 The category IRIs are added to `existing_iris`, so the rule in section 3 covers
 them too: an extraction run does not get to hang an axiom on BFO_0000040.
@@ -639,12 +647,23 @@ those edges at all**. Measured across the 2026-09-07 runs:
 | classes under two disjoint BFO branches | 12 | 40 | **4** |
 
 `Surgical Site Infection` came out both a disposition and a material entity. The
-guard matches case-insensitively, so it also **repairs** a store already damaged.
+guard matches separator-blind, so it also **repairs** a store already damaged
+and reads a cache written before rule 25.
 
-Enforced by: `store/concept_store.py::_declared_category`;
+The guard runs in both directions. A category name is declared before the
+mapping is consulted, so the mapper cannot rename one; and the RESULT of a
+mapping is declared too, so a term that maps *onto* a category name arrives as
+that category. Without the second half the live `roles -> Role` entry would put
+`Role` in the store beside the bare `role` — two spellings of one category,
+which is the split rule 25 exists to end.
+
+Enforced by: `store/concept_store.py::_declared_category` over
+`llm/category_vocab.py::declared_category`;
 `test_every_category_name_survives_normalization` (parametrised over all 15),
 `test_normalization_repairs_a_category_already_damaged`,
-`test_a_category_name_is_never_renamed_by_the_mapper`.
+`test_a_category_name_is_never_renamed_by_the_mapper`,
+`test_a_term_that_maps_onto_a_category_gets_the_declared_spelling`,
+`test_a_mapped_target_is_declared_too`.
 
 ## 23. The canonical is the singular spelling, and is never itself a key
 
@@ -704,6 +723,95 @@ Enforced by: `ConceptStore.normalize`'s `canonical_of`;
 `test_targets_are_remapped_after_normalization_too`,
 `test_the_exact_key_still_wins_over_the_normalised_one`,
 `test_a_normalised_key_claimed_twice_is_reported`.
+
+## 25. The category vocabulary is spelled the way BFO spells it
+
+*Decided 2026-09-08.*
+
+The 15 BFO category names are `material entity`, `process boundary`,
+`specifically dependent continuant` — lowercase, words separated by spaces,
+identical to the labels BFO carries. They were CamelCase until today.
+
+Rules 20 and 22 each fixed one consequence of that CamelCase by adding a guard.
+The guards were right and they stay, but they were carrying the whole load, and
+the reason is worth stating plainly: **CamelCase is the one spelling
+`normalize_term` cannot express.** It lowercases, and it turns `-` and `_` into
+spaces — but CamelCase has no separator to turn, so `MaterialEntity` came out
+*welded* as `materialentity`, not *split* as `material entity`. Every comparison
+downstream then had one side normalised and one side not, which is rule 13's
+failure with no way to see it. Four separate defects, one mismatch:
+
+| where | cost |
+|---|---|
+| `extend.resolve` reading a category as a label | 1770 classes with no path to BFO, under 5 minted duplicates of BFO classes |
+| `store.normalize` writing a category name | reconciliation blind to 7 of 15 categories; clashes 12 → 40 |
+| `base_hierarchy` / `store_categories` membership tests | the same blindness, once per consumer |
+| `class_hierarchy` holding both spellings | `Material Entity` (17 curated edges) and `MaterialEntity` (1138 text edges) split BFO_0000040 in two, and the exporter merged them back every run |
+
+In this spelling `normalize_term` is **idempotent** on every category name, so
+the worst a missed guard can now do is change case — and case is what the guards
+already tolerate. For **14 of the 15** the name is also the ontology's own label
+for the IRI it declares, so a lookup that should never happen can no longer mint
+a duplicate class even when it does. The guards stop being load-bearing and
+become belt-and-braces.
+
+The fifteenth is `information entity`, which declares BFO_0000031 — whose BFO
+label is `generically dependent continuant`. That name is ours, chosen because
+it is what the extractor is being asked to recognise and a model will not pick
+"generically dependent continuant" for a measurement datum. The consequence is
+narrow but real: for this one category the second safety net does not apply, and
+the declaration is the only thing placing it. It is pinned as a named exception
+so a sixteenth cannot appear quietly.
+
+Two spellings are in play downstream and both are correct:
+
+- the **store** holds the declared vocabulary, `material entity`;
+- the **hierarchy** holds class labels, which it title-cases like every other
+  label, so the same category reads back as `Material Entity` — which is also
+  how the curated seed spells BFO_0000040's label. That is what makes the seed
+  edge and the extracted edge one edge instead of two.
+
+Recognition is therefore **separator-blind**, and lives in exactly one place:
+`llm/category_vocab.py`. `declared_category` answers for any casing or
+separator — `MaterialEntity`, `Material Entity`, `Materialentity`,
+`material_entity` all return `material entity`. That is not fuzzy matching: it
+answers only for a string that already *is* one of the fifteen, and it is what
+lets a cache written before today keep reading correctly.
+
+`ident()` in `scripts/build_extraction_schema.py` is the one place the CamelCase
+form is reconstructed, for Python and LinkML identifiers that cannot hold a
+space. `BFOCategory.MaterialEntity` is a member name; `'material entity'` is its
+value, and only the value is ever compared or stored.
+
+Migration, measured (`scripts/migrate_category_vocabulary.py`, 2026-09-08):
+**4175** store attributes rewritten across 3559 terms, **2** terms renamed
+(`Function`, `Role`), 0 merges, 0 data collapsed; **2** unreachable mapping
+entries withdrawn and **1** canonical re-pointed. The hierarchies, matrix and
+FCA artifacts are derived and were rebuilt, not migrated (rule 6).
+`pubmed_abstracts` is never touched — an abstract that says "the healing
+process" is prose, and structure is the only thing that tells the two apart.
+
+**The rebuild changed consistency, not structure, and that is the honest
+result.** Because recognition is separator-blind, the pipeline already read the
+legacy store correctly, so the measured state is identical either side of the
+migration: 3859 WONT classes, 45 with no path to BFO, 1130 children on
+BFO_0000040, 3 classes under two disjoint BFO branches, 3553 of 3559 terms given
+a category. Two things did change, both internal:
+
+| | before | after |
+|---|---|---|
+| BFO classes split across two spellings in `class_hierarchy` | 3 | **0** |
+| folds reported at export | 20 | **17** |
+
+The three folds that disappeared *were* those three classes: `resolve()` was
+merging `materialentity` and `material entity` onto BFO_0000040 at export, every
+run, and reporting it as a fold of two pipeline terms. It was never two terms.
+
+Enforced by: `llm/category_vocab.py`; `tests/test_category_vocabulary.py`, in
+particular `test_normalisation_leaves_every_category_name_alone` and
+`test_a_category_name_is_the_label_the_ontology_carries` — the two claims the
+rename rests on — plus
+`test_a_cache_written_under_the_old_spelling_still_reads`.
 
 ## Adding to this file
 

@@ -48,7 +48,7 @@ class SemanticNameResponse(BaseModel):
     superclass_name: str
     # No `category` field. Asking the model to declare the category of the name
     # it had just invented was a claim about a label, unverifiable whenever the
-    # label was new and trivially satisfied by answering "MaterialEntity". Across
+    # label was new and trivially satisfied by answering "material entity". Across
     # five live runs it refused no bad name and lost one good one to a missing
     # field. What the group *is* comes from the concept's intent, which needs no
     # model at all; what remains of the check is grounded in the ontologies.

@@ -210,20 +210,25 @@ def test_the_real_guard_refuses_a_process_mapped_onto_its_bearer():
 
 
 def test_bfo_category_names_are_never_mapped():
-    """They appear in the store as `is_a: Process` targets; lowercasing them to
-    BFO's `process` would stop category detection recognising them, and every
-    reconciliation and split downstream reads those keys."""
+    """A category is a value from a closed vocabulary, not a term to canonicalise.
+
+    Mapping one hands every reconciliation and split downstream a name that is
+    no longer a category. The refusal is separator-blind, so it also holds for a
+    store still carrying the pre-2026-09-08 CamelCase spelling.
+    """
     import wound_ontology.orchestrator as orch
     p = orch.Orchestrator()
     accept = p._category_compatible_mapping(set(p.ontology_categories()))
-    for name in ("Process", "Quality", "Disposition", "Tendency"):
-        assert not accept(name, name.lower()), name
+    for name in ("process", "quality", "material entity", "process boundary",
+                 "MaterialEntity", "Process", "Material Entity"):
+        assert not accept(name, "Wound"), name
 
 
 def test_the_pre_merge_path_is_guarded_too(mapper):
-    """`Process` and BFO's `process` share a normalised form, so they were merged
-    before clustering ever ran — through the one door the validator was not
-    watching, and the one mapping guaranteed to break category detection."""
+    """The category name and BFO's label are now the SAME string, `process`, so
+    a pre-merge that canonicalises it is a pre-merge that eats a category —
+    through the one door the validator was not watching, and the one mapping
+    guaranteed to break category detection."""
     out = _build(
         mapper,
         ["process", "Process"],

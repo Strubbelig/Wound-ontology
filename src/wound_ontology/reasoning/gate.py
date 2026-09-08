@@ -137,8 +137,8 @@ class ReasonerGate:
     # The honest third option is to retreat to what the abstracts DO agree on:
     # the most specific category that subsumes every one they proposed. That
     # ancestor is read out of the skeleton TBox, so MILD decides it, not a table
-    # written here. `Process` + `ProcessBoundary` agree on `Occurrent`;
-    # `MaterialEntity` + `Process` agree on nothing below `entity` and stay
+    # written here. `process` + `process boundary` agree on `occurrent`;
+    # `material entity` + `process` agree on nothing below `entity` and stay
     # excluded, because there is no honest answer for them.
 
     def _category_ancestors(self) -> dict[str, set[str]]:
@@ -168,7 +168,13 @@ class ReasonerGate:
         categories the extractor can assign. Those stay out of the gate and get
         reported, rather than being forced to a value nobody proposed.
         """
-        cats = sorted(set(categories))
+        # Callers pass whatever the store holds, so names are declared first:
+        # an unrecognised name falls through to None below and the disagreement
+        # is reported as irreconcilable, which is the honest answer for a name
+        # that is not a category at all -- but must NOT be the answer for one
+        # that merely arrived spelled the old way.
+        from wound_ontology.llm.category_vocab import declared_category
+        cats = sorted({declared_category(c) or c for c in categories})
         if not cats:
             return None
         if len(cats) == 1:
@@ -319,7 +325,7 @@ class ReasonerGate:
     # filtered by the category-pair table, but is_a edges are not: the curated
     # CSV and the FCA lattice bypass the extraction schema entirely. And the
     # table is blind to same-category disjointness — `Wound base`, `Wound edge`
-    # and `Wound pocket` are all MaterialEntity yet pairwise disjoint, so an edge
+    # and `Wound pocket` are all `material entity` yet pairwise disjoint, so an edge
     # making something a subclass of two of them passes every schema check and
     # only a reasoner rejects it.
 

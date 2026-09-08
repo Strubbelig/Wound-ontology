@@ -308,7 +308,7 @@ class BaseHierarchy(ABC):
 
                   Stage-1 typing runs per abstract, so nothing stops two
                   abstracts typing one term differently: `Necrosis` arrived as
-                  `MaterialEntity` from one and `Process` from two others. Both
+                  `material entity` from one and `process` from two others. Both
                   became edges, BFO makes continuant and occurrent disjoint, and
                   the reasoner had to clean up afterwards -- 42 of 48 quarantined
                   edges were this, across 16 terms. Reconciling here builds a
@@ -347,7 +347,7 @@ class BaseHierarchy(ABC):
         # Which BFO categories each term was given, across the whole corpus.
         # Collected first so a term's category edge can be decided once, rather
         # than one edge per abstract that happened to mention it.
-        from wound_ontology.llm.extraction_models import CATEGORY_PARENT
+        from wound_ontology.llm.category_vocab import declared_category
         typings: dict[str, set[str]] = {}
         if reconcile_categories is not None:
             for pmid_data in store.dict.values():
@@ -358,9 +358,14 @@ class BaseHierarchy(ABC):
                         pred, target = triple.split(":", 1)
                         if pred.strip().lower().replace(" ", "_") not in self._direct_predicates:
                             continue
-                        target = target.strip()
-                        if target in CATEGORY_PARENT:
-                            typings.setdefault(smart_title(entity), set()).add(target)
+                        # A category read out of the store is converted to its
+                        # declared spelling here, so everything downstream --
+                        # reconciliation, the coarse-set subtraction, the gate --
+                        # compares declared names only. A cache written under the
+                        # old CamelCase spelling reads correctly through this.
+                        declared = declared_category(target.strip())
+                        if declared is not None:
+                            typings.setdefault(smart_title(entity), set()).add(declared)
 
         self.irreconcilable: dict[str, set[str]] = {}
         agreed: dict[str, str] = {}
@@ -387,9 +392,9 @@ class BaseHierarchy(ABC):
                         # Category edges for a reconciled term are emitted once,
                         # below. Skipping them here rather than filtering for the
                         # agreed one matters: the agreed category is often one no
-                        # abstract proposed -- Process and ProcessBoundary agree
+                        # abstract proposed -- process and process boundary agree
                         # on Occurrent, which neither of them said.
-                        if target in CATEGORY_PARENT and smart_title(entity) in typings:
+                        if declared_category(target) and smart_title(entity) in typings:
                             continue
                         _note((smart_title(entity), smart_title(target)), source)
                     elif pred in self._inverse_predicates:

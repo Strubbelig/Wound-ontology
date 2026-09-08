@@ -176,13 +176,13 @@ def test_the_definition_is_what_the_model_is_shown():
     _run(adj.adjudicate(
         {"Cutaneous wound": "Skin wound"}, llm,
         definitions={"Skin wound": "A wound whose disrupted tissue is skin."},
-        store_categories={"Cutaneous Wound": "MaterialEntity"},
-        ontology_categories={"Skin wound": "MaterialEntity"},
+        store_categories={"Cutaneous Wound": "material entity"},
+        ontology_categories={"Skin wound": "material entity"},
     ))
     c = seen["Cutaneous wound"]
     assert c["ontology_definition"] == "A wound whose disrupted tissue is skin."
-    assert c["store_category"] == "MaterialEntity"
-    assert c["ontology_category"] == "MaterialEntity"
+    assert c["store_category"] == "material entity"
+    assert c["ontology_category"] == "material entity"
 
 
 def test_parents_stand_in_where_a_class_has_no_definition():

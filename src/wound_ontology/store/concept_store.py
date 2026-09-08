@@ -6,33 +6,29 @@ import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.utils.string_utils import normalize_term, smart_title
 from config.blocklist import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST, is_noise_term as _is_noise_term
+from wound_ontology.llm.category_vocab import declared_category
 
 
 def _declared_category(term: str) -> str | None:
     """The BFO category `term` names, spelled the one way it is allowed to be.
 
     A category name is a value from a closed vocabulary, not a piece of prose,
-    and normalising it is only ever destructive. `normalize_term` lowercases, and
-    `smart_title` cannot put CamelCase back, so `MaterialEntity` came out of
-    normalisation as `Materialentity` -- which is not in `CATEGORY_PARENT`, so
-    the hierarchy stopped recognising it as a category typing and the one term,
-    one category reconciliation silently stopped applying to it. Measured on the
-    2026-09-07 run: 40 classes ended up under two disjoint BFO branches, against
-    12 before the store was normalised, and `Surgical Site Infection` came out
-    both a disposition and a material entity.
+    and normalising it is only ever destructive. It was destructive: the
+    vocabulary was CamelCase, `normalize_term` lowercases and `smart_title`
+    cannot put CamelCase back, so `MaterialEntity` came out of normalisation as
+    `Materialentity` -- not in `CATEGORY_PARENT`, so the hierarchy stopped
+    recognising it as a category typing and one term, one category silently
+    stopped applying to it. Measured on the 2026-09-07 run: 40 classes ended up
+    under two disjoint BFO branches, against 12 before the store was normalised,
+    and `Surgical Site Infection` came out both a disposition and a material
+    entity.
 
-    Matching case-insensitively repairs a store that has already been damaged.
+    The vocabulary is now spelled `material entity`, which survives
+    normalisation intact, so this guard is no longer the only thing standing
+    between the store and that bug. Matching is separator-blind, which repairs a
+    store damaged under the old spelling and reads a cache written under it.
     """
-    return _CATEGORY_BY_KEY.get(term.strip().lower())
-
-
-def _category_keys() -> dict[str, str]:
-    from wound_ontology.llm.extraction_models import CATEGORY_PARENT
-
-    return {name.strip().lower(): name for name in CATEGORY_PARENT}
-
-
-_CATEGORY_BY_KEY: dict[str, str] = _category_keys()
+    return declared_category(term)
 
 
 class ConceptStore:
@@ -241,22 +237,32 @@ class ConceptStore:
             return folded_map.get(normalize_term(term))
 
         def clean_entity(term: str) -> str:
+            # A category name is declared: never mapped, never normalised.
             declared = _declared_category(term)
             if declared is not None:
                 return declared
             hit = canonical_of(term)
-            if hit is not None:
-                return smart_title(hit)
-            return smart_title(normalize_term(self.clean_entity_str(term)))
+            name = (smart_title(hit) if hit is not None
+                    else smart_title(normalize_term(self.clean_entity_str(term))))
+            # ...and so is a term that MAPS onto one. The mapping holds
+            # `roles -> Role`; without declaring the result, `roles` would come
+            # out `Role` while the bare `role` came out `role` -- two spellings
+            # of the one category, which is the bug this rename exists to end.
+            return _declared_category(name) or name
 
         def clean_target(term: str) -> str:
+            # A category name is declared: never mapped, never normalised.
             declared = _declared_category(term)
             if declared is not None:
                 return declared
             hit = canonical_of(term)
-            if hit is not None:
-                return smart_title(hit)
-            return smart_title(normalize_term(self.clean_target_str(term)))
+            name = (smart_title(hit) if hit is not None
+                    else smart_title(normalize_term(self.clean_target_str(term))))
+            # ...and so is a term that MAPS onto one. The mapping holds
+            # `roles -> Role`; without declaring the result, `roles` would come
+            # out `Role` while the bare `role` came out `role` -- two spellings
+            # of the one category, which is the bug this rename exists to end.
+            return _declared_category(name) or name
 
         normalized: dict = {}
         for key, pmid_data in self._dict.items():
@@ -481,14 +487,19 @@ class ConceptStore:
 
     @staticmethod
     def _category_phrase(category: str) -> str:
-        """`MaterialEntity` -> `Material Entity`, for use inside a class label."""
-        import re as _re
-        return _re.sub(r"(?<!^)(?=[A-Z])", " ", category)
+        """The category as it reads inside a class label: `Necrosis Material Entity`.
+
+        The vocabulary is already lowercase-with-spaces, so the phrase IS the
+        declared name and the caller's `smart_title` does the casing. This used
+        to split CamelCase; a name arriving CamelCase now means the vocabulary
+        regressed, so it is declared through, not welded silently.
+        """
+        return declared_category(category) or category
 
     def split_irreconcilable_terms(self, resolve_conflict) -> dict:
         """One label typed several irreconcilable ways is several classes.
 
-        `Necrosis` arrived as `MaterialEntity` from one abstract and `Process`
+        `Necrosis` arrived as `material entity` from one abstract and `process`
         from two others. That is not one class typed badly: necrosis genuinely is
         a pathological process, and a material entity, and arguably a disposition
         of tissue realised by trauma. Forcing one category loses a sense; forcing
@@ -503,16 +514,14 @@ class ConceptStore:
         tells the two apart.
 
         Only irreconcilable terms are split. A conflict with an honest common
-        ancestor (`Process` and `ProcessBoundary` agree on `Occurrent`) is
+        ancestor (`process` and `process boundary` agree on `occurrent`) is
         reconciled instead — there is one concept there, described at two
         granularities.
 
         Returns a report: {split: {term: {category: new_label}}, mentions: n,
         unsensed: {term: count}}.
         """
-        from wound_ontology.llm.extraction_models import (
-            COARSE_CATEGORIES, CATEGORY_PARENT,
-        )
+        from wound_ontology.llm.extraction_models import COARSE_CATEGORIES
         from wound_ontology.utils.string_utils import smart_title
 
         typings: dict[str, set[str]] = {}
@@ -524,16 +533,16 @@ class ConceptStore:
                     pred, target = triple.split(":", 1)
                     if pred.strip().lower().replace(" ", "_") not in ("is_a", "subclass_of"):
                         continue
-                    target = target.strip()
-                    if target in CATEGORY_PARENT:
+                    declared = declared_category(target.strip())
+                    if declared is not None:
                         # Group by the NORMALISED name, as the hierarchy does.
                         # Grouping by the raw store key hid every conflict whose
                         # mentions differed in case: "granulation" carried
-                        # MaterialEntity and "Granulation" carried Process, so
+                        # material entity and "Granulation" carried process, so
                         # each looked consistent here while the hierarchy — which
                         # smart_titles — saw one term typed two irreconcilable
                         # ways. Rule 13: normalise both sides of a comparison.
-                        typings.setdefault(smart_title(entity.strip()), set()).add(target)
+                        typings.setdefault(smart_title(entity.strip()), set()).add(declared)
 
         # A coarse category is the model declining to answer, not a sense. Splitting
         # on one produced `complications Continuant` and `complications Occurrent`
@@ -569,12 +578,12 @@ class ConceptStore:
                 key = smart_title(entity.strip())
                 if key not in splittable:
                     continue
-                here = {t.split(":", 1)[1].strip()
+                here = {declared_category(t.split(":", 1)[1].strip())
                         for t, v in attrs.items()
                         if v == 1.0 and ":" in t
                         and t.split(":", 1)[0].strip().lower().replace(" ", "_")
                         in ("is_a", "subclass_of")
-                        and t.split(":", 1)[1].strip() in CATEGORY_PARENT}
+                        and declared_category(t.split(":", 1)[1].strip())}
                 chosen = next(iter(here)) if len(here) == 1 else None
                 target = report["split"][key].get(chosen) if chosen else None
                 if target is not None:

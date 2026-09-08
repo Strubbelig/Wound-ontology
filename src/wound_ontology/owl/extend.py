@@ -29,6 +29,7 @@ from pathlib import Path
 import rdflib
 from rdflib.namespace import OWL, RDF, RDFS
 
+from wound_ontology.llm.category_vocab import squash
 from wound_ontology.utils.label_match import LabelIndex
 from wound_ontology.utils.rdf_io import parse_graph
 
@@ -70,20 +71,26 @@ RELATION_IRIS: dict[str, str] = _exportable_relations()
 #: The BFO category a term is typed with is a closed vocabulary with an IRI
 #: already declared for every member, so it must never go through label
 #: matching. It did, and the matching quietly half-worked: the LabelIndex folds
-#: punctuation and plurals but not CamelCase, so the one-word names hit
-#: ("Process" -> BFO_0000015, "Quality" -> BFO_0000019) and every multi-word one
-#: missed. `MaterialEntity` does not match the BFO label `material entity`, so
-#: it was minted as a fresh WONT class carrying the "no BFO anchor" note -- and
-#: so were InformationEntity, ImmaterialEntity, ProcessBoundary and
-#: RealizableEntity. Measured on output/owl/wont_extended.ttl: 1770 classes hung
-#: under those five roots (MaterialEntity alone had 1124 children), and each
-#: root subclasses nothing, so none of them is reachable from BFO by a reasoner
-#: or a query. Reading the category's own IRI removes the whole class of miss.
+#: punctuation and plurals but not CamelCase, and the vocabulary was CamelCase,
+#: so the one-word names hit ("Process" -> BFO_0000015, "Quality" ->
+#: BFO_0000019) and every multi-word one missed. `MaterialEntity` does not match
+#: the BFO label `material entity`, so a DUPLICATE of BFO_0000040 was minted as
+#: a fresh WONT class carrying the "no BFO anchor" note -- and so were twins of
+#: BFO_0000031, BFO_0000141, BFO_0000035 and BFO_0000017. Measured on
+#: output/owl/wont_extended.ttl: 1770 classes hung under those five duplicates
+#: (the `MaterialEntity` twin alone had 1124 children) while the real BFO
+#: classes kept only their curated ones, and no duplicate subclasses anything,
+#: so none of those 1770 was reachable from BFO by a reasoner or a query. WONT
+#: itself was never affected -- it parents on the BFO classes directly and holds
+#: no such twin; the duplicates existed only in the exported file.
+#:
+#: The vocabulary is now spelled the way BFO spells it, so the miss that minted
+#: them cannot recur. Reading the category's own IRI is still what removes the
+#: whole class of miss; the spelling only means a slip is no longer fatal.
 def _category_iris() -> dict[str, rdflib.URIRef]:
     from wound_ontology.llm.extraction_models import CATEGORY_IRI
 
-    return {name.strip().lower(): rdflib.URIRef(iri)
-            for name, iri in CATEGORY_IRI.items()}
+    return {squash(name): rdflib.URIRef(iri) for name, iri in CATEGORY_IRI.items()}
 
 
 CATEGORY_IRIS: dict[str, rdflib.URIRef] = _category_iris()
@@ -105,7 +112,7 @@ class ExtendReport:
     #: punctuation and plurals, so two terms the hierarchy kept apart can land on
     #: one class here and their axioms are unioned. That is usually right
     #: ("wounds" and "Wound" are one class) and occasionally not: `Bacterial Load`
-    #: was typed Quality and `Bacterial Loads` MaterialEntity, and folding them
+    #: was typed `quality` and `Bacterial Loads` `material entity`, and folding them
     #: gave one class two disjoint BFO parents. Either way the merge happens at
     #: export, after every upstream review, so it is reported rather than left to
     #: be discovered in a reasoner run.
@@ -298,7 +305,7 @@ def extend_ground_truth(
     def _resolve(term: str) -> rdflib.URIRef:
         nonlocal counter
         key = term.strip().lower()
-        declared = CATEGORY_IRIS.get(key)
+        declared = CATEGORY_IRIS.get(squash(term))
         if declared is not None:
             # Declared, not matched. See CATEGORY_IRIS.
             report.resolved_category[term] = str(declared)

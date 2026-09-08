@@ -73,54 +73,76 @@ BFO_SKELETON = {
 # The category tree, mirroring BFO (plus MILD's tendency, which MILD places as a
 # sibling of disposition under realizable entity, not as a disposition subtype).
 #
-# COARSE nodes exist so a model that cannot tell a Process from a MaterialEntity
-# can RETREAT UP THE TREE instead of guessing. Every extracted term is still
-# subsumed under a real BFO class either way — that is the point: a correct
-# coarse placement beats a confident wrong precise one, and it can be refined
-# later without contradiction, because Process really is an Occurrent.
+# THE NAMES ARE BFO'S OWN LABELS: lowercase, words separated by spaces. They
+# used to be CamelCase, and CamelCase is the one spelling `normalize_term`
+# cannot express — it lowercases and turns `-`/`_` into spaces, so it welded
+# `MaterialEntity` into `materialentity` instead of splitting it. Four separate
+# silent defects came out of that single mismatch. In this spelling
+# normalisation is idempotent, so a missed guard can at worst change case, and
+# the name is identical to the label BFO carries, so a lookup that should never
+# happen cannot mint a duplicate class even when it does. See INSTRUCTIONS
+# rule 25.
+#
+# COARSE nodes exist so a model that cannot tell a process from a material
+# entity can RETREAT UP THE TREE instead of guessing. Every extracted term is
+# still subsumed under a real BFO class either way — that is the point: a
+# correct coarse placement beats a confident wrong precise one, and it can be
+# refined later without contradiction, because process really is an occurrent.
 #
 # (name, IRI, parent name or None, coarse?, gloss)
 ANCHORS: list[tuple[str, str, str | None, bool, str]] = [
-    ("Continuant", OBO + "BFO_0000002", None, True,
+    ("continuant", OBO + "BFO_0000002", None, True,
      "FALLBACK. Something that persists through time and is wholly present whenever it exists. "
      "Use only when you cannot tell which kind of continuant it is."),
-    ("Occurrent", OBO + "BFO_0000003", None, True,
+    ("occurrent", OBO + "BFO_0000003", None, True,
      "FALLBACK. Something that happens or unfolds in time. "
      "Use only when you cannot tell which kind of occurrent it is."),
 
-    ("IndependentContinuant", OBO + "BFO_0000004", "Continuant", True,
+    ("independent continuant", OBO + "BFO_0000004", "continuant", True,
      "FALLBACK. A continuant that does not depend on a bearer. "
      "Use only when you cannot tell material from immaterial."),
-    ("SpecificallyDependentContinuant", OBO + "BFO_0000020", "Continuant", True,
+    ("specifically dependent continuant", OBO + "BFO_0000020", "continuant", True,
      "FALLBACK. A continuant that must inhere in a bearer. "
      "Use only when you cannot tell which kind of dependent continuant it is."),
-    ("RealizableEntity", OBO + "BFO_0000017", "SpecificallyDependentContinuant", True,
+    ("realizable entity", OBO + "BFO_0000017", "specifically dependent continuant", True,
      "A dependent continuant realized in a process. Use directly only for things like plans; "
-     "otherwise prefer Disposition, Function, Role or Tendency."),
+     "otherwise prefer disposition, function, role or tendency."),
 
-    ("MaterialEntity", OBO + "BFO_0000040", "IndependentContinuant", False,
+    ("material entity", OBO + "BFO_0000040", "independent continuant", False,
      "A material thing: a body part, an organism, a substance, a disorder, a device."),
-    ("ImmaterialEntity", OBO + "BFO_0000141", "IndependentContinuant", False,
+    ("immaterial entity", OBO + "BFO_0000141", "independent continuant", False,
      "An immaterial continuant such as a cavity, a site or a boundary."),
-    ("Quality", OBO + "BFO_0000019", "SpecificallyDependentContinuant", False,
+    ("quality", OBO + "BFO_0000019", "specifically dependent continuant", False,
      "A way a thing is, fully exhibited whenever it is present: a colour, a size, a degree."),
-    ("Disposition", OBO + "BFO_0000016", "RealizableEntity", False,
+    ("disposition", OBO + "BFO_0000016", "realizable entity", False,
      "A tendency to behave a certain way under given conditions, grounded in physical makeup; "
      "it may never be realized."),
-    ("Function", OBO + "BFO_0000034", "Disposition", False,
+    ("function", OBO + "BFO_0000034", "disposition", False,
      "A disposition the bearer exists in order to have, by design or by selection."),
-    ("Role", OBO + "BFO_0000023", "RealizableEntity", False,
+    ("role", OBO + "BFO_0000023", "realizable entity", False,
      "Something a thing has only because of context or convention, and could lose without changing."),
-    ("Tendency", MILD + "MILD_120005", "RealizableEntity", False,
+    ("tendency", MILD + "MILD_120005", "realizable entity", False,
      "Raises the objective probability of an outcome without necessitating it. "
      "Use for predispositions and risk factors."),
-    ("InformationEntity", OBO + "BFO_0000031", "Continuant", False,
+    ("information entity", OBO + "BFO_0000031", "continuant", False,
      "Information: a datum, a specification, a classification result, a scale, a plan specification."),
-    ("Process", OBO + "BFO_0000015", "Occurrent", False,
+    ("process", OBO + "BFO_0000015", "occurrent", False,
      "Something that happens and unfolds over time; it has temporal parts."),
-    ("ProcessBoundary", OBO + "BFO_0000035", "Occurrent", False,
+    ("process boundary", OBO + "BFO_0000035", "occurrent", False,
      "The instantaneous start or end of a process."),
 ]
+
+
+def ident(name: str) -> str:
+    """`material entity` -> `MaterialEntity`, for Python and LinkML identifiers.
+
+    The vocabulary is spelled the way BFO spells it, and identifiers cannot
+    hold a space, so this is the ONE place the CamelCase form is reconstructed.
+    What it returns is an identifier: it is never a category value, never
+    written to the store, and never compared against a term.
+    """
+    return "".join(w[:1].upper() + w[1:] for w in name.split())
+
 
 ANCHOR_PARENT = {n: p for n, _, p, _, _ in ANCHORS}
 ANCHOR_COARSE = {n: c for n, _, _, c, _ in ANCHORS}
@@ -362,9 +384,9 @@ def emit_linkml(onto: Onto, by_cat, patterns, prop_labels) -> str:
         members = by_cat.get(name, [])
         if not members:
             continue
-        add(f"  {name}Term:")
+        add(f"  {ident(name)}Term:")
         add("    description: >-")
-        add(f"      Existing {name} classes in MILD/WONT. Ground to one of these when the")
+        add(f"      Existing '{name}' classes in MILD/WONT. Ground to one of these when the")
         add("      term already exists; leave empty when it is genuinely new.")
         add("    permissible_values:")
         used: set[str] = set()
@@ -469,7 +491,7 @@ def emit_pydantic(onto: Onto, by_cat, patterns, prop_labels) -> str:
     add('    """The one categorical choice made per extracted term."""')
     add("")
     for name, iri, _p, _c, gloss in ANCHORS:
-        add(f"    {name} = {name!r}")
+        add(f"    {ident(name)} = {name!r}")
     add("")
     add("")
     add("CATEGORY_IRI: dict[str, str] = {")
@@ -490,8 +512,8 @@ def emit_pydantic(onto: Onto, by_cat, patterns, prop_labels) -> str:
     add("}")
     add("")
     add("# Coarse categories are legitimate answers, not failures: a model unsure")
-    add("# whether something is a Process or a MaterialEntity should retreat to")
-    add("# Occurrent or Continuant rather than guess. They are flagged for refinement.")
+    add("# whether something is a process or a material entity should retreat to")
+    add("# occurrent or continuant rather than guess. They are flagged for refinement.")
     add("COARSE_CATEGORIES: frozenset[str] = frozenset({")
     for name, _i, _p, coarse, _g in ANCHORS:
         if coarse:
@@ -590,7 +612,7 @@ def emit_pydantic(onto: Onto, by_cat, patterns, prop_labels) -> str:
     add("")
     add("    A coarse category stands for any of its descendants, so the answer widens")
     add("    to their union: asking about Continuant -> Process returns everything")
-    add("    licensed for MaterialEntity -> Process, Quality -> Process and so on. That is")
+    add("    licensed for 'material entity' -> 'process', 'quality' -> 'process' and so on.")
     add("    the open-world reading — we know less, so fewer things are ruled out. Use")
     add("    `relations_are_certain()` to tell a confirmed relation from a possible one.")
     add('    """')
