@@ -161,3 +161,90 @@ def test_demoting_them_did_not_open_the_gate_on_the_domain(blocker):
                  "pressure ulcer", "burn wound", "wound healing",
                  "negative pressure wound therapy", "compression therapy"):
         assert not blocker.is_blocked(term), term
+
+
+# ── the config modules hold lists; the rule lives in one place ────────────────
+
+#: Every public name each config module is allowed to export. `is_noise_term`
+#: earns its place -- `Blocker.is_noise` imports it. The two that were removed
+#: on 2026-09-09, `contains_blocked_keyword` and `contains_whitelisted_keyword`,
+#: did not: both were dead (zero callers across `*.py`, all five notebooks and
+#: `*.md`) and both did `any(kw in lower for kw in ...)` -- the plain-substring
+#: match rule 27 forbids and `KeywordList.match` was fixed to avoid. A second,
+#: wrong implementation of the project's central rule, sitting where someone
+#: would reasonably reach for it.
+CONFIG_SURFACE = {
+    "config.blocklist": {"KEYWORD_BLOCKLIST", "METHODOLOGY_BLOCKLIST", "is_noise_term"},
+    "config.whitelist": {"KEYWORD_WHITELIST", "WHITELIST"},
+    "config.suspicious_list": {"SUSPICIOUS_KEYWORDS"},
+}
+
+
+@pytest.mark.parametrize("module_name,allowed", sorted(CONFIG_SURFACE.items()))
+def test_a_config_module_holds_lists_not_matching_logic(module_name, allowed):
+    """One keyword rule, in one place: `KeywordList.match`."""
+    import importlib
+
+    module = importlib.import_module(module_name)
+    public = {n for n in vars(module) if not n.startswith("_")}
+    assert public == allowed, (
+        f"{module_name} exports {sorted(public - allowed)} beyond its lists. "
+        "If that is a matcher, there is now more than one keyword rule in the "
+        "project and they will disagree; see INSTRUCTIONS rule 27"
+    )
+
+
+# ── one entry per line, in every list literal ─────────────────────────────────
+
+LIST_LITERALS = [
+    ("config/blocklist.py", "KEYWORD_BLOCKLIST"),
+    ("config/blocklist.py", "METHODOLOGY_BLOCKLIST"),
+    ("config/whitelist.py", "KEYWORD_WHITELIST"),
+    ("config/whitelist.py", "WHITELIST"),
+    ("config/suspicious_list.py", "SUSPICIOUS_KEYWORDS"),
+]
+
+
+@pytest.mark.parametrize("rel,var", LIST_LITERALS)
+def test_every_list_literal_is_written_one_entry_per_line(rel, var):
+    """The format the persistence layer can remove from.
+
+    `_pylist_remove` deletes a line only when the line holds exactly one entry.
+    KEYWORD_BLOCKLIST (69 entries on 27 lines) and SUSPICIOUS_KEYWORDS (84 on
+    29) were packed several to a line, so removing from either removed nothing,
+    returned 0 and said nothing -- while adding worked, because the writer
+    appends one per line. Unpacked 2026-09-09.
+    """
+    import pathlib
+    import re
+
+    from wound_ontology.store.term_lists import _entry_value
+
+    path = pathlib.Path(__file__).resolve().parents[1] / rel
+    lines = path.read_text().splitlines()
+    inside = depth = 0
+    started = False
+    packed = []
+    entries = 0
+    for n, line in enumerate(lines, 1):
+        if not started:
+            if re.match(rf"\s*{re.escape(var)}\s*[:=]", line) and "{" in line:
+                started = True
+                depth += line.count("{") - line.count("}")
+            continue
+        depth += line.count("{") - line.count("}")
+        if depth <= 0:
+            break
+        text = line.strip()
+        if not text or text.startswith("#"):
+            continue
+        if _entry_value(line) is None:
+            packed.append((n, text[:70]))
+        else:
+            entries += 1
+    assert started, f"{var} not found in {rel}"
+    assert entries, f"no entries parsed out of {var}; this test would be vacuous"
+    assert packed == [], (
+        f"{rel}:{var} has {len(packed)} line(s) the remover cannot parse as a "
+        f"single entry, so those entries cannot be removed: {packed[:5]}"
+    )

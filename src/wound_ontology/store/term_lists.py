@@ -14,7 +14,9 @@ BaseList
 
 from __future__ import annotations
 
+import ast
 import functools
+import json
 import re
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -62,6 +64,42 @@ def _find_block_end(lines: list[str], var_name: str) -> int:
     raise RuntimeError(f"Could not find closing brace for {var_name!r}")
 
 
+def _entry_value(line: str) -> str | None:
+    """The one string this line holds, or None if it does not hold exactly one.
+
+    Parsed, not sliced. The old code did `line.strip().rstrip('",').strip('"')`,
+    which is wrong twice over. On a line holding several entries it returns
+    `regression", "propensity", "logistic` and matches nothing -- so a packed
+    literal could be added to but never removed from. And on the one
+    METHODOLOGY_BLOCKLIST entry that contains quotes,
+    `"\\"long hu hui\\" pi risk management platform"`, it keeps the backslashes
+    and never matches the value the module actually holds.
+
+    `ast.literal_eval` gets both right, and returns None for a packed line,
+    which is the correct answer: that line does not hold exactly one entry.
+    """
+    text = line.strip()
+    if not text.startswith(("'", '"')):
+        return None
+    try:
+        value = ast.literal_eval(text.rstrip(",").strip())
+    except (ValueError, SyntaxError):  # silent-ok: a line that is not one
+        # quoted string is not an entry -- None is the answer, not a failure.
+        return None
+    return value if isinstance(value, str) else None
+
+
+def _entry_line(term: str) -> str:
+    """One entry, quoted the way the config files quote them.
+
+    `json.dumps` rather than an f-string: `f'    "{t}",'` emits invalid Python
+    the moment a term contains a double quote, and one blocklist entry does.
+    `ensure_ascii=False` keeps `lésions endothéliales chroniques` readable
+    instead of turning it into escapes.
+    """
+    return f"    {json.dumps(term, ensure_ascii=False)},"
+
+
 def _pylist_add(path: Path, var_name: str, current: frozenset[str],
                 new_terms: set[str]) -> int:
     """Append truly-new terms into a Python set/frozenset literal."""
@@ -71,7 +109,7 @@ def _pylist_add(path: Path, var_name: str, current: frozenset[str],
     lines      = path.read_text().splitlines()
     insert_at  = _find_block_end(lines, var_name)
     stub       = ["    # ── added interactively ─────────────────────────────────────────────"]
-    stub      += [f'    "{t}",' for t in truly_new]
+    stub      += [_entry_line(t) for t in truly_new]
     lines      = lines[:insert_at] + stub + lines[insert_at:]
     path.write_text("\n".join(lines) + "\n")
     return len(truly_new)
@@ -97,11 +135,10 @@ def _pylist_remove(path: Path, var_name: str, terms: set[str]) -> int:
             in_block = False
             filtered.append(line)
             continue
-        if line.strip().startswith('"'):
-            val = line.strip().rstrip('",').strip('"')
-            if val in to_remove:
-                removed += 1
-                continue
+        val = _entry_value(line)
+        if val is not None and val in to_remove:
+            removed += 1
+            continue
         filtered.append(line)
     path.write_text("\n".join(filtered) + "\n")
     return removed
@@ -110,7 +147,18 @@ def _pylist_remove(path: Path, var_name: str, terms: set[str]) -> int:
 # ── Abstract bases ────────────────────────────────────────────────────────────
 
 class BaseList(ABC):
-    """Persistent list base: load from config file, save back, add/remove terms."""
+    """Persistent list base: load from config file, save back, add/remove terms.
+
+    `add` and `remove` live here rather than in the five subclasses, which held
+    byte-identical copies of them. Duplication is what lets one copy drift, and
+    it is also what would have made the verification below five things to keep
+    in step instead of one.
+    """
+
+    #: Set by every concrete subclass: the config file, and the name of the set
+    #: literal inside it that this list persists to.
+    _PATH: Path
+    _VAR_NAME: str
 
     def __init__(self) -> None:
         self._terms: frozenset[str] = frozenset()
@@ -122,16 +170,60 @@ class BaseList(ABC):
         """(Re-)load terms from the config file into _terms."""
 
     @abstractmethod
-    def add(self, terms: set[str]) -> int:
-        """Write truly-new terms to the config file. Returns count added."""
-
-    @abstractmethod
-    def remove(self, terms: set[str]) -> int:
-        """Remove terms from the config file. Returns count removed."""
-
-    @abstractmethod
     def match(self, term: str) -> bool:
         """Return True if term is matched by this list."""
+
+    # ── Persistence, verified ─────────────────────────────────────────────────
+
+    def add(self, terms: set[str]) -> int:
+        """Write truly-new terms to the config file. Returns count added.
+
+        The count is what the writer believes it wrote. The check afterwards is
+        what the file actually holds.
+        """
+        self.load()
+        n = _pylist_add(self._PATH, self._VAR_NAME, self._terms, terms)
+        self.load()
+        missing = sorted(t.strip().lower() for t in terms
+                         if t.strip().lower() not in self._terms)
+        if missing:
+            raise RuntimeError(self._write_failed("add", missing))
+        return n
+
+    def remove(self, terms: set[str]) -> int:
+        """Remove terms from the config file. Returns the count of lines removed.
+
+        Lines, not terms: a value written on two lines -- `wound` and `burn`
+        both were, in KEYWORD_WHITELIST -- costs two line removals for one term.
+        Which is why the check below is set membership and not a count.
+        """
+        self.load()
+        wanted = {t.strip().lower() for t in terms} & set(self._terms)
+        n = _pylist_remove(self._PATH, self._VAR_NAME, terms)
+        self.load()
+        left = sorted(t for t in wanted if t in self._terms)
+        if left:
+            raise RuntimeError(self._write_failed("remove", left))
+        return n
+
+    def _write_failed(self, verb: str, terms: list[str]) -> str:
+        """The message that used to be a silent return of 0.
+
+        KEYWORD_BLOCKLIST and SUSPICIOUS_KEYWORDS were written several entries
+        to a line, and `_pylist_remove` only deletes a line holding exactly one
+        quoted value -- so removing from either removed nothing, returned 0 and
+        said nothing, while adding to them worked. Both are one entry per line
+        now, and this is what says so if any list drifts back.
+        """
+        shown = terms[:10]
+        return (
+            f"{self._VAR_NAME}: {verb} did not take effect for "
+            f"{len(terms)} term(s): {shown}" + (" ..." if len(terms) > 10 else "")
+            + f". File: {self._PATH}. The usual cause is a set literal written "
+              "with several entries on one line; the parser handles one entry "
+              "per line. Before this check, the write simply did not happen "
+              "and nothing said so."
+        )
 
     # ── Shared interface ──────────────────────────────────────────────────────
 
@@ -523,26 +615,17 @@ class BlockList(TermList):
         importlib.reload(_m)
         self._terms = frozenset(_m.METHODOLOGY_BLOCKLIST)
 
-    def add(self, terms: set[str]) -> int:
-        self.load()
-        n = _pylist_add(self._PATH, self._VAR_NAME, self._terms, terms)
-        if n:
-            self.load()
-        return n
-
-    def remove(self, terms: set[str]) -> int:
-        n = _pylist_remove(self._PATH, self._VAR_NAME, terms)
-        if n:
-            self.load()
-        return n
-
     # ── Clustering ────────────────────────────────────────────────────────────
 
     @classmethod
     def assign_cluster(cls, term: str) -> str:
         lower = term.lower()
         for label, keywords in cls.CLUSTER_RULES:
-            if any(kw in lower for kw in keywords):
+            # Word-start, not plain containment. `rct` is a cluster keyword and
+            # occurs inside "infa*rct*ion", so "myocardial infarction" was filed
+            # under "Study design & trial types". Labelling only -- but it is
+            # the same loose match as rule 27, in a third place.
+            if any(_starts_a_word(kw, lower) for kw in keywords):
                 return label
         return "Uncategorized"
 
@@ -615,19 +698,6 @@ class WhiteList(TermList):
         importlib.reload(_m)
         self._terms = frozenset(_m.WHITELIST)
 
-    def add(self, terms: set[str]) -> int:
-        self.load()
-        n = _pylist_add(self._PATH, self._VAR_NAME, self._terms, terms)
-        if n:
-            self.load()
-        return n
-
-    def remove(self, terms: set[str]) -> int:
-        n = _pylist_remove(self._PATH, self._VAR_NAME, terms)
-        if n:
-            self.load()
-        return n
-
 
 def _starts_a_word(keyword: str, text: str) -> bool:
     """True if `keyword` occurs in `text` at the start of a word."""
@@ -652,19 +722,6 @@ class BlockKeywordList(KeywordList):
         importlib.reload(_m)
         self._terms = frozenset(_m.KEYWORD_BLOCKLIST)
 
-    def add(self, terms: set[str]) -> int:
-        self.load()
-        n = _pylist_add(self._PATH, self._VAR_NAME, self._terms, terms)
-        if n:
-            self.load()
-        return n
-
-    def remove(self, terms: set[str]) -> int:
-        n = _pylist_remove(self._PATH, self._VAR_NAME, terms)
-        if n:
-            self.load()
-        return n
-
 
 class WhiteKeywordList(KeywordList):
     """KEYWORD_WHITELIST from config/whitelist.py."""
@@ -677,19 +734,6 @@ class WhiteKeywordList(KeywordList):
         importlib.reload(_m)
         self._terms = frozenset(_m.KEYWORD_WHITELIST)
 
-    def add(self, terms: set[str]) -> int:
-        self.load()
-        n = _pylist_add(self._PATH, self._VAR_NAME, self._terms, terms)
-        if n:
-            self.load()
-        return n
-
-    def remove(self, terms: set[str]) -> int:
-        n = _pylist_remove(self._PATH, self._VAR_NAME, terms)
-        if n:
-            self.load()
-        return n
-
 
 class SuspiciousList(KeywordList):
     """SUSPICIOUS_KEYWORDS from config/suspicious_list.py — flags terms for review."""
@@ -701,16 +745,3 @@ class SuspiciousList(KeywordList):
         import importlib, config.suspicious_list as _m
         importlib.reload(_m)
         self._terms = frozenset(_m.SUSPICIOUS_KEYWORDS)
-
-    def add(self, terms: set[str]) -> int:
-        self.load()
-        n = _pylist_add(self._PATH, self._VAR_NAME, self._terms, terms)
-        if n:
-            self.load()
-        return n
-
-    def remove(self, terms: set[str]) -> int:
-        n = _pylist_remove(self._PATH, self._VAR_NAME, terms)
-        if n:
-            self.load()
-        return n

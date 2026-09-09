@@ -8,6 +8,7 @@ from pathlib import Path
 
 from wound_ontology.store.term_lists import (
     BaseList,
+    _entry_line,
     BlockList,
     KeywordList,
     SuspiciousList,
@@ -149,6 +150,19 @@ class TestKeywordListMatch:
 class TestBlockListClustering:
     def test_assign_cluster_known_term(self):
         assert BlockList.assign_cluster("randomized controlled trial") == "Study design & trial types"
+
+    def test_a_cluster_keyword_does_not_fire_from_inside_a_word(self):
+        """`rct` is a cluster keyword and occurs inside "infa*rct*ion".
+
+        Third instance of the plain-substring match rule 27 forbids, after the
+        `cti` whitelist keyword and the `class_hierarchy_*` cache glob. Only
+        labelling — `cluster_report()` grouping and the label `Blocker.flag`
+        returns — but "myocardial infarction" was being filed under study
+        design, and `recluster()` writes those groupings back into the file.
+        """
+        assert "rct" in dict(BlockList.CLUSTER_RULES)["Study design & trial types"]
+        assert "rct" in "myocardial infarction", "the substring really is there"
+        assert BlockList.assign_cluster("myocardial infarction") == "Uncategorized"
 
     def test_assign_cluster_uncategorized(self):
         assert BlockList.assign_cluster("xyzzy unknown term") == "Uncategorized"
@@ -344,3 +358,113 @@ class TestListNameIsMatchedExactly:
         assert hasattr(w, "KEYWORD_WHITELIST") and hasattr(w, "WHITELIST")
         assert "WHITELIST" in "KEYWORD_WHITELIST"
         assert set(w.WHITELIST) != set(w.KEYWORD_WHITELIST)
+
+
+# ── a packed list literal could be added to, but not removed from ─────────────
+#
+# `_pylist_remove` deletes a line only when the line holds exactly ONE quoted
+# value. KEYWORD_BLOCKLIST (69 entries on 27 lines) and SUSPICIOUS_KEYWORDS (84
+# on 29) were written several entries to a line, so the value it parsed out was
+# `regression", "propensity", "logistic` and never matched anything. Removing
+# from either removed nothing, returned 0 and said nothing -- while ADDING to
+# them worked, because `_pylist_add` appends one entry per line. Block a keyword
+# interactively and you could not unblock it. Found 2026-09-09, after the audit.
+#
+# Two things stop it coming back: both literals are one entry per line now (the
+# format is pinned in tests/test_curation_list_shape.py), and BaseList verifies
+# that a write landed (pinned in tests/test_no_silent_failure.py).
+
+_REAL_LISTS = [
+    ("config/blocklist.py", "KEYWORD_BLOCKLIST"),
+    ("config/blocklist.py", "METHODOLOGY_BLOCKLIST"),
+    ("config/whitelist.py", "KEYWORD_WHITELIST"),
+    ("config/whitelist.py", "WHITELIST"),
+    ("config/suspicious_list.py", "SUSPICIOUS_KEYWORDS"),
+]
+
+_CONFIG_DIR_REAL = Path(__file__).resolve().parents[1]
+
+
+def _load_literal(path: Path, var: str) -> frozenset[str]:
+    ns: dict = {}
+    exec(compile(path.read_text(), str(path), "exec"), ns)
+    return frozenset(ns[var])
+
+
+class TestEveryListCanActuallyBeRemovedFrom:
+    """The check has to use an ORIGINAL entry, not one it just added.
+
+    A freshly added term is written on its own line, so it is always removable
+    and a round-trip through add-then-remove passes even on a packed file. It
+    proves nothing. Every case below removes a term the file already held.
+    """
+
+    @pytest.mark.parametrize("rel,var", _REAL_LISTS)
+    def test_an_entry_the_file_already_held_can_be_removed(self, tmp_path, rel, var):
+        src = _CONFIG_DIR_REAL / rel
+        entries = _load_literal(src, var)
+        assert entries, f"{var} is empty; this test would be vacuous"
+        term = sorted(entries)[0]
+
+        copy = tmp_path / src.name
+        copy.write_text(src.read_text())
+        removed = _pylist_remove(copy, var, {term})
+
+        assert removed >= 1, (
+            f"{var}: removing {term!r} deleted no line at all. The literal is "
+            "probably written with several entries on one line again"
+        )
+        assert term not in _load_literal(copy, var)
+        assert _load_literal(copy, var) == entries - {term}
+
+    def test_a_packed_literal_is_what_the_parser_cannot_remove_from(self, tmp_path):
+        """The failure itself, kept as a specimen so the rule has a reason."""
+        p = tmp_path / "packed.py"
+        p.write_text('PACKED: frozenset[str] = frozenset({\n'
+                     '    "alpha", "beta", "gamma",\n'
+                     '})\n')
+        assert _pylist_remove(p, "PACKED", {"beta"}) == 0
+        assert "beta" in _load_literal(p, "PACKED"), "still there, and nothing said so"
+
+    def test_one_entry_per_line_is_what_makes_it_removable(self, tmp_path):
+        """Same content, the other format -- the whole of the fix."""
+        p = tmp_path / "unpacked.py"
+        p.write_text('PACKED: frozenset[str] = frozenset({\n'
+                     '    "alpha",\n    "beta",\n    "gamma",\n'
+                     '})\n')
+        assert _pylist_remove(p, "PACKED", {"beta"}) == 1
+        assert _load_literal(p, "PACKED") == frozenset({"alpha", "gamma"})
+
+    def test_an_entry_containing_quotes_survives_a_round_trip(self, tmp_path):
+        """The second defect the format rule alone would not have caught.
+
+        METHODOLOGY_BLOCKLIST holds one entry with double quotes inside it,
+        `"long hu hui" pi risk management platform`, written correctly in the
+        file as `"\\"long hu hui\\" pi risk management platform",`. The old
+        remover sliced quotes off with `.rstrip('",').strip('"')`, kept the
+        backslashes, and so could never match it -- and the old writer built its
+        line with an f-string, which would have emitted invalid Python for it.
+        """
+        p = tmp_path / "quoted.py"
+        term = '"long hu hui" pi risk management platform'
+        p.write_text("QUOTED: set[str] = {\n" + _entry_line(term) + "\n}\n")
+
+        assert _load_literal(p, "QUOTED") == {term}, "the writer emitted valid Python"
+        assert _pylist_remove(p, "QUOTED", {term}) == 1
+        assert _load_literal(p, "QUOTED") == set()
+
+    def test_the_real_blocklist_still_holds_that_entry(self):
+        """So the regression above is guarding something live, not a hypothetical."""
+        import config.blocklist as b
+
+        assert '"long hu hui" pi risk management platform' in b.METHODOLOGY_BLOCKLIST
+
+    def test_a_packed_line_parses_as_no_single_entry(self):
+        """Why returning None for a packed line is the right answer, not a dodge."""
+        from wound_ontology.store.term_lists import _entry_value
+
+        assert _entry_value('    "alpha",') == "alpha"
+        assert _entry_value('    "alpha", "beta",') is None
+        assert _entry_value('    # a comment') is None
+        assert _entry_value('') is None
+        assert _entry_value('    "\\"quoted\\" term",') == '"quoted" term'

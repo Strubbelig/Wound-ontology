@@ -47,37 +47,84 @@ def is_noise_term(term: str) -> bool:
 
 KEYWORD_BLOCKLIST: frozenset[str] = frozenset({
     # Statistical methods
-    "regression", "propensity", "logistic", "multivariate", "multivariable",
-    "nomogram", "kaplan", "hazard ratio", "odds ratio", "confidence interval",
-    "forest plot", "bayesian",
+    "regression",
+    "propensity",
+    "logistic",
+    "multivariate",
+    "multivariable",
+    "nomogram",
+    "kaplan",
+    "hazard ratio",
+    "odds ratio",
+    "confidence interval",
+    "forest plot",
+    "bayesian",
     # Study design
-    "randomized", "randomised", "meta-analysis", "systematic review", "cohort", "pilot",
-    "multicenter", "multicentre", "prospective", "retrospective", "observational", "trial",
+    "randomized",
+    "randomised",
+    "meta-analysis",
+    "systematic review",
+    "cohort",
+    "pilot",
+    "multicenter",
+    "multicentre",
+    "prospective",
+    "retrospective",
+    "observational",
+    "trial",
     # Bibliometric databases
-    "prisma", "cochrane", "embase", "pubmed", "scopus", "prospero",
+    "prisma",
+    "cochrane",
+    "embase",
+    "pubmed",
+    "scopus",
+    "prospero",
     # ML / AI
-    "machine learning", "deep learning", "neural network", "random forest",
-    "support vector", "model",
+    "machine learning",
+    "deep learning",
+    "neural network",
+    "random forest",
+    "support vector",
+    "model",
     # Admin / nursing
-    "caregiver", "nursing", "surveillance", "curriculum", "manufacturing", "multidisciplinary",
-    "graduate", "education", "conventional", "traditional", "healthcare", "evidence-based",
-    "structured", "standardized", "personalized", "reporting", "tertiary",
-    "attitude", "predictive", "hospital-associated",
+    "caregiver",
+    "nursing",
+    "surveillance",
+    "curriculum",
+    "manufacturing",
+    "multidisciplinary",
+    "graduate",
+    "education",
+    "conventional",
+    "traditional",
+    "healthcare",
+    "evidence-based",
+    "structured",
+    "standardized",
+    "personalized",
+    "reporting",
+    "tertiary",
+    "attitude",
+    "predictive",
+    "hospital-associated",
     # Symptom scores / pain
     "pain",
     # Psychometrics
-    "reliability", "validity", "retest", "cross-cultural",
+    "reliability",
+    "validity",
+    "retest",
+    "cross-cultural",
     # Lab / basic science
-    "sequencing", "in vitro", "in vivo", "exosome", "murine", "assay", "intracellular",
+    "sequencing",
+    "in vitro",
+    "in vivo",
+    "exosome",
+    "murine",
+    "assay",
+    "intracellular",
     # Epidemiology
     "bias",
 })
-
-
-def contains_blocked_keyword(term: str) -> bool:
-    """Return True if term contains any KEYWORD_BLOCKLIST substring."""
-    lower = term.strip().lower()
-    return any(kw in lower for kw in KEYWORD_BLOCKLIST)
 
 
 METHODOLOGY_BLOCKLIST: set[str] = {

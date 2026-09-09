@@ -875,15 +875,17 @@ Enforced by: `tests/test_blocklist_respects_the_ontology.py`, in particular
 *Decided 2026-09-08.*
 
 This is the third time the same bug has been written in this codebase, so it is
-now a rule:
+now a rule. (A fourth turned up on 2026-09-09, in the row added below — the rule
+was already in force by then, which is what made it findable.)
 
 | where | the loose match | what it cost |
 |---|---|---|
 | `KEYWORD_WHITELIST` | `cti` matched inside a word | 287 of 3725 store terms whitelisted by coincidence — "practices", "mortality prediction" |
 | `_cleanup_old_files` | `class_hierarchy_*` also matched `class_hierarchy_provenance_*` | the matrix files were always the ones deleted; the cache held 0 of them and 10 provenance files |
 | `term_lists._find_block_end` | `var_name in line` matched `WHITELIST` inside `KEYWORD_WHITELIST` | every add and remove aimed at WHITELIST landed in the keyword list |
+| `BlockList.assign_cluster` | `kw in lower`; `rct` matched inside "infa*rct*ion" | "myocardial infarction" filed under "Study design & trial types" — found 2026-09-09, fixed the same day |
 
-The third is the worst of the three, because the two lists behave differently: a
+The third is the worst of the four, because the two lists behave differently: a
 keyword list matches on a word *inside* a term, so `skin` written there exempts
 `skin graft`, `skin substitute` and everything else containing the word. The
 list silently widens far past what was curated, and the curated list it was
@@ -979,6 +981,61 @@ targets no longer **existed** — a term that has not appeared yet is a differen
 claim from a target that is gone. Judge shape, never count.
 
 Enforced by: `tests/test_curation_list_shape.py`.
+
+## 30. A write to a config file is verified, never assumed
+
+*Decided 2026-09-09.*
+
+The five curation lists persist themselves by rewriting a Python set literal in
+place. `add` and `remove` returned a count and nobody checked it against the
+file. Two of the five could not be removed from at all:
+
+`_pylist_remove` deletes a line only when that line holds exactly **one** quoted
+value. `KEYWORD_BLOCKLIST` (69 entries on 27 lines) and `SUSPICIOUS_KEYWORDS`
+(84 on 29) were written several entries to a line, so the value it sliced out
+was `regression", "propensity", "logistic` and matched nothing. **Removing from
+either removed nothing, returned 0, and said nothing** — while *adding* worked,
+because the writer appends one entry per line. Block a keyword interactively and
+you could not unblock it. The asymmetry is what kept it invisible.
+
+A second defect of the same shape sat underneath: the slicing was
+`line.strip().rstrip('",').strip('"')`, so the one `METHODOLOGY_BLOCKLIST` entry
+containing quotes — `"long hu hui" pi risk management platform`, stored escaped
+— never matched either. And the writer built its line with an f-string, which
+would have emitted **invalid Python** for that same term.
+
+Three rules, in order of how much they buy:
+
+1. **Verify the write.** After `add`, every requested term must be in the
+   reloaded list; after `remove`, none of the terms that *were* present may
+   remain. Set membership, not a count — a value written on two lines costs two
+   line removals for one term, and `wound` and `burn` both were. A removal of a
+   term that was never there stays a quiet no-op, because that is legitimate and
+   is the normal case in `_save_review_results`.
+2. **Parse, do not slice.** `ast.literal_eval` for reading an entry,
+   `json.dumps(..., ensure_ascii=False)` for writing one. Hand-rolled quote
+   surgery is how both defects above were written.
+3. **One entry per line, in every literal.** The format the parser can act on.
+   Enforced directly, so a list cannot drift back into a shape that silently
+   disables half its own API.
+
+The verification lives once, in `BaseList`. The five concrete classes had held
+byte-identical copies of `add` and `remove`; duplication is what lets one copy
+drift, and it would also have made this guard five things to keep in step.
+
+Related: rule 27 (a name is matched whole) is the same failure at the level of
+*which* list gets written; this is the same failure at the level of *whether*
+the write happened. Both were invisible because a wrong write and a skipped
+write look identical from the return value.
+
+Enforced by: `BaseList.add`, `BaseList.remove`, `BaseList._write_failed`;
+`test_a_removal_that_cannot_land_raises_instead_of_returning_zero` and
+`test_an_add_that_does_not_land_raises` in `tests/test_no_silent_failure.py`;
+`test_every_list_literal_is_written_one_entry_per_line` and
+`test_a_config_module_holds_lists_not_matching_logic` in
+`tests/test_curation_list_shape.py`;
+`TestEveryListCanActuallyBeRemovedFrom` in
+`tests/test_term_lists_and_blocker.py`.
 
 ## Adding to this file
 

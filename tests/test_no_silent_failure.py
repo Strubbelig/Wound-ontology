@@ -325,3 +325,130 @@ def test_dotenv_lookup_does_not_depend_on_the_call_stack():
         "AssertionError when there is no parent frame"
     )
     assert "usecwd=True" in conftest.read_text(encoding="utf-8")
+
+
+# ── a write to a config file is verified, never assumed ─────────────────────
+#
+# `BlockKeywordList.remove()` and `SuspiciousList.remove()` removed nothing,
+# returned 0 and said nothing, for as long as those two literals were written
+# several entries to a line. Adding worked, so the asymmetry was invisible:
+# block a keyword interactively, and you could not unblock it. The list objects
+# now confirm the file actually changed, and raise naming the terms if it did
+# not. Found 2026-09-09, the day after the curation-list audit.
+
+
+class _TinyList:
+    """A BaseList over a temp file, so the guard itself can be exercised."""
+
+    def __new__(cls, path, var):
+        from wound_ontology.store.term_lists import KeywordList
+
+        klass = type("_TinyList", (KeywordList,), {
+            "_PATH": path, "_VAR_NAME": var,
+            "load": lambda self: setattr(self, "_terms", frozenset(_read(path, var))),
+        })
+        obj = klass()
+        obj.load()
+        return obj
+
+
+def _read(path, var):
+    ns: dict = {}
+    exec(compile(path.read_text(), str(path), "exec"), ns)
+    return ns[var]
+
+
+def test_a_removal_that_cannot_land_raises_instead_of_returning_zero(tmp_path):
+    """The exact failure: a packed literal, which the remover cannot touch."""
+    p = tmp_path / "packed.py"
+    p.write_text('PACKED: frozenset[str] = frozenset({\n    "alpha", "beta",\n})\n')
+    lst = _TinyList(p, "PACKED")
+
+    with pytest.raises(RuntimeError) as exc:
+        lst.remove({"beta"})
+    message = str(exc.value)
+    assert "beta" in message and "PACKED" in message
+    assert "one entry per line" in message, "the message must say what to do"
+    assert "beta" in _read(p, "PACKED"), "and it really did not remove it"
+
+
+def test_a_removal_that_lands_returns_normally(tmp_path):
+    """The guard must not fire on the working case."""
+    p = tmp_path / "ok.py"
+    p.write_text('OK: frozenset[str] = frozenset({\n    "alpha",\n    "beta",\n})\n')
+    lst = _TinyList(p, "OK")
+
+    assert lst.remove({"beta"}) == 1
+    assert set(_read(p, "OK")) == {"alpha"}
+
+
+def test_removing_a_term_that_was_never_there_is_not_a_failure(tmp_path):
+    """A no-op removal is legitimate and must stay quiet.
+
+    The guard checks the terms that WERE present, not every term asked for --
+    otherwise `_save_review_results` would explode every time it whitelisted a
+    term that had never been blocklisted, which is the normal case.
+    """
+    p = tmp_path / "noop.py"
+    p.write_text('NOOP: frozenset[str] = frozenset({\n    "alpha",\n})\n')
+    lst = _TinyList(p, "NOOP")
+
+    assert lst.remove({"never-present"}) == 0
+    assert set(_read(p, "NOOP")) == {"alpha"}
+
+
+def test_an_add_is_verified_too(tmp_path):
+    """Same claim in the other direction."""
+    p = tmp_path / "add.py"
+    p.write_text('ADD: frozenset[str] = frozenset({\n    "alpha",\n})\n')
+    lst = _TinyList(p, "ADD")
+
+    assert lst.add({"beta"}) == 1
+    assert set(_read(p, "ADD")) == {"alpha", "beta"}
+    assert lst.add({"alpha"}) == 0, "already present, nothing written, no error"
+
+
+def test_an_add_that_does_not_land_raises(tmp_path):
+    """The realistic way an add fails: writing to one file, reading another.
+
+    That is not hypothetical — it is the shape of the bug fixed in 398aacf,
+    where `_find_block_end` matched `WHITELIST` inside `KEYWORD_WHITELIST` and
+    every write landed in the wrong literal while the right one stayed empty.
+    Here `_PATH` and `load()` are deliberately pointed at different files, so
+    the write succeeds and the term still never appears.
+    """
+    from wound_ontology.store.term_lists import KeywordList
+
+    written = tmp_path / "written.py"
+    read_instead = tmp_path / "read_instead.py"
+    for f in (written, read_instead):
+        f.write_text('L: frozenset[str] = frozenset({\n    "alpha",\n})\n')
+
+    klass = type("_Divergent", (KeywordList,), {
+        "_PATH": written, "_VAR_NAME": "L",
+        "load": lambda self: setattr(self, "_terms", frozenset(_read(read_instead, "L"))),
+    })
+    lst = klass()
+    lst.load()
+
+    with pytest.raises(RuntimeError) as exc:
+        lst.add({"beta"})
+    assert "beta" in str(exc.value) and "add" in str(exc.value)
+    assert "beta" in _read(written, "L"), "it really was written"
+    assert "beta" not in _read(read_instead, "L"), "and really is not where it is read from"
+
+
+def test_the_five_lists_share_one_verified_write_path(tmp_path):
+    """The guard is one implementation, not five copies that can drift.
+
+    The five concrete classes held byte-identical add/remove pairs until
+    2026-09-09; they are now inherited from BaseList.
+    """
+    from wound_ontology.store.term_lists import (
+        BaseList, BlockKeywordList, BlockList, SuspiciousList,
+        WhiteKeywordList, WhiteList,
+    )
+
+    for cls in (BlockList, WhiteList, BlockKeywordList, WhiteKeywordList, SuspiciousList):
+        assert cls.add is BaseList.add, f"{cls.__name__} has its own add again"
+        assert cls.remove is BaseList.remove, f"{cls.__name__} has its own remove again"

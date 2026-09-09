@@ -1275,12 +1275,6 @@ KEYWORD_WHITELIST: frozenset[str] = frozenset({
 })
 
 
-def contains_whitelisted_keyword(term: str) -> bool:
-    """Return True if term contains any KEYWORD_WHITELIST substring."""
-    lower = term.strip().lower()
-    return any(kw in lower for kw in KEYWORD_WHITELIST)
-
-
 WHITELIST: frozenset[str] = frozenset({
     # entities confirmed as valid wound ontology concepts via scan_candidates
     "amputation-free survival",
