@@ -9,7 +9,7 @@ _UNIT_RE = _re.compile(
     r'(?:h|hr|hrs|hour|hours'
     r'|min|mins|minute|minutes'
     r'|sec|secs|second|seconds'
-    r'|d|day|days'
+    r'|day|days'
     r'|wk|wks|week|weeks'
     r'|mo|mos|month|months'
     r'|yr|yrs|year|years'
@@ -19,6 +19,17 @@ _UNIT_RE = _re.compile(
     r'|mmol|mol|meq|iu|miu'
     r'|item|items|session|sessions'
     r')\b'
+    r'|'
+    # A bare single-letter `d` must be SEPARATED from its number. Closed up,
+    # `\d+d` reads a grade code as a duration: "Wagner and Anderson grade 1D"
+    # (WONT_120068) was rejected as "1 day", and 2D, 3D and 4D with it -- four
+    # curated class labels deleted by a heuristic. Measured over the 4104 store
+    # terms and curated labels, the bare `d` alternative matched those four and
+    # not one genuine day expression. "7 d" and "7-d" still match; "7d" written
+    # closed up no longer does, and that is the price of the four. The asymmetry
+    # settles it: a term wrongly let through reaches the store and can still be
+    # blocked, while run_clean_store DELETES what this matches.
+    r'\b\d+(?:[.,]\d+)?[-\s]+d\b'
     r'|'
     # percentage: 0.12%, 44.8%, 100%
     r'\b\d+(?:[.,]\d+)?\s*%'
@@ -79,7 +90,6 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     # place for them. Surfaced by BaseHierarchy.irreconcilable; see INSTRUCTIONS
     # rule 9.
     "adverse events",
-    "amputation-free survival",
     "clinical outcomes",
     "follow-up periods",
     "late lumen loss",
@@ -91,7 +101,6 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "research",
     "studies",
     "technique",
-    "wound area reduction",
 
     # ── seamc · fibroblast · inductive mesenchymal fibroblasts ──────────────────────
     "24-deoxysericoside",
@@ -6558,7 +6567,6 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "antifungal drug resistance",
     "antifungal therapy",
     "antihistamine",
-    "antimicrobial",
     "antimicrobial therapy",
     "apoe overexpression",
     "apoe ε4 carrier status",
@@ -6711,7 +6719,6 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "corynebacterium spp.",
     "critical illness",
     "critical limb ischemia",
-    "critical limb threatening ischemia",
     "crossed screw fixation",
     "crp-to-albumin ratio",
     "cs/ncs-exo composite dressing",
@@ -6740,7 +6747,6 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "dermatome",
     "detec) ph",
     "dextran sulfate sodium-induced uc",
-    "df care",
     "df ulcer",
     "dfec strains",
     "dfu severity",
@@ -6763,7 +6769,6 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "dorsal foot ptco2",
     "dorsum mid foot",
     "dpn symptoms",
-    "dressing",
     "dressing handling",
     "dressing recommendation",
     "dressing therapy",

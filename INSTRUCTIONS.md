@@ -855,6 +855,18 @@ whitelisting cannot free them. Latent — 0 live store terms match the noise reg
 — and pinned in `NOISE_FALSE_POSITIVES` so the gap is named rather than
 rediscovered.
 
+**Closed 2026-09-09 by rule 28.** The precedence was inverted, so a whitelist
+entry now does reach these, and the `\d+ … d` rule was narrowed so a grade code
+is not read as a duration. The four Wagner labels are freed by the narrowed
+rule, the two NaCl labels by an explicit entry, and the exception list is now
+`NOISE_MATCHED_BUT_WHITELISTED` and holds two rather than six.
+`test_no_curated_class_label_is_blocked_in_effect` carries no exclusion list at
+all any more: **no curated class label is blocked, full stop.**
+
+Live store terms blocked went **6 → 13** the same day, and none of the seven is
+a regression — every one is study methodology that a broad whitelist keyword had
+been waving through (rule 29).
+
 Enforced by: `tests/test_blocklist_respects_the_ontology.py`, in particular
 `test_no_curated_class_label_is_blocked_in_effect`.
 
@@ -885,6 +897,88 @@ happens to be written correctly today.
 
 Enforced by: `term_lists._declares`;
 `TestListNameIsMatchedExactly` in `tests/test_term_lists_and_blocker.py`.
+
+## 28. An explicit decision outranks a heuristic
+
+*Decided 2026-09-09.*
+
+`Blocker.is_blocked` used to consult the noise regex before the whitelists. A
+curator could not, therefore, overrule it. `NaCl 0.9%` (WONT_0000208) and
+`NaCl 10%` (WONT_0000209) are curated classes and the `\d+ %` rule rejected
+both; the only available remedy was to weaken the rule for every term in the
+corpus, so that one decision about two concepts had to be paid for by every
+other term. Four more curated labels — Wagner and Anderson grades 1D to 4D —
+were rejected by the `\d+ … d` rule reading a grade code as "1 day".
+
+The order is now: **whitelist, then heuristic, then blocklist.** `is_noise` is a
+guess about the shape of a string; a whitelist entry is a decision about a
+concept, and the decision wins. The heuristic keeps deciding everything nobody
+has ruled on, which is nearly all of it.
+
+The cost is real and is the intended trade: the whitelists now carry the whole
+burden of being right about what they exempt, where before the regex was a
+backstop under them. That is the correct place for the burden — a whitelist
+entry is written by a person and can be pointed at.
+
+Note what this does *not* license. The four grade codes were fixed by narrowing
+the regex, not by whitelisting them: a rule that is wrong should be corrected,
+and the exception list is for the cases where the rule is right in general and
+wrong here. Measured over the 4104 store terms and curated labels, the bare `d`
+alternative matched those four and not one genuine day expression.
+
+**When you narrow a heuristic, pin the price.** Requiring a separator means
+`7d` written closed up is no longer read as a duration. That is recorded as
+`test_the_price_of_narrowing_the_day_rule`, so it is a decision on the record
+rather than a discovery later. The asymmetry settles which way to err: a term
+wrongly let through reaches the store and can still be blocked, while
+`run_clean_store` **deletes** what the blocklist matches.
+
+Enforced by: `Blocker.is_blocked` and `Blocker.score`, which duplicate the
+ladder and must move in step (`test_score_and_is_blocked_agree_about_precedence`);
+`test_a_whitelist_entry_outranks_the_noise_regex`;
+`test_a_grade_code_is_not_a_duration`.
+
+## 29. An entry belongs in the list whose matching rule it can carry
+
+*Decided 2026-09-09.*
+
+There are four curation lists and two matching rules. A **keyword** list fires
+at a word start *inside* a term; a **term** list matches the whole string. An
+entry filed under the wrong rule does not merely sit in the wrong place, it
+means something different.
+
+`KEYWORD_WHITELIST` had drifted into a term list wearing a keyword list's coat:
+1600 of its 3186 entries were three words or more and the longest was twenty
+words, because the substring bug in rule 27 sent every interactive write for
+`WHITELIST` there instead. Measured across the 3559 live store terms and 550
+curated labels, `wound` used as a keyword exempted 311 terms — which is how
+"Wound Reporting In Animal And Human Preclinical Studies Reporting Standards"
+walked past the `reporting` keyword. Of the whole 4104-term universe only 27
+were candidates for blocking at all, 21 were vetoed by a whitelist, and 5326 of
+the 5336 whitelist entries were the sole protector of nothing. The whitelist had
+quietly switched the blocklist off.
+
+Three shape rules, all checkable, all enforced:
+
+1. **A keyword is short.** Three or more words is a phrase, and a phrase used as
+   a keyword exempts everything containing it. It belongs in the term list.
+2. **No keyword is covered by a shorter keyword.** It cannot change any outcome:
+   if `short` starts a word inside `long`, then every term `long` reaches,
+   `short` reaches too. Compute redundancy against the list that will *exist*,
+   not the one that does — `wound bed` is redundant with `wound` only until
+   `wound` is demoted.
+3. **Nothing is on a whitelist and a blocklist at once.** `antimicrobial` and
+   `dressing` sat on `METHODOLOGY_BLOCKLIST` and survived only by the accident
+   of also being broad whitelist keywords.
+
+**Do not judge a preventive list by its size.** 58 of the 69 `KEYWORD_BLOCKLIST`
+entries match nothing in the corpus, and that is the *success* state: they match
+nothing because they already worked, and the list is what stops those terms
+coming back. This is not rule 19, where the mapping was pruned because its
+targets no longer **existed** — a term that has not appeared yet is a different
+claim from a target that is gone. Judge shape, never count.
+
+Enforced by: `tests/test_curation_list_shape.py`.
 
 ## Adding to this file
 

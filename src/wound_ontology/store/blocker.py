@@ -22,10 +22,21 @@ class Blocker:
       suspicious — SuspiciousList  (substring keywords for flagging)
 
     Priority order in is_blocked():
-      1. noise regex (is_noise) → blocked
-      2. white_terms or white_kw → NOT blocked
+      1. white_terms or white_kw → NOT blocked
+      2. noise regex (is_noise)  → blocked
       3. block_kw or terms       → blocked
       4. otherwise               → NOT blocked
+
+    The whitelist comes FIRST. It used to sit behind is_noise, which put a
+    regex heuristic above an explicit human decision: `NaCl 0.9%`
+    (WONT_0000208) and `NaCl 10%` (WONT_0000209) are curated classes, and no
+    whitelist entry could reach them -- the only remedy was to weaken the
+    regex for every term. Now a curator can name the exception, and the
+    heuristic keeps deciding everything nobody has ruled on.
+
+    The whitelists therefore now carry the whole burden of being right about
+    what they exempt. That is the intended trade: `is_noise` is a guess about
+    a string's shape, a whitelist entry is a decision about a concept.
     """
 
     def __init__(self) -> None:
@@ -54,10 +65,10 @@ class Blocker:
 
     def is_blocked(self, term: str) -> bool:
         """True if term should be excluded from the ontology."""
-        if self.is_noise(term):
-            return True
         if self.white_terms.match(term) or self.white_kw.match(term):
             return False
+        if self.is_noise(term):
+            return True
         return self.block_kw.match(term) or self.terms.match(term)
 
     def score(self, term: str) -> float:
@@ -66,10 +77,10 @@ class Blocker:
         SapBERT similarity scores for undecided terms are computed by callers
         (StoreCleaner) rather than here, to keep Blocker free of embedding deps.
         """
-        if self.is_noise(term):
-            return 100.0
         if self.white_terms.match(term) or self.white_kw.match(term):
             return 0.0
+        if self.is_noise(term):
+            return 100.0
         if self.block_kw.match(term) or self.terms.match(term):
             return 100.0
         return 0.0

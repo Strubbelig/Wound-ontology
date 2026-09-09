@@ -59,29 +59,30 @@ def curated_labels() -> dict[str, str]:
     return out
 
 
-#: Curated labels the NOISE REGEX still rejects, and why each is a false
-#: positive. This is a different mechanism from the two lists: `is_noise` runs
-#: BEFORE the whitelist in `Blocker.is_blocked`, so whitelisting cannot free
-#: them -- a heuristic currently outranks an explicit human decision. Latent
-#: rather than active: 0 live store terms match the noise regex today, and none
-#: of these six is in the store. Listed so the gap is named rather than found
-#: again later.
-NOISE_FALSE_POSITIVES = {
-    "NaCl 0.9%":                    "the % rule; a saline concentration is a real class",
-    "NaCl 10%":                     "the % rule",
-    "Wagner and Anderson grade 1D": "the `\\d+ ... d|day|days` rule fires on the D of 1D",
-    "Wagner and Anderson grade 2D": "same",
-    "Wagner and Anderson grade 3D": "same",
-    "Wagner and Anderson grade 4D": "same",
+#: Curated labels the noise regex STILL matches, freed by an explicit WHITELIST
+#: entry now that `Blocker.is_blocked` consults the whitelist FIRST.
+#:
+#: The precedence used to run the other way, which put a guess about a string's
+#: shape above a curator's decision about a concept: no whitelist entry could
+#: reach these, and the only remedy would have been to weaken the regex for
+#: every term in the corpus. Four more labels used to be here -- Wagner and
+#: Anderson grades 1D through 4D -- and are gone because the regex itself was
+#: narrowed rather than overridden; see `test_a_grade_code_is_not_a_duration`.
+#:
+#: If one of these stops matching the regex, delete its entry: the gap narrowed.
+#: If a THIRD appears, `test_no_curated_class_label_is_blocked_in_effect` fails
+#: and names it, which is the point.
+NOISE_MATCHED_BUT_WHITELISTED = {
+    "NaCl 0.9%": "WONT_0000208",
+    "NaCl 10%":  "WONT_0000209",
 }
 
 
 def test_no_curated_class_label_is_blocked_by_a_list(blocker, curated_labels):
-    """The invariant. The noise regex is excluded and pinned separately below."""
+    """The invariant, at the level of the two lists alone."""
     blocked = sorted(
         label for label in curated_labels.values()
-        if label not in NOISE_FALSE_POSITIVES
-        and (blocker.block_kw.match(label) or blocker.terms.match(label))
+        if (blocker.block_kw.match(label) or blocker.terms.match(label))
         and not (blocker.white_terms.match(label) or blocker.white_kw.match(label))
     )
     assert blocked == [], (
@@ -91,24 +92,69 @@ def test_no_curated_class_label_is_blocked_by_a_list(blocker, curated_labels):
 
 
 def test_no_curated_class_label_is_blocked_in_effect(blocker, curated_labels):
-    """The same claim through the public method, so precedence is covered too."""
+    """The same claim through the public method, and now with NO exceptions.
+
+    This test carried an exclusion list of six until 2026-09-09. It does not any
+    more: four were freed by narrowing the noise regex and two by whitelisting
+    them, so the claim is finally the flat one it always wanted to be -- the
+    curated ontology's own labels all survive the lists.
+    """
     blocked = sorted(
-        label for label in curated_labels.values()
-        if label not in NOISE_FALSE_POSITIVES and blocker.is_blocked(label)
+        label for label in curated_labels.values() if blocker.is_blocked(label)
     )
     assert blocked == [], f"blocked despite naming a curated class: {blocked}"
 
 
-@pytest.mark.parametrize("label", sorted(NOISE_FALSE_POSITIVES))
-def test_the_known_noise_false_positives_are_still_exactly_those(blocker, label):
-    """If one starts passing, delete its entry — the gap narrowed.
+@pytest.mark.parametrize("label,iri", sorted(NOISE_MATCHED_BUT_WHITELISTED.items()))
+def test_a_whitelist_entry_outranks_the_noise_regex(blocker, label, iri):
+    """Freed by a decision, not by the regex having been quietly weakened.
 
-    If a SEVENTH appears, the test above fails and names it, which is the point.
+    Both halves matter. If the first assertion starts failing the regex changed
+    and the entry should go; if the second fails the precedence regressed.
     """
     assert blocker.is_noise(label), (
-        f"{label!r} is no longer rejected by the noise regex; remove it from "
-        "NOISE_FALSE_POSITIVES so the exception list stays honest"
+        f"{label!r} no longer matches the noise regex; remove it from "
+        "NOISE_MATCHED_BUT_WHITELISTED so the exception list stays honest"
     )
+    assert blocker.white_terms.match(label), f"{label!r} ({iri}) lost its WHITELIST entry"
+    assert not blocker.is_blocked(label)
+
+
+@pytest.mark.parametrize("grade", ["1D", "2D", "3D", "4D"])
+def test_a_grade_code_is_not_a_duration(blocker, grade):
+    r"""`\d+d` closed up used to read a grade code as a count of days.
+
+    "Wagner and Anderson grade 1D" (WONT_120068) was deleted as "1 day", and 2D,
+    3D and 4D with it. Measured over the 4104 store terms and curated labels,
+    the bare `d` alternative matched those four and not one genuine day
+    expression, so it now requires a separator from its number.
+    """
+    assert not blocker.is_noise(f"Wagner and Anderson grade {grade}")
+    assert not blocker.is_blocked(f"Wagner and Anderson grade {grade}")
+
+
+def test_a_separated_day_abbreviation_is_still_noise(blocker):
+    """The half of the `d` rule that was worth keeping."""
+    for term in ("7 d", "7-d", "14 d", "7 days", "7days", "3 day"):
+        assert blocker.is_noise(term), term
+
+
+def test_the_price_of_narrowing_the_day_rule(blocker):
+    """Named so the cost is a decision on the record, not a surprise later.
+
+    "7d" written closed up is no longer read as a duration. Nothing in the
+    corpus was written that way, and the asymmetry settles it: a term wrongly
+    let through reaches the store and can still be blocked, while
+    `run_clean_store` DELETES what the blocklist matches.
+    """
+    assert not blocker.is_noise("7d")
+
+
+def test_score_and_is_blocked_agree_about_precedence(blocker):
+    """`score` duplicates the ladder in `is_blocked`; it must move in step."""
+    for term in ("NaCl 0.9%", "Wagner and Anderson grade 1D", "100 mg",
+                 "randomized controlled trial", "granulation tissue"):
+        assert (blocker.score(term) == 100.0) is blocker.is_blocked(term), term
 
 
 def test_the_whitelist_outranks_both_blocklists(blocker):
