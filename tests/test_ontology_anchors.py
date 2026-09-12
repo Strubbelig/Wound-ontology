@@ -261,3 +261,57 @@ def test_curated_mappings_are_not_disturbed(mapper):
     _build(mapper, ["Necrosis", "Necrosis Process"], anchors={"Necrosis"},
            groups=[["necrosis"]], accept=lambda t, c: False)
     assert mapper._term_mapping.data["some curated term"] == "its canonical form"
+
+
+# ── a contradiction is not silence ───────────────────────────────────────────
+#
+# The guard allows a mapping when a side's category is unknown -- there is
+# nothing to refuse on. A term typed into two disjoint branches by different
+# abstracts is not unknown; it is known to straddle the boundary. On the
+# 606-abstract corpus (2026-09-12) `Skin Grafting` arrived as both `material
+# entity` and `process`, reconciled to nothing, and was read as unknown -- so
+# `Skin grafting -> Skin graft` passed a guard that had refused it on 142.
+
+def _guard_with(monkeypatch, typings, onto_cat):
+    """The real accept() over a fake store and skeleton."""
+    import wound_ontology.orchestrator as orch
+
+    class _Gate:
+        def least_common_category(self, cats):
+            cats = set(cats)
+            return None if cats == {"material entity", "process"} else next(iter(cats))
+
+    p = orch.Orchestrator.__new__(orch.Orchestrator)
+    p._gate = _Gate()
+    monkeypatch.setattr(orch.Orchestrator, "store_typings", lambda self: typings)
+    monkeypatch.setattr(orch.Orchestrator, "ontology_categories", lambda self, skeleton=None: onto_cat)
+    return p._category_compatible_mapping(set(onto_cat))
+
+
+def test_a_term_typed_into_disjoint_branches_is_refused_not_allowed(monkeypatch):
+    accept = _guard_with(
+        monkeypatch,
+        typings={"Skin Grafting": {"material entity", "process"}},
+        onto_cat={"Skin graft": "material entity"},
+    )
+    assert not accept("Skin grafting", "Skin graft")
+
+
+def test_a_never_typed_term_is_still_allowed(monkeypatch):
+    """The refusal is for contradiction, not for absence."""
+    accept = _guard_with(
+        monkeypatch,
+        typings={},
+        onto_cat={"Skin graft": "material entity"},
+    )
+    assert accept("Skin grafting", "Skin graft")
+
+
+def test_an_agreed_term_is_judged_on_its_category(monkeypatch):
+    accept = _guard_with(
+        monkeypatch,
+        typings={"Skin Grafting": {"process"}, "Chronic Wounds": {"material entity"}},
+        onto_cat={"Skin graft": "material entity", "Chronic wound": "material entity"},
+    )
+    assert not accept("Skin grafting", "Skin graft")
+    assert accept("Chronic wounds", "Chronic wound")

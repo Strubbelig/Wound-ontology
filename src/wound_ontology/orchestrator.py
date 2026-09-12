@@ -343,8 +343,12 @@ class Orchestrator:
             out.setdefault(str(child), []).append(str(parent))
         return out
 
-    def store_categories(self) -> dict[str, str]:
-        """{store term -> its reconciled BFO category}, or absent if undecided."""
+    def store_typings(self) -> dict[str, set[str]]:
+        """{store term -> every BFO category any abstract typed it as}.
+
+        Stage-1 typing runs per abstract, so one term can carry several. This
+        is the raw record; `store_categories` reconciles it.
+        """
         from wound_ontology.llm.category_vocab import declared_category
         from wound_ontology.utils.string_utils import smart_title
 
@@ -360,8 +364,18 @@ class Orchestrator:
                     declared = declared_category(target.strip())
                     if declared is not None:
                         typings.setdefault(smart_title(entity.strip()), set()).add(declared)
+        return typings
+
+    def store_categories(self) -> dict[str, str]:
+        """{store term -> its reconciled BFO category}, or absent if undecided.
+
+        Absent covers two different situations, and `_category_compatible_mapping`
+        needs to tell them apart: a term no abstract ever typed, and a term typed
+        into branches that agree on nothing below `entity`. Use `store_typings`
+        for the raw record.
+        """
         out: dict[str, str] = {}
-        for term, cats in typings.items():
+        for term, cats in self.store_typings().items():
             agreed = (next(iter(cats)) if len(cats) == 1
                       else self.reasoner_gate.least_common_category(cats))
             if agreed:
@@ -382,6 +396,16 @@ class Orchestrator:
         no information to refuse on, and refusing on a guess would throw away the
         lexical variants the anchors exist to catch.
 
+        "Unknown" means never typed. A term typed into branches that cannot be
+        reconciled -- `Skin Grafting` as both `material entity` and `process`,
+        which the 606-abstract corpus produced on 2026-09-12 -- is not unknown;
+        it is known to straddle exactly the boundary this guard exists to hold.
+        `store_categories` drops such a term as undecided, and treating that as
+        "no information" let `Skin grafting -> Skin graft` through: the guard
+        refused the mapping on 142 abstracts and accepted it on 606, because a
+        contradiction had appeared and was read as silence. Contradicted terms
+        are REFUSED.
+
         BFO category names are never mapped at all. They appear in the store as
         `is_a: process` targets, and mapping one onto a term would hand every
         reconciliation and split downstream a name that is no longer a category.
@@ -393,7 +417,9 @@ class Orchestrator:
         from wound_ontology.utils.string_utils import smart_title
 
         onto_cat = self.ontology_categories()
+        typings = self.store_typings()
         store_cat = self.store_categories()
+        contradicted = {term for term in typings if term not in store_cat}
 
         def ancestors(cat: str) -> set[str]:
             chain, cur = {cat}, CATEGORY_PARENT.get(cat)
@@ -405,7 +431,10 @@ class Orchestrator:
         def accept(term: str, canonical: str) -> bool:
             if is_category(term):
                 return False
-            a = store_cat.get(smart_title(term.strip()))
+            key = smart_title(term.strip())
+            if key in contradicted:
+                return False
+            a = store_cat.get(key)
             b = onto_cat.get(canonical.strip())
             if a is None or b is None:
                 return True
