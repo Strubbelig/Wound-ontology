@@ -552,7 +552,6 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "streptolysin s",
     "streptozotocin",
     "stromal cell",
-    "stromal cell-derived factor-1alpha",
     "subarcuate artery",
     "submandibular glands",
     "succinylcholine",
@@ -571,8 +570,6 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "thbs2",
     "total bilirubin",
     "total white blood cell count",
-    "transforming growth factor beta 1",
-    "transforming growth factor-beta",
     "transmalleolar axis",
     "transverse area of the spinal cord",
     "triglycerides",
@@ -8112,5 +8109,15 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "triple crossover hop test",
     # ── added interactively ─────────────────────────────────────────────
     "vaginal discharge",
+    # ── added interactively ─────────────────────────────────────────────
+    "cell-based and adipose-derived therapies",
+    "electrodiagnostic",
+    "endovascular",
+    "gastrointestinal",
+    "growth factor and blood-derived therapies",
+    "immunocompromised",
+    "small sample size",
+    "topical pharmacologic and bioactive agents",
+    "ultrasound",
 }
 

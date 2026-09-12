@@ -118,3 +118,89 @@ def test_it_still_behaves_like_the_dict_it_replaced():
     assert dict(idx.items()) == {"wound": A}
     assert list(idx.values()) == [A]
     assert "wound" in idx
+
+
+# ── the -es branch is ambiguous, so it must not guess ────────────────────────
+#
+# Measured 2026-09-10 on the live store: 45 of 3536 terms have a head noun that
+# takes the `-es` branch, and 31 of them were mis-singularised, because the rule
+# strips two characters whenever the STEM ends in a sibilant -- true of both
+# `bus`+`es` and `phase`+`s`, which are indistinguishable by suffix.
+
+@pytest.mark.parametrize("plural,candidates", [
+    ("phases",     ["phas", "phase"]),
+    ("nurses",     ["nurs", "nurse"]),
+    ("cases",      ["cas", "case"]),
+    ("responses",  ["respons", "response"]),
+    ("buses",      ["bus", "buse"]),
+    ("approaches", ["approach", "approache"]),
+])
+def test_an_es_plural_offers_both_singulars(plural, candidates):
+    from wound_ontology.utils.label_match import singular_candidates
+    assert singular_candidates(plural) == candidates
+
+
+@pytest.mark.parametrize("singular,plural", [
+    ("Inflammatory phase", "Inflammatory Phases"),
+    ("Proliferative phase", "Proliferative Phases"),
+    ("Nurse", "Nurses"),
+    ("Case", "Cases"),
+    ("Response", "Responses"),
+    ("Database", "Databases"),
+    ("Disease", "Diseases"),
+    ("Endoprotease", "Endoproteases"),
+])
+def test_an_es_plural_reaches_a_singular_that_keeps_its_e(singular, plural):
+    """The 31 the old single guess could never find."""
+    idx = LabelIndex()
+    idx.add(singular, A)
+    assert idx.get(plural) == (A, "variant")
+
+
+@pytest.mark.parametrize("singular,plural", [
+    ("approach", "Approaches"),
+    ("process", "Processes"),
+    ("lens", "Lenses"),
+    ("bypass", "Bypasses"),
+    ("census", "Censuses"),
+    ("stress", "Stresses"),
+])
+def test_the_es_rule_still_wins_where_it_was_already_right(singular, plural):
+    """The other 14. Offering a second candidate must not cost the first."""
+    idx = LabelIndex()
+    idx.add(singular, A)
+    assert idx.get(plural) == (A, "variant")
+
+
+def test_orthoses_reaches_orthosis():
+    """No suffix candidate spans a Greek -sis/-ses pair, so it is listed."""
+    idx = LabelIndex()
+    idx.add("Orthosis", A)
+    assert idx.get("Orthoses") == (A, "variant")
+
+
+def test_an_ambiguous_candidate_does_not_hide_a_clean_one():
+    """Two classes collide on the first candidate; the second still resolves,
+    and refusing on the first collision would throw away a real match."""
+    idx = LabelIndex()
+    idx.add("cas", A)          # claims the strip-two key
+    idx.add("cas ", B)         # ... twice over, so it is ambiguous
+    idx.add("case", A)
+    iri, how = idx.get("cases")
+    assert (iri, how) == (A, "variant")
+
+
+def test_ambiguity_is_still_refused_when_nothing_resolves():
+    idx = LabelIndex()
+    idx.add("phase", A)
+    idx.add("phasE", B)        # same folded key, different class
+    iri, how = idx.get("phases")
+    assert iri is None and how == "ambiguous"
+
+
+def test_fold_is_still_the_first_candidate():
+    """fold() and singularize() are unchanged, so every existing caller is."""
+    from wound_ontology.utils.label_match import fold_candidates, singular_candidates
+    for term in ["phases", "wounds", "material entities", "abscesses", "bacteria"]:
+        assert fold(term) == fold_candidates(term)[0]
+        assert singularize(term) == singular_candidates(term)[0]

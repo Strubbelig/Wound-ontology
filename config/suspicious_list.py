@@ -26,7 +26,6 @@ SUSPICIOUS_KEYWORDS: frozenset[str] = frozenset({
     "randomization",
     "sample",
     "population",
-    "cohort",
     # Outcomes & statistics
     "outcome",
     "endpoint",
@@ -90,7 +89,5 @@ SUSPICIOUS_KEYWORDS: frozenset[str] = frozenset({
     "prisma",
     "cochrane",
     "regression",
-    "hazard",
     "propensity",
-    "heterogeneity",
 })

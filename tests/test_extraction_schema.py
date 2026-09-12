@@ -255,3 +255,65 @@ def test_prompt_marks_fallbacks_and_forbids_skipping():
     assert "[FALLBACK]" in block
     assert "no 'unknown' and no skipping" in block
     assert "move UP the tree" in block
+
+
+# ── a determinate quality belongs to the class it defines (rule 31) ─────────
+#
+# The prompt taught one example, "Chronic Wound has_quality Chronic", and no
+# rule about *where* a determinate attaches. Measured on the live store, the
+# extractor then produced `has_quality: chronic` on 2 of 4150 entity-attribute
+# pairs, and in the Wound-subtree FCA context that became a column true of one
+# object and undecided for the other 39 — every undecided cell in a 40x16
+# matrix. The example was right; the missing rule was the defect.
+
+def _has_quality():
+    from config.settings import PREDICATE_DEFINITIONS
+    return PREDICATE_DEFINITIONS["has_quality"]
+
+
+def test_has_quality_names_both_halves_of_the_distinction():
+    hq = _has_quality()
+    text = " ".join([hq["summary"], *hq["yes"], *hq["no"]]).lower()
+    assert "determinable" in text, "the prompt never explains what a determinable is"
+    assert "determinate" in text, "the prompt never explains what a determinate is"
+
+
+def test_has_quality_forbids_a_determinate_on_the_parent():
+    hq = _has_quality()
+    assert any("determinate on the parent" in n.lower() for n in hq["no"]), (
+        "'Wound has_quality Chronic' is the error this rule exists to stop; "
+        "the prompt must name it"
+    )
+
+
+def test_has_quality_forbids_a_determinable_on_the_class_it_defines():
+    hq = _has_quality()
+    assert any("determinable on the class" in n.lower() for n in hq["no"]), (
+        "the reverse error — 'Chronic Wound has_quality Wound Healing Time' — "
+        "adds a column true of every wound, and must be named too"
+    )
+
+
+def test_has_quality_carries_the_decision_procedure_not_just_the_vocabulary():
+    hq = _has_quality()
+    assert any(n.strip().lower().startswith("test:") for n in hq["no"]), (
+        "naming the two categories does not tell the model how to choose; the "
+        "'if X were not <quality>, would it still be a Y?' test does"
+    )
+
+
+def test_has_quality_keeps_the_worked_determinate_example():
+    hq = _has_quality()
+    assert any("Chronic Wound has_quality Chronic" in y for y in hq["yes"]), (
+        "the example is correct and is kept deliberately: WONT models this "
+        "shape ten times, e.g. Reddened wound edge = Wound edge and "
+        "has_quality some reddened (WONT_0000256)"
+    )
+
+
+def test_has_quality_keeps_a_worked_determinable_example():
+    hq = _has_quality()
+    assert any("determinable" in y.lower() for y in hq["yes"]), (
+        "without a positive determinable example the rule reads as 'never put "
+        "a quality on a parent', which is wrong"
+    )

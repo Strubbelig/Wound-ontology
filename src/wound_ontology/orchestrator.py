@@ -1250,27 +1250,57 @@ class Orchestrator:
             MILD_MODULES_DIR as _MODS, PROJECT_ROOT as _ROOT,
         )
 
+        from pathlib import Path as _P
+
         g = rdflib.Graph()
+        sources: list[str] = []
         if ontology_file:
             g.parse(str(ontology_file))
+            sources.append(str(ontology_file))
         else:
-            g.parse(str(_GT), format="turtle")
+            # The pipeline's own output, not the ground truth it started from.
+            # This defaulted to GROUND_TRUTH_TTL, so every report ever written
+            # measured WONT + MILD and stopped -- the extension's contribution,
+            # which is the entire point of running the pipeline, was never in
+            # the number and had to be measured by hand.
+            extended = _P(_ROOT) / "output" / "owl" / "wont_extended.ttl"
+            if extended.exists():
+                g.parse(str(extended), format="turtle")
+                sources.append(f"{extended.name} (contains the ground truth as its base)")
+            else:
+                g.parse(str(_GT), format="turtle")
+                sources.append(f"{_P(_GT).name}")
+                print("[Orchestrator] WARNING: output/owl/wont_extended.ttl does not "
+                      "exist, so this measures the GROUND TRUTH, not the pipeline's "
+                      "output. Run run_extend_ground_truth() first if that is not "
+                      "what you meant.")
             g.parse(str(_MILD), format="turtle")
+            sources.append(_P(_MILD).name)
             if with_imports:
-                for m in sorted(_MODS.glob("*_module.owl")):
+                skipped: list[str] = []
+                mods = sorted(_MODS.glob("*_module.owl"))
+                for m in mods:
                     try:
                         g.parse(str(m))
                     except Exception as exc:
+                        skipped.append(f"{m.name}: {exc}")
                         print(f"  ! skipped {m.name}: {exc}")
+                sources.append(f"{len(mods) - len(skipped)} of {len(mods)} MILD import modules"
+                               + (f" ({len(skipped)} unparseable)" if skipped else ""))
 
         results = run_suite(g, load_questions(_ROOT / "config" / "competency_questions.json"))
         text = _report(results)
+        # A score is only interpretable next to what it was measured over. The
+        # report carried none, which is how a stale one went unnoticed.
+        provenance = ("measured over:\n" + "\n".join(f"  - {s}" for s in sources)
+                      + f"\n  = {len(g)} triples")
+        print(provenance)
         print(text)
         if write_report:
             out = _ROOT / "output" / "competency_report.md"
             out.parent.mkdir(parents=True, exist_ok=True)
-            out.write_text("# Competency question report\n\n```\n" + text + "\n```\n",
-                           encoding="utf-8")
+            out.write_text("# Competency question report\n\n```\n" + provenance
+                           + "\n\n" + text + "\n```\n", encoding="utf-8")
             print(f"[Orchestrator] Report → {out}")
         p, n = in_scope_score(results)
         return results, (p, n)
@@ -1292,20 +1322,45 @@ class Orchestrator:
         )
         from pathlib import Path as _P
 
+        missing = [str(s) for s in (_GT, _MILD) if not _P(s).exists()]
+        if missing:
+            raise FileNotFoundError(
+                "[Orchestrator] build_reasoner_skeleton cannot read its sources: "
+                + ", ".join(missing) + ". The skeleton IS WONT + MILD; there is "
+                "no degraded skeleton worth building without them."
+            )
+
+        # The cached skeleton is only valid while it is newer than what it was
+        # derived from. Reusing it on existence alone was measured to fail
+        # exactly that way on 2026-09-10: skeleton_tbox.ttl 20 Aug 22:13 against
+        # a ground_truth_final.owl of 4 Sep 19:32, so BOTH gates had spent
+        # fifteen days reasoning over a WONT that no longer existed -- and said
+        # nothing. Rebuild instead, and announce which source moved.
         if _P(_SK).exists() and not force:
-            print(f"[Orchestrator] Reusing skeleton TBox at {_SK}")
-            return str(_SK)
+            cached = _P(_SK).stat().st_mtime
+            newer = [s for s in (_GT, _MILD) if _P(s).stat().st_mtime > cached]
+            if not newer:
+                print(f"[Orchestrator] Reusing skeleton TBox at {_SK}")
+                return str(_SK)
+            for src in newer:
+                print(f"[Orchestrator] Skeleton TBox is STALE: {_P(src).name} is "
+                      f"newer than {_P(_SK).name} — rebuilding.")
         path, n = build_skeleton(_GT, _MILD, _SK)
         print(f"[Orchestrator] Skeleton TBox built: {path} ({n} triples)")
         return str(path)
 
     @property
     def reasoner_gate(self):
-        """Lazily constructed per-batch gate."""
+        """Lazily constructed per-batch gate.
+
+        Goes through build_reasoner_skeleton() rather than pointing straight at
+        REASONER_SKELETON, because the staleness check lives there and this is
+        the only place the skeleton is ever consumed. Taking the path directly
+        is what let a fifteen-day-old skeleton stay in service.
+        """
         if getattr(self, "_gate", None) is None:
             from wound_ontology.reasoning.gate import ReasonerGate
-            from config.settings import REASONER_SKELETON as _SK
-            self._gate = ReasonerGate(_SK)
+            self._gate = ReasonerGate(self.build_reasoner_skeleton())
         return self._gate
 
     def run_gate_store_relations(self, store=None, quarantine: bool = True,

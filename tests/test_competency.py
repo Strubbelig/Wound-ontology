@@ -118,9 +118,24 @@ def test_affects_is_unexpressible(graph):
 
 
 def test_missing_term_is_unresolved_with_a_near_miss_hint(graph):
-    r = run_suite(graph, [cq("T7", ("Chronic Wounds", "is_a", "Wound"))])[0]
+    """A term that folds onto nothing, but reads like something that is there.
+
+    This used to be asserted of "Chronic Wounds", which the exact-match-only
+    index could not see. It now resolves -- see the test below -- so the near
+    miss is demonstrated with a term that really is a different word.
+    """
+    r = run_suite(graph, [cq("T7", ("Wound Bed", "is_a", "Wound"))])[0]
     assert r.verdict is Verdict.UNRESOLVED
     assert "did you mean" in r.detail
+
+
+def test_a_plural_no_longer_counts_as_a_missing_class(graph):
+    """One of the four label-index misses measured on 2026-09-10. Asking about
+    "Chronic Wounds" against a class labelled "Chronic Wound" was reported as a
+    vocabulary gap; it is a spelling."""
+    r = run_suite(graph, [cq("T7b", ("Chronic Wounds", "is_a", "Wound"))])[0]
+    assert r.verdict is Verdict.PASS
+    assert "variant" in r.detail
 
 
 def test_genuinely_absent_term_gets_no_hint(graph):
@@ -267,3 +282,84 @@ def test_colocation_is_not_vacuous(real_graph):
     assert colocation_holds(real_graph, idx[no[0]], idx[no[1]]) is False
     # a bare Wound is co-located with nothing in particular
     assert colocation_holds(real_graph, idx["wound"], idx["diabetic metabolic disorder"]) is False
+
+
+# ── the resolver uses the pipeline's one label index, not a second rule ──────
+#
+# label_index() used to build a plain {lower(label): iri} dict and _answerable
+# matched on the exact string only -- a second normalisation rule beside
+# utils.label_match.LabelIndex, which already carried the folded fallback and
+# was sitting unused here. Standing rule 13: names are normalised in exactly
+# one way.
+
+@pytest.fixture
+def plural_graph():
+    """An ontology whose label is the plural of what the CQ asks about."""
+    g = rdflib.Graph()
+
+    def cls(name):
+        iri = URIRef(EX + name.replace(" ", "_"))
+        g.add((iri, RDF.type, OWL.Class))
+        g.add((iri, RDFS.label, rdflib.Literal(name)))
+        return iri
+
+    wound = cls("Wound")
+    acute = cls("Acute Wounds")          # the ontology's spelling
+    g.add((acute, RDFS.subClassOf, wound))
+    return g
+
+
+def test_label_index_is_the_shared_index_not_a_dict():
+    from wound_ontology.utils.label_match import LabelIndex
+    g = rdflib.Graph()
+    iri = URIRef(EX + "Wound")
+    g.add((iri, RDFS.label, rdflib.Literal("Wound")))
+    assert isinstance(label_index(g), LabelIndex)
+
+
+def test_a_cq_resolves_through_the_folded_fallback(plural_graph):
+    """"Acute Wound" against a class labelled "Acute Wounds" -- one of the four
+    label-index misses measured on 2026-09-10."""
+    cq = CompetencyQuestion(id="CQx", question="?", in_scope=True,
+                            triple=("Acute Wound", "is_a", "Wound"))
+    (res,) = run_suite(plural_graph, [cq])
+    assert res.verdict is Verdict.PASS
+
+
+def test_a_variant_match_is_named_in_the_detail(plural_graph):
+    """A pass on a folded key is still a pass, but it is a different fact about
+    the ontology and the report has to say which one it was."""
+    cq = CompetencyQuestion(id="CQx", question="?", in_scope=True,
+                            triple=("Acute Wound", "is_a", "Wound"))
+    (res,) = run_suite(plural_graph, [cq])
+    assert "variant" in res.detail and "Acute Wound" in res.detail
+
+
+def test_an_exact_match_says_nothing_extra(graph):
+    cq = CompetencyQuestion(id="CQx", question="?", in_scope=True,
+                            triple=("Chronic Wound", "is_a", "Wound"))
+    (res,) = run_suite(graph, [cq])
+    assert res.verdict is Verdict.PASS and res.detail == ""
+
+
+def test_two_classes_sharing_a_folded_key_are_reported_as_such_not_as_absent():
+    """Ambiguity is a third outcome. Calling it "no class labelled X" would send
+    the curator looking for a class that is already there twice."""
+    g = rdflib.Graph()
+    for name in ("Phase", "PHASE "):
+        iri = URIRef(EX + name.strip().replace(" ", "_") + name[-1])
+        g.add((iri, RDF.type, OWL.Class))
+        g.add((iri, RDFS.label, rdflib.Literal(name)))
+    g.add((URIRef(EX + "Wound"), RDFS.label, rdflib.Literal("Wound")))
+    cq = CompetencyQuestion(id="CQx", question="?", in_scope=True,
+                            triple=("Phases", "is_a", "Wound"))
+    (res,) = run_suite(g, [cq])
+    assert res.verdict is Verdict.UNRESOLVED
+    assert "several classes share that name" in res.detail
+
+
+def test_a_genuinely_absent_class_is_still_unresolved(plural_graph):
+    cq = CompetencyQuestion(id="CQx", question="?", in_scope=True,
+                            triple=("Osteomyelitis", "is_a", "Wound"))
+    (res,) = run_suite(plural_graph, [cq])
+    assert res.verdict is Verdict.UNRESOLVED

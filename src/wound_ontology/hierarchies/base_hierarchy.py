@@ -96,6 +96,7 @@ class BaseHierarchy(ABC):
         # Edges proposed but not committed, e.g. FCA suggestions awaiting review.
         self._candidates: dict[tuple[str, str], str] = {}
         self._load_provenance()
+        self._load_candidates()
 
     # ── Provenance ─────────────────────────────────────────────────────────────
 
@@ -163,6 +164,75 @@ class BaseHierarchy(ABC):
             [{"child": c, "parent": p, "source": s} for (c, p), s in sorted(self._prov.items())]
         )
         self.dm.save_as_csv(out, self._prov_file)
+
+    # ── Candidates ─────────────────────────────────────────────────────────────
+    #
+    # Proposed-but-uncommitted edges used to live only in this dict, and the
+    # dict died with the Python session. `run_build_hierarchies(commit_fca=False)`
+    # printed "Inspect class_hier.candidates, then promote_candidates(...)" --
+    # an instruction that silently expired when the notebook closed, so the
+    # propose/review/promote path could not actually be completed and 12 of them
+    # were lost without a word. They are persisted next to the matrix now.
+
+    @property
+    def _cand_file(self) -> str:
+        return f"{self.file_name}_candidates"
+
+    def _load_candidates(self) -> None:
+        """Load the review queue. Missing is fine; unreadable is not.
+
+        Same discipline as `_load_provenance`: an empty queue and a queue that
+        could not be read must never look alike.
+        """
+        try:
+            raw = self.dm.load_latest_csv(self._cand_file)
+        except FileNotFoundError:
+            raw = None
+        except Exception as exc:
+            raise RuntimeError(
+                f"[{type(self).__name__}] candidate file for {self._cand_file!r} "
+                f"exists but could not be read: {exc}. Refusing to continue with "
+                "an empty review queue, which would look exactly like having "
+                "nothing left to review."
+            ) from exc
+
+        if raw is None or raw.empty:
+            return
+
+        cols = {c.lower(): c for c in raw.columns}
+        missing = [k for k in ("child", "parent", "source") if k not in cols]
+        if missing:
+            raise ValueError(
+                f"[{type(self).__name__}] candidate CSV for {self._cand_file!r} is "
+                f"missing column(s) {missing}; found {sorted(cols)}."
+            )
+
+        committed = 0
+        for _, r in raw.iterrows():
+            key = (str(r[cols["child"]]), str(r[cols["parent"]]))
+            if key in self._prov:
+                committed += 1          # promoted since it was proposed
+                continue
+            self._candidates[key] = str(r[cols["source"]])
+        print(f"[{type(self).__name__}] {len(self._candidates)} candidate edge(s) "
+              f"awaiting review"
+              + (f"; {committed} already committed since." if committed else "."))
+
+    def save_candidates(self) -> None:
+        """Write the review queue, INCLUDING when it is empty.
+
+        `save_provenance` returns early on an empty dict, which is safe there --
+        provenance only grows. A queue shrinks: promoting the last candidate
+        empties it, and skipping the write would leave the previous file as the
+        newest on disk, so the next session would load the promoted edges back
+        as though they were still awaiting review.
+        """
+        out = pd.DataFrame(
+            [{"child": c, "parent": p, "source": s}
+             for (c, p), s in sorted(self._candidates.items())],
+            columns=["child", "parent", "source"],
+        )
+        self.dm.save_as_csv(out, self._cand_file)
 
     def source_of(self, specific: str, general: str) -> str | None:
         """Which source produced this edge, if any."""
@@ -242,6 +312,13 @@ class BaseHierarchy(ABC):
                     f"run_build_hierarchies(). Pass lattice=... to keep them.",
                     RuntimeWarning, stacklevel=2,
                 )
+        # The queue shrank, so make that durable -- otherwise the previous
+        # file stays newest on disk and the next session reloads the promoted
+        # edges as pending. A hierarchy built detached (`__new__`, no
+        # DataManager) has no file to keep in step, so there is nothing to
+        # write and nothing lost; that is the only case this skips.
+        if n and getattr(self, "dm", None) is not None:
+            self.save_candidates()
         return n
 
     def provenance_axioms(self) -> list[tuple[str, str, str, str]]:
@@ -258,6 +335,7 @@ class BaseHierarchy(ABC):
             out = self._df.copy().reset_index().rename(columns={"index": "concept"})
             self.dm.save_as_csv(out, self.file_name)
         self.save_provenance()
+        self.save_candidates()
 
     # ── Properties ─────────────────────────────────────────────────────────────
 

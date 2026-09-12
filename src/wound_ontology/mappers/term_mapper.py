@@ -154,7 +154,9 @@ class TermMapper:
         """Synonym clustering via SapBERT cosine similarity + complete-linkage.
 
         MERGE CONDITION — a pair (a, b) is valid iff:
-          0. normalize_term(a) == normalize_term(b)  (string-only pre-merge)
+          0. fold(a) == fold(b)  (string-only pre-merge: punctuation and case
+             folded AND the head noun singularized, so `Challenges` pre-merges
+             with `Challenge` instead of being typed separately downstream)
           1. cosine_similarity >= similarity_threshold  (default 0.95)
 
         Generic single-word terms additionally require string_sim >= 0.90 to
@@ -230,10 +232,24 @@ class TermMapper:
             same = [m for m in members if fold(m) == fold(best) and _is_singular(m)]
             return max(same, key=_rank) if same else best
 
-        # ── Step 0: pre-merge by normalized form (no SapBERT) ────────────────
+        # ── Step 0: pre-merge by folded form (no SapBERT) ────────────────────
+        # `fold`, not `normalize_term`: normalize_term folds punctuation and case
+        # but does NOT singularize, so `Challenge` and `Challenges` landed in
+        # different groups and never pre-merged. They then reached the store as
+        # two terms, were typed independently -- `material entity` and `quality`,
+        # in disjoint BFO branches -- and the merge, which DOES fold, collapsed
+        # them into one class holding both. An incoherent class, from one term
+        # spelled two ways.
+        #
+        # `_canonical` below already reasons in `fold` (`fold(m) == fold(best)`)
+        # and already returns the singular spelling per rule 23, so grouping by
+        # fold is what the rest of this function was already written to expect.
+        # Measured over the 4114 terms the mapper is given: fold unites exactly
+        # 8 groups that normalize_term splits, every one a singular/plural pair
+        # of the same term, and not one of them involves an anchor.
         norm_groups: dict[str, list[str]] = defaultdict(list)
         for t in unique_terms:
-            norm_groups[normalize_term(t)].append(t)
+            norm_groups[fold(t)].append(t)
 
         pre_merged: dict[str, str] = {}
         embed_terms: list[str] = []
@@ -255,7 +271,7 @@ class TermMapper:
                 pre_merged[t] = canonical
 
         if pre_merged:
-            print(f"[{self.name}] Pre-merged {len(pre_merged)} terms by normalized form.")
+            print(f"[{self.name}] Pre-merged {len(pre_merged)} terms by folded form.")
 
         print(f"[{self.name}] Embedding {len(embed_terms)} terms with SapBERT...")
         emb: np.ndarray = embedder.embed(embed_terms)

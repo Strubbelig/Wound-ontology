@@ -1037,6 +1037,53 @@ Enforced by: `BaseList.add`, `BaseList.remove`, `BaseList._write_failed`;
 `TestEveryListCanActuallyBeRemovedFrom` in
 `tests/test_term_lists_and_blocker.py`.
 
+## 31. A determinate quality belongs to the class it defines, not to its parent
+
+*Decided 2026-09-10.*
+
+A quality attaches to the class it is actually true of. Two shapes, and only one
+of them belongs on the parent:
+
+- a **determinable** — `color`, `wound area`, `wound healing time` — is true of
+  the parent. Every wound has *some* area, without that fixing which.
+- a **determinate** — `reddened`, `macerated`, `chronic` — is true only of the
+  subclass it defines, and belongs there. Test: *if X were not <quality>, would
+  it still be a Y?* If no, the quality defines Y and belongs on Y.
+
+WONT already carries this pattern ten times, in the shape
+`Reddened wound edge ≡ Wound edge ⊓ has_quality some reddened`, with `reddened`
+under PATO_0000014 `color` and `macerated` under `degree of maceration`. It also
+carries a history-grounded determinate, `human ⊓ has_quality some PATO_0001764
+increased age`, which settles the objection that a quality has to be readable at
+an instant: that criterion separates quality from **disposition** (WONT says so
+itself on `degree of wound pain`: *"There is always some degree of pain inhering
+in the patient, which is what makes this a quality rather than a disposition
+waiting to be realized"*), not quality from process-historical property.
+
+The failure this prevents. `PREDICATE_DEFINITIONS["has_quality"]` taught the
+extractor one example, `Chronic Wound has_quality Chronic`, and no rule about
+where a determinate attaches. The result was measured on the live store:
+`has_quality: chronic` exists on exactly **2 of 4150** entity-attribute pairs,
+and in the Wound-subtree FCA context it became a column that is `True` for one
+object and undecided for the other **39** — every undecided cell in a 40×16
+matrix, and the sole reason 9 of 11 lattice concepts were withheld as
+undecided-dependent. A determinate with no home is not a harmless extra column;
+it is the only column carrying discriminating power, left unusable.
+
+The correct repair is *not* to delete the attribute. It is to give the
+determinate a class to be (WONT_0000442 `Chronic wound` has no defining axiom
+and there is no `chronic` quality class), and to decide the column across the
+subtree. Deleting it leaves the context with three determinables that are true
+of all 39 objects, so the lattice can only re-derive the taxonomy it was handed.
+
+Enforced by: `PREDICATE_DEFINITIONS["has_quality"]` in `config/settings.py` —
+its `no` list names both errors (a determinate on the parent, a determinable on
+the class a determinate defines) and carries the test above.
+
+Related: rule 20 (a BFO category is declared, never matched) is the same
+instinct one level up — where a thing sits is stated, not inferred from how it
+looks.
+
 ## Adding to this file
 
 When a universal design choice is made:

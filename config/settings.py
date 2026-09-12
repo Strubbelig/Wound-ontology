@@ -145,13 +145,24 @@ PREDICATE_DEFINITIONS = {
         ],
     },
     "has_quality": {
-        "summary": "INTRINSIC PROPERTY OR CHARACTERISTIC of a continuant. Use for defining qualities of the object itself.",
+        "summary": (
+            "INTRINSIC PROPERTY OR CHARACTERISTIC of a continuant. Use for defining "
+            "qualities of the object itself. A quality attaches to the class it is "
+            "actually true of. A DETERMINABLE (color, area, healing time) is true of "
+            "the parent — every wound has some area. A DETERMINATE (reddened, chronic) "
+            "is true only of the subclass it defines, and belongs there."
+        ),
         "yes": [
-            "Chronic Wound has_quality Chronic",
+            "Chronic Wound has_quality Chronic  (determinate — a wound that is not chronic is not a Chronic Wound)",
+            "Reddened Wound Edge has_quality Reddened  (determinate — WONT_0000256, the same shape)",
+            "Wound has_quality Wound Area  (determinable — every wound has some area, without fixing which)",
             "Hydrogel has_quality Biocompatible",
         ],
         "no": [
             "NEVER use for functional roles, causal relations, or locations.",
+            "NEVER put a determinate on the parent: 'Wound has_quality Chronic' is WRONG — only some wounds are chronic. It belongs on Chronic Wound.",
+            "NEVER put a determinable on the class a determinate defines: 'Chronic Wound has_quality Wound Healing Time' says nothing that is not already true of every Wound.",
+            "TEST: 'if X were not <quality>, would it still be a Y?' No → the quality defines Y, put it on Y. Yes → it belongs further down, on the subclass it does define.",
         ],
     },
     "occurs_in": {

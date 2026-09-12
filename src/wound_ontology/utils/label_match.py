@@ -46,6 +46,12 @@ _IRREGULAR: dict[str, str] = {
     "stenoses": "stenosis", "necroses": "necrosis", "fibroses": "fibrosis",
     "neuroses": "neurosis", "psychoses": "psychosis", "mycoses": "mycosis",
     "dermatoses": "dermatosis", "sclerosis": "sclerosis", "acidoses": "acidosis",
+    # -sis/-ses that are not disease names but turn up in wound-care prose.
+    # Measured 2026-09-10: "orthoses" is in the store and reaches neither
+    # "orthos" nor "orthose", so no suffix candidate finds "orthosis".
+    "orthoses": "orthosis", "prostheses": "prosthesis",
+    "exostoses": "exostosis", "paralyses": "paralysis", "dialyses": "dialysis",
+    "syntheses": "synthesis", "hypotheses": "hypothesis",
 }
 
 #: Singular words that merely look plural. Suffix rules mangle these into
@@ -65,35 +71,72 @@ _NOT_PLURAL = ("ss", "us", "is", "sis", "ous")
 _ES_STEMS = ("x", "ch", "sh", "s", "z")
 
 
-def singularize(word: str) -> str:
-    """Best-effort singular of one word. Wrong guesses are harmless: a key is
-    only ever *looked up*, never stored as a label."""
+def singular_candidates(word: str) -> list[str]:
+    """Every plausible singular of one word, best guess first, no duplicates.
+
+    ``-es`` is genuinely ambiguous and no suffix rule separates the two cases:
+    ``buses -> bus`` drops two characters because the *singular* ends in a
+    sibilant, while ``phases -> phase`` drops one because the singular already
+    ends in ``e``. The surface forms are identical.
+
+    Guessing once was measured to be wrong more often than right on this
+    vocabulary: of the 45 store terms whose head noun takes that branch, **31
+    are mis-singularised** across 12 head nouns (``responses -> respons``,
+    ``nurses -> nurs``, ``cases -> cas``, ``phases -> phas``,
+    ``orthoses -> orthos``, ``databases -> databas``, ``bases -> bas``,
+    ``causes -> caus``, ``diseases -> diseas``, ``exercises -> exercis``,
+    ``expenses -> expens``, ``endoproteases -> endoproteas``) and only 14 are
+    right (``approaches -> approach``, ``processes -> process``,
+    ``lenses -> lens``, ``bypasses -> bypass``, ``censuses -> census``,
+    ``stresses -> stress``). On the ontology side 9 of 7242 labels take it, 3
+    of them wrongly.
+
+    So both are offered and the *lookup* decides, by which one an ontology
+    actually carries. The first candidate is the historical guess, so
+    :func:`singularize` and :func:`fold` are unchanged.
+    """
     w = word.lower()
     if w in _IRREGULAR:
-        return _IRREGULAR[w]
+        return [_IRREGULAR[w]]
     if w in _INVARIANT:
-        return w
+        return [w]
     # "processes" and "abscesses" are plurals of -ss words; the -ss guard in
     # _NOT_PLURAL would otherwise freeze them, so they are handled first.
     if w.endswith("sses"):
-        return w[:-2]
+        return [w[:-2]]
     if len(w) < 4 or not w.endswith("s") or w.endswith(_NOT_PLURAL):
-        return w
+        return [w]
     if w.endswith("ies") and len(w) > 4:
-        return w[:-3] + "y"
+        return [w[:-3] + "y"]
     if w.endswith("es") and w[:-2].endswith(_ES_STEMS):
-        return w[:-2]
-    return w[:-1]
+        # The ambiguous branch, and the only one that yields two.
+        return [w[:-2], w[:-1]]
+    return [w[:-1]]
+
+
+def singularize(word: str) -> str:
+    """Best-effort singular of one word — the first of
+    :func:`singular_candidates`. Wrong guesses are harmless: a key is only ever
+    *looked up*, never stored as a label."""
+    return singular_candidates(word)[0]
+
+
+def fold_candidates(term: str) -> list[str]:
+    """Every folded key ``term`` could match, best guess first.
+
+    Only the head noun varies, so this is one key per singular candidate.
+    """
+    base = normalize_term(term)
+    if not base:
+        return [base]
+    words = base.split()
+    head = words[-1]
+    return [" ".join(words[:-1] + [cand]) for cand in singular_candidates(head)]
 
 
 def fold(term: str) -> str:
     """Normalized key: punctuation folded, head noun singularized."""
-    base = normalize_term(term)
-    if not base:
-        return base
-    words = base.split()
-    words[-1] = singularize(words[-1])
-    return " ".join(words)
+    return fold_candidates(term)[0]
 
 
 @dataclass
@@ -115,9 +158,9 @@ class LabelIndex:
             self.exact[key] = iri
         else:
             self.exact.setdefault(key, iri)
-        f = fold(key)
-        if f:
-            self.folded.setdefault(f, set()).add(iri)
+        for f in fold_candidates(key):
+            if f:
+                self.folded.setdefault(f, set()).add(iri)
 
     def update(self, other: "LabelIndex", *, preferred: bool = True) -> None:
         for key, iri in other.exact.items():
@@ -153,12 +196,19 @@ class LabelIndex:
         hit = self.exact.get(key)
         if hit is not None:
             return hit, "exact"
-        f = fold(key)
-        if not f:
-            return None, None
-        candidates = self.folded.get(f)
-        if not candidates:
-            return None, None
-        if len(candidates) > 1:
-            return None, "ambiguous"
-        return next(iter(candidates)), "variant"
+        # Try each folded candidate in order. An ambiguous one does not end the
+        # search: a later candidate may resolve cleanly, and refusing on the
+        # first collision would throw away a match that exists. Ambiguity is
+        # only the answer if nothing resolved.
+        ambiguous = False
+        for f in fold_candidates(key):
+            if not f:
+                continue
+            claimants = self.folded.get(f)
+            if not claimants:
+                continue
+            if len(claimants) > 1:
+                ambiguous = True
+                continue
+            return next(iter(claimants)), "variant"
+        return None, ("ambiguous" if ambiguous else None)

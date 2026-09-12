@@ -36,6 +36,8 @@ import rdflib
 from rdflib.namespace import RDF, RDFS, OWL
 from rdflib import RDFS
 
+from wound_ontology.utils.label_match import LabelIndex
+
 OBO = "http://purl.obolibrary.org/obo/"
 MILD = "https://bioportal.bioontology.org/ontologies/MILD/"
 
@@ -126,20 +128,32 @@ def load_questions(path: str | Path) -> list[CompetencyQuestion]:
 ALT_TERM = rdflib.URIRef(OBO + "IAO_0000118")
 
 
-def label_index(graph: rdflib.Graph) -> dict[str, rdflib.URIRef]:
+def label_index(graph: rdflib.Graph) -> LabelIndex:
     """Label -> IRI, including IAO_0000118 alternative terms.
 
     Preferred labels win over synonyms, so a synonym never shadows a real label.
     Matching is case-insensitive because the CQs are written in clinical prose
     while the ontology labels follow its own casing convention.
+
+    This used to build a plain ``{lower(label): iri}`` dict and match on the
+    exact string only, which is a second normalisation rule living alongside
+    :class:`~wound_ontology.utils.label_match.LabelIndex` -- the one the rest of
+    the pipeline uses, which already carries the folded fallback. Two rules for
+    one job is what standing rule 13 forbids, and the cost was measurable: a CQ
+    asking about "Acute Wound" could not see a class labelled "Acute Wounds".
+
+    ``preferred=False`` throughout is deliberate and preserves the old
+    behaviour exactly: labels are added before alternative terms, so whoever
+    claims a key first keeps it, and resolution does not depend on graph
+    iteration order.
     """
-    idx: dict[str, rdflib.URIRef] = {}
+    idx = LabelIndex()
     for s, o in graph.subject_objects(RDFS.label):
         if isinstance(s, rdflib.URIRef):
-            idx.setdefault(str(o).strip().lower(), s)
+            idx.add(str(o), s, preferred=False)
     for s, o in graph.subject_objects(ALT_TERM):
         if isinstance(s, rdflib.URIRef):
-            idx.setdefault(str(o).strip().lower(), s)
+            idx.add(str(o), s, preferred=False)
     return idx
 
 
@@ -275,16 +289,24 @@ def _answerable(graph: rdflib.Graph, idx: dict, cq: CompetencyQuestion):
     if pred not in PREDICATE_MAP:
         return Verdict.UNEXPRESSIBLE, f"unknown CQ predicate '{pred}'", ""
 
-    s_iri = idx.get(subj.strip().lower())
-    o_iri = idx.get(obj.strip().lower())
-    missing = [n for n, v in ((subj, s_iri), (obj, o_iri)) if v is None]
+    s_iri, s_how = idx.get(subj)
+    o_iri, o_how = idx.get(obj)
+    missing = [(n, h) for n, v, h in ((subj, s_iri, s_how), (obj, o_iri, o_how))
+               if v is None]
     if missing:
         # Distinguish a label mismatch from a genuine vocabulary gap: the CQs are
         # written in clinical prose ("Wound Bed") while the ontology has its own
         # label ("Wound base"). A near miss means fix the CQ; no near miss means
         # the concept really is absent.
+        #
+        # 'ambiguous' is a third thing again -- several classes fold to the same
+        # key, so a match exists but choosing one would attach the verdict to a
+        # coin flip. Say so rather than reporting it as absent.
         hints = []
-        for name in missing:
+        for name, how in missing:
+            if how == "ambiguous":
+                hints.append(f"{name!r} (several classes share that name)")
+                continue
             close = difflib.get_close_matches(name.strip().lower(), idx.keys(),
                                               n=1, cutoff=0.75)
             hints.append(f"{name!r}" + (f" (did you mean {close[0]!r}?)" if close else ""))
@@ -295,8 +317,14 @@ def _answerable(graph: rdflib.Graph, idx: dict, cq: CompetencyQuestion):
         ok = colocation_holds(graph, s_iri, o_iri)
     else:
         ok = bool(graph.query(q).askAnswer)
-    return (Verdict.PASS if ok else Verdict.FAIL,
-            "" if ok else "query returned false", q)
+    # A label matched on its folded key rather than as written is still a pass,
+    # but it is a different fact about the ontology and the report should say so.
+    variants = [f"{n!r} matched as a variant" for n, h in
+                ((subj, s_how), (obj, o_how)) if h == "variant"]
+    note = "; ".join(variants)
+    if ok:
+        return Verdict.PASS, note, q
+    return Verdict.FAIL, "; ".join(["query returned false"] + variants), q
 
 
 def run_suite(graph: rdflib.Graph, questions) -> list[CQResult]:

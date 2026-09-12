@@ -354,16 +354,34 @@ class ConceptStore:
             combined_targets = top_targets + (list(extra_targets) if extra_targets else [])
         current = self.dict
 
-        to_process = [
-            row for _, row in df_pubmed.iterrows()
-            if str(int(row['pmid'])) not in current
-        ]
+        # The abstract database is ROW-keyed: a paper found by three queries is
+        # three rows differing only in `query`. The store is PMID-keyed. Queuing
+        # rows therefore sent the same abstract to the model once per query that
+        # found it -- measured 2026-09-11: 193 calls for 136 PMIDs on a 606-PMID
+        # corpus, and 7,536 rows queued for 5,562 PMIDs on the cap-200 fetch,
+        # a quarter of the run's cost buying nothing. Dedupe on PMID, first row
+        # wins (the abstract text is identical across rows), and say how many
+        # were folded so the row count and the call count stop looking alike.
+        seen: set[str] = set()
+        to_process = []
+        duplicate_rows = 0
+        for _, row in df_pubmed.iterrows():
+            pmid = str(int(row['pmid']))
+            if pmid in current:
+                continue
+            if pmid in seen:
+                duplicate_rows += 1
+                continue
+            seen.add(pmid)
+            to_process.append(row)
 
         if not to_process:
             print("All abstracts already in store.")
             return
 
-        print(f"Parallel Extraction: {len(to_process)} new abstracts in waves of {batch_size}...")
+        print(f"Parallel Extraction: {len(to_process)} new abstracts in waves of {batch_size}..."
+              + (f" ({duplicate_rows} duplicate rows of the same PMIDs folded)"
+                 if duplicate_rows else ""))
         sem = asyncio.Semaphore(batch_size)
         abort = asyncio.Event()
         llm.abort_event = abort

@@ -22,6 +22,8 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Iterator
 
+from wound_ontology.utils.string_utils import normalize_term
+
 _CONFIG_DIR = Path(__file__).resolve().parents[3] / "config"
 
 
@@ -144,6 +146,49 @@ def _pylist_remove(path: Path, var_name: str, terms: set[str]) -> int:
     return removed
 
 
+def _pylist_dedupe(path: Path, var_name: str) -> list[str]:
+    """Drop repeat entry lines from a set literal. Returns the values dropped.
+
+    A set literal collapses repeats on load, so a duplicated line costs nothing
+    at runtime and is invisible to `len(list)` -- WHITELIST carried 2683 lines
+    for 2679 distinct values and nothing ever said so. It is not harmless in the
+    file: `remove` deletes every matching line, so one term costs two removals
+    and a count-based check disagrees with a membership-based one. It also makes
+    the file lie to anyone reading it.
+
+    The FIRST occurrence is kept, so a term stays under the comment heading it
+    was first filed under.
+    """
+    lines = path.read_text().splitlines()
+    out: list[str] = []
+    seen: set[str] = set()
+    dropped: list[str] = []
+    in_block = False
+    depth = 0
+    for line in lines:
+        if not in_block:
+            if _declares(line, var_name):
+                in_block = True
+                depth += line.count("{") - line.count("}")
+            out.append(line)
+            continue
+        depth += line.count("{") - line.count("}")
+        if depth <= 0:
+            in_block = False
+            out.append(line)
+            continue
+        val = _entry_value(line)
+        if val is not None:
+            if val in seen:
+                dropped.append(val)
+                continue
+            seen.add(val)
+        out.append(line)
+    if dropped:
+        path.write_text("\n".join(out) + "\n")
+    return dropped
+
+
 # ── Abstract bases ────────────────────────────────────────────────────────────
 
 class BaseList(ABC):
@@ -188,6 +233,7 @@ class BaseList(ABC):
                          if t.strip().lower() not in self._terms)
         if missing:
             raise RuntimeError(self._write_failed("add", missing))
+        self.dedupe()
         return n
 
     def remove(self, terms: set[str]) -> int:
@@ -204,7 +250,29 @@ class BaseList(ABC):
         left = sorted(t for t in wanted if t in self._terms)
         if left:
             raise RuntimeError(self._write_failed("remove", left))
+        self.dedupe()
         return n
+
+    def dedupe(self) -> list[str]:
+        """Drop repeat entry lines from this list's literal, keeping the first.
+
+        Called after every add and remove, so the config files self-heal as the
+        pipeline touches them rather than needing a maintenance pass someone has
+        to remember. Membership cannot change -- the literal is a set, so a
+        repeat was already collapsed on load -- which is what makes it safe to
+        run unattended.
+        """
+        dropped = _pylist_dedupe(self._PATH, self._VAR_NAME)
+        if dropped:
+            before = set(self._terms)
+            self.load()
+            if set(self._terms) != before:
+                raise RuntimeError(
+                    f"{self._VAR_NAME}: dedupe changed membership, which it must "
+                    f"never do. Lost {sorted(before - set(self._terms))[:5]}")
+            print(f"[{self._VAR_NAME}] removed {len(dropped)} duplicate line(s): "
+                  f"{sorted(set(dropped))[:6]}")
+        return dropped
 
     def _write_failed(self, verb: str, terms: list[str]) -> str:
         """The message that used to be a silent return of 0.
@@ -241,7 +309,7 @@ class BaseList(ABC):
 
 
 class TermList(BaseList):
-    """Exact full-string match against a stored set of lowercase terms.
+    """Full-string match against a stored set of terms, normalised both sides.
 
     Subclasses must define:
       _DECL_SUFFIX  — the declaration suffix after the variable name,
@@ -252,10 +320,38 @@ class TermList(BaseList):
     _DECL_SUFFIX: str
     _DECL_CLOSE: str
 
+    @property
+    def _normalized(self) -> frozenset[str]:
+        """`_terms` under `normalize_term`, rebuilt whenever `_terms` is replaced."""
+        if getattr(self, "_norm_src", None) is not self._terms:
+            self._norm = frozenset(normalize_term(t) for t in self._terms)
+            self._norm_src = self._terms
+        return self._norm
+
     def match(self, term: str) -> bool:
+        """Lowercase first, then `normalize_term` on both sides.
+
+        Rule 13 says a name is normalised in exactly one way, and this was the
+        one place that did not. The store writes terms through `normalize_term`,
+        which turns a hyphen into a space, so a hyphenated list entry could never
+        match a store term at all: `cell-based and adipose-derived therapies` sat
+        on METHODOLOGY_BLOCKLIST while the store held `Cell Based And Adipose
+        Derived Therapies`, and the block was a silent no-op.
+
+        Measured over the 3559 store terms and 550 curated labels: 9 more terms
+        block, none is freed, and no curated class label is affected. Seven are
+        study methodology the list already meant to catch. The other two were
+        blocklist entries that were simply wrong -- `transforming growth
+        factor-beta` and `stromal cell-derived factor-1alpha` are signalling
+        molecules central to wound healing -- and they are whitelisted rather
+        than being activated by a matcher fix.
+        """
         lower = term.strip().lower()
         base  = re.sub(r"\s*\([^)]*\)\s*$", "", lower).strip()
-        return lower in self._terms or base in self._terms
+        if lower in self._terms or base in self._terms:
+            return True
+        return (normalize_term(lower) in self._normalized
+                or normalize_term(base) in self._normalized)
 
     @staticmethod
     def _label_cluster(center, terms: list[str], embs, top_n: int = 3) -> str:
