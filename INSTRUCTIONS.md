@@ -1184,6 +1184,44 @@ name — ignoring cell verdicts, a gate that skips without restoring, a cleaner
 that does not lift, a normalisation that drops the verdicts' names, a gate
 that does not re-hear its own verdicts).
 
+## 34. An external term reaches the closure through a module, never through a direct import of its source
+
+*Decided 2026-09-12.*
+
+A curated file (WONT, MILD) imports MILD's modules and nothing else. When a
+new external term is needed — a PATO determinate, a UBERON site — it is used
+in the curated file and the modules are regenerated
+(`../Disease ontologies/build_disease_proposal.sh --no-reason`); the module
+then carries the term with its label and the axioms that ground it under BFO.
+No `owl:imports <http://purl.obolibrary.org/obo/.../releases/.../x.owl>` in a
+curated file, ever, and no module is hand-edited (the one exception,
+`go_module.owl`'s property labels, is why the script leaves `go/chebi/dron`
+alone unless told otherwise).
+
+Two failures behind this. First, the hand edit of 2026-09-12 added a direct
+import of the full `pato.owl` (21 MB, 259,922 triples) to WONT so that five
+PATO classes would resolve in Protégé. The pipeline never follows a curated
+file's imports (the skeleton strips them; the schema builder reads the
+modules), so the five classes were invisible to every gate, and the module
+build script would have seeded the whole of PATO into every module. Second,
+the modules themselves had been over-extracted since June: `obi_module.owl` was
+16.3 MB with 5,549 classes and 29 roots beside `entity`, none of the debris
+referenced by WONT or MILD. Measured cause: a STAR extraction over a merge
+that contains full `pato.owl` runs away (0.9 MB without it, 15.2 MB with);
+seeding `unit` into `uo.owl` pulls in all 518 units. The fix is in the script
+(FIX 3): PATO is BOT-extracted alone and *that* joins the joint STAR; DOID and
+HP are MIREOT paths; `unit` is a label stub. After: 34,071 triples in the
+closure, 1,174 classes, 3 foreign roots, schema rebuild 33 s → 2.6 s.
+
+The rule cuts both ways: a module must carry **everything** the curated
+files reference, with a label — the build is wrong if any external class used
+by WONT or MILD comes out unlabelled — and **nothing** they do not.
+
+Enforced by: `build_disease_proposal.sh` refuses to run if WONT or MILD
+imports a release ontology directly, and aborts if the joint module exceeds
+3 MB; `schema_builder.stale()` lists every module as a source, so a
+regenerated module regenerates the schema (rule 32).
+
 ## Adding to this file
 
 When a universal design choice is made:

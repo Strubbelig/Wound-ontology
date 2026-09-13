@@ -8,8 +8,17 @@ write to a curated file (INSTRUCTIONS, standing rule). Two files are involved:
 | **WONT** | `data/ground truth/ground_truth_final.owl` | Turtle, despite the `.owl` extension — parse with `parse_graph`, not the XML reader |
 | **MILD** | `../Disease ontologies/Disease proposal 2.ttl` | imported by WONT via `owl:imports` |
 
-**After any edit below, re-run the reasoner gate.** Nothing here has been
-applied. Every figure is measured against the files as of 2026-09-10.
+**After any edit below, re-run the reasoner gate.** Every figure is measured
+against the files as of the date given on it.
+
+> **Status 2026-09-12.** Moritz applied A, most of E and part of F by hand in
+> Protégé (both files re-serialised; MILD only relabels MILD_120008 and rewrites
+> four disjointness axioms). Reviewed the same day: IRIs renumbered from
+> `WOND_1200xx` to `WONT_0000475`–`WONT_0000510` with `extend.next_free_id`,
+> definitions written for every new class, the labels below adjusted, the
+> direct `owl:imports pato.owl` removed and the modules regenerated (F2). ELK
+> over the skeleton: 0 unsatisfiable. Competency score 6 → **15 of 65**
+> (measured on the full closure). What is still open is listed per section.
 
 ### Order of work
 
@@ -18,18 +27,25 @@ This is the order to do them, and it is the schedule in `ROADMAP.md`.
 
 | do | section | what | roadmap |
 |---|---|---|---|
-| 1st | **B** | 3 MILD `subClassOf` axioms — small, and one of them unblocks a WONT chain | P0 |
-| 2nd | **A** | `Chronic wound` gets its defining axiom, and the chronic branch gets populated | P1 |
-| 3rd | **E** | the same pattern fourteen more times — **16 competency questions** | P1 |
+| ~~1st~~ | **B** | **not needed** — measured 2026-09-12: all three parents are already asserted, inside `rdfs:subClassOf` intersections (`MILD_120023 ⊑ tendency ⊓ …`, `MILD_120008 ⊑ MILD_120023 ⊓ …`, `MILD_120049 ≡ MILD_120022 ⊓ …`). The 10 Sep scan only looked for *named* parents. | done |
+| ~~2nd~~ | **A** | **applied 2026-09-12** (A1–A3; A4 still open) | P1 |
+| ~~3rd~~ | **E** | **applied 2026-09-12** except `colonized`, `full-thickness`, `Healed wound`; two extra determinables minted (`degree of malignancy`, `acute`) | P1 |
 | — | C | **withdrawn.** Do not apply the 38-axiom orphan patch | — |
 | — | D | open modelling questions; D2 blocks a pipeline-side filter | P2 |
-| 4th | **F** | bridge the 5 used import stubs; shrink `obi_module.owl` — 32 roots beside `entity` | P1, after E |
+| ~~4th~~ | **F** | **F2 done 2026-09-12** (obi_module 16.3 MB → 1.0 MB; 29 foreign roots → 3). F1 is now only `unit` and `disease` — a curator's call | P1 |
 
 ---
 
 ## A. WONT — give `Chronic wound` its defining axiom
 
-*Agreed 2026-09-10. Three edits.*
+*Agreed 2026-09-10. Three edits.* **Applied 2026-09-12** with these
+deviations from the text below: the determinable is `WONT_0000475 degree of
+time after disease inception` (not "degree of healing progression"), its
+determinates are `WONT_0000476 acute` and `WONT_0000477 chronic`, and `Wound`
+carries `has_quality some` that determinable. The bearer in the definition is
+"pathological disorder", so MILD can reuse the pair. **A4 is still open** —
+`Chronic wound` still has zero subclasses; the four YES rows of
+`data/review/chronic_decision_sheet.csv` are not asserted.
 
 ### Why
 
@@ -279,6 +295,24 @@ and that half is not a WONT change.
 
 *Added 2026-09-10. The same pattern as **A**, applied to the rest of the family.
 This is **P1** in `ROADMAP.md` and carries 16 competency questions.*
+
+**Applied 2026-09-12, as follows** (ids are the renumbered ones):
+
+| done | what |
+|---|---|
+| E1 | 5 PATO stubs in WONT; the logic now comes through `pato_module`/`obi_module` (F2), not a direct `owl:imports pato.owl` |
+| E2 | `degree of microbial burden` (478) with `contaminated` 479, `infected` 480, `sterile` 486 — **`colonized` was not minted; `infected` was, against the advice above.** `degree of tissue perfusion` 487 / `ischemic` 488. `full-thickness` not minted. Extra: `degree of malignancy` 489 with `benign` 490 / `malignant` 491. |
+| E3 | `Open wound` 504, `Closed wound` 505, `Large wound` 507, `Deep wound` 508, `Ischemic wound` 509 (≡ `Wound co-located with impaired arterial inflow` 510 ⊓ ischemic), `Epithelialized wound` 506 (in place of `Healed wound`; axiom on `epithelialized` added in review). No `Full-thickness wound`. |
+| E4 | `Clean wound` ≡ Wound ⊓ sterile. `Contaminated wound` and `Infected wound` are *subclasses* of a new hub `WONT_0000481 Wound with recognized microbial burden` (≡ Wound ⊓ has_quality some (contaminated ∪ infected), disjoint with `Clean wound`); each carries `has_quality some <its determinate>` as a necessary condition only. **`Infected wound` lost its `owl:equivalentClass`** in the process — it is primitive now. `Colonized wound` (WONT_0000075) was deleted. |
+| E5 | both alt terms on `Chronic wound` |
+
+Still open from this section: CQ010/CQ012 (`Large`/`Deep` name the PATO
+terms `increased size`/`increased depth` — a CQ-file fix), CQ011
+(`full-thickness`), CQ110 (`Healed wound`), CQ033 (needs `Peripheral Artery
+Disease` spelled as WONT has it, plus the co-location axiom on 510 — the venous
+twin `WONT_0000384` shows the shape; the natural target is `WONT_0000229`).
+Note PATO's own axiom `increased depth ⊑ increased size`: every `Deep wound`
+is inferred a `Large wound`. Decide whether that is wanted.
 
 ### Why this is one job and not fourteen
 
@@ -530,7 +564,30 @@ is in the closure and is where OBI-style modelling puts units (an information
 content entity). Decide that, or leave `unit` outside BFO deliberately and say
 so in a comment — either is defensible; silence is not.
 
-### F2 — the debris
+### F2 — the debris — **done 2026-09-12**
+
+Root cause, measured: STAR over a merge that contains full `pato.owl` runs
+away (six upper sources alone 0.9 MB; with `pato.owl` added 15.2 MB; with
+`uo.owl` added 1.4 MB — every one of the 518 units, because `unit` is seeded).
+`build_disease_proposal.sh` (FIX 3) now BOT-extracts PATO on its own first
+and merges that module into the joint STAR; `unit` is a label stub; DOID and
+HP are MIREOT paths to `disease` / `Phenotypic abnormality`; the one UBERON
+term (`mucosa`) is a MIREOT path to `material entity`; the two ChEBI roots are
+seeded so the ChEBI leaf module stays grounded. The script refuses to run if
+WONT or MILD imports a full release ontology, and if the joint module exceeds
+3 MB. `go/chebi/dron` are not rebuilt unless `--leaf-modules` is passed.
+
+| | before | after |
+|---|---|---|
+| `obi_module.owl` | 16.3 MB, 5 549 classes | 1.0 MB, 248 classes |
+| closure (WONT + MILD + modules) | 220 252 triples, 6 169 classes | 34 071 triples, 1 174 classes |
+| roots beside `entity` | 29 foreign | 3: `disease`, `unit`, `Skin` (FMA_7163, WONT's own stub) |
+| schema rebuild | 33 s | 2.6 s |
+
+The four organisms are grounded (`NCBITaxon_2 ⊑ OBI_0100026 organism ⊑
+material entity` via `ncbitaxon_module` + `obi_module`), so **F1 reduces to
+`unit` and `disease`** — and to `FMA_7163 Skin`, which WONT stubs without a
+parent.
 
 27 roots and ~690 classes that nothing in WONT or MILD references, all pulled
 into `obi_module.owl` by the extraction signature. Two options:
@@ -568,3 +625,6 @@ process restart — that is the signal that the edit reached the prompt.
 | 2026-09-11 | **F added** — the import closure has 32 parentless roots beside `entity`, ~700 disconnected classes, only 24 of them used by the curated layer, and zero curated classes affected. Closure hygiene, not modelling. |
 | 2026-09-11 | **B reported applied, but `Disease proposal 2.ttl` on disk is unchanged since 17 Aug** (96 501 bytes) and none of the three axioms is in it. No `.ttl`/`.owl` anywhere in the tree was modified in the last two days. Unsaved in Protégé, or saved elsewhere — to resolve before anything downstream reads MILD. |
 | 2026-09-10 | Found that `Infected wound` and `Malignant wound` already carry better axioms than CQ093/CQ091 ask for — flagged as a question-file decision, not a WONT edit |
+| 2026-09-12 | **B closed as not needed** — the three parents were there all along, inside intersections. |
+| 2026-09-12 | **A, E (mostly), F2 applied by hand and reviewed.** 36 new WONT entities renumbered WONT_0000475–510; every new class defined; `Wound ⊑ has_quality some epithelialized` removed (a determinate of the wound *base*); definition that had landed on `skos:relatedMatch` moved to IAO_0000115; Jackson "grades" relabelled as zones; `Jackson burn wound zone model` renamed `… classification` because `model` is a blocked keyword (`test_blocklist_respects_the_ontology` caught it). Modules regenerated; CQ score 6 → 15/65. |
+| 2026-09-12 | CQ checker now sees a restriction inside an `owl:equivalentClass` intersection (it entails the `rdfs:subClassOf` form); before, all ten precedent classes and every new one read as FAIL. |

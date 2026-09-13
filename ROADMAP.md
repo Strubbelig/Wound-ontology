@@ -41,10 +41,14 @@ Curation raises pipeline yield. It does not spend it.
 Every figure measured, never estimated (rule 15). Add a column per revision so
 the trend is visible rather than asserted.
 
-| | 2026-09-10 | 2026-09-11 |
-|---|---|---|
-| corpus | **142 abstracts extracted** of 606 fetched — 464 unextracted, extraction started 2026-09-10 | **606 of 606 extracted** (2026-09-11 21:01) — **12,901 entities** (3.6x); 5,425 more fetched at cap 200, extraction gated on E |
-| distinct store entities | 3536 | **12,901** |
+| | 2026-09-10 | 2026-09-11 | 2026-09-12 |
+|---|---|---|---|
+| corpus | **142 abstracts extracted** of 606 fetched — 464 unextracted, extraction started 2026-09-10 | **606 of 606 extracted** (2026-09-11 21:01) — **12,901 entities** (3.6x); 5,425 more fetched at cap 200, extraction gated on E | unchanged |
+| distinct store entities | 3536 | **12,901** | unchanged |
+| **CQ in-scope score** (full closure) | 6 / 65 | 6 / 65 | **15 / 65** — A + E applied by hand; checker now sees defining axioms |
+| import closure (WONT + MILD + modules) | 220,252 triples, 6,169 classes, 29 foreign roots | same | **34,071 triples, 1,174 classes, 3 foreign roots** (`disease`, `unit`, `Skin`) |
+| `obi_module.owl` | 16.3 MB | same | **1.0 MB** |
+| WONT classes | 343 own | same | **379** (36 minted, 6 deleted) |
 | class-hierarchy edges (with provenance) | 4011 — **3552 `text`**, 459 `curated` |
 | entities placed under a curated WONT/MILD class | **2811 (80%)** |
 | entities parked at an upper-level root | 684 (19%) |
@@ -369,7 +373,8 @@ round and curating it by hand in P2.
   than rewrites when only the date would change, and stops the process when the
   content changed (rule 32). "Regenerate the schema" is no longer a manual
   step anywhere.
-- Apply **`WONT_TODO` B** — 3 MILD `subClassOf` axioms.
+- ~~Apply **`WONT_TODO` B**~~ — closed 2026-09-12 as not needed: the three
+  parents were asserted all along, inside `rdfs:subClassOf` intersections.
 
 **Exit:** the 4 label-miss CQs and the 2 phase CQs resolve, measured; the
 skeleton is provably newer than WONT; full suite green; `git status` clean.
@@ -377,6 +382,18 @@ skeleton is provably newer than WONT; full suite green; `git status` clean.
 ---
 
 ### P1 · The determinate-quality block — 12–26 Sep · **the big one**
+
+> **2026-09-12 — applied by hand, reviewed, mostly done.** A1–A3 and E1–E5
+> are in WONT (36 entities, `WONT_0000475`–`0000510`; see `WONT_TODO` for the
+> deviations: no `colonized`, no `full-thickness`, `Epithelialized wound` in
+> place of `Healed wound`, `infected` minted as a determinate, `degree of
+> malignancy` added, `Infected wound` now primitive). F2 done on the way (the
+> modules had to carry the PATO terms). Measured: CQ **6 → 15 / 65**; ELK over
+> the skeleton 0 unsatisfiable. **Still open here:** A4 (chronic branch empty —
+> CQ001/002/006), CQ010/012 (`Large`/`Deep` vs PATO's `increased size`/`depth`
+> — question-file fix), CQ011 (`full-thickness`), CQ110 (`Healed wound`),
+> the co-location axiom on `WONT_0000510`, and the burn-grade duplication
+> (`WONT_0000052–56` beside the new Hildanus/Derganc individuals).
 
 `WONT_TODO` **A** (chronic) and **E** (the other fourteen). One pattern:
 `X ≡ Wound ⊓ has_quality some <determinate>`. Measured against WONT + MILD +
@@ -581,6 +598,7 @@ defect to fix, not to exclude.
 
 | date | what |
 |---|---|
+| 2026-09-12 | **WONT/MILD hand edit reviewed; modules regenerated (F2).** Moritz applied `WONT_TODO` A and most of E in Protégé. Review: 36 `WOND_1200xx` IRIs renumbered to `WONT_0000475`–`0000510` with `extend.next_free_id`; definitions written for all 36; `Wound ⊑ has_quality some epithelialized` removed; a definition that had landed on `skos:relatedMatch` moved; Jackson's zones relabelled as zones; direct `owl:imports pato.owl` removed. `build_disease_proposal.sh` FIX 3: the 16.3 MB `obi_module` was STAR running away over full `pato.owl` (measured: 0.9 MB without it, 15.2 MB with) — PATO is now BOT-extracted alone first, DOID/HP are MIREOT paths, `unit` a stub; closure 220,252 → **34,071 triples**, 29 foreign roots → 3, schema rebuild 33 s → 2.6 s, every external class WONT/MILD uses labelled. CQ checker taught to see restrictions inside `owl:equivalentClass` (they entail the subClassOf form) — 1 test, mutation-checked. **CQ 6 → 15 / 65.** B closed as not needed (parents were inside intersections). |
 | 2026-09-12 | **The store is the one record (rule 33).** Blocklist, predicate filter, prune and reasoner gate now write *verdicts* into the store's `decisions` record instead of deleting; one `effective_records()` applies them for every reader; verdicts are authored and liftable, so un-blocking a term and re-hearing a quarantined triple against a newer WONT both work. Measured: live store 606 docs / 22,280 cells, effective view identical to raw (no verdicts yet); the 278 entities the blocklist removed mid-extraction are gone for good. 16 tests, 5 mutations fail by name. |
 | 2026-09-12 | **Schema staleness closed** (the last open P0 item besides B): the builder moved into the package as `llm/schema_builder.py`, `run_extract_to_store` regenerates it when any source is newer; 14 tests, 4 mutation-checked by name. Measured: rebuild 33 s, current schema identical to a fresh build apart from the date. The full-suite run of 2026-09-12 also found and fixed the `Skin grafting → Skin graft` guard hole (a contradicted typing read as unknown). |
 | 2026-09-10 | Created. Baseline measured: 142 abstracts, CQ 6/65, 47 of 51 unresolved concepts absent from the store, 9 of 18 FAILs blocked on `RelationType`. |
