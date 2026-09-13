@@ -213,6 +213,23 @@ class Orchestrator:
         signature because the deprecated free-text path still consumes them, and
         both announce their inertness rather than pretending to work.
         """
+        # The prompt is built from config/extraction_schema.yaml, a generated
+        # snapshot of WONT + MILD. Regenerate it here if the ontologies have
+        # moved since, so no abstract is ever extracted against a WONT older
+        # than the one on disk. The generated Pydantic module was already
+        # imported when this process started, and a Python enum cannot be
+        # swapped under the eight modules that bound it, so a rebuild that
+        # changed anything stops here rather than extract with the old one.
+        from wound_ontology.llm import schema_builder
+        outcome = schema_builder.ensure_current()
+        if outcome == "rewritten":
+            raise RuntimeError(
+                "[Orchestrator] The extraction schema was REGENERATED from "
+                "WONT + MILD and differs from the one this process imported. "
+                "Nothing was extracted. Restart the Python process (or kernel) "
+                "and run again; it will then extract with the current schema."
+            )
+
         # add_llm_extracts runs the schema-constrained two-stage path, whose prompts
         # carry the generated BFO category tree rather than store vocabulary. Loading
         # bfo.owl here (~11s) only to pass labels nothing reads would be dead work, so
@@ -353,17 +370,15 @@ class Orchestrator:
         from wound_ontology.utils.string_utils import smart_title
 
         typings: dict[str, set[str]] = {}
-        for rec in self.store.dict.values():
-            for entity, attrs in rec.get("entities", {}).items():
-                for triple, value in attrs.items():
-                    if value != 1.0 or ":" not in triple:
-                        continue
-                    pred, target = triple.split(":", 1)
-                    if pred.strip().lower().replace(" ", "_") not in ("is_a", "subclass_of"):
-                        continue
-                    declared = declared_category(target.strip())
-                    if declared is not None:
-                        typings.setdefault(smart_title(entity.strip()), set()).add(declared)
+        for _, entity, triple, value in self.store.assertions():
+            if value != 1.0 or ":" not in triple:
+                continue
+            pred, target = triple.split(":", 1)
+            if pred.strip().lower().replace(" ", "_") not in ("is_a", "subclass_of"):
+                continue
+            declared = declared_category(target.strip())
+            if declared is not None:
+                typings.setdefault(smart_title(entity.strip()), set()).add(declared)
         return typings
 
     def store_categories(self) -> dict[str, str]:
@@ -1392,9 +1407,19 @@ class Orchestrator:
             self._gate = ReasonerGate(self.build_reasoner_skeleton())
         return self._gate
 
+    GATE_AUTHOR = "reasoner_gate"
+
     def run_gate_store_relations(self, store=None, quarantine: bool = True,
                                  apply: bool = True):
         """Reason over the store's RELATIONS, before any hierarchy is built.
+
+        A quarantined triple is REJECTED in the store -- a verdict by
+        `reasoner_gate` beside the assertion -- not deleted. With `apply`, the
+        gate's own earlier verdicts are lifted first, so the run re-tests every
+        relation against the skeleton as it is NOW: a triple quarantined
+        against last month's WONT gets its hearing again. If the gate then
+        cannot run, the lifted verdicts are put back; a skipped gate must not
+        turn into an un-vetted store.
 
         The sibling gate, `run_gate_hierarchy_edges`, runs at the other end of
         the pipeline and checks `is_a` edges. The two are not redundant: they see
@@ -1419,6 +1444,7 @@ class Orchestrator:
         )
 
         st = store or self.store
+        lifted = st.lift_decisions(self.GATE_AUTHOR) if apply else None
         entities, relations, report = store_to_gate_inputs(
             st.dict, resolve_conflict=self.reasoner_gate.least_common_category)
         print("[Orchestrator] " + describe_gate_inputs(entities, relations, report)
@@ -1447,6 +1473,9 @@ class Orchestrator:
         if not relations:
             print("[Orchestrator] No gateable relations. This is NOT a clean result "
                   "unless the store is genuinely empty -- see the counts above.")
+            if lifted:
+                n = st.restore_decisions(lifted)
+                print(f"[Orchestrator] {n} earlier gate verdict(s) put back.")
             return None
 
         result = self.reasoner_gate.check(entities, relations)
@@ -1455,33 +1484,23 @@ class Orchestrator:
             print(f"[Orchestrator] *** GATE DID NOT RUN: {result.skipped} ***\n"
                   f"[Orchestrator] *** All {len(relations)} relation(s) were accepted "
                   f"WITHOUT being checked. This is not a clean result. ***")
+            if lifted:
+                n = st.restore_decisions(lifted)
+                print(f"[Orchestrator] {n} earlier gate verdict(s) put back.")
             return result
 
         if apply and (result.quarantined_relations or result.quarantined_entities):
             # A quarantined triple is ONE axiom but many store cells: the store is
             # keyed by document, so the same assertion sits under every abstract
-            # that made it. All of them have to go, or the next get_data rebuild
-            # puts the edge straight back.
+            # that made it. A cell verdict is keyed by (entity, triple) and so
+            # covers every document at once; the assertions stay in the file.
             doomed = {(r.subject, f"{normalize_predicate(r.predicate.value)}: {r.object}")
                       for r in result.quarantined_relations}
-            data = st.dict
-            removed = 0
-            hit: set = set()
-            for doc in data.values():
-                if not isinstance(doc, dict):
-                    continue
-                for label, attrs in doc.get("entities", {}).items():
-                    if not isinstance(attrs, dict):
-                        continue
-                    for key in [k for k in attrs if (label, str(k)) in doomed]:
-                        del attrs[key]
-                        removed += 1
-                        hit.add((label, str(key)))
-            st.dict = data
-            st.save()
-            print(f"[Orchestrator] Removed {removed} store cell(s) for "
-                  f"{len(hit)} quarantined triple(s), across all documents "
-                  f"asserting them.")
+            hit = {(e, t) for _, e, t, _ in st.assertions() if (e, t) in doomed}
+            n = st.reject_cells(hit, by=self.GATE_AUTHOR,
+                                note=(result.explanation or "unsatisfiable under the skeleton")[:200])
+            print(f"[Orchestrator] Rejected {n} triple(s) the reasoner quarantined; "
+                  f"the assertions stay in the store with the verdict beside them.")
             missed = doomed - hit
             if missed:
                 print(f"[Orchestrator] *** {len(missed)} quarantined triple(s) were "

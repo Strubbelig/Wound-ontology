@@ -103,6 +103,30 @@ def test_quality_restriction_is_found(graph):
     assert r.verdict is Verdict.PASS
 
 
+def test_a_defining_axiom_answers_a_restriction_cq(graph):
+    """`Open Wound ≡ Wound and has_quality some open` entails the necessary
+    condition the CQ asks for. WONT states every determinate-defined class this
+    way, and a checker that only walked rdfs:subClassOf reported all of them
+    as FAIL (8 of 9 has_quality CQs, measured 2026-09-12)."""
+    from rdflib.collection import Collection
+    g = graph
+    wound = URIRef(EX + "Wound")
+    open_q = URIRef(EX + "open"); g.add((open_q, RDF.type, OWL.Class)); g.add((open_q, RDFS.label, rdflib.Literal("open")))
+    ow = URIRef(EX + "Open_Wound"); g.add((ow, RDF.type, OWL.Class)); g.add((ow, RDFS.label, rdflib.Literal("Open Wound")))
+    r = rdflib.BNode()
+    g.add((r, RDF.type, OWL.Restriction))
+    g.add((r, OWL.onProperty, URIRef(OBO + "RO_0000086")))
+    g.add((r, OWL.someValuesFrom, open_q))
+    inter = rdflib.BNode(); lst = rdflib.BNode()
+    Collection(g, lst, [wound, r])
+    g.add((inter, RDF.type, OWL.Class)); g.add((inter, OWL.intersectionOf, lst))
+    g.add((ow, OWL.equivalentClass, inter))          # no rdfs:subClassOf at all
+    res = run_suite(g, [cq("T4b", ("Open Wound", "has_quality", "open")),
+                        cq("T4c", ("Open Wound", "has_quality", "reddened"))])
+    assert res[0].verdict is Verdict.PASS, res[0].detail
+    assert res[1].verdict is Verdict.FAIL, "a quality the axiom does not state must still fail"
+
+
 def test_rejected_relation_is_unexpressible_not_failed(graph):
     """Blaming the ontology for a CQ written against a relation it deliberately
     rejects would be misleading."""

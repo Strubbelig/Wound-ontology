@@ -133,6 +133,10 @@ When the reasoner rejects something, isolate it with an explanation and commit
 the rest of the batch. Nothing good is discarded because something adjacent was
 bad.
 
+*Refined by rule 33 (2026-09-12):* the isolation is a verdict written into the
+store beside the assertion, not a removal into a side file. The quarantine
+directory remains as the per-batch log.
+
 ## 6. Analysis artifacts are per-analysis, and builds replace
 
 *Decided 2026-09-03.*
@@ -778,7 +782,7 @@ separator — `MaterialEntity`, `Material Entity`, `Materialentity`,
 answers only for a string that already *is* one of the fifteen, and it is what
 lets a cache written before today keep reading correctly.
 
-`ident()` in `scripts/build_extraction_schema.py` is the one place the CamelCase
+`ident()` in `wound_ontology/llm/schema_builder.py` is the one place the CamelCase
 form is reconstructed, for Python and LinkML identifiers that cannot hold a
 space. `BFOCategory.MaterialEntity` is a member name; `'material entity'` is its
 value, and only the value is ever compared or stored.
@@ -1083,6 +1087,102 @@ the class a determinate defines) and carries the test above.
 Related: rule 20 (a BFO category is declared, never matched) is the same
 instinct one level up — where a thing sits is stated, not inferred from how it
 looks.
+
+## 32. A snapshot of the ontology checks its own age before it is used
+
+*Decided 2026-09-12.*
+
+Two pipeline files are derived from WONT + MILD and consumed instead of them:
+`output/owl/skeleton_tbox.ttl` (what both reasoner gates reason over) and
+`config/extraction_schema.yaml` with its generated `extraction_models.py` (what
+every abstract is prompted with). Each is a **snapshot**, and a snapshot is
+correct only while its sources have not moved. So the step that consumes one
+compares modification times first and rebuilds if any source is newer — the
+consumer asks, not the person who last edited the ontology, and not a
+checklist.
+
+The rule has three parts:
+
+- **The consumer checks, not the producer.** The check runs where the snapshot
+  is read (`Orchestrator.build_reasoner_skeleton`, called from
+  `reasoner_gate`; `schema_builder.ensure_current`, called first thing in
+  `run_extract_to_store`), because a producer that is never run cannot check
+  anything.
+- **Every source counts.** The schema resolves a class's BFO category through
+  the import modules, so the modules directory is a source, not only WONT and
+  MILD. Missing a source and calling the snapshot current is the failure in a
+  new coat.
+- **A rebuild that changes nothing does not dirty the tree.** The generated
+  files carry a date stamp; a rebuild that differs only there is a no-op, and
+  the outputs are touched, not rewritten — otherwise every WONT save would
+  produce a spurious diff and the real regenerations would drown in it.
+
+The failure: `skeleton_tbox.ttl` was found on 2026-09-10 to be **fifteen days**
+older than WONT, with both gates reasoning over the old one and nothing said.
+The schema had the same hole, measured in sync on 2026-09-12 only because
+nobody had edited WONT since the last hand regeneration on 2026-09-08 — and
+WONT_TODO E was about to add fourteen classes.
+
+One consequence is deliberate: the generated Pydantic module is Python, already
+imported by eight modules when extraction starts, and an enum cannot be swapped
+under them. A rebuild that changed content therefore **stops the process** with
+an instruction to restart, rather than extract with the old schema and mention
+the new one. Extraction is the expensive, never-repeated step; running it
+against a WONT that no longer exists is the one thing this rule exists to
+prevent.
+
+Enforced by: `tests/test_extraction_schema_freshness.py` (14 tests) and the
+skeleton tests in `tests/test_no_silent_failure.py`.
+
+## 33. The store is the one record; a rejection is a verdict in it, never a deletion
+
+*Decided 2026-09-12, on Moritz's instruction: "Store is the sole truth. All the
+others are just views."*
+
+`concept_store_*.json` is the only record. The hierarchies, the context
+matrix, the lattice and the OWL are views rebuilt from it (rule 6), and the
+curated lists and the mapping are *inputs* to decisions about it. So a
+decision about an assertion lives **in the store, beside the assertion**,
+under the reserved record `decisions`:
+
+- `entity_verdicts` — a whole term rejected: `{status, by, when, note}`
+- `cell_verdicts` — one `(entity, triple)` rejected, across every document
+  that asserted it
+- `renamed` — what the mapping turned a label into, and when
+
+Nothing an abstract said is ever `del`-ed. Three consequences:
+
+- **One reading.** `effective_records()` in `concept_store.py` is the only
+  function that applies verdicts, and every reader — the hierarchies, the
+  matrix, the cleaner's scans, the gate adapter — goes through it, whether it
+  was handed a `ConceptStore`, a fake with a `.dict`, or the raw dict. A
+  verdict is honoured everywhere or nowhere. The `decisions` record carries no
+  `entities` key on purpose, so a legacy `rec.get("entities", {})` sees
+  nothing there.
+- **Authored, so liftable.** Every verdict names its author (`blocklist`,
+  `predicate_filter`, `prune`, `reasoner_gate`, …). `StoreCleaner.clean()`
+  lifts its own earlier verdicts before deciding again, so a term whose list
+  entry was withdrawn comes back; `run_gate_store_relations` lifts the gate's
+  and re-tests every relation against the skeleton as it is *now* — and puts
+  them back if the gate cannot run, because a skipped gate must not un-vet the
+  store.
+- **Undecided needs no mark.** A cell with an assertion and no verdict stands;
+  a cell with no assertion is undecided (rule 10). Only rejection is written.
+
+The failure: the 606-abstract extraction of 2026-09-10/11 had **278 entities
+removed by the blocklist mid-run** (the milestone callback), visible only in
+`pc_extract.log`; the reasoner gate's quarantine lived in a gitignored
+directory; and the store on disk was a pure raw record (22,280 cells, all
+`1.0`, no synthetic records) only because nothing past step 3 had run on it
+yet. Those 278 cannot be restored — there is nothing to lift.
+
+Measured on the switch: the effective view of the live store equals the raw
+one cell for cell (22,280 = 22,280), so no downstream view moved.
+
+Enforced by: `tests/test_store_verdicts.py` (16 tests; five mutations fail by
+name — ignoring cell verdicts, a gate that skips without restoring, a cleaner
+that does not lift, a normalisation that drops the verdicts' names, a gate
+that does not re-hear its own verdicts).
 
 ## Adding to this file
 

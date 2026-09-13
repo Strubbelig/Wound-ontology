@@ -546,8 +546,11 @@ The first is the real fix. Do it *after* E, so one HermiT run covers both.
 
 ### F3 — after either
 
-Rebuild the skeleton (`build_reasoner_skeleton(force=True)` — P0's staleness
-check will now do it unprompted) and regenerate the extraction schema.
+Nothing to run by hand any more. The skeleton rebuilds itself when a gate
+next reads it, and the extraction schema regenerates itself when extraction
+next starts (rule 32; both compare modification times against WONT, MILD and
+the modules). If the schema changed, extraction stops once and asks for a
+process restart — that is the signal that the edit reached the prompt.
 
 ---
 

@@ -68,7 +68,7 @@ def test_scaled_ancestor_columns_are_not_mistaken_for_types(lattice):
 
 # ── the rule: only a label the ontologies know can be judged ────────────────
 
-KNOWN_MATERIAL = "2nd degree burn"      # GROUNDING: MaterialEntity
+KNOWN_MATERIAL = "Second-degree burn wound"   # GROUNDING: MaterialEntity (WONT_0000483; "2nd degree burn" is its alt term since 2026-09-12)
 KNOWN_PROCESS = "Autolytic wound debridement process"   # GROUNDING: Process
 KNOWN_QUALITY = "Redness"               # GROUNDING: Quality
 

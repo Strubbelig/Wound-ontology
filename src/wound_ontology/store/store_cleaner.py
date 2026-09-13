@@ -5,15 +5,23 @@ from collections import Counter, defaultdict
 from typing import Any
 
 from wound_ontology.store.base_cleaner import BaseCleaner
+from wound_ontology.store.concept_store import records_of
 
 class StoreCleaner(BaseCleaner):
     """
-    Removes out-of-scope entities and invalid predicates from a ConceptStore.
+    Rejects out-of-scope entities and invalid predicates in a ConceptStore.
 
-    Two cleaning operations:
-      - Entity blocklist  : removes methodology/study-design entities by name.
-      - Predicate filter  : strips attributes whose predicate is not in allowed_predicates.
-      - Empty-entity prune: removes entities left with zero true attributes after the above.
+    Three operations, each written into the store as a verdict (``by`` names
+    the rule, so it can be lifted and re-applied when the lists change):
+      - Entity blocklist  : rejects methodology/study-design entities by name   (by="blocklist")
+      - Predicate filter  : rejects cells whose predicate is not allowed        (by="predicate_filter")
+      - Empty-entity prune: rejects entities left with no standing true cell   (by="prune")
+
+    None of these deletes. Until 2026-09-12 all three did, so a term blocked by
+    a list entry that was later withdrawn stayed gone, and the 278 entities
+    the blocklist removed during the 606-abstract extraction left no trace in
+    the store. `clean()` first lifts its own earlier verdicts, so every run
+    reflects the lists as they are now -- un-blocking a term works.
 
     Usage::
 
@@ -43,7 +51,7 @@ class StoreCleaner(BaseCleaner):
                     blocked_entity_examples.append(entity)
 
         if blocked:
-            store.entities = [e for e in store.entities if e not in blocked]
+            store.reject_entities(blocked, by="blocklist", note="blocked by name")
 
         return {
             **dict(stats),
@@ -126,8 +134,8 @@ class StoreCleaner(BaseCleaner):
         seen: set[str] = self._load_seen()
 
         freq: Counter = Counter()
-        for pmid_data in store._dict.values():
-            for _, attrs in pmid_data.get("entities", {}).items():
+        for _, ents in records_of(store):
+            for _, attrs in ents.items():
                 for attr in attrs:
                     if ':' in attr:
                         freq[attr.split(':', 1)[1].strip()] += 1
@@ -328,8 +336,10 @@ class StoreCleaner(BaseCleaner):
                 stats["rogue_predicates_removed"] += 1
                 rogue_pred_counts[predicate] += 1
 
-        # Replace the store's predicate set with only allowed predicates.
-        store.predicates = list(self.allowed_predicates)
+        doomed = [(e, t) for _, e, t, _ in store.assertions()
+                  if ':' in t and t.split(':', 1)[0].strip() not in self.allowed_predicates]
+        store.reject_cells(doomed, by="predicate_filter",
+                           note=f"predicate not in {sorted(self.allowed_predicates)}")
 
         return {
             **dict(stats),
@@ -345,19 +355,10 @@ class StoreCleaner(BaseCleaner):
         self._reload_lists()
         stats: dict[str, int] = defaultdict(int)
 
-        for pmid_data in store._dict.values():
-            for _, attrs in pmid_data.get("entities", {}).items():
-                # Identify any attribute whose target part is blocked.
-                to_delete = [
-                    attr for attr in attrs
-                    if ':' in attr and self._is_blocked(attr.split(':', 1)[1].strip())
-                ]
-                for attr in to_delete:
-                    del attrs[attr]
-                    stats["blocked_targets_removed"] += 1
-
-        # Save only if there were modifications.
-        store.save()
+        doomed = {(e, t) for _, e, t, _ in store.assertions()
+                  if ':' in t and self._is_blocked(t.split(':', 1)[1].strip())}
+        stats["blocked_targets_removed"] = store.reject_cells(
+            doomed, by="blocklist", note="target blocked by name")
         return dict(stats)
 
     def prune_empty_entities(self, store) -> dict:
@@ -368,17 +369,17 @@ class StoreCleaner(BaseCleaner):
         """
         stats: dict[str, int] = defaultdict(int)
 
-        for pmid_data in store._dict.values():
-            entities = pmid_data.get("entities", {})
-            to_delete = [
-                entity for entity, attrs in entities.items()
-                if not any(v == 1.0 for v in attrs.values())
-            ]
-            for entity in to_delete:
-                del entities[entity]
-                stats["empty_entities_pruned"] += 1
-
-        store.save()
+        # An entity is empty when NO standing cell anywhere asserts it -- per
+        # store, not per abstract. The old per-abstract deletion removed a term
+        # from the one abstract that only denied it while keeping it elsewhere,
+        # which was a partial record dressed as a prune.
+        standing: set[str] = set()
+        for _, entity, _, value in store.assertions():
+            if value == 1.0:
+                standing.add(entity)
+        empty = [e for e in store.entities if e not in standing]
+        stats["empty_entities_pruned"] = store.reject_entities(
+            empty, by="prune", note="no standing true attribute")
         return dict(stats)
 
     def clean_attributes(self, store) -> dict:
@@ -388,11 +389,20 @@ class StoreCleaner(BaseCleaner):
         prune_report  = self.prune_empty_entities(store)
         return {**pred_report, **target_report, **prune_report}
 
+    AUTHORS = ("blocklist", "predicate_filter", "prune")
+
     def clean(self, store) -> dict:
-        """Run all cleaning steps: entities, predicates, blocked targets, empty-entity pruning."""
+        """Run all cleaning steps: entities, predicates, blocked targets, empty-entity pruning.
+
+        Its own earlier verdicts are lifted first, so the result is the lists
+        as they stand now, not the union of every list that ever stood."""
+        lifted = 0
+        for by in self.AUTHORS:
+            got = store.lift_decisions(by)
+            lifted += len(got["entity_verdicts"]) + sum(len(c) for c in got["cell_verdicts"].values())
         entity_report = self.clean_entities(store)
         attr_report   = self.clean_attributes(store)
-        return {**entity_report, **attr_report}
+        return {**entity_report, **attr_report, "verdicts_lifted": lifted}
 
     # ── Candidate scanning ────────────────────────────────────────────────────
 
@@ -413,8 +423,8 @@ class StoreCleaner(BaseCleaner):
 
         freq: Counter = Counter()
         sample_attrs: dict[str, list[str]] = {}
-        for pmid_data in store._dict.values():
-            for entity, attrs in pmid_data.get("entities", {}).items():
+        for _, ents in records_of(store):
+            for entity, attrs in ents.items():
                 freq[entity] += 1
                 if entity not in sample_attrs:
                     sample_attrs[entity] = [a for a, v in attrs.items() if v == 1.0][:4]
@@ -554,8 +564,8 @@ class StoreCleaner(BaseCleaner):
 
         freq: Counter = Counter()
         sample_attrs: dict[str, list[str]] = {}
-        for pmid_data in store._dict.values():
-            for entity, attrs in pmid_data.get("entities", {}).items():
+        for _, ents in records_of(store):
+            for entity, attrs in ents.items():
                 freq[entity] += 1
                 if entity not in sample_attrs:
                     sample_attrs[entity] = [a for a, v in attrs.items() if v == 1.0][:3]
@@ -729,10 +739,12 @@ class StoreCleaner(BaseCleaner):
 
     @staticmethod
     def print_report(report: dict) -> None:
-        print("[StoreCleaner] Cleaning complete")
-        print(f"  Blocked entities removed   : {report.get('blocked_entities', 0)}")
-        print(f"  Rogue predicates stripped  : {report.get('rogue_predicates_removed', 0)}")
-        print(f"  Empty entities pruned      : {report.get('empty_entities_pruned', 0)}")
+        print("[StoreCleaner] Cleaning complete (verdicts written to the store, nothing deleted)")
+        print(f"  Earlier verdicts lifted    : {report.get('verdicts_lifted', 0)}")
+        print(f"  Blocked entities rejected  : {report.get('blocked_entities', 0)}")
+        print(f"  Blocked targets rejected   : {report.get('blocked_targets_removed', 0)}")
+        print(f"  Rogue predicates rejected  : {report.get('rogue_predicates_removed', 0)}")
+        print(f"  Empty entities rejected    : {report.get('empty_entities_pruned', 0)}")
         breakdown = report.get("rogue_predicate_breakdown", {})
         if breakdown:
             top = sorted(breakdown.items(), key=lambda x: -x[1])[:10]

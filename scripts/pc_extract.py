@@ -34,10 +34,7 @@ def log(*a):
 
 
 def distinct_entities(store) -> int:
-    ents: set[str] = set()
-    for rec in store.dict.values():
-        ents.update(rec.get("entities", {}))
-    return len(ents)
+    return len(store.entities)   # standing entities, rejected ones excluded
 
 
 def main(batch_size: int = 10, only_pmids_in: str | None = None) -> None:
@@ -59,7 +56,7 @@ def main(batch_size: int = 10, only_pmids_in: str | None = None) -> None:
         pipeline.pubcon._database = db
         log(f"restricted to the {len(keep):,} PMIDs in {Path(only_pmids_in).name}")
     fetched = set(db["pmid"].astype(str))
-    before = set(map(str, pipeline.store.dict))
+    before = set(pipeline.store.document_keys())
     todo = fetched - before
     log(f"abstract database: {len(db):,} rows, {len(fetched):,} unique PMIDs")
     log(f"store before: {len(before):,} PMIDs, {distinct_entities(pipeline.store):,} entities")
@@ -70,7 +67,7 @@ def main(batch_size: int = 10, only_pmids_in: str | None = None) -> None:
 
     t0 = time.time()
     pipeline.run_extract_to_store(batch_size=batch_size, normalize_every=1000)
-    after = set(map(str, pipeline.store.dict))
+    after = set(pipeline.store.document_keys())
     mins = (time.time() - t0) / 60
     log(f"finished in {mins:.1f} min — store after: {len(after):,} PMIDs "
         f"(+{len(after - before):,}), {distinct_entities(pipeline.store):,} entities")

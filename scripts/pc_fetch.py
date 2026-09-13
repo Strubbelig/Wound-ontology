@@ -39,7 +39,7 @@ def main(cap: int) -> None:
                             base_path=BASE_PATH)
     db = pipeline.pubcon.database
     before_rows, before_pmids = len(db), set(db["pmid"].astype(str))
-    extracted = set(map(str, pipeline.store.dict))
+    extracted = set(pipeline.store.document_keys())
     log(f"before: {before_rows:,} rows, {len(before_pmids):,} unique PMIDs; "
         f"{len(extracted):,} extracted")
     log(f"running {len(PUBMED_SEARCH)} queries at max_results_per_query={cap}")

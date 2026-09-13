@@ -1,12 +1,62 @@
 from __future__ import annotations
 import asyncio
+import datetime as _dt
 import warnings
 import re
+from typing import Iterable, Iterator
 import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.utils.string_utils import normalize_term, smart_title
 from config.blocklist import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST, is_noise_term as _is_noise_term
 from wound_ontology.llm.category_vocab import declared_category
+
+
+DECISIONS = "decisions"
+REJECTED = "rejected"
+
+
+def _rejected_in(raw: dict) -> tuple[set[str], dict[str, set[str]]]:
+    """(rejected entities, {entity: rejected triples}) read off a raw store dict."""
+    dec = raw.get(DECISIONS) or {}
+    ents = {e for e, v in (dec.get("entity_verdicts") or {}).items()
+            if isinstance(v, dict) and v.get("status") == REJECTED}
+    cells: dict[str, set[str]] = {}
+    for e, triples in (dec.get("cell_verdicts") or {}).items():
+        got = {t for t, v in (triples or {}).items()
+               if isinstance(v, dict) and v.get("status") == REJECTED}
+        if got:
+            cells[e] = got
+    return ents, cells
+
+
+def effective_records(raw: dict) -> Iterator[tuple[str, dict[str, dict[str, float]]]]:
+    """(key, {entity: {triple: value}}) for every assertion record in a raw
+    store dict, with the rejected entities and cells left out.
+
+    THE one reading of the store. `ConceptStore.records()` is this; the
+    hierarchies, the matrix, the cleaner's scans and the gate adapter all call
+    it, whether they were handed a ConceptStore, a test fake with a `.dict`,
+    or the file's dict itself -- so a verdict is honoured everywhere or
+    nowhere, never in some readers and not others.
+    """
+    rej_e, rej_c = _rejected_in(raw)
+    for key, rec in raw.items():
+        if key == DECISIONS or not isinstance(rec, dict):
+            continue
+        out: dict[str, dict[str, float]] = {}
+        for entity, attrs in rec.get("entities", {}).items():
+            if entity in rej_e or not isinstance(attrs, dict):
+                continue
+            dropped = rej_c.get(entity)
+            out[entity] = ({t: v for t, v in attrs.items() if t not in dropped}
+                           if dropped else dict(attrs))
+        yield key, out
+
+
+def records_of(store) -> Iterator[tuple[str, dict[str, dict[str, float]]]]:
+    """`effective_records` for anything with a `.dict`, or a dict itself."""
+    raw = store if isinstance(store, dict) else store.dict
+    return effective_records(raw)
 
 
 def _declared_category(term: str) -> str | None:
@@ -39,12 +89,36 @@ class ConceptStore:
       {
         "<pmid>": { "entities": { "<entity>": { "<pred>: <target>": 1.0 | 0.0 } }, "meta_stamp": "..." },
         "predefined": { "entities": { ... }, "meta_stamp": "predefined" },
+        "llm_fill_nan": { "entities": { ... }, "meta_stamp": "..." },   # verdicts, by provenance
+        "decisions": { "entity_verdicts": {...}, "cell_verdicts": {...},
+                       "renamed": {...}, "meta_stamp": "..." },
       }
+
+    The store is the ONE record; everything else -- hierarchies, the context
+    matrix, the lattice -- is a view rebuilt from it. So a decision about an
+    assertion is kept HERE too, beside the assertion, under the reserved key
+    ``decisions``. Nothing an abstract said is ever deleted: a blocklisted term,
+    a rogue predicate, a triple the reasoner gate quarantined are REJECTED,
+    which is a verdict carrying who decided (`by`), when, and why. Until
+    2026-09-12 all of those were `del` -- the 606-abstract extraction had 278
+    entities removed mid-run by the blocklist with no trace in the file, and the
+    quarantine lived in a gitignored directory. A verdict can be lifted; a
+    deletion cannot.
+
+    Readers go through `records()` / `assertions()`, which apply the verdicts.
+    `dict` is the raw file and is what the tests inspect.
 
     Normalization (mapper + Title Case) is applied via normalize() after both LLM
     extraction and predefined ingestion are complete, so all downstream consumers
     (hierarchies, FCA matrix) receive clean, deduplicated names.
     """
+
+    DECISIONS = DECISIONS
+    """Reserved record key. It carries no `entities` key on purpose: a legacy
+    reader doing `rec.get("entities", {})` sees nothing there, so a store with
+    verdicts in it cannot be misread as a store with extra assertions."""
+
+    REJECTED = REJECTED
 
     @staticmethod
     def clean_entity_str(term: str) -> str:
@@ -81,14 +155,188 @@ class ConceptStore:
         self.dict.update(new_data)
         self.save()
 
+    # ── The effective view: assertions minus verdicts ─────────────────────────
+
+    def document_keys(self) -> list[str]:
+        """Every record key that holds assertions -- PMIDs and the synthetic
+        provenance records -- and not the decisions record."""
+        return [k for k in self.dict if k != self.DECISIONS]
+
+    def decisions(self) -> dict:
+        """The decisions record, created empty on first use (not saved until a
+        verdict is written)."""
+        rec = self.dict.get(self.DECISIONS)
+        if rec is None:
+            rec = {"entity_verdicts": {}, "cell_verdicts": {}, "renamed": {},
+                   "meta_stamp": "decisions"}
+            self.dict[self.DECISIONS] = rec
+        for k in ("entity_verdicts", "cell_verdicts", "renamed"):
+            rec.setdefault(k, {})
+        return rec
+
+    def rejected_entities(self) -> dict[str, dict]:
+        """{entity -> verdict} for every entity rejected as a whole."""
+        return {e: v for e, v in self.decisions()["entity_verdicts"].items()
+                if v.get("status") == self.REJECTED}
+
+    def rejected_cells(self) -> dict[str, dict[str, dict]]:
+        """{entity -> {triple -> verdict}} for every single cell rejected."""
+        out: dict[str, dict[str, dict]] = {}
+        for e, cells in self.decisions()["cell_verdicts"].items():
+            kept = {t: v for t, v in cells.items() if v.get("status") == self.REJECTED}
+            if kept:
+                out[e] = kept
+        return out
+
+    def verdict(self, entity: str, triple: str | None = None) -> dict | None:
+        """The verdict that applies to `entity` (or to one of its cells), or None
+        if it stands as asserted. An entity-level verdict covers every cell."""
+        ev = self.decisions()["entity_verdicts"].get(entity)
+        if ev is not None and ev.get("status") == self.REJECTED:
+            return ev
+        if triple is None:
+            return None
+        cv = self.decisions()["cell_verdicts"].get(entity, {}).get(triple)
+        if cv is not None and cv.get("status") == self.REJECTED:
+            return cv
+        return None
+
+    def records(self) -> Iterator[tuple[str, dict[str, dict[str, float]]]]:
+        """(key, {entity: {triple: value}}) for every assertion record, with the
+        rejected entities and cells left out. A fresh copy: mutate the raw
+        `dict` if you mean to change the store, and write a verdict if you mean
+        to reject something."""
+        return effective_records(self.dict)
+
+    def effective_dict(self) -> dict:
+        """The store in its file shape -- {key: {"entities": ..., "meta_stamp": ...}}
+        -- after the verdicts are applied. For readers that take the raw shape."""
+        return {key: {**{k: v for k, v in self.dict[key].items() if k != "entities"},
+                      "entities": ents}
+                for key, ents in self.records()}
+
+    def assertions(self) -> Iterator[tuple[str, str, str, float]]:
+        """(key, entity, triple, value) for every cell that stands."""
+        for key, ents in self.records():
+            for entity, attrs in ents.items():
+                for triple, value in attrs.items():
+                    yield key, entity, triple, value
+
+    # ── Verdicts ──────────────────────────────────────────────────────────────
+
+    @staticmethod
+    def _stamp(by: str, note: str) -> dict:
+        return {"status": ConceptStore.REJECTED, "by": by, "note": note,
+                "when": _dt.datetime.now().isoformat(timespec="seconds")}
+
+    def reject_entities(self, names: Iterable[str], *, by: str, note: str = "") -> int:
+        """Reject every cell of each named entity. Returns how many of the names
+        are actually in the store -- a name that is not is reported, not
+        rejected, because a verdict on nothing is a typo in a list."""
+        names = set(names)
+        present = set(self.entities_raw())
+        missing = sorted(names - present)
+        if missing:
+            print(f"[ConceptStore] {len(missing)} name(s) rejected by {by!r} are not "
+                  f"in the store and were skipped: {missing[:5]}")
+        verdicts = self.decisions()["entity_verdicts"]
+        n = 0
+        for name in sorted(names & present):
+            verdicts[name] = self._stamp(by, note)
+            n += 1
+        if n:
+            self.save()
+        return n
+
+    def reject_cells(self, cells: Iterable[tuple[str, str]], *, by: str, note: str = "") -> int:
+        """Reject single (entity, triple) cells. Returns how many were present."""
+        wanted = set(cells)
+        present: set[tuple[str, str]] = set()
+        for key in self.document_keys():
+            for entity, attrs in self.dict[key].get("entities", {}).items():
+                for triple in attrs:
+                    if (entity, triple) in wanted:
+                        present.add((entity, triple))
+        missing = sorted(wanted - present)
+        if missing:
+            print(f"[ConceptStore] {len(missing)} cell(s) rejected by {by!r} are not "
+                  f"in the store and were skipped: {missing[:5]}")
+        verdicts = self.decisions()["cell_verdicts"]
+        for entity, triple in sorted(present):
+            verdicts.setdefault(entity, {})[triple] = self._stamp(by, note)
+        if present:
+            self.save()
+        return len(present)
+
+    def lift_decisions(self, by: str) -> dict:
+        """Withdraw every verdict `by` wrote, so its author can decide again
+        against the current lists or the current ontology. Returns what was
+        lifted, in a shape `restore_decisions` accepts, so a caller whose
+        re-decision then cannot run puts them back rather than leaving the
+        store un-vetted."""
+        dec = self.decisions()
+        lifted = {"entity_verdicts": {}, "cell_verdicts": {}}
+        for e, v in list(dec["entity_verdicts"].items()):
+            if v.get("by") == by:
+                lifted["entity_verdicts"][e] = dec["entity_verdicts"].pop(e)
+        for e, cells in list(dec["cell_verdicts"].items()):
+            for t, v in list(cells.items()):
+                if v.get("by") == by:
+                    lifted["cell_verdicts"].setdefault(e, {})[t] = cells.pop(t)
+            if not cells:
+                dec["cell_verdicts"].pop(e)
+        n = len(lifted["entity_verdicts"]) + sum(len(c) for c in lifted["cell_verdicts"].values())
+        if n:
+            self.save()
+            print(f"[ConceptStore] {n} verdict(s) by {by!r} lifted.")
+        return lifted
+
+    def restore_decisions(self, lifted: dict) -> int:
+        dec = self.decisions()
+        dec["entity_verdicts"].update(lifted.get("entity_verdicts", {}))
+        n = len(lifted.get("entity_verdicts", {}))
+        for e, cells in lifted.get("cell_verdicts", {}).items():
+            dec["cell_verdicts"].setdefault(e, {}).update(cells)
+            n += len(cells)
+        if n:
+            self.save()
+        return n
+
+    def record_rename(self, old: str, new: str, *, by: str) -> None:
+        """A mapping decision applied to the store: `old` now reads `new`."""
+        if old == new:
+            return
+        self.decisions()["renamed"][old] = {
+            "to": new, "by": by,
+            "when": _dt.datetime.now().isoformat(timespec="seconds")}
+
+    def summary(self) -> dict:
+        """Counts for the three buckets, measured, not estimated."""
+        asserted = sum(1 for _ in self.assertions())
+        raw = sum(len(a) for k in self.document_keys()
+                  for a in self.dict[k].get("entities", {}).values())
+        from collections import Counter
+        by: Counter = Counter()
+        for v in self.rejected_entities().values():
+            by[("entity", v.get("by"))] += 1
+        for cells in self.rejected_cells().values():
+            for v in cells.values():
+                by[("cell", v.get("by"))] += 1
+        return {"documents": len(self.document_keys()), "cells_raw": raw,
+                "cells_standing": asserted, "cells_rejected": raw - asserted,
+                "rejected_entities": len(self.rejected_entities()),
+                "rejected_cells": sum(len(c) for c in self.rejected_cells().values()),
+                "verdicts_by": {f"{lvl}:{who}": n for (lvl, who), n in sorted(by.items())},
+                "renamed": len(self.decisions()["renamed"])}
+
     # ── Derived views ─────────────────────────────────────────────────────────
 
     @property
     def attributes(self) -> list[str]:
-        """Unique predicate:target strings across all stored entities."""
+        """Unique predicate:target strings across all standing entities."""
         all_attrs: set[str] = set()
-        for pmid_data in self.dict.values():
-            for attr_dict in pmid_data.get("entities", {}).values():
+        for _, ents in self.records():
+            for attr_dict in ents.values():
                 all_attrs.update(attr_dict.keys())
         return sorted([a for a in all_attrs if not a.startswith("meta_")])
 
@@ -96,11 +344,9 @@ class ConceptStore:
         """Return the n most frequently occurring predicate:target strings (by entity count)."""
         from collections import Counter
         counts: Counter = Counter()
-        for pmid_data in self.dict.values():
-            for attr_dict in pmid_data.get("entities", {}).values():
-                for attr, val in attr_dict.items():
-                    if not attr.startswith("meta_") and val == 1.0:
-                        counts[attr] += 1
+        for _, _, attr, val in self.assertions():
+            if not attr.startswith("meta_") and val == 1.0:
+                counts[attr] += 1
         return [attr for attr, _ in counts.most_common(n)]
 
     @property
@@ -109,16 +355,14 @@ class ConceptStore:
 
     @predicates.setter
     def predicates(self, keep: list[str]) -> None:
-        """Keep only attributes whose predicate is in `keep`, removing all others."""
+        """Reject every cell whose predicate is not in `keep`. Used to delete them."""
         keep_set = set(keep)
-        for pmid_data in self.dict.values():
-            for entity, attrs in pmid_data.get("entities", {}).items():
-                pmid_data["entities"][entity] = {
-                    attr: val for attr, val in attrs.items()
-                    if ':' not in attr or attr.split(':', 1)[0].strip() in keep_set
-                }
-        self.save()
-        print(f"[ConceptStore] Predicates filtered — {len(keep_set)} allowed.")
+        doomed = [(e, t) for _, e, t, _ in self.assertions()
+                  if ':' in t and t.split(':', 1)[0].strip() not in keep_set]
+        n = self.reject_cells(doomed, by="predicate_filter",
+                              note=f"predicate not in {sorted(keep_set)}")
+        print(f"[ConceptStore] Predicates filtered — {len(keep_set)} allowed, "
+              f"{n} cell(s) rejected.")
 
     @property
     def targets(self) -> list[str]:
@@ -126,34 +370,37 @@ class ConceptStore:
 
     @targets.setter
     def targets(self, keep: list[str]) -> None:
-        """Keep only attributes whose target is in `keep`, removing all others."""
+        """Reject every cell whose target is not in `keep`. Used to delete them."""
         keep_set = set(keep)
-        for pmid_data in self.dict.values():
-            for entity, attrs in pmid_data.get("entities", {}).items():
-                pmid_data["entities"][entity] = {
-                    attr: val for attr, val in attrs.items()
-                    if ':' not in attr or attr.split(':', 1)[1].strip() in keep_set
-                }
-        self.save()
-        print(f"[ConceptStore] Targets filtered — {len(keep_set)} allowed.")
+        doomed = [(e, t) for _, e, t, _ in self.assertions()
+                  if ':' in t and t.split(':', 1)[1].strip() not in keep_set]
+        n = self.reject_cells(doomed, by="target_filter", note="target not kept")
+        print(f"[ConceptStore] Targets filtered — {len(keep_set)} allowed, "
+              f"{n} cell(s) rejected.")
 
     @property
     def entities(self) -> list[str]:
-        """Unique entity names across the store."""
+        """Unique standing entity names across the store."""
         all_entities: set[str] = set()
-        for pmid_data in self.dict.values():
-            all_entities.update(pmid_data.get("entities", {}).keys())
+        for _, ents in self.records():
+            all_entities.update(ents)
         return sorted(all_entities)
+
+    def entities_raw(self) -> list[str]:
+        """Every entity name in the file, rejected ones included."""
+        names: set[str] = set()
+        for key in self.document_keys():
+            names.update(self.dict[key].get("entities", {}))
+        return sorted(names)
 
     @entities.setter
     def entities(self, keep: list[str]) -> None:
-        """Keep only the listed entity names, removing all others from the store."""
+        """Reject every standing entity not in `keep`. Used to delete them."""
         keep_set = set(keep)
-        for pmid_data in self.dict.values():
-            old = pmid_data.get("entities", {})
-            pmid_data["entities"] = {k: v for k, v in old.items() if k in keep_set}
-        self.save()
-        print(f"[ConceptStore] Entities filtered — {len(keep_set)} kept.")
+        doomed = [e for e in self.entities if e not in keep_set]
+        n = self.reject_entities(doomed, by="entity_filter", note="not kept")
+        print(f"[ConceptStore] Entities filtered — {len(keep_set)} kept, "
+              f"{n} rejected.")
 
     # ── Ingestion ─────────────────────────────────────────────────────────────
 
@@ -264,12 +511,18 @@ class ConceptStore:
             # of the one category, which is the bug this rename exists to end.
             return _declared_category(name) or name
 
+        renames_by_mapping: dict[str, str] = {}
+
         normalized: dict = {}
         for key, pmid_data in self._dict.items():
+            if key == self.DECISIONS:
+                continue
             entities = pmid_data.get("entities", {})
             new_entities: dict[str, dict] = {}
             for entity, attrs in entities.items():
                 new_entity = clean_entity(entity)
+                if canonical_of(entity) is not None and new_entity != entity:
+                    renames_by_mapping[entity] = new_entity
                 merged: dict[str, float] = {}
                 for triple, value in attrs.items():
                     if ":" in triple:
@@ -290,9 +543,42 @@ class ConceptStore:
                     new_entities[new_entity] = merged
             normalized[key] = {**pmid_data, "entities": new_entities}
 
+        # The verdicts are keyed by the names they were written against, and
+        # those names just changed. Rename them the same way, or a rejection
+        # of `diabetic foot ulcers` stops applying to `Diabetic Foot Ulcer`
+        # and the term comes back. Two old names collapsing onto one new one
+        # is a merge; the verdict that survives is the first one, and it is
+        # counted.
+        if self.DECISIONS in self._dict:
+            dec = self._dict[self.DECISIONS]
+            ev: dict = {}
+            merged_verdicts = 0
+            for entity, v in dec.get("entity_verdicts", {}).items():
+                new = clean_entity(entity)
+                if new in ev:
+                    merged_verdicts += 1
+                ev.setdefault(new, v)
+            cv: dict = {}
+            for entity, cells in dec.get("cell_verdicts", {}).items():
+                dest = cv.setdefault(clean_entity(entity), {})
+                for triple, v in cells.items():
+                    if ":" in triple:
+                        pred, tgt = triple.split(":", 1)
+                        triple = f"{pred.strip()}: {clean_target(tgt.strip())}"
+                    if triple in dest:
+                        merged_verdicts += 1
+                    dest.setdefault(triple, v)
+            normalized[self.DECISIONS] = {**dec, "entity_verdicts": ev, "cell_verdicts": cv}
+            if merged_verdicts:
+                print(f"[ConceptStore] {merged_verdicts} verdict(s) fell onto a name "
+                      f"another verdict already covers after normalisation; the "
+                      f"earlier one is kept.")
+
         self._dict = normalized
+        for old, new in renames_by_mapping.items():
+            self.record_rename(old, new, by="mapping")
         self.save()
-        n_entities = sum(len(d["entities"]) for d in self._dict.values())
+        n_entities = sum(len(d.get("entities", {})) for d in self._dict.values())
         print(f"[ConceptStore] Normalization applied — {n_entities} entity records updated.")
 
 
@@ -543,8 +829,8 @@ class ConceptStore:
         from wound_ontology.utils.string_utils import smart_title
 
         typings: dict[str, set[str]] = {}
-        for rec in self.dict.values():
-            for entity, attrs in rec.get("entities", {}).items():
+        for _, rec_entities in self.records():
+            for entity, attrs in rec_entities.items():
                 for triple, value in attrs.items():
                     if value != 1.0 or ":" not in triple:
                         continue
@@ -713,8 +999,8 @@ class ConceptStore:
 
         # Build flat merged view: entity → {attr: value} across all PMIDs
         flat: dict[str, dict[str, float]] = {}
-        for pmid_data in self._dict.values():
-            for entity, attrs in pmid_data.get("entities", {}).items():
+        for _, ents in self.records():
+            for entity, attrs in ents.items():
                 merged = flat.setdefault(entity, {})
                 for attr, val in attrs.items():
                     merged[attr] = max(merged.get(attr, 0.0), float(val))

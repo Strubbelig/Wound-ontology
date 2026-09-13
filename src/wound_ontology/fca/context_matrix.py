@@ -3,6 +3,7 @@ import asyncio
 import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.utils.string_utils import smart_title
+from wound_ontology.store.concept_store import records_of
 
 
 class ContextMatrix:
@@ -271,8 +272,8 @@ class ContextMatrix:
         if entities is not None:
             entities = {smart_title(e) for e in entities}
 
-        for pmid_data in store.dict.values():
-            for entity_name, attrs in pmid_data.get("entities", {}).items():
+        for _, ents in records_of(store):
+            for entity_name, attrs in ents.items():
                 if entities is not None and smart_title(entity_name) not in entities:
                     continue
                 if entity_name not in flat_map:
@@ -563,8 +564,8 @@ class ContextMatrix:
         store's own casing keeps one attribute where there is one attribute.
         """
         canon: dict[str, str] = {}
-        for record in store.dict.values():
-            for attrs in record.get("entities", {}).values():
+        for _, ents in records_of(store):
+            for attrs in ents.values():
                 for triple in attrs:
                     canon.setdefault(str(triple).strip().lower(), str(triple).strip())
 

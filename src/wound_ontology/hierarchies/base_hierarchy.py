@@ -5,6 +5,7 @@ import warnings
 import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.utils.string_utils import smart_title
+from wound_ontology.store.concept_store import records_of
 
 
 # ── Edge provenance (C4) ───────────────────────────────────────────────────
@@ -428,8 +429,8 @@ class BaseHierarchy(ABC):
         from wound_ontology.llm.category_vocab import declared_category
         typings: dict[str, set[str]] = {}
         if reconcile_categories is not None:
-            for pmid_data in store.dict.values():
-                for entity, attrs in pmid_data.get("entities", {}).items():
+            for _, ents in records_of(store):
+                for entity, attrs in ents.items():
                     for triple, value in attrs.items():
                         if value != 1.0 or ":" not in triple:
                             continue
@@ -458,8 +459,8 @@ class BaseHierarchy(ABC):
                 agreed[term] = winner
 
         source = SOURCE_TEXT
-        for pmid_data in store.dict.values():
-            for entity, attrs in pmid_data.get("entities", {}).items():
+        for _, ents in records_of(store):
+            for entity, attrs in ents.items():
                 for triple, value in attrs.items():
                     if value != 1.0 or ":" not in triple:
                         continue

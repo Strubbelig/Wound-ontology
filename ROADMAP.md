@@ -154,14 +154,14 @@ question this answers: **if WONT changes, is the current pipeline data trash?**
 |---|---|---|---|---|---|
 | 1 | `run_pubmed_search` | PubMed + `pubmed_query_list.py` | abstract database | network | **never** — purely additive |
 | 2 | `run_validate_pubmed_queries` | the query list | report | small LLM | a query is added |
-| 3 | **`run_extract_to_store`** | abstracts + `extraction_schema.yaml` — a **generated snapshot** of WONT + MILD (`scripts/build_extraction_schema.py`) | `concept_store_*.json` | **LLM per abstract — the expensive one** | **never** for the store; but **regenerate the schema after every WONT edit**, or new classes are not offered as grounding targets |
+| 3 | **`run_extract_to_store`** | abstracts + `extraction_schema.yaml` — a **generated snapshot** of WONT + MILD (`scripts/build_extraction_schema.py`) | `concept_store_*.json` | **LLM per abstract — the expensive one** | **never** for the store; the schema **regenerates itself** at the start of this step when WONT, MILD or a module is newer (rule 32) |
 | 4 | `run_build_term_mapping` | store terms **+ `ontology_labels()`** | `term_mapping_*.json` | SapBERT + LLM adjudication *(cached)* | **corpus or WONT** |
 | 5 | `review_mapping`, `check_term_mapping` | the mapping | curated mapping | **manual** | corpus or WONT |
-| 6 | `run_apply_mapping` | the mapping | **the store, in place** | cheap | corpus or WONT |
+| 6 | `run_apply_mapping` | the mapping | **the store, in place** — renames recorded under `decisions.renamed` | cheap | corpus or WONT |
 | 7 | `review_lists`, `cluster_blocklist`, `run_promote_clusters` | store + the lists | `config/blocklist.py`, `config/whitelist.py` | manual + SapBERT | corpus |
-| 8 | `run_clean_store` | store + lists | store | cheap | corpus |
-| 8b | **`build_reasoner_skeleton`** | **WONT + MILD** | `output/owl/skeleton_tbox.ttl` | ~1 min | **WONT — and it caches, so it needs `force=True`** |
-| 9 | `run_gate_store_relations` | store + skeleton | store + `output/quarantine/` | ELK | corpus or WONT |
+| 8 | `run_clean_store` | store + lists | store — **verdicts** (`blocklist`, `predicate_filter`, `prune`), nothing deleted; its own earlier verdicts lifted first | cheap | corpus, or a list changed |
+| 8b | **`build_reasoner_skeleton`** | **WONT + MILD** | `output/owl/skeleton_tbox.ttl` | ~1 min | **automatic** — rebuilt when WONT or MILD is newer than the cache (rule 32) |
+| 9 | `run_gate_store_relations` | store + skeleton | store — **verdicts** by `reasoner_gate`, re-heard on every run; `output/quarantine/` kept as the batch log | ELK | corpus or WONT |
 | 10 | `run_build_hierarchies` | store **+ curated seed from WONT + MILD** + accepted FCA slices | `class_hierarchy_*.csv` + provenance, `mereological_hierarchy_*.csv` | cheap | corpus or WONT |
 | 11 | `run_gate_hierarchy_edges` | class hierarchy + skeleton | hierarchy + quarantine | ELK | corpus or WONT |
 | 12 | `run_store_fill` | store | store | **LLM per entity** | corpus |
@@ -227,8 +227,10 @@ other, and it has no check either: generated 2026-09-08, WONT last edited
 consequence is quieter than the skeleton's: extraction still runs and the store
 is still right, but the 14 new classes are simply not on offer as grounding
 targets, so every mention of them goes through the gate as a placeholder.
-Add the same mtime check to `build_extraction_schema` in P0, and regenerate as
-the last step of every WONT edit.
+Fixed 2026-09-12: `schema_builder.ensure_current()` runs first thing in
+`run_extract_to_store` (rule 32). Measured on the way: a fresh build against
+the 4 Sep WONT is **33 s** and differs from the 8 Sep file in one line, the
+date — so the check touches an unchanged schema instead of rewriting it.
 
 ### The live defect this traced out
 
@@ -361,10 +363,12 @@ round and curating it by hand in P2.
   a plain `{lower(label): iri}` dict and `_answerable` does `idx.get(...)` —
   exact match only. `utils.label_match.LabelIndex` already exists with a folded
   fallback. Rule 13 says one normalisation.
-- **`extraction_schema.yaml` has the same staleness hole the skeleton had.**
-  Generated from WONT + MILD with no mtime check. Add one (P0 fixed the
-  skeleton's on 2026-09-10; this is the sibling), and make "regenerate the
-  schema" the last step of every WONT edit in `WONT_TODO`.
+- ~~**`extraction_schema.yaml` has the same staleness hole the skeleton had.**~~
+  Done 2026-09-12: `run_extract_to_store` calls `schema_builder.ensure_current()`
+  first; it regenerates when WONT, MILD or a module is newer, touches rather
+  than rewrites when only the date would change, and stops the process when the
+  content changed (rule 32). "Regenerate the schema" is no longer a manual
+  step anywhere.
 - Apply **`WONT_TODO` B** — 3 MILD `subClassOf` axioms.
 
 **Exit:** the 4 label-miss CQs and the 2 phase CQs resolve, measured; the
@@ -459,7 +463,8 @@ this is where they become one artefact.
 
 Order matters and the dependency table is the order:
 
-1. `build_reasoner_skeleton(force=True)` — first, because both gates read it.
+1. `build_reasoner_skeleton()` — first, because both gates read it (it rebuilds
+   on its own when WONT or MILD is newer; `force=True` only if you distrust mtimes).
 2. `run_build_term_mapping` → `review_mapping` → `run_apply_mapping`.
    **The review is manual and is the long pole of this phase**: section E
    redefines classes that store terms have already been absorbed into, so those
@@ -576,6 +581,8 @@ defect to fix, not to exclude.
 
 | date | what |
 |---|---|
+| 2026-09-12 | **The store is the one record (rule 33).** Blocklist, predicate filter, prune and reasoner gate now write *verdicts* into the store's `decisions` record instead of deleting; one `effective_records()` applies them for every reader; verdicts are authored and liftable, so un-blocking a term and re-hearing a quarantined triple against a newer WONT both work. Measured: live store 606 docs / 22,280 cells, effective view identical to raw (no verdicts yet); the 278 entities the blocklist removed mid-extraction are gone for good. 16 tests, 5 mutations fail by name. |
+| 2026-09-12 | **Schema staleness closed** (the last open P0 item besides B): the builder moved into the package as `llm/schema_builder.py`, `run_extract_to_store` regenerates it when any source is newer; 14 tests, 4 mutation-checked by name. Measured: rebuild 33 s, current schema identical to a fresh build apart from the date. The full-suite run of 2026-09-12 also found and fixed the `Skin grafting → Skin graft` guard hole (a contradicted typing read as unknown). |
 | 2026-09-10 | Created. Baseline measured: 142 abstracts, CQ 6/65, 47 of 51 unresolved concepts absent from the store, 9 of 18 FAILs blocked on `RelationType`. |
 | 2026-09-11 | **PC batch 1 complete: all 606 fetched abstracts extracted, 12,901 distinct entities** (from 3,536). Two interruptions on the way — the provider went unresponsive and the circuit breaker aborted at 469 after 22 consecutive timeouts, exactly as designed; and a relaunch picked up the cap-200 CSV and started the unauthorised big batch, killed after one PMID; the runner now takes a PMID-restriction file. |
 | 2026-09-11 | Found and fixed: `add_llm_extracts` queued rows, not PMIDs, so a paper found by three queries went to the model three times and the last answer silently overwrote the first — 193 calls for 136 PMIDs measured; the cap-200 batch would have wasted 1,974 of 7,536 calls. Deduped on PMID, folded count announced, 4 tests, mutation-checked. |

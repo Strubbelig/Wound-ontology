@@ -180,11 +180,21 @@ def compile_ask(subject_iri: str, predicate: str, object_iri: str) -> str | None
             f"# ASK: <{subject_iri}> subClassOf/equivalentClass\n"
             f"#        Wound and part_of some (<{prop}> and has_part some <{object_iri}>)"
         )
+    # A restriction may be asserted as a necessary condition (rdfs:subClassOf)
+    # or sit inside a defining axiom (owl:equivalentClass of an intersection).
+    # The second entails the first, and it is how WONT states every
+    # determinate-defined class ("Open wound ≡ Wound and has_quality some
+    # open"), so a checker that only walked rdfs:subClassOf reported those as
+    # FAIL -- measured 2026-09-12: 8 of the 9 has_quality CQs.
     return (
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
         "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
         "ASK {\n"
-        f"  <{subject_iri}> rdfs:subClassOf*/rdfs:subClassOf ?r .\n"
+        f"  <{subject_iri}> rdfs:subClassOf* ?c .\n"
+        "  { ?c rdfs:subClassOf ?r }\n"
+        "  UNION\n"
+        "  { ?c owl:equivalentClass/owl:intersectionOf/rdf:rest*/rdf:first ?r }\n"
         f"  ?r owl:onProperty <{prop}> ; owl:someValuesFrom ?target .\n"
         f"  ?target rdfs:subClassOf* <{object_iri}> .\n"
         "}"

@@ -4,18 +4,18 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix mild: <https://bioportal.bioontology.org/ontologies/MILD/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix wont: <https://bioportal.bioontology.org/ontologies/WONT/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
 @base <https://bioportal.bioontology.org/ontologies/WONT/> .
 
 <https://bioportal.bioontology.org/ontologies/WONT> rdf:type owl:Ontology ;
-                                                    dcterms:title "Wound Ontology"@en ;
-                                                    dcterms:description "A domain ontology of wounds, wound assessment, wound classification and wound treatment. WONT is the domain layer over the Mid Layer Disease Ontology (MILD): a wound is modelled as a MILD pathological disorder, and wound treatment, diagnosis and classification specialise the corresponding MILD processes and results."@en ;
-                                                    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
-                                                    owl:imports <https://bioportal.bioontology.org/ontologies/MILD> .
+                                                     owl:imports <https://bioportal.bioontology.org/ontologies/MILD> ;
+                                                     dcterms:description "A domain ontology of wounds, wound assessment, wound classification and wound treatment. WONT is the domain layer over the Mid Layer Disease Ontology (MILD): a wound is modelled as a MILD pathological disorder, and wound treatment, diagnosis and classification specialise the corresponding MILD processes and results."@en ;
+                                                     dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+                                                     dcterms:title "Wound Ontology"@en .
 
 #################################################################
 #    Annotation properties
@@ -45,8 +45,9 @@ ns1:BFO_0000050 rdf:type owl:ObjectProperty .
 ns1:BFO_0000051 rdf:type owl:ObjectProperty .
 
 
-###  http://purl.obolibrary.org/obo/RO_0002559
-ns1:RO_0002559 rdf:type owl:ObjectProperty .
+###  http://purl.obolibrary.org/obo/BFO_0000197
+ns1:BFO_0000197 rdf:type owl:ObjectProperty ;
+                rdfs:label "inheres in"@en .
 
 
 ###  http://purl.obolibrary.org/obo/IAO_0000136
@@ -57,37 +58,17 @@ ns1:IAO_0000136 rdf:type owl:ObjectProperty .
 ns1:OBI_0000295 rdf:type owl:ObjectProperty .
 
 
-###  http://purl.obolibrary.org/obo/RO_0000086
-ns1:RO_0000086 rdf:type owl:ObjectProperty ;
-              rdfs:label "has quality"@en .
-
-
-###  http://purl.obolibrary.org/obo/RO_0000087
-ns1:RO_0000087 rdf:type owl:ObjectProperty ;
-              rdfs:label "has role"@en .
-
-
-###  http://purl.obolibrary.org/obo/BFO_0000197
-ns1:BFO_0000197 rdf:type owl:ObjectProperty ;
-              rdfs:label "inheres in"@en .
-
-
-###  http://purl.obolibrary.org/obo/RO_0001025
-ns1:RO_0001025 rdf:type owl:ObjectProperty ;
-              rdfs:label "located in"@en .
-
-
-###  http://purl.obolibrary.org/obo/RO_0000056
-ns1:RO_0000056 rdf:type owl:ObjectProperty ;
-              rdfs:label "participates in"@en .
-
-
 ###  http://purl.obolibrary.org/obo/OBI_0000299
 ns1:OBI_0000299 rdf:type owl:ObjectProperty .
 
 
 ###  http://purl.obolibrary.org/obo/OBI_0000312
 ns1:OBI_0000312 rdf:type owl:ObjectProperty .
+
+
+###  http://purl.obolibrary.org/obo/RO_0000056
+ns1:RO_0000056 rdf:type owl:ObjectProperty ;
+               rdfs:label "participates in"@en .
 
 
 ###  http://purl.obolibrary.org/obo/RO_0000057
@@ -98,8 +79,27 @@ ns1:RO_0000057 rdf:type owl:ObjectProperty .
 ns1:RO_0000085 rdf:type owl:ObjectProperty .
 
 
+###  http://purl.obolibrary.org/obo/RO_0000086
+ns1:RO_0000086 rdf:type owl:ObjectProperty ;
+               rdfs:label "has quality"@en .
+
+
+###  http://purl.obolibrary.org/obo/RO_0000087
+ns1:RO_0000087 rdf:type owl:ObjectProperty ;
+               rdfs:label "has role"@en .
+
+
 ###  http://purl.obolibrary.org/obo/RO_0000091
 ns1:RO_0000091 rdf:type owl:ObjectProperty .
+
+
+###  http://purl.obolibrary.org/obo/RO_0001025
+ns1:RO_0001025 rdf:type owl:ObjectProperty ;
+               rdfs:label "located in"@en .
+
+
+###  http://purl.obolibrary.org/obo/RO_0002559
+ns1:RO_0002559 rdf:type owl:ObjectProperty .
 
 
 #################################################################
@@ -265,7 +265,6 @@ ns1:CHEBI_33301 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/CHEBI_35267
 ns1:CHEBI_35267 rdf:type owl:Class ;
-
                 ns1:IAO_0000115 "A derivative of ammonium, NH<small><sub>4</sub></small><small><sup>+</small></sup>, in which all four of the hydrogens bonded to nitrogen have been replaced with univalent (usually organyl) groups." ;
                 rdfs:label "quaternary ammonium ion" .
 
@@ -278,16 +277,6 @@ ns1:CHEBI_35273 rdf:type owl:Class ;
                                   owl:someValuesFrom ns1:CHEBI_48218
                                 ] ;
                 rdfs:label "quaternary ammonium salt" .
-
-
-###  http://purl.obolibrary.org/obo/FMA_7163
-ns1:FMA_7163 rdf:type owl:Class ;
-             rdfs:label "Skin" .
-
-
-###  http://purl.obolibrary.org/obo/NCBITaxon_9606
-ns1:NCBITaxon_9606 rdf:type owl:Class ;
-                   rdfs:label "Homo sapiens" .
 
 
 ###  http://purl.obolibrary.org/obo/CHEBI_36080
@@ -349,14 +338,12 @@ ns1:DOID_0050061 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_0050426
 ns1:DOID_0050426 rdf:type owl:Class ;
-
                  ns1:IAO_0000115 "A skin disease that is characterized by ulceration of less than 10 percent of the surface area of the body. The disease is often precipitated by the use of medications, such as antibiotics or antiepileptics, or onset of infection." ;
                  rdfs:label "Stevens-Johnson syndrome" .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_0050853
 ns1:DOID_0050853 rdf:type owl:Class ;
-
                  ns1:IAO_0000115 "A venous insufficiency that is characterized by lower extremity swelling, hyperpigmentation, pruritus and venous ulceration caused by blood pooling in the veins." ;
                  ns1:IAO_0000118 "Chronic venous insufficiency"@en ;
                  rdfs:label "chronic venous insufficiency"@en .
@@ -364,7 +351,6 @@ ns1:DOID_0050853 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_0060851
 ns1:DOID_0060851 rdf:type owl:Class ;
-
                  ns1:IAO_0000115 "A pemphigus characterized by autosomal dominant blisters and erosions on the skin and mucous membranes erosions cause by autoantibodies to intercellular cement substance." ;
                  ns1:IAO_0000118 "Pemphigus vulgaris"@en ;
                  rdfs:label "pemphigus vulgaris"@en .
@@ -372,14 +358,12 @@ ns1:DOID_0060851 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_0080841
 ns1:DOID_0080841 rdf:type owl:Class ;
-
                  ns1:IAO_0000115 "An autoimmune disease of skin and connective tissue that is characterized by subepidermal blistering especially in the lower abdomen, groin, and flexor surfaces of the extremities, creating tense blisters that do not break easily." ;
                  rdfs:label "pemphigoid" .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_10881
 ns1:DOID_10881 rdf:type owl:Class ;
-
                ns1:IAO_0000115 "A viral infectious disease that results_in infection located_in skin, has_material_basis_in Enterovirus A (Enterovirus alphacoxsackie), which are transmitted_by contaminated fomites, and transmitted_by contact with nose and throat secretions, saliva, blister fluid and stool of infected persons. The infection has_symptom fever, has_symptom poor appetite, has_symptom malaise, has_symptom sore throat, has_symptom painful sores in the mouth, and has_symptom skin rash on the palms of the hands and soles of the feet." ;
                ns1:IAO_0000118 "Hand-foot-and-mouth disease"@en ;
                rdfs:label "hand, foot and mouth disease"@en .
@@ -387,7 +371,6 @@ ns1:DOID_10881 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_2730
 ns1:DOID_2730 rdf:type owl:Class ;
-
               ns1:IAO_0000115 "A vesiculobullous skin disease that is characterized by formation of blisters with only minor skin trauma, which can cause widespread wounds, dehydration, electrolyte abnormalities, and severe infection, frequently develops_from mutations in connective tissue elements, including genes encoding keratin, collagen, and laminin." ;
               ns1:IAO_0000118 "Epidermolysis bullosa"@en ;
               rdfs:label "epidermolysis bullosa"@en .
@@ -395,7 +378,6 @@ ns1:DOID_2730 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_3042
 ns1:DOID_3042 rdf:type owl:Class ;
-
               ns1:IAO_0000115 "A contact dermatitis that is an allergic skin reaction to foreign chemical or substances leading to red, itchy, weepy reaction where the skin has come into contact with a substance that the immune system recognizes as foreign." ;
               ns1:IAO_0000118 "Allergic contact dermatitis"@en ;
               rdfs:label "allergic contact dermatitis"@en .
@@ -403,7 +385,6 @@ ns1:DOID_3042 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_3132
 ns1:DOID_3132 rdf:type owl:Class ;
-
               ns1:IAO_0000115 "An acute porphyria characterized by painful, blistering skin lesions that develop on sun-exposed skin." ;
               ns1:IAO_0000118 "Porphyria cutanea tarda"@en ;
               rdfs:label "porphyria cutanea tarda"@en .
@@ -418,21 +399,19 @@ ns1:DOID_417 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_4347
 ns1:DOID_4347 rdf:type owl:Class ;
-              skos:relatedMatch wont:WONT_0000470 ;
               rdfs:comment "Bridging annotation, not subsumption. The OBO term is a nosological category / specifically dependent continuant, whereas this class is the material pathological disorder itself. Asserting rdfs:subClassOf between them is a category error, so the relation is recorded as skos:relatedMatch instead."@en ;
-              rdfs:label "lymphocele"@en .
+              rdfs:label "lymphocele"@en ;
+              skos:relatedMatch wont:WONT_0000470 .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_8505
 ns1:DOID_8505 rdf:type owl:Class ;
-
               ns1:IAO_0000118 "Dermatitis herpetiformis Duhring"@en ;
               rdfs:label "dermatitis herpetiformis"@en .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_8506
 ns1:DOID_8506 rdf:type owl:Class ;
-
               ns1:IAO_0000115 "A pemphigoid that is characterized by large blisters." ;
               ns1:IAO_0000118 "Bullous pemphigoid"@en ;
               rdfs:label "bullous pemphigoid"@en .
@@ -440,7 +419,6 @@ ns1:DOID_8506 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_8536
 ns1:DOID_8536 rdf:type owl:Class ;
-
               ns1:IAO_0000115 "A viral infectious disease that results_in infection located_in nerve fiber, has_material_basis_in Human herpesvirus 3 (Varicellovirus humanalpha3), which reactivates after appearing as chickenpox in childhood. The virus is transmitted_by direct contact with the rash, which can develop into chickenpox in newly-infected individuals. The infection has_symptom rash which is followed by blisters, has_symptom headache, has_symptom fever, has_symptom malaise, has_symptom itching, has_symptom burning pain, and has_symptom paresthesia." ;
               ns1:IAO_0000118 "Herpes zoster"@en ;
               rdfs:label "herpes zoster"@en .
@@ -448,7 +426,6 @@ ns1:DOID_8536 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_8566
 ns1:DOID_8566 rdf:type owl:Class ;
-
               ns1:IAO_0000115 "A viral infectious disease that results_in_formation_of lesions, located_in mouth, located_in face, located_in genitalia, or located_in hands, has_material_basis_in Human herpesvirus 1 (Simplexvirus humanalpha1) or 2 (Simplexvirus humanalpha2), which are transmitted_by direct contact with an active lesion or body fluid of an infected person." ;
               ns1:IAO_0000118 "Herpes simplex (e.g. cold sores)"@en ;
               rdfs:label "herpes simplex"@en .
@@ -456,7 +433,6 @@ ns1:DOID_8566 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_8659
 ns1:DOID_8659 rdf:type owl:Class ;
-
               ns1:IAO_0000115 "A viral infectious disease that results_in infection located_in skin, has_material_basis_in Human herpesvirus 3 (Varicellovirus humanalpha3), which is transmitted_by direct contact with secretions from the rash, or transmitted_by droplet spread of respiratory secretions. The infection has_symptom anorexia, has_symptom myalgia, has_symptom nausea, has_symptom fever, has_symptom headache, has_symptom sore throat, and has_symptom blisters." ;
               ns1:IAO_0000118 "Chickenpox (varicella)"@en ;
               rdfs:label "chickenpox"@en .
@@ -464,7 +440,6 @@ ns1:DOID_8659 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_9351
 ns1:DOID_9351 rdf:type owl:Class ;
-
               ns1:IAO_0000115 "A glucose metabolism disease that is characterized by chronic hyperglycaemia with disturbances of carbohydrate, fat and protein metabolism resulting from defects in insulin secretion, insulin action, or both." ;
               ns1:IAO_0000118 "Diabetes mellitus"@en ;
               rdfs:label "diabetes mellitus"@en .
@@ -472,15 +447,14 @@ ns1:DOID_9351 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_9602
 ns1:DOID_9602 rdf:type owl:Class ;
-              skos:relatedMatch mild:MILD_120020 ;
-              rdfs:comment "Bridging annotation, not subsumption. MILD models a wound/disease as a material continuant; the OBO term below is a phenotype or nosological category, i.e. a specifically dependent continuant. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
               ns1:IAO_0000118 "Necrotizing fasciitis"@en ;
-              rdfs:label "necrotizing fasciitis"@en .
+              rdfs:comment "Bridging annotation, not subsumption. MILD models a wound/disease as a material continuant; the OBO term below is a phenotype or nosological category, i.e. a specifically dependent continuant. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
+              rdfs:label "necrotizing fasciitis"@en ;
+              skos:relatedMatch mild:MILD_120020 .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_9970
 ns1:DOID_9970 rdf:type owl:Class ;
-
               ns1:IAO_0000115 "An overnutrition that is characterized by excess body fat, traditionally defined as an elevated ratio of weight to height (specifically 30 kilograms per meter squared), has_material_basis_in a multifactorial etiology related to excess nutrition intake, decreased caloric utilization, and genetic susceptibility, and possibly medications and certain disorders of metabolism, endocrine function, and mental illness." ;
               ns1:IAO_0000118 "Obesity"@en ;
               rdfs:label "obesity"@en .
@@ -489,6 +463,11 @@ ns1:DOID_9970 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/DRON_00000005
 ns1:DRON_00000005 rdf:type owl:Class ;
                   rdfs:label "clinical drug product" .
+
+
+###  http://purl.obolibrary.org/obo/FMA_7163
+ns1:FMA_7163 rdf:type owl:Class ;
+             rdfs:label "Skin" .
 
 
 ###  http://purl.obolibrary.org/obo/GO_0001525
@@ -585,7 +564,6 @@ ns1:HP_0000980 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/HP_0004395
 ns1:HP_0004395 rdf:type owl:Class ;
-
                ns1:IAO_0000115 "A deficiency in the intake of energy and nutrients." ;
                rdfs:label "Malnutrition" .
 
@@ -595,32 +573,31 @@ ns1:HP_0012399 rdf:type owl:Class ;
                rdfs:subClassOf ns1:HP_0032674 ;
                ns1:IAO_0000115 "A type of ulcer that is caused when an area of skin is subject to pressure over a prolonged period of time, ranging in range in severity from patches of discolored skin to open wounds that expose the underlying bone or muscle. The most common sites are the sacrum, coccyx, heels and the hips." ;
                ns1:IAO_0000118 "decubitus ulcer"@en ;
-               ns1:IAO_0000118 "decubitus ulcer"@en ;
                rdfs:label "Pressure ulcer"@en .
 
 
 ###  http://purl.obolibrary.org/obo/HP_0025615
 ns1:HP_0025615 rdf:type owl:Class ;
-               skos:relatedMatch wont:WONT_0000472 ;
-               rdfs:comment "Bridging annotation, not subsumption. The OBO term is a phenotypic abnormality / nosological category, i.e. a specifically dependent continuant, whereas this class is the material pathological disorder itself. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
                ns1:IAO_0000115 "An abscess is a localized collection of purulent material surrounded by inflammation and granulation." ;
-               rdfs:label "abscess"@en .
+               rdfs:comment "Bridging annotation, not subsumption. The OBO term is a phenotypic abnormality / nosological category, i.e. a specifically dependent continuant, whereas this class is the material pathological disorder itself. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
+               rdfs:label "abscess"@en ;
+               skos:relatedMatch wont:WONT_0000472 .
 
 
 ###  http://purl.obolibrary.org/obo/HP_0032326
 ns1:HP_0032326 rdf:type owl:Class ;
-               skos:relatedMatch wont:WONT_0000447 ;
-               rdfs:comment "Bridging annotation, not subsumption. The OBO term is a phenotypic abnormality / nosological category, i.e. a specifically dependent continuant, whereas this class is the material pathological disorder itself. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead. The has-participant axiom formerly asserted here used RO_0000057, whose domain is occurrent; it now sits on WONT_0000447 as a BFO_0000051 has-part axiom, where it is type-correct."@en ;
                ns1:IAO_0000115 "Infection with staphylococcus aureus resistant to the antibiotic methicillin (MRSA). MRSA can infect any individual but is more common among hospitalized patients, and can also occur as an opportunistic infection." ;
-               rdfs:label "Methicillin-resistant Staphylococcus aureus infection" .
+               rdfs:comment "Bridging annotation, not subsumption. The OBO term is a phenotypic abnormality / nosological category, i.e. a specifically dependent continuant, whereas this class is the material pathological disorder itself. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead. The has-participant axiom formerly asserted here used RO_0000057, whose domain is occurrent; it now sits on WONT_0000447 as a BFO_0000051 has-part axiom, where it is type-correct."@en ;
+               rdfs:label "Methicillin-resistant Staphylococcus aureus infection" ;
+               skos:relatedMatch wont:WONT_0000447 .
 
 
 ###  http://purl.obolibrary.org/obo/HP_0032674
 ns1:HP_0032674 rdf:type owl:Class ;
-               skos:relatedMatch wont:WONT_0000380 ;
-               rdfs:comment "Bridging annotation, not subsumption. MILD models a wound/disease as a material continuant; the OBO term below is a phenotype or nosological category, i.e. a specifically dependent continuant. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
                ns1:IAO_0000115 "A cutaneous wound is a defined as a disruption of normal anatomic structure and function of the skin that occurs owing to an injury of the skin. Wound healing is a dynamic, interactive process involving soluble mediators, blood cells, extracellularmatrix, and parenchymal cells. Wound healing has three phases: inflammation, tissue formation, and tissue remodeling, that overlap in time." ;
-               rdfs:label "Cutaneous wound"@en .
+               rdfs:comment "Bridging annotation, not subsumption. MILD models a wound/disease as a material continuant; the OBO term below is a phenotype or nosological category, i.e. a specifically dependent continuant. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
+               rdfs:label "Cutaneous wound"@en ;
+               skos:relatedMatch wont:WONT_0000380 .
 
 
 ###  http://purl.obolibrary.org/obo/HP_0032675
@@ -639,19 +616,19 @@ ns1:HP_0032676 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/HP_0100699
 ns1:HP_0100699 rdf:type owl:Class ;
-               skos:relatedMatch wont:WONT_0000471 ;
-               rdfs:comment "Bridging annotation, not subsumption. HP_0100699 'Scarring' is a phenotypic abnormality, i.e. a quality and therefore a continuant, whereas this class is the process of scar formation. Asserting rdfs:subClassOf between them crosses the continuant/occurrent divide and renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
                ns1:IAO_0000115 "A scar refers to a lesion in which wound, burn, or sore has not healed completely and fibrous connective tissue has developed." ;
-               rdfs:label "Scarring"@en .
+               rdfs:comment "Bridging annotation, not subsumption. HP_0100699 'Scarring' is a phenotypic abnormality, i.e. a quality and therefore a continuant, whereas this class is the process of scar formation. Asserting rdfs:subClassOf between them crosses the continuant/occurrent divide and renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
+               rdfs:label "Scarring"@en ;
+               skos:relatedMatch wont:WONT_0000471 .
 
 
 ###  http://purl.obolibrary.org/obo/HP_0100758
 ns1:HP_0100758 rdf:type owl:Class ;
-               skos:relatedMatch mild:MILD_120020 ;
-               rdfs:comment "Bridging annotation, not subsumption. MILD models a wound/disease as a material continuant; the OBO term below is a phenotype or nosological category, i.e. a specifically dependent continuant. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
                ns1:IAO_0000115 "A serious and potentially life-threatening condition that arises when a considerable mass of body tissue dies (necrosis)." ;
                ns1:IAO_0000118 "gangrene"@en ;
-               rdfs:label "Gangrene"@en .
+               rdfs:comment "Bridging annotation, not subsumption. MILD models a wound/disease as a material continuant; the OBO term below is a phenotype or nosological category, i.e. a specifically dependent continuant. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
+               rdfs:label "Gangrene"@en ;
+               skos:relatedMatch mild:MILD_120020 .
 
 
 ###  http://purl.obolibrary.org/obo/IAO_0000030
@@ -714,6 +691,11 @@ ns1:NCBITaxon_562 rdf:type owl:Class ;
                   rdfs:label "Escherichia coli" .
 
 
+###  http://purl.obolibrary.org/obo/NCBITaxon_9606
+ns1:NCBITaxon_9606 rdf:type owl:Class ;
+                   rdfs:label "Homo sapiens" .
+
+
 ###  http://purl.obolibrary.org/obo/OBI_0000938
 ns1:OBI_0000938 rdf:type owl:Class ;
                 ns1:IAO_0000115 "A measurement datum that is reported on a categorical scale." ;
@@ -750,16 +732,50 @@ ns1:PATO_0000014 rdf:type owl:Class ;
                  rdfs:label "color" .
 
 
+###  http://purl.obolibrary.org/obo/PATO_0000136
+ns1:PATO_0000136 rdf:type owl:Class ;
+                 ns1:IAO_0000115 "A morphological quality pertaining to the degree to which an object contains an opening, aperture, orifice or vent." ;
+                 rdfs:label "closure" .
+
+
 ###  http://purl.obolibrary.org/obo/PATO_0000117
 ns1:PATO_0000117 rdf:type owl:Class ;
                  ns1:IAO_0000115 "A morphology quality inhering in a bearer by virtue of the bearer's physical magnitude." ;
                  rdfs:label "size" .
 
 
+###  http://purl.obolibrary.org/obo/PATO_0000586
+ns1:PATO_0000586 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:PATO_0000117 ;
+                 ns1:IAO_0000115 "A size quality which is relatively high." ;
+                 rdfs:label "increased size" .
+
+
+###  http://purl.obolibrary.org/obo/PATO_0000608
+ns1:PATO_0000608 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:PATO_0000136 ;
+                 ns1:IAO_0000115 "A morphological quality inhering in a bearer by virtue of the bearer's affording blocked passage or view." ;
+                 rdfs:label "closed" .
+
+
+###  http://purl.obolibrary.org/obo/PATO_0000610
+ns1:PATO_0000610 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:PATO_0000136 ;
+                 ns1:IAO_0000115 "A morphological quality inhering in a bearer by virtue of the bearer's affording unobstructed passage or view." ;
+                 rdfs:label "open" .
+
+
 ###  http://purl.obolibrary.org/obo/PATO_0001595
 ns1:PATO_0001595 rdf:type owl:Class ;
                  ns1:IAO_0000115 "A 1-D extent quality inhering in a bearer by virtue of the bearer's downward or backward or inward dimension." ;
                  rdfs:label "depth" .
+
+
+###  http://purl.obolibrary.org/obo/PATO_0001596
+ns1:PATO_0001596 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:PATO_0001595 ;
+                 ns1:IAO_0000115 "A depth quality which is relatively high." ;
+                 rdfs:label "increased depth" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0001764
@@ -788,11 +804,274 @@ ns1:PATO_0002104 rdf:type owl:Class ;
                  rdfs:label "inflamed" .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000001
-wont:WONT_0000001 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000309 ;
-                  ns1:IAO_0000116 "Recategorised when the causal-role groupings 'Medical condition contributing to wound formation' / 'affecting wound healing' / 'contributing to blistering wounds' were dissolved. Those classes grouped entities by what they were said to cause, which this ontology does not assert, and they mixed material disorders with dispositions and processes. Relevance to wounds is now carried by co-location axioms on the wound classes instead of by membership in a causal class."@en ;
-                  rdfs:label "2nd degree burn" .
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000475
+wont:WONT_0000475 rdf:type owl:Class ;
+                  rdfs:subClassOf ns1:BFO_0000019 ;
+                  ns1:IAO_0000115 "A quality of a pathological disorder that is the time that has elapsed since the disorder came into existence, taken relative to the course expected for a disorder of its kind."@en ;
+                  rdfs:label "degree of time after disease inception"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000476
+wont:WONT_0000476 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000475 ;
+                  ns1:IAO_0000115 "A degree of time after disease inception that qualifies its bearer as acute: the disorder is of recent onset and still within the period in which an orderly course is expected."@en ;
+                  rdfs:label "acute"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000477
+wont:WONT_0000477 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000475 ;
+                  ns1:IAO_0000115 "A degree of time after disease inception that qualifies its bearer as chronic: the disorder has persisted beyond the period in which an orderly course is expected."@en ;
+                  rdfs:comment "PATO_0001863 chronic is a duration quality of a process; this quality is borne by the disorder itself, a material entity. Bridged, not subsumed."@en ;
+                  rdfs:label "chronic"@en ;
+                  skos:relatedMatch ns1:PATO_0001863 .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000478
+wont:WONT_0000478 rdf:type owl:Class ;
+                  rdfs:subClassOf ns1:BFO_0000019 ;
+                  ns1:IAO_0000115 "A quality of a wound that is the extent to which microorganisms are present in it, multiply in it and elicit a response from its bearer."@en ;
+                  rdfs:label "degree of microbial burden"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000479
+wont:WONT_0000479 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000478 ;
+                  ns1:IAO_0000115 "A degree of microbial burden that qualifies its bearer as contaminated: microorganisms are present in the wound but are not multiplying."@en ;
+                  rdfs:label "contaminated"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000480
+wont:WONT_0000480 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000478 ;
+                  ns1:IAO_0000115 "A degree of microbial burden that qualifies its bearer as infected: microorganisms are present in the wound, multiply in it and elicit a host response."@en ;
+                  ns1:IAO_0000116 "Added as a determinate beside the process reading, not instead of it: Infected wound (WONT_0000163) also participates in a wound infection process (WONT_0000410)."@en ;
+                  rdfs:label "infected"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000481
+wont:WONT_0000481 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0000086 ;
+                                                               owl:someValuesFrom [ rdf:type owl:Class ;
+                                                                                    owl:unionOf ( wont:WONT_0000479
+                                                                                                  wont:WONT_0000480
+                                                                                                )
+                                                                                  ]
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  owl:disjointWith wont:WONT_0000068 ;
+                  ns1:IAO_0000115 "A wound that bears the quality contaminated or the quality infected."@en ;
+                  rdfs:label "Wound with recognized microbial burden"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000482
+wont:WONT_0000482 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000310 ;
+                  ns1:IAO_0000115 "A thermal wound in which the injury is confined to the epidermis."@en ;
+                  rdfs:label "First-degree burn wound"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000483
+wont:WONT_0000483 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000310 ;
+                  ns1:IAO_0000115 "A thermal wound in which the injury extends through the epidermis into the dermis."@en ;
+                  ns1:IAO_0000118 "2nd degree burn"@en ;
+                  rdfs:label "Second-degree burn wound"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000484
+wont:WONT_0000484 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000310 ;
+                  ns1:IAO_0000115 "A thermal wound in which the injury extends through the full thickness of the skin."@en ;
+                  rdfs:label "Third-degree burn wound"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000485
+wont:WONT_0000485 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000310 ;
+                  ns1:IAO_0000115 "A thermal wound in which the injury extends beyond the skin into underlying tissue such as fascia, muscle or bone."@en ;
+                  rdfs:label "Fourth-degree burn wound"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000486
+wont:WONT_0000486 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000478 ;
+                  ns1:IAO_0000115 "A degree of microbial burden that qualifies its bearer as sterile: no viable microorganisms are present in the wound."@en ;
+                  rdfs:comment "PATO_0000956 sterile is a fertility quality and is deliberately not used here."@en ;
+                  rdfs:label "sterile"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000487
+wont:WONT_0000487 rdf:type owl:Class ;
+                  rdfs:subClassOf ns1:BFO_0000019 ;
+                  ns1:IAO_0000115 "A quality of a wound that is the extent to which its tissue is supplied with blood."@en ;
+                  rdfs:label "degree of tissue perfusion"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000488
+wont:WONT_0000488 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000487 ;
+                  ns1:IAO_0000115 "A degree of tissue perfusion that qualifies its bearer as ischemic: the blood supply to the tissue is insufficient for its metabolic needs."@en ;
+                  rdfs:label "ischemic"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000489
+wont:WONT_0000489 rdf:type owl:Class ;
+                  rdfs:subClassOf ns1:BFO_0000019 ;
+                  ns1:IAO_0000115 "A quality of a wound that is the extent to which its tissue shows neoplastic growth that invades surrounding tissue or spreads to distant sites."@en ;
+                  rdfs:label "degree of malignancy"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000490
+wont:WONT_0000490 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000489 ;
+                  ns1:IAO_0000115 "A degree of malignancy that qualifies its bearer as benign: any neoplastic tissue present neither invades surrounding tissue nor spreads."@en ;
+                  rdfs:label "benign"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000491
+wont:WONT_0000491 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000489 ;
+                  ns1:IAO_0000115 "A degree of malignancy that qualifies its bearer as malignant: neoplastic tissue present invades surrounding tissue or spreads to distant sites."@en ;
+                  rdfs:comment "PATO_0002097 'neoplastic, malignant' is a disposition of a tumour; this quality is borne by the wound. Bridged, not subsumed."@en ;
+                  rdfs:label "malignant"@en ;
+                  skos:relatedMatch ns1:PATO_0002097 .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000492
+wont:WONT_0000492 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000437 ;
+                  ns1:IAO_0000115 "A burn classification grade that is one of the three concentric zones of a burn wound distinguished by Jackson according to the severity of tissue damage."@en ;
+                  ns1:IAO_0000118 "Burn classification grade of the Jackson classification"@en ;
+                  rdfs:label "Jackson burn wound zone"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000493
+wont:WONT_0000493 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000066 ;
+                  ns1:IAO_0000115 "A wound classification scale that divides a burn wound into three concentric zones - coagulation, stasis and hyperemia - by the severity of tissue damage."@en ;
+                  ns1:IAO_0000118 "Jackson burn wound classification"@en ;
+                  dcterms:source "Jackson DM. The diagnosis of the depth of burning. Br J Surg. 1953;40(164):588-596." ;
+                  rdfs:label "Jackson burn wound zone classification"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000494
+wont:WONT_0000494 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000066 ;
+                  ns1:IAO_0000115 "A wound classification scale that grades a burn wound by the depth of tissue destroyed: superficial, superficial partial-thickness, deep partial-thickness and full-thickness. Derganc's subdivision of the second degree refines the degree scheme attributed to Hildanus."@en ;
+                  dcterms:source "Derganc M. The theoretical and practical significance of the subdivision of the second degree burn into superficial and deep type. In: Artz CP, ed. Research in Burns. Vol 9. American Institute of Biological Sciences and F A Davis; 1962:315-326." ,
+                                 "Wallace A. Classification of Burns: A History of Development; with Comments for Today and Thoughts for the Future. Thesis PhD. University of St Andrews; 1973." ;
+                  rdfs:label "Burn wound classification according to Hildanus and Derganc"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000495
+wont:WONT_0000495 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000437 ;
+                  ns1:IAO_0000115 "A burn classification grade that is a category of the burn wound classification according to Hildanus and Derganc."@en ;
+                  rdfs:label "Burn wound classification grade according to Hildanus and Derganc"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000504
+wont:WONT_0000504 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0000086 ;
+                                                               owl:someValuesFrom ns1:PATO_0000610
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that bears the quality open: its surface is breached, so that underlying tissue is exposed."@en ;
+                  rdfs:label "Open wound"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000505
+wont:WONT_0000505 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0000086 ;
+                                                               owl:someValuesFrom ns1:PATO_0000608
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that bears the quality closed: the skin or mucosal surface over the injured tissue is intact."@en ;
+                  rdfs:label "Closed wound"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000506
+wont:WONT_0000506 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0000086 ;
+                                                               owl:someValuesFrom wont:WONT_0000463
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that bears the quality epithelialized: its surface has been covered by newly formed epithelium."@en ;
+                  rdfs:label "Epithelialized wound"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000507
+wont:WONT_0000507 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0000086 ;
+                                                               owl:someValuesFrom ns1:PATO_0000586
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that bears the quality increased size: its extent is greater than is typical for a wound of its kind."@en ;
+                  rdfs:label "Large wound"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000508
+wont:WONT_0000508 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0000086 ;
+                                                               owl:someValuesFrom ns1:PATO_0001596
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that bears the quality increased depth: it extends further into the tissue than is typical for a wound of its kind."@en ;
+                  rdfs:label "Deep wound"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000509
+wont:WONT_0000509 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000510
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0000086 ;
+                                                               owl:someValuesFrom wont:WONT_0000488
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000510 ;
+                  ns1:IAO_0000115 "A wound co-located with impaired arterial inflow that bears the quality ischemic."@en ;
+                  rdfs:label "Ischemic wound"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000510
+wont:WONT_0000510 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that is co-located with impaired arterial inflow in the same limb of the same patient, and that persists over the same period as that impairment. No claim is made that the impaired arterial inflow caused the wound."@en ;
+                  rdfs:comment "TEMPORAL SCOPE NOT AXIOMATISED. The 'over the same period' clause of the definition is documentation only. BFO 2020 places temporal relations in a separate temporal extension, which this ontology deliberately does not import; the spatial half of co-location is expressible, the temporal half is not. Do not read the absence of a temporal axiom as an absence of a temporal commitment."@en ;
+                  rdfs:label "Wound co-located with impaired arterial inflow"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000002
@@ -948,12 +1227,6 @@ wont:WONT_0000030 rdf:type owl:Class ;
                   rdfs:label "Aseptic cuticle" .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000031
-wont:WONT_0000031 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000380 ;
-                  rdfs:label "Aseptic wound" .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000032
 wont:WONT_0000032 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000089 ;
@@ -1106,24 +1379,34 @@ wont:WONT_0000061 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000066
 wont:WONT_0000066 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "An information content entity that is a specified input of a wound classification process."@en ;
                   rdfs:subClassOf ns1:IAO_0000030 ,
                                   [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:OBI_0000295 ;
                                     owl:someValuesFrom wont:WONT_120015
                                   ] ;
+                  ns1:IAO_0000115 "An information content entity that is a specified input of a wound classification process."@en ;
                   rdfs:label "Wound classification scale"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000067
 wont:WONT_0000067 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:subClassOf wont:WONT_0000481 ;
                   rdfs:label "Clean contaminated wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000068
 wont:WONT_0000068 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0000086 ;
+                                                               owl:someValuesFrom wont:WONT_0000486
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
                   rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that bears the quality sterile."@en ;
+                  ns1:IAO_0000118 "Aseptic wound"@en ;
                   rdfs:label "Clean wound" .
 
 
@@ -1157,12 +1440,6 @@ wont:WONT_0000074 rdf:type owl:Class ;
                   rdfs:label "Cold plasma wound treatment process"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000075
-wont:WONT_0000075 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000380 ;
-                  rdfs:label "Colonized wound" .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000076
 wont:WONT_0000076 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000189 ;
@@ -1177,7 +1454,12 @@ wont:WONT_0000077 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000078
 wont:WONT_0000078 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000380 ;
+                  rdfs:subClassOf wont:WONT_0000481 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000086 ;
+                                    owl:someValuesFrom wont:WONT_0000479
+                                  ] ;
+                  ns1:IAO_0000115 "A wound with recognized microbial burden that bears the quality contaminated."@en ;
                   rdfs:label "Contaminated wound" .
 
 
@@ -1285,7 +1567,6 @@ wont:WONT_0000100 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000101
 wont:WONT_0000101 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound base that bears the quality epithelialized."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000382
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:RO_0000086 ;
@@ -1295,6 +1576,7 @@ wont:WONT_0000101 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000382 ;
+                  ns1:IAO_0000115 "A wound base that bears the quality epithelialized."@en ;
                   rdfs:label "Epithelializing wound bed" .
 
 
@@ -1318,7 +1600,6 @@ wont:WONT_0000108 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000109
 wont:WONT_0000109 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound base that bears the quality fibrin-covered."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000382
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:RO_0000086 ;
@@ -1328,6 +1609,7 @@ wont:WONT_0000109 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000382 ;
+                  ns1:IAO_0000115 "A wound base that bears the quality fibrin-covered."@en ;
                   rdfs:label "Fibrin-covered wound bed" .
 
 
@@ -1364,9 +1646,9 @@ wont:WONT_0000114 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000115
 wont:WONT_0000115 rdf:type owl:Class ;
-                  skos:relatedMatch ns1:DOID_9602 ;
                   rdfs:subClassOf mild:MILD_120020 ;
-                  rdfs:label "Fournier's gangrene" .
+                  rdfs:label "Fournier's gangrene" ;
+                  skos:relatedMatch ns1:DOID_9602 .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000116
@@ -1394,15 +1676,8 @@ wont:WONT_0000121 rdf:type owl:Class ;
                   rdfs:label "Germ spectrum assessment process"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000130
-wont:WONT_0000130 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000310 ;
-                  rdfs:label "Graded thermal or cauterizing wound" .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000131
 wont:WONT_0000131 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound base that bears the quality granulating."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000382
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:RO_0000086 ;
@@ -1412,6 +1687,7 @@ wont:WONT_0000131 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000382 ;
+                  ns1:IAO_0000115 "A wound base that bears the quality granulating."@en ;
                   rdfs:label "Granulating wound bed" .
 
 
@@ -1532,16 +1808,16 @@ wont:WONT_0000162 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000163
 wont:WONT_0000163 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000481 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000056 ;
+                                    owl:someValuesFrom wont:WONT_0000410
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000086 ;
+                                    owl:someValuesFrom wont:WONT_0000480
+                                  ] ;
                   ns1:IAO_0000115 "A wound that participates in a wound infection process."@en ;
-                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
-                                                             [ rdf:type owl:Restriction ;
-                                                               owl:onProperty ns1:RO_0000056 ;
-                                                               owl:someValuesFrom wont:WONT_0000410
-                                                             ]
-                                                           ) ;
-                                        rdf:type owl:Class
-                                      ] ;
-                  rdfs:subClassOf wont:WONT_0000380 ;
                   rdfs:label "Infected wound" .
 
 
@@ -1591,7 +1867,6 @@ wont:WONT_0000174 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000175
 wont:WONT_0000175 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound edge that bears the quality livid."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000401
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:RO_0000086 ;
@@ -1601,6 +1876,7 @@ wont:WONT_0000175 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000401 ;
+                  ns1:IAO_0000115 "A wound edge that bears the quality livid."@en ;
                   rdfs:label "Livider wound margin" .
 
 
@@ -1624,7 +1900,6 @@ wont:WONT_0000178 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000180
 wont:WONT_0000180 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound edge that bears the quality macerated."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000401
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:RO_0000086 ;
@@ -1634,12 +1909,12 @@ wont:WONT_0000180 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000401 ;
+                  ns1:IAO_0000115 "A wound edge that bears the quality macerated."@en ;
                   rdfs:label "Macerated wound edge" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000182
 wont:WONT_0000182 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound that is the specified output of a disorder development process that has as participant a malignancy."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:OBI_0000312 ;
@@ -1652,10 +1927,15 @@ wont:WONT_0000182 rdf:type owl:Class ;
                                                                                     rdf:type owl:Class
                                                                                   ]
                                                              ]
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0000086 ;
+                                                               owl:someValuesFrom wont:WONT_0000491
+                                                             ]
                                                            ) ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that is the specified output of a disorder development process that has as participant a malignancy."@en ;
                   rdfs:label "Malignant wound" .
 
 
@@ -1776,7 +2056,6 @@ wont:WONT_0000209 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000211
 wont:WONT_0000211 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound base that bears the quality necrotic."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000382
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:RO_0000086 ;
@@ -1786,6 +2065,7 @@ wont:WONT_0000211 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000382 ;
+                  ns1:IAO_0000115 "A wound base that bears the quality necrotic."@en ;
                   rdfs:label "Necrotic wound bed" .
 
 
@@ -1797,7 +2077,6 @@ wont:WONT_0000213 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000214
 wont:WONT_0000214 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound that is the specified output of a disorder development process that has as participant a neoplasm."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:OBI_0000312 ;
@@ -1814,6 +2093,7 @@ wont:WONT_0000214 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that is the specified output of a disorder development process that has as participant a neoplasm."@en ;
                   rdfs:label "Neoplastic wound" .
 
 
@@ -1940,7 +2220,6 @@ wont:WONT_0000245 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000247
 wont:WONT_0000247 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound that participates in a wound healing by primary intention."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:RO_0000056 ;
@@ -1950,6 +2229,7 @@ wont:WONT_0000247 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that participates in a wound healing by primary intention."@en ;
                   rdfs:label "Primarily-healing wound" .
 
 
@@ -1967,7 +2247,6 @@ wont:WONT_0000253 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000256
 wont:WONT_0000256 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound edge that bears the quality reddened."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000401
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:RO_0000086 ;
@@ -1977,6 +2256,7 @@ wont:WONT_0000256 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000401 ;
+                  ns1:IAO_0000115 "A wound edge that bears the quality reddened."@en ;
                   rdfs:label "Reddened wound edge" .
 
 
@@ -2000,7 +2280,6 @@ wont:WONT_0000260 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000261
 wont:WONT_0000261 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound that participates in a regenerative wound healing."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:RO_0000056 ;
@@ -2010,6 +2289,7 @@ wont:WONT_0000261 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that participates in a regenerative wound healing."@en ;
                   rdfs:label "Regeneratively-healing wound" .
 
 
@@ -2057,7 +2337,6 @@ wont:WONT_0000271 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000272
 wont:WONT_0000272 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound that participates in a wound healing by secondary intention."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:RO_0000056 ;
@@ -2067,6 +2346,7 @@ wont:WONT_0000272 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that participates in a wound healing by secondary intention."@en ;
                   rdfs:label "Secondarily-healing wound" .
 
 
@@ -2163,7 +2443,6 @@ wont:WONT_0000289 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000290
 wont:WONT_0000290 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound edge that bears the quality softened."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000401
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:RO_0000086 ;
@@ -2173,6 +2452,7 @@ wont:WONT_0000290 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000401 ;
+                  ns1:IAO_0000115 "A wound edge that bears the quality softened."@en ;
                   rdfs:label "Softened wound edge" .
 
 
@@ -2244,7 +2524,6 @@ wont:WONT_0000306 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000307
 wont:WONT_0000307 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound that participates in a wound healing by tertiary intention."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:RO_0000056 ;
@@ -2254,6 +2533,7 @@ wont:WONT_0000307 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that participates in a wound healing by tertiary intention."@en ;
                   rdfs:label "Tertiarily-healing wound" .
 
 
@@ -2261,12 +2541,6 @@ wont:WONT_0000307 rdf:type owl:Class ;
 wont:WONT_0000308 rdf:type owl:Class ;
                   rdfs:subClassOf ns1:GO_0042060 ;
                   rdfs:label "Wound healing by tertiary intention"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000309
-wont:WONT_0000309 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000380 ;
-                  rdfs:label "Thermal or cauterizing wound" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310
@@ -2409,12 +2683,12 @@ wont:WONT_0000335 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000336
 wont:WONT_0000336 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A material entity that bears the role nutrient."@en ;
                   rdfs:subClassOf ns1:BFO_0000040 ,
                                   [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:RO_0000087 ;
                                     owl:someValuesFrom ns1:CHEBI_33284
                                   ] ;
+                  ns1:IAO_0000115 "A material entity that bears the role nutrient."@en ;
                   rdfs:label "trace element"@en .
 
 
@@ -2433,7 +2707,6 @@ wont:WONT_0000338 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339
 wont:WONT_0000339 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound that is the specified output of a trauma process."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:OBI_0000312 ;
@@ -2443,6 +2716,7 @@ wont:WONT_0000339 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that is the specified output of a trauma process."@en ;
                   rdfs:label "Traumatic wound" .
 
 
@@ -2472,8 +2746,8 @@ wont:WONT_0000346 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000347
 wont:WONT_0000347 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000441 ,
-                                  wont:WONT_0000384 ;
+                  rdfs:subClassOf wont:WONT_0000384 ,
+                                  wont:WONT_0000441 ;
                   rdfs:label "Ulcus cruris venosum" .
 
 
@@ -2491,7 +2765,6 @@ wont:WONT_0000350 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000351
 wont:WONT_0000351 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound edge that bears the quality undermined."@en ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000401
                                                              [ rdf:type owl:Restriction ;
                                                                owl:onProperty ns1:RO_0000086 ;
@@ -2501,6 +2774,7 @@ wont:WONT_0000351 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000401 ;
+                  ns1:IAO_0000115 "A wound edge that bears the quality undermined."@en ;
                   rdfs:label "Undermined wound margin" .
 
 
@@ -2560,12 +2834,56 @@ wont:WONT_0000379 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380
 wont:WONT_0000380 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A pathological disorder that is the specified output of a wound development process."@en ;
                   rdfs:subClassOf mild:MILD_120022 ,
                                   [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:OBI_0000312 ;
                                     owl:someValuesFrom wont:WONT_0000414
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000086 ;
+                                    owl:someValuesFrom ns1:PATO_0000117
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000086 ;
+                                    owl:someValuesFrom ns1:PATO_0000136
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000086 ;
+                                    owl:someValuesFrom ns1:PATO_0001595
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000086 ;
+                                    owl:someValuesFrom wont:WONT_0000475
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000086 ;
+                                    owl:someValuesFrom wont:WONT_0000478
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000086 ;
+                                    owl:someValuesFrom wont:WONT_0000434
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000086 ;
+                                    owl:someValuesFrom wont:WONT_0000451
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000086 ;
+                                    owl:someValuesFrom wont:WONT_0000452
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000086 ;
+                                    owl:someValuesFrom wont:WONT_0000453
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000086 ;
+                                    owl:someValuesFrom wont:WONT_0000454
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000086 ;
+                                    owl:someValuesFrom wont:WONT_0000455
                                   ] ;
+                  ns1:IAO_0000115 "A pathological disorder that is the specified output of a wound development process."@en ;
                   rdfs:label "Wound" .
 
 
@@ -2648,12 +2966,12 @@ wont:WONT_0000391 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000392
 wont:WONT_0000392 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A pathological disorder that is the specified output of a wound dehiscence process."@en ;
                   rdfs:subClassOf mild:MILD_120022 ,
                                   [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:OBI_0000312 ;
                                     owl:someValuesFrom wont:WONT_0000433
                                   ] ;
+                  ns1:IAO_0000115 "A pathological disorder that is the specified output of a wound dehiscence process."@en ;
                   rdfs:label "Wound dehiscence" .
 
 
@@ -2671,12 +2989,12 @@ wont:WONT_0000397 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000398
 wont:WONT_0000398 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A device that bears a wound coverage function."@en ;
                   rdfs:subClassOf ns1:COB_0001300 ,
                                   [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:RO_0000085 ;
                                     owl:someValuesFrom wont:WONT_120012
                                   ] ;
+                  ns1:IAO_0000115 "A device that bears a wound coverage function."@en ;
                   rdfs:label "Wound dressing" .
 
 
@@ -2736,8 +3054,8 @@ wont:WONT_0000406 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000408
 wont:WONT_0000408 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120022 ;
-                  ns1:IAO_0000116 "Reparented from BFO_0000016 disposition to MILD_120022 pathological disorder. A disorder is not a disposition. What is present in the patient is an abnormal organisation of material components in and around the wound; impaired healing is what that disorder is a disorder OF, not a potential the disorder bears. The dispositional reading was a residue of the dissolved causal-role grouping, which mixed material disorders with dispositions and processes."@en ,
-                                  "Recategorised when the causal-role groupings 'Medical condition contributing to wound formation' / 'affecting wound healing' / 'contributing to blistering wounds' were dissolved. Those classes grouped entities by what they were said to cause, which this ontology does not assert, and they mixed material disorders with dispositions and processes. Relevance to wounds is now carried by co-location axioms on the wound classes instead of by membership in a causal class."@en ;
+                  ns1:IAO_0000116 "Recategorised when the causal-role groupings 'Medical condition contributing to wound formation' / 'affecting wound healing' / 'contributing to blistering wounds' were dissolved. Those classes grouped entities by what they were said to cause, which this ontology does not assert, and they mixed material disorders with dispositions and processes. Relevance to wounds is now carried by co-location axioms on the wound classes instead of by membership in a causal class."@en ,
+                                  "Reparented from BFO_0000016 disposition to MILD_120022 pathological disorder. A disorder is not a disposition. What is present in the patient is an abnormal organisation of material components in and around the wound; impaired healing is what that disorder is a disorder OF, not a potential the disorder bears. The dispositional reading was a residue of the dissolved causal-role grouping, which mixed material disorders with dispositions and processes."@en ;
                   rdfs:label "Wound healing disorder" .
 
 
@@ -2789,8 +3107,8 @@ wont:WONT_0000415 rdf:type owl:Class ;
                                     owl:someValuesFrom wont:WONT_0000380
                                   ] ;
                   ns1:IAO_0000115 "A quality that inheres in a patient, that is the extent of the pain that patient feels, and that is causally influenced by a wound."@en ;
-                  ns1:IAO_0000118 "Wound pain"@en ;
                   ns1:IAO_0000116 "Retyped from BFO_0000016 disposition to BFO_0000019 quality, and the bearer moved from the wound to the patient. Wound pain is pain felt by a patient; a wound does not feel, so it cannot be the bearer. There is always some degree of pain inhering in the patient, which is what makes this a quality rather than a disposition waiting to be realized - so the IAO_0000112 note about realization in debridement or dressing change was dropped with the disposition typing, because qualities are not realized. The single qualifying value is WONT_0000474 painful, mirroring macerated under degree of maceration."@en ;
+                  ns1:IAO_0000118 "Wound pain"@en ;
                   ns1:IAO_0000232 "ON MILD MODEL COMMITMENT 4. Commitment 4 forbids asserting a causal relation between ONE DISORDER AND ANOTHER, on the ground that what a disease causes cannot be separated from what it is. This axiom is outside that scope: the wound is a disorder, but the pain is a quality of the patient, not a second disorder, so no disorder-to-disorder aetiology is claimed and no co-location rewrite is needed. RO_0002559 causally influenced by was chosen over RO_0002452 has symptom and RO_0004023, both of which carry rdfs:domain OGMS_0000031 and would silently infer the OGMS disposition-based disease model that MILD rejects. RO_0002559 has no domain or range axiom, so it carries the intended content with no side effect."@en ;
                   rdfs:label "degree of wound pain"@en .
 
@@ -2820,12 +3138,12 @@ wont:WONT_0000418 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000419
 wont:WONT_0000419 rdf:type owl:Class ;
-                  ns1:IAO_0000115 "A wound diagnostic process that has as specified output a wound depth measurement datum."@en ;
                   rdfs:subClassOf wont:WONT_0000395 ,
                                   [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:OBI_0000299 ;
                                     owl:someValuesFrom wont:WONT_0000448
                                   ] ;
+                  ns1:IAO_0000115 "A wound diagnostic process that has as specified output a wound depth measurement datum."@en ;
                   rdfs:label "Wound size measurement process"@en .
 
 
@@ -2874,15 +3192,15 @@ wont:WONT_0000427 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000429
 wont:WONT_0000429 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000441 ,
-                                  wont:WONT_0000426 ;
+                  rdfs:subClassOf wont:WONT_0000426 ,
+                                  wont:WONT_0000441 ;
                   rdfs:label "Wounds classified according to Gustilo and Anderson" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000430
 wont:WONT_0000430 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000441 ,
-                                  wont:WONT_0000426 ;
+                  rdfs:subClassOf wont:WONT_0000426 ,
+                                  wont:WONT_0000441 ;
                   rdfs:label "Wounds classified according to Tscherne and Oestern" .
 
 
@@ -2952,34 +3270,44 @@ wont:WONT_0000440 rdf:type owl:Class ;
 wont:WONT_0000441 rdf:type owl:Class ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
                                                              [ rdf:type owl:Restriction ;
-                                                             owl:onProperty ns1:RO_0001025 ;
-                                                             owl:someValuesFrom ns1:FMA_7163
-                                                           ]
+                                                               owl:onProperty ns1:RO_0001025 ;
+                                                               owl:someValuesFrom ns1:FMA_7163
+                                                             ]
                                                            ) ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000380 ;
                   ns1:IAO_0000115 "A wound whose disrupted tissue is skin."@en ;
-                  skos:relatedMatch ns1:HP_0032674 ;
                   rdfs:comment "WONT-owned material counterpart of HP_0032674 Cutaneous wound. HP models it as a phenotypic abnormality (a specifically dependent continuant); WONT needs a material wound, so the two are related rather than one subsuming the other."@en ;
-                  rdfs:label "Skin wound"@en .
+                  rdfs:label "Skin wound"@en ;
+                  skos:relatedMatch ns1:HP_0032674 .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000442
 wont:WONT_0000442 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0000086 ;
+                                                               owl:someValuesFrom wont:WONT_0000477
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
                   rdfs:subClassOf wont:WONT_0000380 ;
                   ns1:IAO_0000115 "A wound that has failed to progress through the phases of healing in an orderly and timely fashion."@en ;
-                  skos:relatedMatch ns1:HP_0032676 ;
+                  ns1:IAO_0000118 "Chronic non-healing wound"@en ,
+                                  "Non-healing wound"@en ;
                   rdfs:comment "WONT-owned material counterpart of HP_0032676, which HP models as a phenotypic abnormality. Bridged, not subsumed."@en ;
-                  rdfs:label "Chronic wound"@en .
+                  rdfs:label "Chronic wound"@en ;
+                  skos:relatedMatch ns1:HP_0032676 .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000443
 wont:WONT_0000443 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120020 ;
                   ns1:IAO_0000115 "A superficial bacterial skin infection, characteristically caused by Streptococcus pyogenes, involving the upper dermis and superficial lymphatics."@en ;
-                  rdfs:comment "Minted because no erysipelas class was available in the imported DOID module. DOID_0050061 is erysipeloid - a distinct zoonotic infection caused by Erysipelothrix rhusiopathiae - and had been mislabelled 'Erysipel' in WONT. Deliberately NOT related to DOID_0050061."@en ;
                   ns1:IAO_0000116 "Recategorised when the causal-role groupings 'Medical condition contributing to wound formation' / 'affecting wound healing' / 'contributing to blistering wounds' were dissolved. Those classes grouped entities by what they were said to cause, which this ontology does not assert, and they mixed material disorders with dispositions and processes. Relevance to wounds is now carried by co-location axioms on the wound classes instead of by membership in a causal class."@en ;
+                  rdfs:comment "Minted because no erysipelas class was available in the imported DOID module. DOID_0050061 is erysipeloid - a distinct zoonotic infection caused by Erysipelothrix rhusiopathiae - and had been mislabelled 'Erysipel' in WONT. Deliberately NOT related to DOID_0050061."@en ;
                   rdfs:label "Erysipelas"@en .
 
 
@@ -2987,32 +3315,32 @@ wont:WONT_0000443 rdf:type owl:Class ;
 wont:WONT_0000444 rdf:type owl:Class ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000188
                                                              [ rdf:type owl:Restriction ;
-                                                             owl:onProperty ns1:RO_0000087 ;
-                                                             owl:someValuesFrom ns1:CHEBI_48218
-                                                           ]
+                                                               owl:onProperty ns1:RO_0000087 ;
+                                                               owl:someValuesFrom ns1:CHEBI_48218
+                                                             ]
                                                            ) ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000188 ;
                   ns1:IAO_0000115 "A material used for wound treatment that bears the antiseptic drug role."@en ;
-                  skos:relatedMatch ns1:CHEBI_48218 ;
-                  rdfs:label "Antiseptic agent"@en .
+                  rdfs:label "Antiseptic agent"@en ;
+                  skos:relatedMatch ns1:CHEBI_48218 .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000445
 wont:WONT_0000445 rdf:type owl:Class ;
                   owl:equivalentClass [ owl:intersectionOf ( ns1:CHEBI_3095
                                                              [ rdf:type owl:Restriction ;
-                                                             owl:onProperty ns1:RO_0000087 ;
-                                                             owl:someValuesFrom ns1:CHEBI_48218
-                                                           ]
+                                                               owl:onProperty ns1:RO_0000087 ;
+                                                               owl:someValuesFrom ns1:CHEBI_48218
+                                                             ]
                                                            ) ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000444 ;
                   ns1:IAO_0000115 "A biguanide that bears the antiseptic drug role."@en ;
-                  skos:relatedMatch ns1:CHEBI_3095 ;
-                  rdfs:label "Antiseptic biguanide"@en .
+                  rdfs:label "Antiseptic biguanide"@en ;
+                  skos:relatedMatch ns1:CHEBI_3095 .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000446
@@ -3020,17 +3348,17 @@ wont:WONT_0000446 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120020 ,
                                   [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:BFO_0000051 ;
-                                    owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000473
-                                                                             wont:WONT_0000469
-                                                                           ) ;
+                                    owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000469
+                                                                              wont:WONT_0000473
+                                                                            ) ;
                                                          rdf:type owl:Class
                                                        ]
                                   ] ;
                   ns1:IAO_0000115 "A material disease entity that has as parts one or more mucosal blisters that are autoimmune tissue disorders."@en ;
-                  skos:relatedMatch ns1:DOID_0080841 ;
                   ns1:IAO_0000116 "Reparented from ns1:DOID_0080841 pemphigoid to mild:MILD_120020 material disease entity. This class had been the only WONT class with no BFO anchor: its only parent chain ran into DOID and dead-ended at DOID_4, so nothing placed it in a BFO category. It is a disease, and it is a disease in virtue of the material disorders that compose it - several blisters in the mucosa, arising from an immune response against the patient's own tissue. That is now what the axiom says: MILD_120020 has_part some (mucosal blister and autoimmune tissue disorder). No causal claim is made between the autoimmunity and the blistering; the blisters simply ARE autoimmune tissue disorders, which is assertable under MILD model commitment 4 whereas an aetiological arrow is not."@en ;
                   rdfs:comment "Bridging annotation, not subsumption. DOID_0080841 pemphigoid is a nosological category, i.e. a specifically dependent continuant, whereas this class is the material disease entity itself; the imported DOID module also carries only that generic term, which WONT had been narrowing by label. Asserting rdfs:subClassOf between them is the category error corrected here, so the relation is recorded as skos:relatedMatch instead."@en ;
-                  rdfs:label "Mucous membrane pemphigoid"@en .
+                  rdfs:label "Mucous membrane pemphigoid"@en ;
+                  skos:relatedMatch ns1:DOID_0080841 .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000447
@@ -3041,9 +3369,9 @@ wont:WONT_0000447 rdf:type owl:Class ;
                                     owl:someValuesFrom ns1:NCBITaxon_1280
                                   ] ;
                   ns1:IAO_0000115 "A material disease entity that is an infection whose causal agent is a methicillin-resistant strain of Staphylococcus aureus."@en ;
-                  skos:relatedMatch ns1:HP_0032326 ;
                   rdfs:comment "WONT-owned material disease counterpart of HP_0032326, which HP models as a phenotypic abnormality. Bridged, not subsumed."@en ;
-                  rdfs:label "MRSA infection"@en .
+                  rdfs:label "MRSA infection"@en ;
+                  skos:relatedMatch ns1:HP_0032326 .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000448
@@ -3064,9 +3392,9 @@ wont:WONT_0000449 rdf:type owl:Class ;
                                     owl:onProperty ns1:BFO_0000197 ;
                                     owl:someValuesFrom [ owl:intersectionOf ( ns1:NCBITaxon_9606
                                                                               [ rdf:type owl:Restriction ;
-                                                                              owl:onProperty ns1:RO_0000086 ;
-                                                                              owl:someValuesFrom ns1:PATO_0001764
-                                                                            ]
+                                                                                owl:onProperty ns1:RO_0000086 ;
+                                                                                owl:someValuesFrom ns1:PATO_0001764
+                                                                              ]
                                                                             ) ;
                                                          rdf:type owl:Class
                                                        ]
@@ -3185,9 +3513,9 @@ wont:WONT_0000464 rdf:type owl:Class ;
 wont:WONT_0000465 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000464 ;
                   ns1:IAO_0000115 "A neoplasm whose constituent cells are disposed to invade surrounding tissue or to metastasise."@en ;
-                  skos:relatedMatch ns1:PATO_0002097 ;
                   rdfs:comment "PATO_0002097 'neoplastic, malignant' is a quality and cannot subsume a material disease entity, so it is bridged rather than used as a parent. Minted under MILD_120020 because the imported DOID module contains no neoplasm or carcinoma class."@en ;
-                  rdfs:label "Malignancy"@en .
+                  rdfs:label "Malignancy"@en ;
+                  skos:relatedMatch ns1:PATO_0002097 .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000466
@@ -3202,54 +3530,54 @@ wont:WONT_0000466 rdf:type owl:Class ;
 wont:WONT_0000467 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120022 ;
                   ns1:IAO_0000115 "A pathological disorder consisting in the abnormal organisation of the insulin-secreting or insulin-responsive tissues of a patient, such that glucose homeostasis is not maintained."@en ;
-                  skos:relatedMatch ns1:DOID_9351 ;
                   rdfs:comment "Bridging annotation, not subsumption. The OBO term is a nosological category / specifically dependent continuant, whereas this class is the material pathological disorder itself. Asserting rdfs:subClassOf between them is a category error, so the relation is recorded as skos:relatedMatch instead."@en ;
-                  rdfs:label "Diabetic metabolic disorder"@en .
+                  rdfs:label "Diabetic metabolic disorder"@en ;
+                  skos:relatedMatch ns1:DOID_9351 .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000468
 wont:WONT_0000468 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120022 ;
                   ns1:IAO_0000115 "A pathological disorder consisting in an abnormal structure of the valves or walls of the veins of a limb, such that venous return from that limb against gravity is impaired."@en ;
-                  skos:relatedMatch ns1:DOID_0050853 ;
                   rdfs:comment "Bridging annotation, not subsumption. The OBO term is a nosological category / specifically dependent continuant, whereas this class is the material pathological disorder itself. Asserting rdfs:subClassOf between them is a category error, so the relation is recorded as skos:relatedMatch instead."@en ;
-                  rdfs:label "Venous insufficiency disorder"@en .
+                  rdfs:label "Venous insufficiency disorder"@en ;
+                  skos:relatedMatch ns1:DOID_0050853 .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000469
 wont:WONT_0000469 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120022 ;
                   ns1:IAO_0000115 "A pathological disorder consisting in tissue of a patient that has been damaged by an immune response directed against constituents normally present in that patient's own body."@en ;
-                  skos:relatedMatch ns1:DOID_417 ;
                   rdfs:comment "Bridging annotation, not subsumption. The OBO term is a nosological category / specifically dependent continuant, whereas this class is the material pathological disorder itself. Asserting rdfs:subClassOf between them is a category error, so the relation is recorded as skos:relatedMatch instead."@en ;
-                  rdfs:label "Autoimmune tissue disorder"@en .
+                  rdfs:label "Autoimmune tissue disorder"@en ;
+                  skos:relatedMatch ns1:DOID_417 .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000470
 wont:WONT_0000470 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120022 ;
                   ns1:IAO_0000115 "A pathological disorder consisting in a collection of lymphatic fluid within a non-epithelialised cavity in a bodily structure."@en ;
-                  skos:relatedMatch ns1:DOID_4347 ;
                   rdfs:comment "Bridging annotation, not subsumption. The OBO term is a nosological category / specifically dependent continuant, whereas this class is the material pathological disorder itself. Asserting rdfs:subClassOf between them is a category error, so the relation is recorded as skos:relatedMatch instead."@en ;
-                  rdfs:label "Lymphocele"@en .
+                  rdfs:label "Lymphocele"@en ;
+                  skos:relatedMatch ns1:DOID_4347 .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000471
 wont:WONT_0000471 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000409 ;
                   ns1:IAO_0000115 "A wound healing related physiological process in which fibrous connective tissue replaces tissue lost in a wound, yielding a scar rather than restoration of the original tissue architecture."@en ;
-                  skos:relatedMatch ns1:HP_0100699 ;
                   rdfs:comment "Bridging annotation, not subsumption. HP_0100699 'Scarring' is a phenotypic abnormality, i.e. a quality and therefore a continuant, whereas this class is the process of scar formation. Asserting rdfs:subClassOf between them crosses the continuant/occurrent divide and renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
-                  rdfs:label "Scarring process"@en .
+                  rdfs:label "Scarring process"@en ;
+                  skos:relatedMatch ns1:HP_0100699 .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000472
 wont:WONT_0000472 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120022 ;
                   ns1:IAO_0000115 "A pathological disorder consisting in a localised collection of purulent material within a bodily structure, surrounded by inflamed and granulating tissue."@en ;
-                  skos:relatedMatch ns1:HP_0025615 ;
                   rdfs:comment "Bridging annotation, not subsumption. The OBO term is a phenotypic abnormality / nosological category, i.e. a specifically dependent continuant, whereas this class is the material pathological disorder itself. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
-                  rdfs:label "Abscess"@en .
+                  rdfs:label "Abscess"@en ;
+                  skos:relatedMatch ns1:HP_0025615 .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000473
@@ -3352,13 +3680,8 @@ wont:WONT_120012 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120013
 wont:WONT_120013 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "A wound treatment process that has as specified output a wound covered by wound dressing and that has as participant a wound and a wound dressing."@en ;
                  rdfs:subClassOf wont:WONT_0000423 ,
                                  [ rdf:type owl:Restriction ;
-                                   owl:onProperty ns1:OBI_0000299 ;
-                                   owl:someValuesFrom wont:WONT_120014
-                                 ] ,
-                                 [ rdf:type owl:Restriction ;
                                    owl:onProperty ns1:RO_0000057 ;
                                    owl:someValuesFrom wont:WONT_0000380
                                  ] ,
@@ -3366,32 +3689,18 @@ wont:WONT_120013 rdf:type owl:Class ;
                                    owl:onProperty ns1:RO_0000057 ;
                                    owl:someValuesFrom wont:WONT_0000398
                                  ] ;
+                 ns1:IAO_0000115 "A wound treatment process that has as specified output a wound covered by wound dressing and that has as participant a wound and a wound dressing."@en ;
                  rdfs:label "Wound dressing process"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120014
-wont:WONT_120014 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "A wound that has as part a wound and a wound dressing."@en ;
-                 rdfs:subClassOf wont:WONT_0000380 ,
-                                 [ rdf:type owl:Restriction ;
-                                   owl:onProperty ns1:BFO_0000051 ;
-                                   owl:someValuesFrom wont:WONT_0000380
-                                 ] ,
-                                 [ rdf:type owl:Restriction ;
-                                   owl:onProperty ns1:BFO_0000051 ;
-                                   owl:someValuesFrom wont:WONT_0000398
-                                 ] ;
-                 rdfs:label "Wound covered by wound dressing"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120015
 wont:WONT_120015 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "A disease classification process that has as specified output a wound classification result."@en ;
                  rdfs:subClassOf mild:MILD_120055 ,
                                  [ rdf:type owl:Restriction ;
                                    owl:onProperty ns1:OBI_0000299 ;
                                    owl:someValuesFrom wont:WONT_120017
                                  ] ;
+                 ns1:IAO_0000115 "A disease classification process that has as specified output a wound classification result."@en ;
                  rdfs:label "Wound classification process"@en .
 
 
@@ -3403,7 +3712,6 @@ wont:WONT_120016 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120017
 wont:WONT_120017 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "A disease stage classification result that is about a wound and that is the specified output of a wound classification process."@en ;
                  rdfs:subClassOf mild:MILD_120054 ,
                                  [ rdf:type owl:Restriction ;
                                    owl:onProperty ns1:IAO_0000136 ;
@@ -3413,6 +3721,7 @@ wont:WONT_120017 rdf:type owl:Class ;
                                    owl:onProperty ns1:OBI_0000312 ;
                                    owl:someValuesFrom wont:WONT_120015
                                  ] ;
+                 ns1:IAO_0000115 "A disease stage classification result that is about a wound and that is the specified output of a wound classification process."@en ;
                  rdfs:label "Wound classification result"@en .
 
 
@@ -3424,7 +3733,6 @@ wont:WONT_120018 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120019
 wont:WONT_120019 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "A pathogen that bears a wound infecting disposition."@en ;
                  owl:equivalentClass [ owl:intersectionOf ( ns1:BFO_0000040
                                                             [ rdf:type owl:Restriction ;
                                                               owl:onProperty ns1:RO_0000091 ;
@@ -3434,6 +3742,7 @@ wont:WONT_120019 rdf:type owl:Class ;
                                        rdf:type owl:Class
                                      ] ;
                  rdfs:subClassOf ns1:IDO_0000528 ;
+                 ns1:IAO_0000115 "A pathogen that bears a wound infecting disposition."@en ;
                  rdfs:label "wound infecting pathogen"@en .
 
 
@@ -3447,100 +3756,123 @@ wont:WONT_120020 rdf:type owl:Class ;
 #    Individuals
 #################################################################
 
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000496
+wont:WONT_0000496 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000492 ;
+                  ns1:IAO_0000118 "Stasis"@en ;
+                  rdfs:label "Zone of stasis"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000497
+wont:WONT_0000497 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000492 ;
+                  ns1:IAO_0000118 "Hyperemia"@en ;
+                  rdfs:label "Zone of hyperemia"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000498
+wont:WONT_0000498 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000492 ;
+                  ns1:IAO_0000118 "Coagulation"@en ;
+                  rdfs:label "Zone of coagulation"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000499
+wont:WONT_0000499 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000495 ;
+                  ns1:IAO_0000118 "First degree"@en ;
+                  rdfs:label "Superficial"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000500
+wont:WONT_0000500 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000495 ;
+                  ns1:IAO_0000118 "Second degree, 2a"@en ;
+                  rdfs:label "Superficial partial-thickness"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000501
+wont:WONT_0000501 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000495 ;
+                  ns1:IAO_0000118 "Second degree, 2b"@en ;
+                  rdfs:label "Deep partial-thickness"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000502
+wont:WONT_0000502 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000495 ;
+                  ns1:IAO_0000118 "Third degree"@en ;
+                  rdfs:label "Full-thickness"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000503
+wont:WONT_0000503 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000495 ;
+                  ns1:IAO_0000118 "Second degree"@en ;
+                  rdfs:label "Partial-thickness"@en .
+
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000052
 wont:WONT_0000052 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000437 ;
-                 ns1:IAO_0000118 "Burn wound Grade I"@en ;
-                 rdfs:label "Burn classification grade I"@en .
-
+                           wont:WONT_0000437 ;
+                  ns1:IAO_0000118 "Burn wound Grade I"@en ;
+                  rdfs:label "Burn classification grade I"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000053
 wont:WONT_0000053 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000437 ;
-                 ns1:IAO_0000118 "Burn wound Grade IIa"@en ;
-                 rdfs:label "Burn classification grade IIa"@en .
-
+                           wont:WONT_0000437 ;
+                  ns1:IAO_0000118 "Burn wound Grade IIa"@en ;
+                  rdfs:label "Burn classification grade IIa"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000054
 wont:WONT_0000054 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000437 ;
-                 ns1:IAO_0000118 "Burn wound Grade IIb"@en ;
-                 rdfs:label "Burn classification grade IIb"@en .
-
+                           wont:WONT_0000437 ;
+                  ns1:IAO_0000118 "Burn wound Grade IIb"@en ;
+                  rdfs:label "Burn classification grade IIb"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000055
 wont:WONT_0000055 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000437 ;
-                 ns1:IAO_0000118 "Burn wound Grade III"@en ;
-                 rdfs:label "Burn classification grade III"@en .
-
+                           wont:WONT_0000437 ;
+                  ns1:IAO_0000118 "Burn wound Grade III"@en ;
+                  rdfs:label "Burn classification grade III"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000056
 wont:WONT_0000056 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000437 ;
-                 ns1:IAO_0000118 "Burn wound Grade IV"@en ;
-                 rdfs:label "Burn classification grade IV"@en .
-
+                           wont:WONT_0000437 ;
+                  ns1:IAO_0000118 "Burn wound Grade IV"@en ;
+                  rdfs:label "Burn classification grade IV"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000123
 wont:WONT_0000123 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000438 ;
-                 ns1:IAO_0000118 "Grade I pressure ulcer according to Shea"@en ;
-                 rdfs:label "Shea classification grade I"@en .
-
+                           wont:WONT_0000438 ;
+                  ns1:IAO_0000118 "Grade I pressure ulcer according to Shea"@en ;
+                  rdfs:label "Shea classification grade I"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000125
 wont:WONT_0000125 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000438 ;
-                 ns1:IAO_0000118 "Grade II pressure ulcer according to Shea"@en ;
-                 rdfs:label "Shea classification grade II"@en .
-
+                           wont:WONT_0000438 ;
+                  ns1:IAO_0000118 "Grade II pressure ulcer according to Shea"@en ;
+                  rdfs:label "Shea classification grade II"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000127
 wont:WONT_0000127 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000438 ;
-                 ns1:IAO_0000118 "Grade III pressure ulcer according to Shea"@en ;
-                 rdfs:label "Shea classification grade III"@en .
-
+                           wont:WONT_0000438 ;
+                  ns1:IAO_0000118 "Grade III pressure ulcer according to Shea"@en ;
+                  rdfs:label "Shea classification grade III"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000129
 wont:WONT_0000129 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000438 ;
-                 ns1:IAO_0000118 "Grade IV pressure ulcer according to Shea"@en ;
-                 rdfs:label "Shea classification grade IV"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120081
-wont:WONT_120081 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000440 ;
-                 rdfs:label "clean wound classification grade"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120082
-wont:WONT_120082 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000440 ;
-                 rdfs:label "clean-contaminated wound classification grade"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120083
-wont:WONT_120083 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000440 ;
-                 rdfs:label "contaminated wound classification grade"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120084
-wont:WONT_120084 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000440 ;
-                 rdfs:label "dirty or infected wound classification grade"@en .
+                           wont:WONT_0000438 ;
+                  ns1:IAO_0000118 "Grade IV pressure ulcer according to Shea"@en ;
+                  rdfs:label "Shea classification grade IV"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120056
@@ -3693,110 +4025,40 @@ wont:WONT_120080 rdf:type owl:NamedIndividual ,
                  rdfs:label "Wagner and Anderson grade 4D"@en .
 
 
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120081
+wont:WONT_120081 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000440 ;
+                 rdfs:label "clean wound classification grade"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120082
+wont:WONT_120082 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000440 ;
+                 rdfs:label "clean-contaminated wound classification grade"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120083
+wont:WONT_120083 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000440 ;
+                 rdfs:label "contaminated wound classification grade"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120084
+wont:WONT_120084 rdf:type owl:NamedIndividual ,
+                          wont:WONT_0000440 ;
+                 rdfs:label "dirty or infected wound classification grade"@en .
 
 
 #################################################################
 #    General axioms
 #################################################################
 
-###  Tier 3 - WONT domain disjointness.
-
-###  grades of Gustilo and Anderson wound classification grade are pairwise distinct
-[ rdf:type owl:AllDifferent ;
-  owl:distinctMembers ( wont:WONT_120056
-                  wont:WONT_120057
-                  wont:WONT_120058
-                  wont:WONT_120059
-                  wont:WONT_120060
-                  )
-] .
-
-
-###  grades of Tscherne and Oestern wound classification grade are pairwise distinct
-[ rdf:type owl:AllDifferent ;
-  owl:distinctMembers ( wont:WONT_120061
-                  wont:WONT_120062
-                  wont:WONT_120063
-                  wont:WONT_120064
-                  )
-] .
-
-
-###  grades of Wagner and Anderson wound classification grade are pairwise distinct
-[ rdf:type owl:AllDifferent ;
-  owl:distinctMembers ( wont:WONT_120065
-                  wont:WONT_120066
-                  wont:WONT_120067
-                  wont:WONT_120068
-                  wont:WONT_120069
-                  wont:WONT_120070
-                  wont:WONT_120071
-                  wont:WONT_120072
-                  wont:WONT_120073
-                  wont:WONT_120074
-                  wont:WONT_120075
-                  wont:WONT_120076
-                  wont:WONT_120077
-                  wont:WONT_120078
-                  wont:WONT_120079
-                  wont:WONT_120080
-                  )
-] .
-
-
-###  grades of Burn classification grade are pairwise distinct
-[ rdf:type owl:AllDifferent ;
-  owl:distinctMembers ( wont:WONT_0000052
-                  wont:WONT_0000053
-                  wont:WONT_0000054
-                  wont:WONT_0000055
-                  wont:WONT_0000056
-                  )
-] .
-
-
-###  grades of Shea classification grade are pairwise distinct
-[ rdf:type owl:AllDifferent ;
-  owl:distinctMembers ( wont:WONT_0000123
-                  wont:WONT_0000125
-                  wont:WONT_0000127
-                  wont:WONT_0000129
-                  )
-] .
-
-
-###  grades of CDC surgical wound classification grade are pairwise distinct
-[ rdf:type owl:AllDifferent ;
-  owl:distinctMembers ( wont:WONT_120081
-                  wont:WONT_120082
-                  wont:WONT_120083
-                  wont:WONT_120084
-                  )
-] .
-
-
 [ rdf:type owl:AllDisjointClasses ;
-  owl:members ( wont:WONT_0000380
+  owl:members ( wont:WONT_0000066
+                wont:WONT_0000380
                 wont:WONT_0000398
                 wont:WONT_120017
-                wont:WONT_0000066
-                )
-] .
-
-
-[ rdf:type owl:AllDisjointClasses ;
-  owl:members ( wont:WONT_0000423
-                wont:WONT_0000395
-                wont:WONT_120015
-                )
-] .
-
-
-[ rdf:type owl:AllDisjointClasses ;
-  owl:members ( wont:WONT_0000382
-                wont:WONT_0000401
-                wont:WONT_0000417
-                )
+              )
 ] .
 
 
@@ -3804,7 +4066,111 @@ wont:WONT_120080 rdf:type owl:NamedIndividual ,
   owl:members ( wont:WONT_0000248
                 wont:WONT_0000274
                 wont:WONT_0000308
-                )
+              )
+] .
+
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( wont:WONT_0000382
+                wont:WONT_0000401
+                wont:WONT_0000417
+              )
+] .
+
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( wont:WONT_0000395
+                wont:WONT_0000423
+                wont:WONT_120015
+              )
+] .
+
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( wont:WONT_0000052
+                        wont:WONT_0000053
+                        wont:WONT_0000054
+                        wont:WONT_0000055
+                        wont:WONT_0000056
+                      )
+] .
+
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( wont:WONT_0000123
+                        wont:WONT_0000125
+                        wont:WONT_0000127
+                        wont:WONT_0000129
+                      )
+] .
+
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( wont:WONT_120056
+                        wont:WONT_120057
+                        wont:WONT_120058
+                        wont:WONT_120059
+                        wont:WONT_120060
+                      )
+] .
+
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( wont:WONT_120061
+                        wont:WONT_120062
+                        wont:WONT_120063
+                        wont:WONT_120064
+                      )
+] .
+
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( wont:WONT_120065
+                        wont:WONT_120066
+                        wont:WONT_120067
+                        wont:WONT_120068
+                        wont:WONT_120069
+                        wont:WONT_120070
+                        wont:WONT_120071
+                        wont:WONT_120072
+                        wont:WONT_120073
+                        wont:WONT_120074
+                        wont:WONT_120075
+                        wont:WONT_120076
+                        wont:WONT_120077
+                        wont:WONT_120078
+                        wont:WONT_120079
+                        wont:WONT_120080
+                      )
+] .
+
+
+###  Jackson burn wound zones are pairwise distinct
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( wont:WONT_0000496
+                        wont:WONT_0000497
+                        wont:WONT_0000498
+                      )
+] .
+
+
+###  grades of the burn wound classification according to Hildanus and Derganc are pairwise distinct
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( wont:WONT_0000499
+                        wont:WONT_0000500
+                        wont:WONT_0000501
+                        wont:WONT_0000502
+                        wont:WONT_0000503
+                      )
+] .
+
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( wont:WONT_120081
+                        wont:WONT_120082
+                        wont:WONT_120083
+                        wont:WONT_120084
+                      )
 ] .
 
 
