@@ -20,6 +20,41 @@ against the files as of the date given on it.
 > over the skeleton: 0 unsatisfiable. Competency score 6 → **15 of 65**
 > (measured on the full closure). What is still open is listed per section.
 
+## G. Open after the 12 Sep review — the checklist to walk
+
+*Written 2026-09-14. Everything below is measured against the files as
+committed in `24fcefe` / `4517fe1` plus the review edits. Sections A–F below
+keep the original reasoning; this is the residue, in one place. Tick, decide,
+or strike each; nothing here is applied.*
+
+### G1 — modelling decisions your edit left implicit
+
+| # | what | where | my recommendation |
+|---|---|---|---|
+| G1.1 | **`Infected wound` (WONT_0000163) lost its `owl:equivalentClass`.** It was `Wound ⊓ participates_in some Wound infection process`; it is now a primitive subclass of the microbial-burden hub with two necessary conditions (`participates_in some 410`, `has_quality some infected`). Nothing can be *inferred* an infected wound any more. | WONT_0000163 | restore the equivalence — `≡ Wound ⊓ has_quality some infected` is the shape of its siblings, and keep `participates_in` as a necessary condition |
+| G1.2 | **`infected` was minted as a determinate (WONT_0000480)**, against the note in E ("infection is participation in a process, not a quality"). Defensible — the clinical continuum sterile → contaminated → colonized → infected *is* one scale — but it is a decision, so record it in an `IAO_0000116` on 480 (there is a placeholder note there now). | WONT_0000480 | keep, and write the note |
+| G1.3 | **`colonized` / `Colonized wound` (WONT_0000075) deleted**, so the continuum has a hole between contaminated and infected. | — | mint `colonized` under 478 and restore the class as `≡ Wound ⊓ has_quality some colonized` (next free id: WONT_0000511) |
+| G1.4 | **`Wound co-located with impaired arterial inflow` (WONT_0000510) has no co-location axiom** — it is a bare subclass of `Wound`, so `Ischemic wound ≡ 510 ⊓ ischemic` says nothing about arteries. The venous twin `WONT_0000384` shows the shape; the natural target is `WONT_0000229 Peripheral arterial occlusive disease`. This also unblocks CQ033 once P3 lands. | WONT_0000510 | copy the 384 axiom with 229 as the co-located disorder |
+| G1.5 | **`Wound dressing process` (WONT_120013) has a dangling definition**: "…has as specified output a wound covered by wound dressing", but that class (WONT_120014) was deleted and the `OBI_0000299` restriction with it. | WONT_120013 | either rewrite the definition to what the axioms now say, or restore 120014 |
+| G1.6 | **Six wound-edge / wound-base determinables are asserted of `Wound` itself**: `degree of maceration` (434), `skin adherence` (451), `granulation` (452), `necrosis` (453), `fibrin coverage` (454), `epithelialization` (455) are defined as qualities *of a wound edge / wound base*, and `Wound ⊑ has_quality some <each>` now says every wound bears them directly. The bearer mismatch is exactly what the Chronic-wound bearer check in A guards against. | WONT_0000380 | remove the six; keep `size`, `closure`, `depth`, `degree of time after disease inception`, `degree of microbial burden` (those *are* wound qualities) |
+| G1.7 | **`increased depth ⊑ increased size` in PATO**, so every `Deep wound` is inferred a `Large wound`. Probably not what you mean by "large". | WONT_0000507/508 | accept it, or define `Large wound` over `increased area` (**PATO_0002057**, a determinate of `area` PATO_0001323 — measured against full PATO; it is not in the module yet, so it would need the rebuild) instead of `increased size` |
+| G1.8 | **Two burn-grade sets now overlap**: the Hildanus/Derganc individuals (499–503: Superficial, Superficial partial-thickness, Deep partial-thickness, Full-thickness, Partial-thickness) and the pre-existing `Burn classification grade I–IV` (WONT_0000052–56) describe the same grades. And 503 `Partial-thickness` is the *union* of 500 and 501 — an individual that is two other individuals. | WONT_0000052–56, 499–503 | merge: keep one set, make the other's labels alt terms; drop 503 or make it a class |
+| G1.9 | **`Burn classification grade` (WONT_0000437) now has two subclasses** (492 Jackson zone, 495 Hildanus/Derganc grade) *and* four direct individuals (52–56) that belong to neither. | WONT_0000437 | once G1.8 is settled, retype 52–56 under 495 |
+| G1.10 | **`degree of malignancy` / `benign` / `malignant` (489–491)**: `Malignant wound` now carries `has_quality some malignant` *inside* its equivalence, beside the causal-history conjunct. Redundant with the process reading, and `benign` has no class to define. Also record the PATO_0002097 near-miss (done in a `rdfs:comment` on 491). | WONT_0000182, 489–491 | either drop the `has_quality` conjunct or drop the causal-history one; not both |
+| G1.11 | **A4 — the chronic branch is still empty.** `Chronic wound` has zero subclasses; the four YES rows in `data/review/chronic_decision_sheet.csv` (`Ulcus cruris venosum`, `Ulcus cruris mixtum`, `Ulcus hypertonicus Martorell`, `Arterial leg ulcer`) are not asserted. CQ001/002/006 wait on this. | WONT_0000442 | assert the four `rdfs:subClassOf wont:WONT_0000442`; decide the three CHECK rows |
+
+### G2 — small things
+
+| # | what |
+|---|---|
+| G2.1 | Definitions I wrote for the 36 new classes are first drafts in the house pattern — read them; the clinical thresholds (e.g. "confined to the epidermis" for first-degree) are mine, not sourced. |
+| G2.2 | `Jackson burn wound zone classification` (493) carries a `dcterms:source` I added (Jackson 1953, Br J Surg) — verify. |
+| G2.3 | `FMA_7163 Skin` is stubbed in WONT with no parent — one of the three remaining roots beside `entity`. Give it `rdfs:subClassOf ns1:BFO_0000040` or a UBERON path. |
+| G2.4 | `unit` (UO_0000000) and `disease` (DOID_4) are the other two roots — F1's curator's call still stands. |
+| G2.5 | CQ010 / CQ012 ask for `Large` / `Deep`; the ontology has PATO's `increased size` / `increased depth`. Fix in `config/competency_questions.json`, not WONT. |
+| G2.6 | CQ011 `Full-thickness wound` / `full-thickness` and CQ110 `Healed wound` — you chose not to mint them (`Epithelialized wound` 506 stands in for the latter). Either add `Healed wound` as an alt term on 506 and rewrite CQ011, or mint. |
+| G2.7 | `ontology_labels()` indexes `rdfs:label` only, so `2nd degree burn` (now an alt term on 483) dropped out of the naming guard's index. Pipeline-side; noted in ROADMAP. |
+
 ### Order of work
 
 Sections are lettered in the order they were found, not the order to do them.
@@ -627,4 +662,5 @@ process restart — that is the signal that the edit reached the prompt.
 | 2026-09-10 | Found that `Infected wound` and `Malignant wound` already carry better axioms than CQ093/CQ091 ask for — flagged as a question-file decision, not a WONT edit |
 | 2026-09-12 | **B closed as not needed** — the three parents were there all along, inside intersections. |
 | 2026-09-12 | **A, E (mostly), F2 applied by hand and reviewed.** 36 new WONT entities renumbered WONT_0000475–510; every new class defined; `Wound ⊑ has_quality some epithelialized` removed (a determinate of the wound *base*); definition that had landed on `skos:relatedMatch` moved to IAO_0000115; Jackson "grades" relabelled as zones; `Jackson burn wound zone model` renamed `… classification` because `model` is a blocked keyword (`test_blocklist_respects_the_ontology` caught it). Modules regenerated; CQ score 6 → 15/65. |
+| 2026-09-14 | **G added** — the consolidated checklist of what the 12 Sep review left open: 11 modelling decisions, 7 small items. |
 | 2026-09-12 | CQ checker now sees a restriction inside an `owl:equivalentClass` intersection (it entails the `rdfs:subClassOf` form); before, all ten precedent classes and every new one read as FAIL. |
