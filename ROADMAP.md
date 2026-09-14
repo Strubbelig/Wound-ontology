@@ -138,7 +138,7 @@ the determinate quality that makes it that subclass:
 | predicate | CQs | unblocked by |
 |---|---|---|
 | `has_quality` | 13 | the determinate-quality block (P1) — 11 by axiom, 2 by correcting the question |
-| `is_a … Chronic Wound` | 3 | populating the chronic branch (`WONT_TODO` A4) |
+| `is_a … Chronic Wound` | 3 | populating the chronic branch (`WONT_TODO` 1.11) |
 | `co_located_with` | 1 | class from P1 **+** `RelationType` extension (P3) |
 | `is_treatment_for` | 1 | class from P1 **+** `RelationType` extension (P3) |
 
@@ -260,7 +260,7 @@ The cheapest schedule is:
 1. **Grow the corpus and extract** (steps 1–3) until coverage is where it needs
    to be. Additive, never invalidated, and independent of every curation
    decision — so this can start immediately and run all the way through.
-2. **Make the WONT hand edits** (`WONT_TODO` B, A, E) while extraction runs.
+2. **Make the WONT hand edits** (`WONT_TODO` — done 12 Sep; the residue is `WONT_TODO` §1) while extraction runs.
 3. **Then run steps 4–17 once**, against the final store and the final WONT.
 
 One refinement, decided 2026-09-11 when the cap-200 fetch turned up **5,659**
