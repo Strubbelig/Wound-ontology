@@ -100,6 +100,10 @@ ALLOWED_PREDICATES = [
     "is_about",
     "is_specified_input_of",
     "is_specified_output_of",
+    # RO_0001025. Entered the schema on 2026-09-16, when FMA_7163 Skin got a
+    # BFO path through fma_module and `Skin wound ≡ Wound ⊓ located_in some
+    # Skin` therefore resolved to a licensed category pair.
+    "located_in",
     "occupies_temporal_region",
     "output_of",
     "part_of",

@@ -1,7 +1,7 @@
 # GENERATED FILE - DO NOT EDIT BY HAND.
 # Regenerate with:  python scripts/build_extraction_schema.py
 # Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)
-# Generated:        2026-09-12
+# Generated:        2026-09-16
 id: https://w3id.org/wont/extraction
 name: wont-extraction
 title: WONT/MILD-derived extraction schema
@@ -397,9 +397,6 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000182
         title: "Malignant wound"
         description: "A wound that is the specified output of a disorder development process that has as participant a malignancy."
-      MANIFEST_INFECTED_WOUND:
-        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000184
-        title: "Manifest-infected wound"
       MANUKA_HONEY:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000185
         title: "Manuka honey"
@@ -747,7 +744,7 @@ enums:
       WOUND_WITH_RECOGNIZED_MICROBIAL_BURDEN:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000481
         title: "Wound with recognized microbial burden"
-        description: "A wound that bears the quality contaminated or the quality infected."
+        description: "A wound that bears the quality contaminated, colonized or infected."
       FIRST_DEGREE_BURN_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000482
         title: "First-degree burn wound"
@@ -793,6 +790,10 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000510
         title: "Wound co-located with impaired arterial inflow"
         description: "A wound that is co-located with impaired arterial inflow in the same limb of the same patient, and that persists over the same period as that impairment. No claim is made that the impaired arterial inflow caused the wound."
+      COLONIZED_WOUND:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000511
+        title: "Colonized wound"
+        description: "A wound with recognized microbial burden that bears the quality colonized."
       WOUND_INFECTING_PATHOGEN:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120019
         title: "wound infecting pathogen"
@@ -989,6 +990,10 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000491
         title: "malignant"
         description: "A degree of malignancy that qualifies its bearer as malignant: neoplastic tissue present invades surrounding tissue or spreads to distant sites."
+      COLONIZED:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000512
+        title: "colonized"
+        description: "A degree of microbial burden that qualifies its bearer as colonized: microorganisms are present in the wound and multiply in it, without invading its tissue or eliciting a host response."
   DispositionTerm:
     description: >-
       Existing 'disposition' classes in MILD/WONT. Ground to one of these when the
@@ -1328,6 +1333,11 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000495
         title: "Burn wound classification grade according to Hildanus and Derganc"
         description: "A burn classification grade that is a category of the burn wound classification according to Hildanus and Derganc."
+      PARTIAL_THICKNESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000513
+        title: "Partial thickness"
+        description: "A burn wound classification grade according to Hildanus and Derganc in which the injury extends into but not through the dermis; its instances are the superficial and the deep partial-thickness grade."
+        aliases: ["Second degree"]
       WOUND_CLASSIFICATION_GRADE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120016
         title: "wound classification grade"
@@ -1595,7 +1605,6 @@ enums:
       WOUND_DRESSING_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120013
         title: "Wound dressing process"
-        description: "A wound treatment process that has as specified output a wound covered by wound dressing and that has as participant a wound and a wound dressing."
       WOUND_CLASSIFICATION_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120015
         title: "Wound classification process"
@@ -1699,6 +1708,10 @@ enums:
         meaning: http://purl.obolibrary.org/obo/OBI_0000312
         title: "is specified output of"
         description: "Permitted category pairs: information entity -> process; material entity -> process"
+      LOCATED_IN:
+        meaning: http://purl.obolibrary.org/obo/RO_0001025
+        title: "located in"
+        description: "Permitted category pairs: material entity -> material entity"
       OCCUPIES_TEMPORAL_REGION:
         meaning: http://purl.obolibrary.org/obo/BFO_0000199
         title: "occupies temporal region"

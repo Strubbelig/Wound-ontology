@@ -3,7 +3,7 @@
 
 Regenerate with:  python scripts/build_extraction_schema.py
 Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)
-Generated:        2026-09-12
+Generated:        2026-09-16
 
 Mirrors config/extraction_schema.yaml. Emitted directly rather than via
 `gen-pydantic` so the pipeline has no hard dependency on the linkml generator;
@@ -222,7 +222,6 @@ GROUNDING: dict[str, dict[str, str]] = {
         'Lymphatic fistula': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000178',
         'Macerated wound edge': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000180',
         'Malignant wound': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000182',
-        'Manifest-infected wound': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000184',
         'Manuka honey': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000185',
         'Marjolin ulcer': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000186',
         'Material used for wound complication prevention': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000187',
@@ -339,6 +338,7 @@ GROUNDING: dict[str, dict[str, str]] = {
         'Deep wound': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000508',
         'Ischemic wound': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000509',
         'Wound co-located with impaired arterial inflow': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000510',
+        'Colonized wound': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000511',
         'wound infecting pathogen': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120019',
         'Necrosis': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120020',
     },
@@ -394,6 +394,7 @@ GROUNDING: dict[str, dict[str, str]] = {
         'degree of malignancy': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000489',
         'benign': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000490',
         'malignant': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000491',
+        'colonized': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000512',
     },
     'disposition': {
         'Immunosuppression': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000161',
@@ -499,6 +500,7 @@ GROUNDING: dict[str, dict[str, str]] = {
         'Jackson burn wound zone classification': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000493',
         'Burn wound classification according to Hildanus and Derganc': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000494',
         'Burn wound classification grade according to Hildanus and Derganc': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000495',
+        'Partial thickness': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000513',
         'wound classification grade': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120016',
         'Wound classification result': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120017',
     },
@@ -641,7 +643,7 @@ DEFINITIONS: dict[str, str] = {
     'Lymphocele': 'A pathological disorder consisting in a collection of lymphatic fluid within a non-epithelialised cavity in a bodily structure.',
     'Abscess': 'A pathological disorder consisting in a localised collection of purulent material within a bodily structure, surrounded by inflamed and granulating tissue.',
     'Mucosal blister': 'A pathological disorder that is part of a mucosa and consists in a fluid-filled separation of the epithelium of that mucosa from the tissue beneath it.',
-    'Wound with recognized microbial burden': 'A wound that bears the quality contaminated or the quality infected.',
+    'Wound with recognized microbial burden': 'A wound that bears the quality contaminated, colonized or infected.',
     'First-degree burn wound': 'A thermal wound in which the injury is confined to the epidermis.',
     'Second-degree burn wound': 'A thermal wound in which the injury extends through the epidermis into the dermis.',
     'Third-degree burn wound': 'A thermal wound in which the injury extends through the full thickness of the skin.',
@@ -653,6 +655,7 @@ DEFINITIONS: dict[str, str] = {
     'Deep wound': 'A wound that bears the quality increased depth: it extends further into the tissue than is typical for a wound of its kind.',
     'Ischemic wound': 'A wound co-located with impaired arterial inflow that bears the quality ischemic.',
     'Wound co-located with impaired arterial inflow': 'A wound that is co-located with impaired arterial inflow in the same limb of the same patient, and that persists over the same period as that impairment. No claim is made that the impaired arterial inflow caused the wound.',
+    'Colonized wound': 'A wound with recognized microbial burden that bears the quality colonized.',
     'wound infecting pathogen': 'A pathogen that bears a wound infecting disposition.',
     'degree of wound pain': 'A quality that inheres in a patient, that is the extent of the pain that patient feels, and that is causally influenced by a wound.',
     'degree of maceration': 'A quality of a wound edge that is the extent to which its tissue has been softened by prolonged exposure to moisture.',
@@ -684,6 +687,7 @@ DEFINITIONS: dict[str, str] = {
     'degree of malignancy': 'A quality of a wound that is the extent to which its tissue shows neoplastic growth that invades surrounding tissue or spreads to distant sites.',
     'benign': 'A degree of malignancy that qualifies its bearer as benign: any neoplastic tissue present neither invades surrounding tissue nor spreads.',
     'malignant': 'A degree of malignancy that qualifies its bearer as malignant: neoplastic tissue present invades surrounding tissue or spreads to distant sites.',
+    'colonized': 'A degree of microbial burden that qualifies its bearer as colonized: microorganisms are present in the wound and multiply in it, without invading its tissue or eliciting a host response.',
     'Physician role': 'A healthcare provider role that inheres in a person in virtue of that person being licensed to practise medicine.',
     'tendency': 'A realizable entity that inheres in a material entity and that, in virtue of the physical makeup of its bearer, inclines that bearer toward participating in processes of a certain type — such that the inclination raises the objective probability of, but does not necessitate, the occurrence of those processes; that may be counteracted or reinforced by other tendencies of the same bearer without thereby ceasing to exist; and that may be realized to varying degrees, or not at all.',
     'pathological genetic predisposition': 'A disease predisposition that has as material basis a pathogenic genetic variant.',
@@ -708,6 +712,7 @@ DEFINITIONS: dict[str, str] = {
     'Jackson burn wound zone classification': 'A wound classification scale that divides a burn wound into three concentric zones - coagulation, stasis and hyperemia - by the severity of tissue damage.',
     'Burn wound classification according to Hildanus and Derganc': "A wound classification scale that grades a burn wound by the depth of tissue destroyed: superficial, superficial partial-thickness, deep partial-thickness and full-thickness. Derganc's subdivision of the second degree refines the degree scheme attributed to Hildanus.",
     'Burn wound classification grade according to Hildanus and Derganc': 'A burn classification grade that is a category of the burn wound classification according to Hildanus and Derganc.',
+    'Partial thickness': 'A burn wound classification grade according to Hildanus and Derganc in which the injury extends into but not through the dermis; its instances are the superficial and the deep partial-thickness grade.',
     'Wound classification result': 'A disease stage classification result that is about a wound and that is the specified output of a wound classification process.',
     'predisposition realizing disorder development process': 'A disorder development process that realizes a disease predisposition.',
     'disorder development process': 'A process that has as output a pathological disorder and that has as its end boundary a threshold crossing event.',
@@ -723,7 +728,6 @@ DEFINITIONS: dict[str, str] = {
     'Wound size measurement process': 'A wound diagnostic process that has as specified output a wound depth measurement datum.',
     'Wound dehiscence process': 'A disorder development process in which previously approximated wound edges separate.',
     'Scarring process': 'A wound healing related physiological process in which fibrous connective tissue replaces tissue lost in a wound, yielding a scar rather than restoration of the original tissue architecture.',
-    'Wound dressing process': 'A wound treatment process that has as specified output a wound covered by wound dressing and that has as participant a wound and a wound dressing.',
     'Wound classification process': 'A disease classification process that has as specified output a wound classification result.',
     'threshold crossing event': 'A process boundary that occupies a temporal instant and that has as participant a measurement datum that is about a phenotypic abnormality.',
 }
@@ -753,6 +757,7 @@ class RelationType(str, Enum):
     IS_ABOUT = 'is about'
     IS_SPECIFIED_INPUT_OF = 'is specified input of'
     IS_SPECIFIED_OUTPUT_OF = 'is specified output of'
+    LOCATED_IN = 'located in'
     OCCUPIES_TEMPORAL_REGION = 'occupies temporal region'
     OUTPUT_OF = 'output of'
     PART_OF = 'part of'
@@ -783,6 +788,7 @@ RELATION_IRI: dict[str, str] = {
     RelationType.IS_ABOUT.value: 'http://purl.obolibrary.org/obo/IAO_0000136',
     RelationType.IS_SPECIFIED_INPUT_OF.value: 'http://purl.obolibrary.org/obo/OBI_0000295',
     RelationType.IS_SPECIFIED_OUTPUT_OF.value: 'http://purl.obolibrary.org/obo/OBI_0000312',
+    RelationType.LOCATED_IN.value: 'http://purl.obolibrary.org/obo/RO_0001025',
     RelationType.OCCUPIES_TEMPORAL_REGION.value: 'http://purl.obolibrary.org/obo/BFO_0000199',
     RelationType.OUTPUT_OF.value: 'http://purl.obolibrary.org/obo/RO_0002353',
     RelationType.PART_OF.value: 'http://purl.obolibrary.org/obo/BFO_0000050',
@@ -867,6 +873,9 @@ RELATION_DOMAINS: dict[str, set[tuple[str, str]]] = {
     RelationType.IS_SPECIFIED_OUTPUT_OF.value: {
         ('information entity', 'process'),
         ('material entity', 'process'),
+    },
+    RelationType.LOCATED_IN.value: {
+        ('material entity', 'material entity'),
     },
     RelationType.OCCUPIES_TEMPORAL_REGION.value: {
         ('process boundary', 'occurrent'),
