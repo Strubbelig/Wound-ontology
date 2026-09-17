@@ -66,6 +66,11 @@ ns1:OBI_0000299 rdf:type owl:ObjectProperty .
 ns1:OBI_0000312 rdf:type owl:ObjectProperty .
 
 
+###  http://purl.obolibrary.org/obo/RO_0002353
+ns1:RO_0002353 rdf:type owl:ObjectProperty ;
+               rdfs:label "output of"@en .
+
+
 ###  http://purl.obolibrary.org/obo/RO_0000056
 ns1:RO_0000056 rdf:type owl:ObjectProperty ;
                rdfs:label "participates in"@en .
@@ -794,30 +799,6 @@ ns1:PATO_0002104 rdf:type owl:Class ;
                  rdfs:label "inflamed" .
 
 
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000534
-wont:WONT_0000534 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000380 ;
-                 ns1:IAO_0000118 "decubitus ulcer"@en ;
-                 ns1:IAO_0000115 "A wound that is the specified output of a wound causing pressure impact process."@en ;
-                 rdfs:label "Pressure ulcer"@en ;
-                 skos:relatedMatch ns1:HP_0012399 .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000535
-wont:WONT_0000535 rdf:type owl:Class ;
-                 rdfs:subClassOf mild:MILD_120028 ;
-                 ns1:IAO_0000115 "A disease course process of a diabetic metabolic disorder."@en ;
-                 rdfs:label "Diabetes mellitus disease process"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000536
-wont:WONT_0000536 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000535 ;
-                 ns1:IAO_0000115 "A diabetes mellitus disease process of a diabetic metabolic disorder of type I."@en ;
-                 rdfs:label "Diabetes mellitus type I disease process"@en .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000002
 wont:WONT_0000002 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000093 ;
@@ -879,11 +860,11 @@ wont:WONT_0000013 rdf:type owl:Class ;
 wont:WONT_0000015 rdf:type owl:Class ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
                                                              [ rdf:type owl:Restriction ;
-                                                               owl:onProperty ns1:OBI_0000312 ;
+                                                               owl:onProperty ns1:RO_0002353 ;
                                                                owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000414
                                                                                                          [ rdf:type owl:Restriction ;
                                                                                                            owl:onProperty ns1:BFO_0000051 ;
-                                                                                                           owl:someValuesFrom wont:WONT_0000522
+                                                                                                           owl:someValuesFrom wont:WONT_0000537
                                                                                                          ]
                                                                                                        ) ;
                                                                                     rdf:type owl:Class
@@ -892,12 +873,10 @@ wont:WONT_0000015 rdf:type owl:Class ;
                                                            ) ;
                                         rdf:type owl:Class
                                       ] ;
-                  ns1:IAO_0000115 "A wound that is part of the same material disease entity as an angiopathy in the same patient, and that persists over the same period as that angiopathy. No claim is made that the angiopathy caused the wound."@en ;
-                  ns1:IAO_0000116 "CO-LOCATION, NOT CAUSATION. This class previously sat under a grouping that collected conditions by what they were said to cause. Aetiology is not asserted here: what a disorder causes cannot be reliably separated from what the disorder is. What is asserted is that the wound and the angiopathy are parts of one material disease entity in one patient. The probability-raising relation between reduced perfusion and the occurrence or persistence of the wound belongs to the predisposition layer - MILD_120023 disease predisposition, a MILD_120005 tendency whose material basis is attached by MILD_120094 - and is recorded there, not as a causal axiom. The label was singularised from 'Angiopathic wounds'."@en ;
-                  rdfs:comment "TEMPORAL SCOPE NOT AXIOMATISED. The 'over the same period' clause of the definition is documentation only. BFO 2020 places temporal relations in a separate temporal extension, which this ontology deliberately does not import; the spatial half of co-location is expressible, the temporal half is not. Do not read the absence of a temporal axiom as an absence of a temporal commitment."@en ;
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of an angiopathy: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
+                  ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ;
                   rdfs:label "Angiopathic wound"@en .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000016
 wont:WONT_0000016 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000198 ;
@@ -982,24 +961,25 @@ wont:WONT_0000032 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000033
 wont:WONT_0000033 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000380 ,
-                                  [ rdf:type owl:Restriction ;
-                                    owl:onProperty ns1:OBI_0000312 ;
-                                    owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000414
-                                                                              [ rdf:type owl:Restriction ;
-                                                                                owl:onProperty ns1:BFO_0000051 ;
-                                                                                owl:someValuesFrom wont:WONT_0000523
-                                                                              ]
-                                                                            ) ;
-                                                         rdf:type owl:Class
-                                                       ]
-                                  ] ;
-                  ns1:IAO_0000115 "A wound that is part of the same material disease entity as an autoimmune tissue disorder in the same patient, and that persists over the same period as that disorder. No claim is made that the autoimmune disorder caused the wound."@en ;
-                  ns1:IAO_0000116 "CO-LOCATION, NOT CAUSATION. The blistering and ulcerating autoimmune dermatoses previously grouped under a causal parent are now placed by their own ontological category, and their relevance to wounds is carried here instead: the wound and the autoimmune tissue disorder are parts of one material disease entity in one patient. 'Related' in the label is deliberately non-causal."@en ;
-                  rdfs:comment "TEMPORAL SCOPE NOT AXIOMATISED. The 'over the same period' clause of the definition is documentation only. BFO 2020 places temporal relations in a separate temporal extension, which this ontology deliberately does not import; the spatial half of co-location is expressible, the temporal half is not. Do not read the absence of a temporal axiom as an absence of a temporal commitment."@en ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0002353 ;
+                                                               owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000414
+                                                                                                         [ rdf:type owl:Restriction ;
+                                                                                                           owl:onProperty ns1:BFO_0000051 ;
+                                                                                                           owl:someValuesFrom wont:WONT_0000538
+                                                                                                         ]
+                                                                                                       ) ;
+                                                                                    rdf:type owl:Class
+                                                                                  ]
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of an autoimmune tissue disorder: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
+                  ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ;
                   rdfs:label "Autoimmune disease related wound"@en .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000034
 wont:WONT_0000034 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000084 ;
@@ -1223,11 +1203,11 @@ wont:WONT_0000084 rdf:type owl:Class ;
 wont:WONT_0000088 rdf:type owl:Class ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
                                                              [ rdf:type owl:Restriction ;
-                                                               owl:onProperty ns1:OBI_0000312 ;
+                                                               owl:onProperty ns1:RO_0002353 ;
                                                                owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000414
                                                                                                          [ rdf:type owl:Restriction ;
                                                                                                            owl:onProperty ns1:BFO_0000051 ;
-                                                                                                           owl:someValuesFrom wont:WONT_0000520
+                                                                                                           owl:someValuesFrom wont:WONT_0000539
                                                                                                          ]
                                                                                                        ) ;
                                                                                     rdf:type owl:Class
@@ -1237,12 +1217,9 @@ wont:WONT_0000088 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000380 ;
-                  ns1:IAO_0000115 "A wound that is part of the same material disease entity as a diabetic metabolic disorder in the same patient, and that persists over the same period as that disorder. No claim is made that the diabetes caused the wound."@en ;
-                  ns1:IAO_0000116 "CO-LOCATION, NOT CAUSATION. Diabetes does not cause wounds. It raises the probability that particular skin wounds occur and fail to close, by way of diabetic microangiopathy (WONT_0000201), and the relation is not deterministic: a diabetic wound still depends on an external trauma process (WONT_0000338) to arise at all. That dependence is what distinguishes this class from a neoplastic or malignant wound, where no additional process is required - some basal cell carcinomas produce extensive wounds unaided. The probability-raising half belongs to the predisposition layer - MILD_120023 disease predisposition, a MILD_120005 tendency whose material basis is attached by MILD_120094 - and is documentation here rather than an axiom. The axiom asserts co-location only."@en ;
-                  rdfs:comment "TEMPORAL SCOPE NOT AXIOMATISED. The 'over the same period' clause of the definition is documentation only. BFO 2020 places temporal relations in a separate temporal extension, which this ontology deliberately does not import; the spatial half of co-location is expressible, the temporal half is not. Do not read the absence of a temporal axiom as an absence of a temporal commitment."@en ;
+                  ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of a diabetic metabolic disorder: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
+                  ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ;
                   rdfs:label "Diabetic wound"@en .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000089
 wont:WONT_0000089 rdf:type owl:Class ;
                   rdfs:subClassOf ns1:BFO_0000015 ;
@@ -1662,7 +1639,7 @@ wont:WONT_0000180 rdf:type owl:Class ;
 wont:WONT_0000182 rdf:type owl:Class ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
                                                              [ rdf:type owl:Restriction ;
-                                                               owl:onProperty ns1:OBI_0000312 ;
+                                                               owl:onProperty ns1:RO_0002353 ;
                                                                owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000414
                                                                                                          [ rdf:type owl:Restriction ;
                                                                                                            owl:onProperty ns1:BFO_0000051 ;
@@ -2264,12 +2241,10 @@ wont:WONT_0000308 rdf:type owl:Class ;
 wont:WONT_0000310 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000380 ,
                                   [ rdf:type owl:Restriction ;
-                                    owl:onProperty ns1:OBI_0000312 ;
+                                    owl:onProperty ns1:RO_0002353 ;
                                     owl:someValuesFrom wont:WONT_0000140
                                   ] ;
                   rdfs:label "Thermal wound" .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000311
 wont:WONT_0000311 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000093 ;
@@ -2430,7 +2405,7 @@ wont:WONT_0000338 rdf:type owl:Class ;
 wont:WONT_0000339 rdf:type owl:Class ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
                                                              [ rdf:type owl:Restriction ;
-                                                               owl:onProperty ns1:OBI_0000312 ;
+                                                               owl:onProperty ns1:RO_0002353 ;
                                                                owl:someValuesFrom wont:WONT_0000516
                                                              ]
                                                            ) ;
@@ -2439,8 +2414,6 @@ wont:WONT_0000339 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000380 ;
                   ns1:IAO_0000115 "A wound that is the specified output of a trauma process."@en ;
                   rdfs:label "Traumatic wound" .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000341
 wont:WONT_0000341 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000066 ;
@@ -2557,7 +2530,7 @@ wont:WONT_0000379 rdf:type owl:Class ;
 wont:WONT_0000380 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120022 ,
                                   [ rdf:type owl:Restriction ;
-                                    owl:onProperty ns1:OBI_0000312 ;
+                                    owl:onProperty ns1:RO_0002353 ;
                                     owl:someValuesFrom wont:WONT_0000414
                                   ] ,
                                   [ rdf:type owl:Restriction ;
@@ -2582,8 +2555,6 @@ wont:WONT_0000380 rdf:type owl:Class ;
                                   ] ;
                   ns1:IAO_0000115 "A pathological disorder that is the specified output of a wound development process."@en ;
                   rdfs:label "Wound" .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000381
 wont:WONT_0000381 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000093 ;
@@ -2627,11 +2598,11 @@ wont:WONT_0000383 rdf:type owl:Class ;
 wont:WONT_0000384 rdf:type owl:Class ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
                                                              [ rdf:type owl:Restriction ;
-                                                               owl:onProperty ns1:BFO_0000050 ;
-                                                               owl:someValuesFrom [ owl:intersectionOf ( mild:MILD_120020
+                                                               owl:onProperty ns1:RO_0002353 ;
+                                                               owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000414
                                                                                                          [ rdf:type owl:Restriction ;
                                                                                                            owl:onProperty ns1:BFO_0000051 ;
-                                                                                                           owl:someValuesFrom wont:WONT_0000468
+                                                                                                           owl:someValuesFrom wont:WONT_0000541
                                                                                                          ]
                                                                                                        ) ;
                                                                                     rdf:type owl:Class
@@ -2641,12 +2612,12 @@ wont:WONT_0000384 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000380 ;
-                  ns1:IAO_0000115 "A wound that is co-located with impaired venous backflow in the same limb of the same patient, and that persists over the same period as that impairment. No claim is made that the impaired venous backflow caused the wound."@en ;
+                  ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of a venous insufficiency disorder: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
+                  ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ;
                   ns1:IAO_0000116 "RENAMED. The previous label, 'Wound causally related to impaired venous backflow', asserted in its own name a causal relation that this ontology does not hold to be assertable: what a disease causes cannot be reliably separated from what the disease is. Only co-location in space and time is claimed. The old label is deliberately NOT retained as an alternative term, because doing so would keep the rejected causal claim in circulation as a searchable synonym."@en ;
-                  rdfs:comment "TEMPORAL SCOPE NOT AXIOMATISED. The 'over the same period' clause of the definition is documentation only. BFO 2020 places temporal relations in a separate temporal extension, which this ontology deliberately does not import; the spatial half of co-location is expressible, the temporal half is not. Do not read the absence of a temporal axiom as an absence of a temporal commitment."@en ;
-                  rdfs:label "Wound co-located with impaired venous backflow"@en .
-
-
+                  ns1:IAO_0000118 "venous wound"@en ;
+                  ns1:IAO_0000118 "venous insufficiency ulcer"@en ;
+                  rdfs:label "Venous insufficiency wound"@en .
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000387
 wont:WONT_0000387 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000423 ;
@@ -2681,13 +2652,11 @@ wont:WONT_0000391 rdf:type owl:Class ;
 wont:WONT_0000392 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120022 ,
                                   [ rdf:type owl:Restriction ;
-                                    owl:onProperty ns1:OBI_0000312 ;
+                                    owl:onProperty ns1:RO_0002353 ;
                                     owl:someValuesFrom wont:WONT_0000433
                                   ] ;
                   ns1:IAO_0000115 "A pathological disorder that is the specified output of a wound dehiscence process."@en ;
                   rdfs:label "Wound dehiscence" .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000395
 wont:WONT_0000395 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120047 ;
@@ -3567,33 +3536,35 @@ wont:WONT_0000509 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000510 ;
-                  ns1:IAO_0000115 "A wound co-located with impaired arterial inflow that bears the quality ischemic."@en ;
+                  ns1:IAO_0000115 "An arterial insufficiency wound that bears the quality ischemic."@en ;
                   rdfs:label "Ischemic wound"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000510
 wont:WONT_0000510 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0002353 ;
+                                                               owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000414
+                                                                                                         [ rdf:type owl:Restriction ;
+                                                                                                           owl:onProperty ns1:BFO_0000051 ;
+                                                                                                           owl:someValuesFrom wont:WONT_0000543
+                                                                                                         ]
+                                                                                                       ) ;
+                                                                                    rdf:type owl:Class
+                                                                                  ]
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
                   rdfs:subClassOf wont:WONT_0000380 ,
-                                  [ owl:intersectionOf ( wont:WONT_0000380
-                                                         [ rdf:type owl:Restriction ;
-                                                           owl:onProperty ns1:BFO_0000050 ;
-                                                           owl:someValuesFrom [ owl:intersectionOf ( mild:MILD_120020
-                                                                                                     [ rdf:type owl:Restriction ;
-                                                                                                       owl:onProperty ns1:BFO_0000051 ;
-                                                                                                       owl:someValuesFrom wont:WONT_0000229
-                                                                                                     ]
-                                                                                                   ) ;
-                                                                                rdf:type owl:Class
-                                                                              ]
-                                                         ]
-                                                       ) ;
-                                    rdf:type owl:Class
-                                  ] ;
-                  ns1:IAO_0000115 "A wound that is co-located with impaired arterial inflow in the same limb of the same patient, and that persists over the same period as that impairment. No claim is made that the impaired arterial inflow caused the wound."@en ;
-                  rdfs:comment "TEMPORAL SCOPE NOT AXIOMATISED. The 'over the same period' clause of the definition is documentation only. BFO 2020 places temporal relations in a separate temporal extension, which this ontology deliberately does not import; the spatial half of co-location is expressible, the temporal half is not. Do not read the absence of a temporal axiom as an absence of a temporal commitment."@en ;
-                  rdfs:label "Wound co-located with impaired arterial inflow"@en .
-
-
+                                  wont:WONT_0000015 ;
+                  ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of a peripheral arterial occlusive disease: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
+                  ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ;
+                  ns1:IAO_0000118 "arterial wound"@en ;
+                  ns1:IAO_0000118 "arterial insufficiency ulcer"@en ;
+                  ns1:IAO_0000118 "ischemic ulcer"@en ;
+                  rdfs:label "Arterial insufficiency wound"@en .
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000511
 wont:WONT_0000511 rdf:type owl:Class ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000481
@@ -3758,6 +3729,126 @@ wont:WONT_0000529 rdf:type owl:Class ;
                   rdfs:label "IWII wound classification grade"@en .
 
 
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000534
+wont:WONT_0000534 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0002353 ;
+                                                               owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000414
+                                                                                                         [ rdf:type owl:Restriction ;
+                                                                                                           owl:onProperty ns1:BFO_0000051 ;
+                                                                                                           owl:someValuesFrom wont:WONT_0000245
+                                                                                                         ]
+                                                                                                       ) ;
+                                                                                    rdf:type owl:Class
+                                                                                  ]
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing pressure impact process."@en ;
+                  ns1:IAO_0000118 "decubitus ulcer"@en ;
+                  rdfs:label "Pressure ulcer"@en ;
+                  skos:relatedMatch ns1:HP_0012399 .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000535
+wont:WONT_0000535 rdf:type owl:Class ;
+                  rdfs:subClassOf mild:MILD_120028 ;
+                  ns1:IAO_0000115 "A disease course process of a diabetic metabolic disorder."@en ;
+                  rdfs:label "Diabetes mellitus disease process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000536
+wont:WONT_0000536 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000535 ;
+                  ns1:IAO_0000115 "A diabetes mellitus disease process of a diabetic metabolic disorder of type I."@en ;
+                  rdfs:label "Diabetes mellitus type I disease process"@en .
+
+
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000537
+wont:WONT_0000537 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418
+                                                             wont:WONT_0000522
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000522 ;
+                  ns1:IAO_0000115 "An angiopathic disease process that is a wound causing process."@en ;
+                  rdfs:label "Wound causing angiopathic disease process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000538
+wont:WONT_0000538 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418
+                                                             wont:WONT_0000523
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000523 ;
+                  ns1:IAO_0000115 "An autoimmune disease process that is a wound causing process."@en ;
+                  rdfs:label "Wound causing autoimmune disease process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000539
+wont:WONT_0000539 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418
+                                                             wont:WONT_0000535
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000535 ;
+                  ns1:IAO_0000115 "A diabetes mellitus disease process that is a wound causing process."@en ;
+                  rdfs:label "Wound causing diabetes mellitus disease process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000540
+wont:WONT_0000540 rdf:type owl:Class ;
+                  rdfs:subClassOf mild:MILD_120028 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000057 ;
+                                    owl:someValuesFrom wont:WONT_0000468
+                                  ] ;
+                  ns1:IAO_0000115 "A course of the disease process that has as participant a venous insufficiency disorder."@en ;
+                  rdfs:label "Venous insufficiency disease process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000541
+wont:WONT_0000541 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418
+                                                             wont:WONT_0000540
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000540 ;
+                  ns1:IAO_0000115 "A venous insufficiency disease process that is a wound causing process."@en ;
+                  rdfs:label "Wound causing venous insufficiency disease process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000542
+wont:WONT_0000542 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000522 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000057 ;
+                                    owl:someValuesFrom wont:WONT_0000229
+                                  ] ;
+                  ns1:IAO_0000115 "An angiopathic disease process that has as participant a peripheral arterial occlusive disease."@en ;
+                  rdfs:label "Peripheral arterial occlusive disease process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000543
+wont:WONT_0000543 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418
+                                                             wont:WONT_0000542
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000542 ;
+                  ns1:IAO_0000115 "A peripheral arterial occlusive disease process that is a wound causing process."@en ;
+                  rdfs:label "Wound causing peripheral arterial occlusive disease process"@en .
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120000
 wont:WONT_120000 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:BFO_0000034 ;

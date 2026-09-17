@@ -1233,6 +1233,51 @@ imports a release ontology directly, and aborts if the joint module exceeds
 3 MB; `schema_builder.stale()` lists every module as a source, so a
 regenerated module regenerates the schema (rule 32).
 
+## 35. A complication is a disorder put out by a process of another disease's course — never a relation between two disorders
+
+*Decided 2026-09-17, with Moritz.*
+
+The shape, used for every aetiological wound class in WONT:
+
+```
+X wound ≡ Wound ⊓ output_of some (Wound development process
+                                   ⊓ has_part some Wound causing X process)
+Wound causing X process ≡ X disease process ⊓ Wound causing process
+```
+
+`output_of` is RO_0002353, not OBI_0000312 `is_specified_output_of`: a
+wound development process is not a planned process, and *specified* output
+belongs to planned processes only (classification and diagnostic results
+keep OBI_0000312). The causal order lives in the processes, where MILD
+licenses it (commitment 4; MILD_120053 "disease course process putting out
+disorders as part of a complication"); no causal relation between the two
+disorders is asserted, and none is needed.
+
+The failure this replaces. From June to 17 Sep five classes said
+`Wound ⊓ part_of some (material disease entity ⊓ has_part some <disorder>)`
+and were labelled *co-located with*. Read against MILD's own definition —
+"which disorders compose one disease is fixed by the diagnostic
+classification assigned to them, not by an intrinsic unity criterion" — that
+axiom asserted only that a diagnostic classification files the two under one
+disease. It said nothing about mechanism, and its name promised a spatial
+adjacency (definitions even said "in the same limb") that the logic never
+stated. Moritz's objection that made this visible: a plaque in the iliac
+artery and an ischaemic ulcer on the toe share no material entity, yet the
+ulcer is plainly a complication of the arteriopathy. The complication
+pattern says exactly that; co-location could not.
+
+The five classes are `Angiopathic wound`, `Autoimmune disease related
+wound`, `Diabetic wound`, `Venous insufficiency wound` (was *Wound
+co-located with impaired venous backflow*) and `Arterial insufficiency
+wound` (was *… impaired arterial inflow*); `Traumatic wound`, `Thermal
+wound`, `Malignant wound` and `Pressure ulcer` already had the shape. The
+competency predicate `co_located_with` became `complication_of`, evaluated
+by `complication_holds()` in `evaluation/competency.py`.
+
+Enforced by: `tests/test_competency.py::test_complication_is_not_vacuous`
+(the three ways a process can be "of" a disease — subclass, has_participant,
+direct output — and two refusals; mutation-checked).
+
 ## Adding to this file
 
 When a universal design choice is made:

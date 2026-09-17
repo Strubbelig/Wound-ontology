@@ -183,7 +183,7 @@ enums:
       ANGIOPATHIC_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000015
         title: "Angiopathic wound"
-        description: "A wound that is part of the same material disease entity as an angiopathy in the same patient, and that persists over the same period as that angiopathy. No claim is made that the angiopathy caused the wound."
+        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of an angiopathy: a complication of that disorder. No claim is made that the disorder caused the wound."
       ANTISEPTIC_DYE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020
         title: "Antiseptic dye"
@@ -205,7 +205,7 @@ enums:
       AUTOIMMUNE_DISEASE_RELATED_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000033
         title: "Autoimmune disease related wound"
-        description: "A wound that is part of the same material disease entity as an autoimmune tissue disorder in the same patient, and that persists over the same period as that disorder. No claim is made that the autoimmune disorder caused the wound."
+        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of an autoimmune tissue disorder: a complication of that disorder. No claim is made that the disorder caused the wound."
       BEPANTHEN_OINTMENT:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000037
         title: "Bepanthen ointment"
@@ -269,7 +269,7 @@ enums:
       DIABETIC_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000088
         title: "Diabetic wound"
-        description: "A wound that is part of the same material disease entity as a diabetic metabolic disorder in the same patient, and that persists over the same period as that disorder. No claim is made that the diabetes caused the wound."
+        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of a diabetic metabolic disorder: a complication of that disorder. No claim is made that the disorder caused the wound."
       DOG_BITE_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000091
         title: "Dog bite wound"
@@ -618,10 +618,11 @@ enums:
       WOUND_BIOFILM:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000383
         title: "Wound biofilm"
-      WOUND_CO_LOCATED_WITH_IMPAIRED_VENOUS_BACKFLOW:
+      VENOUS_INSUFFICIENCY_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000384
-        title: "Wound co-located with impaired venous backflow"
-        description: "A wound that is co-located with impaired venous backflow in the same limb of the same patient, and that persists over the same period as that impairment. No claim is made that the impaired venous backflow caused the wound."
+        title: "Venous insufficiency wound"
+        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of a venous insufficiency disorder: a complication of that disorder. No claim is made that the disorder caused the wound."
+        aliases: ["venous insufficiency ulcer"]
       WOUND_DEHISCENCE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000392
         title: "Wound dehiscence"
@@ -782,11 +783,12 @@ enums:
       ISCHEMIC_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000509
         title: "Ischemic wound"
-        description: "A wound co-located with impaired arterial inflow that bears the quality ischemic."
-      WOUND_CO_LOCATED_WITH_IMPAIRED_ARTERIAL_INFLOW:
+        description: "An arterial insufficiency wound that bears the quality ischemic."
+      ARTERIAL_INSUFFICIENCY_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000510
-        title: "Wound co-located with impaired arterial inflow"
-        description: "A wound that is co-located with impaired arterial inflow in the same limb of the same patient, and that persists over the same period as that impairment. No claim is made that the impaired arterial inflow caused the wound."
+        title: "Arterial insufficiency wound"
+        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of a peripheral arterial occlusive disease: a complication of that disorder. No claim is made that the disorder caused the wound."
+        aliases: ["arterial insufficiency ulcer"]
       COLONIZED_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000511
         title: "Colonized wound"
@@ -811,7 +813,7 @@ enums:
       PRESSURE_ULCER:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000534
         title: "Pressure ulcer"
-        description: "A wound that is the specified output of a wound causing pressure impact process."
+        description: "A wound that is the output of a wound development process that has as part a wound causing pressure impact process."
         aliases: ["decubitus ulcer"]
       WOUND_INFECTING_PATHOGEN:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120019
@@ -825,18 +827,6 @@ enums:
       Existing 'quality' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
-      DEGREE_OF_MALIGNANCY:
-        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120095
-        title: "degree of malignancy"
-        description: "A quality of a pathological disorder that is the extent to which its tissue shows neoplastic growth that invades surrounding tissue or spreads to distant sites."
-      BENIGN:
-        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120096
-        title: "benign"
-        description: "A degree of malignancy that qualifies its bearer as benign: any neoplastic tissue present neither invades surrounding tissue nor spreads."
-      MALIGNANT:
-        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120097
-        title: "malignant"
-        description: "A degree of malignancy that qualifies its bearer as malignant: neoplastic tissue present invades surrounding tissue or spreads to distant sites."
       REDNESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000257
         title: "Redness"
@@ -1678,6 +1668,34 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000536
         title: "Diabetes mellitus type I disease process"
         description: "A diabetes mellitus disease process of a diabetic metabolic disorder of type I."
+      WOUND_CAUSING_ANGIOPATHIC_DISEASE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000537
+        title: "Wound causing angiopathic disease process"
+        description: "An angiopathic disease process that is a wound causing process."
+      WOUND_CAUSING_AUTOIMMUNE_DISEASE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000538
+        title: "Wound causing autoimmune disease process"
+        description: "An autoimmune disease process that is a wound causing process."
+      WOUND_CAUSING_DIABETES_MELLITUS_DISEASE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000539
+        title: "Wound causing diabetes mellitus disease process"
+        description: "A diabetes mellitus disease process that is a wound causing process."
+      VENOUS_INSUFFICIENCY_DISEASE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000540
+        title: "Venous insufficiency disease process"
+        description: "A course of the disease process that has as participant a venous insufficiency disorder."
+      WOUND_CAUSING_VENOUS_INSUFFICIENCY_DISEASE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000541
+        title: "Wound causing venous insufficiency disease process"
+        description: "A venous insufficiency disease process that is a wound causing process."
+      PERIPHERAL_ARTERIAL_OCCLUSIVE_DISEASE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000542
+        title: "Peripheral arterial occlusive disease process"
+        description: "An angiopathic disease process that has as participant a peripheral arterial occlusive disease."
+      WOUND_CAUSING_PERIPHERAL_ARTERIAL_OCCLUSIVE_DISEASE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000543
+        title: "Wound causing peripheral arterial occlusive disease process"
+        description: "A peripheral arterial occlusive disease process that is a wound causing process."
       WOUND_DRESSING_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120013
         title: "Wound dressing process"
@@ -1783,7 +1801,7 @@ enums:
       IS_SPECIFIED_OUTPUT_OF:
         meaning: http://purl.obolibrary.org/obo/OBI_0000312
         title: "is specified output of"
-        description: "Permitted category pairs: information entity -> process; material entity -> process"
+        description: "Permitted category pairs: information entity -> process"
       OCCUPIES_TEMPORAL_REGION:
         meaning: http://purl.obolibrary.org/obo/BFO_0000199
         title: "occupies temporal region"

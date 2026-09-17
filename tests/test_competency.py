@@ -69,7 +69,7 @@ def cq(id_, triple, in_scope=True):
 # ── compilation ────────────────────────────────────────────────────────────
 def test_subclass_compiles_to_a_transitive_ask():
     q = compile_ask(EX + "A", "is_a", EX + "B")
-    assert "ASK" in q and "rdfs:subClassOf*" in q
+    assert "ASK" in q and "rdfs:subClassOf" in q and ")*" in q
 
 
 def test_restriction_predicate_compiles_to_a_restriction_ask():
@@ -117,12 +117,30 @@ def test_a_restriction_whose_filler_is_an_intersection_is_found(graph):
     inner = rdflib.BNode(); inner_lst = rdflib.BNode()
     Collection(g, inner_lst, [wdp, other]); g.add((inner, OWL.intersectionOf, inner_lst))
     r = rdflib.BNode()
-    g.add((r, RDF.type, OWL.Restriction)); g.add((r, OWL.onProperty, URIRef(OBO + "OBI_0000312"))); g.add((r, OWL.someValuesFrom, inner))
+    g.add((r, RDF.type, OWL.Restriction)); g.add((r, OWL.onProperty, URIRef(OBO + "RO_0002353"))); g.add((r, OWL.someValuesFrom, inner))
     outer = rdflib.BNode(); outer_lst = rdflib.BNode()
     Collection(g, outer_lst, [wound, r]); g.add((outer, OWL.intersectionOf, outer_lst))
     g.add((mw, OWL.equivalentClass, outer))
     res = run_suite(g, [cq("T5", ("Malignant Wound", "output_of", "Wound development process")),
                         cq("T5b", ("Malignant Wound", "output_of", "reddened"))])
+    assert res[0].verdict is Verdict.PASS, res[0].detail
+    assert res[1].verdict is Verdict.FAIL
+
+
+def test_a_defining_axiom_answers_a_subclass_cq(graph):
+    """`Pressure ulcer = Wound and output_of some ...` with no asserted
+    rdfs:subClassOf Wound (the 17 Sep hand edit dropped it) is still a
+    subclass of Wound, and CQ002 must not fail on a convention."""
+    from rdflib.collection import Collection
+    g = graph
+    wound = URIRef(EX + "Wound")
+    pu = URIRef(EX + "PU"); g.add((pu, RDF.type, OWL.Class)); g.add((pu, RDFS.label, rdflib.Literal("Pressure ulcer")))
+    r = rdflib.BNode(); g.add((r, RDF.type, OWL.Restriction))
+    g.add((r, OWL.onProperty, URIRef(OBO + "RO_0002353"))); g.add((r, OWL.someValuesFrom, URIRef(EX + "WDP")))
+    inter = rdflib.BNode(); lst = rdflib.BNode(); Collection(g, lst, [wound, r]); g.add((inter, OWL.intersectionOf, lst))
+    g.add((pu, OWL.equivalentClass, inter))
+    res = run_suite(g, [cq("T6", ("Pressure ulcer", "is_a", "Wound")),
+                        cq("T6b", ("Pressure ulcer", "is_a", "reddened"))])
     assert res[0].verdict is Verdict.PASS, res[0].detail
     assert res[1].verdict is Verdict.FAIL
 
@@ -319,20 +337,20 @@ def test_no_new_relation_becomes_unexpressible(real_results):
     assert preds <= {"affects", "caused_by"}, f"unexpected unexpressible: {preds}"
 
 
-def test_colocation_is_not_vacuous(real_graph):
-    """co_located_with must distinguish. If it answered true for any pair it
+def test_complication_is_not_vacuous(real_graph):
+    """complication_of must distinguish. If it answered true for any pair it
     would manufacture passes rather than measure anything."""
-    from wound_ontology.evaluation.competency import colocation_holds, label_index
+    from wound_ontology.evaluation.competency import complication_holds, label_index
     idx = label_index(real_graph)
-    # Since 2026-09-16 the diabetic, angiopathic and autoimmune wounds are
-    # defined through their development process instead; the venous and
-    # arterial classes are the ones that still carry a co-location axiom.
-    yes = ("wound co-located with impaired venous backflow", "venous insufficiency disorder")
-    no = ("wound co-located with impaired venous backflow", "peripheral arterial occlusive disease")
-    assert colocation_holds(real_graph, idx[yes[0]], idx[yes[1]]) is True
-    assert colocation_holds(real_graph, idx[no[0]], idx[no[1]]) is False
-    # a bare Wound is co-located with nothing in particular
-    assert colocation_holds(real_graph, idx["wound"], idx["diabetic metabolic disorder"]) is False
+    # through a subclass of the process (Angiopathic disease process)
+    assert complication_holds(real_graph, idx["angiopathic wound"], idx["angiopathic disease process"]) is True
+    # through has_participant on the process (Venous insufficiency disease process)
+    assert complication_holds(real_graph, idx["venous insufficiency wound"], idx["venous insufficiency disorder"]) is True
+    # a direct output_of, no has_part (Traumatic wound)
+    assert complication_holds(real_graph, idx["traumatic wound"], idx["trauma process"]) is True
+    assert complication_holds(real_graph, idx["venous insufficiency wound"], idx["peripheral arterial occlusive disease"]) is False
+    # a bare Wound is a complication of nothing in particular
+    assert complication_holds(real_graph, idx["wound"], idx["venous insufficiency disorder"]) is False
 
 
 # ── the resolver uses the pipeline's one label index, not a second rule ──────

@@ -55,7 +55,7 @@ def misbehaving_llm():
         ]),
         relations=RelationResponse(relations=[
             RelationCandidate(subject="Wound", predicate="has quality", object="reddened"),
-            RelationCandidate(subject="Wound", predicate="is specified output of",
+            RelationCandidate(subject="Wound", predicate="output of",
                               object="Wound development process"),
             RelationCandidate(subject="reddened", predicate="has part",
                               object="Wound"),                          # unlicensed pair
@@ -89,7 +89,7 @@ def test_licensed_relations_survive(misbehaving_llm):
     result, _ = _run(misbehaving_llm.extract_two_stage("text"))
     kept = {(r.subject, r.predicate.value, r.object) for r in result.relations}
     assert ("Wound", "has quality", "reddened") in kept
-    assert ("Wound", "is specified output of", "Wound development process") in kept
+    assert ("Wound", "output of", "Wound development process") in kept
 
 
 def test_grounding_is_lookup_not_generation(misbehaving_llm):

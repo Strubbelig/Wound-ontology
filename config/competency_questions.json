@@ -59,16 +59,16 @@
         },
         {
           "id": "CQ006",
-          "question": "Is a venous leg ulcer a wound co-located with impaired venous backflow?",
+          "question": "Is a venous leg ulcer a venous insufficiency wound?",
           "example_triple": [
             "Ulcus cruris venosum",
             "is_a",
-            "Wound co-located with impaired venous backflow"
+            "Venous insufficiency wound"
           ],
           "label_fix": {
             "Venous Leg Ulcer": "Ulcus cruris venosum"
           },
-          "rewrite": "Rewritten 2026-09-16: was 'Venous Leg Ulcer is_a Chronic Wound' -- same reason as CQ001. The venous axis is what WONT asserts of this class."
+          "rewrite": "Rewritten 2026-09-16: was 'Venous Leg Ulcer is_a Chronic Wound' -- same reason as CQ001. The venous axis is what WONT asserts of this class (label 'Wound co-located with impaired venous backflow' until 2026-09-17)."
         },
         {
           "id": "CQ007",
@@ -228,36 +228,35 @@
           "question": "What causes a pressure injury?",
           "example_triple": [
             "pressure ulcer",
-            "co_located_with",
+            "complication_of",
             "Sustained Mechanical Load"
           ],
           "label_fix": {
             "Pressure Injury": "pressure ulcer"
           },
-          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
+          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
         },
         {
           "id": "CQ031",
           "question": "What causes a diabetic foot ulcer?",
           "example_triple": [
             "Diabetic Foot Ulcer",
-            "co_located_with",
+            "complication_of",
             "Peripheral Neuropathy"
           ],
-          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
+          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
         },
         {
           "id": "CQ032",
           "question": "What causes a venous leg ulcer?",
           "example_triple": [
-            "Wound co-located with impaired venous backflow",
-            "co_located_with",
+            "Venous insufficiency wound",
+            "complication_of",
             "Venous insufficiency disorder"
           ],
-          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient.",
+          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease.",
           "label_fix": {
-            "Venous Leg Ulcer": "Wound co-located with impaired venous backflow",
-            "Chronic Venous Insufficiency": "Venous insufficiency disorder"
+            "Venous Leg Ulcer": "Venous insufficiency wound"
           }
         },
         {
@@ -265,10 +264,10 @@
           "question": "What causes an ischemic wound?",
           "example_triple": [
             "Ischemic Wound",
-            "co_located_with",
+            "complication_of",
             "Peripheral arterial occlusive disease"
           ],
-          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient.",
+          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease.",
           "label_fix": {
             "Peripheral Artery Disease": "Peripheral arterial occlusive disease"
           }
@@ -278,10 +277,13 @@
           "question": "What causes impaired wound healing?",
           "example_triple": [
             "Impaired Wound Healing",
-            "co_located_with",
-            "Diabetes Mellitus"
+            "complication_of",
+            "Diabetic metabolic disorder"
           ],
-          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
+          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease.",
+          "label_fix": {
+            "Diabetes Mellitus": "Diabetic metabolic disorder"
+          }
         }
       ]
     },
@@ -311,43 +313,43 @@
           "question": "What contaminates a wound with bacteria?",
           "example_triple": [
             "wound infection process",
-            "co_located_with",
+            "complication_of",
             "Bacterial Colonization"
           ],
           "label_fix": {
             "Wound Infection": "wound infection process"
           },
-          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
+          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
         },
         {
           "id": "CQ043",
           "question": "What causes a foreign body wound?",
           "example_triple": [
             "Foreign Body Wound",
-            "co_located_with",
+            "complication_of",
             "Foreign Body"
           ],
-          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
+          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
         },
         {
           "id": "CQ044",
           "question": "What pathogen causes necrotizing fasciitis?",
           "example_triple": [
             "Necrotizing Fasciitis",
-            "co_located_with",
+            "complication_of",
             "Group A Streptococcus"
           ],
-          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
+          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
         },
         {
           "id": "CQ045",
           "question": "What causes biofilm formation in a wound?",
           "example_triple": [
             "Wound Biofilm",
-            "co_located_with",
+            "complication_of",
             "Bacterial Colonization"
           ],
-          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
+          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
         }
       ]
     },
@@ -561,23 +563,23 @@
           "question": "What causes wound dehiscence?",
           "example_triple": [
             "Wound Dehiscence",
-            "co_located_with",
+            "complication_of",
             "wound infection process"
           ],
           "label_fix": {
             "Wound Infection": "wound infection process"
           },
-          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
+          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
         },
         {
           "id": "CQ075",
           "question": "What causes hypertrophic scar formation?",
           "example_triple": [
             "Hypertrophic Scar",
-            "co_located_with",
+            "complication_of",
             "Excessive Collagen Deposition"
           ],
-          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
+          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
         }
       ]
     },
