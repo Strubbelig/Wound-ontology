@@ -66,11 +66,6 @@ ns1:OBI_0000299 rdf:type owl:ObjectProperty .
 ns1:OBI_0000312 rdf:type owl:ObjectProperty .
 
 
-###  http://purl.obolibrary.org/obo/RO_0002353
-ns1:RO_0002353 rdf:type owl:ObjectProperty ;
-               rdfs:label "output of"@en .
-
-
 ###  http://purl.obolibrary.org/obo/RO_0000056
 ns1:RO_0000056 rdf:type owl:ObjectProperty ;
                rdfs:label "participates in"@en .
@@ -101,6 +96,11 @@ ns1:RO_0000091 rdf:type owl:ObjectProperty .
 ###  http://purl.obolibrary.org/obo/RO_0001025
 ns1:RO_0001025 rdf:type owl:ObjectProperty ;
                rdfs:label "located in"@en .
+
+
+###  http://purl.obolibrary.org/obo/RO_0002353
+ns1:RO_0002353 rdf:type owl:ObjectProperty ;
+               rdfs:label "output of"@en .
 
 
 ###  http://purl.obolibrary.org/obo/RO_0002559
@@ -334,6 +334,10 @@ ns1:COB_0001300 rdf:type owl:Class ;
                 rdfs:label "device" .
 
 
+###  http://purl.obolibrary.org/obo/DOID_574
+ns1:DOID_574 rdf:type owl:Class .
+
+
 ###  http://purl.obolibrary.org/obo/DOID_0050061
 ns1:DOID_0050061 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:IDO_0000586 ;
@@ -507,10 +511,7 @@ ns1:GO_0008283 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/GO_0042060
 ns1:GO_0042060 rdf:type owl:Class ;
-               rdfs:subClassOf ns1:GO_0008150 ;
-               ns1:IAO_0000115 "The series of events that restore integrity to a damaged tissue, following an injury." ;
-               ns1:IAO_0000118 "wound healing process"@en ;
-               rdfs:label "wound healing"@en .
+               ns1:IAO_0000118 "wound healing process"@en .
 
 
 ###  http://purl.obolibrary.org/obo/GO_0042246
@@ -627,9 +628,7 @@ ns1:IAO_0000030 rdf:type owl:Class .
 
 
 ###  http://purl.obolibrary.org/obo/IAO_0000104
-ns1:IAO_0000104 rdf:type owl:Class ;
-                ns1:IAO_0000115 "A directive information entity with action specifications and objective specifications as parts, and that may be concretized as a realizable entity that, if realized, is realized in a process in which the bearer tries to achieve the objectives by taking the actions specified." ;
-                rdfs:label "plan specification" .
+ns1:IAO_0000104 rdf:type owl:Class .
 
 
 ###  http://purl.obolibrary.org/obo/IAO_0000109
@@ -799,6 +798,35 @@ ns1:PATO_0002104 rdf:type owl:Class ;
                  rdfs:label "inflamed" .
 
 
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000544
+wont:WONT_0000544 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:GO_0042060 ;
+                 ns1:IAO_0000118 "Pathological wound healing process"@en ;
+                 rdfs:label "Impaired wound healing process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000545
+wont:WONT_0000545 rdf:type owl:Class ;
+                 rdfs:subClassOf mild:MILD_120089 ;
+                 rdfs:label "Wound care procedure"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000547
+wont:WONT_0000547 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:IDO_0000528 ;
+                 rdfs:label "Group A Streptococcus"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000548
+wont:WONT_0000548 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:COB_0000013 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:RO_0000087 ;
+                                   owl:someValuesFrom wont:WONT_0000578
+                                 ] ;
+                 rdfs:label "Vancomycin"@en .
+
+
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000002
 wont:WONT_0000002 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000093 ;
@@ -877,9 +905,11 @@ wont:WONT_0000015 rdf:type owl:Class ;
                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of an angiopathy: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
                   ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ;
                   rdfs:label "Angiopathic wound"@en .
+
+
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000016
 wont:WONT_0000016 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000198 ;
+                  rdfs:subClassOf mild:MILD_120089 ;
                   rdfs:label "Antibiotic therapy" .
 
 
@@ -949,7 +979,7 @@ wont:WONT_0000029 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000030
 wont:WONT_0000030 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:IAO_0000104 ;
+                  rdfs:subClassOf mild:MILD_120089 ;
                   rdfs:label "Aseptic cuticle" .
 
 
@@ -980,6 +1010,8 @@ wont:WONT_0000033 rdf:type owl:Class ;
                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of an autoimmune tissue disorder: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
                   ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ;
                   rdfs:label "Autoimmune disease related wound"@en .
+
+
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000034
 wont:WONT_0000034 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000084 ;
@@ -1006,7 +1038,7 @@ wont:WONT_0000039 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000040
 wont:WONT_0000040 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:IAO_0000104 ;
+                  rdfs:subClassOf mild:MILD_120089 ;
                   rdfs:label "Biosurgical debridement" .
 
 
@@ -1220,9 +1252,11 @@ wont:WONT_0000088 rdf:type owl:Class ;
                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of a diabetic metabolic disorder: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
                   ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ;
                   rdfs:label "Diabetic wound"@en .
+
+
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000089
 wont:WONT_0000089 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:BFO_0000015 ;
+                  rdfs:subClassOf wont:WONT_0000395 ;
                   rdfs:label "Diagnostic process to assess wound characteristics" .
 
 
@@ -1277,6 +1311,7 @@ wont:WONT_0000098 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000100
 wont:WONT_0000100 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000409 ;
+                  ns1:IAO_0000118 "Re-Epithelialization"@en ;
                   rdfs:label "Epithelialization process"@en .
 
 
@@ -1406,12 +1441,6 @@ wont:WONT_0000131 rdf:type owl:Class ;
                   rdfs:label "Granulating wound bed" .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000132
-wont:WONT_0000132 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000409 ;
-                  rdfs:label "Granulation process"@en .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000133
 wont:WONT_0000133 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000224 ;
@@ -1514,7 +1543,7 @@ wont:WONT_0000154 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000161
 wont:WONT_0000161 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:BFO_0000016 ;
+                  rdfs:subClassOf mild:MILD_120020 ;
                   ns1:IAO_0000116 "Recategorised when the causal-role groupings 'Medical condition contributing to wound formation' / 'affecting wound healing' / 'contributing to blistering wounds' were dissolved. Those classes grouped entities by what they were said to cause, which this ontology does not assert, and they mixed material disorders with dispositions and processes. Relevance to wounds is now carried by co-location axioms on the wound classes instead of by membership in a causal class."@en ;
                   rdfs:label "Immunosuppression" .
 
@@ -1604,7 +1633,18 @@ wont:WONT_0000175 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000176
 wont:WONT_0000176 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:BFO_0000015 ;
+                  rdfs:subClassOf wont:WONT_0000579 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000057 ;
+                                    owl:someValuesFrom [ owl:intersectionOf ( ns1:BFO_0000040
+                                                                              [ rdf:type owl:Restriction ;
+                                                                                owl:onProperty ns1:RO_0000087 ;
+                                                                                owl:someValuesFrom wont:WONT_0000585
+                                                                              ]
+                                                                            ) ;
+                                                         rdf:type owl:Class
+                                                       ]
+                                  ] ;
                   rdfs:label "Process of administering a local anaesthetic agent"@en .
 
 
@@ -1683,7 +1723,7 @@ wont:WONT_0000188 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000189
 wont:WONT_0000189 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:IAO_0000104 ;
+                  rdfs:subClassOf mild:MILD_120089 ;
                   rdfs:label "Mechanical debridement" .
 
 
@@ -1699,21 +1739,15 @@ wont:WONT_0000196 rdf:type owl:Class ;
                   rdfs:label "Medicinal honey" .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000198
-wont:WONT_0000198 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:IAO_0000104 ;
-                  rdfs:label "Method used for wound complication prevention" .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000199
 wont:WONT_0000199 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:IAO_0000104 ;
-                  rdfs:label "Method used for wound complication treatment" .
+                  rdfs:subClassOf mild:MILD_120089 ;
+                  rdfs:label "Method used for medical condition treatment"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000200
 wont:WONT_0000200 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:IAO_0000104 ;
+                  rdfs:subClassOf wont:WONT_0000199 ;
                   rdfs:label "Method used for wound treatment" .
 
 
@@ -1837,7 +1871,7 @@ wont:WONT_0000227 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000228
 wont:WONT_0000228 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000198 ;
+                  rdfs:subClassOf wont:WONT_0000200 ;
                   rdfs:label "Perioperative antimicrobial prophylaxis" .
 
 
@@ -1930,7 +1964,8 @@ wont:WONT_0000247 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000248
 wont:WONT_0000248 rdf:type owl:Class ;
                   rdfs:subClassOf ns1:GO_0042060 ;
-                  rdfs:label "Wound healing by primary intention"@en .
+                  ns1:IAO_0000118 "Wound healing by primary intention"@en ;
+                  rdfs:label "Wound healing by primary intention process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000253
@@ -1969,7 +2004,8 @@ wont:WONT_0000258 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000260
 wont:WONT_0000260 rdf:type owl:Class ;
                   rdfs:subClassOf ns1:GO_0042060 ;
-                  rdfs:label "Regenerative wound healing" .
+                  ns1:IAO_0000118 "Regenerative wound healing"@en ;
+                  rdfs:label "Regenerative wound healing process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000261
@@ -2019,7 +2055,7 @@ wont:WONT_0000268 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000269
 wont:WONT_0000269 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:BFO_0000015 ;
+                  rdfs:subClassOf mild:MILD_120021 ;
                   rdfs:label "Pathological scarring process"@en .
 
 
@@ -2053,7 +2089,8 @@ wont:WONT_0000273 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000274
 wont:WONT_0000274 rdf:type owl:Class ;
                   rdfs:subClassOf ns1:GO_0042060 ;
-                  rdfs:label "Wound healing by secondary intention"@en .
+                  ns1:IAO_0000118 "Wound healing by secondary intention"@en ;
+                  rdfs:label "Wound healing by secondary intention process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000275
@@ -2234,7 +2271,8 @@ wont:WONT_0000307 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000308
 wont:WONT_0000308 rdf:type owl:Class ;
                   rdfs:subClassOf ns1:GO_0042060 ;
-                  rdfs:label "Wound healing by tertiary intention"@en .
+                  ns1:IAO_0000118 "Wound healing by tertiary intention"@en ;
+                  rdfs:label "Wound healing by tertiary intention process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310
@@ -2245,6 +2283,8 @@ wont:WONT_0000310 rdf:type owl:Class ;
                                     owl:someValuesFrom wont:WONT_0000140
                                   ] ;
                   rdfs:label "Thermal wound" .
+
+
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000311
 wont:WONT_0000311 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000093 ;
@@ -2412,8 +2452,10 @@ wont:WONT_0000339 rdf:type owl:Class ;
                                         rdf:type owl:Class
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000380 ;
-                  ns1:IAO_0000115 "A wound that is the specified output of a trauma process."@en ;
+                  ns1:IAO_0000115 "A wound that is the output of a wound causing trauma process."@en ;
                   rdfs:label "Traumatic wound" .
+
+
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000341
 wont:WONT_0000341 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000066 ;
@@ -2442,6 +2484,7 @@ wont:WONT_0000346 rdf:type owl:Class ;
 wont:WONT_0000347 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000384 ,
                                   wont:WONT_0000441 ;
+                  ns1:IAO_0000118 "Venous leg ulcer"@en ;
                   rdfs:label "Ulcus cruris venosum" .
 
 
@@ -2530,10 +2573,6 @@ wont:WONT_0000379 rdf:type owl:Class ;
 wont:WONT_0000380 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120022 ,
                                   [ rdf:type owl:Restriction ;
-                                    owl:onProperty ns1:RO_0002353 ;
-                                    owl:someValuesFrom wont:WONT_0000414
-                                  ] ,
-                                  [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:RO_0000086 ;
                                     owl:someValuesFrom ns1:PATO_0000117
                                   ] ,
@@ -2552,9 +2591,15 @@ wont:WONT_0000380 rdf:type owl:Class ;
                                   [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:RO_0000086 ;
                                     owl:someValuesFrom wont:WONT_0000478
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0002353 ;
+                                    owl:someValuesFrom wont:WONT_0000414
                                   ] ;
-                  ns1:IAO_0000115 "A pathological disorder that is the specified output of a wound development process."@en ;
+                  ns1:IAO_0000115 "A pathological disorder that is the output of a wound development process."@en ;
                   rdfs:label "Wound" .
+
+
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000381
 wont:WONT_0000381 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000093 ;
@@ -2613,11 +2658,13 @@ wont:WONT_0000384 rdf:type owl:Class ;
                                       ] ;
                   rdfs:subClassOf wont:WONT_0000380 ;
                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of a venous insufficiency disorder: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
-                  ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ;
-                  ns1:IAO_0000116 "RENAMED. The previous label, 'Wound causally related to impaired venous backflow', asserted in its own name a causal relation that this ontology does not hold to be assertable: what a disease causes cannot be reliably separated from what the disease is. Only co-location in space and time is claimed. The old label is deliberately NOT retained as an alternative term, because doing so would keep the rejected causal claim in circulation as a searchable synonym."@en ;
-                  ns1:IAO_0000118 "venous wound"@en ;
-                  ns1:IAO_0000118 "venous insufficiency ulcer"@en ;
+                  ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ,
+                                  "RENAMED. The previous label, 'Wound causally related to impaired venous backflow', asserted in its own name a causal relation that this ontology does not hold to be assertable: what a disease causes cannot be reliably separated from what the disease is. Only co-location in space and time is claimed. The old label is deliberately NOT retained as an alternative term, because doing so would keep the rejected causal claim in circulation as a searchable synonym."@en ;
+                  ns1:IAO_0000118 "venous insufficiency ulcer"@en ,
+                                  "venous wound"@en ;
                   rdfs:label "Venous insufficiency wound"@en .
+
+
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000387
 wont:WONT_0000387 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000423 ;
@@ -2632,7 +2679,7 @@ wont:WONT_0000388 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000389
 wont:WONT_0000389 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:IAO_0000104 ;
+                  rdfs:subClassOf mild:MILD_120089 ;
                   rdfs:label "Wound closure technique" .
 
 
@@ -2655,8 +2702,10 @@ wont:WONT_0000392 rdf:type owl:Class ;
                                     owl:onProperty ns1:RO_0002353 ;
                                     owl:someValuesFrom wont:WONT_0000433
                                   ] ;
-                  ns1:IAO_0000115 "A pathological disorder that is the specified output of a wound dehiscence process."@en ;
+                  ns1:IAO_0000115 "A pathological disorder that is the output of a wound dehiscence process."@en ;
                   rdfs:label "Wound dehiscence" .
+
+
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000395
 wont:WONT_0000395 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120047 ;
@@ -3557,14 +3606,16 @@ wont:WONT_0000510 rdf:type owl:Class ;
                                                            ) ;
                                         rdf:type owl:Class
                                       ] ;
-                  rdfs:subClassOf wont:WONT_0000380 ,
-                                  wont:WONT_0000015 ;
+                  rdfs:subClassOf wont:WONT_0000015 ,
+                                  wont:WONT_0000380 ;
                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of a peripheral arterial occlusive disease: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
                   ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ;
-                  ns1:IAO_0000118 "arterial wound"@en ;
-                  ns1:IAO_0000118 "arterial insufficiency ulcer"@en ;
-                  ns1:IAO_0000118 "ischemic ulcer"@en ;
+                  ns1:IAO_0000118 "arterial insufficiency ulcer"@en ,
+                                  "arterial wound"@en ,
+                                  "ischemic ulcer"@en ;
                   rdfs:label "Arterial insufficiency wound"@en .
+
+
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000511
 wont:WONT_0000511 rdf:type owl:Class ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000481
@@ -3646,6 +3697,8 @@ wont:WONT_0000518 rdf:type owl:Class ;
 wont:WONT_0000519 rdf:type owl:Class ;
                   rdfs:subClassOf ns1:BFO_0000015 ;
                   ns1:IAO_0000115 "A process in which sustained mechanical pressure acts on a tissue."@en ;
+                  ns1:IAO_0000118 "Sustained mechanical load"@en ,
+                                  "Sustained mechanical load process"@en ;
                   rdfs:label "Pressure impact process"@en .
 
 
@@ -3767,8 +3820,6 @@ wont:WONT_0000536 rdf:type owl:Class ;
                   rdfs:label "Diabetes mellitus type I disease process"@en .
 
 
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000537
 wont:WONT_0000537 rdf:type owl:Class ;
                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418
@@ -3849,6 +3900,300 @@ wont:WONT_0000543 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000542 ;
                   ns1:IAO_0000115 "A peripheral arterial occlusive disease process that is a wound causing process."@en ;
                   rdfs:label "Wound causing peripheral arterial occlusive disease process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000549
+wont:WONT_0000549 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000088 ;
+                 rdfs:label "Diabetic foot ulcer"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000550
+wont:WONT_0000550 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000557 ;
+                 rdfs:label "Surgical site infection"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000551
+wont:WONT_0000551 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000380 ;
+                 rdfs:label "Soft tissue wound"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000552
+wont:WONT_0000552 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000339 ;
+                 rdfs:label "Laceration"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000553
+wont:WONT_0000553 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000380 ;
+                 rdfs:label "Acute wound"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000554
+wont:WONT_0000554 rdf:type owl:Class ;
+                 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0002353 ;
+                                                               owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000414
+                                                                                                         [ rdf:type owl:Restriction ;
+                                                                                                           owl:onProperty ns1:BFO_0000051 ;
+                                                                                                           owl:someValuesFrom wont:WONT_0000587
+                                                                                                         ]
+                                                                                                       ) ;
+                                                                                    rdf:type owl:Class
+                                                                                  ]
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing foreign body process."@en ;
+                 rdfs:label "Foreign body wound"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000555
+wont:WONT_0000555 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000040 ;
+                 rdfs:label "Foreign body"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000556
+wont:WONT_0000556 rdf:type owl:Class ;
+                 rdfs:subClassOf mild:MILD_120022 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:RO_0002353 ;
+                                   owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000154
+                                                                             [ rdf:type owl:Restriction ;
+                                                                               owl:onProperty ns1:BFO_0000051 ;
+                                                                               owl:someValuesFrom wont:WONT_0000567
+                                                                             ]
+                                                                           ) ;
+                                                        rdf:type owl:Class
+                                                      ]
+                                 ] ;
+                 rdfs:label "Hypertrophic scar"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000557
+wont:WONT_0000557 rdf:type owl:Class ;
+                 rdfs:subClassOf mild:MILD_120051 ;
+                 rdfs:label "Wound complication"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000558
+wont:WONT_0000558 rdf:type owl:Class ;
+                 rdfs:subClassOf mild:MILD_120020 ;
+                 rdfs:label "Sepsis"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000559
+wont:WONT_0000559 rdf:type owl:Class ;
+                 rdfs:subClassOf mild:MILD_120020 ;
+                 rdfs:label "Osteomyelitis"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000560
+wont:WONT_0000560 rdf:type owl:Class ;
+                 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418
+                                                             wont:WONT_0000586
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000586 ;
+                  ns1:IAO_0000115 "A neuropathic disease process that is a wound causing process."@en ;
+                 rdfs:label "Wound causing neuropathic disease process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000561
+wont:WONT_0000561 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_120016 ;
+                 rdfs:label "Wound healing phase"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000132
+wont:WONT_0000132 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000409 ;
+                 ns1:IAO_0000118 "Granulation process"@en ;
+                  rdfs:label "Granulation tissue formation process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000566
+wont:WONT_0000566 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000015 ;
+                 rdfs:label "Bacterial colonization process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000567
+wont:WONT_0000567 rdf:type owl:Class ;
+                 rdfs:subClassOf mild:MILD_120021 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:BFO_0000050 ;
+                                   owl:someValuesFrom wont:WONT_0000154
+                                 ] ;
+                 rdfs:label "Excessive collagen deposition process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000568
+wont:WONT_0000568 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000423 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:BFO_0000055 ;
+                                   owl:someValuesFrom wont:WONT_0000580
+                                 ] ;
+                 rdfs:label "Pressure offloading process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000569
+wont:WONT_0000569 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000016 ;
+                 rdfs:label "Prophylactic antibiotic therapy"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000570
+wont:WONT_0000570 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:COB_0001300 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:RO_0000085 ;
+                                   owl:someValuesFrom wont:WONT_0000580
+                                 ] ;
+                 rdfs:label "Pressure redistribution mattress"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000571
+wont:WONT_0000571 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:COB_0001300 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:RO_0000085 ;
+                                   owl:someValuesFrom wont:WONT_0000580
+                                 ] ;
+                 rdfs:label "Therapeutic footwear"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000572
+wont:WONT_0000572 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000395 ;
+                 rdfs:label "Bacterial culture process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000573
+wont:WONT_0000573 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000395 ;
+                 rdfs:label "Vascular assessment process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000574
+wont:WONT_0000574 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000573 ;
+                 rdfs:label "Ankle-brachial index measurement process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000575
+wont:WONT_0000575 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000397 ;
+                 rdfs:label "Wound photography process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000576
+wont:WONT_0000576 rdf:type owl:Class ;
+                 rdfs:subClassOf mild:MILD_120098 ;
+                 rdfs:label "Wound healing criterion"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000577
+wont:WONT_0000577 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000576 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:IAO_0000136 ;
+                                   owl:someValuesFrom wont:WONT_0000455
+                                 ] ;
+                 rdfs:label "Epithelialization criterion"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000578
+wont:WONT_0000578 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:DRON_00000001 ;
+                 rdfs:label "antibiotic drug role"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000579
+wont:WONT_0000579 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000015 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:RO_0000057 ;
+                                   owl:someValuesFrom [ owl:intersectionOf ( ns1:BFO_0000040
+                                                                             [ rdf:type owl:Restriction ;
+                                                                               owl:onProperty ns1:RO_0000087 ;
+                                                                               owl:someValuesFrom ns1:DRON_00000001
+                                                                             ]
+                                                                           ) ;
+                                                        rdf:type owl:Class
+                                                      ]
+                                 ] ;
+                 rdfs:label "Process of drug administration"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000580
+wont:WONT_0000580 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000034 ;
+                 rdfs:label "pressure redistribution function"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000581
+wont:WONT_0000581 rdf:type owl:Class ;
+                 rdfs:subClassOf mild:MILD_120089 ;
+                 rdfs:label "Surgical debridement"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000582
+wont:WONT_0000582 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000023 ;
+                 rdfs:label "therapeutic role"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000583
+wont:WONT_0000583 rdf:type owl:Class ;
+                 rdfs:subClassOf ns1:BFO_0000034 ;
+                 rdfs:label "clinical function"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000584
+wont:WONT_0000584 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000583 ;
+                 rdfs:label "therapeutic function"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000585
+wont:WONT_0000585 rdf:type owl:Class ;
+                  rdfs:subClassOf ns1:DRON_00000001 ;
+                  ns1:IAO_0000115 "A clinical drug role borne by a substance used to produce local anaesthesia."@en ;
+                  rdfs:label "local anaesthetic drug role"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000586
+wont:WONT_0000586 rdf:type owl:Class ;
+                  rdfs:subClassOf mild:MILD_120028 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000057 ;
+                                    owl:someValuesFrom ns1:DOID_574
+                                  ] ;
+                  ns1:IAO_0000115 "A course of the disease process that has as participant a peripheral nervous system disease (peripheral neuropathy)."@en ;
+                  rdfs:label "Neuropathic disease process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000587
+wont:WONT_0000587 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000418 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000057 ;
+                                    owl:someValuesFrom wont:WONT_0000555
+                                  ] ;
+                  ns1:IAO_0000115 "A wound causing process in which a foreign body participates."@en ;
+                  rdfs:label "Wound causing foreign body process"@en .
+
+
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120000
 wont:WONT_120000 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:BFO_0000034 ;
@@ -3975,8 +4320,8 @@ wont:WONT_120017 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120018
 wont:WONT_120018 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000016 ;
-                 rdfs:label "wound infecting disposition"@en .
+                 rdfs:subClassOf mild:MILD_120005 ;
+                 rdfs:label "wound infecting tendency"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120019
@@ -3990,8 +4335,8 @@ wont:WONT_120019 rdf:type owl:Class ;
                                        rdf:type owl:Class
                                      ] ;
                  rdfs:subClassOf ns1:IDO_0000528 ;
-                 ns1:IAO_0000115 "A pathogen that bears a wound infecting disposition."@en ;
-                 rdfs:label "wound infecting pathogen"@en .
+                 ns1:IAO_0000115 "A pathogen that bears a wound infecting tendency."@en ;
+                 rdfs:label "pathogen with wound infecting tendency"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120020
@@ -4003,6 +4348,30 @@ wont:WONT_120020 rdf:type owl:Class ;
 #################################################################
 #    Individuals
 #################################################################
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000562
+wont:WONT_0000562 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000561 ;
+                  rdfs:label "Hemostasis phase"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000563
+wont:WONT_0000563 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000561 ;
+                  rdfs:label "Inflammatory phase"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000564
+wont:WONT_0000564 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000561 ;
+                  rdfs:label "Proliferative phase"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000565
+wont:WONT_0000565 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000561 ;
+                  rdfs:label "Remodelling phase"@en .
+
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000123
 wont:WONT_0000123 rdf:type owl:NamedIndividual ,

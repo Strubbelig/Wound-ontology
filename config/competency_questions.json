@@ -33,20 +33,24 @@
           "example_triple": [
             "Surgical Site Infection",
             "is_a",
-            "wound complication process"
+            "Wound complication"
           ],
           "label_fix": {
-            "Wound Complication": "wound complication process"
-          }
+            "Wound Complication": "Wound complication"
+          },
+          "rewrite": "Rewritten 2026-09-17: a surgical site infection is a disease, not a process, so it cannot be a subclass of 'wound complication process'. WONT now has the material class 'Wound complication' (MILD_120051 branch) and files SSI under it."
         },
         {
           "id": "CQ004",
           "question": "Is a burn injury a type of traumatic wound?",
           "example_triple": [
-            "Burn Injury",
+            "Thermal wound",
             "is_a",
             "Traumatic Wound"
-          ]
+          ],
+          "label_fix": {
+            "Burn Injury": "Thermal wound"
+          }
         },
         {
           "id": "CQ005",
@@ -242,9 +246,12 @@
           "example_triple": [
             "Diabetic Foot Ulcer",
             "complication_of",
-            "Peripheral Neuropathy"
+            "peripheral nervous system disease"
           ],
-          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
+          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease.",
+          "label_fix": {
+            "Peripheral Neuropathy": "peripheral nervous system disease"
+          }
         },
         {
           "id": "CQ032",
@@ -276,13 +283,14 @@
           "id": "CQ034",
           "question": "What causes impaired wound healing?",
           "example_triple": [
-            "Impaired Wound Healing",
+            "Wound healing disorder",
             "complication_of",
             "Diabetic metabolic disorder"
           ],
           "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease.",
           "label_fix": {
-            "Diabetes Mellitus": "Diabetic metabolic disorder"
+            "Diabetes Mellitus": "Diabetic metabolic disorder",
+            "Impaired Wound Healing": "Wound healing disorder"
           }
         }
       ]
@@ -303,10 +311,13 @@
           "id": "CQ041",
           "question": "What quality characterises a sterile wound?",
           "example_triple": [
-            "Clean Wound",
+            "Clean wound according to IWII",
             "has_quality",
             "Sterile"
-          ]
+          ],
+          "label_fix": {
+            "Clean Wound": "Clean wound according to IWII"
+          }
         },
         {
           "id": "CQ042",
@@ -314,10 +325,11 @@
           "example_triple": [
             "wound infection process",
             "complication_of",
-            "Bacterial Colonization"
+            "Bacterial colonization process"
           ],
           "label_fix": {
-            "Wound Infection": "wound infection process"
+            "Wound Infection": "wound infection process",
+            "Bacterial Colonization": "Bacterial colonization process"
           },
           "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
         },
@@ -347,9 +359,12 @@
           "example_triple": [
             "Wound Biofilm",
             "complication_of",
-            "Bacterial Colonization"
+            "Bacterial colonization process"
           ],
-          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
+          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease.",
+          "label_fix": {
+            "Bacterial Colonization": "Bacterial colonization process"
+          }
         }
       ]
     },
@@ -411,12 +426,13 @@
           "id": "CQ055",
           "question": "Which intervention treats pressure injuries?",
           "example_triple": [
-            "Pressure Offloading",
+            "Pressure offloading process",
             "is_treatment_for",
             "pressure ulcer"
           ],
           "label_fix": {
-            "Pressure Injury": "pressure ulcer"
+            "Pressure Injury": "pressure ulcer",
+            "Pressure Offloading": "Pressure offloading process"
           }
         },
         {
@@ -424,12 +440,13 @@
           "question": "Is debridement part of wound care?",
           "example_triple": [
             "debridement process",
-            "part_of",
-            "Wound Care Procedure"
+            "is_a",
+            "Wound treatment process"
           ],
           "label_fix": {
-            "Debridement": "debridement process"
-          }
+            "Wound Care Procedure": "Wound treatment process"
+          },
+          "rewrite": "Rewritten 2026-09-17: 'Wound Care Procedure' is a treatment plan specification (an information entity) and a process is not part of a plan. Debridement is a kind of wound treatment process, which is what the question means by 'wound care'."
         },
         {
           "id": "CQ057",
@@ -477,10 +494,13 @@
           "id": "CQ062",
           "question": "Is granulation tissue formation a phase of wound healing?",
           "example_triple": [
-            "Granulation Tissue Formation",
+            "Granulation tissue formation process",
             "is_a",
             "Wound Healing Phase"
-          ]
+          ],
+          "label_fix": {
+            "Granulation Tissue Formation": "Granulation tissue formation process"
+          }
         },
         {
           "id": "CQ063",
@@ -577,9 +597,12 @@
           "example_triple": [
             "Hypertrophic Scar",
             "complication_of",
-            "Excessive Collagen Deposition"
+            "Excessive collagen deposition process"
           ],
-          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
+          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease.",
+          "label_fix": {
+            "Excessive Collagen Deposition": "Excessive collagen deposition process"
+          }
         }
       ]
     },
@@ -590,10 +613,13 @@
           "id": "CQ080",
           "question": "Which intervention prevents surgical site infection?",
           "example_triple": [
-            "Prophylactic Antibiotic",
+            "Prophylactic antibiotic therapy",
             "is_treatment_for",
             "Surgical Site Infection"
-          ]
+          ],
+          "label_fix": {
+            "Prophylactic Antibiotic": "Prophylactic antibiotic therapy"
+          }
         },
         {
           "id": "CQ081",
@@ -679,22 +705,27 @@
           "id": "CQ101",
           "question": "Is bacterial culture a type of wound diagnostic?",
           "example_triple": [
-            "Bacterial Culture",
+            "Bacterial culture process",
             "is_a",
             "wound diagnostic process"
           ],
           "label_fix": {
-            "Wound Diagnostic": "wound diagnostic process"
+            "Wound Diagnostic": "wound diagnostic process",
+            "Bacterial Culture": "Bacterial culture process"
           }
         },
         {
           "id": "CQ102",
           "question": "Is ankle-brachial index a diagnostic for vascular wounds?",
           "example_triple": [
-            "Ankle-Brachial Index",
+            "Ankle-brachial index measurement process",
             "is_a",
-            "Vascular Assessment"
-          ]
+            "Vascular assessment process"
+          ],
+          "label_fix": {
+            "Ankle-Brachial Index": "Ankle-brachial index measurement process",
+            "Vascular Assessment": "Vascular assessment process"
+          }
         },
         {
           "id": "CQ103",
@@ -713,12 +744,13 @@
           "id": "CQ104",
           "question": "Is wound photography a type of wound documentation?",
           "example_triple": [
-            "Wound Photography",
+            "Wound photography process",
             "is_a",
             "wound documentation process"
           ],
           "label_fix": {
-            "Wound Documentation": "wound documentation process"
+            "Wound Documentation": "wound documentation process",
+            "Wound Photography": "Wound photography process"
           }
         }
       ]
@@ -758,10 +790,13 @@
           "id": "CQ113",
           "question": "Is complete epithelialization a criterion for wound healing?",
           "example_triple": [
-            "Complete Epithelialization",
+            "Epithelialization criterion",
             "is_a",
             "Wound Healing Criterion"
-          ]
+          ],
+          "label_fix": {
+            "Complete Epithelialization": "Epithelialization criterion"
+          }
         }
       ]
     }
