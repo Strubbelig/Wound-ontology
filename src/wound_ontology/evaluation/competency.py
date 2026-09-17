@@ -64,6 +64,9 @@ PREDICATE_MAP: dict[str, tuple[str, str] | None] = {
     "has_quality": ("restriction", OBO + "RO_0000086"),
     "occurs_in": ("restriction", OBO + "BFO_0000066"),
     "has_part": ("restriction", OBO + "BFO_0000051"),
+    # RO_0000057 has participant: a process CQ may ask what takes part in it
+    # (CQ100 asks it of clinical wound assessment and the wound).
+    "has_participant": ("restriction", OBO + "RO_0000057"),
     "is_treatment_for": ("restriction", OBO + "RO_0002606"),
     # RO_0002353 output of (not OBI_0000312 is_specified_output_of: a wound
     # development process is not a planned process). WONT defines its

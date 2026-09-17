@@ -53,15 +53,6 @@
           }
         },
         {
-          "id": "CQ005",
-          "question": "Is necrotizing fasciitis a type of wound?",
-          "example_triple": [
-            "Necrotizing Fasciitis",
-            "is_a",
-            "Soft Tissue Wound"
-          ]
-        },
-        {
           "id": "CQ006",
           "question": "Is a venous leg ulcer a venous insufficiency wound?",
           "example_triple": [
@@ -73,24 +64,6 @@
             "Venous Leg Ulcer": "Ulcus cruris venosum"
           },
           "rewrite": "Rewritten 2026-09-16: was 'Venous Leg Ulcer is_a Chronic Wound' -- same reason as CQ001. The venous axis is what WONT asserts of this class (label 'Wound co-located with impaired venous backflow' until 2026-09-17)."
-        },
-        {
-          "id": "CQ007",
-          "question": "Is an abscess a type of wound?",
-          "example_triple": [
-            "Abscess",
-            "is_a",
-            "Wound"
-          ]
-        },
-        {
-          "id": "CQ008",
-          "question": "Is a laceration a type of acute wound?",
-          "example_triple": [
-            "Laceration",
-            "is_a",
-            "Acute Wound"
-          ]
         }
       ],
       "out_of_scope": [
@@ -103,6 +76,39 @@
           "id": "CQ_OUT002",
           "question": "Is a myocardial infarction a wound?",
           "reason": "Organ infarction is not within the wound care domain."
+        },
+        {
+          "id": "CQ005",
+          "question": "Is necrotizing fasciitis a type of wound?",
+          "reason": "Premise rejected 2026-09-17 (curator): necrotizing fasciitis is an infection that occurs without any wound being present at the time of infection, so it is not a type of wound.",
+          "retired_triple": [
+            "Necrotizing Fasciitis",
+            "is_a",
+            "Soft Tissue Wound"
+          ],
+          "retired": "2026-09-17"
+        },
+        {
+          "id": "CQ007",
+          "question": "Is an abscess a type of wound?",
+          "reason": "Premise rejected 2026-09-17 (curator): an abscess is an infection of a hair follicle under intact skin; the skin is intact, so it is not a wound.",
+          "retired_triple": [
+            "Abscess",
+            "is_a",
+            "Wound"
+          ],
+          "retired": "2026-09-17"
+        },
+        {
+          "id": "CQ008",
+          "question": "Is a laceration a type of acute wound?",
+          "reason": "Premise rejected 2026-09-17 (curator): a laceration is not acute by definition - it is chronic if it does not heal. No wound class is acute or chronic by definition (ruling of 2026-09-16). WONT holds Laceration ⊑ Traumatic wound.",
+          "retired_triple": [
+            "Laceration",
+            "is_a",
+            "Acute Wound"
+          ],
+          "retired": "2026-09-17"
         }
       ]
     },
@@ -241,19 +247,6 @@
           "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
         },
         {
-          "id": "CQ031",
-          "question": "What causes a diabetic foot ulcer?",
-          "example_triple": [
-            "Diabetic Foot Ulcer",
-            "complication_of",
-            "peripheral nervous system disease"
-          ],
-          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease.",
-          "label_fix": {
-            "Peripheral Neuropathy": "peripheral nervous system disease"
-          }
-        },
-        {
           "id": "CQ032",
           "question": "What causes a venous leg ulcer?",
           "example_triple": [
@@ -278,20 +271,30 @@
           "label_fix": {
             "Peripheral Artery Disease": "Peripheral arterial occlusive disease"
           }
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "CQ031",
+          "question": "What causes a diabetic foot ulcer?",
+          "reason": "Premise rejected 2026-09-17 (curator): not every diabetic foot ulcer is a complication of a peripheral neuropathy, so nothing can be asserted of the class.",
+          "retired_triple": [
+            "Diabetic Foot Ulcer",
+            "complication_of",
+            "peripheral nervous system disease"
+          ],
+          "retired": "2026-09-17"
         },
         {
           "id": "CQ034",
           "question": "What causes impaired wound healing?",
-          "example_triple": [
+          "reason": "Premise rejected 2026-09-17 (curator): impaired wound healing is not a complication of a diabetic metabolic disorder by definition.",
+          "retired_triple": [
             "Wound healing disorder",
             "complication_of",
             "Diabetic metabolic disorder"
           ],
-          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease.",
-          "label_fix": {
-            "Diabetes Mellitus": "Diabetic metabolic disorder",
-            "Impaired Wound Healing": "Wound healing disorder"
-          }
+          "retired": "2026-09-17"
         }
       ]
     },
@@ -320,20 +323,6 @@
           }
         },
         {
-          "id": "CQ042",
-          "question": "What contaminates a wound with bacteria?",
-          "example_triple": [
-            "wound infection process",
-            "complication_of",
-            "Bacterial colonization process"
-          ],
-          "label_fix": {
-            "Wound Infection": "wound infection process",
-            "Bacterial Colonization": "Bacterial colonization process"
-          },
-          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
-        },
-        {
           "id": "CQ043",
           "question": "What causes a foreign body wound?",
           "example_triple": [
@@ -352,19 +341,30 @@
             "Group A Streptococcus"
           ],
           "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "CQ042",
+          "question": "What contaminates a wound with bacteria?",
+          "reason": "Premise rejected 2026-09-17 (curator): bacterial colonization is a process on the IWII continuum, not a disease course, and a wound infection process is not the output of it. Colonized and infected are grades of the same scale in WONT.",
+          "retired_triple": [
+            "wound infection process",
+            "complication_of",
+            "Bacterial colonization process"
+          ],
+          "retired": "2026-09-17"
         },
         {
           "id": "CQ045",
           "question": "What causes biofilm formation in a wound?",
-          "example_triple": [
+          "reason": "Premise rejected 2026-09-17 (curator): a wound biofilm is not the output of a bacterial colonization process in the sense of a complication; see CQ042.",
+          "retired_triple": [
             "Wound Biofilm",
             "complication_of",
             "Bacterial colonization process"
           ],
-          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease.",
-          "label_fix": {
-            "Bacterial Colonization": "Bacterial colonization process"
-          }
+          "retired": "2026-09-17"
         }
       ]
     },
@@ -447,19 +447,19 @@
             "Wound Care Procedure": "Wound treatment process"
           },
           "rewrite": "Rewritten 2026-09-17: 'Wound Care Procedure' is a treatment plan specification (an information entity) and a process is not part of a plan. Debridement is a kind of wound treatment process, which is what the question means by 'wound care'."
-        },
+        }
+      ],
+      "out_of_scope": [
         {
           "id": "CQ057",
           "question": "Is wound irrigation part of wound cleansing?",
-          "example_triple": [
+          "reason": "Premise rejected 2026-09-17 (curator): wound irrigation is not part of wound cleansing by definition.",
+          "retired_triple": [
             "wound irrigation process",
             "part_of",
             "wound cleansing process"
           ],
-          "label_fix": {
-            "Wound Irrigation": "wound irrigation process",
-            "Wound Cleansing": "wound cleansing process"
-          }
+          "retired": "2026-09-17"
         }
       ]
     },
@@ -548,23 +548,18 @@
           }
         },
         {
-          "id": "CQ071",
-          "question": "Is sepsis a type of wound complication?",
-          "example_triple": [
-            "Sepsis",
-            "is_a",
-            "Infectious Complication"
-          ]
-        },
-        {
           "id": "CQ072",
           "question": "Is wound dehiscence a type of wound complication?",
           "example_triple": [
             "Wound Dehiscence",
             "is_a",
-            "Wound Complication"
+            "Wound complication disorder"
           ],
-          "note": "REVERTED a label fix. Mapping 'Wound Complication' to 'wound complication process' made this triple a category error: Wound dehiscence is a MILD_120022 pathological disorder, not a process, so it can never be a subclass of a process. The ontology's material counterpart is 'material complication disease entity' - but choosing it is a modelling decision, not a label fix, so it is left for review."
+          "note": "REVERTED a label fix. Mapping 'Wound Complication' to 'wound complication process' made this triple a category error: Wound dehiscence is a MILD_120022 pathological disorder, not a process, so it can never be a subclass of a process. The ontology's material counterpart is 'material complication disease entity' - but choosing it is a modelling decision, not a label fix, so it is left for review.",
+          "label_fix": {
+            "Wound Complication": "Wound complication disorder"
+          },
+          "rewrite": "Rewritten 2026-09-17: 'Wound complication' (WONT_0000557) is a material complication disease entity (MILD_120051) and wound dehiscence is a pathological disorder; a disorder is not a disease. The disorder-level class 'Wound complication disorder' (WONT_0000588, ⊑ MILD_120022) is what dehiscence is a kind of; the disease-level class has it as part."
         },
         {
           "id": "CQ073",
@@ -579,19 +574,6 @@
           }
         },
         {
-          "id": "CQ074",
-          "question": "What causes wound dehiscence?",
-          "example_triple": [
-            "Wound Dehiscence",
-            "complication_of",
-            "wound infection process"
-          ],
-          "label_fix": {
-            "Wound Infection": "wound infection process"
-          },
-          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
-        },
-        {
           "id": "CQ075",
           "question": "What causes hypertrophic scar formation?",
           "example_triple": [
@@ -603,6 +585,30 @@
           "label_fix": {
             "Excessive Collagen Deposition": "Excessive collagen deposition process"
           }
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "CQ071",
+          "question": "Is sepsis a type of wound complication?",
+          "reason": "Premise rejected 2026-09-17 (curator): sepsis is not a wound complication by definition; it can be one, which is not a class-level statement.",
+          "retired_triple": [
+            "Sepsis",
+            "is_a",
+            "Infectious Complication"
+          ],
+          "retired": "2026-09-17"
+        },
+        {
+          "id": "CQ074",
+          "question": "What causes wound dehiscence?",
+          "reason": "Premise rejected 2026-09-17 (curator): wound dehiscence is not a wound development, and it is not the output of a wound infection process by definition. The dehiscence process is a disorder development process (WONT_0000433).",
+          "retired_triple": [
+            "Wound Dehiscence",
+            "complication_of",
+            "wound infection process"
+          ],
+          "retired": "2026-09-17"
         }
       ]
     },
@@ -694,12 +700,13 @@
           "question": "Where does wound assessment take place?",
           "example_triple": [
             "clinical wound assessment",
-            "occurs_in",
+            "has_participant",
             "Wound"
           ],
           "label_fix": {
             "Wound Assessment": "clinical wound assessment"
-          }
+          },
+          "rewrite": "Rewritten 2026-09-17: occurs_in takes a site and a wound is a material entity, so the question as posed could never be answered. The wound participates in the process that assesses its characteristics (WONT_0000089, inherited by clinical wound assessment)."
         },
         {
           "id": "CQ101",

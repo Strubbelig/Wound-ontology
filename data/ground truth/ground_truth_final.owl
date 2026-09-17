@@ -1256,7 +1256,11 @@ wont:WONT_0000088 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000089
 wont:WONT_0000089 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000395 ;
+                  rdfs:subClassOf wont:WONT_0000395 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000057 ;
+                                    owl:someValuesFrom wont:WONT_0000380
+                                  ] ;
                   rdfs:label "Diagnostic process to assess wound characteristics" .
 
 
@@ -2277,11 +2281,12 @@ wont:WONT_0000308 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310
 wont:WONT_0000310 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000380 ,
+                  rdfs:subClassOf wont:WONT_0000339 ,
                                   [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:RO_0002353 ;
                                     owl:someValuesFrom wont:WONT_0000140
                                   ] ;
+                  ns1:IAO_0000118 "Burn injury"@en ;
                   rdfs:label "Thermal wound" .
 
 
@@ -2697,7 +2702,7 @@ wont:WONT_0000391 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000392
 wont:WONT_0000392 rdf:type owl:Class ;
-                  rdfs:subClassOf mild:MILD_120022 ,
+                  rdfs:subClassOf wont:WONT_0000588 ,
                                   [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:RO_0002353 ;
                                     owl:someValuesFrom wont:WONT_0000433
@@ -3688,7 +3693,7 @@ wont:WONT_0000517 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000518
 wont:WONT_0000518 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:BFO_0000015 ;
+                  rdfs:subClassOf wont:WONT_0000338 ;
                   ns1:IAO_0000115 "A process in which heat acts on a tissue."@en ;
                   rdfs:label "Heat impact process"@en .
 
@@ -3979,7 +3984,12 @@ wont:WONT_0000556 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000557
 wont:WONT_0000557 rdf:type owl:Class ;
-                 rdfs:subClassOf mild:MILD_120051 ;
+                 rdfs:subClassOf mild:MILD_120051 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:BFO_0000051 ;
+                                   owl:someValuesFrom wont:WONT_0000588
+                                 ] ;
+                 ns1:IAO_0000115 "A material complication disease entity that has as part a wound complication disorder."@en ;
                  rdfs:label "Wound complication"@en .
 
 
@@ -4192,6 +4202,13 @@ wont:WONT_0000587 rdf:type owl:Class ;
                                   ] ;
                   ns1:IAO_0000115 "A wound causing process in which a foreign body participates."@en ;
                   rdfs:label "Wound causing foreign body process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000588
+wont:WONT_0000588 rdf:type owl:Class ;
+                  rdfs:subClassOf mild:MILD_120022 ;
+                  ns1:IAO_0000115 "A pathological disorder that is the output of a process in the course of a wound: the disorder-level counterpart of a wound complication (MILD_120053's pattern). Wound dehiscence is one; the disorders of a surgical site infection are others."@en ;
+                  rdfs:label "Wound complication disorder"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120000

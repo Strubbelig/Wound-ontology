@@ -98,6 +98,24 @@ def test_restriction_is_found(graph):
     assert r.verdict is Verdict.PASS
 
 
+def test_has_participant_is_asked_as_a_restriction(graph):
+    """CQ100 was rewritten from occurs_in (a wound is not a site) to
+    has_participant. The predicate must reach RO_0000057 and be found on the
+    class or an ancestor; without the axiom it fails rather than resolving to
+    something else."""
+    g = graph
+    assess = URIRef(EX + "Assessment"); g.add((assess, RDF.type, OWL.Class)); g.add((assess, RDFS.label, rdflib.Literal("Wound assessment")))
+    clinical = URIRef(EX + "Clinical"); g.add((clinical, RDF.type, OWL.Class)); g.add((clinical, RDFS.label, rdflib.Literal("Clinical wound assessment")))
+    g.add((clinical, RDFS.subClassOf, assess))
+    before = run_suite(g, [cq("T4p", ("Clinical wound assessment", "has_participant", "Wound"))])[0]
+    assert before.verdict is Verdict.FAIL
+    r = rdflib.BNode()
+    g.add((r, RDF.type, OWL.Restriction)); g.add((r, OWL.onProperty, URIRef(OBO + "RO_0000057"))); g.add((r, OWL.someValuesFrom, URIRef(EX + "Wound")))
+    g.add((assess, RDFS.subClassOf, r))
+    after = run_suite(g, [cq("T4p", ("Clinical wound assessment", "has_participant", "Wound"))])[0]
+    assert after.verdict is Verdict.PASS, after.detail
+
+
 def test_quality_restriction_is_found(graph):
     r = run_suite(graph, [cq("T4", ("Chronic Wound", "has_quality", "reddened"))])[0]
     assert r.verdict is Verdict.PASS
