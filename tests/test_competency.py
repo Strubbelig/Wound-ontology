@@ -116,6 +116,35 @@ def test_has_participant_is_asked_as_a_restriction(graph):
     assert after.verdict is Verdict.PASS, after.detail
 
 
+def test_an_individual_is_a_its_type(graph):
+    """Grades are individuals (decision of 2026-09-16): 'Inflammatory phase'
+    is an instance of 'Wound healing phase', so `is_a` must take rdf:type as
+    its first step. Without it the CQ fails on a convention."""
+    g = graph
+    phase = URIRef(EX + "Phase"); g.add((phase, RDF.type, OWL.Class)); g.add((phase, RDFS.label, rdflib.Literal("Wound healing phase")))
+    grade = URIRef(EX + "Grade"); g.add((grade, RDF.type, OWL.Class)); g.add((grade, RDFS.label, rdflib.Literal("Classification grade")))
+    g.add((phase, RDFS.subClassOf, grade))
+    infl = URIRef(EX + "Infl"); g.add((infl, RDF.type, OWL.NamedIndividual)); g.add((infl, RDF.type, phase)); g.add((infl, RDFS.label, rdflib.Literal("Inflammatory phase")))
+    res = run_suite(g, [cq("T4i", ("Inflammatory phase", "is_a", "Wound healing phase")),
+                        cq("T4j", ("Inflammatory phase", "is_a", "Classification grade")),
+                        cq("T4k", ("Inflammatory phase", "is_a", "Wound"))])
+    assert [r.verdict for r in res] == [Verdict.PASS, Verdict.PASS, Verdict.FAIL], [r.detail for r in res]
+
+
+def test_an_individual_carries_a_relation_as_an_assertion(graph):
+    """'Proliferative phase' is_about 'Granulation tissue formation process'
+    is a plain property assertion on an individual, not a restriction on a
+    class; the restriction path alone never sees it."""
+    g = graph
+    prol = URIRef(EX + "Prol"); g.add((prol, RDF.type, OWL.NamedIndividual)); g.add((prol, RDFS.label, rdflib.Literal("Proliferative phase")))
+    gran = URIRef(EX + "Gran"); g.add((gran, RDF.type, OWL.Class)); g.add((gran, RDFS.label, rdflib.Literal("Granulation tissue formation process")))
+    before = run_suite(g, [cq("T4m", ("Proliferative phase", "is_about", "Granulation tissue formation process"))])[0]
+    assert before.verdict is Verdict.FAIL
+    g.add((prol, URIRef(OBO + "IAO_0000136"), gran))
+    after = run_suite(g, [cq("T4m", ("Proliferative phase", "is_about", "Granulation tissue formation process"))])[0]
+    assert after.verdict is Verdict.PASS, after.detail
+
+
 def test_quality_restriction_is_found(graph):
     r = run_suite(graph, [cq("T4", ("Chronic Wound", "has_quality", "reddened"))])[0]
     assert r.verdict is Verdict.PASS

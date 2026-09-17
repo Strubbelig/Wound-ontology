@@ -67,6 +67,13 @@ PREDICATE_MAP: dict[str, tuple[str, str] | None] = {
     # RO_0000057 has participant: a process CQ may ask what takes part in it
     # (CQ100 asks it of clinical wound assessment and the wound).
     "has_participant": ("restriction", OBO + "RO_0000057"),
+    # RO_0000056 participates in: the curator's form for treatment questions
+    # (2026-09-17) -- an agent (dressing, drug, device) participates in a
+    # treatment process; is_treatment_for is not needed for them.
+    "participates_in": ("restriction", OBO + "RO_0000056"),
+    # IAO_0000136 is about: a classification grade (an ICE individual such as
+    # 'Proliferative phase') is about the processes it labels.
+    "is_about": ("restriction", OBO + "IAO_0000136"),
     "is_treatment_for": ("restriction", OBO + "RO_0002606"),
     # RO_0002353 output of (not OBI_0000312 is_specified_output_of: a wound
     # development process is not a planned process). WONT defines its
@@ -179,11 +186,14 @@ def compile_ask(subject_iri: str, predicate: str, object_iri: str) -> str | None
         # A class defined as `X = Y and ...` is a subclass of Y by entailment;
         # WONT states every aetiological wound class that way, and the asserted
         # rdfs:subClassOf beside the equivalence is convention, not guaranteed.
+        # The subject may be an individual (WONT's classification grades --
+        # 'Inflammatory phase' is an instance of 'Wound healing phase', by the
+        # decision that grades are individuals); then the first step is rdf:type.
         return (
             "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
             "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
             "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
-            f"ASK {{ <{subject_iri}> (rdfs:subClassOf|owl:equivalentClass/owl:intersectionOf/rdf:rest*/rdf:first)* <{object_iri}> }}"
+            f"ASK {{ <{subject_iri}> rdf:type?/(rdfs:subClassOf|owl:equivalentClass/owl:intersectionOf/rdf:rest*/rdf:first)* <{object_iri}> }}"
         )
     if kind == "complication":
         # Returned for display and provenance only; evaluated natively by
@@ -206,11 +216,18 @@ def compile_ask(subject_iri: str, predicate: str, object_iri: str) -> str | None
         "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
         "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n"
         "ASK {\n"
-        f"  <{subject_iri}> rdfs:subClassOf* ?c .\n"
-        "  { ?c rdfs:subClassOf ?r }\n"
-        "  UNION\n"
-        "  { ?c owl:equivalentClass/owl:intersectionOf/rdf:rest*/rdf:first ?r }\n"
-        f"  ?r owl:onProperty <{prop}> ; owl:someValuesFrom ?f .\n"
+        # An individual carries the relation as a plain assertion
+        # ('Proliferative phase' is_about 'Granulation tissue formation
+        # process'), or inherits a restriction through its type.
+        "  {\n"
+        f"    <{subject_iri}> <{prop}> ?f .\n"
+        "  } UNION {\n"
+        f"    <{subject_iri}> rdf:type?/rdfs:subClassOf* ?c .\n"
+        "    { ?c rdfs:subClassOf ?r }\n"
+        "    UNION\n"
+        "    { ?c owl:equivalentClass/owl:intersectionOf/rdf:rest*/rdf:first ?r }\n"
+        f"    ?r owl:onProperty <{prop}> ; owl:someValuesFrom ?f .\n"
+        "  }\n"
         # The filler may itself be an intersection (Malignant wound = Wound and
         # output_of some (Wound development process and has_part some ...));
         # any named member of it counts, since the intersection is subsumed by

@@ -14,38 +14,32 @@ next reads it and the extraction schema regenerates when extraction next starts
 (`../Disease ontologies/build_disease_proposal.sh --no-reason`, rule 34) —
 never import a source ontology directly.
 
-**Where things stand (2026-09-17, late).** Sixth hand edit reviewed and the
-curator's calls answered. Ten CQs retired on your rulings (premise rejected,
-recorded as `out_of_scope` with the reason: NF and abscess are not wounds,
-laceration is not acute by definition, DFU/impaired healing/sepsis/dehiscence
-are not complications *by definition*, colonization is a grade not a
-complication, irrigation is not part of cleansing) — the denominator is now
-**55**. Three landed: burn is a trauma (`Heat impact process ⊑ Trauma
-process`, ELK infers `Thermal wound ⊑ Traumatic wound`), `Wound complication
-disorder` (588) for dehiscence, `has_participant some Wound` on the wound
-assessment process. Measured: **CQ 35 / 55** (15 FAIL, 5 UNRESOLVED, 18
-DECLARED), ELK 0 unsatisfiable, closure 34,675 triples, unit suite 1007
-passed.
+**Where things stand (2026-09-17, end of day).** Every curator's call is
+answered. Twelve CQs retired on rejected premises (recorded as
+`out_of_scope` with the reason), thirteen rewritten to what the ontology can
+truthfully say — treatment as participation (`is_treatment_for` withdrawn,
+ROADMAP P3 closed), phases as a classification scheme whose grades are about
+the processes they label. Measured: **CQ 48 / 53**, ELK 0 unsatisfiable,
+closure 34,721 triples, unit suite 1009 passed. **The five open CQs are all
+FMA anatomy references** (§1.2) — the only thing left on this list that needs
+Protégé.
 
-Next free WONT id: **WONT_0000589**; next free MILD id: **MILD_120099**.
+Next free WONT id: **WONT_0000590**; next free MILD id: **MILD_120099**.
 Mint in the `WONT_` / `MILD_` prefix — never `WOND_`. (Protégé:
 Preferences → New entities → set the prefix and the 7-digit counter once.)
 
 ---
 
-## 1. What the 20 open competency questions still need
+## 1. What the 5 open competency questions still need
 
-*Measured 2026-09-17 (late): 35 PASS, 15 FAIL, 5 UNRESOLVED of 55. Items
-marked* are curator's calls.*
+*Measured 2026-09-17 (end of day): 48 PASS, 5 UNRESOLVED of 53.*
 
-### 1.1 Curator's calls left
+### 1.1 Curator's calls — none open
 
-| CQ | today | the call* |
-|---|---|---|
-| CQ044 `Necrotizing fasciitis complication_of Group A Streptococcus` | label resolves to the DOID stub; `Group A Streptococcus` (547) ⊑ pathogen | you ruled NF is an infection, not a wound (CQ005). So this CQ is about a disease, not a wound — is it in WONT's scope at all? If yes it needs WONT's own NF class with a wound causing process that has 547 as participant; if no, retire like CQ005. |
-| CQ062–065 phases | `Wound healing phase` (561) is a classification grade (ICE) with four individuals (562–565) | an ICE is not `part_of` a process and a process is not `is_a` an ICE, so all four fail *by design*. Either (a) rewrite them to what the scheme says — `Proliferative phase is_about Granulation tissue formation process` — which needs the checker to read individuals, or (b) add the four fiat process parts (`Inflammation process part_of some wound healing` …) beside the scheme. (b) passes all four with no checker change. |
-| CQ073 `Osteomyelitis is_a wound complication process` | 559 ⊑ material disease entity | the same ruling as CQ071 (sepsis) applies — not a wound complication by definition. Not in your list of 17 Sep; retire? |
-| `Acute wound` (553) | ⊑ `Wound`, no axiom, no CQ left that names it | with CQ008 retired and no wound acute by definition, does the class stay? |
+`Acute wound` (553) stays by decision (17 Sep); it has no defining axiom and
+no CQ names it. CQ022 (`Necrotizing fasciitis part_of Fascia`) still resolves
+to the DOID stub — since NF is not a wound (CQ005), decide whether the anatomy
+question about it stays.
 
 ### 1.2 Anatomy — reference FMA terms, mint nothing (unchanged)
 
@@ -53,18 +47,16 @@ Dermis (CQ020, CQ024), subcutaneous tissue (CQ021), fascia (CQ022), plantar
 foot / foot (CQ023): use the FMA IRI in WONT, `fma_module` picks up the path.
 Then each CQ needs its `part_of` / `occurs_in` axiom.
 
-### 1.3 `is_treatment_for` — nine CQs (050–055, 080–082), one decision — **the biggest lever left**
+### 1.3 `is_treatment_for` — closed
 
-RO_0002606 is *is substance that treats*: substance/device → condition. The
-device rows (CQ051 dressing, CQ081 mattress, CQ082 footwear) and CQ052
-(Vancomycin) fit it; the process rows (CQ050 NPWT, CQ053 surgical debridement,
-CQ054 compression therapy, CQ055 pressure offloading, CQ080 prophylactic
-antibiotic therapy) do not — a process has the condition as `has_input`
-(RO_0002233, already in `RelationType`). Offered 17 Sep, not yet decided:
-rewrite the five process rows to `has_input`, keep `is_treatment_for` for the
-four bearer rows and add it to `RelationType` (P3). Note CQ080/081/082 ask
-about *prevention*; `is_treatment_for` is the wrong relation there whatever
-the subject — a `Disease disorder prevention process` is missing in MILD.
+Not needed (curator, 17 Sep): an agent participates in a treatment process.
+Asserted: `Wound treatment process ⊑ has_participant some Wound`; `Wound
+dressing ⊑ participates_in some Wound dressing process`; mattress and
+footwear `participates_in some Pressure offloading process`; `Vancomycin
+participates_in some Antibiotic administration process` (589, new). The
+ICE "methods" (NPWT, compression therapy, prophylactic antibiotic therapy)
+are asked as `is_a`; prevention stays inexpressible (no prevention process in
+MILD) — noted on CQ080.
 
 ### 1.4 Things landed this round that you may want to look at again
 
@@ -100,3 +92,4 @@ the subject — a `Disease disorder prevention process` is missing in MILD.
 | 2026-09-17 | **Co-location retired for the complication pattern (rule 35)**; `output_of` replaces `is_specified_output_of` on unplanned processes; venous/arterial classes renamed; seven process classes minted; MILD commitment 4 amended; eleven CQs repointed. Closed: old 1.1 (notes written), 1.2 (you pointed Diabetic wound at the parent), 1.3 (you added the axiom; I restored the asserted parent). |
 | 2026-09-17 | **Sixth hand edit reviewed (night).** 44 classes landed and renumbered (`WOND_120067–072`, `WONT_000600–638` → `WONT_0000544–587`). Fixes: unlabelled empty class dropped; `Surgical debridement process` and `Diagnostic process` dropped as duplicates of 299 / MILD_120047 (children reparented to `Wound diagnostic process`); `Sustained mechanical load process` folded into `Pressure impact process` (519) as alt terms — same definition; `Granulation process` (132) had been deleted and re-minted — IRI restored, new label kept; `Laceration` ⊑ material entity → ⊑ `Traumatic wound`; `Diabetic foot ulcer` ⊑ `Diabetic wound`; `Wound complication` ⊑ MILD_120051, SSI under it; the local-anaesthetic process had the *antibiotic* drug role as filler → `local anaesthetic drug role` (585); Vancomycin `has_function therapeutic function` → `has_role antibiotic drug role`; footwear/mattress ⊑ `device` bearing `pressure redistribution function`, offloading process realizes it; `Wound causing neuropathic disease process` put on the rule-35 shape with `Neuropathic disease process` (586, participant DOID_574); `Foreign body wound` on the rule-35 shape with `Wound causing foreign body process` (587); phases → individuals of `Wound healing phase` (grades are individuals, 1.2); old labels of the three intention classes kept as alt terms (CQ060/061 had regressed); `threshold specification` → MILD_120098. CQ file: 14 label fixes, CQ003 and CQ056 rewritten. Blocklist: 4 entries removed. **CQ 22 → 32 / 65.** |
 | 2026-09-17 | **Curator's calls answered (late).** CQ004/072/100 rewritten and made to pass (`Heat impact process ⊑ Trauma process`; `Wound complication disorder` 588 with dehiscence under it and the disease-level class having it as part; `has_participant some Wound` on 89; checker gained `has_participant`, 1 test, mutation-checked). CQ005/007/008/031/034/042/045/057/071/074 retired as `out_of_scope` with your reasons; dehiscence confirmed not a wound development (its process was already a disorder development process). **CQ 32/65 → 35/55.** |
+| 2026-09-17 | **Last calls answered (end of day).** CQ044/073 retired; CQ062–065 rewritten to the scheme (`561 is_about wound healing`; grades `is_about` hemostasis / epithelialization + granulation / tissue remodeling; checker reads individuals); CQ050–055/080–082 rewritten to participation, `is_treatment_for` withdrawn. **CQ 35/55 → 48/53.** |

@@ -331,16 +331,6 @@
             "Foreign Body"
           ],
           "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
-        },
-        {
-          "id": "CQ044",
-          "question": "What pathogen causes necrotizing fasciitis?",
-          "example_triple": [
-            "Necrotizing Fasciitis",
-            "complication_of",
-            "Group A Streptococcus"
-          ],
-          "rewrite": "'caused_by' -> 'co_located_with' (2026-09) -> 'complication_of' (2026-09-17). MILD commitment 4 refuses aetiology between disorders; the assertable question is whether the subject is the output of a development process that has a wound causing process of the object's disease course as part (MILD_120053). Co-location only said a diagnostic classification files the two under one disease."
         }
       ],
       "out_of_scope": [
@@ -365,6 +355,17 @@
             "Bacterial colonization process"
           ],
           "retired": "2026-09-17"
+        },
+        {
+          "id": "CQ044",
+          "question": "What pathogen causes necrotizing fasciitis?",
+          "reason": "Retired 2026-09-17 (curator): necrotizing fasciitis is an infection, not a wound (CQ005); which pathogen causes it is a question about a disease, outside WONT's scope.",
+          "retired_triple": [
+            "Necrotizing Fasciitis",
+            "complication_of",
+            "Group A Streptococcus"
+          ],
+          "retired": "2026-09-17"
         }
       ]
     },
@@ -373,67 +374,99 @@
       "in_scope": [
         {
           "id": "CQ050",
-          "question": "Which intervention treats chronic wounds?",
+          "question": "Is negative pressure wound therapy a method of wound treatment?",
           "example_triple": [
+            "Negative pressure wound therapy",
+            "is_a",
+            "Method used for wound treatment"
+          ],
+          "original_question": "Which intervention treats chronic wounds?",
+          "original_triple": [
             "Negative Pressure Wound Therapy",
             "is_treatment_for",
             "Chronic Wound"
-          ]
+          ],
+          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition. 'Chronic wound' dropped: no wound is chronic by definition and NPWT is not confined to them."
         },
         {
           "id": "CQ051",
-          "question": "Which dressing treats diabetic foot ulcers?",
+          "question": "In which treatment process does a hydrogel dressing participate?",
           "example_triple": [
+            "hydrogel containing wound dressing",
+            "participates_in",
+            "Wound dressing process"
+          ],
+          "original_question": "Which dressing treats diabetic foot ulcers?",
+          "original_triple": [
             "hydrogel containing wound dressing",
             "is_treatment_for",
             "Diabetic Foot Ulcer"
           ],
-          "label_fix": {
-            "Hydrogel Dressing": "hydrogel containing wound dressing"
-          }
+          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition."
         },
         {
           "id": "CQ052",
-          "question": "Which antibiotic treats wound infections?",
+          "question": "In which treatment process does vancomycin participate?",
           "example_triple": [
+            "Vancomycin",
+            "participates_in",
+            "Antibiotic administration process"
+          ],
+          "original_question": "Which antibiotic treats wound infections?",
+          "original_triple": [
             "Vancomycin",
             "is_treatment_for",
             "wound infection process"
           ],
-          "label_fix": {
-            "Wound Infection": "wound infection process"
-          }
+          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition."
         },
         {
           "id": "CQ053",
-          "question": "Which procedure treats necrotizing fasciitis?",
+          "question": "What does a surgical wound debridement process act on?",
           "example_triple": [
+            "Surgical wound debridement process",
+            "has_participant",
+            "Wound"
+          ],
+          "original_question": "Which procedure treats necrotizing fasciitis?",
+          "original_triple": [
             "Surgical Debridement",
             "is_treatment_for",
             "Necrotizing Fasciitis"
-          ]
+          ],
+          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition. Necrotizing fasciitis is not a wound (CQ005)."
         },
         {
           "id": "CQ054",
-          "question": "Which therapy treats venous leg ulcers?",
+          "question": "Is compression therapy a method of wound treatment?",
           "example_triple": [
+            "Compression therapy",
+            "is_a",
+            "Method used for wound treatment"
+          ],
+          "original_question": "Which therapy treats venous leg ulcers?",
+          "original_triple": [
             "Compression Therapy",
             "is_treatment_for",
             "Venous Leg Ulcer"
-          ]
+          ],
+          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition."
         },
         {
           "id": "CQ055",
-          "question": "Which intervention treats pressure injuries?",
+          "question": "What does a pressure offloading process act on?",
           "example_triple": [
+            "Pressure offloading process",
+            "has_participant",
+            "Wound"
+          ],
+          "original_question": "Which intervention treats pressure injuries?",
+          "original_triple": [
             "Pressure offloading process",
             "is_treatment_for",
             "pressure ulcer"
           ],
-          "label_fix": {
-            "Pressure Injury": "pressure ulcer",
-            "Pressure Offloading": "Pressure offloading process"
-          }
+          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition. Offloading is not confined to pressure ulcers (diabetic foot too)."
         },
         {
           "id": "CQ056",
@@ -492,42 +525,67 @@
         },
         {
           "id": "CQ062",
-          "question": "Is granulation tissue formation a phase of wound healing?",
+          "question": "Which wound healing phase is granulation tissue formation assigned to?",
           "example_triple": [
+            "Proliferative phase",
+            "is_about",
+            "Granulation tissue formation process"
+          ],
+          "original_question": "Is granulation tissue formation a phase of wound healing?",
+          "original_triple": [
             "Granulation tissue formation process",
             "is_a",
             "Wound Healing Phase"
           ],
-          "label_fix": {
-            "Granulation Tissue Formation": "Granulation tissue formation process"
-          }
+          "rewrite": "Rewritten 2026-09-17: wound healing phases are a classification scheme (WONT_0000561, a wound classification grade) whose grades are individuals, as every grade in WONT is. A grade is an information entity: it is not part_of the healing process and a process is not a kind of it. The scheme is about wound healing and each grade is about the processes it labels, which is what the question can ask."
         },
         {
           "id": "CQ063",
-          "question": "Is re-epithelialization a phase of wound healing?",
+          "question": "Which wound healing phase is re-epithelialization assigned to?",
           "example_triple": [
+            "Proliferative phase",
+            "is_about",
+            "Epithelialization process"
+          ],
+          "original_question": "Is re-epithelialization a phase of wound healing?",
+          "original_triple": [
             "Re-Epithelialization",
             "is_a",
             "Wound Healing Phase"
-          ]
+          ],
+          "rewrite": "Rewritten 2026-09-17: wound healing phases are a classification scheme (WONT_0000561, a wound classification grade) whose grades are individuals, as every grade in WONT is. A grade is an information entity: it is not part_of the healing process and a process is not a kind of it. The scheme is about wound healing and each grade is about the processes it labels, which is what the question can ask."
         },
         {
           "id": "CQ064",
-          "question": "Is the inflammatory phase part of wound healing?",
+          "question": "Is the inflammatory phase a wound healing phase?",
           "example_triple": [
+            "Inflammatory phase",
+            "is_a",
+            "Wound healing phase"
+          ],
+          "original_question": "Is the inflammatory phase part of wound healing?",
+          "original_triple": [
             "Inflammatory Phase",
             "part_of",
             "Wound Healing"
-          ]
+          ],
+          "rewrite": "Rewritten 2026-09-17: wound healing phases are a classification scheme (WONT_0000561, a wound classification grade) whose grades are individuals, as every grade in WONT is. A grade is an information entity: it is not part_of the healing process and a process is not a kind of it. The scheme is about wound healing and each grade is about the processes it labels, which is what the question can ask."
         },
         {
           "id": "CQ065",
-          "question": "Is the proliferative phase part of wound healing?",
+          "question": "Is the proliferative phase a wound healing phase?",
           "example_triple": [
+            "Proliferative phase",
+            "is_a",
+            "Wound healing phase"
+          ],
+          "original_question": "Is the proliferative phase part of wound healing?",
+          "original_triple": [
             "Proliferative Phase",
             "part_of",
             "Wound Healing"
-          ]
+          ],
+          "rewrite": "Rewritten 2026-09-17: wound healing phases are a classification scheme (WONT_0000561, a wound classification grade) whose grades are individuals, as every grade in WONT is. A grade is an information entity: it is not part_of the healing process and a process is not a kind of it. The scheme is about wound healing and each grade is about the processes it labels, which is what the question can ask."
         }
       ]
     },
@@ -560,18 +618,6 @@
             "Wound Complication": "Wound complication disorder"
           },
           "rewrite": "Rewritten 2026-09-17: 'Wound complication' (WONT_0000557) is a material complication disease entity (MILD_120051) and wound dehiscence is a pathological disorder; a disorder is not a disease. The disorder-level class 'Wound complication disorder' (WONT_0000588, ⊑ MILD_120022) is what dehiscence is a kind of; the disease-level class has it as part."
-        },
-        {
-          "id": "CQ073",
-          "question": "Is osteomyelitis a complication of an open wound?",
-          "example_triple": [
-            "Osteomyelitis",
-            "is_a",
-            "wound complication process"
-          ],
-          "label_fix": {
-            "Wound Complication": "wound complication process"
-          }
         },
         {
           "id": "CQ075",
@@ -609,6 +655,17 @@
             "wound infection process"
           ],
           "retired": "2026-09-17"
+        },
+        {
+          "id": "CQ073",
+          "question": "Is osteomyelitis a complication of an open wound?",
+          "reason": "Premise rejected 2026-09-17 (curator): osteomyelitis is not a wound complication by definition; it can be one, which is not a class-level statement (as CQ071, sepsis).",
+          "retired_triple": [
+            "Osteomyelitis",
+            "is_a",
+            "wound complication process"
+          ],
+          "retired": "2026-09-17"
         }
       ]
     },
@@ -617,36 +674,51 @@
       "in_scope": [
         {
           "id": "CQ080",
-          "question": "Which intervention prevents surgical site infection?",
+          "question": "Is prophylactic antibiotic therapy a kind of antibiotic therapy?",
           "example_triple": [
+            "Prophylactic antibiotic therapy",
+            "is_a",
+            "Antibiotic therapy"
+          ],
+          "original_question": "Which intervention prevents surgical site infection?",
+          "original_triple": [
             "Prophylactic antibiotic therapy",
             "is_treatment_for",
             "Surgical Site Infection"
           ],
-          "label_fix": {
-            "Prophylactic Antibiotic": "Prophylactic antibiotic therapy"
-          }
+          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition. Prevention of a surgical site infection is not expressible: MILD has no prevention process, and is_treatment_for was the wrong relation for it anyway."
         },
         {
           "id": "CQ081",
-          "question": "Which measure prevents pressure injury?",
+          "question": "In which treatment process does a pressure redistribution mattress participate?",
           "example_triple": [
+            "Pressure Redistribution Mattress",
+            "participates_in",
+            "Pressure offloading process"
+          ],
+          "original_question": "Which measure prevents pressure injury?",
+          "original_triple": [
             "Pressure Redistribution Mattress",
             "is_treatment_for",
             "pressure ulcer"
           ],
-          "label_fix": {
-            "Pressure Injury": "pressure ulcer"
-          }
+          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition."
         },
         {
           "id": "CQ082",
-          "question": "Which intervention prevents diabetic foot ulcer recurrence?",
+          "question": "In which treatment process does therapeutic footwear participate?",
           "example_triple": [
+            "Therapeutic Footwear",
+            "participates_in",
+            "Pressure offloading process"
+          ],
+          "original_question": "Which intervention prevents diabetic foot ulcer recurrence?",
+          "original_triple": [
             "Therapeutic Footwear",
             "is_treatment_for",
             "Diabetic Foot Ulcer"
-          ]
+          ],
+          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition."
         }
       ]
     },

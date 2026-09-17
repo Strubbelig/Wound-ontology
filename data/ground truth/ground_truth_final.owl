@@ -821,6 +821,10 @@ wont:WONT_0000547 rdf:type owl:Class ;
 wont:WONT_0000548 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:COB_0000013 ,
                                  [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:RO_0000056 ;
+                                   owl:someValuesFrom wont:WONT_0000589
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
                                    owl:onProperty ns1:RO_0000087 ;
                                    owl:someValuesFrom wont:WONT_0000578
                                  ] ;
@@ -2727,6 +2731,10 @@ wont:WONT_0000397 rdf:type owl:Class ;
 wont:WONT_0000398 rdf:type owl:Class ;
                   rdfs:subClassOf ns1:COB_0001300 ,
                                   [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000056 ;
+                                    owl:someValuesFrom wont:WONT_120013
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:RO_0000085 ;
                                     owl:someValuesFrom wont:WONT_120012
                                   ] ;
@@ -2920,7 +2928,11 @@ wont:WONT_0000422 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000423
 wont:WONT_0000423 rdf:type owl:Class ;
-                  rdfs:subClassOf mild:MILD_120086 ;
+                  rdfs:subClassOf mild:MILD_120086 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000057 ;
+                                    owl:someValuesFrom wont:WONT_0000380
+                                  ] ;
                   rdfs:label "Wound treatment process"@en .
 
 
@@ -4019,7 +4031,12 @@ wont:WONT_0000560 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000561
 wont:WONT_0000561 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_120016 ;
+                 rdfs:subClassOf wont:WONT_120016 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:IAO_0000136 ;
+                                    owl:someValuesFrom ns1:GO_0042060
+                                  ] ;
+                  ns1:IAO_0000115 "A wound classification grade of the scheme that divides wound healing into phases (hemostasis, inflammatory, proliferative, remodelling). The phases are labels assigned to stretches of the healing process, not processes themselves; each is about the processes it groups."@en ;
                  rdfs:label "Wound healing phase"@en .
 
 
@@ -4066,6 +4083,10 @@ wont:WONT_0000569 rdf:type owl:Class ;
 wont:WONT_0000570 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:COB_0001300 ,
                                  [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:RO_0000056 ;
+                                   owl:someValuesFrom wont:WONT_0000568
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
                                    owl:onProperty ns1:RO_0000085 ;
                                    owl:someValuesFrom wont:WONT_0000580
                                  ] ;
@@ -4075,6 +4096,10 @@ wont:WONT_0000570 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000571
 wont:WONT_0000571 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:COB_0001300 ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty ns1:RO_0000056 ;
+                                   owl:someValuesFrom wont:WONT_0000568
+                                 ] ,
                                  [ rdf:type owl:Restriction ;
                                    owl:onProperty ns1:RO_0000085 ;
                                    owl:someValuesFrom wont:WONT_0000580
@@ -4209,6 +4234,24 @@ wont:WONT_0000588 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120022 ;
                   ns1:IAO_0000115 "A pathological disorder that is the output of a process in the course of a wound: the disorder-level counterpart of a wound complication (MILD_120053's pattern). Wound dehiscence is one; the disorders of a surgical site infection are others."@en ;
                   rdfs:label "Wound complication disorder"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000589
+wont:WONT_0000589 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000579 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000057 ;
+                                    owl:someValuesFrom [ owl:intersectionOf ( ns1:BFO_0000040
+                                                                              [ rdf:type owl:Restriction ;
+                                                                                owl:onProperty ns1:RO_0000087 ;
+                                                                                owl:someValuesFrom wont:WONT_0000578
+                                                                              ]
+                                                                            ) ;
+                                                         rdf:type owl:Class
+                                                       ]
+                                  ] ;
+                  ns1:IAO_0000115 "A process of drug administration in which a material entity bearing an antibiotic drug role participates."@en ;
+                  rdfs:label "Antibiotic administration process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120000
@@ -4369,6 +4412,7 @@ wont:WONT_120020 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000562
 wont:WONT_0000562 rdf:type owl:NamedIndividual ,
                            wont:WONT_0000561 ;
+                  ns1:IAO_0000136 ns1:GO_0007599 ;
                   rdfs:label "Hemostasis phase"@en .
 
 
@@ -4381,12 +4425,15 @@ wont:WONT_0000563 rdf:type owl:NamedIndividual ,
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000564
 wont:WONT_0000564 rdf:type owl:NamedIndividual ,
                            wont:WONT_0000561 ;
+                  ns1:IAO_0000136 wont:WONT_0000100 ,
+                                  wont:WONT_0000132 ;
                   rdfs:label "Proliferative phase"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000565
 wont:WONT_0000565 rdf:type owl:NamedIndividual ,
                            wont:WONT_0000561 ;
+                  ns1:IAO_0000136 ns1:GO_0048771 ;
                   rdfs:label "Remodelling phase"@en .
 
 
