@@ -1233,6 +1233,18 @@ imports a release ontology directly, and aborts if the joint module exceeds
 3 MB; `schema_builder.stale()` lists every module as a source, so a
 regenerated module regenerates the schema (rule 32).
 
+**Refinement, 2026-09-17 (evening): no definitions on foreign classes,
+either.** The same ownership applies to annotations: neither WONT nor MILD
+carries an `IAO_0000115` definition for a class it does not own. A copied
+definition is a second source for the same text (it drifts from the owner's
+release and the module already carries the owner's), and a written one puts
+words in another ontology's mouth. Sixty-five such definitions were found in
+WONT on 2026-09-17 — every one a duplicate of what the module carries — and
+removed; a foreign class in a curated file is a bare declaration (a stub the
+module fills in), plus at most a `skos:relatedMatch` or an `rdfs:comment`
+explaining a bridge. Moritz's wording: "never write definitions for foreign
+classes, so nor MILD nor WONT."
+
 ## 35. A complication is a disorder put out by a process of another disease's course — never a relation between two disorders
 
 *Decided 2026-09-17, with Moritz.*

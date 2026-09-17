@@ -154,21 +154,18 @@ ns1:CHEBI_15882 rdf:type owl:Class ;
                                   owl:onProperty ns1:RO_0000087 ;
                                   owl:someValuesFrom ns1:CHEBI_48218
                                 ] ;
-                ns1:IAO_0000115 "An organic hydroxy compound that consists of benzene bearing a single hydroxy substituent. The parent of the class of phenols." ;
                 rdfs:label "phenol"@en .
 
 
 ###  http://purl.obolibrary.org/obo/CHEBI_16236
 ns1:CHEBI_16236 rdf:type owl:Class ;
                 rdfs:subClassOf wont:WONT_0000010 ;
-                ns1:IAO_0000115 "A primary alcohol that is ethane in which one of the hydrogens is substituted by a hydroxy group." ;
                 rdfs:label "ethanol"@en .
 
 
 ###  http://purl.obolibrary.org/obo/CHEBI_164200
 ns1:CHEBI_164200 rdf:type owl:Class ;
                  rdfs:subClassOf wont:WONT_0000025 ;
-                 ns1:IAO_0000115 "An aromatic ether that is phenol which is substituted at C-5 by a chloro group and at C-2 by a 2,4-dichlorophenoxy group. It is widely used as a preservative and antimicrobial agent in personal care products such as soaps, skin creams, toothpaste and deodorants as well as in household items such as plastic chopping boards, sports equipment and shoes." ;
                  ns1:IAO_0000118 "Triclosan"@en ;
                  rdfs:label "triclosan"@en .
 
@@ -176,14 +173,12 @@ ns1:CHEBI_164200 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/CHEBI_17606
 ns1:CHEBI_17606 rdf:type owl:Class ;
                 rdfs:subClassOf ns1:CHEBI_24473 ;
-                ns1:IAO_0000115 "Molecule comprising two covalently bonded iodine atoms with overall zero charge.." ;
                 rdfs:label "diiodine" .
 
 
 ###  http://purl.obolibrary.org/obo/CHEBI_17824
 ns1:CHEBI_17824 rdf:type owl:Class ;
                 rdfs:subClassOf wont:WONT_0000010 ;
-                ns1:IAO_0000115 "A secondary alcohol that is propane in which one of the hydrogens attached to the central carbon is substituted by a hydroxy group." ;
                 ns1:IAO_0000118 "propane-2-ol"@en ;
                 rdfs:label "propan-2-ol"@en .
 
@@ -191,7 +186,6 @@ ns1:CHEBI_17824 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/CHEBI_231501
 ns1:CHEBI_231501 rdf:type owl:Class ;
                  rdfs:subClassOf wont:WONT_0000020 ;
-                 ns1:IAO_0000115 "An inorganic potassium salt of permanganic acid." ;
                  ns1:IAO_0000118 "Crystal violet"@en ;
                  rdfs:label "potassium permanganate"@en .
 
@@ -209,7 +203,6 @@ ns1:CHEBI_24757 rdf:type owl:Class ;
                                   owl:onProperty ns1:RO_0000087 ;
                                   owl:someValuesFrom ns1:CHEBI_48218
                                 ] ;
-                ns1:IAO_0000115 "A chlorine oxoacid with formula HOCl; a weak, unstable acid, it is the active form of chlorine in water." ;
                 rdfs:label "hypochlorous acid"@en .
 
 
@@ -228,7 +221,6 @@ ns1:CHEBI_28694 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/CHEBI_3020
 ns1:CHEBI_3020 rdf:type owl:Class ;
                rdfs:subClassOf ns1:CHEBI_35273 ;
-               ns1:IAO_0000115 "A class of quaternary ammonium chloride salts in which the nitrogen is substituted by a benzyl group, two methyl groups and an even-numbered alkyl chain." ;
                rdfs:label "benzalkonium chloride"@en .
 
 
@@ -251,14 +243,12 @@ ns1:CHEBI_3095 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/CHEBI_33229
 ns1:CHEBI_33229 rdf:type owl:Class ;
                 rdfs:subClassOf ns1:CHEBI_33284 ;
-                ns1:IAO_0000115 "A biochemical role played by any micronutrient that is an organic compound. Vitamins are present in foods in small amounts and are essential to normal metabolism and biochemical functions, usually as coenzymes. The term \\" ;
                 ns1:IAO_0000118 "vitamin"@en ;
                 rdfs:label "vitamin (role)"@en .
 
 
 ###  http://purl.obolibrary.org/obo/CHEBI_33284
 ns1:CHEBI_33284 rdf:type owl:Class ;
-                ns1:IAO_0000115 "A nutrient is a food component that an organism uses to survive and grow." ;
                 rdfs:label "nutrient" .
 
 
@@ -270,7 +260,6 @@ ns1:CHEBI_33301 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/CHEBI_35267
 ns1:CHEBI_35267 rdf:type owl:Class ;
-                ns1:IAO_0000115 "A derivative of ammonium, NH<small><sub>4</sub></small><small><sup>+</small></sup>, in which all four of the hydrogens bonded to nitrogen have been replaced with univalent (usually organyl) groups." ;
                 rdfs:label "quaternary ammonium ion" .
 
 
@@ -290,28 +279,24 @@ ns1:CHEBI_36080 rdf:type owl:Class ;
                                   owl:onProperty ns1:RO_0000087 ;
                                   owl:someValuesFrom ns1:CHEBI_33284
                                 ] ;
-                ns1:IAO_0000115 "A biological macromolecule minimally consisting of one polypeptide chain synthesized at the ribosome." ;
                 rdfs:label "protein"@en .
 
 
 ###  http://purl.obolibrary.org/obo/CHEBI_3614
 ns1:CHEBI_3614 rdf:type owl:Class ;
                rdfs:subClassOf wont:WONT_0000445 ;
-               ns1:IAO_0000115 "A bisbiguanide compound with a structure consisting of two (<em>p</em>-chlorophenyl)guanide units linked by a hexamethylene bridge." ;
                ns1:IAO_0000118 "Chlorhexidine"@en ;
                rdfs:label "chlorhexidine"@en .
 
 
 ###  http://purl.obolibrary.org/obo/CHEBI_48218
 ns1:CHEBI_48218 rdf:type owl:Class ;
-                ns1:IAO_0000115 "A substance used locally on humans and other animals to destroy harmful microorganisms or to inhibit their activity (cf. disinfectants, which destroy microorganisms found on non-living objects, and antibiotics, which can be transported through the lymphatic system to destroy bacteria within the body)." ;
                 rdfs:label "antiseptic drug" .
 
 
 ###  http://purl.obolibrary.org/obo/CHEBI_64275
 ns1:CHEBI_64275 rdf:type owl:Class ;
                 rdfs:subClassOf wont:WONT_0000025 ;
-                ns1:IAO_0000115 "An aromatic ether that is phenol substituted on oxygen by a 2-hydroxyethyl group." ;
                 ns1:IAO_0000118 "Phenoxyethanol"@en ;
                 rdfs:label "2-phenoxyethanol"@en .
 
@@ -324,13 +309,11 @@ ns1:CHEBI_8347 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/COB_0000082
 ns1:COB_0000082 rdf:type owl:Class ;
-                ns1:IAO_0000115 "A process that is initiated by an agent who intends to carry out a plan to achieve an objective through one or more actions as described in a plan specification." ;
                 rdfs:label "planned process" .
 
 
 ###  http://purl.obolibrary.org/obo/COB_0001300
 ns1:COB_0001300 rdf:type owl:Class ;
-                ns1:IAO_0000115 "A processed material entity which is designed to be capable of a process." ;
                 rdfs:label "device" .
 
 
@@ -338,70 +321,68 @@ ns1:COB_0001300 rdf:type owl:Class ;
 ns1:DOID_574 rdf:type owl:Class .
 
 
+###  http://purl.obolibrary.org/obo/DOID_0040085
+ns1:DOID_0040085 rdf:type owl:Class .
+
+
+###  http://purl.obolibrary.org/obo/DOID_1019
+ns1:DOID_1019 rdf:type owl:Class .
+
+
 ###  http://purl.obolibrary.org/obo/DOID_0050061
 ns1:DOID_0050061 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:IDO_0000586 ;
-                 ns1:IAO_0000115 "A primary bacterial infectious disease that results_in infection located_in skin, has_material_basis_in Erysipelothrix rhusiopathiae, which is transmitted_by contact with infected animals. The infection has_symptom redness of skin, has_symptom tenderness of skin and has_symptom warmth of skin." ;
                  rdfs:label "erysipeloid" .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_0050426
 ns1:DOID_0050426 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "A skin disease that is characterized by ulceration of less than 10 percent of the surface area of the body. The disease is often precipitated by the use of medications, such as antibiotics or antiepileptics, or onset of infection." ;
                  rdfs:label "Stevens-Johnson syndrome" .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_0050853
 ns1:DOID_0050853 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "A venous insufficiency that is characterized by lower extremity swelling, hyperpigmentation, pruritus and venous ulceration caused by blood pooling in the veins." ;
                  ns1:IAO_0000118 "Chronic venous insufficiency"@en ;
                  rdfs:label "chronic venous insufficiency"@en .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_0060851
 ns1:DOID_0060851 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "A pemphigus characterized by autosomal dominant blisters and erosions on the skin and mucous membranes erosions cause by autoantibodies to intercellular cement substance." ;
                  ns1:IAO_0000118 "Pemphigus vulgaris"@en ;
                  rdfs:label "pemphigus vulgaris"@en .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_0080841
 ns1:DOID_0080841 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "An autoimmune disease of skin and connective tissue that is characterized by subepidermal blistering especially in the lower abdomen, groin, and flexor surfaces of the extremities, creating tense blisters that do not break easily." ;
                  rdfs:label "pemphigoid" .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_10881
 ns1:DOID_10881 rdf:type owl:Class ;
-               ns1:IAO_0000115 "A viral infectious disease that results_in infection located_in skin, has_material_basis_in Enterovirus A (Enterovirus alphacoxsackie), which are transmitted_by contaminated fomites, and transmitted_by contact with nose and throat secretions, saliva, blister fluid and stool of infected persons. The infection has_symptom fever, has_symptom poor appetite, has_symptom malaise, has_symptom sore throat, has_symptom painful sores in the mouth, and has_symptom skin rash on the palms of the hands and soles of the feet." ;
                ns1:IAO_0000118 "Hand-foot-and-mouth disease"@en ;
                rdfs:label "hand, foot and mouth disease"@en .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_2730
 ns1:DOID_2730 rdf:type owl:Class ;
-              ns1:IAO_0000115 "A vesiculobullous skin disease that is characterized by formation of blisters with only minor skin trauma, which can cause widespread wounds, dehydration, electrolyte abnormalities, and severe infection, frequently develops_from mutations in connective tissue elements, including genes encoding keratin, collagen, and laminin." ;
               ns1:IAO_0000118 "Epidermolysis bullosa"@en ;
               rdfs:label "epidermolysis bullosa"@en .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_3042
 ns1:DOID_3042 rdf:type owl:Class ;
-              ns1:IAO_0000115 "A contact dermatitis that is an allergic skin reaction to foreign chemical or substances leading to red, itchy, weepy reaction where the skin has come into contact with a substance that the immune system recognizes as foreign." ;
               ns1:IAO_0000118 "Allergic contact dermatitis"@en ;
               rdfs:label "allergic contact dermatitis"@en .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_3132
 ns1:DOID_3132 rdf:type owl:Class ;
-              ns1:IAO_0000115 "An acute porphyria characterized by painful, blistering skin lesions that develop on sun-exposed skin." ;
               ns1:IAO_0000118 "Porphyria cutanea tarda"@en ;
               rdfs:label "porphyria cutanea tarda"@en .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_417
 ns1:DOID_417 rdf:type owl:Class ;
-             ns1:IAO_0000115 "An immune system disease that is an overactive immune response of the body against substances and tissues normally present in the body resulting from an abnormal functioning of the immune system that results in the production of antibodies or T cell directed against the host tissues." ;
              ns1:IAO_0000118 "Autoimmune disease"@en ;
              rdfs:label "autoimmune disease"@en .
 
@@ -421,35 +402,30 @@ ns1:DOID_8505 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_8506
 ns1:DOID_8506 rdf:type owl:Class ;
-              ns1:IAO_0000115 "A pemphigoid that is characterized by large blisters." ;
               ns1:IAO_0000118 "Bullous pemphigoid"@en ;
               rdfs:label "bullous pemphigoid"@en .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_8536
 ns1:DOID_8536 rdf:type owl:Class ;
-              ns1:IAO_0000115 "A viral infectious disease that results_in infection located_in nerve fiber, has_material_basis_in Human herpesvirus 3 (Varicellovirus humanalpha3), which reactivates after appearing as chickenpox in childhood. The virus is transmitted_by direct contact with the rash, which can develop into chickenpox in newly-infected individuals. The infection has_symptom rash which is followed by blisters, has_symptom headache, has_symptom fever, has_symptom malaise, has_symptom itching, has_symptom burning pain, and has_symptom paresthesia." ;
               ns1:IAO_0000118 "Herpes zoster"@en ;
               rdfs:label "herpes zoster"@en .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_8566
 ns1:DOID_8566 rdf:type owl:Class ;
-              ns1:IAO_0000115 "A viral infectious disease that results_in_formation_of lesions, located_in mouth, located_in face, located_in genitalia, or located_in hands, has_material_basis_in Human herpesvirus 1 (Simplexvirus humanalpha1) or 2 (Simplexvirus humanalpha2), which are transmitted_by direct contact with an active lesion or body fluid of an infected person." ;
               ns1:IAO_0000118 "Herpes simplex (e.g. cold sores)"@en ;
               rdfs:label "herpes simplex"@en .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_8659
 ns1:DOID_8659 rdf:type owl:Class ;
-              ns1:IAO_0000115 "A viral infectious disease that results_in infection located_in skin, has_material_basis_in Human herpesvirus 3 (Varicellovirus humanalpha3), which is transmitted_by direct contact with secretions from the rash, or transmitted_by droplet spread of respiratory secretions. The infection has_symptom anorexia, has_symptom myalgia, has_symptom nausea, has_symptom fever, has_symptom headache, has_symptom sore throat, and has_symptom blisters." ;
               ns1:IAO_0000118 "Chickenpox (varicella)"@en ;
               rdfs:label "chickenpox"@en .
 
 
 ###  http://purl.obolibrary.org/obo/DOID_9351
 ns1:DOID_9351 rdf:type owl:Class ;
-              ns1:IAO_0000115 "A glucose metabolism disease that is characterized by chronic hyperglycaemia with disturbances of carbohydrate, fat and protein metabolism resulting from defects in insulin secretion, insulin action, or both." ;
               ns1:IAO_0000118 "Diabetes mellitus"@en ;
               rdfs:label "diabetes mellitus"@en .
 
@@ -464,7 +440,6 @@ ns1:DOID_9602 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/DOID_9970
 ns1:DOID_9970 rdf:type owl:Class ;
-              ns1:IAO_0000115 "An overnutrition that is characterized by excess body fat, traditionally defined as an elevated ratio of weight to height (specifically 30 kilograms per meter squared), has_material_basis_in a multifactorial etiology related to excess nutrition intake, decreased caloric utilization, and genetic susceptibility, and possibly medications and certain disorders of metabolism, endocrine function, and mental illness." ;
               ns1:IAO_0000118 "Obesity"@en ;
               rdfs:label "obesity"@en .
 
@@ -482,7 +457,6 @@ ns1:FMA_7163 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/GO_0001525
 ns1:GO_0001525 rdf:type owl:Class ;
                rdfs:subClassOf wont:WONT_0000409 ;
-               ns1:IAO_0000115 "Blood vessel formation when new vessels emerge from the proliferation of pre-existing blood vessels." ;
                ns1:IAO_0000118 "Angiogenesis process"@en ;
                rdfs:label "angiogenesis"@en .
 
@@ -490,21 +464,18 @@ ns1:GO_0001525 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/GO_0007599
 ns1:GO_0007599 rdf:type owl:Class ;
                rdfs:subClassOf wont:WONT_0000409 ;
-               ns1:IAO_0000115 "The stopping of bleeding (loss of body fluid) or the arrest of the circulation to an organ or part." ;
                ns1:IAO_0000118 "Hemostasis process"@en ;
                rdfs:label "hemostasis"@en .
 
 
 ###  http://purl.obolibrary.org/obo/GO_0008150
 ns1:GO_0008150 rdf:type owl:Class ;
-               ns1:IAO_0000115 "A biological process is the execution of a genetically-encoded biological module or program. It consists of all the steps required to achieve the specific biological objective of the module. A biological process is accomplished by a particular set of molecular functions carried out by specific gene products (or macromolecular complexes), often in a highly regulated manner and in a particular temporal sequence." ;
                rdfs:label "biological_process" .
 
 
 ###  http://purl.obolibrary.org/obo/GO_0008283
 ns1:GO_0008283 rdf:type owl:Class ;
                rdfs:subClassOf wont:WONT_0000409 ;
-               ns1:IAO_0000115 "The multiplication or reproduction of cells, resulting in the expansion of a cell population." ;
                ns1:IAO_0000118 "Proliferation process"@en ;
                rdfs:label "cell population proliferation"@en .
 
@@ -517,7 +488,6 @@ ns1:GO_0042060 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/GO_0042246
 ns1:GO_0042246 rdf:type owl:Class ;
                rdfs:subClassOf wont:WONT_0000409 ;
-               ns1:IAO_0000115 "The regrowth of lost or destroyed tissues." ;
                ns1:IAO_0000118 "Tissue regeneration process"@en ;
                rdfs:label "tissue regeneration"@en .
 
@@ -525,7 +495,6 @@ ns1:GO_0042246 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/GO_0042310
 ns1:GO_0042310 rdf:type owl:Class ;
                rdfs:subClassOf wont:WONT_0000409 ;
-               ns1:IAO_0000115 "A decrease in the diameter of blood vessels, especially arteries, due to constriction of smooth muscle cells that line the vessels, and usually causing an increase in blood pressure." ;
                ns1:IAO_0000118 "Vasoconstriction process"@en ;
                rdfs:label "vasoconstriction"@en .
 
@@ -533,7 +502,6 @@ ns1:GO_0042310 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/GO_0042311
 ns1:GO_0042311 rdf:type owl:Class ;
                rdfs:subClassOf wont:WONT_0000409 ;
-               ns1:IAO_0000115 "An increase in the internal diameter of blood vessels, especially arterioles or capillaries, due to relaxation of smooth muscle cells that line the vessels, and usually resulting in a decrease in blood pressure." ;
                ns1:IAO_0000118 "Vasodilation process"@en ;
                rdfs:label "vasodilation"@en .
 
@@ -541,7 +509,6 @@ ns1:GO_0042311 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/GO_0048771
 ns1:GO_0048771 rdf:type owl:Class ;
                rdfs:subClassOf wont:WONT_0000409 ;
-               ns1:IAO_0000115 "The reorganization or renovation of existing tissues. This process can either change the characteristics of a tissue such as in blood vessel remodeling, or result in the dynamic equilibrium of a tissue such as in bone remodeling." ;
                ns1:IAO_0000118 "Remodeling process"@en ;
                rdfs:label "tissue remodeling"@en .
 
@@ -549,7 +516,6 @@ ns1:GO_0048771 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/GO_0050817
 ns1:GO_0050817 rdf:type owl:Class ;
                rdfs:subClassOf wont:WONT_0000409 ;
-               ns1:IAO_0000115 "The process in which a fluid solution, or part of it, changes into a solid or semisolid mass." ;
                ns1:IAO_0000118 "Coagulation process"@en ;
                rdfs:label "coagulation"@en .
 
@@ -557,20 +523,17 @@ ns1:GO_0050817 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/HP_0000961
 ns1:HP_0000961 rdf:type owl:Class ;
                rdfs:subClassOf ns1:PATO_0000014 ;
-               ns1:IAO_0000115 "Bluish discoloration of the skin and mucosa due to poor circulation or inadequate oxygenation of arterial or capillary blood." ;
                rdfs:label "Cyanosis" .
 
 
 ###  http://purl.obolibrary.org/obo/HP_0000980
 ns1:HP_0000980 rdf:type owl:Class ;
                rdfs:subClassOf ns1:PATO_0000014 ;
-               ns1:IAO_0000115 "Abnormally pale skin." ;
                rdfs:label "Pallor" .
 
 
 ###  http://purl.obolibrary.org/obo/HP_0004395
 ns1:HP_0004395 rdf:type owl:Class ;
-               ns1:IAO_0000115 "A deficiency in the intake of energy and nutrients." ;
                rdfs:label "Malnutrition" .
 
 
@@ -580,7 +543,6 @@ ns1:HP_0012399 rdf:type owl:Class .
 
 ###  http://purl.obolibrary.org/obo/HP_0025615
 ns1:HP_0025615 rdf:type owl:Class ;
-               ns1:IAO_0000115 "An abscess is a localized collection of purulent material surrounded by inflammation and granulation." ;
                rdfs:comment "Bridging annotation, not subsumption. The OBO term is a phenotypic abnormality / nosological category, i.e. a specifically dependent continuant, whereas this class is the material pathological disorder itself. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
                rdfs:label "abscess"@en ;
                skos:relatedMatch wont:WONT_0000472 .
@@ -588,7 +550,6 @@ ns1:HP_0025615 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/HP_0032326
 ns1:HP_0032326 rdf:type owl:Class ;
-               ns1:IAO_0000115 "Infection with staphylococcus aureus resistant to the antibiotic methicillin (MRSA). MRSA can infect any individual but is more common among hospitalized patients, and can also occur as an opportunistic infection." ;
                rdfs:comment "Bridging annotation, not subsumption. The OBO term is a phenotypic abnormality / nosological category, i.e. a specifically dependent continuant, whereas this class is the material pathological disorder itself. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead. The has-participant axiom formerly asserted here used RO_0000057, whose domain is occurrent; it now sits on WONT_0000447 as a BFO_0000051 has-part axiom, where it is type-correct."@en ;
                rdfs:label "Methicillin-resistant Staphylococcus aureus infection" ;
                skos:relatedMatch wont:WONT_0000447 .
@@ -608,7 +569,6 @@ ns1:HP_0032676 rdf:type owl:Class .
 
 ###  http://purl.obolibrary.org/obo/HP_0100699
 ns1:HP_0100699 rdf:type owl:Class ;
-               ns1:IAO_0000115 "A scar refers to a lesion in which wound, burn, or sore has not healed completely and fibrous connective tissue has developed." ;
                rdfs:comment "Bridging annotation, not subsumption. HP_0100699 'Scarring' is a phenotypic abnormality, i.e. a quality and therefore a continuant, whereas this class is the process of scar formation. Asserting rdfs:subClassOf between them crosses the continuant/occurrent divide and renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
                rdfs:label "Scarring"@en ;
                skos:relatedMatch wont:WONT_0000471 .
@@ -616,7 +576,6 @@ ns1:HP_0100699 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/HP_0100758
 ns1:HP_0100758 rdf:type owl:Class ;
-               ns1:IAO_0000115 "A serious and potentially life-threatening condition that arises when a considerable mass of body tissue dies (necrosis)." ;
                ns1:IAO_0000118 "gangrene"@en ;
                rdfs:comment "Bridging annotation, not subsumption. MILD models a wound/disease as a material continuant; the OBO term below is a phenotype or nosological category, i.e. a specifically dependent continuant. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
                rdfs:label "Gangrene"@en ;
@@ -633,7 +592,6 @@ ns1:IAO_0000104 rdf:type owl:Class .
 
 ###  http://purl.obolibrary.org/obo/IAO_0000109
 ns1:IAO_0000109 rdf:type owl:Class ;
-                ns1:IAO_0000115 "A measurement datum is an information content entity that is a recording of the output of a measurement such as produced by a device." ;
                 rdfs:label "measurement datum" .
 
 
@@ -688,14 +646,12 @@ ns1:NCBITaxon_9606 rdf:type owl:Class ;
 
 ###  http://purl.obolibrary.org/obo/OBI_0000938
 ns1:OBI_0000938 rdf:type owl:Class ;
-                ns1:IAO_0000115 "A measurement datum that is reported on a categorical scale." ;
                 rdfs:label "categorical measurement datum" .
 
 
 ###  http://purl.obolibrary.org/obo/OBI_0600022
 ns1:OBI_0600022 rdf:type owl:Class ;
                 rdfs:subClassOf wont:WONT_0000190 ;
-                ns1:IAO_0000115 "the use physical means to remove a portion of a substance from the rest" ;
                 ns1:IAO_0000118 "Surgical excision"@en ;
                 rdfs:label "excision"@en .
 
@@ -703,7 +659,6 @@ ns1:OBI_0600022 rdf:type owl:Class ;
 ###  http://purl.obolibrary.org/obo/OBI_0600044
 ns1:OBI_0600044 rdf:type owl:Class ;
                 rdfs:subClassOf wont:WONT_0000387 ;
-                ns1:IAO_0000115 "A protocol application to separate cells and/or cellular secretions from an anatomical space by the introduction and removal of fluid" ;
                 ns1:IAO_0000118 "Lavage process"@en ;
                 rdfs:label "lavage"@en .
 
@@ -718,66 +673,56 @@ ns1:OMRSE_00000012 rdf:type owl:Class .
 
 ###  http://purl.obolibrary.org/obo/PATO_0000014
 ns1:PATO_0000014 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "A composite chromatic quality composed of hue, saturation and intensity parts." ;
                  rdfs:label "color" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0000117
 ns1:PATO_0000117 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "A morphology quality inhering in a bearer by virtue of the bearer's physical magnitude." ;
                  rdfs:label "size" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0000136
 ns1:PATO_0000136 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "A morphological quality pertaining to the degree to which an object contains an opening, aperture, orifice or vent." ;
                  rdfs:label "closure" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0000586
 ns1:PATO_0000586 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:PATO_0000117 ;
-                 ns1:IAO_0000115 "A size quality which is relatively high." ;
                  rdfs:label "increased size" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0000608
 ns1:PATO_0000608 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:PATO_0000136 ;
-                 ns1:IAO_0000115 "A morphological quality inhering in a bearer by virtue of the bearer's affording blocked passage or view." ;
                  rdfs:label "closed" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0000610
 ns1:PATO_0000610 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:PATO_0000136 ;
-                 ns1:IAO_0000115 "A morphological quality inhering in a bearer by virtue of the bearer's affording unobstructed passage or view." ;
                  rdfs:label "open" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0001595
 ns1:PATO_0001595 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "A 1-D extent quality inhering in a bearer by virtue of the bearer's downward or backward or inward dimension." ;
                  rdfs:label "depth" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0001596
 ns1:PATO_0001596 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:PATO_0001595 ;
-                 ns1:IAO_0000115 "A depth quality which is relatively high." ;
                  rdfs:label "increased depth" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0001764
 ns1:PATO_0001764 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "An age which is high relative to the normal or average." ;
                  rdfs:label "increased age" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0001851
 ns1:PATO_0001851 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:BFO_0000019 ;
-                 ns1:IAO_0000115 "A structure quality inhering in a bearer by virtue of the bearer's exhibiting transient abnormal enlargement, not due to cell proliferation." ;
                  ns1:IAO_0000118 "Swelling"@en ;
                  rdfs:label "swollen"@en .
 
@@ -788,13 +733,11 @@ ns1:PATO_0002057 rdf:type owl:Class .
 
 ###  http://purl.obolibrary.org/obo/PATO_0002097
 ns1:PATO_0002097 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "A disposition inhering in a tumour by virtue of the bearer's disposition to progress, invade surrounding tissues or metastasize." ;
                  rdfs:label "neoplastic, malignant" .
 
 
 ###  http://purl.obolibrary.org/obo/PATO_0002104
 ns1:PATO_0002104 rdf:type owl:Class ;
-                 ns1:IAO_0000115 "A compositional quality inhering in an bearer by virtue of the bearer's infiltration by leukocytes, local edema and accumulation of plasma proteins." ;
                  rdfs:label "inflamed" .
 
 
@@ -803,12 +746,6 @@ wont:WONT_0000544 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:GO_0042060 ;
                  ns1:IAO_0000118 "Pathological wound healing process"@en ;
                  rdfs:label "Impaired wound healing process"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000545
-wont:WONT_0000545 rdf:type owl:Class ;
-                 rdfs:subClassOf mild:MILD_120089 ;
-                 rdfs:label "Wound care procedure"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000547
@@ -1747,15 +1684,9 @@ wont:WONT_0000196 rdf:type owl:Class ;
                   rdfs:label "Medicinal honey" .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000199
-wont:WONT_0000199 rdf:type owl:Class ;
-                  rdfs:subClassOf mild:MILD_120089 ;
-                  rdfs:label "Method used for medical condition treatment"@en .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000200
 wont:WONT_0000200 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000199 ;
+                  rdfs:subClassOf mild:MILD_120099 ;
                   rdfs:label "Method used for wound treatment" .
 
 
@@ -1855,7 +1786,7 @@ wont:WONT_0000221 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000222
 wont:WONT_0000222 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000199 ;
+                  rdfs:subClassOf mild:MILD_120099 ;
                   rdfs:label "Pain management" .
 
 
@@ -1879,7 +1810,7 @@ wont:WONT_0000227 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000228
 wont:WONT_0000228 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000200 ;
+                  rdfs:subClassOf mild:MILD_120100 ;
                   rdfs:label "Perioperative antimicrobial prophylaxis" .
 
 
@@ -3979,7 +3910,7 @@ wont:WONT_0000555 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000556
 wont:WONT_0000556 rdf:type owl:Class ;
-                 rdfs:subClassOf mild:MILD_120022 ,
+                 rdfs:subClassOf ns1:BFO_0000040 ,
                                  [ rdf:type owl:Restriction ;
                                    owl:onProperty ns1:RO_0002353 ;
                                    owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000154
@@ -4008,12 +3939,14 @@ wont:WONT_0000557 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000558
 wont:WONT_0000558 rdf:type owl:Class ;
                  rdfs:subClassOf mild:MILD_120020 ;
+                 skos:relatedMatch ns1:DOID_0040085 ;
                  rdfs:label "Sepsis"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000559
 wont:WONT_0000559 rdf:type owl:Class ;
                  rdfs:subClassOf mild:MILD_120020 ;
+                 skos:relatedMatch ns1:DOID_1019 ;
                  rdfs:label "Osteomyelitis"@en .
 
 
@@ -4075,7 +4008,7 @@ wont:WONT_0000568 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000569
 wont:WONT_0000569 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000016 ;
+                 rdfs:subClassOf mild:MILD_120100 ;
                  rdfs:label "Prophylactic antibiotic therapy"@en .
 
 

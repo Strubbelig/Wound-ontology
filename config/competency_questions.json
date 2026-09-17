@@ -188,16 +188,6 @@
           "rewrite": "'affects' -> 'part_of'. The disorder is a material part of the anatomical structure; 'affects' had no IRI at all."
         },
         {
-          "id": "CQ022",
-          "question": "Which tissue does necrotizing fasciitis affect?",
-          "example_triple": [
-            "Necrotizing Fasciitis",
-            "part_of",
-            "Fascia"
-          ],
-          "rewrite": "'affects' -> 'part_of'. The disorder is a material part of the anatomical structure; 'affects' had no IRI at all."
-        },
-        {
           "id": "CQ023",
           "question": "Which anatomical site does a diabetic foot ulcer affect?",
           "example_triple": [
@@ -227,6 +217,19 @@
           "label_fix": {
             "Wound Bed": "wound base"
           }
+        }
+      ],
+      "out_of_scope": [
+        {
+          "id": "CQ022",
+          "question": "Which tissue does necrotizing fasciitis affect?",
+          "reason": "Retired 2026-09-17 (curator): necrotizing fasciitis is not a wound (CQ005) and is not part of the fascia - the fascia is at most where the infection process occurs. Where an infection process occurs is a question about a disease, outside WONT's scope.",
+          "retired_triple": [
+            "Necrotizing Fasciitis",
+            "part_of",
+            "Fascia"
+          ],
+          "retired": "2026-09-17"
         }
       ]
     },
@@ -674,11 +677,11 @@
       "in_scope": [
         {
           "id": "CQ080",
-          "question": "Is prophylactic antibiotic therapy a kind of antibiotic therapy?",
+          "question": "Is prophylactic antibiotic therapy a prophylaxis plan?",
           "example_triple": [
             "Prophylactic antibiotic therapy",
             "is_a",
-            "Antibiotic therapy"
+            "prophylaxis plan specification"
           ],
           "original_question": "Which intervention prevents surgical site infection?",
           "original_triple": [
@@ -686,7 +689,7 @@
             "is_treatment_for",
             "Surgical Site Infection"
           ],
-          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition. Prevention of a surgical site infection is not expressible: MILD has no prevention process, and is_treatment_for was the wrong relation for it anyway."
+          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition. Prevention of a surgical site infection is not expressible: MILD has no prevention process, and is_treatment_for was the wrong relation for it anyway. 2026-09-17 later: prophylaxis is not treatment, so the class moved from Antibiotic therapy (a treatment plan specification) to MILD's prophylaxis plan specification (MILD_120100); the question follows."
         },
         {
           "id": "CQ081",
