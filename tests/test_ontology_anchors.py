@@ -158,6 +158,21 @@ def test_the_orchestrator_collects_real_ontology_labels():
         assert expected in labels, expected
 
 
+def test_anchors_are_class_names_including_alt_terms_and_never_individuals():
+    """A grade is an owl:NamedIndividual (WONT_TODO 1.2, kept that way on
+    purpose); mapping a store term onto it would map onto an instance. An alt
+    term names the same class as its label, so it anchors too -- `2nd degree
+    burn` stayed in the ontology when it became an alt term (2.7)."""
+    import wound_ontology.orchestrator as orch
+    p = orch.Orchestrator.__new__(orch.Orchestrator)
+    labels = p.ontology_labels()
+    assert "2nd degree burn" in labels, "alt term dropped"
+    assert "Second-degree burn wound" in labels
+    for grade in ("Zone of stasis", "Shea classification grade I",
+                  "clean wound classification grade"):
+        assert grade not in labels, f"individual {grade!r} offered as a class anchor"
+
+
 # ── the categorical guard ───────────────────────────────────────────────────
 
 def test_a_rejected_mapping_leaves_the_term_alone(mapper):

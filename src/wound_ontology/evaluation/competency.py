@@ -65,6 +65,11 @@ PREDICATE_MAP: dict[str, tuple[str, str] | None] = {
     "occurs_in": ("restriction", OBO + "BFO_0000066"),
     "has_part": ("restriction", OBO + "BFO_0000051"),
     "is_treatment_for": ("restriction", OBO + "RO_0002606"),
+    # OBI_0000312 is_specified_output_of. WONT defines its aetiological wound
+    # classes this way since 2026-09-16 (Traumatic wound = Wound and output_of
+    # some Wound causing trauma process), so a CQ may ask which process a wound
+    # class is the output of.
+    "output_of": ("restriction", OBO + "OBI_0000312"),
     # The relation MILD actually licenses in place of aetiology. "X co_located_with
     # Y" asks whether the ontology says X and Y are parts of one material disease
     # entity in one patient -- which is assertable -- rather than whether Y caused
@@ -195,7 +200,12 @@ def compile_ask(subject_iri: str, predicate: str, object_iri: str) -> str | None
         "  { ?c rdfs:subClassOf ?r }\n"
         "  UNION\n"
         "  { ?c owl:equivalentClass/owl:intersectionOf/rdf:rest*/rdf:first ?r }\n"
-        f"  ?r owl:onProperty <{prop}> ; owl:someValuesFrom ?target .\n"
+        f"  ?r owl:onProperty <{prop}> ; owl:someValuesFrom ?f .\n"
+        # The filler may itself be an intersection (Malignant wound = Wound and
+        # output_of some (Wound development process and has_part some ...));
+        # any named member of it counts, since the intersection is subsumed by
+        # each of its members.
+        "  ?f (owl:intersectionOf/rdf:rest*/rdf:first)? ?target .\n"
         f"  ?target rdfs:subClassOf* <{object_iri}> .\n"
         "}"
     )

@@ -103,6 +103,30 @@ def test_quality_restriction_is_found(graph):
     assert r.verdict is Verdict.PASS
 
 
+def test_a_restriction_whose_filler_is_an_intersection_is_found(graph):
+    """`Malignant wound = Wound and output_of some (Wound development process
+    and has_part some X)`: the filler is an intersection, and the CQ names one
+    of its members. The intersection is subsumed by each member, so the member
+    answers the question."""
+    from rdflib.collection import Collection
+    g = graph
+    wound = URIRef(EX + "Wound")
+    wdp = URIRef(EX + "WDP"); g.add((wdp, RDF.type, OWL.Class)); g.add((wdp, RDFS.label, rdflib.Literal("Wound development process")))
+    mw = URIRef(EX + "Malignant_Wound"); g.add((mw, RDF.type, OWL.Class)); g.add((mw, RDFS.label, rdflib.Literal("Malignant Wound")))
+    other = URIRef(EX + "Other"); g.add((other, RDF.type, OWL.Class)); g.add((other, RDFS.label, rdflib.Literal("Other process")))
+    inner = rdflib.BNode(); inner_lst = rdflib.BNode()
+    Collection(g, inner_lst, [wdp, other]); g.add((inner, OWL.intersectionOf, inner_lst))
+    r = rdflib.BNode()
+    g.add((r, RDF.type, OWL.Restriction)); g.add((r, OWL.onProperty, URIRef(OBO + "OBI_0000312"))); g.add((r, OWL.someValuesFrom, inner))
+    outer = rdflib.BNode(); outer_lst = rdflib.BNode()
+    Collection(g, outer_lst, [wound, r]); g.add((outer, OWL.intersectionOf, outer_lst))
+    g.add((mw, OWL.equivalentClass, outer))
+    res = run_suite(g, [cq("T5", ("Malignant Wound", "output_of", "Wound development process")),
+                        cq("T5b", ("Malignant Wound", "output_of", "reddened"))])
+    assert res[0].verdict is Verdict.PASS, res[0].detail
+    assert res[1].verdict is Verdict.FAIL
+
+
 def test_a_defining_axiom_answers_a_restriction_cq(graph):
     """`Open Wound ≡ Wound and has_quality some open` entails the necessary
     condition the CQ asks for. WONT states every determinate-defined class this
@@ -300,8 +324,11 @@ def test_colocation_is_not_vacuous(real_graph):
     would manufacture passes rather than measure anything."""
     from wound_ontology.evaluation.competency import colocation_holds, label_index
     idx = label_index(real_graph)
-    yes = ("diabetic wound", "diabetic metabolic disorder")
-    no = ("diabetic wound", "autoimmune tissue disorder")
+    # Since 2026-09-16 the diabetic, angiopathic and autoimmune wounds are
+    # defined through their development process instead; the venous and
+    # arterial classes are the ones that still carry a co-location axiom.
+    yes = ("wound co-located with impaired venous backflow", "venous insufficiency disorder")
+    no = ("wound co-located with impaired venous backflow", "peripheral arterial occlusive disease")
     assert colocation_holds(real_graph, idx[yes[0]], idx[yes[1]]) is True
     assert colocation_holds(real_graph, idx[no[0]], idx[no[1]]) is False
     # a bare Wound is co-located with nothing in particular

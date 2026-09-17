@@ -253,24 +253,39 @@ class Orchestrator:
     # ── Phase 2: Mapping ───────────────────────────────────────────────────────
 
     def ontology_labels(self, sources=None) -> set[str]:
-        """Every class label WONT and MILD already carry.
+        """Every name a WONT or MILD *class* answers to: its rdfs:label and its
+        IAO_0000118 alternative terms.
 
         Used as SapBERT anchors, so a store term that means the same as an
-        existing class is mapped onto it rather than minted beside it.
+        existing class is mapped onto it rather than minted beside it, and by
+        the FCA naming guard to decide whether a label is one the ontologies
+        know.
+
+        Two exclusions, both decided 2026-09-16. Individuals are skipped: the
+        classification grades (`Burn classification grade I`, `Zone of
+        stasis`, the CDC and IWII grades) are owl:NamedIndividuals by design,
+        and a store term mapped onto one of them would be mapped onto an
+        instance, not a class. Alt terms are included: when a label is demoted
+        to an alt term (`2nd degree burn` became one of `Second-degree burn
+        wound`) the concept has not left the ontology, and the anchor must not
+        leave with it.
         """
-        from rdflib import RDFS
+        from rdflib import OWL, RDF, RDFS, URIRef
 
         from wound_ontology.utils.rdf_io import parse_graph
+        alt = URIRef("http://purl.obolibrary.org/obo/IAO_0000118")
         if sources is None:
             from wound_ontology.hierarchies.curated_seed import default_curated_sources
             sources, _ = default_curated_sources()
         labels: set[str] = set()
         for src in sources:
             g = parse_graph(src)
-            for _, _, o in g.triples((None, RDFS.label, None)):
-                text = str(o).strip()
-                if text:
-                    labels.add(text)
+            individuals = set(g.subjects(RDF.type, OWL.NamedIndividual))
+            for pred in (RDFS.label, alt):
+                for s, _, o in g.triples((None, pred, None)):
+                    text = str(o).strip()
+                    if text:
+                        labels.add(text)
         return labels
 
     def ontology_categories(self, skeleton=None) -> dict[str, str]:

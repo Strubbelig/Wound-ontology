@@ -6,24 +6,26 @@
       "in_scope": [
         {
           "id": "CQ001",
-          "question": "Is a diabetic foot ulcer a type of wound?",
+          "question": "Is a diabetic wound a type of wound?",
           "example_triple": [
-            "Diabetic Foot Ulcer",
+            "Diabetic wound",
             "is_a",
-            "Chronic Wound"
-          ]
+            "Wound"
+          ],
+          "rewrite": "Rewritten 2026-09-16: was 'Diabetic Foot Ulcer is_a Chronic Wound'. No wound class is chronic by definition (every wound starts acute), so nothing may be asserted under Chronic wound; and WONT models the diabetic wound, not the foot site. The subsumption asked for is the one WONT holds."
         },
         {
           "id": "CQ002",
-          "question": "Is a pressure injury a type of wound?",
+          "question": "Is a pressure ulcer a type of wound?",
           "example_triple": [
-            "pressure ulcer",
+            "Pressure ulcer",
             "is_a",
-            "Chronic Wound"
+            "Wound"
           ],
           "label_fix": {
             "Pressure Injury": "pressure ulcer"
-          }
+          },
+          "rewrite": "Rewritten 2026-09-16: was 'is_a Chronic Wound' -- same reason as CQ001. Expected to FAIL until WONT mints its own pressure ulcer class (the label currently resolves to HP_0012399, a phenotype); see WONT_TODO."
         },
         {
           "id": "CQ003",
@@ -57,12 +59,16 @@
         },
         {
           "id": "CQ006",
-          "question": "Is a venous leg ulcer a type of chronic wound?",
+          "question": "Is a venous leg ulcer a wound co-located with impaired venous backflow?",
           "example_triple": [
-            "Venous Leg Ulcer",
+            "Ulcus cruris venosum",
             "is_a",
-            "Chronic Wound"
-          ]
+            "Wound co-located with impaired venous backflow"
+          ],
+          "label_fix": {
+            "Venous Leg Ulcer": "Ulcus cruris venosum"
+          },
+          "rewrite": "Rewritten 2026-09-16: was 'Venous Leg Ulcer is_a Chronic Wound' -- same reason as CQ001. The venous axis is what WONT asserts of this class."
         },
         {
           "id": "CQ007",
@@ -105,17 +111,22 @@
           "example_triple": [
             "Large Wound",
             "has_quality",
-            "Large"
-          ]
+            "increased area"
+          ],
+          "label_fix": {
+            "Large": "increased area"
+          },
+          "rewrite": "Rewritten 2026-09-16: the determinate is PATO_0002057 'increased area', reused rather than minted."
         },
         {
           "id": "CQ011",
-          "question": "What quality distinguishes a full-thickness wound from a partial-thickness wound?",
+          "question": "Which classification grades a burn wound by the depth of tissue destroyed?",
           "example_triple": [
-            "Full-Thickness Wound",
-            "has_quality",
-            "Full-Thickness"
-          ]
+            "Burn wound classification according to Hildanus and Derganc",
+            "is_a",
+            "Burn classification scale"
+          ],
+          "rewrite": "Rewritten 2026-09-16: was 'Full-Thickness Wound has_quality Full-Thickness'. Full-/partial-thickness are grades of the Hildanus-Derganc burn scale (individuals WONT_0000499-503), not qualities of a wound class; the scale is what the ontology asserts."
         },
         {
           "id": "CQ012",
@@ -123,8 +134,12 @@
           "example_triple": [
             "Deep Wound",
             "has_quality",
-            "Deep"
-          ]
+            "increased depth"
+          ],
+          "label_fix": {
+            "Deep": "increased depth"
+          },
+          "rewrite": "Rewritten 2026-09-16: the determinate is PATO_0001596 'increased depth', reused rather than minted."
         },
         {
           "id": "CQ013",
@@ -251,9 +266,12 @@
           "example_triple": [
             "Ischemic Wound",
             "co_located_with",
-            "Peripheral Artery Disease"
+            "Peripheral arterial occlusive disease"
           ],
-          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient."
+          "rewrite": "'caused_by' -> 'co_located_with'. MILD model commitment 4 refuses aetiology; the assertable question is whether the two are parts of one material disease entity in one patient.",
+          "label_fix": {
+            "Peripheral Artery Disease": "Peripheral arterial occlusive disease"
+          }
         },
         {
           "id": "CQ034",
@@ -612,12 +630,13 @@
         },
         {
           "id": "CQ091",
-          "question": "What quality characterises a malignant wound?",
+          "question": "Which process produces a malignant wound?",
           "example_triple": [
             "Malignant Wound",
-            "has_quality",
-            "Malignant"
-          ]
+            "output_of",
+            "Wound development process"
+          ],
+          "rewrite": "Rewritten 2026-09-16: was 'has_quality Malignant'. WONT defines Malignant wound through its causal history (output of a wound development process that has a wound causing malignant process as part), not through a quality of the wound; malignancy is a disposition of a tumour. The question now asks what the ontology asserts."
         },
         {
           "id": "CQ092",
@@ -707,12 +726,13 @@
       "in_scope": [
         {
           "id": "CQ110",
-          "question": "What quality characterises a fully healed wound?",
+          "question": "What quality characterises a fully healed (epithelialized) wound?",
           "example_triple": [
             "Healed Wound",
             "has_quality",
-            "Epithelialized"
-          ]
+            "epithelialized"
+          ],
+          "rewrite": "Rewritten 2026-09-16: 'Healed wound' is an alt term of Epithelialized wound (WONT_0000506); the determinate is WONT_0000463 'epithelialized'."
         },
         {
           "id": "CQ111",
