@@ -14,17 +14,10 @@ next reads it and the extraction schema regenerates when extraction next starts
 (`../Disease ontologies/build_disease_proposal.sh --no-reason`, rule 34) —
 never import a source ontology directly.
 
-**Where things stand (2026-09-17, evening).** §1.4 answered: `Method used
-for medical condition treatment` is MILD's (`MILD_120099`), prophylaxis has
-its own plan-specification class in MILD (`MILD_120100`, sibling of
-treatment), a hypertrophic scar is neither disease nor disorder by definition
-(⊑ material entity), `Wound care procedure` dropped, sepsis and osteomyelitis
-`relatedMatch` DOID, the roles/functions stay. The 65 definitions WONT carried
-on foreign classes are gone (rule 34 refined: never a definition on a class
-we do not own). CQ022 retired. Measured: **CQ 48 / 52**, ELK 0
-unsatisfiable, closure 34,787 triples, 167 external terms all labelled, unit
-suite 1009 passed. **The four open CQs are the FMA anatomy references** —
-see §1.2 for which class gets which relation.
+**Where things stand (2026-09-17, evening).** Measured: **CQ 48 / 52**, ELK
+0 unsatisfiable, closure 34,787 triples, 167 external terms all labelled,
+unit suite 1009 passed. Everything answered so far is in the log and in git;
+this file holds only what is still open.
 
 Next free WONT id: **WONT_0000590**; next free MILD id: **MILD_120101**.
 Mint in the `WONT_` / `MILD_` prefix — never `WOND_`. (Protégé:
@@ -32,16 +25,7 @@ Preferences → New entities → set the prefix and the 7-digit counter once.)
 
 ---
 
-## 1. What the 4 open competency questions still need
-
-*Measured 2026-09-17 (evening): 48 PASS, 4 UNRESOLVED of 52.*
-
-### 1.1 Curator's calls — none open
-
-`Acute wound` (553) stays by decision (17 Sep); it has no defining axiom and
-no CQ names it.
-
-### 1.2 Anatomy — which WONT class gets which FMA relation
+## 1. The four open competency questions — all FMA anatomy
 
 FMA owns the anatomy; WONT references the IRI and `fma_module` carries the
 path (rule 34). FMA states parthood with its own `fma#constitutional_part_of`
@@ -56,35 +40,20 @@ parthood ever reaches the closure, and rule 34 forbids asserting it for them.
 | CQ020 | `Wound healing occurs_in Dermis` | no class truthfully: healing of a dermal wound occurs in the dermis, healing as such does not. | retire, or rewrite to `Skin wound located_in Skin` (passes today) |
 | CQ021 | `Pressure ulcer part_of Subcutaneous tissue` | not by definition — a stage-1 pressure ulcer is intact skin; `Subcutaneous tissue` is FMA's `Superficial fascia` (`FMA_9630`, exact synonym). | retire |
 
-### 1.3 `is_treatment_for` — closed
-
-Not needed (curator, 17 Sep): an agent participates in a treatment process.
-Asserted: `Wound treatment process ⊑ has_participant some Wound`; `Wound
-dressing ⊑ participates_in some Wound dressing process`; mattress and
-footwear `participates_in some Pressure offloading process`; `Vancomycin
-participates_in some Antibiotic administration process` (589, new). The
-ICE "methods" (NPWT, compression therapy, prophylactic antibiotic therapy)
-are asked as `is_a`; prevention stays inexpressible (no prevention process in
-MILD) — noted on CQ080.
-
-### 1.4 Answered 17 Sep (evening)
-
-| what | decision |
-|---|---|
-| `Method used for medical condition treatment` | MILD's: `MILD_120099` ⊑ treatment plan specification; `Method used for wound treatment` (200) and `Pain management` (222) under it. WONT_0000199 retired. |
-| prophylaxis | not treatment: `prophylaxis plan specification` (`MILD_120100` ⊑ plan specification, sibling of treatment); `Perioperative antimicrobial prophylaxis` (228) and `Prophylactic antibiotic therapy` (569) under it; CQ080 follows. Open naming question you raised: should every class under a plan specification carry "plan specification" in its name (`Antibiotic therapy` → `Antibiotic therapy plan specification`)? Not applied. |
-| `Antibiotic therapy`, debridement techniques, `Aseptic cuticle` ⊑ treatment plan specification | stay: an aseptic cuticle is part of an operation plan. |
-| `Hypertrophic scar` (556) | neither a disease nor a disorder by definition (hypertrophic scarring is common and not abnormal in some populations) → ⊑ material entity, `output_of` its scarring process kept. Consequence to look at: `Hypertrophic scarring process` (154) ⊑ `Pathological scarring process` (269) and `Excessive collagen deposition process` (567) ⊑ disorder development process both still say *abnormal*; `Scarring process` (471) is the non-pathological parent available. |
-| `Wound care procedure` (545) | dropped — nobody could say what it is. |
-| `Sepsis`, `Osteomyelitis` | `skos:relatedMatch` `DOID_0040085` (bacterial sepsis — DOID has no plain sepsis) / `DOID_1019`; module rebuilt. |
-| `therapeutic role`, `clinical function`, `therapeutic function` | keep. |
-
-## 2. Small things
+## 2. Open questions you raised, not yet decided
 
 | # | what |
 |---|---|
-| 2.1 | Definitions written in review are first drafts in the house pattern (36 on 12 Sep; 3 + 17 on 16 Sep; 3 + 7 process classes + 5 rewritten wound definitions + 7 on 17 Sep). Never on a foreign class (rule 34, refined 17 Sep): the 65 WONT carried were removed. |
-| 2.2 | `hp_module.owl` was re-saved by Protégé once (header only) — reverted. Modules are build outputs; if Protégé asks to save one, say no. |
+| 2.1 | Naming under plan specification: should every class under a plan specification carry "plan specification" in its name (`Antibiotic therapy` → `Antibiotic therapy plan specification`)? You raised it on 17 Sep; not applied. |
+| 2.2 | `Hypertrophic scarring process` (154) ⊑ `Pathological scarring process` (269) and `Excessive collagen deposition process` (567) ⊑ disorder development process both still say *abnormal*, while `Hypertrophic scar` (556) no longer does. `Scarring process` (471) is the non-pathological parent available. |
+| 2.3 | `Inflammatory phase` (563) is the one grade with no `is_about`: WONT has no inflammation process class (GO's would need `--leaf-modules`). |
+
+## 3. Standing notes
+
+| # | what |
+|---|---|
+| 3.1 | Definitions written in review are first drafts in the house pattern. Never on a foreign class (rule 34, refined 17 Sep). |
+| 3.2 | Modules are build outputs; if Protégé asks to save one, say no. |
 
 ---
 
@@ -103,3 +72,4 @@ MILD) — noted on CQ080.
 | 2026-09-17 | **Curator's calls answered (late).** CQ004/072/100 rewritten and made to pass (`Heat impact process ⊑ Trauma process`; `Wound complication disorder` 588 with dehiscence under it and the disease-level class having it as part; `has_participant some Wound` on 89; checker gained `has_participant`, 1 test, mutation-checked). CQ005/007/008/031/034/042/045/057/071/074 retired as `out_of_scope` with your reasons; dehiscence confirmed not a wound development (its process was already a disorder development process). **CQ 32/65 → 35/55.** |
 | 2026-09-17 | **Last calls answered (end of day).** CQ044/073 retired; CQ062–065 rewritten to the scheme (`561 is_about wound healing`; grades `is_about` hemostasis / epithelialization + granulation / tissue remodeling; checker reads individuals); CQ050–055/080–082 rewritten to participation, `is_treatment_for` withdrawn. **CQ 35/55 → 48/53.** |
 | 2026-09-17 | **§1.4 answered (evening).** 199 → MILD_120099; prophylaxis plan specification MILD_120100; hypertrophic scar ⊑ material entity; 545 dropped; relatedMatch on sepsis/osteomyelitis; 65 foreign definitions removed from WONT (rule 34 refined); CQ022 retired. **CQ 48/53 → 48/52.** §1.2 now says which class gets which FMA relation. |
+| 2026-09-17 | File cut to what is open: the four FMA CQs, three undecided questions, two standing notes. Everything done is in this log. |
