@@ -166,44 +166,19 @@
       "theme": "Which tissue is affected by the wound?",
       "in_scope": [
         {
-          "id": "CQ020",
-          "question": "In which anatomical structure does wound healing occur?",
-          "example_triple": [
-            "Wound Healing",
-            "occurs_in",
-            "Dermis"
-          ]
-        },
-        {
-          "id": "CQ021",
-          "question": "Which tissue does a pressure injury affect?",
-          "example_triple": [
-            "pressure ulcer",
-            "part_of",
-            "Subcutaneous Tissue"
-          ],
-          "label_fix": {
-            "Pressure Injury": "pressure ulcer"
-          },
-          "rewrite": "'affects' -> 'part_of'. The disorder is a material part of the anatomical structure; 'affects' had no IRI at all."
-        },
-        {
           "id": "CQ023",
-          "question": "Which anatomical site does a diabetic foot ulcer affect?",
+          "question": "In which anatomical structure is a diabetic foot ulcer located?",
           "example_triple": [
+            "Diabetic foot ulcer",
+            "located_in",
+            "Foot"
+          ],
+          "rewrite": "Rewritten 2026-09-17: a wound is located in a body part, not part of it; and 'foot' (FMA_9664), not 'plantar part of foot' - dorsal and interdigital diabetic foot ulcers exist. WONT defines the class as Diabetic wound and located_in some Foot.",
+          "original_question": "Which anatomical site does a diabetic foot ulcer affect?",
+          "original_triple": [
             "Diabetic Foot Ulcer",
             "part_of",
             "Plantar Foot"
-          ],
-          "rewrite": "'affects' -> 'part_of'. The disorder is a material part of the anatomical structure; 'affects' had no IRI at all."
-        },
-        {
-          "id": "CQ024",
-          "question": "Is the dermis part of the skin?",
-          "example_triple": [
-            "Dermis",
-            "part_of",
-            "Skin"
           ]
         },
         {
@@ -228,6 +203,39 @@
             "Necrotizing Fasciitis",
             "part_of",
             "Fascia"
+          ],
+          "retired": "2026-09-17"
+        },
+        {
+          "id": "CQ020",
+          "question": "In which anatomical structure does wound healing occur?",
+          "reason": "Retired 2026-09-17 (curator): healing of a dermal wound occurs in the dermis; wound healing as such does not occur in any one structure.",
+          "retired_triple": [
+            "Wound Healing",
+            "occurs_in",
+            "Dermis"
+          ],
+          "retired": "2026-09-17"
+        },
+        {
+          "id": "CQ021",
+          "question": "Which tissue does a pressure injury affect?",
+          "reason": "Retired 2026-09-17 (curator): a pressure ulcer is not part of the subcutaneous tissue by definition (a stage-1 ulcer is intact skin), and a wound is located in a tissue, not part of it.",
+          "retired_triple": [
+            "pressure ulcer",
+            "part_of",
+            "Subcutaneous Tissue"
+          ],
+          "retired": "2026-09-17"
+        },
+        {
+          "id": "CQ024",
+          "question": "Is the dermis part of the skin?",
+          "reason": "Retired 2026-09-17 (curator): 'dermis part of skin' is FMA's own fact, stated in FMA's own relation (fma:constitutional_part_of); WONT references anatomy, it does not restate it (rule 34).",
+          "retired_triple": [
+            "Dermis",
+            "part_of",
+            "Skin"
           ],
           "retired": "2026-09-17"
         }
@@ -379,9 +387,9 @@
           "id": "CQ050",
           "question": "Is negative pressure wound therapy a method of wound treatment?",
           "example_triple": [
-            "Negative pressure wound therapy",
+            "Negative pressure wound therapy plan specification",
             "is_a",
-            "Method used for wound treatment"
+            "Wound treatment plan specification"
           ],
           "original_question": "Which intervention treats chronic wounds?",
           "original_triple": [
@@ -389,7 +397,11 @@
             "is_treatment_for",
             "Chronic Wound"
           ],
-          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition. 'Chronic wound' dropped: no wound is chronic by definition and NPWT is not confined to them."
+          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition. 'Chronic wound' dropped: no wound is chronic by definition and NPWT is not confined to them.",
+          "label_fix": {
+            "Negative pressure wound therapy": "Negative pressure wound therapy plan specification",
+            "Method used for wound treatment": "Wound treatment plan specification"
+          }
         },
         {
           "id": "CQ051",
@@ -443,9 +455,9 @@
           "id": "CQ054",
           "question": "Is compression therapy a method of wound treatment?",
           "example_triple": [
-            "Compression therapy",
+            "Compression therapy plan specification",
             "is_a",
-            "Method used for wound treatment"
+            "Wound treatment plan specification"
           ],
           "original_question": "Which therapy treats venous leg ulcers?",
           "original_triple": [
@@ -453,7 +465,11 @@
             "is_treatment_for",
             "Venous Leg Ulcer"
           ],
-          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition."
+          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition.",
+          "label_fix": {
+            "Compression therapy": "Compression therapy plan specification",
+            "Method used for wound treatment": "Wound treatment plan specification"
+          }
         },
         {
           "id": "CQ055",
@@ -679,7 +695,7 @@
           "id": "CQ080",
           "question": "Is prophylactic antibiotic therapy a prophylaxis plan?",
           "example_triple": [
-            "Prophylactic antibiotic therapy",
+            "Prophylactic antibiotic therapy plan specification",
             "is_a",
             "prophylaxis plan specification"
           ],
@@ -689,7 +705,10 @@
             "is_treatment_for",
             "Surgical Site Infection"
           ],
-          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition. Prevention of a surgical site infection is not expressible: MILD has no prevention process, and is_treatment_for was the wrong relation for it anyway. 2026-09-17 later: prophylaxis is not treatment, so the class moved from Antibiotic therapy (a treatment plan specification) to MILD's prophylaxis plan specification (MILD_120100); the question follows."
+          "rewrite": "Rewritten 2026-09-17: is_treatment_for is not needed (curator). An agent - dressing, drug, device - participates in a treatment process, and the wound participates in every wound treatment process; that is what the ontology asserts. The condition named before was in any case not what the intervention treats by definition. Prevention of a surgical site infection is not expressible: MILD has no prevention process, and is_treatment_for was the wrong relation for it anyway. 2026-09-17 later: prophylaxis is not treatment, so the class moved from Antibiotic therapy (a treatment plan specification) to MILD's prophylaxis plan specification (MILD_120100); the question follows.",
+          "label_fix": {
+            "Prophylactic antibiotic therapy": "Prophylactic antibiotic therapy plan specification"
+          }
         },
         {
           "id": "CQ081",

@@ -14,46 +14,30 @@ next reads it and the extraction schema regenerates when extraction next starts
 (`../Disease ontologies/build_disease_proposal.sh --no-reason`, rule 34) —
 never import a source ontology directly.
 
-**Where things stand (2026-09-17, evening).** Measured: **CQ 48 / 52**, ELK
-0 unsatisfiable, closure 34,787 triples, 167 external terms all labelled,
-unit suite 1009 passed. Everything answered so far is in the log and in git;
-this file holds only what is still open.
+**Where things stand (2026-09-17, night).** Measured: **CQ 49 / 49** — every
+in-scope competency question passes; 24 declared out of scope with the
+reason on each. ELK 0 unsatisfiable, closure 34,856 triples, 168 external
+terms all labelled, unit suite 1009 passed. Nothing on this list needs
+Protégé right now.
 
-Next free WONT id: **WONT_0000590**; next free MILD id: **MILD_120101**.
+Next free WONT id: **WONT_0000591**; next free MILD id: **MILD_120101**.
 Mint in the `WONT_` / `MILD_` prefix — never `WOND_`. (Protégé:
 Preferences → New entities → set the prefix and the 7-digit counter once.)
 
 ---
 
-## 1. The four open competency questions — all FMA anatomy
+## 1. Open
 
-FMA owns the anatomy; WONT references the IRI and `fma_module` carries the
-path (rule 34). FMA states parthood with its own `fma#constitutional_part_of`
-/ `fma#regional_part_of` (32,060 uses in `fma_obo.owl`), never `BFO_0000050`,
-and the MIREOT extraction carries only the subclass path — so no FMA-internal
-parthood ever reaches the closure, and rule 34 forbids asserting it for them.
+Nothing. The next items come from the ROADMAP (P4 derived rebuild, P5
+HermiT, P6 BioPortal), not from the CQs.
 
-| CQ | asks | WONT class and relation | verdict |
-|---|---|---|---|
-| CQ023 | `Diabetic foot ulcer part_of Plantar foot` | **`Diabetic foot ulcer` (549) `located_in some Foot` (`FMA_9664`)** — the one clean case, and the class's natural definition (`≡ Diabetic wound ⊓ located_in some Foot`). `Plantar part of foot` is `FMA_25000`, but dorsal and interdigital DFUs exist, so *foot*, not *plantar*; and `located_in`, not `part_of` — a wound is in the foot, not a part of it. Rewrite the CQ to match. | do it |
-| CQ024 | `Dermis part_of Skin` | no WONT class: it is FMA's own fact (`FMA_70323 constitutional_part_of FMA_7163`), stated in FMA's relation, and we do not restate it. `Skin wound` (already `located_in some Skin`) is the nearest WONT class. | retire or ask the FMA fact of `fma_obo.owl` directly |
-| CQ020 | `Wound healing occurs_in Dermis` | no class truthfully: healing of a dermal wound occurs in the dermis, healing as such does not. | retire, or rewrite to `Skin wound located_in Skin` (passes today) |
-| CQ021 | `Pressure ulcer part_of Subcutaneous tissue` | not by definition — a stage-1 pressure ulcer is intact skin; `Subcutaneous tissue` is FMA's `Superficial fascia` (`FMA_9630`, exact synonym). | retire |
-
-## 2. Open questions you raised, not yet decided
+## 2. Standing notes
 
 | # | what |
 |---|---|
-| 2.1 | Naming under plan specification: should every class under a plan specification carry "plan specification" in its name (`Antibiotic therapy` → `Antibiotic therapy plan specification`)? You raised it on 17 Sep; not applied. |
-| 2.2 | `Hypertrophic scarring process` (154) ⊑ `Pathological scarring process` (269) and `Excessive collagen deposition process` (567) ⊑ disorder development process both still say *abnormal*, while `Hypertrophic scar` (556) no longer does. `Scarring process` (471) is the non-pathological parent available. |
-| 2.3 | `Inflammatory phase` (563) is the one grade with no `is_about`: WONT has no inflammation process class (GO's would need `--leaf-modules`). |
-
-## 3. Standing notes
-
-| # | what |
-|---|---|
-| 3.1 | Definitions written in review are first drafts in the house pattern. Never on a foreign class (rule 34, refined 17 Sep). |
-| 3.2 | Modules are build outputs; if Protégé asks to save one, say no. |
+| 2.1 | Every class under a plan specification carries "plan specification" in its name (decision 17 Sep); the previous label stays as an alt term. |
+| 2.2 | Definitions written in review are first drafts in the house pattern. Never on a foreign class (rule 34, refined 17 Sep). |
+| 2.3 | Modules are build outputs; if Protégé asks to save one, say no. |
 
 ---
 
@@ -73,3 +57,4 @@ parthood ever reaches the closure, and rule 34 forbids asserting it for them.
 | 2026-09-17 | **Last calls answered (end of day).** CQ044/073 retired; CQ062–065 rewritten to the scheme (`561 is_about wound healing`; grades `is_about` hemostasis / epithelialization + granulation / tissue remodeling; checker reads individuals); CQ050–055/080–082 rewritten to participation, `is_treatment_for` withdrawn. **CQ 35/55 → 48/53.** |
 | 2026-09-17 | **§1.4 answered (evening).** 199 → MILD_120099; prophylaxis plan specification MILD_120100; hypertrophic scar ⊑ material entity; 545 dropped; relatedMatch on sepsis/osteomyelitis; 65 foreign definitions removed from WONT (rule 34 refined); CQ022 retired. **CQ 48/53 → 48/52.** §1.2 now says which class gets which FMA relation. |
 | 2026-09-17 | File cut to what is open: the four FMA CQs, three undecided questions, two standing notes. Everything done is in this log. |
+| 2026-09-17 | **Night.** 31 classes under plan specification renamed "… plan specification" (old labels as alt terms; `Method used for X` → `X plan specification`); `Hypertrophic scarring process` folded into `Excessive collagen deposition process` (older IRI 154 kept, alt term, now ⊑ `Scarring process`), `Hypertrophic scar output_of` it; `Inflammation process` (590) minted, `Inflammatory phase is_about` it; `Diabetic foot ulcer ≡ Diabetic wound ⊓ located_in some Foot` (FMA_9664, module rebuilt), checker gained `located_in`; CQ020/021/024 retired. Two renamed labels whitelisted. **CQ 48/52 → 49/49.** |

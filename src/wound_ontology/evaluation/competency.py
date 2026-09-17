@@ -64,6 +64,9 @@ PREDICATE_MAP: dict[str, tuple[str, str] | None] = {
     "has_quality": ("restriction", OBO + "RO_0000086"),
     "occurs_in": ("restriction", OBO + "BFO_0000066"),
     "has_part": ("restriction", OBO + "BFO_0000051"),
+    # RO_0001025 located in: a wound is located in a body part (Diabetic foot
+    # ulcer = Diabetic wound and located_in some Foot), never part of it.
+    "located_in": ("restriction", OBO + "RO_0001025"),
     # RO_0000057 has participant: a process CQ may ask what takes part in it
     # (CQ100 asks it of clinical wound assessment and the wound).
     "has_participant": ("restriction", OBO + "RO_0000057"),

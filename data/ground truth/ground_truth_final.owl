@@ -449,6 +449,10 @@ ns1:DRON_00000005 rdf:type owl:Class ;
                   rdfs:label "clinical drug product" .
 
 
+###  http://purl.obolibrary.org/obo/FMA_9664
+ns1:FMA_9664 rdf:type owl:Class .
+
+
 ###  http://purl.obolibrary.org/obo/FMA_7163
 ns1:FMA_7163 rdf:type owl:Class ;
              rdfs:label "Skin" .
@@ -851,7 +855,8 @@ wont:WONT_0000015 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000016
 wont:WONT_0000016 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120089 ;
-                  rdfs:label "Antibiotic therapy" .
+                  ns1:IAO_0000118 "Antibiotic therapy"@en ;
+                  rdfs:label "Antibiotic therapy plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020
@@ -915,13 +920,15 @@ wont:WONT_0000028 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000029
 wont:WONT_0000029 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000200 ;
-                  rdfs:label "Aseptic conditions" .
+                  ns1:IAO_0000118 "Aseptic conditions"@en ;
+                  rdfs:label "Aseptic conditions plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000030
 wont:WONT_0000030 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120089 ;
-                  rdfs:label "Aseptic cuticle" .
+                  ns1:IAO_0000118 "Aseptic cuticle"@en ;
+                  rdfs:label "Aseptic cuticle plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000032
@@ -968,7 +975,8 @@ wont:WONT_0000037 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000038
 wont:WONT_0000038 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000040 ;
-                  rdfs:label "Biobag debridement" .
+                  ns1:IAO_0000118 "Biobag debridement"@en ;
+                  rdfs:label "Biobag debridement plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000039
@@ -980,7 +988,8 @@ wont:WONT_0000039 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000040
 wont:WONT_0000040 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120089 ;
-                  rdfs:label "Biosurgical debridement" .
+                  ns1:IAO_0000118 "Biosurgical debridement"@en ;
+                  rdfs:label "Biosurgical debridement plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000041
@@ -1119,7 +1128,8 @@ wont:WONT_0000071 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000072
 wont:WONT_0000072 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000200 ;
-                  rdfs:label "CO2 bath wound therapy" .
+                  ns1:IAO_0000118 "CO2 bath wound therapy"@en ;
+                  rdfs:label "CO2 bath wound therapy plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000074
@@ -1131,13 +1141,15 @@ wont:WONT_0000074 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000076
 wont:WONT_0000076 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000189 ;
-                  rdfs:label "Compress debridement" .
+                  ns1:IAO_0000118 "Compress debridement"@en ;
+                  rdfs:label "Compress debridement plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000077
 wont:WONT_0000077 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000200 ;
-                  rdfs:label "Compression therapy" .
+                  ns1:IAO_0000118 "Compression therapy"@en ;
+                  rdfs:label "Compression therapy plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000078
@@ -1226,7 +1238,8 @@ wont:WONT_0000093 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000094
 wont:WONT_0000094 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000200 ;
-                  rdfs:label "Dressing change" .
+                  ns1:IAO_0000118 "Dressing change"@en ;
+                  rdfs:label "Dressing change plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000095
@@ -1336,7 +1349,8 @@ wont:WONT_0000113 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000114
 wont:WONT_0000114 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000200 ;
-                  rdfs:label "Flap plasty" .
+                  ns1:IAO_0000118 "Flap plasty"@en ;
+                  rdfs:label "Flap plasty plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000115
@@ -1407,7 +1421,8 @@ wont:WONT_0000135 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000138
 wont:WONT_0000138 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000030 ;
-                  rdfs:label "Hand disinfection" .
+                  ns1:IAO_0000118 "Hand disinfection"@en ;
+                  rdfs:label "Hand disinfection plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000140
@@ -1471,7 +1486,8 @@ wont:WONT_0000151 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000152
 wont:WONT_0000152 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000200 ;
-                  rdfs:label "Hyperbaric O2 wound therapy" .
+                  ns1:IAO_0000118 "Hyperbaric O2 wound therapy"@en ;
+                  rdfs:label "Hyperbaric O2 wound therapy plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000153
@@ -1482,8 +1498,9 @@ wont:WONT_0000153 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000154
 wont:WONT_0000154 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000269 ;
-                  rdfs:label "Hypertrophic scarring process"@en .
+                  rdfs:subClassOf wont:WONT_0000471 ;
+                  ns1:IAO_0000118 "Hypertrophic scarring process"@en ;
+                  rdfs:label "Excessive collagen deposition process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000161
@@ -1669,7 +1686,8 @@ wont:WONT_0000188 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000189
 wont:WONT_0000189 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120089 ;
-                  rdfs:label "Mechanical debridement" .
+                  ns1:IAO_0000118 "Mechanical debridement"@en ;
+                  rdfs:label "Mechanical debridement plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000190
@@ -1687,7 +1705,8 @@ wont:WONT_0000196 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000200
 wont:WONT_0000200 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120099 ;
-                  rdfs:label "Method used for wound treatment" .
+                  ns1:IAO_0000118 "Method used for wound treatment"@en ;
+                  rdfs:label "Wound treatment plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000201
@@ -1757,7 +1776,8 @@ wont:WONT_0000211 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000213
 wont:WONT_0000213 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000200 ;
-                  rdfs:label "Negative pressure wound therapy" .
+                  ns1:IAO_0000118 "Negative pressure wound therapy"@en ;
+                  rdfs:label "Negative pressure wound therapy plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000215
@@ -1787,7 +1807,8 @@ wont:WONT_0000221 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000222
 wont:WONT_0000222 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120099 ;
-                  rdfs:label "Pain management" .
+                  ns1:IAO_0000118 "Pain management"@en ;
+                  rdfs:label "Pain management plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000224
@@ -1799,7 +1820,8 @@ wont:WONT_0000224 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000225
 wont:WONT_0000225 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000200 ;
-                  rdfs:label "Patient education" .
+                  ns1:IAO_0000118 "Patient education"@en ;
+                  rdfs:label "Patient education plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000227
@@ -1811,7 +1833,8 @@ wont:WONT_0000227 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000228
 wont:WONT_0000228 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120100 ;
-                  rdfs:label "Perioperative antimicrobial prophylaxis" .
+                  ns1:IAO_0000118 "Perioperative antimicrobial prophylaxis"@en ;
+                  rdfs:label "Perioperative antimicrobial prophylaxis plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000229
@@ -2095,13 +2118,15 @@ wont:WONT_0000285 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000286
 wont:WONT_0000286 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000200 ;
-                  rdfs:label "Skin grafting" .
+                  ns1:IAO_0000118 "Skin grafting"@en ;
+                  rdfs:label "Skin grafting plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000287
 wont:WONT_0000287 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000389 ;
-                  rdfs:label "Skin stapling" .
+                  ns1:IAO_0000118 "Skin stapling"@en ;
+                  rdfs:label "Skin stapling plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000289
@@ -2147,7 +2172,8 @@ wont:WONT_0000296 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000297
 wont:WONT_0000297 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000030 ;
-                  rdfs:label "Surface disinfection" .
+                  ns1:IAO_0000118 "Surface disinfection"@en ;
+                  rdfs:label "Surface disinfection plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000298
@@ -2171,7 +2197,8 @@ wont:WONT_0000301 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000302
 wont:WONT_0000302 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000389 ;
-                  rdfs:label "Suturing" .
+                  ns1:IAO_0000118 "Suturing"@en ;
+                  rdfs:label "Suturing plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000304
@@ -2183,7 +2210,8 @@ wont:WONT_0000304 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000305
 wont:WONT_0000305 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000016 ;
-                  rdfs:label "Systemic antibiotic therapy" .
+                  ns1:IAO_0000118 "Systemic antibiotic therapy"@en ;
+                  rdfs:label "Systemic antibiotic therapy plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000306
@@ -2354,7 +2382,8 @@ wont:WONT_0000334 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000335
 wont:WONT_0000335 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000016 ;
-                  rdfs:label "Topical antibiotic therapy" .
+                  ns1:IAO_0000118 "Topical antibiotic therapy"@en ;
+                  rdfs:label "Topical antibiotic therapy plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000336
@@ -2500,7 +2529,8 @@ wont:WONT_0000377 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000378
 wont:WONT_0000378 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000030 ;
-                  rdfs:label "Wearing Sterile gloves" .
+                  ns1:IAO_0000118 "Wearing Sterile gloves"@en ;
+                  rdfs:label "Wearing sterile gloves plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000379
@@ -2620,7 +2650,8 @@ wont:WONT_0000388 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000389
 wont:WONT_0000389 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120089 ;
-                  rdfs:label "Wound closure technique" .
+                  ns1:IAO_0000118 "Wound closure technique"@en ;
+                  rdfs:label "Wound closure technique plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000390
@@ -2725,7 +2756,8 @@ wont:WONT_0000404 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000405
 wont:WONT_0000405 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000389 ;
-                  rdfs:label "Wound Fabric adhesive" .
+                  ns1:IAO_0000118 "Wound Fabric adhesive"@en ;
+                  rdfs:label "Wound fabric adhesive plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000406
@@ -2848,7 +2880,8 @@ wont:WONT_0000420 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000421
 wont:WONT_0000421 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000389 ;
-                  rdfs:label "Wound staple plastering" .
+                  ns1:IAO_0000118 "Wound staple plastering"@en ;
+                  rdfs:label "Wound staple plastering plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000422
@@ -3852,7 +3885,16 @@ wont:WONT_0000543 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000549
 wont:WONT_0000549 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000088 ;
+                 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000088
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0001025 ;
+                                                               owl:someValuesFrom ns1:FMA_9664
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000088 ;
+                  ns1:IAO_0000115 "A diabetic wound that is located in a foot."@en ;
                  rdfs:label "Diabetic foot ulcer"@en .
 
 
@@ -3913,14 +3955,7 @@ wont:WONT_0000556 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:BFO_0000040 ,
                                  [ rdf:type owl:Restriction ;
                                    owl:onProperty ns1:RO_0002353 ;
-                                   owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000154
-                                                                             [ rdf:type owl:Restriction ;
-                                                                               owl:onProperty ns1:BFO_0000051 ;
-                                                                               owl:someValuesFrom wont:WONT_0000567
-                                                                             ]
-                                                                           ) ;
-                                                        rdf:type owl:Class
-                                                      ]
+                                   owl:someValuesFrom wont:WONT_0000154
                                  ] ;
                  rdfs:label "Hypertrophic scar"@en .
 
@@ -3986,16 +4021,6 @@ wont:WONT_0000566 rdf:type owl:Class ;
                  rdfs:label "Bacterial colonization process"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000567
-wont:WONT_0000567 rdf:type owl:Class ;
-                 rdfs:subClassOf mild:MILD_120021 ,
-                                 [ rdf:type owl:Restriction ;
-                                   owl:onProperty ns1:BFO_0000050 ;
-                                   owl:someValuesFrom wont:WONT_0000154
-                                 ] ;
-                 rdfs:label "Excessive collagen deposition process"@en .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000568
 wont:WONT_0000568 rdf:type owl:Class ;
                  rdfs:subClassOf wont:WONT_0000423 ,
@@ -4009,7 +4034,8 @@ wont:WONT_0000568 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000569
 wont:WONT_0000569 rdf:type owl:Class ;
                  rdfs:subClassOf mild:MILD_120100 ;
-                 rdfs:label "Prophylactic antibiotic therapy"@en .
+                 ns1:IAO_0000118 "Prophylactic antibiotic therapy"@en ;
+                  rdfs:label "Prophylactic antibiotic therapy plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000570
@@ -4112,7 +4138,8 @@ wont:WONT_0000580 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000581
 wont:WONT_0000581 rdf:type owl:Class ;
                  rdfs:subClassOf mild:MILD_120089 ;
-                 rdfs:label "Surgical debridement"@en .
+                 ns1:IAO_0000118 "Surgical debridement"@en ;
+                  rdfs:label "Surgical debridement plan specification"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000582
@@ -4185,6 +4212,12 @@ wont:WONT_0000589 rdf:type owl:Class ;
                                   ] ;
                   ns1:IAO_0000115 "A process of drug administration in which a material entity bearing an antibiotic drug role participates."@en ;
                   rdfs:label "Antibiotic administration process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000590
+wont:WONT_0000590 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000409 ;
+                  rdfs:label "Inflammation process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120000
@@ -4352,6 +4385,7 @@ wont:WONT_0000562 rdf:type owl:NamedIndividual ,
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000563
 wont:WONT_0000563 rdf:type owl:NamedIndividual ,
                            wont:WONT_0000561 ;
+                  ns1:IAO_0000136 wont:WONT_0000590 ;
                   rdfs:label "Inflammatory phase"@en .
 
 
