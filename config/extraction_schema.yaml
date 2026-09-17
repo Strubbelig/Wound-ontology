@@ -1,7 +1,7 @@
 # GENERATED FILE - DO NOT EDIT BY HAND.
 # Regenerate with:  python scripts/build_extraction_schema.py
 # Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)
-# Generated:        2026-09-16
+# Generated:        2026-09-17
 id: https://w3id.org/wont/extraction
 name: wont-extraction
 title: WONT/MILD-derived extraction schema
@@ -808,6 +808,11 @@ enums:
         title: "Clean wound according to IWII"
         description: "A wound with microbial burden assessed according to IWII that bears the quality sterile."
         aliases: ["Aseptic wound"]
+      PRESSURE_ULCER:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000534
+        title: "Pressure ulcer"
+        description: "A wound that is the specified output of a wound causing pressure impact process."
+        aliases: ["decubitus ulcer"]
       WOUND_INFECTING_PATHOGEN:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120019
         title: "wound infecting pathogen"
@@ -820,6 +825,18 @@ enums:
       Existing 'quality' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
+      DEGREE_OF_MALIGNANCY:
+        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120095
+        title: "degree of malignancy"
+        description: "A quality of a pathological disorder that is the extent to which its tissue shows neoplastic growth that invades surrounding tissue or spreads to distant sites."
+      BENIGN:
+        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120096
+        title: "benign"
+        description: "A degree of malignancy that qualifies its bearer as benign: any neoplastic tissue present neither invades surrounding tissue nor spreads."
+      MALIGNANT:
+        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120097
+        title: "malignant"
+        description: "A degree of malignancy that qualifies its bearer as malignant: neoplastic tissue present invades surrounding tissue or spreads to distant sites."
       REDNESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000257
         title: "Redness"
@@ -992,18 +1009,6 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000488
         title: "ischemic"
         description: "A degree of tissue perfusion that qualifies its bearer as ischemic: the blood supply to the tissue is insufficient for its metabolic needs."
-      DEGREE_OF_MALIGNANCY:
-        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000489
-        title: "degree of malignancy"
-        description: "A quality of a wound that is the extent to which its tissue shows neoplastic growth that invades surrounding tissue or spreads to distant sites."
-      BENIGN:
-        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000490
-        title: "benign"
-        description: "A degree of malignancy that qualifies its bearer as benign: any neoplastic tissue present neither invades surrounding tissue nor spreads."
-      MALIGNANT:
-        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000491
-        title: "malignant"
-        description: "A degree of malignancy that qualifies its bearer as malignant: neoplastic tissue present invades surrounding tissue or spreads to distant sites."
       COLONIZED:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000512
         title: "colonized"
@@ -1652,7 +1657,7 @@ enums:
       DIABETES_MELLITUS_TYPE_II_DISEASE_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000520
         title: "Diabetes mellitus type II disease process"
-        description: "A disease course process of a diabetic metabolic disorder of type II."
+        description: "A diabetes mellitus disease process of a diabetic metabolic disorder of type II."
       IRREVERSIBLY_DIMINISHED_MICROVASCULAR_PERFUSION_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000521
         title: "Irreversibly diminished microvascular perfusion process"
@@ -1665,6 +1670,14 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000523
         title: "Autoimmune disease process"
         description: "A disease course process of an autoimmune tissue disorder."
+      DIABETES_MELLITUS_DISEASE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000535
+        title: "Diabetes mellitus disease process"
+        description: "A disease course process of a diabetic metabolic disorder."
+      DIABETES_MELLITUS_TYPE_I_DISEASE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000536
+        title: "Diabetes mellitus type I disease process"
+        description: "A diabetes mellitus disease process of a diabetic metabolic disorder of type I."
       WOUND_DRESSING_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120013
         title: "Wound dressing process"
@@ -1771,10 +1784,6 @@ enums:
         meaning: http://purl.obolibrary.org/obo/OBI_0000312
         title: "is specified output of"
         description: "Permitted category pairs: information entity -> process; material entity -> process"
-      LOCATED_IN:
-        meaning: http://purl.obolibrary.org/obo/RO_0001025
-        title: "located in"
-        description: "Permitted category pairs: material entity -> material entity"
       OCCUPIES_TEMPORAL_REGION:
         meaning: http://purl.obolibrary.org/obo/BFO_0000199
         title: "occupies temporal region"

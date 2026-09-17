@@ -569,11 +569,7 @@ ns1:HP_0004395 rdf:type owl:Class ;
 
 
 ###  http://purl.obolibrary.org/obo/HP_0012399
-ns1:HP_0012399 rdf:type owl:Class ;
-               rdfs:subClassOf ns1:HP_0032674 ;
-               ns1:IAO_0000115 "A type of ulcer that is caused when an area of skin is subject to pressure over a prolonged period of time, ranging in range in severity from patches of discolored skin to open wounds that expose the underlying bone or muscle. The most common sites are the sacrum, coccyx, heels and the hips." ;
-               ns1:IAO_0000118 "decubitus ulcer"@en ;
-               rdfs:label "Pressure ulcer"@en .
+ns1:HP_0012399 rdf:type owl:Class .
 
 
 ###  http://purl.obolibrary.org/obo/HP_0025615
@@ -593,25 +589,15 @@ ns1:HP_0032326 rdf:type owl:Class ;
 
 
 ###  http://purl.obolibrary.org/obo/HP_0032674
-ns1:HP_0032674 rdf:type owl:Class ;
-               ns1:IAO_0000115 "A cutaneous wound is a defined as a disruption of normal anatomic structure and function of the skin that occurs owing to an injury of the skin. Wound healing is a dynamic, interactive process involving soluble mediators, blood cells, extracellularmatrix, and parenchymal cells. Wound healing has three phases: inflammation, tissue formation, and tissue remodeling, that overlap in time." ;
-               rdfs:comment "Bridging annotation, not subsumption. MILD models a wound/disease as a material continuant; the OBO term below is a phenotype or nosological category, i.e. a specifically dependent continuant. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
-               rdfs:label "Cutaneous wound"@en ;
-               skos:relatedMatch wont:WONT_0000380 .
+ns1:HP_0032674 rdf:type owl:Class .
 
 
 ###  http://purl.obolibrary.org/obo/HP_0032675
-ns1:HP_0032675 rdf:type owl:Class ;
-               rdfs:subClassOf ns1:HP_0032674 ;
-               ns1:IAO_0000115 "A cutaneous wound that is proceeding through an orderly and timely reparative process that results in sustained restoration of the anatomic and functional integrity of the skin." ;
-               rdfs:label "Acute cutaneous wound" .
+ns1:HP_0032675 rdf:type owl:Class .
 
 
 ###  http://purl.obolibrary.org/obo/HP_0032676
-ns1:HP_0032676 rdf:type owl:Class ;
-               rdfs:subClassOf ns1:HP_0032674 ;
-               ns1:IAO_0000115 "A cutaneous wound that has failed to proceed through the orderly and timely process to produce an atomic and functional integrity, or proceeded through the repair process without establishing a sustained anatomic and functional result." ;
-               rdfs:label "Chronic cutaneous wound" .
+ns1:HP_0032676 rdf:type owl:Class .
 
 
 ###  http://purl.obolibrary.org/obo/HP_0100699
@@ -808,142 +794,28 @@ ns1:PATO_0002104 rdf:type owl:Class ;
                  rdfs:label "inflamed" .
 
 
-###  https://bioportal.bioontology.org/ontologies/MILD/MILD_120028
-mild:MILD_120028 skos:relatedMatch ns1:OGMS_0000063 .
 
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000514
-wont:WONT_0000514 rdf:type owl:Class ;
-                 rdfs:subClassOf mild:MILD_120028 ,
-                                 [ rdf:type owl:Restriction ;
-                                   owl:onProperty ns1:RO_0000057 ;
-                                   owl:someValuesFrom wont:WONT_0000465
-                                 ] ;
-                 ns1:IAO_0000115 "A disease course process that has as participant a malignancy."@en ;
-                 rdfs:label "Malignant process"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000515
-wont:WONT_0000515 rdf:type owl:Class ;
-                 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000514
-                                                            wont:WONT_0000418
-                                                          ) ;
-                                       rdf:type owl:Class
-                                     ] ;
-                 ns1:IAO_0000115 "A malignant process that is a wound causing process."@en ;
-                 rdfs:label "Wound causing malignant process"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000516
-wont:WONT_0000516 rdf:type owl:Class ;
-                 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000338
-                                                            wont:WONT_0000418
-                                                          ) ;
-                                       rdf:type owl:Class
-                                     ] ;
-                 ns1:IAO_0000115 "A trauma process that is a wound causing process."@en ;
-                 rdfs:label "Wound causing trauma process"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000517
-wont:WONT_0000517 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000015 ;
-                 ns1:IAO_0000115 "A process in which an acid or a base acts on a tissue."@en ;
-                 rdfs:label "Acidity impact process"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000518
-wont:WONT_0000518 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000015 ;
-                 ns1:IAO_0000115 "A process in which heat acts on a tissue."@en ;
-                 rdfs:label "Heat impact process"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000519
-wont:WONT_0000519 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000015 ;
-                 ns1:IAO_0000115 "A process in which sustained mechanical pressure acts on a tissue."@en ;
-                 rdfs:label "Pressure impact process"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000520
-wont:WONT_0000520 rdf:type owl:Class ;
-                 rdfs:subClassOf mild:MILD_120028 ;
-                 ns1:IAO_0000115 "A disease course process of a diabetic metabolic disorder of type II."@en ;
-                 rdfs:label "Diabetes mellitus type II disease process"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000521
-wont:WONT_0000521 rdf:type owl:Class ;
-                 rdfs:subClassOf ns1:BFO_0000015 ;
-                 ns1:IAO_0000115 "A process in which the perfusion of a tissue through its microvasculature is reduced without recovery."@en ;
-                 rdfs:label "Irreversibly diminished microvascular perfusion process"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000522
-wont:WONT_0000522 rdf:type owl:Class ;
-                 rdfs:subClassOf mild:MILD_120028 ;
-                 ns1:IAO_0000115 "A disease course process of an angiopathy."@en ;
-                 rdfs:label "Angiopathic disease process"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000523
-wont:WONT_0000523 rdf:type owl:Class ;
-                 rdfs:subClassOf mild:MILD_120028 ;
-                 ns1:IAO_0000115 "A disease course process of an autoimmune tissue disorder."@en ;
-                 rdfs:label "Autoimmune disease process"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000524
-wont:WONT_0000524 rdf:type owl:Class ;
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000534
+wont:WONT_0000534 rdf:type owl:Class ;
                  rdfs:subClassOf wont:WONT_0000380 ;
-                 ns1:IAO_0000115 "A wound that is classified by the CDC surgical wound classification: clean, clean-contaminated, contaminated or dirty, according to the state of the operative field."@en ;
-                 rdfs:label "Wound with microbial burden assessed according to CDC"@en .
+                 ns1:IAO_0000118 "decubitus ulcer"@en ;
+                 ns1:IAO_0000115 "A wound that is the specified output of a wound causing pressure impact process."@en ;
+                 rdfs:label "Pressure ulcer"@en ;
+                 skos:relatedMatch ns1:HP_0012399 .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000525
-wont:WONT_0000525 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000524 ;
-                 ns1:IAO_0000115 "A wound with microbial burden assessed according to CDC that is an open, fresh, accidental wound, or an operative wound with a major break in sterile technique or gross spillage from the gastrointestinal tract."@en ;
-                 rdfs:label "Contaminated wound according to CDC"@en .
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000535
+wont:WONT_0000535 rdf:type owl:Class ;
+                 rdfs:subClassOf mild:MILD_120028 ;
+                 ns1:IAO_0000115 "A disease course process of a diabetic metabolic disorder."@en ;
+                 rdfs:label "Diabetes mellitus disease process"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000526
-wont:WONT_0000526 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000524 ;
-                 ns1:IAO_0000115 "A wound with microbial burden assessed according to CDC that is an old traumatic wound with retained devitalised tissue, or one that involves existing clinical infection or perforated viscera."@en ;
-                 rdfs:label "Dirty wound according to CDC"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000527
-wont:WONT_0000527 rdf:type owl:Class ;
-                 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000481
-                                                            [ rdf:type owl:Restriction ;
-                                                              owl:onProperty ns1:RO_0000086 ;
-                                                              owl:someValuesFrom wont:WONT_0000486
-                                                            ]
-                                                          ) ;
-                                       rdf:type owl:Class
-                                     ] ;
-                 rdfs:subClassOf wont:WONT_0000481 ;
-                 ns1:IAO_0000115 "A wound with microbial burden assessed according to IWII that bears the quality sterile."@en ;
-                 ns1:IAO_0000118 "Aseptic wound"@en ,
-                                 "Sterile wound"@en ;
-                 rdfs:label "Clean wound according to IWII"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000528
-wont:WONT_0000528 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_0000066 ;
-                 ns1:IAO_0000115 "A wound classification scale that grades a wound by its microbial burden on the wound infection continuum of the International Wound Infection Institute: clean, contaminated, colonized, infected."@en ;
-                 rdfs:label "IWII wound classification scale"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000529
-wont:WONT_0000529 rdf:type owl:Class ;
-                 rdfs:subClassOf wont:WONT_120016 ;
-                 ns1:IAO_0000115 "A wound classification grade that is a category of the IWII wound classification scale."@en ;
-                 rdfs:label "IWII wound classification grade"@en .
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000536
+wont:WONT_0000536 rdf:type owl:Class ;
+                 rdfs:subClassOf wont:WONT_0000535 ;
+                 ns1:IAO_0000115 "A diabetes mellitus disease process of a diabetic metabolic disorder of type I."@en ;
+                 rdfs:label "Diabetes mellitus type I disease process"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000002
@@ -954,8 +826,8 @@ wont:WONT_0000002 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000004
 wont:WONT_0000004 rdf:type owl:Class ;
-                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000517
-                                                             wont:WONT_0000418
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418
+                                                             wont:WONT_0000517
                                                            ) ;
                                         rdf:type owl:Class
                                       ] ;
@@ -1589,8 +1461,8 @@ wont:WONT_0000138 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000140
 wont:WONT_0000140 rdf:type owl:Class ;
-                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000518
-                                                             wont:WONT_0000418
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418
+                                                             wont:WONT_0000518
                                                            ) ;
                                         rdf:type owl:Class
                                       ] ;
@@ -2055,8 +1927,8 @@ wont:WONT_0000243 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000245
 wont:WONT_0000245 rdf:type owl:Class ;
-                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000519
-                                                             wont:WONT_0000418
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418
+                                                             wont:WONT_0000519
                                                            ) ;
                                         rdf:type owl:Class
                                       ] ;
@@ -2988,7 +2860,7 @@ wont:WONT_0000418 rdf:type owl:Class ;
                                   ] ,
                                   [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:RO_0000057 ;
-                                    owl:someValuesFrom ns1:FMA_62955
+                                    owl:someValuesFrom ns1:FMA_67135
                                   ] ;
                   ns1:IAO_0000115 "A process that has the newly developed wound as a participant or output and does so with near certainty."@en ;
                   rdfs:label "Wound causing process"@en .
@@ -3575,28 +3447,6 @@ wont:WONT_0000488 rdf:type owl:Class ;
                   rdfs:label "ischemic"@en .
 
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000489
-wont:WONT_0000489 rdf:type owl:Class ;
-                  rdfs:subClassOf ns1:BFO_0000019 ;
-                  ns1:IAO_0000115 "A quality of a wound that is the extent to which its tissue shows neoplastic growth that invades surrounding tissue or spreads to distant sites."@en ;
-                  rdfs:label "degree of malignancy"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000490
-wont:WONT_0000490 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000489 ;
-                  ns1:IAO_0000115 "A degree of malignancy that qualifies its bearer as benign: any neoplastic tissue present neither invades surrounding tissue nor spreads."@en ;
-                  rdfs:label "benign"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000491
-wont:WONT_0000491 rdf:type owl:Class ;
-                  rdfs:subClassOf wont:WONT_0000489 ;
-                  ns1:IAO_0000115 "A degree of malignancy that qualifies its bearer as malignant: neoplastic tissue present invades surrounding tissue or spreads to distant sites."@en ;
-                  rdfs:label "malignant"@en ;
-                  skos:relatedMatch ns1:PATO_0002097 .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000492
 wont:WONT_0000492 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000437 ;
@@ -3774,6 +3624,140 @@ wont:WONT_0000513 rdf:type owl:Class ;
                   rdfs:label "Partial thickness"@en .
 
 
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000514
+wont:WONT_0000514 rdf:type owl:Class ;
+                  rdfs:subClassOf mild:MILD_120028 ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty ns1:RO_0000057 ;
+                                    owl:someValuesFrom wont:WONT_0000465
+                                  ] ;
+                  ns1:IAO_0000115 "A disease course process that has as participant a malignancy."@en ;
+                  rdfs:label "Malignant process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000515
+wont:WONT_0000515 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418
+                                                             wont:WONT_0000514
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  ns1:IAO_0000115 "A malignant process that is a wound causing process."@en ;
+                  rdfs:label "Wound causing malignant process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000516
+wont:WONT_0000516 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000338
+                                                             wont:WONT_0000418
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  ns1:IAO_0000115 "A trauma process that is a wound causing process."@en ;
+                  rdfs:label "Wound causing trauma process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000517
+wont:WONT_0000517 rdf:type owl:Class ;
+                  rdfs:subClassOf ns1:BFO_0000015 ;
+                  ns1:IAO_0000115 "A process in which an acid or a base acts on a tissue."@en ;
+                  rdfs:label "Acidity impact process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000518
+wont:WONT_0000518 rdf:type owl:Class ;
+                  rdfs:subClassOf ns1:BFO_0000015 ;
+                  ns1:IAO_0000115 "A process in which heat acts on a tissue."@en ;
+                  rdfs:label "Heat impact process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000519
+wont:WONT_0000519 rdf:type owl:Class ;
+                  rdfs:subClassOf ns1:BFO_0000015 ;
+                  ns1:IAO_0000115 "A process in which sustained mechanical pressure acts on a tissue."@en ;
+                  rdfs:label "Pressure impact process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000520
+wont:WONT_0000520 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000535 ;
+                  ns1:IAO_0000115 "A diabetes mellitus disease process of a diabetic metabolic disorder of type II."@en ;
+                  rdfs:label "Diabetes mellitus type II disease process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000521
+wont:WONT_0000521 rdf:type owl:Class ;
+                  rdfs:subClassOf ns1:BFO_0000015 ;
+                  ns1:IAO_0000115 "A process in which the perfusion of a tissue through its microvasculature is reduced without recovery."@en ;
+                  rdfs:label "Irreversibly diminished microvascular perfusion process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000522
+wont:WONT_0000522 rdf:type owl:Class ;
+                  rdfs:subClassOf mild:MILD_120028 ;
+                  ns1:IAO_0000115 "A disease course process of an angiopathy."@en ;
+                  rdfs:label "Angiopathic disease process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000523
+wont:WONT_0000523 rdf:type owl:Class ;
+                  rdfs:subClassOf mild:MILD_120028 ;
+                  ns1:IAO_0000115 "A disease course process of an autoimmune tissue disorder."@en ;
+                  rdfs:label "Autoimmune disease process"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000524
+wont:WONT_0000524 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000380 ;
+                  ns1:IAO_0000115 "A wound that is classified by the CDC surgical wound classification: clean, clean-contaminated, contaminated or dirty, according to the state of the operative field."@en ;
+                  rdfs:label "Wound with microbial burden assessed according to CDC"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000525
+wont:WONT_0000525 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000524 ;
+                  ns1:IAO_0000115 "A wound with microbial burden assessed according to CDC that is an open, fresh, accidental wound, or an operative wound with a major break in sterile technique or gross spillage from the gastrointestinal tract."@en ;
+                  rdfs:label "Contaminated wound according to CDC"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000526
+wont:WONT_0000526 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000524 ;
+                  ns1:IAO_0000115 "A wound with microbial burden assessed according to CDC that is an old traumatic wound with retained devitalised tissue, or one that involves existing clinical infection or perforated viscera."@en ;
+                  rdfs:label "Dirty wound according to CDC"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000527
+wont:WONT_0000527 rdf:type owl:Class ;
+                  owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000481
+                                                             [ rdf:type owl:Restriction ;
+                                                               owl:onProperty ns1:RO_0000086 ;
+                                                               owl:someValuesFrom wont:WONT_0000486
+                                                             ]
+                                                           ) ;
+                                        rdf:type owl:Class
+                                      ] ;
+                  rdfs:subClassOf wont:WONT_0000481 ;
+                  ns1:IAO_0000115 "A wound with microbial burden assessed according to IWII that bears the quality sterile."@en ;
+                  ns1:IAO_0000118 "Aseptic wound"@en ,
+                                  "Sterile wound"@en ;
+                  rdfs:label "Clean wound according to IWII"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000528
+wont:WONT_0000528 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_0000066 ;
+                  ns1:IAO_0000115 "A wound classification scale that grades a wound by its microbial burden on the wound infection continuum of the International Wound Infection Institute: clean, contaminated, colonized, infected."@en ;
+                  rdfs:label "IWII wound classification scale"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000529
+wont:WONT_0000529 rdf:type owl:Class ;
+                  rdfs:subClassOf wont:WONT_120016 ;
+                  ns1:IAO_0000115 "A wound classification grade that is a category of the IWII wound classification scale."@en ;
+                  rdfs:label "IWII wound classification grade"@en .
+
+
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120000
 wont:WONT_120000 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:BFO_0000034 ;
@@ -3929,30 +3913,6 @@ wont:WONT_120020 rdf:type owl:Class ;
 #    Individuals
 #################################################################
 
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000530
-wont:WONT_0000530 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000529 ;
-                 rdfs:label "clean"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000531
-wont:WONT_0000531 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000529 ;
-                 rdfs:label "contaminated"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000532
-wont:WONT_0000532 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000529 ;
-                 rdfs:label "colonized"@en .
-
-
-###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000533
-wont:WONT_0000533 rdf:type owl:NamedIndividual ,
-                          wont:WONT_0000529 ;
-                 rdfs:label "infected"@en .
-
-
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000123
 wont:WONT_0000123 rdf:type owl:NamedIndividual ,
                            wont:WONT_0000438 ;
@@ -4028,6 +3988,30 @@ wont:WONT_0000502 rdf:type owl:NamedIndividual ,
                            wont:WONT_0000495 ;
                   ns1:IAO_0000118 "Third degree"@en ;
                   rdfs:label "Full-thickness"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000530
+wont:WONT_0000530 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000529 ;
+                  rdfs:label "clean"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000531
+wont:WONT_0000531 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000529 ;
+                  rdfs:label "contaminated"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000532
+wont:WONT_0000532 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000529 ;
+                  rdfs:label "colonized"@en .
+
+
+###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000533
+wont:WONT_0000533 rdf:type owl:NamedIndividual ,
+                           wont:WONT_0000529 ;
+                  rdfs:label "infected"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120056

@@ -1217,6 +1217,17 @@ The rule cuts both ways: a module must carry **everything** the curated
 files reference, with a label — the build is wrong if any external class used
 by WONT or MILD comes out unlabelled — and **nothing** they do not.
 
+*Refined 2026-09-17 — we author axioms about our own classes only.* A module
+carries an external term with exactly the superclass path its owner states;
+neither the build script nor MILD nor WONT adds a `subClassOf` to a class
+another ontology owns, however tidy it would make the closure. Where an
+owner does not place its root under BFO — `DOID_4 disease`, `UO_0000000
+unit`, `FMA_62955 anatomical entity` — that root stands beside `entity`, and
+the MILD header says so. The two FMA grounding axioms the build had added on
+2026-09-16 were removed for this reason; the HP path that remains is quoted
+from `hp.owl` and `upheno.owl`, with the citation in the script. Moritz's
+wording: "we manipulate our own ontologies, not somebody else's."
+
 Enforced by: `build_disease_proposal.sh` refuses to run if WONT or MILD
 imports a release ontology directly, and aborts if the joint module exceeds
 3 MB; `schema_builder.stale()` lists every module as a source, so a

@@ -14,23 +14,24 @@ next reads it and the extraction schema regenerates when extraction next starts
 (`../Disease ontologies/build_disease_proposal.sh --no-reason`, rule 34) —
 never import a source ontology directly.
 
-**Where things stand (2026-09-16, evening).** Three rounds of hand edits
-are in and reviewed. Since the morning: `Malignant wound`, `Traumatic wound`,
-`Diabetic wound`, `Angiopathic wound` and `Autoimmune disease related wound`
-are defined through their wound-causing process; the CDC surgical classes and
-the IWII bioburden continuum are two separate axes, each with its scale, grade
-individuals and wound classes; `Neoplastic wound` is gone. Review completed
-the split (CDC `Clean wound` is a surgical-field class and no longer `≡ Wound ⊓
-sterile`; `sterile` defines the IWII clean wound; the IWII hub's union now has
-all four grades), renumbered 20 `WOND_1200xx` IRIs to `WONT_0000514–533`,
-restored the parent `Autoimmune disease related wound` had lost, removed the
-direct `fma.owl` import, fixed typos, wrote definitions. MILD now imports
-`fma_module`. Nine CQs rewritten. Measured: **CQ 15 → 21 / 65**, ELK 0
-unsatisfiable, closure 34,275 triples, roots beside `entity`: `disease`,
-`unit`. Unit suite 1005 passed.
+**Where things stand (2026-09-17).** Four rounds of hand edits reviewed.
+Latest: `Pressure ulcer` minted, the diabetes disease processes given a
+parent with type I and II under it, `Wound causing process` narrowed to
+`Anatomical structure`, the HP stubs reduced to bare declarations (the module
+carries them). Review: 3 new IRIs renumbered `WOND_120064–66` → `WONT_0000534–536`;
+direct `fma.owl` import removed again and the WONT catalog repointed at
+`fma_module` (it had been mapped to the 66 MB `fma_obo.owl`); `degree of
+malignancy` / `benign` / `malignant` moved to MILD as `MILD_120095–097`; the
+`MILD_120028 relatedMatch OGMS_0000063` annotation moved to MILD; MILD header
+records that foreign roots are accepted, not bridged. The build no longer
+grounds FMA under BFO (your ruling: we author axioms about our own classes
+only — INSTRUCTIONS rule 34). Measured: **CQ 22 / 65**, ELK 0 unsatisfiable,
+closure 34,286 triples, roots beside `entity`: `disease`, `unit`, `anatomical
+entity` (all three by design). Unit suite 1005 passed.
 
-Next free WONT id: **WONT_0000534**. Mint in the `WONT_` prefix, main
-series — never `WOND_`, never the `1200xx` band.
+Next free WONT id: **WONT_0000537**; next free MILD id: **MILD_120098**.
+Mint in the `WONT_` / `MILD_` prefix, main series — never `WOND_`. (Protégé:
+Preferences → New entities → set the prefix and the 7-digit counter once.)
 
 ---
 
@@ -38,19 +39,16 @@ series — never `WOND_`, never the `1200xx` band.
 
 | # | what | where | my recommendation |
 |---|---|---|---|
-| 1.1 | **`degree of malignancy` / `benign` / `malignant` (489–491) are now orphans.** `Malignant wound` is defined through `Wound causing malignant process`; nothing uses the three qualities. | WONT_0000489–491 | delete them, or keep `malignant` with a note saying it is reserved for the tumour, not the wound |
-| 1.2 | **Aetiology through process mereology.** The five wound classes are now `≡ Wound ⊓ output_of some (Wound development process ⊓ has_part some <X disease process>)`. That is process-part, not causation, so it does not break MILD commitment 4 — but the three that used to be *co-location* classes (diabetic, angiopathic, autoimmune) have lost that reading: `Diabetic wound` no longer says it shares a material disease entity with a `Diabetic metabolic disorder`. Nothing is wrong; it is a change of commitment worth an `IAO_0000116` on each of the three saying why. | WONT_0000015, 0000033, 0000088 | write the note; consider keeping the co-location axiom *beside* the process one — they are independent claims |
-| 1.3 | **`Pressure ulcer` has no WONT class.** CQ002 resolves to HP_0012399 (a phenotype) and fails. Your new pattern gives the shape directly: `Pressure ulcer ≡ Wound ⊓ output_of some Wound causing pressure impact process` (WONT_0000245), the way `Thermal wound ⊑ output_of some Wound causing heat impact process`. | new class | mint it (WONT_0000534) |
-| 1.4 | **`Wound causing process ⊑ has_participant some FMA_62955 Anatomical entity`** — true of nearly every process; it says nothing. If the intent was "acts on the patient's tissue", `FMA_67135 Anatomical structure` is tighter; if it was "has the wound as participant", the definition already says that. | WONT_0000418 | narrow or drop |
-| 1.5 | **`Diabetes mellitus type II disease process`** (520) is the only *type-specific* disease process in the file, and `Diabetic wound` is defined over it — so a wound in a type I diabetic is not a `Diabetic wound`. | WONT_0000520, 0000088 | rename to `Diabetes mellitus disease process`, or add type I and define over the parent |
+| 1.1 | **Aetiology through process mereology.** The five wound classes are `≡ Wound ⊓ output_of some (Wound development process ⊓ has_part some <X disease process>)`. That is process-part, not causation, so it keeps MILD commitment 4 — but the three that used to be *co-location* classes (diabetic, angiopathic, autoimmune) have lost that reading: `Diabetic wound` no longer says it shares a material disease entity with a `Diabetic metabolic disorder`. Nothing is wrong; it is a change of commitment worth an `IAO_0000116` on each of the three saying why. | WONT_0000015, 0000033, 0000088 | write the note; consider keeping the co-location axiom *beside* the process one — they are independent claims |
+| 1.2 | **`Diabetic wound` is still defined over `Diabetes mellitus type II disease process` (520)** although you minted the parent `Diabetes mellitus disease process` (535) with type I (536) and II under it. As it stands a wound in a type I diabetic is not a `Diabetic wound`. | WONT_0000088 | point the `has_part some` filler at 535 |
+| 1.3 | **`Pressure ulcer` (534) is a bare subclass of `Wound`.** Your own pattern gives it a defining axiom: `≡ Wound ⊓ output_of some Wound causing pressure impact process` (WONT_0000245), as `Traumatic wound` and `Thermal wound` have. I wrote the definition that way; the axiom is yours to add. | WONT_0000534 | add the equivalence |
 
 ## 2. Small things
 
 | # | what |
 |---|---|
-| 2.1 | Definitions written in review are first drafts in the house pattern: the 36 of 12 Sep, 3 of 16 Sep (morning), and 17 of 16 Sep (evening: the ten process classes, the CDC/IWII hubs, scale and grades). The CDC grade wordings follow the CDC/NHSN surgical wound classification; the process ones are mine. |
-| 2.2 | **Two roots still sit beside `entity` in the import closure**: `disease` (DOID_4) and `unit` (UO_0000000). Everything WONT and MILD use is under BFO except these two subtrees, because neither DOID nor UO places its root under BFO and the modules only carry what the sources say. Three options, one per line in MILD's import block or header: (a) `UO_0000000 ⊑ IAO_0000003 measurement unit label` — the OBI way of placing a unit under information content entity; (b) for DOID nothing — WONT deliberately links DOID terms by `skos:relatedMatch`, never subsumption, because a DOID disease is a nosological category, not the material disorder; so `DOID_4` staying outside BFO is *correct*, and should be said in an `rdfs:comment` on the MILD header rather than left to look like an oversight; (c) leave both and say nothing — the one option that is not defensible, because the next reader will re-find them. |
-| 2.3 | `MILD_120028 skos:relatedMatch OGMS_0000063` is asserted in **WONT** about a **MILD** class. Harmless, but it belongs in MILD. |
+| 2.1 | Definitions written in review are first drafts in the house pattern: 36 (12 Sep), 3 + 17 (16 Sep), 3 (17 Sep: `Pressure ulcer`, the two diabetes processes; and the three malignancy qualities now in MILD). The CDC grade wordings follow the CDC/NHSN classification; the process ones are mine. |
+| 2.2 | `hp_module.owl` was re-saved by Protégé (header and OWL-API version line only) — reverted. Modules are build outputs; if Protégé asks to save one, say no. |
 
 ---
 
@@ -61,5 +59,5 @@ series — never `WOND_`, never the `1200xx` band.
 | 2026-09-10 | File created: A (chronic axiom), B (3 MILD parents), C (orphan patch — withdrawn), D, E (determinate-quality block), F (import closure). |
 | 2026-09-12 | A, E (mostly) and F2 applied by hand and reviewed; B closed as never missing. Details in ROADMAP changelog. |
 | 2026-09-14 | Rewritten to hold only what is open. Previous full text in git history (`8896bf9`). |
-| 2026-09-16 | Second hand edit reviewed; `fma_module` built; `located_in` allowed; chronic branch withdrawn on your ruling. |
-| 2026-09-16 | Third hand edit reviewed (aetiology via process, CDC/IWII split, `Neoplastic wound` dropped). Closed: old 1.1, 1.3, 1.4, 1.5, 2.1, 2.3, 2.5, 2.6, 2.7. Your rulings recorded: grades stay individuals (old 1.2) — pipeline fixed instead (`ontology_labels()` skips individuals, includes alt terms; old 2.7); Jackson source fine (old 2.3). CQ001/002/006/010/011/012/033/091/110 rewritten; checker taught `output_of` and intersection fillers. |
+| 2026-09-16 | Second and third hand edits reviewed; `fma_module`; chronic branch withdrawn; CDC/IWII split; nine CQs rewritten; anchors fixed. |
+| 2026-09-17 | Fourth hand edit reviewed. Your rulings: malignancy qualities and the OGMS relatedMatch belong in MILD (moved); `unit`, `disease`, `anatomical entity` stay unbridged — we author axioms about our own classes only (rule 34 refined, FMA grounding removed from the build, MILD header says so). Closed: old 1.1, 1.3 (class minted; axiom still open as new 1.3), 1.4, 1.5 (hierarchy minted; filler still open as new 1.2), 2.2, 2.3. `located_in` left `ALLOWED_PREDICATES` again — with Skin outside BFO the schema licenses no pair for it. |

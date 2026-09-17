@@ -3,7 +3,7 @@
 
 Regenerate with:  python scripts/build_extraction_schema.py
 Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)
-Generated:        2026-09-16
+Generated:        2026-09-17
 
 Mirrors config/extraction_schema.yaml. Emitted directly rather than via
 `gen-pydantic` so the pipeline has no hard dependency on the linkml generator;
@@ -342,10 +342,14 @@ GROUNDING: dict[str, dict[str, str]] = {
         'Contaminated wound according to CDC': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000525',
         'Dirty wound according to CDC': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000526',
         'Clean wound according to IWII': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000527',
+        'Pressure ulcer': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000534',
         'wound infecting pathogen': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120019',
         'Necrosis': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120020',
     },
     'quality': {
+        'degree of malignancy': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120095',
+        'benign': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120096',
+        'malignant': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120097',
         'Redness': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000257',
         'Thread size': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000315',
         'Thread size 0': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000316',
@@ -394,9 +398,6 @@ GROUNDING: dict[str, dict[str, str]] = {
         'sterile': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000486',
         'degree of tissue perfusion': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000487',
         'ischemic': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000488',
-        'degree of malignancy': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000489',
-        'benign': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000490',
-        'malignant': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000491',
         'colonized': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000512',
     },
     'disposition': {
@@ -599,6 +600,8 @@ GROUNDING: dict[str, dict[str, str]] = {
         'Irreversibly diminished microvascular perfusion process': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000521',
         'Angiopathic disease process': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000522',
         'Autoimmune disease process': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000523',
+        'Diabetes mellitus disease process': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000535',
+        'Diabetes mellitus type I disease process': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000536',
         'Wound dressing process': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120013',
         'Wound classification process': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120015',
     },
@@ -675,7 +678,11 @@ DEFINITIONS: dict[str, str] = {
     'Contaminated wound according to CDC': 'A wound with microbial burden assessed according to CDC that is an open, fresh, accidental wound, or an operative wound with a major break in sterile technique or gross spillage from the gastrointestinal tract.',
     'Dirty wound according to CDC': 'A wound with microbial burden assessed according to CDC that is an old traumatic wound with retained devitalised tissue, or one that involves existing clinical infection or perforated viscera.',
     'Clean wound according to IWII': 'A wound with microbial burden assessed according to IWII that bears the quality sterile.',
+    'Pressure ulcer': 'A wound that is the specified output of a wound causing pressure impact process.',
     'wound infecting pathogen': 'A pathogen that bears a wound infecting disposition.',
+    'degree of malignancy': 'A quality of a pathological disorder that is the extent to which its tissue shows neoplastic growth that invades surrounding tissue or spreads to distant sites.',
+    'benign': 'A degree of malignancy that qualifies its bearer as benign: any neoplastic tissue present neither invades surrounding tissue nor spreads.',
+    'malignant': 'A degree of malignancy that qualifies its bearer as malignant: neoplastic tissue present invades surrounding tissue or spreads to distant sites.',
     'degree of wound pain': 'A quality that inheres in a patient, that is the extent of the pain that patient feels, and that is causally influenced by a wound.',
     'degree of maceration': 'A quality of a wound edge that is the extent to which its tissue has been softened by prolonged exposure to moisture.',
     'macerated': 'A degree of maceration that qualifies its bearer as macerated.',
@@ -703,9 +710,6 @@ DEFINITIONS: dict[str, str] = {
     'sterile': 'A degree of microbial burden that qualifies its bearer as sterile: no viable microorganisms are present in the wound.',
     'degree of tissue perfusion': 'A quality of a wound that is the extent to which its tissue is supplied with blood.',
     'ischemic': 'A degree of tissue perfusion that qualifies its bearer as ischemic: the blood supply to the tissue is insufficient for its metabolic needs.',
-    'degree of malignancy': 'A quality of a wound that is the extent to which its tissue shows neoplastic growth that invades surrounding tissue or spreads to distant sites.',
-    'benign': 'A degree of malignancy that qualifies its bearer as benign: any neoplastic tissue present neither invades surrounding tissue nor spreads.',
-    'malignant': 'A degree of malignancy that qualifies its bearer as malignant: neoplastic tissue present invades surrounding tissue or spreads to distant sites.',
     'colonized': 'A degree of microbial burden that qualifies its bearer as colonized: microorganisms are present in the wound and multiply in it, without invading its tissue or eliciting a host response.',
     'Physician role': 'A healthcare provider role that inheres in a person in virtue of that person being licensed to practise medicine.',
     'tendency': 'A realizable entity that inheres in a material entity and that, in virtue of the physical makeup of its bearer, inclines that bearer toward participating in processes of a certain type — such that the inclination raises the objective probability of, but does not necessitate, the occurrence of those processes; that may be counteracted or reinforced by other tendencies of the same bearer without thereby ceasing to exist; and that may be realized to varying degrees, or not at all.',
@@ -756,10 +760,12 @@ DEFINITIONS: dict[str, str] = {
     'Acidity impact process': 'A process in which an acid or a base acts on a tissue.',
     'Heat impact process': 'A process in which heat acts on a tissue.',
     'Pressure impact process': 'A process in which sustained mechanical pressure acts on a tissue.',
-    'Diabetes mellitus type II disease process': 'A disease course process of a diabetic metabolic disorder of type II.',
+    'Diabetes mellitus type II disease process': 'A diabetes mellitus disease process of a diabetic metabolic disorder of type II.',
     'Irreversibly diminished microvascular perfusion process': 'A process in which the perfusion of a tissue through its microvasculature is reduced without recovery.',
     'Angiopathic disease process': 'A disease course process of an angiopathy.',
     'Autoimmune disease process': 'A disease course process of an autoimmune tissue disorder.',
+    'Diabetes mellitus disease process': 'A disease course process of a diabetic metabolic disorder.',
+    'Diabetes mellitus type I disease process': 'A diabetes mellitus disease process of a diabetic metabolic disorder of type I.',
     'Wound classification process': 'A disease classification process that has as specified output a wound classification result.',
     'threshold crossing event': 'A process boundary that occupies a temporal instant and that has as participant a measurement datum that is about a phenotypic abnormality.',
 }
@@ -789,7 +795,6 @@ class RelationType(str, Enum):
     IS_ABOUT = 'is about'
     IS_SPECIFIED_INPUT_OF = 'is specified input of'
     IS_SPECIFIED_OUTPUT_OF = 'is specified output of'
-    LOCATED_IN = 'located in'
     OCCUPIES_TEMPORAL_REGION = 'occupies temporal region'
     OUTPUT_OF = 'output of'
     PART_OF = 'part of'
@@ -820,7 +825,6 @@ RELATION_IRI: dict[str, str] = {
     RelationType.IS_ABOUT.value: 'http://purl.obolibrary.org/obo/IAO_0000136',
     RelationType.IS_SPECIFIED_INPUT_OF.value: 'http://purl.obolibrary.org/obo/OBI_0000295',
     RelationType.IS_SPECIFIED_OUTPUT_OF.value: 'http://purl.obolibrary.org/obo/OBI_0000312',
-    RelationType.LOCATED_IN.value: 'http://purl.obolibrary.org/obo/RO_0001025',
     RelationType.OCCUPIES_TEMPORAL_REGION.value: 'http://purl.obolibrary.org/obo/BFO_0000199',
     RelationType.OUTPUT_OF.value: 'http://purl.obolibrary.org/obo/RO_0002353',
     RelationType.PART_OF.value: 'http://purl.obolibrary.org/obo/BFO_0000050',
@@ -905,9 +909,6 @@ RELATION_DOMAINS: dict[str, set[tuple[str, str]]] = {
     RelationType.IS_SPECIFIED_OUTPUT_OF.value: {
         ('information entity', 'process'),
         ('material entity', 'process'),
-    },
-    RelationType.LOCATED_IN.value: {
-        ('material entity', 'material entity'),
     },
     RelationType.OCCUPIES_TEMPORAL_REGION.value: {
         ('process boundary', 'occurrent'),
