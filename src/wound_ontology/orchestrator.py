@@ -283,6 +283,8 @@ class Orchestrator:
             individuals = set(g.subjects(RDF.type, OWL.NamedIndividual))
             for pred in (RDFS.label, alt):
                 for s, _, o in g.triples((None, pred, None)):
+                    if s in individuals:
+                        continue
                     text = str(o).strip()
                     if text:
                         labels.add(text)

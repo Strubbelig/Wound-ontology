@@ -1110,7 +1110,8 @@ wont:WONT_0000032 rdf:type owl:Class ;
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000033
 wont:WONT_0000033 rdf:type owl:Class ;
-                  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                  rdfs:subClassOf wont:WONT_0000380 ,
+                                  [ rdf:type owl:Restriction ;
                                     owl:onProperty ns1:OBI_0000312 ;
                                     owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000414
                                                                               [ rdf:type owl:Restriction ;

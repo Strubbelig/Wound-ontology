@@ -248,14 +248,14 @@ enums:
       CELLULOSE_ACETATE_MESH_IMPREGNATED_WITH_A_PETROLATUM_EMULSION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000061
         title: "Cellulose acetate mesh impregnated with a petrolatum emulsion"
-      CLEAN_CONTAMINATED_WOUND:
+      CLEAN_CONTAMINATED_WOUND_ACCORDING_TO_CDC:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000067
-        title: "Clean contaminated wound"
-      CLEAN_WOUND:
+        title: "Clean-contaminated wound according to CDC"
+        description: "A wound with microbial burden assessed according to CDC that is an operative wound in which the respiratory, alimentary, genital or urinary tract is entered under controlled conditions and without unusual contamination."
+      CLEAN_WOUND_ACCORDING_TO_CDC:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000068
-        title: "Clean wound"
-        description: "A wound that bears the quality sterile."
-        aliases: ["Aseptic wound"]
+        title: "Clean wound according to CDC"
+        description: "A wound with microbial burden assessed according to CDC that is an uninfected operative wound in which no inflammation is encountered and the respiratory, alimentary, genital or urinary tract is not entered."
       CLOSED_DRAIN:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000071
         title: "Closed drain"
@@ -437,10 +437,6 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000211
         title: "Necrotic wound bed"
         description: "A wound base that bears the quality necrotic."
-      NEOPLASTIC_WOUND:
-        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000214
-        title: "Neoplastic wound"
-        description: "A wound that is the specified output of a disorder development process that has as participant a neoplasm."
       NON_ABSORBABLE_THREAD_MATERIAL:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000215
         title: "Non-absorbable thread material"
@@ -741,10 +737,10 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000473
         title: "Mucosal blister"
         description: "A pathological disorder that is part of a mucosa and consists in a fluid-filled separation of the epithelium of that mucosa from the tissue beneath it."
-      WOUND_WITH_RECOGNIZED_MICROBIAL_BURDEN:
+      WOUND_WITH_MICROBIAL_BURDEN_ASSESSED_ACCORDING_TO_IWII:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000481
-        title: "Wound with recognized microbial burden"
-        description: "A wound that bears the quality contaminated, colonized or infected."
+        title: "Wound with microbial burden assessed according to IWII"
+        description: "A wound whose microbial burden is assessed on the IWII wound infection continuum: it bears the quality sterile, contaminated, colonized or infected."
       FIRST_DEGREE_BURN_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000482
         title: "First-degree burn wound"
@@ -774,6 +770,7 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000506
         title: "Epithelialized wound"
         description: "A wound that bears the quality epithelialized: its surface has been covered by newly formed epithelium."
+        aliases: ["Healed wound"]
       LARGE_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000507
         title: "Large wound"
@@ -794,6 +791,23 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000511
         title: "Colonized wound"
         description: "A wound with recognized microbial burden that bears the quality colonized."
+      WOUND_WITH_MICROBIAL_BURDEN_ASSESSED_ACCORDING_TO_CDC:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000524
+        title: "Wound with microbial burden assessed according to CDC"
+        description: "A wound that is classified by the CDC surgical wound classification: clean, clean-contaminated, contaminated or dirty, according to the state of the operative field."
+      CONTAMINATED_WOUND_ACCORDING_TO_CDC:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000525
+        title: "Contaminated wound according to CDC"
+        description: "A wound with microbial burden assessed according to CDC that is an open, fresh, accidental wound, or an operative wound with a major break in sterile technique or gross spillage from the gastrointestinal tract."
+      DIRTY_WOUND_ACCORDING_TO_CDC:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000526
+        title: "Dirty wound according to CDC"
+        description: "A wound with microbial burden assessed according to CDC that is an old traumatic wound with retained devitalised tissue, or one that involves existing clinical infection or perforated viscera."
+      CLEAN_WOUND_ACCORDING_TO_IWII:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000527
+        title: "Clean wound according to IWII"
+        description: "A wound with microbial burden assessed according to IWII that bears the quality sterile."
+        aliases: ["Aseptic wound"]
       WOUND_INFECTING_PATHOGEN:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120019
         title: "wound infecting pathogen"
@@ -882,9 +896,9 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000435
         title: "macerated"
         description: "A degree of maceration that qualifies its bearer as macerated."
-      TISSUE_FIRMNESS:
+      DEGREE_OF_TISSUE_FIRMNESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000450
-        title: "tissue firmness"
+        title: "degree of tissue firmness"
         description: "A quality of a bodily tissue that is the degree of resistance it offers to deformation."
       DEGREE_OF_SKIN_ADHERENCE_TO_UNDERLYING_TISSUE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000451
@@ -1338,6 +1352,14 @@ enums:
         title: "Partial thickness"
         description: "A burn wound classification grade according to Hildanus and Derganc in which the injury extends into but not through the dermis; its instances are the superficial and the deep partial-thickness grade."
         aliases: ["Second degree"]
+      IWII_WOUND_CLASSIFICATION_SCALE:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000528
+        title: "IWII wound classification scale"
+        description: "A wound classification scale that grades a wound by its microbial burden on the wound infection continuum of the International Wound Infection Institute: clean, contaminated, colonized, infected."
+      IWII_WOUND_CLASSIFICATION_GRADE:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000529
+        title: "IWII wound classification grade"
+        description: "A wound classification grade that is a category of the IWII wound classification scale."
       WOUND_CLASSIFICATION_GRADE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120016
         title: "wound classification grade"
@@ -1412,9 +1434,9 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120092
         title: "complication disease process"
         description: "A disease process that has as participant a disease that has as part a disorder which is the output of another disease course process."
-      ACIDITY_IMPACT_PROCESS:
+      WOUND_CAUSING_ACIDITY_IMPACT_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000004
-        title: "Acidity impact process"
+        title: "Wound causing acidity impact process"
       ASSESSING_PATIENT_S_MEDICAL_HISTORY:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000032
         title: "Assessing patient's medical history"
@@ -1463,9 +1485,9 @@ enums:
       GRANULATION_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000132
         title: "Granulation process"
-      HEAT_IMPACT_PROCESS:
+      WOUND_CAUSING_HEAT_IMPACT_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000140
-        title: "Heat impact process"
+        title: "Wound causing heat impact process"
       HISTOPATHOLOGICAL_EXAMINATION_PROCESS_OF_WOUND_MATERIAL:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000146
         title: "Histopathological examination process of wound material"
@@ -1493,9 +1515,9 @@ enums:
       POSTOPERATIVE_WOUND_CONTROL_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000243
         title: "Postoperative wound control process"
-      PRESSURE_IMPACT_PROCESS:
+      WOUND_CAUSING_PRESSURE_IMPACT_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000245
-        title: "Pressure impact process"
+        title: "Wound causing pressure impact process"
       WOUND_HEALING_BY_PRIMARY_INTENTION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000248
         title: "Wound healing by primary intention"
@@ -1578,9 +1600,10 @@ enums:
       WOUND_PALPATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000416
         title: "Wound palpation"
-      PATHOLOGICAL_WOUND_REALIZING_PROCESS:
+      WOUND_CAUSING_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000418
-        title: "Pathological wound realizing process"
+        title: "Wound causing process"
+        description: "A process that has the newly developed wound as a participant or output and does so with near certainty."
       WOUND_SIZE_MEASUREMENT_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000419
         title: "Wound size measurement process"
@@ -1602,6 +1625,46 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000471
         title: "Scarring process"
         description: "A wound healing related physiological process in which fibrous connective tissue replaces tissue lost in a wound, yielding a scar rather than restoration of the original tissue architecture."
+      MALIGNANT_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000514
+        title: "Malignant process"
+        description: "A disease course process that has as participant a malignancy."
+      WOUND_CAUSING_MALIGNANT_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000515
+        title: "Wound causing malignant process"
+        description: "A malignant process that is a wound causing process."
+      WOUND_CAUSING_TRAUMA_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000516
+        title: "Wound causing trauma process"
+        description: "A trauma process that is a wound causing process."
+      ACIDITY_IMPACT_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000517
+        title: "Acidity impact process"
+        description: "A process in which an acid or a base acts on a tissue."
+      HEAT_IMPACT_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000518
+        title: "Heat impact process"
+        description: "A process in which heat acts on a tissue."
+      PRESSURE_IMPACT_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000519
+        title: "Pressure impact process"
+        description: "A process in which sustained mechanical pressure acts on a tissue."
+      DIABETES_MELLITUS_TYPE_II_DISEASE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000520
+        title: "Diabetes mellitus type II disease process"
+        description: "A disease course process of a diabetic metabolic disorder of type II."
+      IRREVERSIBLY_DIMINISHED_MICROVASCULAR_PERFUSION_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000521
+        title: "Irreversibly diminished microvascular perfusion process"
+        description: "A process in which the perfusion of a tissue through its microvasculature is reduced without recovery."
+      ANGIOPATHIC_DISEASE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000522
+        title: "Angiopathic disease process"
+        description: "A disease course process of an angiopathy."
+      AUTOIMMUNE_DISEASE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000523
+        title: "Autoimmune disease process"
+        description: "A disease course process of an autoimmune tissue disorder."
       WOUND_DRESSING_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120013
         title: "Wound dressing process"
