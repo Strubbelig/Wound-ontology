@@ -1,7 +1,7 @@
 # GENERATED FILE - DO NOT EDIT BY HAND.
 # Regenerate with:  python scripts/build_extraction_schema.py
 # Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)
-# Generated:        2026-09-17
+# Generated:        2026-09-18
 id: https://w3id.org/wont/extraction
 name: wont-extraction
 title: WONT/MILD-derived extraction schema
@@ -354,6 +354,9 @@ enums:
       HYPERGRANULATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000153
         title: "Hypergranulation"
+      IMMUNOSUPPRESSION:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000161
+        title: "Immunosuppression"
       INCISION_FOIL:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000162
         title: "Incision foil"
@@ -563,6 +566,7 @@ enums:
       THERMAL_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310
         title: "Thermal wound"
+        aliases: ["Burn injury"]
       THORACIC_DRAIN:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000311
         title: "Thoracic drain"
@@ -576,7 +580,7 @@ enums:
       TRAUMATIC_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339
         title: "Traumatic wound"
-        description: "A wound that is the specified output of a trauma process."
+        description: "A wound that is the output of a wound causing trauma process."
       TYMPANIC_DRAIN:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000344
         title: "Tympanic drain"
@@ -586,6 +590,7 @@ enums:
       ULCUS_CRURIS_VENOSUM:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000347
         title: "Ulcus cruris venosum"
+        aliases: ["Venous leg ulcer"]
       ULCUS_HYPERTONICUS_MARTORELL:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000348
         title: "Ulcus hypertonicus Martorell"
@@ -608,7 +613,7 @@ enums:
       WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380
         title: "Wound"
-        description: "A pathological disorder that is the specified output of a wound development process."
+        description: "A pathological disorder that is the output of a wound development process."
       WOUND_AND_SOFT_TISSUE_DRAIN:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000381
         title: "Wound and soft tissue drain"
@@ -626,7 +631,7 @@ enums:
       WOUND_DEHISCENCE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000392
         title: "Wound dehiscence"
-        description: "A pathological disorder that is the specified output of a wound dehiscence process."
+        description: "A pathological disorder that is the output of a wound dehiscence process."
       WOUND_DRESSING:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000398
         title: "Wound dressing"
@@ -815,10 +820,62 @@ enums:
         title: "Pressure ulcer"
         description: "A wound that is the output of a wound development process that has as part a wound causing pressure impact process."
         aliases: ["decubitus ulcer"]
-      WOUND_INFECTING_PATHOGEN:
+      GROUP_A_STREPTOCOCCUS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000547
+        title: "Group A Streptococcus"
+      VANCOMYCIN:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000548
+        title: "Vancomycin"
+      DIABETIC_FOOT_ULCER:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000549
+        title: "Diabetic foot ulcer"
+        description: "A diabetic wound that is located in a foot."
+      SURGICAL_SITE_INFECTION:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000550
+        title: "Surgical site infection"
+      SOFT_TISSUE_WOUND:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000551
+        title: "Soft tissue wound"
+      LACERATION:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000552
+        title: "Laceration"
+      ACUTE_WOUND:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000553
+        title: "Acute wound"
+      FOREIGN_BODY_WOUND:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000554
+        title: "Foreign body wound"
+        description: "A wound that is the output of a wound development process that has as part a wound causing foreign body process."
+      FOREIGN_BODY:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000555
+        title: "Foreign body"
+      HYPERTROPHIC_SCAR:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000556
+        title: "Hypertrophic scar"
+      WOUND_COMPLICATION:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000557
+        title: "Wound complication"
+        description: "A material complication disease entity that has as part a wound complication disorder."
+      SEPSIS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000558
+        title: "Sepsis"
+      OSTEOMYELITIS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000559
+        title: "Osteomyelitis"
+      PRESSURE_REDISTRIBUTION_MATTRESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000570
+        title: "Pressure redistribution mattress"
+      THERAPEUTIC_FOOTWEAR:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000571
+        title: "Therapeutic footwear"
+      WOUND_COMPLICATION_DISORDER:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000588
+        title: "Wound complication disorder"
+        description: "A pathological disorder that is the output of a process in the course of a wound: the disorder-level counterpart of a wound complication (MILD_120053's pattern). Wound dehiscence is one; the disorders of a surgical site infection are others."
+      PATHOGEN_WITH_WOUND_INFECTING_TENDENCY:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120019
-        title: "wound infecting pathogen"
-        description: "A pathogen that bears a wound infecting disposition."
+        title: "pathogen with wound infecting tendency"
+        description: "A pathogen that bears a wound infecting tendency."
       NECROSIS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120020
         title: "Necrosis"
@@ -1003,22 +1060,20 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000512
         title: "colonized"
         description: "A degree of microbial burden that qualifies its bearer as colonized: microorganisms are present in the wound and multiply in it, without invading its tissue or eliciting a host response."
-  DispositionTerm:
-    description: >-
-      Existing 'disposition' classes in MILD/WONT. Ground to one of these when the
-      term already exists; leave empty when it is genuinely new.
-    permissible_values:
-      IMMUNOSUPPRESSION:
-        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000161
-        title: "Immunosuppression"
-      WOUND_INFECTING_DISPOSITION:
-        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120018
-        title: "wound infecting disposition"
   FunctionTerm:
     description: >-
       Existing 'function' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
+      PRESSURE_REDISTRIBUTION_FUNCTION:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000580
+        title: "pressure redistribution function"
+      CLINICAL_FUNCTION:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000583
+        title: "clinical function"
+      THERAPEUTIC_FUNCTION:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000584
+        title: "therapeutic function"
       WOUND_PROTECTION_FUNCTION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120000
         title: "wound protection function"
@@ -1073,6 +1128,16 @@ enums:
       WOUND_MANAGER_ROLE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000413
         title: "Wound manager role"
+      ANTIBIOTIC_DRUG_ROLE:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000578
+        title: "antibiotic drug role"
+      THERAPEUTIC_ROLE:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000582
+        title: "therapeutic role"
+      LOCAL_ANAESTHETIC_DRUG_ROLE:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000585
+        title: "local anaesthetic drug role"
+        description: "A clinical drug role borne by a substance used to produce local anaesthesia."
   TendencyTerm:
     description: >-
       Existing 'tendency' classes in MILD/WONT. Ground to one of these when the
@@ -1106,6 +1171,9 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000449
         title: "advanced age wound-healing predisposition"
         description: "A disease predisposition that inheres in a human being of advanced age and whose realization impairs wound healing."
+      WOUND_INFECTING_TENDENCY:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120018
+        title: "wound infecting tendency"
   InformationEntityTerm:
     description: >-
       Existing 'information entity' classes in MILD/WONT. Ground to one of these when the
@@ -1179,100 +1247,129 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120089
         title: "treatment plan specification"
         description: "A plan specification that is about a treatment plan."
-      ANTIBIOTIC_THERAPY:
+      THRESHOLD_SPECIFICATION:
+        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120098
+        title: "threshold specification"
+        description: "A directive information entity that has as part a threshold value and a comparison operator and that is about a quality, such that the quality's meeting the threshold is what the specification prescribes as decisive."
+      MEDICAL_CONDITION_TREATMENT_PLAN_SPECIFICATION:
+        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120099
+        title: "Medical condition treatment plan specification"
+        aliases: ["Method used for medical condition treatment"]
+      PROPHYLAXIS_PLAN_SPECIFICATION:
+        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120100
+        title: "prophylaxis plan specification"
+      ANTIBIOTIC_THERAPY_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000016
-        title: "Antibiotic therapy"
+        title: "Antibiotic therapy plan specification"
+        aliases: ["Antibiotic therapy"]
       ASEPSIS_SCORE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000028
         title: "ASEPSIS score"
-      ASEPTIC_CONDITIONS:
+      ASEPTIC_CONDITIONS_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000029
-        title: "Aseptic conditions"
-      ASEPTIC_CUTICLE:
+        title: "Aseptic conditions plan specification"
+        aliases: ["Aseptic conditions"]
+      ASEPTIC_CUTICLE_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000030
-        title: "Aseptic cuticle"
-      BIOBAG_DEBRIDEMENT:
+        title: "Aseptic cuticle plan specification"
+        aliases: ["Aseptic cuticle"]
+      BIOBAG_DEBRIDEMENT_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000038
-        title: "Biobag debridement"
-      BIOSURGICAL_DEBRIDEMENT:
+        title: "Biobag debridement plan specification"
+        aliases: ["Biobag debridement"]
+      BIOSURGICAL_DEBRIDEMENT_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000040
-        title: "Biosurgical debridement"
+        title: "Biosurgical debridement plan specification"
+        aliases: ["Biosurgical debridement"]
       WOUND_CLASSIFICATION_SCALE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000066
         title: "Wound classification scale"
         description: "An information content entity that is a specified input of a wound classification process."
-      CO2_BATH_WOUND_THERAPY:
+      CO2_BATH_WOUND_THERAPY_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000072
-        title: "CO2 bath wound therapy"
-      COMPRESS_DEBRIDEMENT:
+        title: "CO2 bath wound therapy plan specification"
+        aliases: ["CO2 bath wound therapy"]
+      COMPRESS_DEBRIDEMENT_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000076
-        title: "Compress debridement"
-      COMPRESSION_THERAPY:
+        title: "Compress debridement plan specification"
+        aliases: ["Compress debridement"]
+      COMPRESSION_THERAPY_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000077
-        title: "Compression therapy"
-      DRESSING_CHANGE:
+        title: "Compression therapy plan specification"
+        aliases: ["Compression therapy"]
+      DRESSING_CHANGE_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000094
-        title: "Dressing change"
-      FLAP_PLASTY:
+        title: "Dressing change plan specification"
+        aliases: ["Dressing change"]
+      FLAP_PLASTY_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000114
-        title: "Flap plasty"
+        title: "Flap plasty plan specification"
+        aliases: ["Flap plasty"]
       GUSTILO_AND_ANDERSON_WOUND_CLASSIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000134
         title: "Gustilo and Anderson wound classification"
       GUSTILO_AND_ANDERSON_WOUND_CLASSIFICATION_GRADE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000135
         title: "Gustilo and Anderson wound classification grade"
-      HAND_DISINFECTION:
+      HAND_DISINFECTION_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000138
-        title: "Hand disinfection"
-      HYPERBARIC_O2_WOUND_THERAPY:
+        title: "Hand disinfection plan specification"
+        aliases: ["Hand disinfection"]
+      HYPERBARIC_O2_WOUND_THERAPY_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000152
-        title: "Hyperbaric O2 wound therapy"
-      MECHANICAL_DEBRIDEMENT:
+        title: "Hyperbaric O2 wound therapy plan specification"
+        aliases: ["Hyperbaric O2 wound therapy"]
+      MECHANICAL_DEBRIDEMENT_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000189
-        title: "Mechanical debridement"
-      METHOD_USED_FOR_WOUND_COMPLICATION_PREVENTION:
-        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000198
-        title: "Method used for wound complication prevention"
-      METHOD_USED_FOR_WOUND_COMPLICATION_TREATMENT:
-        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000199
-        title: "Method used for wound complication treatment"
-      METHOD_USED_FOR_WOUND_TREATMENT:
+        title: "Mechanical debridement plan specification"
+        aliases: ["Mechanical debridement"]
+      WOUND_TREATMENT_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000200
-        title: "Method used for wound treatment"
-      NEGATIVE_PRESSURE_WOUND_THERAPY:
+        title: "Wound treatment plan specification"
+        aliases: ["Method used for wound treatment"]
+      NEGATIVE_PRESSURE_WOUND_THERAPY_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000213
-        title: "Negative pressure wound therapy"
-      PAIN_MANAGEMENT:
+        title: "Negative pressure wound therapy plan specification"
+        aliases: ["Negative pressure wound therapy"]
+      PAIN_MANAGEMENT_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000222
-        title: "Pain management"
-      PATIENT_EDUCATION:
+        title: "Pain management plan specification"
+        aliases: ["Pain management"]
+      PATIENT_EDUCATION_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000225
-        title: "Patient education"
-      PERIOPERATIVE_ANTIMICROBIAL_PROPHYLAXIS:
+        title: "Patient education plan specification"
+        aliases: ["Patient education"]
+      PERIOPERATIVE_ANTIMICROBIAL_PROPHYLAXIS_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000228
-        title: "Perioperative antimicrobial prophylaxis"
+        title: "Perioperative antimicrobial prophylaxis plan specification"
+        aliases: ["Perioperative antimicrobial prophylaxis"]
       SHEA_CLASSIFICATION_OF_PRESSURE_ULCERS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000279
         title: "Shea classification of pressure ulcers"
-      SKIN_GRAFTING:
+      SKIN_GRAFTING_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000286
-        title: "Skin grafting"
-      SKIN_STAPLING:
+        title: "Skin grafting plan specification"
+        aliases: ["Skin grafting"]
+      SKIN_STAPLING_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000287
-        title: "Skin stapling"
-      SURFACE_DISINFECTION:
+        title: "Skin stapling plan specification"
+        aliases: ["Skin stapling"]
+      SURFACE_DISINFECTION_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000297
-        title: "Surface disinfection"
-      SUTURING:
+        title: "Surface disinfection plan specification"
+        aliases: ["Surface disinfection"]
+      SUTURING_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000302
-        title: "Suturing"
-      SYSTEMIC_ANTIBIOTIC_THERAPY:
+        title: "Suturing plan specification"
+        aliases: ["Suturing"]
+      SYSTEMIC_ANTIBIOTIC_THERAPY_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000305
-        title: "Systemic antibiotic therapy"
-      TOPICAL_ANTIBIOTIC_THERAPY:
+        title: "Systemic antibiotic therapy plan specification"
+        aliases: ["Systemic antibiotic therapy"]
+      TOPICAL_ANTIBIOTIC_THERAPY_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000335
-        title: "Topical antibiotic therapy"
+        title: "Topical antibiotic therapy plan specification"
+        aliases: ["Topical antibiotic therapy"]
       TSCHERNE_AND_OESTERN_WOUND_CLASSIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000341
         title: "Tscherne and Oestern wound classification"
@@ -1288,18 +1385,22 @@ enums:
       WAGNER_AND_ANDERSON_WOUND_CLASSIFICATION_GRADE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000376
         title: "Wagner and Anderson wound classification grade"
-      WEARING_STERILE_GLOVES:
+      WEARING_STERILE_GLOVES_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000378
-        title: "Wearing Sterile gloves"
-      WOUND_CLOSURE_TECHNIQUE:
+        title: "Wearing sterile gloves plan specification"
+        aliases: ["Wearing Sterile gloves"]
+      WOUND_CLOSURE_TECHNIQUE_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000389
-        title: "Wound closure technique"
-      WOUND_FABRIC_ADHESIVE:
+        title: "Wound closure technique plan specification"
+        aliases: ["Wound closure technique"]
+      WOUND_FABRIC_ADHESIVE_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000405
-        title: "Wound Fabric adhesive"
-      WOUND_STAPLE_PLASTERING:
+        title: "Wound fabric adhesive plan specification"
+        aliases: ["Wound Fabric adhesive"]
+      WOUND_STAPLE_PLASTERING_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000421
-        title: "Wound staple plastering"
+        title: "Wound staple plastering plan specification"
+        aliases: ["Wound staple plastering"]
       BURN_CLASSIFICATION_SCALE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000436
         title: "Burn classification scale"
@@ -1355,6 +1456,24 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000529
         title: "IWII wound classification grade"
         description: "A wound classification grade that is a category of the IWII wound classification scale."
+      WOUND_HEALING_PHASE:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000561
+        title: "Wound healing phase"
+        description: "A wound classification grade of the scheme that divides wound healing into phases (hemostasis, inflammatory, proliferative, remodelling). The phases are labels assigned to stretches of the healing process, not processes themselves; each is about the processes it groups."
+      PROPHYLACTIC_ANTIBIOTIC_THERAPY_PLAN_SPECIFICATION:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000569
+        title: "Prophylactic antibiotic therapy plan specification"
+        aliases: ["Prophylactic antibiotic therapy"]
+      WOUND_HEALING_CRITERION:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000576
+        title: "Wound healing criterion"
+      EPITHELIALIZATION_CRITERION:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000577
+        title: "Epithelialization criterion"
+      SURGICAL_DEBRIDEMENT_PLAN_SPECIFICATION:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000581
+        title: "Surgical debridement plan specification"
+        aliases: ["Surgical debridement"]
       WOUND_CLASSIFICATION_GRADE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120016
         title: "wound classification grade"
@@ -1471,24 +1590,27 @@ enums:
       EPITHELIALIZATION_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000100
         title: "Epithelialization process"
+        aliases: ["Re-Epithelialization"]
       EXUDATION_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000106
         title: "Exudation process"
       GERM_SPECTRUM_ASSESSMENT_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000121
         title: "Germ spectrum assessment process"
-      GRANULATION_PROCESS:
+      GRANULATION_TISSUE_FORMATION_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000132
-        title: "Granulation process"
+        title: "Granulation tissue formation process"
+        aliases: ["Granulation process"]
       WOUND_CAUSING_HEAT_IMPACT_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000140
         title: "Wound causing heat impact process"
       HISTOPATHOLOGICAL_EXAMINATION_PROCESS_OF_WOUND_MATERIAL:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000146
         title: "Histopathological examination process of wound material"
-      HYPERTROPHIC_SCARRING_PROCESS:
+      EXCESSIVE_COLLAGEN_DEPOSITION_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000154
-        title: "Hypertrophic scarring process"
+        title: "Excessive collagen deposition process"
+        aliases: ["Hypertrophic scarring process"]
       KELOID_DEVELOPMENT_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000171
         title: "Keloid development process"
@@ -1513,21 +1635,24 @@ enums:
       WOUND_CAUSING_PRESSURE_IMPACT_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000245
         title: "Wound causing pressure impact process"
-      WOUND_HEALING_BY_PRIMARY_INTENTION:
+      WOUND_HEALING_BY_PRIMARY_INTENTION_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000248
-        title: "Wound healing by primary intention"
-      REGENERATIVE_WOUND_HEALING:
+        title: "Wound healing by primary intention process"
+        aliases: ["Wound healing by primary intention"]
+      REGENERATIVE_WOUND_HEALING_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000260
-        title: "Regenerative wound healing"
+        title: "Regenerative wound healing process"
+        aliases: ["Regenerative wound healing"]
       TISSUE_REPAIR_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000263
         title: "Tissue repair process"
       PATHOLOGICAL_SCARRING_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000269
         title: "Pathological scarring process"
-      WOUND_HEALING_BY_SECONDARY_INTENTION:
+      WOUND_HEALING_BY_SECONDARY_INTENTION_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000274
-        title: "Wound healing by secondary intention"
+        title: "Wound healing by secondary intention process"
+        aliases: ["Wound healing by secondary intention"]
       SKIN_COLOR_ASSESSMENT_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000284
         title: "Skin color assessment process"
@@ -1546,9 +1671,10 @@ enums:
       TAKING_A_WOUND_SWAB:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000306
         title: "Taking a wound swab"
-      WOUND_HEALING_BY_TERTIARY_INTENTION:
+      WOUND_HEALING_BY_TERTIARY_INTENTION_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000308
-        title: "Wound healing by tertiary intention"
+        title: "Wound healing by tertiary intention process"
+        aliases: ["Wound healing by tertiary intention"]
       TRAUMA_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338
         title: "Trauma process"
@@ -1644,6 +1770,7 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000519
         title: "Pressure impact process"
         description: "A process in which sustained mechanical pressure acts on a tissue."
+        aliases: ["Sustained mechanical load"]
       DIABETES_MELLITUS_TYPE_II_DISEASE_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000520
         title: "Diabetes mellitus type II disease process"
@@ -1696,6 +1823,50 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000543
         title: "Wound causing peripheral arterial occlusive disease process"
         description: "A peripheral arterial occlusive disease process that is a wound causing process."
+      IMPAIRED_WOUND_HEALING_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000544
+        title: "Impaired wound healing process"
+        aliases: ["Pathological wound healing process"]
+      WOUND_CAUSING_NEUROPATHIC_DISEASE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000560
+        title: "Wound causing neuropathic disease process"
+        description: "A neuropathic disease process that is a wound causing process."
+      BACTERIAL_COLONIZATION_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000566
+        title: "Bacterial colonization process"
+      PRESSURE_OFFLOADING_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000568
+        title: "Pressure offloading process"
+      BACTERIAL_CULTURE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000572
+        title: "Bacterial culture process"
+      VASCULAR_ASSESSMENT_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000573
+        title: "Vascular assessment process"
+      ANKLE_BRACHIAL_INDEX_MEASUREMENT_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000574
+        title: "Ankle-brachial index measurement process"
+      WOUND_PHOTOGRAPHY_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000575
+        title: "Wound photography process"
+      PROCESS_OF_DRUG_ADMINISTRATION:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000579
+        title: "Process of drug administration"
+      NEUROPATHIC_DISEASE_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000586
+        title: "Neuropathic disease process"
+        description: "A course of the disease process that has as participant a peripheral nervous system disease (peripheral neuropathy)."
+      WOUND_CAUSING_FOREIGN_BODY_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000587
+        title: "Wound causing foreign body process"
+        description: "A wound causing process in which a foreign body participates."
+      ANTIBIOTIC_ADMINISTRATION_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000589
+        title: "Antibiotic administration process"
+        description: "A process of drug administration in which a material entity bearing an antibiotic drug role participates."
+      INFLAMMATION_PROCESS:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000590
+        title: "Inflammation process"
       WOUND_DRESSING_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120013
         title: "Wound dressing process"
@@ -1741,7 +1912,7 @@ enums:
       HAS_DISPOSITION:
         meaning: http://purl.obolibrary.org/obo/RO_0000091
         title: "has disposition"
-        description: "Permitted category pairs: material entity -> disposition"
+        description: "Permitted category pairs: material entity -> tendency"
       HAS_FUNCTION:
         meaning: http://purl.obolibrary.org/obo/RO_0000085
         title: "has function"
@@ -1773,7 +1944,7 @@ enums:
       HAS_ROLE:
         meaning: http://purl.obolibrary.org/obo/RO_0000087
         title: "has role"
-        description: "Permitted category pairs: material entity -> specifically dependent continuant"
+        description: "Permitted category pairs: material entity -> role; material entity -> specifically dependent continuant"
       HAS_SPECIFIED_INPUT:
         meaning: http://purl.obolibrary.org/obo/OBI_0000293
         title: "has specified input"
@@ -1793,7 +1964,7 @@ enums:
       IS_ABOUT:
         meaning: http://purl.obolibrary.org/obo/IAO_0000136
         title: "is about"
-        description: "Permitted category pairs: information entity -> material entity; information entity -> quality; information entity -> realizable entity; information entity -> specifically dependent continuant"
+        description: "Permitted category pairs: information entity -> material entity; information entity -> process; information entity -> quality; information entity -> realizable entity; information entity -> specifically dependent continuant"
       IS_SPECIFIED_INPUT_OF:
         meaning: http://purl.obolibrary.org/obo/OBI_0000295
         title: "is specified input of"
@@ -1825,7 +1996,7 @@ enums:
       REALIZES:
         meaning: http://purl.obolibrary.org/obo/BFO_0000055
         title: "realizes"
-        description: "Permitted category pairs: process -> realizable entity; process -> tendency"
+        description: "Permitted category pairs: process -> function; process -> realizable entity; process -> tendency"
 
 slots:
   label:
