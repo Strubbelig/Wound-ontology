@@ -37,7 +37,8 @@ def distinct_entities(store) -> int:
     return len(store.entities)   # standing entities, rejected ones excluded
 
 
-def main(batch_size: int = 10, only_pmids_in: str | None = None) -> None:
+def main(batch_size: int = 10, only_pmids_in: str | None = None,
+         normalize_every: int = 0) -> None:
     log("constructing Orchestrator")
     pipeline = Orchestrator(entrez_email=ENTREZ_EMAIL,
                             allowed_predicates=ALLOWED_PREDICATES,
@@ -66,7 +67,17 @@ def main(batch_size: int = 10, only_pmids_in: str | None = None) -> None:
         return
 
     t0 = time.time()
-    pipeline.run_extract_to_store(batch_size=batch_size, normalize_every=1000)
+    # normalize_every counts MENTIONS, not abstracts: at 1000 the mapping
+    # milestone (SapBERT over every store term, on the CPU, synchronously) fired
+    # every ~35 abstracts - 89 times across the 18-20 Sep runs - and while it
+    # ran the ten in-flight LLM requests timed out behind it. Measured on run 2:
+    # 615 of 750 timeouts fell within 30 abstracts of a milestone, and two of the
+    # three circuit-breaker stops came with zero abstracts cached after one.
+    # The mapping is a P4 step that runs once against the final store; here it
+    # is off unless asked for (third argument).
+    if normalize_every:
+        log(f"mid-run normalisation every {normalize_every:,} mentions")
+    pipeline.run_extract_to_store(batch_size=batch_size, normalize_every=normalize_every)
     after = set(pipeline.store.document_keys())
     mins = (time.time() - t0) / 60
     log(f"finished in {mins:.1f} min — store after: {len(after):,} PMIDs "
@@ -80,6 +91,7 @@ def main(batch_size: int = 10, only_pmids_in: str | None = None) -> None:
 
 
 if __name__ == "__main__":
-    # usage: pc_extract.py [batch_size] [only_pmids_in.csv]
+    # usage: pc_extract.py [batch_size] [only_pmids_in.csv|-] [normalize_every]
     main(batch_size=int(sys.argv[1]) if len(sys.argv) > 1 else 10,
-         only_pmids_in=sys.argv[2] if len(sys.argv) > 2 else None)
+         only_pmids_in=(sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] != "-" else None),
+         normalize_every=int(sys.argv[3]) if len(sys.argv) > 3 else 0)
