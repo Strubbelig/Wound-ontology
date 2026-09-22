@@ -695,7 +695,37 @@ identity entries, the exact artifact rule 19 exists to remove. Remove the old
 entry; do not add beside it. The invariant to check after any edit is
 `data[data[k]] == data[k]` for every k, and no `k == data[k]`.
 
-Enforced by: `TermMapper._canonical`;
+*Refined 2026-09-22: the invariant held per build, not across builds.*
+`build_from_embeddings` asserts it on every run (`assignment[c] == c` for every
+canonical), so no single build can violate it — but the mapping FILE is not one
+build. It accumulates, and a term this build makes a canonical may be a term an
+earlier build already mapped elsewhere. Measured on the 2026-09-21 build of
+15,585 entries: **735 chains whose second hop really renames** and **408
+two-cycles that are not case variants** — `thermal burns -> thermal burn` beside
+`thermal burn -> thermal burn injuries`, `CFU -> CFUs` beside `CFUs -> CFU`.
+
+`ConceptStore.normalize` follows exactly one hop, so both shapes fail silently
+rather than loudly: a chain half-lands the merge and leaves the store holding
+both names, and a cycle renames each term onto the other so nothing merges at
+all. `prune` did not catch either — it follows chains to decide whether an entry
+can still fire, and a chain that fires is exactly what it keeps.
+
+`TermMapper.resolve_chains` now re-points every entry onto its terminal and
+breaks each cycle with `canonical_rank` — the same rule `build_from_embeddings`
+uses to pick a cluster's canonical, hoisted to module level so the two cannot
+drift. It runs in `run_build_term_mapping` BEFORE the adjudication, because
+collapsing `A -> B -> C` onto `A -> C` creates a pair no model has been asked
+about, and rule 18 says no mapping onto an existing class stands unasked. It
+verifies its own write and raises rather than leaving the file in the state it
+exists to end. A chain that terminates at an anchor the category guard refuses
+for that term is withdrawn, not walked: the guard's refusal is not to be
+delivered through the back door. On the live file this re-pointed 349 entries,
+broke 1,444 cycles and withdrew 10, leaving 14,131.
+
+Enforced by: `TermMapper._canonical`, `TermMapper.resolve_chains`,
+`canonical_rank`; `tests/test_mapping_resolve_chains.py` (ten tests,
+mutation-checked: no cycle detection, one hop only, guard ignored, no
+verification, winner by min rank, dry run writing);
 `test_the_singular_spelling_is_canonical_even_when_rarer`,
 `test_an_anchor_stays_canonical_however_it_is_spelled`,
 `test_the_rule_never_trades_one_concept_for_another`, and

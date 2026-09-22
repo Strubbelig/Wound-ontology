@@ -542,11 +542,25 @@ class Orchestrator:
                   f"wrong kind of thing:")
             for term, onto in refused[:15]:
                 print(f"[Orchestrator]     {term!r} -> {onto!r}")
-        self._adjudicate_anchor_mappings(anchors, readjudicate=readjudicate)
         # The file never forgot: entries survive every rebuild, so one written
         # against a store that has since been re-extracted still fires. Dropping
         # the provably inert ones is what makes the rest reviewable.
         self.term_mapper.prune(set(freq), self.ontology_labels() if anchors else frozenset())
+        # ...and it never forgot the SHAPE either: a canonical this build chose
+        # may be a term an earlier build had already mapped elsewhere, leaving
+        # `A -> B -> C` and `A <-> B` in a file every single build writes as a
+        # forest. `normalize` follows one hop, so a chain half-lands the merge
+        # and a cycle undoes it — both without a word.
+        #
+        # This runs BEFORE the adjudication, not after: resolving `A -> B -> C`
+        # to `A -> C` creates a pair no model has seen, and the whole point of
+        # the adjudication is that no mapping onto an existing class stands
+        # unasked. Withdrawing entries afterwards cannot re-create a chain --
+        # removing an edge never makes a path -- so the order is safe in the
+        # other direction.
+        self.term_mapper.resolve_chains(frequencies=freq, anchors=anchors,
+                                        accept_mapping=accept)
+        self._adjudicate_anchor_mappings(anchors, readjudicate=readjudicate)
         mapping = self.term_mapper.mapping
         print("[Orchestrator] Mapping built — call review_mapping() to inspect and curate.")
         return mapping

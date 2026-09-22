@@ -33,6 +33,26 @@ def _is_generic(term: str) -> bool:
     return normalize_term(term) in _GENERIC_TERMS
 
 
+def canonical_rank(term: str, anchors=frozenset(), frequencies: dict[str, int] | None = None):
+    """How strong a claim `term` has to be the canonical spelling of its cluster.
+
+    Higher is stronger: an ontology anchor outranks any store term; among store
+    terms the corpus decides by frequency; a longer label outranks a shorter one
+    at equal frequency because it is the more specific of two spellings, and a
+    shorter STRING breaks the remaining tie.
+
+    One rule with two callers, on purpose. `build_from_embeddings` picks a
+    cluster's canonical with it and `resolve_chains` picks a cycle's winner with
+    it; written twice they would drift, and the two would then disagree about
+    which spelling of one concept is its name.
+    """
+    freq = frequencies or {}
+    return (1 if term in anchors else 0,
+            freq.get(term, 0),
+            len(normalize_term(term).split()),
+            -len(term))
+
+
 class TermMapper:
     """Action layer: synonym clustering and mapping lookup.
 
@@ -140,6 +160,154 @@ class TermMapper:
               f"exists; {report['kept']} live mapping(s) kept.")
         return report
 
+    def resolve_chains(self, *, frequencies: dict[str, int] | None = None,
+                       anchors=frozenset(), accept_mapping=None,
+                       dry_run: bool = False) -> dict:
+        """Collapse `A -> B -> C` to `A -> C`, and break `A <-> B`, so the
+        mapping is a forest and applying it once is applying it completely.
+
+        Every single build writes a forest: `build_from_embeddings` asserts that
+        each canonical maps to itself. The file is not one build. It accumulates,
+        so a term this build makes a canonical may be a term an earlier build had
+        already mapped somewhere else, and the two entries then sit side by side.
+
+        `ConceptStore.normalize` follows exactly one hop, which makes both shapes
+        fail SILENTLY rather than loudly:
+
+          * a CHAIN half-lands the merge. `thermal burns -> thermal burn` and
+            `thermal burn -> thermal burn injuries` leave the store holding
+            `Thermal Burn` and `Thermal Burn Injuries` — two names for the one
+            concept the mapping was built to unite.
+          * a CYCLE undoes itself. `CFU -> CFUs` with `CFUs -> CFU` renames each
+            onto the other; both spellings survive and nothing merges at all.
+
+        Measured on the 2026-09-21 build: 735 chains whose second hop really
+        renames, and 408 two-cycles that are not mere case variants.
+
+        A cycle is broken with `canonical_rank` — the same rule that picks a
+        cluster's canonical, so the winner is the one the build itself would have
+        chosen: an ontology anchor first, then the corpus frequency.
+
+        `accept_mapping` is honoured on the way. A chain ending at an anchor the
+        category guard refuses FOR THIS TERM cannot be resolved in either
+        direction: walking it there defeats the guard, and leaving it one step
+        short lands the term on a name that the same pass renames away. The
+        entry is withdrawn instead, which is what a refusal already means
+        everywhere else here — the term keeps its own name and is reported.
+        """
+        data = self._term_mapping.data
+        succ = {t: c for t, c in data.items() if t != c}
+
+        # ── the cycles, and who wins each one ────────────────────────────────
+        winner_of: dict[str, str] = {}
+        seen: set[str] = set()
+        for start in succ:
+            if start in seen:
+                continue
+            path: list[str] = []
+            index: dict[str, int] = {}
+            cur = start
+            while cur in succ and cur not in seen:
+                index[cur] = len(path)
+                path.append(cur)
+                seen.add(cur)
+                cur = succ[cur]
+            if cur in index:                      # walked back into this path
+                members = path[index[cur]:]
+                winner = max(sorted(members),
+                             key=lambda t: canonical_rank(t, anchors, frequencies))
+                for m in members:
+                    winner_of[m] = winner
+
+        # ── every entry's terminal ───────────────────────────────────────────
+        cache: dict[str, str] = {}
+
+        def terminal(term: str) -> str:
+            walked: list[str] = []
+            on_path: set[str] = set()
+            cur = term
+            while True:
+                if cur in cache:
+                    end = cache[cur]
+                    break
+                if cur in winner_of:
+                    end = winner_of[cur]
+                    break
+                nxt = succ.get(cur)
+                if nxt is None or nxt == cur:
+                    end = cur
+                    break
+                if cur in on_path:
+                    # Unreachable while the cycle pass above is intact, and a
+                    # loop rather than a raise if it ever is not.
+                    raise RuntimeError(
+                        f"[{self.name}] resolve_chains walked into an unbroken "
+                        f"cycle at {cur!r}; the cycle pass missed it."
+                    )
+                on_path.add(cur)
+                walked.append(cur)
+                cur = nxt
+            for w in walked:
+                cache[w] = end
+            return end
+
+        repointed: dict[str, str] = {}
+        dropped: list[str] = []
+        refused: list[tuple[str, str]] = []
+        for term, current in succ.items():
+            end = terminal(term)
+            if (end != current and accept_mapping is not None and end in anchors
+                    and not accept_mapping(term, end)):
+                refused.append((term, end))
+                continue
+            if end == term:
+                dropped.append(term)
+            elif end != current:
+                repointed[term] = end
+
+        cycles = len(set(winner_of.values()))
+        report = {"cycles": cycles, "repointed": len(repointed),
+                  "dropped": len(dropped), "withdrawn": len(refused)}
+        if not (repointed or dropped or refused):
+            print(f"[{self.name}] mapping is already a forest — no chains, no cycles.")
+            return report
+        verb = "would re-point" if dry_run else "re-pointed"
+        print(f"[{self.name}] {verb} {len(repointed)} entr(ies) onto their final "
+              f"canonical and broke {cycles} cycle(s), dropping {len(dropped)} "
+              f"entr(ies) whose term won its own cycle.")
+        for term, end in list(repointed.items())[:5]:
+            print(f"[{self.name}]     {term!r} -> {succ[term]!r} -> … -> {end!r}")
+        if refused:
+            print(f"[{self.name}] withdrew {len(refused)} entr(ies) whose chain "
+                  f"ends at an anchor the category guard refuses for that term:")
+            for term, end in refused[:5]:
+                print(f"[{self.name}]     {term!r} kept its own name, not walked to {end!r}")
+        if dry_run:
+            return report
+
+        self._term_mapping.add_batch(
+            repointed,
+            {t: {"standard": c, "confidence": 1.0, "method": "chain_resolved"}
+             for t, c in repointed.items()},
+        )
+        if dropped or refused:
+            self._term_mapping.remove(*dropped, *(t for t, _ in refused))
+
+        # Verify rather than assume: the point of the step is that one hop is
+        # enough afterwards, and a write that did not land would leave exactly
+        # the silent half-merge it exists to end.
+        after = self._term_mapping.data
+        left = {t: c for t, c in after.items() if t != c and c in after and after[c] != c}
+        if left:
+            shown = "; ".join(f"{t!r}->{c!r}->{after[c]!r}" for t, c in list(left.items())[:3])
+            raise RuntimeError(
+                f"[{self.name}] resolve_chains did not reach a fixed point: "
+                f"{len(left)} entr(ies) still point at a term that is itself "
+                f"mapped ({shown}). The mapping was NOT left in a state where "
+                f"one hop applies it completely."
+            )
+        return report
+
     # ── SapBERT clustering ────────────────────────────────────────────────────
 
     def build_from_embeddings(
@@ -200,10 +368,7 @@ class TermMapper:
         # An anchor outranks any store term on frequency, and one anchor outranks
         # another by being the shorter, more general label.
         def _rank(t: str):
-            return (1 if t in anchor_set else 0,
-                    freq.get(t, 0),
-                    len(normalize_term(t).split()),
-                    -len(t))
+            return canonical_rank(t, anchor_set, freq)
 
         def _canonical(members: list[str]) -> str:
             """Pick the cluster's canonical, then take the singular spelling of it.
