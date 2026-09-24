@@ -722,6 +722,17 @@ for that term is withdrawn, not walked: the guard's refusal is not to be
 delivered through the back door. On the live file this re-pointed 349 entries,
 broke 1,444 cycles and withdrew 10, leaving 14,131.
 
+The walk folds both sides (rule 13), because the store's lookup does: it tries
+the exact spelling and then `normalize_term`. `deep partial thickness skin
+burns -> deep partial-thickness burns` beside `Deep partial-thickness burns ->
+deep partial-thickness burn wounds` is a chain that one capital letter hides
+from an exact-string walk and does not hide from the store, which found it on
+the next apply. Folding FINDS the chain and never rewrites the label at the end
+of one: two spellings that fold together are one node, so `Povidone Iodine ->
+Povidone-iodine` is left exactly as written — the mapping's spelling of a
+canonical is a decision, and dropping the entry would hand the store the
+unhyphenated fallback.
+
 Enforced by: `TermMapper._canonical`, `TermMapper.resolve_chains`,
 `canonical_rank`; `tests/test_mapping_resolve_chains.py` (ten tests,
 mutation-checked: no cycle detection, one hop only, guard ignored, no
@@ -751,6 +762,22 @@ visible at all.
 The lookup now tries the exact key first and falls back to `normalize_term` on
 both sides. A normalised key claimed by two different canonicals is **reported**,
 not silently resolved to whichever came first.
+
+*Refined 2026-09-23: surviving being applied is not the same as being applied.*
+`normalize` maps a name and THEN title-cases it, so the name a pass produces can
+itself be a mapping key — or fold onto one — that the same pass has already
+walked past. Measured on the 6,029-abstract store: pass 1 collapsed 12,912
+names, pass 2 another **1,191**, pass 3 one more, pass 4 none. One call reported
+a completed apply with 1,192 merges undone, and nothing said so.
+
+`MappingCleaner.apply` now runs `normalize` until the store stops changing and
+returns how many passes that took, saying how many rounds a single pass would
+have left. Not converging within ten passes raises: a mapping still moving names
+after ten rewrites has not been applied, whatever state the last pass left.
+
+Enforced by: `MappingCleaner.apply`; `tests/test_mapping_apply_converges.py`
+(four tests, mutation-checked: single pass, no raise, silence about the extra
+rounds).
 
 Enforced by: `ConceptStore.normalize`'s `canonical_of`;
 `test_the_mapping_still_applies_after_the_store_was_normalized`,
@@ -1319,6 +1346,77 @@ by `complication_holds()` in `evaluation/competency.py`.
 Enforced by: `tests/test_competency.py::test_complication_is_not_vacuous`
 (the three ways a process can be "of" a disease — subclass, has_participant,
 direct output — and two refusals; mutation-checked).
+
+## 36. The ontology's own label is the canonical, and every identity claim faces the guard
+
+*Decided 2026-09-23, by the curator: "the ontology's own label always wins."*
+
+Where a canonical names a class that WONT or MILD already has, the canonical is
+that class's **own spelling**. The mapping held `Necrosis Process -> necrosis`
+where WONT spells it `Necrosis`, `debridement surgery -> surgical debridement`
+where it is `Surgical debridement`, `wounds -> wound` where it is `Wound`: 88
+entries canonicalising an existing class under a spelling the class does not use.
+Downstream each one mints a twin of a class that already exists, which is the
+failure the anchors were introduced to prevent.
+
+**The rule is also what makes the category guard work.**
+`_category_compatible_mapping` refuses a merge whose two sides sit in disjoint
+BFO branches, and it is consulted only for ANCHORS — the ontology labels that are
+**not** also store terms. So it went quiet exactly when a class label was common
+enough in the corpus to be extracted: `Necrosis Process` [process] ->
+`Necrosis` [material entity], the pair its own docstring names as its reason for
+existing, was never once put to it. Measured on the 2026-09-22 mapping: five such
+merges, two of them the docstring's own examples, and `Necrosis Process` had
+already been applied to the store.
+
+Two changes make the guard see it. Its lookup of the class's category **folds**
+(exact spelling first, then `normalize_term`), because it is consulted with
+whatever spelling the mapping carries and `necrosis` resolved to nothing at all —
+which the guard reads as "no information" and allows. And the canonical is
+re-spelled to the class label, which also turns a store-to-store merge into the
+anchor mapping it always was.
+
+Only `rdfs:label` is re-spelled onto, never an alt term. WONT's alt terms are
+largely HISTORICAL labels: the 17 Sep renaming moved 31 classes to "… plan
+specification" and kept the old names as alt terms, so `Negative pressure wound
+therapy` is an alt term of `Negative pressure wound therapy plan specification`
+and also the plain name of the therapy process. Resolving alt terms to their
+class's label moved store terms for the THERAPY onto the PLAN SPECIFICATION, an
+information entity — 101 re-spellings, the first three exactly that. An alt term
+is how the lexicon FINDS a class; it is not a name to rename onto. Where two
+classes answer to one folded name (DOID's `necrotizing fasciitis`, WONT's
+`Necrotizing fasciitis`), ours wins; without a rule the winner came out of dict
+order and flipped between runs. Only a **content**
+difference is put to the guard (`label_difference`, the partition the adjudication
+already uses): asking it about `Pressure ulcers -> Pressure ulcer` refused 19 good
+inflections whose store typing happened to be contradictory.
+
+Two neighbours of the rule, both measured the same day:
+
+* **A blocked name is never quietly made a canonical.** The methodology blocklist
+  is applied at extraction, by exact lowercase name, and never again — while rule
+  23 makes the canonical singular. `patients` is not on the list and `patient` is,
+  so the mapping renamed the survivor back onto the blocked name: **462 store
+  names arrived that way carrying 7,201 mentions**, which `run_clean_store` would
+  remove along with everything merged into them. The pass does not repair this —
+  withdrawing would leave the variant standing as its own concept, and whether the
+  list or the merge is wrong (`intervention` yes, `tissue repair` almost certainly
+  not) is a `review_lists` decision. It reports them, with counts, as a work item.
+* **Re-spelling can turn an entry into an identity** (`Wound -> wound` becomes
+  `Wound -> Wound`); rule 19 removes those. Exactly equal, not folded:
+  `Povidone Iodine -> Povidone-iodine` folds to itself and is still doing work,
+  because without it the store falls back to `normalize_term` and loses the hyphen.
+
+Enforced by: `TermMapper.enforce_canonical_policy`,
+`Orchestrator.ontology_label_spellings`, `Orchestrator.blocked_names`, called from
+`run_build_term_mapping` between `resolve_chains` and the adjudication — before it,
+because re-spelling creates pairs no model has seen (rule 18).
+`tests/test_ontology_anchors.py::test_the_guard_knows_the_class_under_the_store_s_spelling`
+(mutation-checked against an exact-only lookup), and
+`tests/test_canonical_policy.py` (eleven tests, mutation-checked: no re-spelling,
+guard not consulted, guard asked about inflections, blocked canonical ignored,
+case-sensitive block, identity folded instead of exact, verification removed, dry
+run writing).
 
 ## Adding to this file
 

@@ -414,6 +414,65 @@ class Orchestrator:
                 out[term] = agreed
         return out
 
+    def ontology_label_spellings(self) -> dict[str, str]:
+        """{folded name a class answers to -> that class's rdfs:label}.
+
+        The curator's rule of 2026-09-23: where a canonical names an existing
+        class, the class's own spelling is the canonical. Folded, because the
+        store's spelling is exactly what hides the class -- `necrosis` for
+        `Necrosis`, `surgical debridement` for `Surgical debridement`.
+
+        Only `rdfs:label` is re-spelled onto. An ALT TERM is left exactly as it
+        is, and that is a decision about THIS ontology, not about alt terms in
+        general: WONT's alt terms are largely HISTORICAL LABELS. The 17 Sep
+        renaming moved 31 classes to "… plan specification" and kept the old
+        names as alt terms, so `Negative pressure wound therapy` is an alt term
+        of `Negative pressure wound therapy plan specification` -- and also the
+        plain name of the therapy process. Resolving alt terms to their class's
+        label moved store terms for the THERAPY onto the PLAN SPECIFICATION, an
+        information entity: measured, 101 re-spellings of which the first three
+        were exactly that. An alt term is how the lexicon FINDS a class; it is
+        not a canonical to rename onto.
+        """
+        from rdflib import OWL, RDF, RDFS
+
+        from wound_ontology.hierarchies.curated_seed import default_curated_sources
+        from wound_ontology.utils.rdf_io import parse_graph
+        from wound_ontology.utils.string_utils import normalize_term
+
+        sources, _ = default_curated_sources()
+        primary: dict[str, str] = {}                    # IRI -> rdfs:label
+        for src in sources:
+            g = parse_graph(src)
+            individuals = set(g.subjects(RDF.type, OWL.NamedIndividual))
+            for subj, _, obj in g.triples((None, RDFS.label, None)):
+                if subj in individuals or (subj, RDF.type, OWL.Class) not in g:
+                    continue
+                primary.setdefault(str(subj), str(obj).strip())
+
+        # Two classes can answer to one folded name: DOID spells it
+        # `necrotizing fasciitis`, WONT `Necrotizing fasciitis`. Ours wins --
+        # it is the ontology being built, and without a rule the winner came
+        # out of dict order and flipped between runs.
+        def ours_first(item: tuple[str, str]) -> tuple[int, str]:
+            iri, label = item
+            return (0 if ("WONT_" in iri or "MILD_" in iri) else 1, label)
+
+        out: dict[str, str] = {}
+        for _, label in sorted(primary.items(), key=ours_first):
+            out.setdefault(normalize_term(label), label)
+        return out
+
+    def blocked_names(self) -> set[str]:
+        """Names the methodology blocklist condemns, lowercased.
+
+        The list is applied at extraction and never again, so the mapping could
+        rename a surviving variant back onto a blocked name. Held here so the
+        mapping can refuse to do that.
+        """
+        from config.blocklist import METHODOLOGY_BLOCKLIST
+        return {b.strip().lower() for b in METHODOLOGY_BLOCKLIST}
+
     def _category_compatible_mapping(self, anchors: set[str]):
         """Refuse an anchor mapping that crosses a categorical boundary.
 
@@ -446,9 +505,17 @@ class Orchestrator:
         """
         from wound_ontology.llm.category_vocab import is_category
         from wound_ontology.llm.extraction_models import CATEGORY_PARENT
-        from wound_ontology.utils.string_utils import smart_title
+        from wound_ontology.utils.string_utils import normalize_term, smart_title
 
         onto_cat = self.ontology_categories()
+        # Folded as well as exact. The guard is consulted with whatever spelling
+        # the mapping carries, and a store-spelled label (`necrosis` for
+        # `Necrosis`) used to resolve to nothing at all -- which the guard reads
+        # as "no information" and allows. That is how
+        # `Necrosis Process -> necrosis` reached the store.
+        onto_cat_folded: dict[str, str] = {}
+        for label, cat in onto_cat.items():
+            onto_cat_folded.setdefault(normalize_term(label), cat)
         typings = self.store_typings()
         store_cat = self.store_categories()
         contradicted = {term for term in typings if term not in store_cat}
@@ -467,7 +534,8 @@ class Orchestrator:
             if key in contradicted:
                 return False
             a = store_cat.get(key)
-            b = onto_cat.get(canonical.strip())
+            b = onto_cat.get(canonical.strip()) or onto_cat_folded.get(
+                normalize_term(canonical))
             if a is None or b is None:
                 return True
             return b in ancestors(a) or a in ancestors(b)
@@ -560,6 +628,15 @@ class Orchestrator:
         # other direction.
         self.term_mapper.resolve_chains(frequencies=freq, anchors=anchors,
                                         accept_mapping=accept)
+        # The ontology's own label wins (curator, 2026-09-23), which also puts
+        # the identity claim in front of the category guard: a canonical spelled
+        # the store's way (`necrosis`) hid it from a guard that only ever sees
+        # anchors, and anchors exclude every label the corpus also uses.
+        self.term_mapper.enforce_canonical_policy(
+            label_spellings=self.ontology_label_spellings(),
+            blocked=self.blocked_names(),
+            accept_mapping=self._category_compatible_mapping(self.ontology_labels()),
+        )
         self._adjudicate_anchor_mappings(anchors, readjudicate=readjudicate)
         mapping = self.term_mapper.mapping
         print("[Orchestrator] Mapping built — call review_mapping() to inspect and curate.")

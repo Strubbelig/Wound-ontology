@@ -184,6 +184,22 @@ class TermMapper:
         Measured on the 2026-09-21 build: 735 chains whose second hop really
         renames, and 408 two-cycles that are not mere case variants.
 
+        The walk folds both sides (rule 13), because `ConceptStore.normalize`
+        does — it looks a term up by its exact spelling and then by
+        `normalize_term`. A chain can therefore exist only after folding:
+        `deep partial thickness skin burns -> deep partial-thickness burns`
+        beside `deep partial-thickness burns -> deep partial-thickness burn
+        wounds`, where a hyphen is the whole difference. Resolving on exact
+        strings alone left that one standing and the store found it on the next
+        apply. A folded key claimed by two canonicals takes the first, which is
+        what the store does with the same collision.
+
+        Two spellings that fold together are one node, so an entry between them
+        makes no progress and is left exactly as it is: the mapping's own
+        spelling of a canonical is a decision (`Povidone-iodine`, not
+        `Povidone Iodine`), and folding is for FINDING the chain, never for
+        rewriting the label at the end of it.
+
         A cycle is broken with `canonical_rank` — the same rule that picks a
         cluster's canonical, so the winner is the one the build itself would have
         chosen: an ontology anchor first, then the corpus frequency.
@@ -197,56 +213,70 @@ class TermMapper:
         """
         data = self._term_mapping.data
         succ = {t: c for t, c in data.items() if t != c}
+        fold = normalize_term
 
-        # ── the cycles, and who wins each one ────────────────────────────────
+        # The graph is over FOLDED nodes, because that is the graph the store
+        # walks. Each node's outgoing edge is the first entry claiming it.
+        edge: dict[str, str] = {}          # folded node -> canonical, as written
+        for t, c in succ.items():
+            if fold(c) != fold(t):
+                edge.setdefault(fold(t), c)
+        spelling: dict[str, list[str]] = defaultdict(list)
+        for t, c in succ.items():
+            spelling[fold(t)].append(t)
+            spelling[fold(c)].append(c)
+
+        # ── the cycles among those nodes, and who wins each one ──────────────
         winner_of: dict[str, str] = {}
         seen: set[str] = set()
-        for start in succ:
+        for start in list(edge):
             if start in seen:
                 continue
             path: list[str] = []
             index: dict[str, int] = {}
-            cur = start
-            while cur in succ and cur not in seen:
-                index[cur] = len(path)
-                path.append(cur)
-                seen.add(cur)
-                cur = succ[cur]
-            if cur in index:                      # walked back into this path
-                members = path[index[cur]:]
-                winner = max(sorted(members),
+            node: str | None = start
+            while node is not None and node not in seen:
+                index[node] = len(path)
+                path.append(node)
+                seen.add(node)
+                nxt = edge.get(node)
+                node = fold(nxt) if nxt is not None else None
+            if node is not None and node in index:
+                members = path[index[node]:]
+                candidates = sorted({s for m in members for s in spelling[m]})
+                winner = max(candidates,
                              key=lambda t: canonical_rank(t, anchors, frequencies))
                 for m in members:
                     winner_of[m] = winner
 
-        # ── every entry's terminal ───────────────────────────────────────────
+        # ── where each node's chain ends, as the mapping spells it ───────────
         cache: dict[str, str] = {}
 
-        def terminal(term: str) -> str:
+        def terminal(node: str, arrived_as: str) -> str:
             walked: list[str] = []
             on_path: set[str] = set()
-            cur = term
+            cur_node, cur_raw = node, arrived_as
             while True:
-                if cur in cache:
-                    end = cache[cur]
+                if cur_node in cache:
+                    end = cache[cur_node]
                     break
-                if cur in winner_of:
-                    end = winner_of[cur]
+                if cur_node in winner_of:
+                    end = winner_of[cur_node]
                     break
-                nxt = succ.get(cur)
-                if nxt is None or nxt == cur:
-                    end = cur
+                nxt = edge.get(cur_node)
+                if nxt is None:
+                    end = cur_raw
                     break
-                if cur in on_path:
+                if cur_node in on_path:
                     # Unreachable while the cycle pass above is intact, and a
                     # loop rather than a raise if it ever is not.
                     raise RuntimeError(
                         f"[{self.name}] resolve_chains walked into an unbroken "
-                        f"cycle at {cur!r}; the cycle pass missed it."
+                        f"cycle at {cur_raw!r}; the cycle pass missed it."
                     )
-                on_path.add(cur)
-                walked.append(cur)
-                cur = nxt
+                on_path.add(cur_node)
+                walked.append(cur_node)
+                cur_node, cur_raw = fold(nxt), nxt
             for w in walked:
                 cache[w] = end
             return end
@@ -255,12 +285,14 @@ class TermMapper:
         dropped: list[str] = []
         refused: list[tuple[str, str]] = []
         for term, current in succ.items():
-            end = terminal(term)
+            if fold(current) == fold(term):
+                continue                      # one node; the entry is a spelling
+            end = terminal(fold(current), current)
             if (end != current and accept_mapping is not None and end in anchors
                     and not accept_mapping(term, end)):
                 refused.append((term, end))
                 continue
-            if end == term:
+            if fold(end) == fold(term):
                 dropped.append(term)
             elif end != current:
                 repointed[term] = end
@@ -295,11 +327,22 @@ class TermMapper:
 
         # Verify rather than assume: the point of the step is that one hop is
         # enough afterwards, and a write that did not land would leave exactly
-        # the silent half-merge it exists to end.
+        # the silent half-merge it exists to end. Checked the way the store
+        # looks a term up — exact key first, folded key second.
         after = self._term_mapping.data
-        left = {t: c for t, c in after.items() if t != c and c in after and after[c] != c}
+        after_folded: dict[str, str] = {}
+        for t, c in after.items():
+            if t != c:
+                after_folded.setdefault(fold(t), c)
+        left = {}
+        for t, c in after.items():
+            if t == c:
+                continue
+            nxt = after.get(c, after_folded.get(fold(c)))
+            if nxt is not None and fold(nxt) != fold(c):
+                left[t] = c
         if left:
-            shown = "; ".join(f"{t!r}->{c!r}->{after[c]!r}" for t, c in list(left.items())[:3])
+            shown = "; ".join(f"{t!r}->{c!r}" for t, c in list(left.items())[:3])
             raise RuntimeError(
                 f"[{self.name}] resolve_chains did not reach a fixed point: "
                 f"{len(left)} entr(ies) still point at a term that is itself "
@@ -307,6 +350,143 @@ class TermMapper:
                 f"one hop applies it completely."
             )
         return report
+
+    def enforce_canonical_policy(self, *, label_spellings: dict[str, str] | None = None,
+                                 blocked=frozenset(), accept_mapping=None,
+                                 dry_run: bool = False) -> dict:
+        """Hold every canonical in the file to three rules, and report what moves.
+
+        The rules are decisions taken elsewhere; this is where they reach the
+        file, so a mapping built before one of them existed is brought up to it
+        without a five-hour rebuild.
+
+        1. THE ONTOLOGY'S OWN LABEL WINS (curator, 2026-09-23). A canonical that
+           folds to a WONT or MILD label is re-spelled to that label. The store
+           had `Necrosis Process -> necrosis` where the class is spelled
+           `Necrosis`, and `debridement surgery -> surgical debridement` where it
+           is `Surgical debridement`: 22 entries canonicalising a class under a
+           spelling the class does not use. Downstream that mints a twin.
+
+        2. A MAPPING ONTO A CLASS IS AN IDENTITY CLAIM, so `accept_mapping` --
+           the category guard -- judges it. It could not before: it is consulted
+           only for ANCHORS, and anchors are the ontology labels that are NOT
+           also store terms, so the guard went quiet exactly when a class label
+           was common enough in the corpus to be extracted. Rule 1 is what makes
+           this possible: re-spelling the canonical to the label turns a
+           store-to-store merge into the anchor mapping it always was.
+           `Necrosis Process` [process] -> `Necrosis` [material entity] is the
+           case the guard was written for and had never once seen.
+
+           A term that IS the label under another spelling is not asked about --
+           `Closure` for `closure`, `Pressure ulcers` for `Pressure ulcer`. The
+           test is `label_difference`, the same partition the adjudication uses:
+           only a CONTENT difference carries a claim. Without it the guard
+           refuses inflections whose store typing happens to be contradictory,
+           and `Pressure ulcers -> Pressure ulcer` is not a claim anybody needs
+           checked.
+
+        3. A BLOCKED CANONICAL IS REPORTED, NOT REPAIRED. The methodology
+           blocklist is applied at extraction, by exact lowercase name, and never
+           again -- while rule 23 makes the canonical singular. `patients` is not
+           on the list and `patient` is, so the mapping renames the survivor back
+           onto the blocked name: 462 store names arrived that way carrying 7,201
+           mentions, which `run_clean_store` then removes together with whatever
+           had merged into them.
+
+           This method does NOT withdraw those entries. Withdrawing would leave
+           the variant standing as its own concept, which is noise leaking back
+           in under a plural; keeping the merge collapses the family onto one
+           name that the cleanup then removes once. Which of the two is right
+           depends on whether the blocklist entry is correct -- `intervention`
+           yes, `tissue repair` almost certainly not -- and that is a decision
+           for `review_lists`, not for a mapping pass. So the pairs are counted
+           and returned, and the caller writes them out as a work item.
+
+        Returns counts, and the entries behind each of them.
+        """
+        from wound_ontology.mappers.mapping_adjudicator import label_difference
+
+        labels = label_spellings or {}
+        is_label = set(labels.values())
+        blocked = {b.strip().lower() for b in blocked}
+        data = self._term_mapping.data
+        respelled: dict[str, str] = {}
+        refused: list[tuple[str, str, str]] = []
+        on_blocklist: list[tuple[str, str]] = []
+
+        identities: list[str] = []
+        for term, canonical in list(data.items()):
+            if term == canonical:
+                continue
+            target = labels.get(normalize_term(canonical), canonical)
+            if target == term:
+                # Re-spelling turned the entry into a term mapped onto its own
+                # name (`Wound -> wound` became `Wound -> Wound`). That is an
+                # identity, which rule 19 removes -- not a refusal, and not a
+                # question for the guard.
+                #
+                # EXACTLY equal, not folded: `Povidone Iodine -> Povidone-iodine`
+                # folds to itself and is still doing work, because without the
+                # entry the store falls back to `normalize_term`, which drops the
+                # hyphen. Folding finds chains; it never decides that a spelling
+                # is worthless.
+                identities.append(term)
+                continue
+            if target.strip().lower() in blocked:
+                on_blocklist.append((term, target))
+                continue
+            if (target in is_label and label_difference(term, target) == "content"
+                    and accept_mapping is not None
+                    and not accept_mapping(term, target)):
+                refused.append((term, canonical, target))
+                continue
+            if target != canonical:
+                respelled[term] = target
+
+        report = {"respelled": len(respelled), "refused": len(refused),
+                  "identities": len(identities),
+                  "blocked_canonical": len(on_blocklist)}
+        if not (respelled or refused or on_blocklist or identities):
+            print(f"[{self.name}] every canonical already follows the policy.")
+            return report | {"respelled_entries": {}, "refused_entries": [],
+                             "blocked_entries": []}
+
+        verb = "would re-spell" if dry_run else "re-spelled"
+        print(f"[{self.name}] {verb} {len(respelled)} canonical(s) to the "
+              f"ontology's own label, dropped {len(identities)} that became "
+              f"identities, and refused {len(refused)} mapping(s) onto a class of "
+              f"a different BFO kind. {len(on_blocklist)} entr(ies) point at a "
+              f"blocklisted canonical — reported, not touched; that is a "
+              f"review_lists decision.")
+        for t, c in list(respelled.items())[:5]:
+            print(f"[{self.name}]     {t!r} -> {data[t]!r} … now -> {c!r}")
+        for t, c, tgt in refused[:5]:
+            print(f"[{self.name}]     REFUSED {t!r} -> {tgt!r} (was {c!r}) — wrong kind of thing")
+        for t, c in on_blocklist[:5]:
+            print(f"[{self.name}]     BLOCKED CANONICAL {t!r} -> {c!r} — either {t!r} "
+                  f"belongs on the list too, or {c!r} does not belong on it")
+
+        if not dry_run:
+            if respelled:
+                self._term_mapping.add_batch(
+                    respelled,
+                    {t: {"standard": c, "confidence": 1.0, "method": "ontology_label"}
+                     for t, c in respelled.items()})
+            gone = [t for t, _, _ in refused] + identities
+            if gone:
+                self._term_mapping.remove(*gone)
+            after = self._term_mapping.data
+            missed = {t: c for t, c in respelled.items() if after.get(t) != c}
+            left = [t for t in gone if t in after]
+            if missed or left:
+                raise RuntimeError(
+                    f"[{self.name}] the canonical policy did not land: "
+                    f"{len(missed)} re-spelling(s) read back wrong and "
+                    f"{len(left)} withdrawn entr(ies) are still in the file."
+                )
+        return report | {"respelled_entries": respelled,
+                         "refused_entries": refused,
+                         "blocked_entries": on_blocklist}
 
     # ── SapBERT clustering ────────────────────────────────────────────────────
 

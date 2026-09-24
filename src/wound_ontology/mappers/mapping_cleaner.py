@@ -202,9 +202,41 @@ class MappingCleaner(BaseCleaner):
 
     # ── Apply ─────────────────────────────────────────────────────────────────
 
-    def apply(self, store) -> None:
-        """Apply the mapping to entity names and attribute targets in the store."""
-        store.normalize(mapper=self.term_mapper)
+    def apply(self, store, *, max_passes: int = 10) -> int:
+        """Apply the mapping to the store, and keep applying until it stops
+        changing. Returns how many passes that took.
+
+        One pass was never enough, and the shortfall was silent.
+        `ConceptStore.normalize` maps a name and THEN title-cases it, so the
+        name a pass produces can itself be a mapping key — or fold onto one —
+        that the same pass has already walked past. Measured 2026-09-23 on the
+        6,029-abstract store: pass 1 collapsed 12,912 names, pass 2 another
+        **1,191**, pass 3 one more, pass 4 none. Stopping after pass 1 left
+        1,192 merges undone and reported a completed apply.
+
+        Applying is idempotent once it has converged (rule 24), so the extra
+        passes cost a rewrite of the store and nothing else. Not converging is
+        a failure, not a result: it means the mapping is still moving names
+        around after ten rewrites, and the raise says so rather than leaving
+        the store wherever the last pass happened to stop.
+        """
+        previous: int | None = None
+        for attempt in range(1, max_passes + 1):
+            store.normalize(mapper=self.term_mapper)
+            names = len(store.entities)
+            if names == previous:
+                if attempt > 2:
+                    print(f"  term_mapper: the store settled after {attempt - 1} "
+                          f"pass(es); a single pass would have left "
+                          f"{attempt - 2} round(s) of merges undone.")
+                return attempt - 1
+            previous = names
+        raise RuntimeError(
+            f"[{self.term_mapper.name}] the store is still changing after {max_passes} "
+            f"passes of the mapping ({previous} distinct entity names at the "
+            f"last one). The mapping is moving names in a loop; it was NOT "
+            f"applied completely."
+        )
 
     # ── Internal ──────────────────────────────────────────────────────────────
 

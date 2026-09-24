@@ -10,6 +10,31 @@ reviewable rather than nominally reviewable.
 Pressing `y` fourteen thousand times is not review, so the queue is partitioned
 first — by the rule the pipeline itself used to decide what to ask the model.
 
+## How to work it — read the family sheet, not the entry sheet
+
+`data/review/mapping_families_2026-09-23.csv` is the one to mark. One row is one
+**canonical**, with every term that collapses onto it in the `terms` cell:
+**4,813 entries are 3,574 families**, and the repetition is all inside the
+families — `Debridement process` gathers five spellings, and that is one
+decision, not five.
+
+Every row carries a **`suggested`** verdict filled by rule, with the rule in the
+`why` cell. 518 rows suggest `n`; the rest suggest `y`. The work is reading and
+overriding, not deciding from nothing.
+
+Four filters take most of it off the table in four decisions:
+
+| filter | rows | one decision |
+|---|---|---|
+| `variation` = spelling / word order / abbreviation | 579 families | British/American, hyphenation, word order, acronym expansion — measured clean in an 80-row hand check |
+| `process` column | 117 entries | settled: **the ontology's own label wins** (your ruling, 23 Sep), so everything pointing at a WONT class keeps its `… process` spelling |
+| `blocked canonical` = yes | 319 entries | these canonicals are on the methodology blocklist; the decision belongs to `review_lists`, not here — see `blocked_canonicals_2026-09-23.csv` |
+| `onto an existing class` = yes | **87 families** | the irreversible ones. This is the set worth your full attention |
+
+`data/review/mapping_review_2026-09-23.csv` keeps the entry-level record with the
+model's verdict and reason on every row, for when a family needs splitting.
+`scripts/apply_review_sheet.py` reads either file.
+
 ## What is in the sheet, and what is not
 
 `label_difference` says how two labels differ:
@@ -185,21 +210,34 @@ not withdraw the concept.
   class's BFO category — worth a look only if you think the store's typing is
   the thing that is wrong.
 
-## What applying it costs
+## Applied — 2026-09-23
 
-Measured against the current store, `run_apply_mapping` would:
+`run_apply_mapping` has been run. The store went from **98,522 distinct terms to
+84,418**: 14,104 names disappeared into another, 15,386 renames are logged in
+the store's own decision record (`decisions.renamed`, each stamped
+`by="mapping"`), and 176,360 entity records remain. No mapping entry still fires
+on any live name, so the store is at the mapping's fixed point.
 
-* rename **93,421** of 98,522 store terms (most of that is title-casing, which
-  happens with or without the mapping);
-* leave **85,585 distinct names** where there are now 98,522 — **12,937 names
-  disappear into another**;
-* move **82,579 of 217,627 mentions** through a mapping entry rather than
-  through title-casing alone.
+**The sheet was unmarked when this ran**, so everything below — including the
+three rows recommended `n` — went in as it stood. That is what the backup is
+for: `data/backup/concept_store_pre_mapping_2026-09-22.json` is the pre-apply
+store, byte-identical to the cache original and outside the ten-version
+rotation, with `data/backup/README.md` saying how to go back. Mark the sheet,
+restore, re-apply, and the merges you refused are gone.
 
-The store keeps its last ten versions in `data/cache/`, so the pre-apply store
-survives the run — but ten writes later it does not. Copy
-`concept_store_2026-09-21_04-33.json` somewhere safe before applying if you want
-a guaranteed way back.
+Two things the apply itself uncovered, both fixed:
+
+* **One chain only a fold could see.** `deep partial thickness skin burns ->
+  deep partial-thickness burns` beside `Deep partial-thickness burns -> deep
+  partial-thickness burn wounds`: one capital letter hid it from the exact-string
+  resolution, and the store's own folded lookup found it. `resolve_chains` now
+  walks folded, as the store does.
+* **One pass was not the whole apply.** `normalize` maps a name and then
+  title-cases it, so a name a pass produces can be a key that pass has already
+  walked past. Pass 1 collapsed 12,912 names, pass 2 another **1,191**, pass 3
+  one more, pass 4 none — and the run had been reporting a finished apply after
+  pass 1. `MappingCleaner.apply` now runs to convergence and says how many
+  rounds a single pass would have left (INSTRUCTIONS rule 24, refined).
 
 ## One defect fixed before this sheet was written
 

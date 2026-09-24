@@ -119,6 +119,13 @@ def test_a_write_that_does_not_land_raises():
     with pytest.raises(RuntimeError, match="fixed point"):
         m.resolve_chains()
 
+    # and the same check has to see a chain that only the fold reveals,
+    # or it passes a file the store will still walk one hop further
+    folded = TermMapper(_Deaf({"a term": "a-canonical", "A-canonical": "the end"}),
+                        name="test")
+    with pytest.raises(RuntimeError, match="fixed point"):
+        folded.resolve_chains()
+
 
 def test_one_canonicality_rule_serves_both_callers():
     """build_from_embeddings and resolve_chains must not drift apart about which
@@ -126,3 +133,27 @@ def test_one_canonicality_rule_serves_both_callers():
     freq = {"ulcers": 9, "ulcer": 2}
     assert canonical_rank("ulcers", frozenset(), freq) > canonical_rank("ulcer", frozenset(), freq)
     assert canonical_rank("Skin wound", {"Skin wound"}, freq) > canonical_rank("ulcers", frozenset(), freq)
+
+
+def test_a_chain_that_only_exists_once_the_labels_are_folded():
+    """The store looks a term up by its exact spelling and THEN by
+    `normalize_term`, so a hyphen is enough to hide a chain from an exact-string
+    walk — and not enough to hide it from the store, which found this one on the
+    next apply."""
+    # the live pair, spelled as the file spells it: the second entry's key
+    # differs from the first entry's canonical by one capital letter
+    m = _mapper({"deep partial thickness skin burns": "deep partial-thickness burns",
+                 "Deep partial-thickness burns": "deep partial-thickness burn wounds"})
+    rep = m.resolve_chains()
+    assert rep["repointed"] == 1
+    assert m.mapping["deep partial thickness skin burns"] == "deep partial-thickness burn wounds"
+
+
+def test_two_spellings_of_one_folded_name_are_left_as_they_are():
+    """Folding FINDS the chain; it never rewrites the label at the end of one.
+    `Povidone Iodine -> Povidone-iodine` is the mapping choosing a spelling, and
+    dropping it would hand the store the unhyphenated fallback instead."""
+    m = _mapper({"Povidone Iodine": "Povidone-iodine"})
+    rep = m.resolve_chains()
+    assert rep == {"cycles": 0, "repointed": 0, "dropped": 0, "withdrawn": 0}
+    assert m.mapping == {"Povidone Iodine": "Povidone-iodine"}

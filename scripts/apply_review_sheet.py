@@ -3,6 +3,12 @@
     python scripts/apply_review_sheet.py data/review/mapping_review_2026-09-22.csv
     python scripts/apply_review_sheet.py data/review/mapping_review_2026-09-22.csv --apply
 
+It takes either sheet: the row-level `mapping_review_*.csv`, or the
+`mapping_families_*.csv` where one row is one CANONICAL and the `terms` column
+lists everything that collapses onto it. A decision on a family applies to
+every term in it, which is the point of the family sheet — 4,813 entries are
+3,574 families, and the repetition is in the families.
+
 Two columns are the curator's:
 
   keep(y/n)             `n` withdraws the entry — the term goes back to being
@@ -64,6 +70,11 @@ def main(argv: list[str]) -> int:
         return 2
     sheet = Path(args[0])
     df = pd.read_csv(sheet).fillna("")
+    if "terms" in df.columns and "term" not in df.columns:
+        # a family sheet: expand each family into its members, so everything
+        # below works on entries and one decision reaches all of them
+        df = df.assign(term=df["terms"].str.split(" ; ")).explode("term")
+        df["term"] = df["term"].str.strip()
     for col in ("term", "canonical", "keep(y/n)", "corrected canonical"):
         if col not in df.columns:
             raise SystemExit(f"{sheet} has no {col!r} column — is it a review sheet?")

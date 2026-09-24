@@ -26,6 +26,13 @@ tests/test_output/
 # Cache — track versioned pipeline state, but skip large regeneratable CSVs
 data/cache/pubmed_abstracts_*.csv
 
+# Pre-apply snapshots. 30 MB copies of state that already exists in
+# data/cache/; they live outside the cache's ten-version rotation so a
+# destructive step has a way back, not so git carries them. The README
+# beside them is tracked — it says what each copy is and how to restore it.
+data/backup/*
+!data/backup/README.md
+
 # Flap ontology template files (large OWL/FMA/ABox files)
 notebooks/templates/
 

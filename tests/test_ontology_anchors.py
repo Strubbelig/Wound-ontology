@@ -224,6 +224,19 @@ def test_the_real_guard_refuses_a_process_mapped_onto_its_bearer():
     assert accept("chronic wounds", "Chronic wound")
 
 
+def test_the_guard_knows_the_class_under_the_store_s_spelling():
+    """The lookup was exact, so a canonical spelled the store's way resolved to
+    no category at all -- which the guard reads as "no information" and allows.
+    That is how `Necrosis Process -> necrosis` reached the store on 2026-09-22:
+    the class is `Necrosis`, the mapping said `necrosis`, and the guard, asked
+    about the merge, had nothing to judge it on."""
+    import wound_ontology.orchestrator as orch
+    p = orch.Orchestrator()
+    accept = p._category_compatible_mapping(set(p.ontology_categories()))
+    assert not accept("Necrosis Process", "necrosis")
+    assert not accept("Skin grafting", "skin graft")
+
+
 def test_bfo_category_names_are_never_mapped():
     """A category is a value from a closed vocabulary, not a term to canonicalise.
 
