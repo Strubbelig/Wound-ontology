@@ -223,8 +223,11 @@ def main() -> None:
     for term, canonical in mapping.items():
         if label_difference(term, canonical) != "content":
             continue
-        verdict = adj.get(f"{term}\x1f{canonical}", {})
-        two = second.get(f"{term}\x1f{canonical}", {})
+        # The entry's own record first; the caches are the fallback for a
+        # mapping written before the records carried verdicts.
+        rec = p.term_mapper._term_mapping.record(term)
+        verdict = rec.get("pass1") or adj.get(f"{term}\x1f{canonical}", {})
+        two = rec.get("pass2") or second.get(f"{term}\x1f{canonical}", {})
         onto_axiom = axiom_between(term, canonical)
         # Both sides curated only counts when they are DIFFERENT classes. A
         # label and one of its own alt terms are both "curated" and mapping one

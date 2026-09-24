@@ -99,14 +99,37 @@ def main(argv: list[str]) -> int:
         print(f"[review] {len(missing)} row(s) marked `n` are no longer in the "
               f"mapping — already withdrawn, or the mapping was rebuilt since "
               f"the sheet was written: {missing[:5]}")
-    n = p.term_mapper.withdraw(*withdraw)
+    # A refusal is recorded, not deleted. `withdraw` would remove the entry and
+    # leave nothing behind, so the next mapping build would re-propose the merge
+    # and the adjudication cache would re-approve it — the curator's evening,
+    # overwritten by a rebuild. `refuse` keeps the pair on record and
+    # `build_from_embeddings` honours it.
+    reasons = {str(r["term"]): str(r.get("why") or r.get("LLM reason") or "")
+               for _, r in df.iterrows()}
+    n = 0
+    for term in withdraw:
+        canonical = mapping.get(term) or str(
+            df.loc[df["term"] == term, "canonical"].iloc[0])
+        p.term_mapper.refuse(term, canonical,
+                             reason=reasons.get(term, "")[:200], by="curator")
+        n += 1
     for term, canonical in repoint.items():
         p.term_mapper._term_mapping.add(term, canonical, confidence=1.0, method="manual")
+        p.term_mapper.annotate(term, curator={"verdict": "repointed",
+                                              "reason": reasons.get(term, "")[:200]})
 
     # Read it back. `add` and `remove` save as they go, so what the next step
     # loads is what is on disk, and that is what has to be checked.
-    reloaded = Orchestrator().term_mapper.mapping
+    reloaded_mapper = Orchestrator().term_mapper
+    reloaded = reloaded_mapper.mapping
     still_there = [t for t in withdraw if t in reloaded]
+    unremembered = [t for t in withdraw
+                    if not reloaded_mapper._term_mapping.record(t).get("refused")]
+    if unremembered:
+        raise RuntimeError(
+            f"[review] {len(unremembered)} refusal(s) were applied but not "
+            f"recorded, so the next build would re-propose them: "
+            f"{unremembered[:5]}")
     wrong = {t: reloaded.get(t) for t, c in repoint.items() if reloaded.get(t) != c}
     if still_there or wrong:
         raise RuntimeError(
@@ -114,7 +137,7 @@ def main(argv: list[str]) -> int:
             f"entr(ies) are still in the mapping {still_there[:5]}, and "
             f"{len(wrong)} re-pointed entr(ies) read back wrong {list(wrong.items())[:5]}."
         )
-    print(f"[review] withdrew {n} entr(ies), re-pointed {len(repoint)}; verified "
+    print(f"[review] refused {n} entr(ies) on the record, re-pointed {len(repoint)}; verified "
           f"against the file. {len(reloaded):,} entries remain.")
     print("[review] run_apply_mapping() next — the store still holds the old "
           "spellings until it runs.")

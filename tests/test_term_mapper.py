@@ -247,10 +247,15 @@ def test_build_from_embeddings_single_linkage_would_merge_complete_linkage_does_
 
 def test_export_review_csv_writes_low_confidence_metadata(mapper, tmp_path):
     from wound_ontology.mappers.mapping_cleaner import MappingCleaner
-    mapper._term_mapping._metadata = {
-        "needs review": {"standard": "candidate", "confidence": 0.6, "method": "llm"},
-        "accepted":     {"standard": "wound",     "confidence": 0.95, "method": "similarity"},
+    # Confidence and method live ON the record now (rule 37); `metadata` is a
+    # view over them rather than a dict of its own that vanished with the run.
+    mapper._term_mapping._records = {
+        "needs review": {"to": "candidate", "confidence": 0.6, "method": "llm",
+                         "refused": {}},
+        "accepted":     {"to": "wound", "confidence": 0.95, "method": "similarity",
+                         "refused": {}},
     }
+    mapper._term_mapping._dirty()
     cleaner = MappingCleaner(mapper)
     path = tmp_path / "review.csv"
 
@@ -283,7 +288,7 @@ def test_import_review_csv_overrides_mapping_and_marks_manual(mapper, dm, tmp_pa
     cleaner.import_review_csv(str(path))
 
     assert mapper.mapping["needs review"] == "manual standard"
-    assert mapper._term_mapping._metadata["needs review"] == {
+    assert mapper._term_mapping.metadata["needs review"] == {
         "standard":   "manual standard",
         "confidence": 1.0,
         "method":     "manual",

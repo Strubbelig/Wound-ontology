@@ -108,6 +108,7 @@ def test_the_build_no_longer_writes_identity_entries():
     class _Persist:
         def __init__(self): self.data = {}
         def add_batch(self, entries, metadata=None): self.data.update(entries)
+        def is_refused(self, term, canonical): return None
         def remove(self, *t):
             n = sum(1 for x in t if self.data.pop(x, None) is not None)
             return n
@@ -129,3 +130,77 @@ def test_the_build_no_longer_writes_identity_entries():
     # caller can ask what happened to one without inferring it from an absence.
     assert set(result) == {"wound", "wounds", "granulation"}
     assert result["granulation"] == "granulation"
+
+
+def test_a_curator_refusal_survives_the_next_build():
+    """It did not, and that is why the mapping now holds records rather than a
+    flat dict. `withdraw` deleted the entry and recorded nothing, so clustering
+    re-proposed the merge on the next run and the adjudication cache re-approved
+    it from memory: the guard's refusals survived a rebuild, the curator's did
+    not (rule 33 — a decision is a verdict in the record, never a deletion)."""
+    import numpy as np
+
+    from wound_ontology.mappers.term_mapping import TermMapping
+
+    class _DM:
+        def __init__(self): self.saved = None
+        def load_latest_json(self, name): return {}
+        def save_as_json(self, data, name): self.saved = data
+
+    class _Emb:
+        def embed(self, terms):
+            out = np.zeros((len(terms), 2))
+            for i, t in enumerate(terms):
+                out[i, 0 if "wound" in t.lower() else 1] = 1.0
+            return out
+
+    tm = TermMapping(_DM())
+    mapper = TermMapper(tm, name="t")
+    mapper.build_from_embeddings(["wounds", "wound"], _Emb(),
+                                 similarity_threshold=0.95, frequencies={"wound": 9})
+    assert mapper.mapping == {"wounds": "wound"}
+
+    mapper.refuse("wounds", "wound", reason="not the same concept here")
+    assert mapper.mapping == {}
+
+    # the same build again: SapBERT proposes the same merge, and it must not stand
+    mapper.build_from_embeddings(["wounds", "wound"], _Emb(),
+                                 similarity_threshold=0.95, frequencies={"wound": 9})
+    assert mapper.mapping == {}, "the curator's refusal was overwritten by a rebuild"
+    assert tm.is_refused("wounds", "wound")["by"] == "curator"
+
+
+def test_a_refusal_is_about_the_pair_not_the_term():
+    """`materials` refused onto `material entity` must still be free to map onto
+    something else."""
+    from wound_ontology.mappers.term_mapping import TermMapping
+
+    class _DM:
+        def load_latest_json(self, name): return {}
+        def save_as_json(self, data, name): pass
+
+    tm = TermMapping(_DM())
+    mapper = TermMapper(tm, name="t")
+    mapper.refuse("materials", "material entity", reason="a BFO category name")
+    tm.add("materials", "Wound dressing material")
+    assert mapper.mapping == {"materials": "Wound dressing material"}
+    assert tm.is_refused("materials", "material entity")
+    assert tm.is_refused("materials", "Wound dressing material") is None
+
+
+def test_the_old_flat_file_still_loads():
+    """The file on disk is `term -> canonical` until something saves records over
+    it, and a migration that needs remembering is a migration that gets
+    forgotten."""
+    from wound_ontology.mappers.term_mapping import TermMapping
+
+    class _DM:
+        def load_latest_json(self, name): return {"wounds": "Wound", "ulcers": "Ulcer"}
+        def save_as_json(self, data, name): self.written = data
+
+    dm = _DM()
+    tm = TermMapping(dm)
+    assert tm.data == {"wounds": "Wound", "ulcers": "Ulcer"}
+    tm.annotate("wounds", pass1={"verdict": "same_class", "reason": "plural"})
+    assert dm.written["wounds"] == {"to": "Wound", "refused": {},
+                                    "pass1": {"verdict": "same_class", "reason": "plural"}}

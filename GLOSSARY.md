@@ -141,8 +141,18 @@ for anchor pairs, no categories for store pairs. Pass 2 is a second, independent
 judgement with *different* evidence (BFO categories, the continuant/occurrent rule
 stated). Only rows where the two disagree go to you.
 
-**withdraw** — remove a mapping entry, so the term goes back to being its own
-concept. **Re-point** — change an entry's canonical.
+**record** — what the mapping file holds per term since 2026-09-24: the
+canonical, how it was decided, both model passes, the curator's verdict, and the
+canonicals this term has been refused against. `TermMapping.data` projects it
+back to the plain `term -> canonical` dict every consumer reads.
+
+**refuse** vs **withdraw** — refusing records a verdict against that exact pair
+and unmaps it, and the next build honours it. Withdrawing deletes the entry and
+remembers nothing; it is for entries that can no longer do anything, not for
+decisions. Before the distinction existed, a curator's refusal was re-proposed
+and re-approved by the next rebuild.
+
+**re-point** — change an entry's canonical.
 
 **prune** — drop entries that can no longer fire: identities, and entries whose
 canonical exists nowhere any more.

@@ -98,6 +98,14 @@ async def main() -> None:
     await asyncio.gather(*(one(c) for c in chunks))
     p.dm.save_as_json(cache, "mapping_second_opinion")
 
+    # ...and onto the entries themselves, so a record says what both passes made
+    # of it without anyone opening a cache file.
+    for t, c in pairs.items():
+        hit = cache.get(_key(t, c))
+        if hit:
+            p.term_mapper._term_mapping.record(t)["pass2"] = hit
+    p.term_mapper.save()
+
     rows = []
     agree = disagree = unanswered = 0
     for t, c in pairs.items():

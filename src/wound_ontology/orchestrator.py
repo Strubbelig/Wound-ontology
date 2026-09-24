@@ -758,6 +758,16 @@ class Orchestrator:
         )))
         if cache:
             self.dm.save_as_json(cache, "mapping_adjudication")
+        # The verdict also lands ON the entry. The cache is the model's memory
+        # across builds and holds pairs that are no longer mapped; the record is
+        # this entry's own provenance, so nothing has to consult a side file to
+        # know why a mapping stands.
+        live_mapping = self.term_mapper.mapping
+        for term, canonical in {**anchor_pairs, **store_pairs}.items():
+            hit = cache.get(adj._key(term, canonical))
+            if hit and live_mapping.get(term) == canonical:
+                self.term_mapper._term_mapping.record(term)["pass1"] = hit
+        self.term_mapper.save()
         print(f"[Orchestrator] Anchor adjudication: {report.summary()}.")
 
         withdrawn = [t for t, _, _, _ in report.refused + report.subsumption_candidates]

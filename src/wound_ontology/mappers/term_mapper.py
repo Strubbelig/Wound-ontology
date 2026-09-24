@@ -104,6 +104,22 @@ class TermMapper:
         """
         return self._term_mapping.remove(*terms)
 
+    def refuse(self, term: str, canonical: str, reason: str = "",
+               by: str = "curator") -> None:
+        """Record a refusal of this exact pair and unmap it.
+
+        The difference from `withdraw` is memory. `withdraw` deletes, which is
+        right for an entry that can no longer do anything; a refusal is a
+        DECISION, and a decision that leaves no trace is re-made by the next
+        build (rule 33, and the reason `build_from_embeddings` consults
+        `is_refused`).
+        """
+        self._term_mapping.refuse(term, canonical, reason=reason, by=by)
+
+    def annotate(self, term: str, **fields) -> None:
+        """Attach evidence — a model verdict, a note — to a term's record."""
+        self._term_mapping.annotate(term, **fields)
+
     def prune(self, live_terms: set[str], ontology_labels=frozenset(),
               *, dry_run: bool = False) -> dict:
         """Drop entries that can no longer map anything onto anything.
@@ -713,6 +729,22 @@ class TermMapper:
         # canonical made the file 92% no-op (24441 of 26625 entries) and buried
         # the ~200 decisions a curator actually has to look at.
         merges = {t: c for t, c in assignment.items() if t != c}
+        # A refusal already recorded against this exact pair stands. Clustering
+        # is not a vote it can win by being run again: before this check a
+        # curator's `n` was a deletion, so the next build re-proposed the merge
+        # and the adjudication cache re-approved it from memory. The guard's
+        # refusals survived a rebuild and the curator's did not.
+        standing = {t: c for t, c in merges.items()
+                    if self._term_mapping.is_refused(t, c)}
+        for t in standing:
+            merges.pop(t)
+        if standing:
+            print(f"[{self.name}] {len(standing)} proposed merge(s) skipped — a "
+                  f"refusal is on record against that exact pair:")
+            for t, c in list(standing.items())[:5]:
+                why = self._term_mapping.is_refused(t, c) or {}
+                print(f"[{self.name}]     {t!r} -> {c!r} refused by "
+                      f"{why.get('by', 'someone')}: {why.get('reason', '')[:60]}")
         self._term_mapping.add_batch(
             merges, {t: metadata_batch[t] for t in merges if t in metadata_batch})
 

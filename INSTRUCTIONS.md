@@ -1449,6 +1449,64 @@ guard not consulted, guard asked about inflections, blocked canonical ignored,
 case-sensitive block, identity folded instead of exact, verification removed, dry
 run writing).
 
+## 37. The mapping is a record, and a refusal is a verdict in it
+
+*Decided 2026-09-24, from the curator's question: "why does it have to be a
+separate csv? why not just more data in the mapping dict?"*
+
+Everything known about one mapping entry used to live in four artifacts: the
+decision in `term_mapping_*.json`, the model's verdict in
+`mapping_adjudication_*.json`, the second opinion in
+`mapping_second_opinion_*.json`, the flags and the curator's marks in a review
+CSV. Three of those are derivable. **One was not, and it was being thrown away.**
+
+`withdraw()` deleted the entry. Nothing recorded that a human had refused it or
+why, so the next `build_from_embeddings` re-proposed the merge, the adjudication
+cache answered `same_class` for it from memory, and the refusal was gone. The
+category guard's refusals survived a rebuild -- they are re-applied every build
+from `refused_mappings` -- and the curator's did not. An evening of review,
+erased by the next run of a step that runs whenever the store changes.
+
+This is rule 33 (the store is the one record; a rejection is a verdict in it,
+never a deletion) applied to the artifact it had never been applied to.
+
+The file now holds one RECORD per term:
+
+```
+{"to": "Wound", "method": …, "confidence": …,
+ "pass1": {"verdict": …, "reason": …},      # what the model said, with the
+ "pass2": {"verdict": …, "reason": …},      #   ontology's definitions / with categories
+ "curator": {"verdict": …, "reason": …, "when": …},
+ "refused": {"material entity": {"reason": …, "by": "curator", "when": …}}}
+```
+
+Four things make it safe to do this to the most-read file in the pipeline:
+
+1. **`data` stays `dict[str, str]`.** It is a projection over the records, so
+   `ConceptStore.normalize`, `DataFrame.rename` and every caller of
+   `TermMapper.mapping` are untouched. The format change stops at `TermMapping`.
+2. **A refused term is absent from the projection**, exactly as a deleted entry
+   used to be, so nothing downstream can act on a refusal by accident.
+3. **`refused` is keyed by CANONICAL, not by term.** Refusing `materials ->
+   material entity` must not stop `materials` ever mapping onto anything.
+4. **The old flat file still loads** and is migrated in memory, written as
+   records by the next save. A migration that has to be remembered is one that
+   gets forgotten.
+
+`remove()` still exists and still deletes, for entries that can no longer do
+anything -- identities, dead targets, inert spellings (rules 19 and 23). The
+distinction is the point: **a mechanical prune deletes, a decision is recorded.**
+
+Enforced by: `TermMapping.refuse` / `is_refused` / `record`,
+`TermMapper.refuse`, the standing-refusal check in
+`TermMapper.build_from_embeddings`, and the verification in
+`scripts/apply_review_sheet.py` that every refusal it applied reads back as
+recorded. `tests/test_mapping_prune.py::test_a_curator_refusal_survives_the_next_build`,
+`::test_a_refusal_is_about_the_pair_not_the_term`,
+`::test_the_old_flat_file_still_loads` — mutation-checked against a build that
+ignores standing refusals, a refusal keyed by term, a refusal that leaves the
+entry mapped, and a flat file that is not migrated.
+
 ## Adding to this file
 
 When a universal design choice is made:

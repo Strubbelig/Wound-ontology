@@ -40,6 +40,8 @@ def mapper():
             self.data.update({k: v for k, v in assignment.items() if k != v})
         def remove(self, *terms):
             for t in terms: self.data.pop(t, None)
+        def is_refused(self, term, canonical):
+            return None                 # nothing refused in these fixtures
     m = TermMapper.__new__(TermMapper)
     m.name = "test"
     m._term_mapping = _Mapping()
