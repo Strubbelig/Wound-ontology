@@ -150,7 +150,6 @@ def main(argv: list[str]) -> int:
         p.term_mapper.refuse(term, canonical,
                              reason=reasons.get(term, "")[:200], by="curator")
         refused_pairs[term] = canonical
-    n = len(refused_pairs)
     for term, canonical in repoint.items():
         p.term_mapper._term_mapping.add(term, canonical, confidence=1.0, method="manual")
         p.term_mapper.judge(term, canonical,
@@ -189,9 +188,12 @@ def main(argv: list[str]) -> int:
             f"entr(ies) are still in the mapping {still_there[:5]}, and "
             f"{len(wrong)} re-pointed entr(ies) read back wrong {list(wrong.items())[:5]}."
         )
-    print(f"[review] refused {n} entr(ies) on the record, re-pointed {len(repoint)}, "
-          f"reversed {len(reverse)}; verified against the file. "
-          f"{len(reloaded):,} entries remain.")
+    # Counted AFTER the reversals, which refuse a pair each. Counting before them
+    # reported 2 refusals on a run that recorded 8.
+    print(f"[review] {len(refused_pairs)} refusal(s) on the record "
+          f"({len(withdraw)} withdrawn, {len(reverse)} the refused half of a "
+          f"reversal), {len(repoint)} re-pointed, {len(reverse)} reversed; "
+          f"verified against the file. {len(reloaded):,} entries remain.")
     print("[review] run_apply_mapping() next — the store still holds the old "
           "spellings until it runs.")
     return 0
