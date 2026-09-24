@@ -83,6 +83,72 @@ An unmarked row is not a decision. The applier says how many you left blank.
 
 ## Decide these first
 
+### 0. Twenty-five families are named by an alt term, and they split in two
+
+Your ruling settles the label case mechanically. The alt-term case it cannot,
+because WONT's alt terms are two different things wearing one annotation, and
+the sheet now says which is which (`canonical is an alt term of`).
+
+**Eight where the canonical is right and must not move.** The 17 Sep renaming
+made the plan specification the label and kept the plain name as an alt term, so
+the "class" these point at is the *plan*, not the process:
+
+```
+Negative pressure wound therapy   (alt of  … plan specification)   42 mentions
+Antibiotic therapy                (alt of  … plan specification)   25
+Skin grafting                     (alt of  … plan specification)   11
+Surgical debridement              (alt of  … plan specification)   10
+Compression therapy, Prophylactic antibiotic therapy,
+Systemic antibiotic therapy, Dressing change
+```
+
+Left alone by the code, deliberately: resolving them would move store terms for
+a therapy onto an information entity.
+
+**Seventeen where the class's own label is a real alternative**, and your rule
+says it wins — but doing that drops the `… process` suffix your convention adds:
+
+```
+Angiogenesis process      -> angiogenesis                  211 mentions
+Tissue regeneration process -> tissue regeneration          96
+Proliferation process     -> cell population proliferation  91
+Hemostasis process        -> hemostasis                     28
+Remodeling process        -> tissue remodeling              26
+Re-Epithelialization      -> Epithelialization process      18
+2nd degree burn           -> Second-degree burn wound       15
+Coagulation process       -> coagulation                    10
+Vasodilation / Vasoconstriction / Lavage process, Surgical excision
+```
+
+`2nd degree burn -> Second-degree burn wound` is plainly right. The others are
+the same policy question as the `process` suffix, seen from the other side: WONT
+added `… process` as an alt term **on an imported class** (GO's `angiogenesis`,
+`hemostasis`, `coagulation`), so following the label means calling the process
+what GO calls it.
+
+**One alt-term assignment is worth checking in WONT itself.** I flagged four and
+then read the classes; three are sound and one is not:
+
+```
+Wound pain  is an alt term of WONT_0000415 'degree of wound pain'
+            — a QUALITY defined as "the extent of the pain that patient feels".
+              Wound pain is the pain; the class is its degree. A determinate
+              quality and what it is a degree OF are not synonyms.
+```
+
+Sound, on reading: `ischemic ulcer` for `Arterial insufficiency wound` (which
+already carries `arterial insufficiency ulcer` and `arterial wound`);
+`Second degree` for `Partial thickness` (the traditional name of that grade in
+the Hildanus/Derganc scheme the class cites); `diagnosis` for MILD_120024
+`disease diagnostic result` (a diagnosis is that result).
+
+`diagnosis` does raise a MAPPING question though, separately from the alt term:
+240 mentions of `diagnoses` / `Diagnoses` are canonicalised onto it, and the
+store's "diagnosis" is often the *act* of diagnosing rather than the information
+entity that comes out of it.
+
+
+
 ### 1. The one merge the ontology already contradicts
 
 ```

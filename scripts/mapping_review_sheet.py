@@ -185,6 +185,19 @@ def main() -> None:
                 continue
             label2iri.setdefault(str(o).strip(), set()).add(s)
     labels = set(label2iri)
+    # An alt term is not the class's name. `2nd degree burn` is an alternative
+    # term of `Second-degree burn wound`, so a family canonicalised onto it
+    # names the class by its synonym and sits apart from the family that used
+    # the label. The pass does not re-spell these automatically -- WONT's alt
+    # terms are largely historical labels, and resolving them moved therapy
+    # terms onto plan specifications -- so they are flagged for the curator.
+    alt_of: dict[str, str] = {}
+    for subj, _, obj in G.triples((None, ALT, None)):
+        if subj in individuals or subj not in classes:
+            continue
+        own = G.value(subj, RDFS.label)
+        if own and str(obj).strip() != str(own).strip():
+            alt_of.setdefault(str(obj).strip(), str(own).strip())
 
     def axiom_between(a: str, b: str) -> str:
         ai, bi = label2iri.get(a.strip(), set()), label2iri.get(b.strip(), set())
@@ -232,6 +245,7 @@ def main() -> None:
             "variation": variation(term, canonical),
             "process": process_direction(term, canonical),
             "both sides curated": "yes" if both else "",
+            "canonical is an alt term of": alt_of.get(canonical.strip(), ""),
             "BFO category side": ("term" if is_category(term) else
                                   "canonical" if is_category(canonical) else ""),
             "ontology axiom": onto_axiom,
@@ -262,6 +276,9 @@ def main() -> None:
             why.append("one side is a declared BFO category name")
         if (r["term"], r["canonical"]) in clash:
             why.append(f"typed into disjoint BFO branches ({clash[(r['term'], r['canonical'])]})")
+        if r["canonical is an alt term of"]:
+            why.append(f"canonical is an alt term; the class is "
+                       f"{r['canonical is an alt term of']!r}")
         if r["process"] == "DROPS 'process'" and r["canonical"] not in labels:
             why.append("drops the process suffix onto a term that is not a class")
         r["suggested"] = "n" if why else "y"
@@ -292,6 +309,7 @@ def main() -> None:
             "variation": strongest,
             "process": next((x for x in grp["process"] if x), ""),
             "blocked canonical": next((x for x in grp["blocked canonical"] if x), ""),
+            "canonical is an alt term of": next((x for x in grp["canonical is an alt term of"] if x), ""),
             "passes disagree": int((grp["passes disagree"] == "yes").sum()),
             "LLM reason": next((x for x in grp["LLM reason"] if x), ""),
             "suggested": "n" if why else "y",

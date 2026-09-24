@@ -28,8 +28,13 @@ Preferences → New entities → set the prefix and the 7-digit counter once.)
 
 ## 1. Open
 
-Nothing. The next items come from the ROADMAP (P4 derived rebuild, P5
-HermiT, P6 BioPortal), not from the CQs.
+| # | what | why |
+|---|---|---|
+| 1.1 | **`Wound pain` is an alt term of WONT_0000415 `degree of wound pain`** — decide whether to move it. The class is a *quality*, defined as "the extent of the pain that patient feels"; wound pain is the pain, its degree is a determinate quality of it (rule 31). Either the alt term belongs on a `Wound pain` class that does not exist yet, or the class's definition is broader than its label. 4 store mentions ride on it. | found 2026-09-23 while reviewing which mapping canonicals are alt terms rather than labels |
+| 1.2 | **Seventeen `… process` alt terms sit on imported classes** — `Angiogenesis process` on GO's `angiogenesis`, `Hemostasis process` on `hemostasis`, `Proliferation process` on `cell population proliferation`, and so on. Nothing is wrong with them, but they make your ruling ("the ontology's own label wins") point at GO's spelling for 211 + 96 + 91 + 28 + 26 mentions, against WONT's own `… process` convention. One policy call; see §0 of `data/review/MAPPING_REVIEW.md`. | same review |
+
+Nothing else. The rest comes from the ROADMAP (P4 derived rebuild, P5 HermiT,
+P6 BioPortal), not from the CQs.
 
 ## 2. Standing notes
 
