@@ -19,18 +19,9 @@ Dropping those would silently re-spell thousands of terms.
 """
 import pytest
 
+from conftest import memory_mapper
+
 from wound_ontology.orchestrator import Orchestrator
-
-
-class _Mapping:
-    def __init__(self, data):
-        self.data = dict(data)
-
-    def remove(self, *terms):
-        before = len(self.data)
-        for t in terms:
-            self.data.pop(t, None)
-        return before - len(self.data)
 
 
 @pytest.fixture
@@ -41,7 +32,7 @@ def pipeline(monkeypatch):
 
 def _with(p, data):
     from wound_ontology.mappers.term_mapper import TermMapper
-    p.term_mapper = TermMapper(_Mapping(data), name="test")
+    p.term_mapper = memory_mapper(data)
     return p
 
 

@@ -13,8 +13,9 @@ only the DISAGREEMENTS go to the curator. Two independently-evidenced
 judgements agreeing is decent grounds to wave a row through; disagreeing is
 where a human is worth the time.
 
-Writes data/review/second_opinion_<date>.csv and caches verdicts in
-data/cache/mapping_second_opinion_*.json, so a re-run asks nothing twice.
+Writes data/review/second_opinion_<date>.csv. Verdicts are cached ON THE
+RECORDS as `pass2` (rule 38), so a re-run asks nothing twice and nothing has to
+consult a side file to know what the second pass made of an entry.
 """
 from __future__ import annotations
 import asyncio, sys, time
@@ -67,8 +68,9 @@ async def main() -> None:
     store_cat = p.store_categories()
     onto_cat = p.ontology_categories()
     defs = p.ontology_definitions()
-    first = p.dm.load_latest_json("mapping_adjudication") or {}
-    cache = p.dm.load_latest_json("mapping_second_opinion") or {}
+    gt = p.term_mapper._term_mapping
+    first = gt.pass_cache("pass1")
+    cache = gt.pass_cache("pass2")
     todo = {t: c for t, c in pairs.items() if _key(t, c) not in cache}
     log(f"{len(cache):,} already in the pass-2 cache; {len(todo):,} to ask")
 
@@ -93,17 +95,9 @@ async def main() -> None:
         done += len(chunk)
         if done % (BATCH * 10) < BATCH:
             log(f"  {done:,}/{len(items):,} asked")
-            p.dm.save_as_json(cache, "mapping_second_opinion")
+            p.term_mapper.save()
 
     await asyncio.gather(*(one(c) for c in chunks))
-    p.dm.save_as_json(cache, "mapping_second_opinion")
-
-    # ...and onto the entries themselves, so a record says what both passes made
-    # of it without anyone opening a cache file.
-    for t, c in pairs.items():
-        hit = cache.get(_key(t, c))
-        if hit:
-            p.term_mapper._term_mapping.record(t)["pass2"] = hit
     p.term_mapper.save()
 
     rows = []

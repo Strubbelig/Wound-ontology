@@ -523,7 +523,8 @@ class Orchestrator:
             print(f"[Orchestrator]     {t!r} -> {mapping[t]!r} — both give "
                   f"{store_name(t)!r}")
         if not dry_run:
-            self.term_mapper.withdraw(*inert)
+            self.term_mapper.withdraw(
+                *inert, reason="the store's own title-casing produces the canonical anyway")
         return report
 
     def _category_compatible_mapping(self, anchors: set[str]):
@@ -741,7 +742,12 @@ class Orchestrator:
                        if c not in anchors and (t in live or c in live)}
         if not anchor_pairs and not store_pairs:
             return mapping
-        cache = {} if readjudicate else (self.dm.load_latest_json("mapping_adjudication") or {})
+        # The cache IS the records (rule 38). `mapping_adjudication_*.json` was a
+        # second home for the same fact, with nothing keeping the two equal;
+        # `pass_cache` reads and writes the entry the verdict is about.
+        # `readjudicate` stops it reading, not writing: every pair is asked
+        # again and the new answers still land on the record.
+        cache = self.term_mapper._term_mapping.pass_cache("pass1", read=not readjudicate)
         report = self._run_sync(adj.adjudicate(
             anchor_pairs, self.llm,
             store_categories=self.store_categories(),
@@ -756,23 +762,13 @@ class Orchestrator:
         report.extend(self._run_sync(adj.adjudicate(
             store_pairs, self.llm, cache=cache,
         )))
-        if cache:
-            self.dm.save_as_json(cache, "mapping_adjudication")
-        # The verdict also lands ON the entry. The cache is the model's memory
-        # across builds and holds pairs that are no longer mapped; the record is
-        # this entry's own provenance, so nothing has to consult a side file to
-        # know why a mapping stands.
-        live_mapping = self.term_mapper.mapping
-        for term, canonical in {**anchor_pairs, **store_pairs}.items():
-            hit = cache.get(adj._key(term, canonical))
-            if hit and live_mapping.get(term) == canonical:
-                self.term_mapper._term_mapping.record(term)["pass1"] = hit
         self.term_mapper.save()
         print(f"[Orchestrator] Anchor adjudication: {report.summary()}.")
 
         withdrawn = [t for t, _, _, _ in report.refused + report.subsumption_candidates]
         if withdrawn:
-            n = self.term_mapper.withdraw(*withdrawn)
+            n = self.term_mapper.withdraw(
+                *withdrawn, reason="pass 1 did not confirm the two as the same class")
             print(f"[Orchestrator] withdrew {n} anchor mapping(s) the model did not "
                   f"confirm as the same class.")
         for term, onto, verdict, reason in report.refused:
@@ -780,19 +776,17 @@ class Orchestrator:
         for term, onto, verdict, reason in report.subsumption_candidates:
             arrow = "is_a" if verdict == "narrower" else "has subclass"
             print(f"[Orchestrator]   SUBCLASS  {term!r} {arrow} {onto!r}  — {reason}")
-        if report.subsumption_candidates:
-            # Written in the hierarchy's own 'Class' / 'Parent class' shape, the
-            # specific one first, so the file can be read straight into a review
-            # without re-deriving which way round the verdict pointed.
-            df = pd.DataFrame(
-                [{"Class": (t if v == "narrower" else c),
-                  "Parent class": (c if v == "narrower" else t),
-                  "store term": t, "ontology class": c,
-                  "verdict": v, "reason": r}
-                 for t, c, v, r in report.subsumption_candidates])
-            self.dm.save_as_csv(df, "mapping_subsumption_candidates")
-            print(f"[Orchestrator] {len(df)} subsumption candidate(s) saved — these "
-                  f"are not synonyms but they are not nothing; review before minting.")
+        # A VIEW of the record, not of this run. The old version wrote only what
+        # this build happened to re-ask, so a pair judged `narrower` in September
+        # vanished from the file in October the moment the cache answered it from
+        # memory — the candidate edge was still true and no longer written down.
+        rows = self.term_mapper.subsumption_candidates()
+        if rows:
+            self.dm.save_as_csv(pd.DataFrame(rows), "mapping_subsumption_candidates")
+            fresh = len(report.subsumption_candidates)
+            print(f"[Orchestrator] {len(rows)} subsumption candidate(s) on record "
+                  f"({fresh} of them judged in this run) — these are not synonyms "
+                  f"but they are not nothing; review before minting.")
         return self.term_mapper.mapping
 
     def review_mapping(self) -> None:

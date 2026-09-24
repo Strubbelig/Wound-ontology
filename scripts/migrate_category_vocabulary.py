@@ -175,13 +175,15 @@ def main() -> None:
     print("\nstore written.")
 
     if dead or restale:
-        removed = p.term_mapper.withdraw(*dead) if dead else 0
+        removed = p.term_mapper.withdraw(
+            *dead, reason="canonical is a retired category name") if dead else 0
         if restale:
-            p.term_mapper._term_mapping.add_batch(
-                restale,
-                {k: {"standard": v, "confidence": 1.0,
-                     "method": "declared-category"} for k, v in restale.items()},
-            )
+            p.term_mapper._report_skipped(
+                p.term_mapper._term_mapping.add_batch(
+                    restale,
+                    {k: {"standard": v, "confidence": 1.0,
+                         "method": "declared-category"} for k, v in restale.items()},
+                ), "the category migration")
         p.term_mapper.save()
         for k, v in restale.items():
             got = p.term_mapper.map(k)

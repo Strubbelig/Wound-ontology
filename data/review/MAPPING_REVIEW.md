@@ -263,14 +263,21 @@ not withdraw the concept.
   order: `granulations -> Granulation process`, `autoimmune disorder ->
   Autoimmune disease`, `inflammation -> inflammatory`, all of them material
   entity against process or disposition.
-* **968 subsumption candidates** — 960 in
-  `data/cache/mapping_subsumption_candidates_2026-09-21_23-24.csv` and 8 more in
-  today's file, written in `Class` / `Parent class` shape. Not synonyms, but not
-  nothing. **Only 9 of them involve a curated class** (`wound debridement` under
+* **1,072 subsumption candidates**, all of them in
+  `data/cache/mapping_subsumption_candidates_2026-09-24_13-36.csv`, written in
+  `Class` / `Parent class` shape. Not synonyms, but not nothing. This file used
+  to be written from what a build happened to RE-ASK, so it held 960 rows on
+  21 Sep and 8 on 22 Sep — the other 952 were answered from the cache and so
+  never appeared in that run's report. It is now a view of the record and
+  carries every pair either pass called `narrower` or `broader` (rule 38).
+  **Only 9 of them involve a curated class** (`wound debridement` under
   `Surgical wound debridement process`, `antiseptic` under `antiseptic drug`,
-  `scarring process` under `Pathological scarring process`, …); the other 951
-  are store term over store term and belong to the hierarchy step, not to
-  minting.
+  `scarring process` under `Pathological scarring process`, …); the rest are
+  store term over store term and belong to the hierarchy step, not to minting.
+  **93 of the 1,072 are still live merges**: pass 1 called them the same class,
+  pass 2 called them narrower or broader. Those are already in your family sheet
+  under the pass-disagreement flag, and they are the subset where the
+  disagreement is about hierarchy rather than about synonymy.
 * **The 51 anchor mappings the category guard refused** before the model was
   even asked (`Wound Dressing -> Wound dressing`, `laceration -> Laceration`).
   These were refused because the store's own typing of the term contradicts the

@@ -25,25 +25,12 @@
 """
 import pytest
 
-from wound_ontology.mappers.term_mapper import TermMapper
-
-
-class _Mapping:
-    def __init__(self, data):
-        self.data = dict(data)
-
-    def add_batch(self, entries, metadata_batch=None):
-        self.data.update(entries)
-
-    def remove(self, *terms):
-        before = len(self.data)
-        for t in terms:
-            self.data.pop(t, None)
-        return before - len(self.data)
+from conftest import memory_mapper
 
 
 def _mapper(data):
-    return TermMapper(_Mapping(data), name="test")
+    """The real TermMapping over an in-memory file — see tests/conftest.py."""
+    return memory_mapper(data)
 
 
 LABELS = {"necrosis": "Necrosis", "surgical debridement": "Surgical debridement"}
@@ -137,11 +124,8 @@ def test_dry_run_writes_nothing():
 
 
 def test_a_write_that_does_not_land_raises():
-    class _Deaf(_Mapping):
-        def add_batch(self, entries, metadata_batch=None):
-            pass
-
-    m = TermMapper(_Deaf({"debridement surgery": "surgical debridement"}), name="test")
+    m = _mapper({"debridement surgery": "surgical debridement"})
+    m._term_mapping.add_batch = lambda entries, metadata_batch=None: []   # the write goes nowhere
     with pytest.raises(RuntimeError, match="did not land"):
         m.enforce_canonical_policy(label_spellings=LABELS)
 

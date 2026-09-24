@@ -13,6 +13,8 @@ Anchors close it: ontology labels join the clustering and always win canonicalit
 import numpy as np
 import pytest
 
+from conftest import memory_mapper
+
 from wound_ontology.mappers.term_mapper import TermMapper
 
 
@@ -33,18 +35,9 @@ class _Embedder:
 
 @pytest.fixture
 def mapper():
-    class _Mapping:
-        def __init__(self): self.data = {}
-        def add_batch(self, assignment, metadata):
-            # merges, as the real one does: the mapping persists across builds
-            self.data.update({k: v for k, v in assignment.items() if k != v})
-        def remove(self, *terms):
-            for t in terms: self.data.pop(t, None)
-        def is_refused(self, term, canonical):
-            return None                 # nothing refused in these fixtures
-    m = TermMapper.__new__(TermMapper)
-    m.name = "test"
-    m._term_mapping = _Mapping()
+    # The real TermMapping over an in-memory file — see tests/conftest.py.
+    m = memory_mapper()
+    m._standard_embeddings = {}
     return m
 
 
@@ -287,7 +280,7 @@ def test_a_refused_mapping_recorded_earlier_is_withdrawn(mapper):
 
 def test_curated_mappings_are_not_disturbed(mapper):
     """Only the exact refused pair is withdrawn; anything else in the file stays."""
-    mapper._term_mapping.data["some curated term"] = "its canonical form"
+    mapper._term_mapping.add("some curated term", "its canonical form")
     _build(mapper, ["Necrosis", "Necrosis Process"], anchors={"Necrosis"},
            groups=[["necrosis"]], accept=lambda t, c: False)
     assert mapper._term_mapping.data["some curated term"] == "its canonical form"

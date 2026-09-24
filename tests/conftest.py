@@ -79,3 +79,41 @@ def pytest_sessionstart(session) -> None:
         "Interpreter', or run pytest from `conda activate onto_env`. "
         "Refusing to run rather than reporting import errors as test failures."
     )
+
+
+# ── A real TermMapping over an in-memory file ────────────────────────────────
+#
+# Five test modules used to hand-roll a `_Mapping` double carrying `data`,
+# `add_batch` and `remove`. The doubles drifted apart from each other and from
+# the class, and when `remove` became `retire` all five went red at once for a
+# reason that had nothing to do with what they test. A double that has to track
+# a class this closely IS the class, so the tests use the real one -- refusals,
+# retirement, the record format -- and only the file underneath is fake.
+
+class MemoryDataManager:
+    """DataManager's whole surface as far as TermMapping is concerned."""
+
+    def __init__(self, records: dict | None = None) -> None:
+        self.records = dict(records or {})
+        self.written: dict | None = None
+
+    def load_latest_json(self, name):
+        return self.records
+
+    def save_as_json(self, data, name):
+        self.written = data
+        return name
+
+
+def memory_mapping(data: dict | None = None):
+    """A real `TermMapping` whose file is a dict. Accepts the flat
+    `term -> canonical` shape, which `_load` migrates exactly as it does on
+    disk, or full records."""
+    from wound_ontology.mappers.term_mapping import TermMapping
+    return TermMapping(MemoryDataManager(dict(data or {})))
+
+
+def memory_mapper(data: dict | None = None, name: str = "test"):
+    """A real `TermMapper` over `memory_mapping`."""
+    from wound_ontology.mappers.term_mapper import TermMapper
+    return TermMapper(memory_mapping(data), name=name)

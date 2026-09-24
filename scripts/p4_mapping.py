@@ -3,8 +3,9 @@ Roadmap P4, the single derived rebuild. Runs build_reasoner_skeleton() (it
 rebuilds on its own when WONT or MILD is newer) and run_build_term_mapping(),
 which embeds every store term with SapBERT, anchors on the WONT + MILD labels,
 and has the LLM adjudicate every anchor and store-to-store pair whose labels
-differ by more than case, punctuation or plural. The adjudication cache in
-data/cache/mapping_adjudication_*.json is read first and saved at the end.
+differ by more than case, punctuation or plural. Verdicts are read from and
+written to the mapping records themselves (rule 38), so nothing it has already
+asked is asked again and nothing has to consult a side file.
 Then review_mapping() by hand, then run_apply_mapping().
 Run detached:
     ( nohup python -u scripts/p4_mapping.py > output/p4_mapping.log 2>&1 < /dev/null & )

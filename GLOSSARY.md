@@ -79,8 +79,17 @@ branches. Evidence of either a wrong merge or a wrong typing; both matter.
 
 ## The term mapping
 
-**term mapping** — `data/cache/term_mapping_*.json`, a dict of
-`term -> canonical`. Applying it renames every matching name in the store.
+**term mapping** — `data/cache/term_mapping_*.json`. Since 2026-09-24 it is the
+**ground truth**: one record per term holding everything ever decided about it.
+The plain `term -> canonical` dict everything applies is a *view* of it.
+
+**ground truth** vs **view** — the ground truth is the one file a fact is stored
+in. A view is computed from it whenever asked and never stored, so it cannot go
+stale or disagree. `data` (the live mapping), `pass_cache`, `verdicts`,
+`subsumption_candidates`, `disagreements` and `metadata` are all views of the
+mapping records. When you see two artifacts carrying the same fact, one of them
+is wrong and nobody knows which — that is why the two adjudication cache files
+were folded in.
 
 **canonical** — the spelling a group of variants collapses onto, and later the
 class label. `wounds`, `Wound`, `wound` all have canonical `Wound`.
@@ -133,24 +142,35 @@ all of them.
 
 **adjudication** — the LLM judging a proposed merge. Verdicts: `same_class`,
 `narrower`, `broader` (subsumption candidates — not synonyms, but a hierarchy
-hint), `different` (refused and withdrawn). Cached in
-`mapping_adjudication_*.json`, so a rebuild re-asks nothing it has already asked.
+hint), `different` (refused and withdrawn).
+
+**pass cache** — the memory that stops a rebuild paying to ask the same question
+twice. It used to be two files (`mapping_adjudication_*.json`,
+`mapping_second_opinion_*.json`); it is now a view over the records, so asking
+the model writes the answer onto the entry it is about. A cached verdict was
+still a model verdict — only the second call is skipped, not the judgement.
 
 **pass 1 / pass 2** — pass 1 is the adjudication that has run: definitions attached
 for anchor pairs, no categories for store pairs. Pass 2 is a second, independent
 judgement with *different* evidence (BFO categories, the continuant/occurrent rule
 stated). Only rows where the two disagree go to you.
 
-**record** — what the mapping file holds per term since 2026-09-24: the
-canonical, how it was decided, both model passes, the curator's verdict, and the
-canonicals this term has been refused against. `TermMapping.data` projects it
-back to the plain `term -> canonical` dict every consumer reads.
+**record** — what the mapping file holds per term: the canonical, how it was
+decided, whether it has been retired, and a **pair** entry for each canonical the
+term has ever been judged against.
 
-**refuse** vs **withdraw** — refusing records a verdict against that exact pair
-and unmaps it, and the next build honours it. Withdrawing deletes the entry and
-remembers nothing; it is for entries that can no longer do anything, not for
-decisions. Before the distinction existed, a curator's refusal was re-proposed
-and re-approved by the next rebuild.
+**pair** — one (term, canonical) question and everything said about it: `pass1`,
+`pass2`, the curator's verdict, and any refusal. Keyed by canonical because a
+term is judged against more than one — 192 of them are — and `different` about
+one canonical says nothing about another.
+
+**refuse** vs **retire** — refusing records a verdict against that exact pair,
+unmaps it, and the next build honours it: a decision. Retiring only unmaps, with
+a reason, for an entry that can no longer do anything — an identity, a dead
+target, an inert spelling. Neither deletes: the record and its verdicts stay
+either way, because the model's answer cost credits and a deleted pair is one the
+next build pays to ask again. (Before the distinction existed, a curator's
+refusal was re-proposed and re-approved by the next rebuild.)
 
 **re-point** — change an entry's canonical.
 

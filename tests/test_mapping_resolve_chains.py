@@ -20,25 +20,13 @@ write and raises rather than leaving the file in that state.
 """
 import pytest
 
-from wound_ontology.mappers.term_mapper import TermMapper, canonical_rank
-
-
-class _Mapping:
-    def __init__(self, data):
-        self.data = dict(data)
-
-    def add_batch(self, entries, metadata_batch=None):
-        self.data.update(entries)
-
-    def remove(self, *terms):
-        before = len(self.data)
-        for t in terms:
-            self.data.pop(t, None)
-        return before - len(self.data)
+from conftest import memory_mapper
+from wound_ontology.mappers.term_mapper import canonical_rank
 
 
 def _mapper(data):
-    return TermMapper(_Mapping(data), name="test")
+    """The real TermMapping over an in-memory file — see tests/conftest.py."""
+    return memory_mapper(data)
 
 
 def test_a_chain_collapses_onto_its_terminal():
@@ -111,18 +99,17 @@ def test_dry_run_reports_without_writing():
 def test_a_write_that_does_not_land_raises():
     """The verification is the point: a resolution that did not reach a fixed
     point leaves exactly the silent half-merge the method exists to end."""
-    class _Deaf(_Mapping):
-        def add_batch(self, entries, metadata_batch=None):
-            pass                      # the write goes nowhere
+    def _deafen(mapper):
+        mapper._term_mapping.add_batch = lambda e, metadata_batch=None: []
+        return mapper                             # the write goes nowhere
 
-    m = TermMapper(_Deaf({"A": "B", "B": "C"}), name="test")
+    m = _deafen(_mapper({"A": "B", "B": "C"}))
     with pytest.raises(RuntimeError, match="fixed point"):
         m.resolve_chains()
 
     # and the same check has to see a chain that only the fold reveals,
     # or it passes a file the store will still walk one hop further
-    folded = TermMapper(_Deaf({"a term": "a-canonical", "A-canonical": "the end"}),
-                        name="test")
+    folded = _deafen(_mapper({"a term": "a-canonical", "A-canonical": "the end"}))
     with pytest.raises(RuntimeError, match="fixed point"):
         folded.resolve_chains()
 

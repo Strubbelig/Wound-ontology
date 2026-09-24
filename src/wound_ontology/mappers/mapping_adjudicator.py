@@ -128,8 +128,18 @@ def triage(pairs: dict[str, str]) -> tuple[dict[str, str], dict[str, str]]:
     return surface, content
 
 
-def _key(term: str, canonical: str) -> str:
-    return f"{term}\x1f{canonical}"
+def pair_key(term: str, canonical: str) -> str:
+    """The key a pair is remembered under, here and in `TermMapping`.
+
+    One implementation, imported by both, because two copies of a key format is
+    two chances for a verdict to be written where nothing will look for it.
+    """
+    from wound_ontology.mappers.term_mapping import KEY_SEP
+    return f"{term}{KEY_SEP}{canonical}"
+
+
+#: Older name, kept because scripts import it.
+_key = pair_key
 
 
 def _loose(text: str) -> str:

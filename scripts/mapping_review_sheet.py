@@ -161,12 +161,11 @@ def main() -> None:
     p = Orchestrator()
     mapping = dict(p.term_mapper.mapping)
     freq = p._collect_store_terms_with_freq()
-    adj = p.dm.load_latest_json("mapping_adjudication") or {}
-    # Pass 2, if it has run: the same pairs judged again on the evidence pass 1
-    # withheld. Its verdicts are not applied -- they over-refuse, which is why
-    # pass 1 withholds the evidence -- but where the two passes DISAGREE is where
-    # a curator is worth the time.
-    second = p.dm.load_latest_json("mapping_second_opinion") or {}
+    # Both passes come off the entry itself (rule 38). Pass 2 is the same pair
+    # judged again on the evidence pass 1 withheld: its verdicts are not applied
+    # -- they over-refuse, which is why pass 1 withholds the evidence -- but
+    # where the two passes DISAGREE is where a curator is worth the time.
+    gt = p.term_mapper._term_mapping
 
     # every name a curated class answers to, and the graph itself, so a merge
     # the ontologies already relate by an axiom can be shown as such
@@ -223,11 +222,9 @@ def main() -> None:
     for term, canonical in mapping.items():
         if label_difference(term, canonical) != "content":
             continue
-        # The entry's own record first; the caches are the fallback for a
-        # mapping written before the records carried verdicts.
-        rec = p.term_mapper._term_mapping.record(term)
-        verdict = rec.get("pass1") or adj.get(f"{term}\x1f{canonical}", {})
-        two = rec.get("pass2") or second.get(f"{term}\x1f{canonical}", {})
+        judged = gt.peek(term, canonical)
+        verdict = judged.get("pass1") or {}
+        two = judged.get("pass2") or {}
         onto_axiom = axiom_between(term, canonical)
         # Both sides curated only counts when they are DIFFERENT classes. A
         # label and one of its own alt terms are both "curated" and mapping one

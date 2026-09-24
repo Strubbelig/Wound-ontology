@@ -94,15 +94,33 @@ class TermMapper:
         """Explicit save — delegates to TermMapping."""
         self._term_mapping.save()
 
-    def withdraw(self, *terms: str) -> int:
-        """Remove entries from the mapping. Returns how many were actually there.
+    def _report_skipped(self, skipped: list[tuple[str, str]], what: str) -> None:
+        """Say which proposals a standing refusal blocked.
+
+        `add_batch` returns them rather than writing them, and a batch that
+        silently dropped part of itself is the failure mode this pipeline does
+        not get to have.
+        """
+        if not skipped:
+            return
+        print(f"[{self.name}] {len(skipped)} entr(y/ies) from {what} not written — "
+              f"a refusal stands against that exact pair:")
+        for t, c in skipped[:5]:
+            print(f"[{self.name}]     {t!r} -> {c!r}")
+
+    def withdraw(self, *terms: str, reason: str = "") -> int:
+        """Unmap entries. Returns how many were actually mapped.
 
         The mapping file accumulates across builds, so a mapping that a later
         step refuses may already be recorded from an earlier run that had no such
         check. Withdrawing is how a refusal reaches the file rather than being
         quietly outvoted by it.
+
+        The record itself stays -- `TermMapping.retire` keeps the verdicts the
+        pair cost credits to obtain -- and `reason` says on the record why the
+        entry stopped being live.
         """
-        return self._term_mapping.remove(*terms)
+        return self._term_mapping.retire(*terms, reason=reason)
 
     def refuse(self, term: str, canonical: str, reason: str = "",
                by: str = "curator") -> None:
@@ -117,8 +135,17 @@ class TermMapper:
         self._term_mapping.refuse(term, canonical, reason=reason, by=by)
 
     def annotate(self, term: str, **fields) -> None:
-        """Attach evidence — a model verdict, a note — to a term's record."""
+        """Attach term-level evidence — a note, a method — to a term's record."""
         self._term_mapping.annotate(term, **fields)
+
+    def judge(self, term: str, canonical: str, **fields) -> None:
+        """Attach evidence to one PAIR — a pass verdict, a curator's mark."""
+        self._term_mapping.judge(term, canonical, **fields)
+        self._term_mapping.save()
+
+    def subsumption_candidates(self) -> list[dict]:
+        """The pairs a pass called narrower/broader — a view of the record."""
+        return self._term_mapping.subsumption_candidates()
 
     def prune(self, live_terms: set[str], ontology_labels=frozenset(),
               *, dry_run: bool = False) -> dict:
@@ -170,7 +197,8 @@ class TermMapper:
             print(f"[{self.name}] prune (dry run): would drop {report['identity']} "
                   f"identity and {report['dead']} dead entr(ies); {report['kept']} kept.")
             return report
-        self._term_mapping.remove(*identity, *dead)
+        self._term_mapping.retire(*identity, reason="identity entry — mapped a term onto itself")
+        self._term_mapping.retire(*dead, reason="target no longer exists anywhere")
         print(f"[{self.name}] pruned {report['identity']} identity entr(ies) that "
               f"never mapped anything and {report['dead']} whose target no longer "
               f"exists; {report['kept']} live mapping(s) kept.")
@@ -333,13 +361,14 @@ class TermMapper:
         if dry_run:
             return report
 
-        self._term_mapping.add_batch(
+        self._report_skipped(self._term_mapping.add_batch(
             repointed,
             {t: {"standard": c, "confidence": 1.0, "method": "chain_resolved"}
              for t, c in repointed.items()},
-        )
-        if dropped or refused:
-            self._term_mapping.remove(*dropped, *(t for t, _ in refused))
+        ), "chain resolution")
+        self._term_mapping.retire(*dropped, reason="spelling of its own canonical")
+        self._term_mapping.retire(*(t for t, _ in refused),
+                                  reason="chain ends at an anchor the guard refuses")
 
         # Verify rather than assume: the point of the step is that one hop is
         # enough afterwards, and a write that did not land would leave exactly
@@ -484,13 +513,17 @@ class TermMapper:
 
         if not dry_run:
             if respelled:
-                self._term_mapping.add_batch(
+                self._report_skipped(self._term_mapping.add_batch(
                     respelled,
                     {t: {"standard": c, "confidence": 1.0, "method": "ontology_label"}
-                     for t, c in respelled.items()})
+                     for t, c in respelled.items()}), "canonical policy")
             gone = [t for t, _, _ in refused] + identities
             if gone:
-                self._term_mapping.remove(*gone)
+                self._term_mapping.retire(
+                    *[t for t, _, _ in refused],
+                    reason="re-spelling onto the class label is the wrong kind of thing")
+                self._term_mapping.retire(
+                    *identities, reason="re-spelling turned the entry into an identity")
             after = self._term_mapping.data
             missed = {t: c for t, c in respelled.items() if after.get(t) != c}
             left = [t for t in gone if t in after]
@@ -745,8 +778,9 @@ class TermMapper:
                 why = self._term_mapping.is_refused(t, c) or {}
                 print(f"[{self.name}]     {t!r} -> {c!r} refused by "
                       f"{why.get('by', 'someone')}: {why.get('reason', '')[:60]}")
-        self._term_mapping.add_batch(
-            merges, {t: metadata_batch[t] for t in merges if t in metadata_batch})
+        self._report_skipped(self._term_mapping.add_batch(
+            merges, {t: metadata_batch[t] for t in merges if t in metadata_batch}),
+            "this build")
 
         # The mapping persists across builds, so a mapping this build refuses may
         # still be present from an earlier one that had no validator. Withdraw it
@@ -755,7 +789,7 @@ class TermMapper:
         stale = [t for t, canonical in self.refused_mappings
                  if self._term_mapping.data.get(t) == canonical]
         if stale:
-            self._term_mapping.remove(*stale)
+            self._term_mapping.retire(*stale, reason="refused by the category guard")
             print(f"[{self.name}] withdrew {len(stale)} refused mapping(s) recorded "
                   f"by an earlier build.")
         # This build's decision about the terms it was given, identities included,

@@ -506,8 +506,8 @@ duplicate class, which a curator can still merge.
 Enforced by: `mappers/mapping_adjudicator.py` (`label_difference`, `triage`,
 `adjudicate`), `LLMClient.adjudicate_mappings_batch`,
 `Orchestrator._adjudicate_anchor_mappings`, `Orchestrator.ontology_definitions`.
-Verdicts are cached in `mapping_adjudication`; re-ask with `readjudicate=True`
-after the ontologies' definitions change.
+Verdicts are cached on the entry they judge (`TermMapping.pass_cache`, rule 38);
+re-ask with `readjudicate=True` after the ontologies' definitions change.
 
 ## 19. The mapping is pruned to what can still fire
 
@@ -1497,6 +1497,13 @@ Four things make it safe to do this to the most-read file in the pipeline:
 anything -- identities, dead targets, inert spellings (rules 19 and 23). The
 distinction is the point: **a mechanical prune deletes, a decision is recorded.**
 
+> **Superseded in part by rule 38 (2026-09-24.)** The record now keeps every
+> verdict under the CANONICAL it is about (`pairs`), not at the term level, and
+> `remove()` became `retire()`: a mechanical prune unmaps the entry and keeps
+> the record, because deleting it also threw away model verdicts the pair had
+> cost credits to obtain. What rule 37 decided -- a decision is a verdict, never
+> a deletion -- is unchanged and is what rule 38 extends.
+
 Enforced by: `TermMapping.refuse` / `is_refused` / `record`,
 `TermMapper.refuse`, the standing-refusal check in
 `TermMapper.build_from_embeddings`, and the verification in
@@ -1506,6 +1513,82 @@ recorded. `tests/test_mapping_prune.py::test_a_curator_refusal_survives_the_next
 `::test_the_old_flat_file_still_loads` — mutation-checked against a build that
 ignores standing refusals, a refusal keyed by term, a refusal that leaves the
 entry mapped, and a flat file that is not migrated.
+
+## 38. The mapping file is the ground truth; everything else about the mapping is a view
+
+*Decided 2026-09-24.*
+
+`TermMapping` holds one record per term carrying **everything** anyone ever
+decided about it, and every other artifact about the mapping is COMPUTED from
+those records on demand. Nothing about a mapping is stored twice.
+
+```
+"debridement": {
+  "to": "Debridement process", "method": …, "confidence": …,
+  "retired": {"reason": …, "when": …},          # unmapped mechanically
+  "pairs": {                                     # keyed by CANONICAL
+     "Debridement process": {
+        "pass1":   {"verdict": "same_class", "reason": …},
+        "pass2":   {"verdict": "same_class", "reason": …},
+        "curator": {"verdict": "refused",    "reason": …, "when": …},
+        "refused": {"reason": …, "by": "curator", "when": …}},
+     "Wound care process": {"pass1": {"verdict": "different", "reason": …}}}}
+```
+
+The views, all recomputed per call, none stored: `data` (the live
+`term -> canonical` every consumer uses), `pass_cache(name)` (the adjudicator's
+cache interface), `verdicts(name)`, `judged(name)`, `subsumption_candidates()`,
+`disagreements()`, `metadata`, `standards`, `originals`.
+
+**The failure.** `mapping_adjudication_*.json` (pass 1) and
+`mapping_second_opinion_*.json` (pass 2) were the model's memory across builds.
+Rule 37 then copied each verdict onto the record as well -- two homes for one
+fact, two writers, nothing keeping them equal. Three things were wrong with the
+split, all measured on the 2026-09-24 file:
+
+* **2,548 of the 7,224 judged terms were not in the mapping at all.** Their
+  verdicts existed only inside a cache file nothing downstream reads. A term
+  re-proposed by a later build would find its own verdict — but a curator
+  reading the record would not.
+* **192 terms had been judged against more than one canonical.** `pass1` on the
+  record could only hold one of them, so the record's copy was lossy by
+  construction, and a verdict about `materials -> material entity` said nothing
+  about `materials -> Wound dressing material` while sitting where both would
+  read it.
+* **`mapping_subsumption_candidates_*.csv` was written from the RUN, not the
+  record.** 979 pairs stand judged `narrower`/`broader`, but a build writes only
+  what it re-asked: the 2026-09-21 build wrote 960 rows and the 2026-09-22 build
+  wrote 8, because the other 952 were answered from the cache and so were never
+  in that run's report. Candidate subsumption edges, still true, silently absent
+  from the artifact whose whole job is to carry them.
+
+**The rule in practice.**
+
+1. A verdict is written where the decision lives. `pass_cache(name)` is a
+   `MutableMapping` over the records keyed `term \x1f canonical`
+   (`mapping_adjudicator.pair_key`, one implementation, imported by both). A
+   cache MISS must not create the record it missed.
+2. `readjudicate` stops the cache READING, not writing — every pair is asked
+   again and the new answers still land on the record.
+3. A mechanical prune RETIRES: `to` becomes `None`, a `retired` reason is
+   stamped, and every verdict stays. `forget()` deletes outright and nothing in
+   the pipeline calls it.
+4. A write that would overwrite a standing refusal does not happen silently:
+   `add` raises (`override=True` is the deliberate reversal, and it clears the
+   refusal), `add_batch` skips and RETURNS the skipped pairs, and every caller
+   prints them.
+5. An artifact derived from the mapping is written from the view, so it carries
+   the whole record and not one run's worth of it.
+
+Enforced by: `wound_ontology/mappers/term_mapping.py` (the record and every
+view), `mapping_adjudicator.pair_key`, `Orchestrator._adjudicate_anchor_mappings`
+(which no longer loads or saves a cache file),
+`scripts/p4_fold_caches.py` (the one-time import, verified by reading back from
+disk). `tests/test_mapping_ground_truth.py` — 29 tests, mutation-checked against
+a cache miss that creates records, verdicts left at the term level, a retire
+that deletes, an `add` that ignores a refusal, an `add_batch` that writes one, a
+subsumption view built from one pass or one run, an `import_pass` that
+overwrites a conflict, and a second key format.
 
 ## Adding to this file
 

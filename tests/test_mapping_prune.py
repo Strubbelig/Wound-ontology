@@ -21,26 +21,13 @@ the same normalisation happens next time the term appears.
 """
 import pytest
 
+from conftest import memory_mapper
 from wound_ontology.mappers.term_mapper import TermMapper
 
 
-class _Mapping:
-    def __init__(self, data):
-        self.data = dict(data)
-        self.saved = 0
-
-    def remove(self, *terms):
-        before = len(self.data)
-        for t in terms:
-            self.data.pop(t, None)
-        removed = before - len(self.data)
-        if removed:
-            self.saved += 1
-        return removed
-
-
 def _mapper(data):
-    return TermMapper(_Mapping(data), name="test")
+    """The real TermMapping over an in-memory file — see tests/conftest.py."""
+    return memory_mapper(data)
 
 
 def test_identity_entries_are_dropped():
@@ -201,6 +188,8 @@ def test_the_old_flat_file_still_loads():
     dm = _DM()
     tm = TermMapping(dm)
     assert tm.data == {"wounds": "Wound", "ulcers": "Ulcer"}
-    tm.annotate("wounds", pass1={"verdict": "same_class", "reason": "plural"})
-    assert dm.written["wounds"] == {"to": "Wound", "refused": {},
-                                    "pass1": {"verdict": "same_class", "reason": "plural"}}
+    tm.judge("wounds", "Wound", pass1={"verdict": "same_class", "reason": "plural"})
+    tm.save()
+    assert dm.written["wounds"] == {
+        "to": "Wound",
+        "pairs": {"Wound": {"pass1": {"verdict": "same_class", "reason": "plural"}}}}

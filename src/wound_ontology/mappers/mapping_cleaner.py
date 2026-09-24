@@ -240,6 +240,6 @@ class MappingCleaner(BaseCleaner):
 
     # ── Internal ──────────────────────────────────────────────────────────────
 
-    def _remove_entries(self, keys: set[str]) -> int:
-        """Remove entries from TermMapping (saves automatically)."""
-        return self.term_mapper._term_mapping.remove(*keys)
+    def _remove_entries(self, keys: set[str], reason: str = "removed in review") -> int:
+        """Unmap entries, keeping their record (rule 38; saves automatically)."""
+        return self.term_mapper._term_mapping.retire(*keys, reason=reason)
