@@ -335,9 +335,9 @@ def main() -> None:
     print(f"[sheet] {len(fdf):,} families ({(fdf['n'] > 1).sum():,} with more than one term); "
           f"mechanical families (one policy decision): "
           f"{(fdf['variation'].isin(['spelling', 'word order', 'abbreviation']) & (fdf['suggested'] == 'y')).sum():,}")
-    if second:
+    if gt.judged("pass2"):
         d = int((df["passes disagree"] == "yes").sum())
-        print(f"[sheet] pass 2 present: {len(second):,} verdicts; the two passes "
+        print(f"[sheet] pass 2 present: {gt.judged('pass2'):,} verdicts; the two passes "
               f"disagree on {d:,} row(s) in {int((fdf['passes disagree'] > 0).sum()):,} "
               f"famil(ies) — those sort first.")
     else:
