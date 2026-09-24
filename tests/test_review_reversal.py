@@ -1,0 +1,127 @@
+"""A curator saying "the other one is the right name" is a reversal, not an `n`.
+
+On the 2026-09-24 sheet, 6 of 9 rows marked `n` said so in their `why` cell:
+"reverse the mapping", "the process suffix is what i actually want here",
+"always prefer the non hyphenated synonym", "stick to american". Marking such a
+row `n` refuses the merge and leaves BOTH spellings standing as separate
+concepts -- the opposite of the decision being made. The sheet had no way to say
+it, so the curator wrote prose, and prose does not apply.
+
+Putting the row's own term in `corrected canonical` now says it.
+"""
+
+import pandas as pd
+import pytest
+
+from conftest import memory_mapper
+
+
+def _sheet(**row) -> pd.DataFrame:
+    base = {"term": "", "canonical": "", "keep(y/n)": "", "corrected canonical": "",
+            "why": ""}
+    return pd.DataFrame([{**base, **row}])
+
+
+def _decisions(df):
+    import importlib.util, pathlib
+    spec = importlib.util.spec_from_file_location(
+        "apply_review_sheet",
+        pathlib.Path(__file__).resolve().parents[1] / "scripts" / "apply_review_sheet.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.decisions(df)
+
+
+# ── Reading the sheet ────────────────────────────────────────────────────────
+
+def test_the_term_in_the_corrected_column_is_a_reversal():
+    w, r, rev, _ = _decisions(_sheet(term="subcutaneous tissue",
+                                     canonical="subcutaneous layer",
+                                     **{"corrected canonical": "subcutaneous tissue"}))
+    assert rev == {"subcutaneous tissue": "subcutaneous layer"}
+    assert w == [] and r == {}
+
+
+def test_a_reversal_is_read_case_insensitively():
+    """A curator typing a name back is matching a concept, not a byte string."""
+    _, _, rev, _ = _decisions(_sheet(term="Case", canonical="cases",
+                                     **{"corrected canonical": "  case  "}))
+    assert rev == {"Case": "cases"}
+
+
+def test_a_different_label_is_still_a_re_point():
+    _, r, rev, _ = _decisions(_sheet(term="fibroblasts", canonical="fibroblast cells",
+                                     **{"corrected canonical": "fibroblast"}))
+    assert r == {"fibroblasts": "fibroblast"} and rev == {}
+
+
+def test_the_canonical_typed_back_is_no_decision_at_all():
+    w, r, rev, un = _decisions(_sheet(term="wounds", canonical="Wound",
+                                      **{"corrected canonical": "Wound"}))
+    assert (w, r, rev) == ([], {}, {})
+
+
+def test_a_canonical_that_differs_only_in_case_is_read_as_a_restatement():
+    """`a -> A` with `A` in the column: a case-insensitive test cannot tell the
+    canonical restated from the term typed back, and only one of those two means
+    nothing. The exact match on the canonical is checked first."""
+    w, r, rev, un = _decisions(_sheet(term="a", canonical="A",
+                                      **{"corrected canonical": "A"}))
+    assert (w, r, rev) == ([], {}, {})
+
+
+def test_the_term_typed_back_still_reverses_when_only_the_case_differs():
+    _, _, rev, _ = _decisions(_sheet(term="a", canonical="A",
+                                     **{"corrected canonical": "a"}))
+    assert rev == {"a": "A"}
+
+
+def test_n_without_a_correction_is_still_a_plain_withdrawal():
+    w, _, rev, _ = _decisions(_sheet(term="Diabetes mellitus", canonical="diabetes",
+                                     **{"keep(y/n)": "n"}))
+    assert w == ["Diabetes mellitus"] and rev == {}
+
+
+def test_a_reversal_outranks_an_n_on_the_same_row():
+    """Both marks appear together on the real sheet — `n` to reject the
+    direction, the term to say which direction is right."""
+    w, _, rev, _ = _decisions(_sheet(term="case", canonical="cases",
+                                     **{"keep(y/n)": "n", "corrected canonical": "case"}))
+    assert rev == {"case": "cases"} and w == []
+
+
+def test_an_empty_correction_read_back_as_the_string_nan_is_not_a_decision():
+    """`decisions` must hold on its own, not on its caller's housekeeping.
+
+    pandas reads a blank cell as NaN and `str()` makes it the truthy string
+    'nan'. `main` happens to `.fillna("")` first, so this has never fired in
+    anger -- but the guard belongs in the function that reads the column, not in
+    one of the two places that call it.
+    """
+    df = pd.read_csv(pd.io.common.StringIO(
+        "term,canonical,keep(y/n),corrected canonical,why\na,A,,,\nb,B,,b,\n"))
+    w, r, rev, un = _decisions(df)
+    assert r == {} and rev == {"b": "B"} and un == 1
+
+
+# ── Writing it ───────────────────────────────────────────────────────────────
+
+def test_a_reversal_refuses_the_pair_and_writes_the_other_direction():
+    m = memory_mapper({"subcutaneous tissue": "subcutaneous layer"})
+    tm = m._term_mapping
+    tm.refuse("subcutaneous tissue", "subcutaneous layer", reason="reversed", by="curator")
+    tm.add("subcutaneous layer", "subcutaneous tissue")
+    assert tm.data == {"subcutaneous layer": "subcutaneous tissue"}
+    assert tm.is_refused("subcutaneous tissue", "subcutaneous layer")
+
+
+def test_the_refusal_half_is_what_stops_the_next_build_undoing_it():
+    """Without it the rebuild re-proposes the merge in the old direction and the
+    pass-1 verdict on record approves it again."""
+    m = memory_mapper({"case": "cases"})
+    tm = m._term_mapping
+    tm.judge("case", "cases", pass1={"verdict": "same_class", "reason": "plural"})
+    tm.refuse("case", "cases", reason="reversed", by="curator")
+    tm.add("cases", "case")
+    with pytest.raises(ValueError, match="stands refused"):
+        tm.add("case", "cases")
