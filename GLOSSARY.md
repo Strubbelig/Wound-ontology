@@ -117,8 +117,18 @@ threshold, so one loose pair cannot drag two groups together.
 **singular spelling** — the store's names are singular, always (`Diabetic Foot
 Ulcers` is kept as `Diabetic Foot Ulcer`). A rule about the name, applied in
 `normalize` after the mapping has had its say, not a decision recorded per term.
-Distinct from `singularize`, which lowercases because its answers are only used
-as lookup keys.
+
+**naming singular** vs **lookup singular** — two different jobs, and conflating
+them is what put `cas`, `dos` and `nurs` in line to be written into the store.
+`-es` is genuinely ambiguous: `buses -> bus` drops two characters, `phases ->
+phase` drops one, and the two look identical. A LOOKUP can try both candidates
+and let the vocabulary decide, so `singularize` takes the first and a wrong
+guess costs nothing. A NAME has to pick one and live with it, so
+`naming_singular` decides by group — `-ses`/`-zes` keep the `e` (`cases ->
+case`), `-ches`/`-shes`/`-xes` drop it (`searches -> search`), and the stems
+that are already words (`virus`, `census`, `gas`) are listed because no suffix
+separates them from `cause` or `house`. All-caps tokens are acronyms and are
+left alone: `ARDS` is not the plural of `ARD`.
 
 **inert entry** — a mapping entry whose result is what the store would produce
 anyway, so it cannot change an outcome. Case-only entries were inert from the

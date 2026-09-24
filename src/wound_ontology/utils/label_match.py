@@ -52,7 +52,36 @@ _IRREGULAR: dict[str, str] = {
     "orthoses": "orthosis", "prostheses": "prosthesis",
     "exostoses": "exostosis", "paralyses": "paralysis", "dialyses": "dialysis",
     "syntheses": "synthesis", "hypotheses": "hypothesis",
+    # Added 2026-09-24, when the naming rule started using these answers as
+    # LABELS rather than as lookup keys. Each reaches neither suffix candidate:
+    # "crises" gives "cris"/"crise", "meta-analyses" gives "meta-analys"/
+    # "meta-analyse". "niches" and "axes" are the two where the -ches/-xes rule
+    # (right for "patches", "boxes") is wrong.
+    "crises": "crisis", "misdiagnoses": "misdiagnosis",
+    "keratoses": "keratosis", "thromboses": "thrombosis",
+    "niches": "niche", "axes": "axis",
+    # `-aches` is NOT a compound tail like the -sis family below: `roaches`,
+    # `cockroaches` and `attaches` all end that way and all want the stem. The
+    # body parts that ache are a closed set, so they are listed.
+    "aches": "ache", "headaches": "headache", "backaches": "backache",
+    "toothaches": "toothache", "earaches": "earache",
+    "stomachaches": "stomachache", "heartaches": "heartache",
 }
+
+#: The `-ses -> -sis` entries above, as COMPOUND tails. `osteosyntheses`,
+#: `sub-analyses` and `endoprostheses` are not keys and never will be: the
+#: family is open, and the 2026-09-24 store already had three of them plus a
+#: `meta‑analyses` spelled with a non-breaking hyphen, which no ASCII key can
+#: match. A word ending in one of these, with something in front of it, takes
+#: the same singular.
+#:
+#: Only the `-sis` group, and only tails of 6 characters or more: `men` and
+#: `feet` as suffixes would catch `specimens` and `flatfeet`, where the first is
+#: not a compound of `man` and the second is not spelled that way anyway.
+_SIS_TAILS: tuple[str, ...] = tuple(sorted(
+    (k for k, v in _IRREGULAR.items() if k.endswith("ses") and v.endswith("sis")
+     and len(k) >= 6),
+    key=len, reverse=True))
 
 #: Singular words that merely look plural. Suffix rules mangle these into
 #: things like "diabete", "specy" and "sery".
@@ -69,6 +98,23 @@ _NOT_PLURAL = ("ss", "us", "is", "sis", "ous")
 
 #: -es is dropped only after these; elsewhere a bare -s is dropped instead.
 _ES_STEMS = ("x", "ch", "sh", "s", "z")
+
+#: Stems where the `-es` plural sits on a singular that ALREADY ends in a
+#: sibilant, so the stem itself is the name: `viruses -> virus`, not `viruse`.
+#: A suffix rule cannot find these. "ends in -us" looks like it should work and
+#: does not: `caus` (from `causes`), `hous`, `abus` and `bruis` all end in -us
+#: or -s and all want the `e` back, while `virus` and `census` do not. The
+#: discriminator is which strings are words, so they are listed.
+#:
+#: The four at the front are the ones measured in the 2026-09-24 store; the
+#: rest are clinical -us nouns that would hit the same branch the first time
+#: one is extracted, listed now rather than after they are written down wrong.
+_ES_STEM_IS_SINGULAR: frozenset[str] = frozenset({
+    "virus", "sinus", "census", "lens", "bias", "gas",
+    "bolus", "status", "apparatus", "focus", "plexus", "meatus", "fundus",
+    "uterus", "thrombus", "fetus", "callus", "humerus", "radius", "nucleus",
+    "bonus", "campus", "surplus", "impetus", "consensus",
+})
 
 
 def singular_candidates(word: str) -> list[str]:
@@ -100,6 +146,9 @@ def singular_candidates(word: str) -> list[str]:
         return [_IRREGULAR[w]]
     if w in _INVARIANT:
         return [w]
+    for tail in _SIS_TAILS:                      # osteo|syntheses, sub-|analyses
+        if len(w) > len(tail) and w.endswith(tail):
+            return [w[:-len(tail)] + _IRREGULAR[tail]]
     # "processes" and "abscesses" are plurals of -ss words; the -ss guard in
     # _NOT_PLURAL would otherwise freeze them, so they are handled first.
     if w.endswith("sses"):
@@ -115,10 +164,57 @@ def singular_candidates(word: str) -> list[str]:
 
 
 def singularize(word: str) -> str:
-    """Best-effort singular of one word — the first of
-    :func:`singular_candidates`. Wrong guesses are harmless: a key is only ever
-    *looked up*, never stored as a label."""
+    """Best-effort singular of one word, for LOOKUP — the first of
+    :func:`singular_candidates`.
+
+    A wrong guess here is harmless because the answer is only ever looked up: it
+    either matches something or it does not. That was true of every caller until
+    2026-09-23, when :func:`singular_spelling` began producing the store's NAMES
+    from it and a wrong guess started being written down. Naming goes through
+    :func:`naming_singular` instead; this function is unchanged so that `fold`
+    and every folded lookup built on it keep answering what they always did.
+    """
     return singular_candidates(word)[0]
+
+
+def naming_singular(word: str) -> str:
+    """The singular to WRITE for `word`. One answer, chosen not guessed.
+
+    `singular_candidates` returns two for the ambiguous `-es` branch and leaves
+    the choice to the caller, because `buses -> bus` drops two characters while
+    `phases -> phase` drops one and the surface forms are identical. A lookup
+    can try both. A name cannot, and taking the first — the historical guess —
+    put `cas`, `dos`, `phas`, `nurs`, `caus` and `expens` on 938 of the store's
+    names (1,722 mentions, 96 head nouns), which is how the curator found it:
+    "canonical is always the singular, this should have been handled by the
+    regex".
+
+    What separates the two, measured over those 96 head nouns:
+
+    * `-ches`, `-shes`, `-xes` — the `-es` is there for pronunciation and the
+      stem is the singular: `searches -> search`, `patches -> patch`,
+      `meshes -> mesh`, `complexes -> complex`, `indexes -> index`. The two
+      exceptions in this vocabulary, `niches` and `axes`, are listed as
+      irregular rather than guessed at.
+    * `-ses`, `-zes` — the singular already ends in `e` and only the `s` comes
+      off: `cases -> case`, `doses -> dose`, `nurses -> nurse`,
+      `gauzes -> gauze`, `purposes -> purpose`, `uses -> use`. Unless the stem
+      is itself a word ending in a sibilant, which is not something a suffix
+      can see and so is listed in `_ES_STEM_IS_SINGULAR`:
+      `viruses -> virus`, `censuses -> census`.
+
+    `-sses` never reaches here: `singular_candidates` handles it first and
+    returns one candidate (`processes -> process`, `abscesses -> abscess`).
+    """
+    cands = singular_candidates(word)
+    if len(cands) == 1:
+        return cands[0]
+    drop_two, drop_one = cands
+    if word.lower().endswith(("ches", "shes", "xes")):
+        return drop_two
+    if drop_two in _ES_STEM_IS_SINGULAR:
+        return drop_two
+    return drop_one
 
 
 def singular_spelling(label: str) -> str:
@@ -148,8 +244,21 @@ def singular_spelling(label: str) -> str:
         # SSIs, DFUs, PJIs -- an acronym with a plural s, which no suffix rule
         # recognises because the stem is not a word.
         return " ".join(words[:-1] + [core[:-1] + trailing])
+    if len(core) > 1 and core.isupper() and core.isalpha():
+        # An ALL-CAPS token is an acronym, not an English word, and its final S
+        # is part of it. Measured on the 2026-09-24 store: 275 distinct all-caps
+        # heads end in S, and the suffix rules were eating the last letter of
+        # POSAS, ARDS, NIRS, KOOS, LEFS, ASES and SBSES. The ones that survived
+        # did so by accident -- VAS, LOS and HS are under the four-character
+        # floor, not recognised as names.
+        #
+        # The casualties are RESULTS, METHODS and CONCLUSIONS, which stay
+        # plural. They are section headings the methodology blocklist is meant
+        # to keep out of the store in the first place, so this is the right
+        # trade: an acronym is content and a heading is noise.
+        return label
     lowered = core.lower()
-    single = singularize(lowered)
+    single = naming_singular(lowered)
     if single == lowered:
         return label
     if core.isupper():

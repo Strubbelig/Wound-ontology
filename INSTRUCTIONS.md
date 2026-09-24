@@ -774,6 +774,54 @@ verification, winner by min rank, dry run writing);
 `test_without_anchors_the_frequent_store_term_wins` rewritten onto a case pair so
 it still tests frequency rather than this rule.
 
+### 23a. A singular that will be WRITTEN is chosen; one that will be looked up may be guessed
+
+*Added 2026-09-24, from the curator's review.*
+
+`singular_candidates` returns TWO answers for the ambiguous `-es` branch and
+says why: `buses -> bus` drops two characters because the singular ends in a
+sibilant, `phases -> phase` drops one because it already ends in `e`, and the
+surface forms are identical. `singularize` takes the first and its docstring
+called the guess harmless — correct, and only correct, **because a key is only
+ever looked up**. A lookup that misses costs a miss.
+
+Rule 23 broke that premise without noticing. Moving the singular rule into
+`ConceptStore.normalize` made `singular_spelling` — and through it `singularize`
+— produce the store's NAMES. A guess stopped being tried and started being
+written down. Measured on the 2026-09-24 store: **938 names across 96 head
+nouns, 1,722 mentions**, in line to be renamed `cas`, `dos`, `phas`, `nurs`,
+`caus`, `expens`, `respons`, `diseas`. None of it had happened yet, because the
+store had been restored to its pre-apply state; `run_apply_mapping` would have
+done it.
+
+The curator found it from the other end, reviewing `case -> cases`: *"canonical
+is always the singular, this should have been handled by the regex."*
+
+So the two jobs are separate functions:
+
+* **`singularize`** — the lookup singular. Unchanged, deliberately, so `fold`
+  and every folded lookup, cluster and mapping built on it answer what they
+  always answered.
+* **`naming_singular`** — the singular to write. One answer, decided by group:
+  `-ses`/`-zes` keep the `e` (`cases -> case`), `-ches`/`-shes`/`-xes` drop it
+  (`searches -> search`), and stems that are already words are LISTED
+  (`_ES_STEM_IS_SINGULAR`: virus, census, gas, bias, lens) because no suffix
+  separates `virus` from `caus`. All-caps tokens are acronyms and are returned
+  untouched — 275 all-caps heads in the store end in S, and the suffix rules
+  were eating the last letter of `POSAS`, `ARDS`, `NIRS`, `KOOS`, `LEFS`,
+  `ASES` and `SBSES`.
+
+The general form: **when a function's answer changes from being tried to being
+stored, its error budget changes with it.** A docstring saying "wrong guesses
+are harmless" is a claim about the callers, and it expires when a caller
+changes.
+
+Enforced by: `label_match.naming_singular`, `_ES_STEM_IS_SINGULAR`, `_SIS_TAILS`
+(the open-ended `-sis` compounds: `osteosyntheses`, `sub-analyses`, and a
+`meta‑analyses` spelled with a non-breaking hyphen), the all-caps guard in
+`singular_spelling`. `tests/test_naming_singular.py` — 61 cases, 8 mutations,
+all caught, including one that changes `singularize` along with the naming rule.
+
 ## 24. The mapping has to survive being applied
 
 *Decided 2026-09-07.*
