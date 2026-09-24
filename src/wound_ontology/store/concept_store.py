@@ -9,6 +9,34 @@ from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.utils.string_utils import normalize_term, smart_title
 from config.blocklist import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST, is_noise_term as _is_noise_term
 from wound_ontology.llm.category_vocab import declared_category
+from wound_ontology.utils.label_match import singular_spelling as _singular_spelling
+
+
+def store_name(term: str, canonical: str | None = None, *, target: bool = False) -> str:
+    """The name the store keeps for `term`, given the mapping's answer for it.
+
+    One implementation of "what does this term end up called", used by
+    `normalize` to rename and by `Orchestrator.prune_inert_mappings` to decide
+    whether a mapping entry changes anything at all. Written twice they would
+    drift, and the prune would delete entries that were doing work.
+
+    Three rules in order: a declared BFO category is returned as declared and
+    never touched (rule 22); the mapping's canonical wins over the raw term; and
+    the result is title-cased and its head noun made singular (curator,
+    2026-09-23), so a plural cannot come back in through a plural canonical.
+    """
+    declared = declared_category(term)
+    if declared is not None:
+        return declared
+    clean = ConceptStore.clean_target_str if target else ConceptStore.clean_entity_str
+    name = (smart_title(canonical) if canonical is not None
+            else smart_title(normalize_term(clean(term))))
+    name = _singular_spelling(name)
+    # ...and so is a term that MAPS onto one. The mapping holds `roles -> Role`;
+    # without declaring the result, `roles` would come out `Role` while the bare
+    # `role` came out `role` -- two spellings of the one category, which is the
+    # bug this rename exists to end.
+    return declared_category(name) or name
 
 
 DECISIONS = "decisions"
@@ -484,32 +512,10 @@ class ConceptStore:
             return folded_map.get(normalize_term(term))
 
         def clean_entity(term: str) -> str:
-            # A category name is declared: never mapped, never normalised.
-            declared = _declared_category(term)
-            if declared is not None:
-                return declared
-            hit = canonical_of(term)
-            name = (smart_title(hit) if hit is not None
-                    else smart_title(normalize_term(self.clean_entity_str(term))))
-            # ...and so is a term that MAPS onto one. The mapping holds
-            # `roles -> Role`; without declaring the result, `roles` would come
-            # out `Role` while the bare `role` came out `role` -- two spellings
-            # of the one category, which is the bug this rename exists to end.
-            return _declared_category(name) or name
+            return store_name(term, canonical_of(term))
 
         def clean_target(term: str) -> str:
-            # A category name is declared: never mapped, never normalised.
-            declared = _declared_category(term)
-            if declared is not None:
-                return declared
-            hit = canonical_of(term)
-            name = (smart_title(hit) if hit is not None
-                    else smart_title(normalize_term(self.clean_target_str(term))))
-            # ...and so is a term that MAPS onto one. The mapping holds
-            # `roles -> Role`; without declaring the result, `roles` would come
-            # out `Role` while the bare `role` came out `role` -- two spellings
-            # of the one category, which is the bug this rename exists to end.
-            return _declared_category(name) or name
+            return store_name(term, canonical_of(term), target=True)
 
         renames_by_mapping: dict[str, str] = {}
 

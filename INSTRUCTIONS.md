@@ -695,6 +695,37 @@ identity entries, the exact artifact rule 19 exists to remove. Remove the old
 entry; do not add beside it. The invariant to check after any edit is
 `data[data[k]] == data[k]` for every k, and no `k == data[k]`.
 
+*Refined 2026-09-23, by the curator: "I always want the singular. This can be
+regex too."* The rule was asked of the MAPPING, which could only deliver it
+where the corpus happened to contain a singular spelling: `_canonical` picks the
+singular among the cluster's members, so a term nobody ever wrote in the
+singular stayed plural, and 5,072 entries existed to record `patients ->
+patient` one term at a time. A regex, written down five thousand times in a file
+of decisions, and the reason the mapping read as mechanical noise.
+
+It is now a rule about the NAME, applied in `ConceptStore.normalize` to every
+name it keeps, after the mapping has had its say so a plural canonical cannot
+reintroduce one. `singular_spelling` produces a name rather than a key — it
+keeps the label's own casing (`Diabetic Foot Ulcers -> Diabetic Foot Ulcer`) and
+handles the acronym plurals no suffix rule sees (`DFUs -> DFU`, `SSIs -> SSI`),
+while `singularize` underneath it protects the medical singulars that a naive
+`rstrip("s")` maims: `diabetes`, `sepsis`, `necrosis`, `osteomyelitis`,
+`fasciitis`, `series`, `bias`. Declared BFO categories are exempt (rule 22), so
+`process` does not become `proces`.
+
+Consequence, and the point: those 5,072 entries became inert and were pruned.
+With the 3,324 case-only entries removed the same day, the mapping went from
+14,047 to about 5,600 — almost entirely content decisions. `store_name` in
+`concept_store.py` is the single implementation of "what does this term end up
+called", used by `normalize` to rename and by `prune_inert_mappings` to decide
+whether an entry changes anything; written twice they would drift, and the prune
+would delete entries that were doing work.
+
+Enforced by: `ConceptStore.store_name`, `label_match.singular_spelling`;
+`tests/test_store_is_singular.py` (nineteen cases, mutation-checked: entities
+not singularised, targets not singularised, naive `rstrip("s")`, acronym plurals
+unhandled), `tests/test_inert_mappings.py`.
+
 *Refined 2026-09-22: the invariant held per build, not across builds.*
 `build_from_embeddings` asserts it on every run (`assignment[c] == c` for every
 canonical), so no single build can violate it — but the mapping FILE is not one

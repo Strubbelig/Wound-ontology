@@ -215,14 +215,17 @@ def test_the_mapping_still_applies_after_the_store_was_normalized(empty_store):
         mapping = {}
 
     empty_store.normalize(mapper=NoMapper())          # first pass: title case
-    assert "Diabetic Foot Ulcers" in empty_store.dict["1"]["entities"]
+    # ...and singular, since 2026-09-23: the store's name is singular whether or
+    # not a mapping says so, so this pass no longer leaves `Diabetic Foot Ulcers`
+    # standing for a later entry to fix.
+    assert "Diabetic Foot Ulcer" in empty_store.dict["1"]["entities"]
 
     class LateMapper:                                  # mapping corrected later
-        mapping = {"diabetic foot ulcers": "diabetic foot ulcer"}
+        mapping = {"diabetic foot ulcer": "Diabetic wound"}
 
     empty_store.normalize(mapper=LateMapper())
-    assert "Diabetic Foot Ulcer" in empty_store.dict["1"]["entities"]
-    assert "Diabetic Foot Ulcers" not in empty_store.dict["1"]["entities"]
+    assert "Diabetic Wound" in empty_store.dict["1"]["entities"]
+    assert "Diabetic Foot Ulcer" not in empty_store.dict["1"]["entities"]
 
 
 def test_targets_are_remapped_after_normalization_too(empty_store):

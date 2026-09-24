@@ -13,7 +13,7 @@ import pandas as pd
 from rapidfuzz.fuzz import ratio as _fuzz_ratio
 
 from wound_ontology.mappers.term_mapping import TermMapping
-from wound_ontology.utils.label_match import fold, singularize
+from wound_ontology.utils.label_match import fold, singular_spelling, singularize
 from wound_ontology.utils.string_utils import normalize_term
 
 _GENERIC_TERMS: frozenset[str] = frozenset({
@@ -575,7 +575,11 @@ class TermMapper:
                 return bool(words) and singularize(words[-1]) == words[-1].lower()
 
             same = [m for m in members if fold(m) == fold(best) and _is_singular(m)]
-            return max(same, key=_rank) if same else best
+            # ...and if the corpus never said it in the singular, spell it so.
+            # Rule 23 could only pick a singular spelling that existed; the
+            # curator's rule of 2026-09-23 is that the name is singular whether
+            # or not anybody wrote it that way.
+            return max(same, key=_rank) if same else singular_spelling(best)
 
         # ── Step 0: pre-merge by folded form (no SapBERT) ────────────────────
         # `fold`, not `normalize_term`: normalize_term folds punctuation and case

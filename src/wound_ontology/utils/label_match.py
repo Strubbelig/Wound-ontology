@@ -121,6 +121,44 @@ def singularize(word: str) -> str:
     return singular_candidates(word)[0]
 
 
+def singular_spelling(label: str) -> str:
+    """`label` with its head noun singular, KEEPING the label's own spelling.
+
+    `singularize` is a folding function: it lowercases, because its answers are
+    only ever looked up as keys. This one produces a NAME -- the curator's rule
+    of 2026-09-23, "I always want the singular" -- so the rest of the label is
+    left exactly as written and the head keeps its case:
+
+        'Diabetic Foot Ulcers' -> 'Diabetic Foot Ulcer'
+        'DFUs'                 -> 'DFU'          (an acronym plural, which
+                                                  `singularize` cannot see:
+                                                  it answers 'dfus')
+        'Diabetes'             -> 'Diabetes'     (-es on a -sis/-itis/-us word
+                                                  is not a plural)
+
+    Unchanged when the head is already singular, so it is safe to apply twice.
+    """
+    words = label.split()
+    if not words:
+        return label
+    head = words[-1]
+    core = head.rstrip(".,;:)")
+    trailing = head[len(core):]
+    if len(core) > 1 and core[:-1].isupper() and core.endswith("s") and core[:-1].isalpha():
+        # SSIs, DFUs, PJIs -- an acronym with a plural s, which no suffix rule
+        # recognises because the stem is not a word.
+        return " ".join(words[:-1] + [core[:-1] + trailing])
+    lowered = core.lower()
+    single = singularize(lowered)
+    if single == lowered:
+        return label
+    if core.isupper():
+        single = single.upper()
+    elif core[:1].isupper():
+        single = single[:1].upper() + single[1:]
+    return " ".join(words[:-1] + [single + trailing])
+
+
 def fold_candidates(term: str) -> list[str]:
     """Every folded key ``term`` could match, best guess first.
 

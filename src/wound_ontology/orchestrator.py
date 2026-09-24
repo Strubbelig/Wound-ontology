@@ -473,6 +473,59 @@ class Orchestrator:
         from config.blocklist import METHODOLOGY_BLOCKLIST
         return {b.strip().lower() for b in METHODOLOGY_BLOCKLIST}
 
+    def prune_inert_mappings(self, *, dry_run: bool = True) -> dict:
+        """Drop entries whose result is what the store would produce anyway.
+
+        `ConceptStore.normalize` title-cases every name it keeps, so an entry
+        that only changes case cannot change an outcome: `Healing -> healing`
+        and no entry at all both leave `Healing` in the store. Measured
+        2026-09-23: **3,324 of 14,047 entries** are inert in exactly that way,
+        a quarter of the file, and they are why the mapping reads as mostly
+        mechanical noise.
+
+        What is NOT inert, and is often mistaken for it:
+
+        * **plural** — 5,072 entries. `normalize_term` folds case and
+          punctuation; it does not singularise. Without `patients -> patient`
+          the store keeps `Patients` AND `Patient` as two names. The mapping is
+          the only place singularisation reaches the store, which is why rule 23
+          lives there and not in a regex: which spelling is canonical is decided
+          on corpus frequency over a cluster, and a recorded entry can be
+          withdrawn in review where a hard-coded rule cannot.
+        * **punctuation** — 844 entries. The fallback strips it, so the entry is
+          what keeps `Povidone-iodine` and `Bates-Jensen Wound Assessment Tool`
+          from coming out unhyphenated.
+
+        Inertness is measured against the store's own cleaner rather than
+        guessed, and it is relative to the casing policy: were the store to stop
+        title-casing, these entries would matter again. That is the same footing
+        as rule 19's identity entries, which are inert only because `get()`
+        returns an unmapped term unchanged.
+        """
+        # The store's own answer to "what is this term called", not a second
+        # implementation of it: a prune that modelled the rule slightly
+        # differently would delete entries that are doing work.
+        from wound_ontology.store.concept_store import store_name
+
+        mapping = self.term_mapper.mapping
+        inert = [t for t, c in mapping.items()
+                 if t != c and store_name(t, c) == store_name(t)]
+        report = {"inert": len(inert), "kept": len(mapping) - len(inert)}
+        if not inert:
+            print("[Orchestrator] no inert entries — every mapping changes a name.")
+            return report
+        verb = "would drop" if dry_run else "dropped"
+        print(f"[Orchestrator] {verb} {len(inert):,} entr(ies) whose canonical is "
+              f"what the store's own title-casing produces anyway; {report['kept']:,} "
+              f"kept. Plural and punctuation entries are NOT among them — the "
+              f"store neither singularises nor keeps punctuation on its own.")
+        for t in inert[:5]:
+            print(f"[Orchestrator]     {t!r} -> {mapping[t]!r} — both give "
+                  f"{store_name(t)!r}")
+        if not dry_run:
+            self.term_mapper.withdraw(*inert)
+        return report
+
     def _category_compatible_mapping(self, anchors: set[str]):
         """Refuse an anchor mapping that crosses a categorical boundary.
 

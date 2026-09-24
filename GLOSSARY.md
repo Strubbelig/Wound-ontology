@@ -105,6 +105,16 @@ after it.
 **complete linkage** — two clusters merge only if *every* cross-pair passes the
 threshold, so one loose pair cannot drag two groups together.
 
+**singular spelling** — the store's names are singular, always (`Diabetic Foot
+Ulcers` is kept as `Diabetic Foot Ulcer`). A rule about the name, applied in
+`normalize` after the mapping has had its say, not a decision recorded per term.
+Distinct from `singularize`, which lowercases because its answers are only used
+as lookup keys.
+
+**inert entry** — a mapping entry whose result is what the store would produce
+anyway, so it cannot change an outcome. Case-only entries were inert from the
+start; plural entries became inert when the store took on the singular rule.
+
 **fold** — compare two labels ignoring case, punctuation and plural
 (`normalize_term`, and `fold` which also singularises). "Folded space" means the
 graph the store actually walks: it looks a term up by its exact spelling first

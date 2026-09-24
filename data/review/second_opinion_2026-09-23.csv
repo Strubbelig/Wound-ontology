@@ -1,0 +1,807 @@
+term,canonical,pass 1,pass 1 reason,pass 2,pass 2 reason,term category,canonical category
+WBC level,Wbc Count,same_class,same measurement,different,"store term is a quality, ontology term is an information entity",,information entity
+Femoropopliteal Bypasses,femoro-popliteal bypass procedures,same_class,Bypasses and bypass procedures refer to the same surgical intervention.,different,"store term is material entity, ontology class is process",material entity,process
+Sliding In Bed,Patient Sliding In Bed,same_class,Patient is implied in the store term.,broader,"store term does not specify patient, so is more general",process,process
+Patient Reported Outcome Measures,patient-reported outcomes,same_class,abbreviation/expansion and plural variant,different,"measures (instruments) vs outcomes (results), type mismatch",information entity,continuant
+Femoropopliteal Bypass,femoro-popliteal bypass procedures,same_class,same procedure with spelling variant,different,"store term typed as material entity, ontology class as process",material entity,process
+worsening,worsened,same_class,nominalization vs past participle of same state,different,"process vs state, not synonyms",process,
+Public Health Problem,public health issue,same_class,synonymous terms for same concept,different,"type mismatch: store term typed as material entity, ontology class as continuant (non-material)",material entity,continuant
+regional tissue oxygen saturation),regional tissue oxygen saturation) values,same_class,Same measurement with optional word,different,"store term is a quality, ontology class is an information entity (values)",quality,information entity
+immunomodulatory functions,immunomodulatory effects,same_class,synonymous nouns,different,function vs effect: distinct ontological types despite label similarity,function,specifically dependent continuant
+immunocompromised individuals,immunocompromised patient,same_class,Individuals and patients are synonyms in this context,broader,'individuals' is wider in scope than 'patient',material entity,material entity
+Aggressive Debridement,aggressive surgical debridement,same_class,Surgical debridement is the same as debridement with aggressive modifier,broader,unspecified method vs explicitly surgical,process,process
+L-arginine,arginine,same_class,L-arginine is the common stereochemical name for arginine,narrower,L-arginine is a specific form of arginine,material entity,material entity
+Masson's trichrome,Masson's trichrome staining,same_class,staining is implied in the store term,different,material entity vs process,continuant,process
+Debrided,debride,same_class,past tense and base verb form of the same procedure,different,past participle vs verb; likely different states,,process
+immunomodulatory activity,immunomodulatory effects,same_class,activity and effects are synonymous in this context,different,activity vs effects; distinct concepts,,specifically dependent continuant
+debridement techniques,debridement modalities,same_class,techniques and modalities are synonyms in this context,different,techniques vs modalities; not exact synonyms,,
+methodologies,methodology approach,same_class,methodology and approach are synonyms,different,plural vs singular; type mismatch (continuant vs information entity),continuant,information entity
+regenerative strategy,regenerative approach,same_class,strategy and approach are synonyms in this context,different,strategy vs approach; type mismatch (information entity vs process),information entity,process
+antimicrobial action,antimicrobial effect,same_class,action and effect are synonymous here,different,action and effect are distinct concepts,,
+Lower Albumin level,low albumin levels,same_class,"lower and low are variants, singular/plural",different,"comparative vs absolute quality, potential distinction",quality,
+trauma injuries,traumatic injury,same_class,trauma injuries and traumatic injury are synonymous,different,process vs likely continuant; plural vs singular may not align,process,
+Regenerative Medicine Therapy,regenerative medicine,same_class,therapy is redundant with medicine,different,process vs field/discipline,process,
+Minimum Inhibitory Concentration Values,minimum inhibitory concentration,same_class,values is a plural generic suffix,different,information entity about a concentration vs the concentration itself,information entity,continuant
+density values,density,same_class,values is a generic suffix,different,values about density vs the quality density,quality,quality
+cutaneous manifestations,skin manifestation,same_class,cutaneous and skin are synonyms,different,type mismatch: continuant vs material entity,continuant,material entity
+incidence of adverse effects,incidence of adverse events,same_class,effects and events are synonymous here,different,adverse effects and adverse events are distinct concepts in pharmacovigilance,information entity,
+injury types,types of injuries,same_class,"identical meaning, only word order differs",different,"type mismatch: store term typed as continuant, ontology class as process",continuant,process
+pressure injury prevention measures,pressure injury prevention efforts,same_class,measures and efforts are synonyms,different,"type mismatch: store term typed as information entity, ontology class as process",information entity,process
+keloid scarring,Keloid Scars,same_class,scarring and scars are lexical variants,different,"scarring is a process, scars are material entities",,material entity
+histopathological pattern,Histopathologic Pattern,same_class,spelling variant,different,different BFO types (quality vs information entity),quality,information entity
+Chronic lower-extremity ulcers,chronic lower leg ulcers,same_class,lower-extremity and lower leg refer to the same location,broader,lower extremity includes lower leg and more,material entity,material entity
+precision medicine,Precision Medicine Approaches,same_class,Approaches is a generic plural suffix,different,'Approaches' implies a subclass,,information entity
+Local Therapies,local treatment,same_class,Therapies and treatment are synonyms,different,material entity vs process,material entity,process
+Intention To Treat,intention-to-treat principle,same_class,same concept with case and hyphenation variants,different,process vs information entity,,information entity
+centres,center,same_class,British vs American spelling variant,different,independent continuant vs immaterial entity,independent continuant,immaterial entity
+best practise,best practice,same_class,spelling variant,different,process vs information entity,process,information entity
+head/neck,head and neck,same_class,punctuation variant,different,immaterial vs material entity,immaterial entity,independent continuant
+limb-salvage approach,limb salvage strategy,same_class,approach and strategy near synonyms here,different,process vs realizable entity,process,realizable entity
+CFU/g,colony-forming unit [CFU]/g,same_class,abbreviation expansion,different,quality vs information entity,quality,information entity
+alternative etiologies,alternative causes,same_class,etiologies and causes are synonyms,different,material entity vs continuant,material entity,continuant
+Diabetes mellitus,diabetes,same_class,Diabetes mellitus is the full name for diabetes,narrower,Diabetes mellitus is a subtype of diabetes,,continuant
+wound sizes,wound size,same_class,plural form of wound size,different,type mismatch: quality vs continuant,quality,continuant
+Dfu Recurrence,recurrent DFU,same_class,same condition with word-order and capitalization variants,different,process vs material entity,process,material entity
+Proliferative Phases,proliferative phase,same_class,plural and capitalization are lexical variants,different,process boundary vs process type mismatch,process boundary,process
+randomized controlled,randomized controlled trial,same_class,trial is implied by the adjective phrase,different,"store term is an incomplete phrase; missing ""trial""",,
+injectable,injectable route,same_class,route is implied by the adjective,different,"""injectable"" refers to a substance, ""injectable route"" to a pathway",continuant,immaterial entity
+blood glucose,blood glucose levels,same_class,levels is redundant in this context,different,substance vs quality,continuant,quality
+retrospective cross-sectional design,retrospective cross-sectional study,same_class,design and study are synonymous in this context,different,design vs study,,
+HbA1c levels,HbA1c,same_class,levels is redundant in this context,different,quality vs material entity,quality,
+HbA1c level,HbA1c,same_class,"level is a common qualifier, same measurement",different,quality vs material entity,quality,
+certainty of the evidence,certainty of evidence,same_class,definite article is a lexical variant,different,information entity vs quality,information entity,quality
+Microvascular Impairment,microvascular dysfunction,same_class,impairment and dysfunction are synonyms,different,types mismatch: material entity vs disposition,material entity,disposition
+Preventative strategies,preventative measures,same_class,strategies and measures are synonyms here,different,types mismatch: information entity vs process,information entity,process
+therapy combinations,combined therapy,same_class,"plural vs singular, same meaning",different,"types mismatch: store is material entity, ontology likely process; also semantic difference",material entity,
+chronic inflammatory state,chronic inflammation,same_class,state and disease process are synonymous here,different,potential process vs state distinction,,
+offloading modalities,offloading strategy,same_class,modalities and strategy are synonymous in this context,different,types mismatch: material entity vs process,material entity,process
+metabolic disturbances,metabolic dysfunction,same_class,synonymous terms for the same condition,different,disturbances vs dysfunction are not exact synonyms,,continuant
+antimicrobial stewardship,antibiotic stewardship,same_class,antimicrobial and antibiotic are synonyms in this context,broader,antimicrobial includes antibiotic and other agents,,process
+persistent inflammation,persistent inflammatory state,same_class,inflammation and inflammatory state are equivalent,different,process vs quality distinction,,quality
+microbiome-based therapies,microbiome-targeted interventions,same_class,both refer to therapies targeting microbiome,different,material entity vs process type mismatch,material entity,process
+history of DFU,history of a DFU,same_class,article does not change meaning,different,information entity vs material entity type mismatch,information entity,material entity
+bacterial biofilms,biofilm,same_class,bacterial biofilms are biofilms,narrower,bacterial biofilms are a subtype of biofilm,material entity,material entity
+standard patient care,standard care,same_class,patient is implied,narrower,adds 'patient' makes it more specific,process,
+hospital operating rooms,operating rooms,same_class,hospital is implied,narrower,adds 'hospital' restricts location,immaterial entity,independent continuant
+moderate or high risk,moderate-to-high risk level,same_class,same risk category,different,different BFO categories (quality vs information entity),quality,information entity
+targeted interventions,targeted intervention strategies,same_class,same class under different wording,different,"different types: store term is process, ontology class is information entity",process,information entity
+rural,rural areas,same_class,"same class, adjective vs noun phrase",different,"store term is continuant (likely quality), ontology class is immaterial entity (location)",continuant,immaterial entity
+treatment frequency,frequency of treatments,same_class,"same concept, word order variant",different,"types differ: store term is quality, ontology class is information entity",quality,information entity
+repositioning protocols,repositioning regimen,same_class,synonyms for same plan,different,"types differ: store term is information entity, ontology class is process",information entity,process
+practice gaps,gap in practice,same_class,"same concept, plural vs singular",different,"types differ: store term is quality, ontology class is material entity",quality,material entity
+risk of adverse reactions,Risk Of Adverse Events,same_class,adverse reactions and adverse events are synonymous,narrower,adverse reactions are a subtype of adverse events,tendency,tendency
+poorer clinical outcomes,poor clinical outcomes,same_class,comparative and positive forms refer to same outcome type,different,"comparative vs base adjective, and type mismatch (quality vs process)",quality,process
+Targeted interventions,targeted intervention strategies,same_class,"strategies is redundant, same concept",different,process vs information entity type mismatch,process,information entity
+larger sample,larger sample sizes,same_class,singular and plural form of same concept,different,material entity vs quality type,material entity,quality
+Deep learning,deep learning methods,same_class,"same concept, plural generic",different,Singular field vs plural methods; likely different granularity.,,
+prone position,prone positioning,same_class,position vs positioning as noun/gerund,different,Immaterial entity (position) vs process (positioning).,immaterial entity,
+practice gap,gap in practice,same_class,same phrase with word order variant,different,Type mismatch: quality vs material entity.,quality,material entity
+debrided,debride,same_class,Inflected forms of the same verb.,different,Adjective/result vs process verb.,,process
+English-language publications,English Language Articles,same_class,Synonyms for the same class of publications.,different,publications broader than articles,information entity,information entity
+early prevention,Early Prevention Strategies,same_class,The added 'strategies' does not change the class.,different,process vs realizable entity,process,realizable entity
+intraoperatively acquired pressure injury,intraoperative acquired pressure injury,same_class,Adverbial and adjectival forms of the same modifier.,different,process vs continuant,process,
+lower serum albumin,low serum albumin,same_class,Comparative and positive forms of the same adjective.,different,comparative vs absolute quality,quality,quality
+geographical locations,geographic location,same_class,same concept with spelling and number variant,different,immaterial entity vs quality,immaterial entity,quality
+multivariable Cox models,Multivariable Cox proportional hazards regression model,same_class,short form of the full name,different,material entity vs information entity,material entity,
+knowledge deficiency,deficits in knowledge,same_class,same concept with singular/plural and phrasing variant,different,disposition vs quality,disposition,quality
+Heel pressure ulceration,heel pressure ulcer,same_class,ulceration and ulcer synonymous,different,process (ulceration) vs material entity (ulcer),process,material entity
+heel pressure ulceration,heel pressure ulcer,same_class,ulceration and ulcer synonymous,different,process vs material entity (same as pair 9),process,material entity
+sacrococcygeal,sacrococcygeal region,same_class,adjective and noun forms refer to the same anatomical region,different,quality vs independent continuant,quality,independent continuant
+knowledge deficit,deficits in knowledge,same_class,singular/plural and word order variants of the same concept,different,"store term is tendency, ontology is quality",tendency,quality
+Braden Scale assessments,Braden score assessments,same_class,scale and score used interchangeably,different,"store is information entity, ontology is process",information entity,process
+Area under ROC curve,area under the ROC curve,same_class,article omission only,different,"store is information entity, ontology is continuant",information entity,continuant
+quality improvement programme,quality improvement programs,same_class,spelling and number variant,different,"store is process, ontology is material entity",process,material entity
+patient's needs,patient needs,same_class,possessive apostrophe variant,different,"store is material entity, ontology is continuant",material entity,continuant
+quality improvement programmes,quality improvement programs,same_class,spelling variant,different,"store is process, ontology is material entity",process,material entity
+emerging therapeutic approaches,Emerging Therapies,same_class,therapeutic approaches and therapies are synonymous,different,therapeutic approaches broader than therapies,disposition,
+confounding variables,confounding factor,same_class,"plural vs singular, same concept",different,different BFO types and potential meaning difference,continuant,role
+scoring rate,score rate,same_class,gerund and noun variant,different,different BFO types,information entity,quality
+foot temperature monitoring technology,temperature-based foot monitoring,same_class,labels are near-identical lexical variants,different,material entity vs process,material entity,process
+CRP values,Crp Level,same_class,values and level are synonymous in this context,different,different BFO types,quality,continuant
+poor prognosis,poor prognostic outcomes,same_class,prognosis and prognostic outcomes are synonymous,different,prognosis (prediction) vs outcome (result),,information entity
+albumin values,albumin level,same_class,values and level are synonymous in this context,different,values (plural) vs level (singular) may indicate different granularity,quality,
+Gram-positive organisms,Gram-positive,same_class,Organisms is implied by Gram-positive,different,organisms vs property of organisms,material entity,continuant
+reducing inflammation,reduced inflammation,same_class,Gerund vs past participle but same process,different,process vs resultant state,process,
+fasting blood glucose levels,fasting blood glucose,same_class,levels is a lexical variant of the same measurement,different,quality vs substance,quality,continuant
+Machine learning approaches,Machine learning-based methods,same_class,approaches and methods are synonyms,different,"store types as material entity, likely not same as process class",material entity,
+rates of recurrence,recurrence rate,same_class,plural and singular forms of the same metric,different,type conflict (information entity vs continuant),information entity,continuant
+Dfu Diagnosis,diagnosis of DFU,same_class,abbreviation and full form refer to the same diagnosis,different,type mismatch (process boundary vs information entity),process boundary,information entity
+SINBAD score,SINBAD scoring system,same_class,score and scoring system refer to the same instrument,different,score vs scoring system are distinct,information entity,information entity
+SINBAD scores,SINBAD scoring system,same_class,scores and scoring system refer to the same tool,different,scores are distinct from scoring system,information entity,information entity
+wound care clinics,wound clinic,same_class,"plural vs singular, identical meaning",different,type mismatch (independent continuant vs immaterial entity),independent continuant,immaterial entity
+clinical case,clinical cases,same_class,singular/plural lexical variant,different,type mismatch (information entity vs continuant),information entity,continuant
+alternative treatment,alternative therapy,same_class,synonymous terms,different,type mismatch (role vs process),role,process
+improved,improve,same_class,past tense and base verb forms of same process,different,process vs result state,,process
+advanced wound therapy,advanced wound treatments,same_class,singular/plural and nominalization variant,different,type mismatch (material entity vs process),material entity,
+at-risk population,"at ""risk"" patient population",same_class,same concept with punctuation and word order variants,different,type mismatch (material entity vs role),material entity,role
+type of diabetes,type of diabetes mellitus,same_class,diabetes is short for diabetes mellitus,different,type mismatch (material entity vs quality),material entity,quality
+at-risk populations,"at ""risk"" patient population",same_class,plural and punctuation variant of same concept,different,type mismatch (material entity vs role),material entity,role
+wound care methodologies,wound care methods,same_class,methodologies and methods are synonymous,different,Process vs material entity type mismatch; cannot be same class,process,material entity
+single-centre setting,single-centre,same_class,setting is redundant qualifier,different,Immaterial entity vs continuant; 'setting' adds a distinct context,immaterial entity,continuant
+Median time-to-healing,median healing time,same_class,synonymous phrasing for the same metric,different,Process vs continuant type mismatch; different entities despite similar labels,process,continuant
+incompetence,incompetency,same_class,synonymous noun forms,different,different BFO categories (disposition vs quality),disposition,quality
+wound size changes,change in wound size,same_class,"plural vs. singular, same concept",different,different BFO categories (process vs information entity),process,information entity
+post-surgical wounds,postoperative wound,same_class,post-surgical and postoperative are synonyms,different,different BFO categories (material vs immaterial entity),material entity,immaterial entity
+post-healing state,post-healing,same_class,state is implicit in the adjective,different,different BFO categories (continuant vs occurrent),continuant,occurrent
+prophylactic treatment,prophylactic treatment option,same_class,option is redundant in this context,different,different BFO categories (process vs material entity),process,material entity
+prophylactic treatments,prophylactic treatment option,same_class,treatments and treatment option refer to the same class,different,different BFO types (continuant vs material entity),continuant,material entity
+granulating,granulated,same_class,present and past participle of same verb,different,different BFO types (quality vs process),quality,process
+rate of ulcer healing,ulcer healing rate,same_class,same meaning with different word order,different,different BFO types (quality vs continuant),quality,continuant
+vascular abnormalities,vascular anomalies,same_class,abnormalities and anomalies are synonyms,different,different BFO types (disposition vs material entity),disposition,material entity
+Behcet's syndrome,Behcet's disease,same_class,Syndrome and disease are used interchangeably for this condition,different,different BFO types (disposition vs material entity),disposition,material entity
+geographical location,geographic location,same_class,spelling variant of the same term,different,different BFO types (immaterial entity vs quality),immaterial entity,quality
+everyday life challenges,daily life challenges,same_class,synonymous phrasing for the same concept,different,different BFO types (material entity vs process),material entity,process
+preventative treatments,preventive treatment,same_class,spelling variant and plural form of the same term,different,different BFO types (material entity vs process),material entity,process
+indices,index,same_class,plural and singular forms of the same term,different,type mismatch: information entity vs continuant,information entity,continuant
+infrapopliteal arterial disease,infrapopliteal artery disease,same_class,arterial and artery are adjectival and noun forms of the same term,different,type mismatch: material entity vs continuant,material entity,continuant
+two-dressing regimen,two-dressing regime,same_class,regimen and regime are spelling variants in this context,different,type mismatch: information entity vs material entity,information entity,material entity
+woundcare nurse,wound care nurses,same_class,singular/plural and spelling variant,different,type mismatch: role vs continuant,role,continuant
+limb salvage technique,limb salvage strategy,same_class,technique and strategy are used interchangeably here,different,technique and strategy are distinct realizable entities,function,realizable entity
+open surgical,open surgery,same_class,adjective vs noun form,different,"store term typed as material entity, ontology class as process; different categories",material entity,process
+antibiotic beads,Antibiotic Loaded Beads,same_class,abbreviation of the same concept,broader,antibiotic beads includes other types beyond loaded,material entity,material entity
+levels of amputation,amputation level,same_class,plural/word order variant,different,"store term typed as process, ontology class as continuant",process,continuant
+distal symmetrical polyneuropathy,distal symmetric polyneuropathy,same_class,spelling variant of same term,different,"store term typed as material entity, ontology class as disposition",material entity,disposition
+no option chronic limb threatening ischaemia,no-option chronic limb-threatening ischemia,same_class,spelling and hyphenation variants,different,types differ: disposition vs material entity,disposition,material entity
+better outcomes,improved outcomes,same_class,synonymous adjectives,different,types conflict: process vs continuant,process,continuant
+hematological disorders,hematological diseases,same_class,disorders and diseases are synonyms in this context,different,types differ: disposition vs material entity,disposition,material entity
+femorofemoral bypass,femoro-femoral bypass,same_class,hyphenation variant,different,"store term typed as material entity, ontology as process",material entity,process
+Dialysis Dependent,dialysis dependence,same_class,adjectival and nominal form,different,"store term typed as role, ontology as continuant; no definition to confirm synonymy",role,continuant
+advanced stage,advanced disease stages,same_class,"same meaning, singular/plural variant",different,"store is quality, ontology is information entity; different BFO types",quality,information entity
+Hispanic ethnicity,Hispanic,same_class,"same meaning, ethnicity qualifier",different,"store typed as quality, ontology as continuant; possible different classes",quality,continuant
+rate of major amputation,major amputation rate,same_class,"same meaning, word order variant",different,"store typed as quality, ontology as continuant; type mismatch",quality,continuant
+WIfI clinical stage 4,WIfI stage 4,same_class,same staging class with 'clinical' omitted,different,"store is quality, ontology is continuant; type mismatch",quality,continuant
+cellular therapy,cell-based therapy,same_class,synonyms for therapy using cells,different,"store is process, ontology is material entity; BFO distinction",process,material entity
+post procedural,post-procedure,same_class,hyphenation and adjective/noun variant of same temporal context,different,"Types differ: store is 'quality', ontology is 'process boundary'.",quality,process boundary
+toe-brachial indices,toe-brachial index,same_class,plural vs singular only,different,"Types differ: store is 'information entity', ontology is 'continuant'.",information entity,continuant
+area under receiver operating characteristics curves,area under the ROC curve,same_class,expanded acronym and plural variant,different,different BFO types (information entity vs continuant),information entity,continuant
+revascularization feasibility,revascularisation feasibility,same_class,spelling variant (z/s),different,different BFO types (disposition vs quality),disposition,quality
+below-knee,below-the-knee,same_class,lexical variant with 'the',different,different BFO types (material entity vs immaterial entity),material entity,immaterial entity
+head and neck region,head and neck,same_class,region is redundant and does not change the class,different,"store is immaterial region, ontology is material anatomical entity",immaterial entity,independent continuant
+orthopaedic,orthopedics,same_class,British and American spellings of the same specialty,different,adjective (quality) vs noun (discipline),quality,
+multidrug resistant,multidrug resistance,same_class,adjective and noun forms of the same property,different,adjective (quality) vs noun (disposition),,disposition
+nutritional,nutrition,same_class,adjective and noun forms of the same concept,different,different grammatical form and likely different ontological category,quality,
+multi-disciplinary,multi-disciplinary approach,same_class,approach is implicit,different,different types: quality vs process,quality,process
+collateral arteries,collateral vessels,same_class,arteries are vessels in this context,narrower,arteries are a subtype of vessels,material entity,material entity
+bibliometric,bibliometric approaches,same_class,approach implied,different,different types: continuant vs information entity,continuant,information entity
+single use NPWT,single-use NPWT device,same_class,"device implied, hyphen variant",different,process vs material entity,process,material entity
+Anesthesia Induction,induction of anesthesia,same_class,word order variant,different,process vs process boundary,process,process boundary
+closed incisions,closed surgical incision,same_class,closed incisions is a lexical variant of closed surgical incision,broader,store term includes non-surgical incisions,material entity,independent continuant
+closure technique,closure method,same_class,technique and method are synonyms in this context,different,process vs information entity types differ,process,information entity
+thigh regions,thigh,same_class,regions is a generic plural and does not change the class,different,immaterial spatial regions vs anatomical continuant,immaterial entity,continuant
+post-operatively,post-surgery,same_class,adverb and noun phrase both mean after surgery,different,temporal quality vs process boundary,occurrent,process boundary
+income status,income level,same_class,synonymous terms for the same attribute,different,"Type mismatch: store term is quality, ontology class is information entity.",quality,information entity
+Cutoff,cutoff value,same_class,value is implicit,different,"Cutoff may refer to a general threshold, while cutoff value is a specific numeric value.",continuant,continuant
+cost-effectiveness modelling,Cost-effectiveness models,same_class,modelling and models are nominalizations,different,Modelling (process) versus models (information entity).,,
+multivariable regression models,multivariable regression,same_class,models is implicit,different,Models (information entities) vs the statistical method (process).,information entity,
+perioperative,perioperative period,same_class,adjective and noun form refer to same period,different,Adjective vs temporal region; distinct concepts.,,
+prophylactic antimicrobial use rate,prophylactic antibiotic use rate,same_class,antimicrobial and antibiotic are synonymous here,broader,Antimicrobial is broader than antibiotic.,quality,quality
+antimicrobial susceptibility profiles,antibiotic susceptibility profiles,same_class,antimicrobial and antibiotic are used interchangeably here,broader,"Antimicrobial includes antibiotics and other agents, so store term is broader.",information entity,information entity
+skin-closure technique,skin closure methods,same_class,technique and methods are synonyms,different,"Store is process, ontology class is material entity; cannot be same.",process,material entity
+advanced wound care techniques,Advanced wound care methods,same_class,techniques and methods are synonyms,different,"Store is process, ontology class is material entity; cannot be same.",process,material entity
+cefazolin prophylaxis,cefazolin-based prophylaxis,same_class,synonymous phrasing,different,process vs material entity type mismatch,process,material entity
+skin closure techniques,skin closure methods,same_class,synonymous terms,different,continuant vs material entity type mismatch,continuant,material entity
+Surgical antimicrobial prophylaxis,surgical antibiotic prophylaxis,same_class,antimicrobial and antibiotic synonymous here,broader,antimicrobial is broader than antibiotic,process,process
+Surgical Antimicrobial Prophylaxis,surgical antibiotic prophylaxis,same_class,case and synonym variant,broader,antimicrobial is broader than antibiotic (capitalization variant),process,process
+Disease Modifying Treatment,disease-modifying therapies,same_class,singular/plural and synonym,different,process vs material entity type mismatch,process,material entity
+Insufficient Dietary Intake,inadequate dietary intake,same_class,synonymous adjectives,different,process vs material entity type mismatch,process,material entity
+rigorous oral hygiene,rigorous oral hygiene practices,same_class,implicit practices,different,quality vs process type mismatch,quality,process
+laboratory investigation,Laboratory examinations,same_class,Investigation and examinations are synonyms,different,information entity vs process type mismatch,information entity,process
+high-quality comparative studies,High-quality comparative trials,same_class,Studies and trials are synonyms,broader,studies is broader than trials,process,
+injury type,types of injuries,same_class,Both refer to categories of injuries.,different,"store term is information entity, ontology class is process; type mismatch",information entity,process
+original research studies,original research,same_class,plural form of the same concept,different,"Store term is a process (studies), ontology class is an information entity; different categories.",process,information entity
+antibacterial activity,antibacterial properties,same_class,activity and properties are synonyms,different,"Activity typically denotes a process or capacity, while properties are inherent qualities; distinct BFO categories.",,specifically dependent continuant
+hamstring autografts,hamstring tendon autografts,same_class,tendon is redundant,broader,hamstring autografts may include non-tendon tissue,material entity,material entity
+troponin elevation,elevated troponin,same_class,same class with word order variant,different,process vs quality categories differ,process,quality
+regenerative functions,regenerative activity,same_class,functions and activity are synonymous in this context,different,function (disposition) vs process (occurrent),function,process
+treatment guidelines,clinical treatment guideline,same_class,clinical is implied and not a distinct subtype,broader,treatment guidelines include clinical and non-clinical,information entity,information entity
+sensory functions,sensory,same_class,functions is a nominalization of the adjective,different,"function vs continuant, different categories",function,continuant
+deep learning,deep learning methods,same_class,methods is implied and not a distinct subtype,broader,deep learning is more general than specific methods,,
+monomicrobial infection,monomicrobial disease,same_class,infection and disease are synonymous in this context,different,infection vs disease distinct,material entity,material entity
+high mortality rates,high mortality,same_class,"rates is redundant, same concept",different,rates vs attribute,information entity,
+ethics committee approval,Ethics approval,same_class,"committee is implied, same approval concept",narrower,store term specifies committee,information entity,
+fissuring,fissures,same_class,"process and plural noun, same entity",different,process vs material entity,disposition,material entity
+nonoperative management,nonoperative management strategies,same_class,strategies is implicit in management,different,process vs information entity,,information entity
+in-hospital mortality rate,in-hospital mortality,same_class,rate is implicit in mortality,different,rate vs event,information entity,
+conservative treatment methods,conservative therapy,same_class,methods is a generic qualifier adding no distinct meaning,different,methods vs therapy,,process
+additional benefit,added benefit,same_class,additional and added are synonyms,different,information entity vs quality,information entity,quality
+cement removal,cement removed,same_class,removal and removed are lexical variants,different,process vs material entity,process,material entity
+conventional treatment strategies,conventional treatment,same_class,strategies is a generic qualifier adding no distinct meaning,different,strategies vs treatment,,
+grade 1,grade I,same_class,Arabic and Roman numeral notation for same grade,different,different BFO types (information entity vs continuant),information entity,continuant
+anthracycline-associated cardiotoxicity,Anthracycline-induced cardiotoxicity,same_class,associated and induced are synonymous in this context,different,different BFO types (material entity vs continuant),material entity,continuant
+detection limits,limit of detection,same_class,plural and singular forms of same concept,different,different BFO types (information entity vs continuant),information entity,continuant
+eye involvement,ocular involvement,same_class,eye and ocular are synonyms,different,different BFO types (material entity vs continuant),material entity,continuant
+pediatric burn population,pediatric burn patients,same_class,population and patients are synonymous in this context,different,population (collection) vs patients (role),material entity,continuant
+microbial virulence,virulence,same_class,microbial is redundant qualifier; same class,narrower,microbial virulence is a subtype of virulence,disposition,specifically dependent continuant
+innate immunity,innate immune response,same_class,immunity and immune response are synonymous here,different,material entity vs process; different categories,material entity,process
+total body surface area burn,total body surface area burned,same_class,burn and burned are grammatical variants,different,quality vs continuant; 'burn' vs 'burned' may differ,quality,continuant
+corrosive,Corrosive substance,same_class,No definition; adjective vs noun phrase with same referent.,different,"store term is quality, ontology class is material entity",quality,material entity
+ROM improvement,improved ROM,same_class,"same concept, word order variant",different,"store term is process, ontology class is quality",process,quality
+serum creatinine level,serum creatinine,same_class,level is redundant,different,"store term is quality, ontology class likely material entity",quality,continuant
+post-discharge period,post-discharge,same_class,period is redundant,different,"store term typed as process, period is not a process; unsure",process,
+Clostridioides difficile infections,clostridium difficile infections,same_class,"taxonomic name update, same infection class",different,store term is disposition but ontology term is material entity; type mismatch,disposition,material entity
+anatomical regions,anatomic region,same_class,plural and spelling variant of the same class,different,store term is material entity but ontology term is immaterial entity; type mismatch,material entity,immaterial entity
+nonpharmacological adjunct,nonpharmacologic adjunct,same_class,spelling variant of nonpharmacological,different,"store term typed as role, ontology as material entity",role,material entity
+reduced self-esteem,loss of self-esteem,same_class,reduced and loss are synonymous here,different,different BFO types (quality vs process),quality,process
+Kirby-Bauer disc diffusion method,Kirby-Bauer disk diffusion method,same_class,disc/disk are spelling variants,different,different BFO types (information entity vs process),information entity,process
+total body surface area burnt,total body surface area burned,same_class,burnt/burned are spelling variants,different,different BFO types (information entity vs continuant),information entity,continuant
+burn total body surface area,total body surface area burned,same_class,same phrase with word order variation,different,different BFO types (quality vs continuant),quality,continuant
+Total Burned Surface Area,total body surface area burned,same_class,"same clinical measurement, different word order",different,different BFO types (quality vs continuant),quality,continuant
+allogeneic keratinocyte sheets,allogeneic cultured keratinocyte sheets,same_class,cultured is implied in keratinocyte sheets,broader,missing 'cultured' qualifier makes store term a broader class,material entity,material entity
+sloughed tissue,sloughy tissue,same_class,sloughed and sloughy are adjectival variants describing the same tissue,different,"'sloughed' implies detached, 'sloughy' describes state; not synonyms",material entity,material entity
+visual disturbances,vision disturbance,same_class,visual and vision are synonymous,different,process vs material entity type mismatch,process,material entity
+elevated risks,increased risk,same_class,elevated and increased are synonyms,narrower,tendency is subtype of realizable entity,tendency,realizable entity
+evidence syntheses,evidence synthesis,same_class,plural and singular are lexical variants,different,information entity vs process type conflict,information entity,process
+duration of follow-up,follow-up duration,same_class,word order variant with same meaning,narrower,quality is subtype of continuant,quality,continuant
+bruising,bruises,same_class,process and plural material entity? but likely same class,different,process vs material entity distinction,continuant,material entity
+double-row suture technique,double-row suture repair,same_class,technique and repair refer to same procedure,different,information entity vs process,information entity,process
+single-stage surgical procedure,single-stage surgical approach,same_class,procedure and approach are synonymous here,different,process vs information entity,process,information entity
+superficial laceration,Superficial skin lacerations,same_class,"same wound type, pluralization only",broader,store term lacks 'skin' specification,material entity,material entity
+superficial lacerations,Superficial skin lacerations,same_class,"'skin' implicit, same wound type",broader,store term lacks 'skin' specification,material entity,material entity
+cramping,cramps,same_class,cramping and cramps are lexical variants of the same symptom,different,process vs quality type mismatch,process,quality
+Muscular injuries,muscle injury,same_class,Muscular and muscle are adjectival and noun forms of same entity,different,disposition vs material entity type mismatch,disposition,material entity
+conservative rehabilitation protocols,conservative rehabilitation strategy,same_class,protocols and strategy are synonyms in this context,different,protocol and strategy are different information entity subtypes,information entity,information entity
+traumatic avulsion,avulsion injury,same_class,"avulsion is typically traumatic, synonymous",different,process vs material entity type mismatch,process,material entity
+alveolar fractures,alveolar bone fractures,same_class,alveolar implies bone in this context,different,quality vs process type mismatch and label difference,quality,process
+endoscopic,endoscopic technique,same_class,endoscopic is an adjective referring to the technique,different,quality vs material entity type mismatch,quality,material entity
+neurological injuries,neurologic injury,same_class,neurological and neurologic are synonyms; plural is lexical,different,"store term typed as material entity, ontology class typed as disposition; likely distinct ontological categories",material entity,disposition
+antibiotics resistance,antimicrobial resistance,same_class,antibiotics and antimicrobial are synonymous in this context,narrower,antibiotics resistance is a subtype of antimicrobial resistance,disposition,realizable entity
+serum lactate,Serum Lactate Level,same_class,level is implied by the measurement context,different,material entity vs quality,material entity,quality
+immunocompetent individuals,immunocompetent patients,same_class,individuals and patients are synonymous in clinical context,broader,individuals includes patients and non-patients,material entity,continuant
+ICU admission rate,rate of ICU admission,same_class,same meaning with different word order,different,"store term typed as process, ontology as information entity; different BFO categories",process,information entity
+microbial virulence factors,virulence factor,same_class,plural and singular lexical variant,different,plural vs singular and different BFO types (disposition vs continuant),disposition,continuant
+normal-appearing skin,normal skin,same_class,synonymous phrasing,different,quality vs material entity,quality,material entity
+advanced-stage,advanced disease stages,same_class,"same concept, pluralization",different,"quality vs information entity, singular vs plural",quality,information entity
+myeloid neoplasia,myeloid neoplasm,same_class,neoplasia and neoplasm are synonymous,different,"Neoplasia is a process, neoplasm is a material entity",material entity,material entity
+unknown aetiology,unknown etiology,same_class,spelling variant of the same term,different,type mismatch: quality vs continuant,quality,continuant
+postoperative surgical wound dehiscence,post-surgical wound dehiscence,same_class,synonymous terms for the same condition,different,process vs material entity type mismatch,process,material entity
+moist microenvironment,moist environment,same_class,micro- prefix does not change meaning,narrower,microenvironment is a subtype of environment,immaterial entity,continuant
+loss of vision,visual loss,same_class,synonymous noun phrases,different,material entity vs quality type mismatch,material entity,quality
+comorbid diseases,comorbid conditions,same_class,diseases and conditions are synonymous in this context,narrower,diseases are a subset of conditions,material entity,continuant
+intensive care unit length of stay,intensive care length of stay,same_class,unit is implied in the ontology class,different,different BFO types (information entity vs quality),information entity,quality
+bacteraemia,bacteremia,same_class,spelling variant (ae vs e),different,"store types as material entity, but bacteremia is typically a process",material entity,
+granulation score,Granulation tissue scores,same_class,score and scores are grammatical variants,different,different BFO types (information entity vs quality),information entity,quality
+improvement in outcomes,improved outcomes,same_class,nominalization variant of the same outcome improvement,different,process vs continuant: different BFO types,process,continuant
+comprehensive management approach,comprehensive management,same_class,approach is redundant in this context,different,information entity vs process: different types,information entity,process
+antimicrobial activities,antimicrobial effect,same_class,activities and effect are synonyms in this context,different,activities (processes) vs effect (outcome) likely distinct,process,
+staged reconstructive strategy,staged reconstruction,same_class,strategy is redundant with approach,different,information entity (strategy) vs process (reconstruction),information entity,process
+chronic lower-limb ulcers,chronic lower leg ulcers,same_class,limb and leg are synonyms in this context,broader,lower-limb includes leg and foot; lower leg is a part of limb.,material entity,material entity
+sterile gauze,Standard sterile gauze,same_class,standard is a modifier not changing the class,broader,sterile gauze is more general than the specific Standard sterile gauze.,material entity,material entity
+material biocompatibility,biocompatibility,same_class,material is redundant qualifier,narrower,material biocompatibility is a subtype of biocompatibility.,disposition,
+diabetic wound healing impairment,impaired diabetic wound healing,same_class,word order and nominalization are equivalent,different,"store is material entity, ontology is process; different ontological categories.",material entity,process
+pigmentary alterations,pigmentary changes,same_class,alterations and changes are synonyms,different,"store is material entity, ontology is process; ontological mismatch.",material entity,process
+oral ulcerations,oral mucosal ulcerations,same_class,mucosal is implied by oral location,broader,store term lacks 'mucosal' specificity,material entity,material entity
+mean time to epithelialization,mean time to complete epithelialization,same_class,complete is redundant in this context,broader,store term lacks 'complete' qualifier,information entity,information entity
+anti-inflammatory effects,anti-inflammatory actions,same_class,effects and actions are synonyms,different,effects vs actions are not exact synonyms,,
+infection-control measures,infection control,same_class,measures is a generic term,narrower,measures are specific actions under infection control,process,
+mouse wound model,murine wound model,same_class,mouse and murine are equivalent,different,type mismatch: information entity vs material entity,information entity,material entity
+visual disturbance,vision disturbance,same_class,visual and vision are adjectival/noun variants,different,type mismatch: quality vs material entity,quality,material entity
+bone destruction,Bony Destruction,same_class,adjective and noun form of same process,different,type mismatch: material entity vs continuant,material entity,continuant
+intertrochanteric femoral fractures,intertrochanteric femur fracture,same_class,"same fracture, grammatical variation",different,type mismatch: material entity vs process,material entity,process
+Prolonged surgical duration,prolonged surgery duration,same_class,surgical and surgery are lexical variants,different,type mismatch: quality vs continuant,quality,continuant
+Very High-Risk Category,very high risk,same_class,category is a nominalization of risk level,different,type mismatch: information entity vs continuant,information entity,continuant
+complete osseous union,complete bone union,same_class,osseous and bone are synonyms,different,process vs material entity type conflict,material entity,process
+burn injured patients,burn injury patients,same_class,adjectival and noun phrase variants,different,"store term typed as material entity, ontology as role",material entity,role
+Vertebrae,vertebra,same_class,plural form of same anatomical class,different,"plural vs singular, different classes",independent continuant,material entity
+wound etiologies,wound aetiology,same_class,spelling variant and plural do not change meaning,different,"plural vs singular, different concepts",,continuant
+3rd-degree burns,third-degree burn,same_class,numeral and number word are equivalent,different,ontological types differ: quality vs material entity,quality,material entity
+Average time to healing,average healing time,same_class,paraphrase of same measure,different,ontological types differ: quality vs continuant,quality,continuant
+three months of follow-up,three-month follow-up,same_class,same duration phrase,different,ontological types differ: quality vs occurrent,quality,occurrent
+analgesia consumption,analgesic consumption,same_class,analgesia and analgesic are equivalent here,different,analgesia (symptom) vs analgesic (drug) are distinct,quality,
+high-frequency color Doppler ultrasound,high-frequency color Doppler ultrasound examination,same_class,examination is implied in the modality,different,ontological types differ: material entity vs process,material entity,process
+health care-associated pressure injuries,health care-acquired pressure injuries,same_class,associated and acquired are synonymous here,different,ontological types differ: process vs material entity,process,material entity
+wound size measurements,Wound size measurement process,same_class,measurements is the plural of the process; same class,different,measurements are information; process is a different entity type,information entity,
+tendon and/or bone exposure,bone and tendon exposure,same_class,same exposure with conjunction variant,different,different ontological types (quality vs material entity),quality,material entity
+biofilm-disruptive properties,biofilm-disrupting properties,same_class,synonymous adjective forms,different,Different BFO types: function vs quality.,function,quality
+cold atmosphere plasma,cold atmospheric plasma,same_class,noun vs adjective form variant,different,Different BFO types: process vs material entity.,process,material entity
+cutaneous wound area,skin wound area,same_class,synonymous adjectives cutaneous and skin,different,Different BFO types: quality vs immaterial entity.,quality,immaterial entity
+cellular therapies,cell-based therapy,same_class,"Synonyms, same treatment concept.",different,Potential type mismatch and different phrasing.,,material entity
+bone's biopsies,bone biopsy,same_class,"Possessive plural vs. noun phrase, same procedure.",different,"store term is material entity, ontology class is process",material entity,
+biofilm-disruption capabilities,biofilm-disrupting properties,same_class,capabilities and properties are synonyms,different,disposition vs quality type mismatch,disposition,quality
+contaminated/dirty wound classifications,Contaminated and dirty wound classification,same_class,slash and and are equivalent,different,quality vs information entity type mismatch,quality,information entity
+microbiological workup,microbiological work-up,same_class,hyphenation variant,different,information entity vs process type mismatch,information entity,process
+deformity feet,foot deformities,same_class,word order and plural variant,different,type mismatch (quality vs material entity),quality,material entity
+post-operative wounds,postoperative wound,same_class,"Hyphen and plural vs. singular, same entity.",different,type mismatch (material vs immaterial entity),material entity,immaterial entity
+grade three,grade 3,same_class,number word variant of same grade,different,type mismatch (quality vs continuant),quality,continuant
+Wagner grading,Wagner grade,same_class,gerund and noun form of same class,different,process vs category,information entity,continuant
+mixed etiology,mixed aetiology,same_class,spelling variant of same term,different,type mismatch (information vs dependent continuant),information entity,specifically dependent continuant
+mesh structure,mesh,same_class,structure is redundant qualifier for mesh,different,"possible type mismatch, mesh likely material entity",quality,
+Wound Care Clinic,wound clinic,same_class,Added 'care' is not a distinct differentiator.,different,material entity vs immaterial entity types differ,material entity,immaterial entity
+optimal treatments,optimal therapy,same_class,treatments and therapy are synonyms; plural variant,different,information entity vs process types differ,information entity,process
+wound care clinic,wound clinic,same_class,care is redundant qualifier for wound clinic,different,material entity vs immaterial entity types differ,material entity,immaterial entity
+previous amputation,prior amputation,same_class,synonyms,different,process vs process boundary types differ,process,process boundary
+advanced therapy,advanced treatments,same_class,therapy and treatments are synonyms,different,"store term typed as material entity, likely process mismatch",material entity,
+shoulder region,shoulder,same_class,region is redundant,different,immaterial region vs material anatomical structure,immaterial entity,material entity
+radiological signs,Radiologic Signs,same_class,radiological and radiologic are spelling variants,different,quality vs information entity type mismatch,quality,information entity
+post-operative surgical site infections,postoperative surgical site infection,same_class,hyphen and plural are lexical variants,different,type mismatch: process vs continuant,process,continuant
+postoperative intravenous antibiotics,postoperative IV antibiotics,same_class,IV is abbreviation for intravenous,different,type mismatch: material entity vs process,material entity,process
+antibiotic stewardship initiatives,antibiotic stewardship programs,same_class,initiatives and programs are synonyms in this context,different,type mismatch: process vs information entity,process,information entity
+preoperative plans,preoperative planning,same_class,plans and planning are lexical variants,different,different concepts: plans vs planning,information entity,
+obese populations,obese group,same_class,populations and group are plural/singular variants,different,type mismatch: material entity vs information entity,material entity,information entity
+running suture,running suture closure,same_class,closure is implied in running suture,different,different concepts: suture vs closure,information entity,information entity
+complication types,types of complications,same_class,"identical meaning, only word order differs",different,type mismatch: process vs information entity,process,information entity
+empirical antimicrobial therapy,Empirical antibiotic treatment,same_class,antimicrobial and antibiotic are synonymous in this context,broader,antimicrobial includes antibiotic,process,process
+shotgun metagenomics,shotgun metagenomic sequencing,same_class,"same method, nominal vs gerund form",broader,metagenomics encompasses more than sequencing,process,
+Microbiota-targeted interventions,microbiota-targeted treatments,same_class,interventions and treatments are synonyms here,different,type mismatch: material entity vs realizable entity,material entity,realizable entity
+preoperative bowel preparation regimen,preoperative bowel preparation,same_class,regimen is implicit in preparation,different,type mismatch: information entity vs process,information entity,process
+secondary hospital,secondary hospital setting,same_class,setting is implied by hospital context,different,Material entity vs immaterial entity,material entity,immaterial entity
+secondary hospitals,secondary hospital setting,same_class,plural and setting implied,different,Material entity vs immaterial entity,material entity,immaterial entity
+Combination antibiotics,combination of antibiotics,same_class,lexical variant naming same substance class,different,"Store term is process, ontology term is material entity",process,material entity
+near-infrared radiation,near-infrared,same_class,Near-infrared is a shorthand for near-infrared radiation; same electromagnetic band.,different,type mismatch (process vs quality),process,quality
+nausea/vomiting,nausea/emesis,same_class,Vomiting and emesis are synonyms; the pair denotes the same symptom complex.,different,type mismatch (continuant vs process),specifically dependent continuant,process
+peptic ulcer disease,peptic ulcer,same_class,Peptic ulcer disease is the disease name for a peptic ulcer; same class.,different,disease vs material entity,,material entity
+Intestinal Barrier Dysfunction,intestinal barrier impairment,same_class,Dysfunction and impairment are synonyms; same class.,different,"Type mismatch: store continuant, ontology material entity.",continuant,material entity
+antibacterial agents,antibacterial,same_class,Synonym with word 'agents' omitted.,different,"Type mismatch: store continuant, ontology specifically dependent continuant.",continuant,specifically dependent continuant
+structural alterations,structural changes,same_class,alterations and changes are synonyms,different,"Type mismatch: store quality, ontology process.",quality,process
+inflammatory disorder,inflammatory disease,same_class,disorder and disease are synonyms,different,"Type mismatch: store disposition, ontology material entity.",disposition,material entity
+microbiome-targeted therapeutic strategies,microbiome-targeted interventions,same_class,therapeutic strategies and interventions are synonyms,different,"Type mismatch: store material entity, ontology process.",material entity,process
+host immune defences,host immune defenses,same_class,defences and defenses are spelling variants,different,"Type mismatch: store function, ontology material entity.",function,material entity
+active diseases,active disease,same_class,plural and singular forms of the same class,different,type mismatch: disposition vs quality,disposition,quality
+anorectal disorders,anorectal disease,same_class,disorders and disease are synonymous in this context,different,type mismatch: disposition vs material entity,disposition,material entity
+intestinal barrier dysfunction,intestinal barrier impairment,same_class,dysfunction and impairment are synonyms,different,type mismatch: continuant vs material entity,continuant,material entity
+anti-inflammatory properties,anti-inflammatory actions,same_class,properties and actions are synonyms,different,properties (dispositions) vs actions (processes) are distinct,specifically dependent continuant,
+antioxidative properties,antioxidative effects,same_class,properties and effects are synonyms,different,properties (dispositions) vs effects (outcomes) are different classes,disposition,
+immunohistochemical methodology,immunohistochemical analyses,same_class,methodology and analyses refer to the same procedure,different,methodology (plan) vs analyses (performance) are not synonyms,process,process
+localized interventions,localised therapeutic intervention,same_class,"spelling variant and pluralization, same concept",broader,"store term includes non-therapeutic interventions, ontology narrower",process,process
+leg infection,leg-region infections,same_class,leg and leg-region refer to the same anatomical area,different,store typed as material entity but infection is a process; type mismatch,material entity,process
+skin wound infection,infected skin wounds,same_class,infection of wound equals infected wound,different,"one is an infection (process), the other is a wound (material entity)",,material entity
+gut dysbiosis,gut microbial dysbiosis,same_class,gut dysbiosis is a common synonym for gut microbial dysbiosis,different,type mismatch: material entity vs disposition,material entity,disposition
+Healing a wound,healing wounds,same_class,singular/plural and article variant,different,process (store) vs material entity (ontology) cannot be same class,process,material entity
+painful condition,painful,same_class,nominalized adjective and noun phrase equivalent,different,condition (state/disorder) vs quality (painful) are distinct classes,,quality
+stage 3-4,Stages 3 and 4,same_class,numeric range and conjunction equivalent,different,Different types: quality vs information entity,quality,information entity
+advanced wound care therapies,advanced wound treatments,same_class,care therapies and treatments are synonymous,different,Type mismatch: store term is material entity but therapies are processes,material entity,
+wound outpatient department,outpatient wound care department,same_class,word order and care insertion are lexical variants,different,Type mismatch: immaterial entity vs material entity,immaterial entity,material entity
+specialist's referral,specialist referral,same_class,possessive and word order variants,different,"store term is information entity, ontology class is process",information entity,process
+wound region,regions of the wound,same_class,singular/plural and word order variants,different,"store term is material entity, ontology class is immaterial entity",material entity,immaterial entity
+automatic segmentation method,automated segmentation,same_class,"automatic/automated synonyms, method omitted",different,"store term is information entity, ontology class is process",information entity,process
+wound bed tissue type,tissue type of the wound bed,same_class,word order and preposition variants,different,"store term is information entity, ontology class is quality",information entity,quality
+increased temperature,temperature increase,same_class,adjectival and nominal forms of same process,different,"store term is quality, ontology class is process",quality,process
+wound-related discomfort and distress,wound-related discomfort or distress,same_class,"and/or conjunction variants, same class",narrower,"store term requires both, ontology allows either",quality,quality
+silver-based dressings,silver-containing dressings,same_class,'based' and 'containing' are synonymous here,narrower,silver-based is a subtype of silver-containing,material entity,material entity
+wound measurement procedure,wound measurement,same_class,procedure is implied by measurement process,different,"store term is information entity, ontology class is process",information entity,process
+rate of wound healing,wound healing rate,same_class,"identical meaning, only word order differs",different,"store term is quality, ontology class is continuant",quality,continuant
+standardized documentation,standardized documentation process,same_class,process is implicit in documentation,different,"store term likely information entity, ontology class is process",,
+imaging technique,imaging method,same_class,technique and method are synonyms,different,process vs continuant type mismatch,process,continuant
+Friedman's test,Friedman test,same_class,possessive apostrophe is a variant,different,information entity vs process type mismatch,information entity,process
+Wound Bed Preparation protocol,wound bed preparation paradigm,same_class,protocol and paradigm are synonymous in this context,different,protocol and paradigm are distinct concepts,information entity,information entity
+microbial community composition,microbial composition,same_class,community is implied in microbial composition context,narrower,"store term specifies community, narrower than general microbial composition",quality,continuant
+implant complications,implant-related complication,same_class,"plural vs singular, same concept",different,"store types as material entity, ontology types as process; incompatible",material entity,process
+device complications,device-related complications,same_class,related is implicit; same meaning,different,"store types as material entity, complications are processes",material entity,
+Rhino-orbital-cerebral mucormycosis,rhino-orbito-cerebral mucormycosis,same_class,spelling variant orbita/orbito,different,different BFO types: disposition vs material entity,disposition,material entity
+staged surgical approach,staged surgical management,same_class,approach and management are synonymous in this context,different,"approach vs management; store typed information entity, ontology likely process",information entity,
+Autologous iliac bone grafting,autologous iliac-crest bone grafting,same_class,iliac bone grafting typically refers to iliac crest,broader,"iliac bone includes iliac crest, store is more general",process,process
+hard-to-heal wound infections,infected hard-to-heal wounds,same_class,"reordered modifiers, same meaning",different,"store term is a process, ontology class is a material entity",process,material entity
+full re-epithelialisation,complete re-epithelialization,same_class,spelling and synonym (full/complete),different,"store term is a process boundary, ontology class is a process",process boundary,process
+glycated haemoglobin levels,glycated hemoglobin level,same_class,spelling variant (haemoglobin/hemoglobin) and number,different,"type mismatch: store term is a quality, ontology class is an information entity",quality,information entity
+hyperplasia of scar,scar hyperplasia,same_class,Synonymous medical phrase,different,"type mismatch: store term is a disposition, ontology class is a continuant",disposition,continuant
+H+G,HG,same_class,Likely abbreviation variant with plus sign,different,"store is process, ontology is material entity",process,material entity
+areas of wounds,wound area,same_class,"Same concept, singular/plural",different,"store is quality, ontology is continuant",quality,continuant
+pediatric patient population,pediatric population,same_class,"identical meaning, 'patient' implied",different,"store is role, ontology is material entity",role,material entity
+Treatment Frequency,frequency of treatments,same_class,synonymous word order variant,different,"store is quality, ontology is information entity",quality,information entity
+dressing concept,dressing,same_class,'concept' is a meta-label; both refer to the dressing class,different,"store is information entity, not the material dressing",information entity,
+average time to heal,average healing time,same_class,"paraphrase, identical meaning",different,"store is information entity, ontology is continuant",information entity,continuant
+wound exudate absorption,absorption of wound exudate,same_class,"lexical variant, same concept",different,"Store term typed as function, ontology class as process",function,process
+subjective assessment,subjective evaluation,same_class,synonyms,different,"Store term typed as information entity, ontology class as process",information entity,process
+blanchable erythema,blanching erythema,same_class,synonyms in medical terminology,different,"Store term typed as material entity, ontology class as quality",material entity,quality
+socio-economic impact,Social And Economic Impact,same_class,"different capitalization, same concept",different,type mismatch: quality vs material entity,quality,material entity
+full re-epithelialization,complete re-epithelialization,same_class,'full' and 'complete' are synonyms,different,type mismatch: process boundary vs process,process boundary,process
+silicone-covered dressing,silicone-based dressings,same_class,labels describe the same type of dressing,different,different composition: covered vs based,material entity,material entity
+hypertension history,prior history of hypertension,same_class,"'prior' is implied, same meaning",different,type mismatch: quality vs disposition,quality,disposition
+Dressing technique,dressing methods,same_class,technique and methods are synonyms,different,BFO type mismatch: information entity vs process,information entity,process
+threshold level,threshold,same_class,lexical variant,different,"store typed as information entity, ontology typed as continuant; distinct classes",information entity,continuant
+venous blood stasis,venous stasis,same_class,Venous blood stasis is a common synonym for venous stasis.,different,"store typed as process, ontology typed as continuant; distinct classes",process,continuant
+wound surface area reduction,reduction in wound surface area,same_class,Paraphrase of the same concept.,different,"store typed as information entity, ontology typed as process; distinct classes",information entity,process
+ability to remain in place,ability to stay in place,same_class,synonymous phrases,different,type mismatch: function vs disposition,function,disposition
+Positive Healing Dynamics,positive dynamics of healing,same_class,capitalization and word order variation,different,different ontological categories: process vs quality,process,quality
+antibacterial agent,antibacterial,same_class,'agent' is implicit in the class name,different,different categories: material entity vs property,continuant,specifically dependent continuant
+time for wound necrotic tissue removal,time to wound necrotic tissue removal,same_class,preposition variant (for vs to),different,different types: information entity vs quality,information entity,quality
+Schiff base crosslinking,Schiff-base cross-linking,same_class,hyphenation and spelling variant,different,different types: quality vs process,quality,process
+biosensing technologies,biosensing technique,same_class,"lexical variant, technologies vs technique",different,material entity vs information entity,material entity,information entity
+therapeutic success,therapy success,same_class,lexical variant: therapeutic vs therapy,different,process vs information entity,process,information entity
+perineal dehiscence,perineal wound dehiscence,same_class,'wound' is implicit in dehiscence context,different,material entity vs process,material entity,process
+antibacterial ability,antibacterial properties,same_class,synonymous terms,narrower,disposition is subtype of specifically dependent continuant,disposition,specifically dependent continuant
+silver ion antibacterial dressing,silver ion-bearing antimicrobial dressing,same_class,Antibacterial and antimicrobial used interchangeably for silver dressings,narrower,antibacterial is subtype of antimicrobial,material entity,material entity
+pathogenic organisms,pathogenic micro-organisms,same_class,Pathogenic organisms here refers to micro-organisms,broader,'organisms' includes 'micro-organisms',material entity,material entity
+anti-bacterial properties,anti-bacterial activity,same_class,Properties and activity refer to the same quality,different,different BFO types: function vs disposition,function,disposition
+curative effects,clinical curative effect,same_class,Curative effects and clinical curative effect refer to the same concept,different,different BFO types: quality vs process,quality,process
+silver-based products,silver products,same_class,"Both refer to products containing silver, likely synonymous.",different,"silver-based implies compound, silver products may include elemental silver",material entity,material entity
+anti-inflammatory effect,anti-inflammatory actions,same_class,effect and action are used interchangeably,different,effect vs actions denote different aspects,disposition,
+tissue angiogenesis,Angiogenesis process,same_class,Both refer to the process of blood vessel formation; 'tissue' is implied.,narrower,"tissue specifies a context, subtype of angiogenesis",process,
+surgical suture,suture,same_class,"surgical is often implied, synonymous",narrower,'surgical' specifies a subtype of suture process,process,
+anti-bacterial,anti-bacteria,same_class,"adjective vs noun form, same meaning",different,different ontological categories (disposition vs function),disposition,function
+chronic wound environment,chronic wound settings,same_class,environment and settings are synonyms in this context,different,different ontological categories (immaterial vs material entity),immaterial entity,material entity
+real-world situation,real-world setting,same_class,situation and setting are interchangeable,different,"store term is process, ontology class is immaterial entity",process,immaterial entity
+color change,change in colour,same_class,"lexical variant (American vs British spelling, word order)",different,"store term is process, ontology class is quality",process,quality
+healing activity,healing action,same_class,synonyms for the same process,different,"store term is disposition, ontology class is process",disposition,process
+chlorhexidine rinses,chlorhexidine rinse,same_class,"plural vs singular, same entity",different,"store term is process, ontology class is material entity",process,material entity
+Antiseptics,antiseptic drug,same_class,plural and drug are lexical variants,broader,store term 'Antiseptics' is more general than 'antiseptic drug',material entity,
+Endoscopic,endoscopic technique,same_class,adjective used as noun referring to the technique,different,different categories: quality vs material entity,quality,material entity
+endoscopic procedure,endoscopic technique,same_class,synonyms for the same procedure,different,different categories: process vs material entity,process,material entity
+targeted preventive approaches,targeted preventive measures,same_class,synonyms,different,different categories and slight semantic difference between approaches and measures,information entity,continuant
+minimally invasive,minimally invasive approach,same_class,"adjective and noun phrase, same concept",different,"adjective vs noun phrase, not same class",,
+reparative stage,reparative phase,same_class,synonyms,different,Different BFO types: process boundary vs process,process boundary,process
+burn injury outcomes,burn outcomes,same_class,"synonyms, 'injury' redundant",different,Different BFO types: process vs information entity,process,information entity
+antioxidative activity,antioxidative effects,same_class,activity and effects are synonyms here,different,Disposition vs undefined type; label difference suggests distinct concepts,disposition,
+biofilm phenotypes,biofilm phenotypic state,same_class,"plural vs singular, same concept",different,Material entity vs quality,material entity,quality
+dynamics,dynamic nature,same_class,synonymous,different,Quality vs disposition,quality,disposition
+oncological patients,oncologic patients,same_class,synonymous adjectives,different,"Store is role, ontology is material entity; different BFO types",role,material entity
+wound healing problems,wound healing issues,same_class,synonymous nouns,different,"Store is quality, ontology is process; different BFO types",quality,process
+percutaneous technique,percutaneous approach,same_class,'Technique' and 'approach' synonyms,different,different BFO types: material entity vs process,material entity,process
+advanced wound care approaches,Advanced wound care methods,same_class,'Approaches' and 'methods' synonyms,different,process vs material entity,process,material entity
+incisional complications,incision-related complications,same_class,'Incisional' equals 'incision-related',different,disposition vs material entity,disposition,material entity
+traditional dressing methods,traditional dressing,same_class,methods is a redundant qualifier,different,methods (process) vs dressing (material),,
+Therapeutic/Care Management,therapeutic management,same_class,care is redundant and case variant,broader,store term includes both therapeutic and care management,information entity,
+autologous platelet-rich plasma gel,autologous platelet-rich gel,same_class,plasma is implicit in context,narrower,"store term specifies plasma, ontology class is more general",material entity,material entity
+intraabdominal complications,intra-abdominal complications,same_class,hyphen variant,different,type mismatch: process vs disposition,process,disposition
+managing infection,managing this infection,same_class,identical meaning with minor determiner,broader,store term is more general due to missing 'this',process,process
+continuous negative pressure,continuous negative pressure therapy,same_class,shorthand for the therapy,broader,"store term lacks 'therapy', more general",,process
+LC3 gene,LC3,same_class,LC3 standardly refers to the gene,different,potential distinct entities: gene vs protein,material entity,material entity
+Wagner's grading,Wagner grade,same_class,same classification system,different,type mismatch: information entity vs continuant,information entity,continuant
+area of ulcers,ulcer area,same_class,"same meaning, different word order",different,quality vs continuant category mismatch,quality,continuant
+percent of reduction,percentage reduction,same_class,"same meaning, different wording",different,information entity vs continuant,information entity,continuant
+diabetes mellitus patients,patients with diabetes,same_class,diabetes mellitus is the full name of diabetes,narrower,diabetes mellitus is a subtype of diabetes,material entity,continuant
+Recombinant epidermal growth factor,human recombinant epidermal growth factor,same_class,"typically human, 'human' is implied",broader,store term lacks human specificity,material entity,material entity
+areas of ulcers,ulcer area,same_class,"same concept, minor grammatical variation",different,type mismatch (quality vs continuant),quality,continuant
+immunomodulatory actions,immunomodulatory effects,same_class,actions and effects are used interchangeably here,different,process vs SDC type mismatch,process,specifically dependent continuant
+autologous platelet-rich plasma products,autologous platelet rich plasma,same_class,"products vs no products, same entity",different,"store term adds 'products', likely a distinct subclass",material entity,
+intralesional recombinant epidermal growth factor,intralesional recombinant human epidermal growth factor,same_class,human is implicit in recombinant EGF,broader,"store term lacks 'human', is more general",material entity,material entity
+platelet-rich growth factor,platelet rich in growth factor,same_class,synonymous phrasing,different,phrases have different meanings,material entity,material entity
+diabetes disorders,diabetes,same_class,"disorders is a general term, same disease",different,Potential broader scope and type mismatch (material entity vs continuant without clear synonymy).,material entity,continuant
+bacterial etiologies,bacterial aetiology,same_class,plural vs singular and spelling variant,different,Type mismatch (material entity vs information entity) and plural vs singular likely different classes.,material entity,information entity
+Fungal Aetiology,Fungal etiology,same_class,capitalization and spelling variant,different,Type mismatch (material entity vs information entity) indicates distinct classes.,material entity,information entity
+Completely Healed Ulcers,complete healed ulcers,same_class,identical meaning with minor capitalization and word order variance,different,"store term is a quality, ontology class is a material entity",quality,material entity
+intention-to-treat approach,intention-to-treat principle,same_class,synonymous methodological terms,different,"approach is a process, principle is an information entity",process,information entity
+resection of infected bone,Removal Of Infected Bone,same_class,resection and removal are synonyms in this context,narrower,resection is a subtype of removal,process,process
+Heel region,heel,same_class,anatomical region synonymous with the heel,different,immaterial spatial region vs material anatomical entity,immaterial entity,independent continuant
+area of ulcer,ulcer area,same_class,equivalent phrases for the same measurement,different,"store term is a quality, ontology class is a continuant",quality,continuant
+proliferation phase,proliferative phase,same_class,"Same wound healing phase, lexical variant.",different,process boundary vs process,process boundary,process
+excessive extracellular matrix production,Excessive Extracellular Matrix Deposition,same_class,Production and deposition are synonymous in this pathological context.,different,production vs deposition are distinct processes,process,process
+gastrointestinal,gastrointestinal tract,same_class,common shorthand for the anatomical entity,different,adjective vs anatomical structure,,independent continuant
+immunocompromised conditions,immunocompromised status,same_class,Conditions and status are synonyms,different,"conditions vs status, type mismatch",continuant,specifically dependent continuant
+Preoperative Magnetic Resonance Imaging,preoperative MRI,same_class,MRI is abbreviation for Magnetic Resonance Imaging,different,"store term typed as information entity, likely image vs process",information entity,
+American Shoulder and Elbow Society score,American Shoulder and Elbow Surgeons score,same_class,Refers to the same score despite minor name variation,different,Society vs Surgeons changes the named entity,information entity,information entity
+antimicrobial uses,antimicrobial use,same_class,Plural and singular forms of the same term,different,function vs process type mismatch,function,process
+inflammatory neutrophilic dermatosis,neutrophilic dermatosis,same_class,Inflammatory is redundant but does not change the class,narrower,store term adds 'inflammatory' qualifier,material entity,continuant
+cutaneous pyoderma gangrenosum,pyoderma gangrenosum,same_class,Cutaneous is implicit in pyoderma gangrenosum,narrower,store term adds 'cutaneous' qualifier,process,
+Dermal Matrix Organization,dermal extracellular matrix organization,same_class,Dermal matrix is short for dermal extracellular matrix,different,different BFO categories (quality vs process),quality,process
+dual-action mechanism,Dual Mechanism Of Action,same_class,"same concept, different phrasing",different,process vs disposition categories,process,disposition
+Mean time of healing,mean time to healing,same_class,lexical variant,different,preposition change may indicate different concept,quality,continuant
+blood biomarker,Blood-based biomarkers,same_class,synonymous,different,types differ: role vs material entity,role,material entity
+scalable strategy,Scalable Approach,same_class,synonyms,different,Type mismatch (information entity vs material entity) and not synonymous.,information entity,material entity
+Socio Economic Burden,economic and social burdens,same_class,synonym,different,Type mismatch (quality vs material entity).,quality,material entity
+wound-healing promotion,promoting wound healing,same_class,lexical variant (hyphenated vs gerund),different,"store term is a function, ontology class is a process",function,process
+abnormalities in wound healing,abnormal wound healing,same_class,lexical variant (plural noun vs adjective),different,type mismatch: disposition vs process,disposition,process
+carbon monoxide intoxication,Carbon Monoxide Poisoning,same_class,intoxication is a synonym for poisoning,different,type mismatch: material entity vs disposition,material entity,disposition
+Thromboprophylaxis,thromboprophylaxis measures,same_class,the general concept and its implementation are likely the same class,different,type mismatch: process vs information entity,process,information entity
+structural scaffold,scaffold,same_class,Adjective modifier does not change class identity,narrower,structural scaffold is a subtype of scaffold,material entity,continuant
+total score points,total score,same_class,Points is redundant with score,different,addition of 'points' may indicate a specific subset,information entity,continuant
+non-invasive method,non-invasive technique,same_class,Method and technique are synonyms,different,information entity vs process type mismatch,information entity,process
+identifying patients at high risk,identification of patients at higher risk,same_class,verb and noun forms of the same process,different,high risk vs higher risk and verb vs noun form,process,process
+improvement in quality of life,improvement of quality of life,same_class,preposition variant,different,"type mismatch – store term is information entity, ontology class is process",information entity,process
+microcirculatory disturbance,microcirculatory impairment,same_class,synonym,different,"type mismatch – store term is disposition, ontology class is material entity",disposition,material entity
+microcirculatory dysfunction,microcirculatory impairment,same_class,synonym,different,"type mismatch – store term is disposition, ontology class is material entity",disposition,material entity
+not healed,non-healed,same_class,negation variant,different,type mismatch: disposition vs quality,disposition,quality
+medical co-morbidities,co-morbidities,same_class,medical is a redundant qualifier,different,type mismatch: material entity vs continuant,material entity,continuant
+gastrointestinal tract cancer,gastrointestinal cancer,same_class,tract is implicit in gastrointestinal cancer,different,type mismatch: disposition vs material entity,disposition,material entity
+Immunofluorescence analysis,immunofluorescence staining,same_class,analysis and staining are used interchangeably,different,analysis is broader than staining,process,process
+vertebral height restoration,vertebral body height restoration,same_class,commonly used synonym for vertebral body height restoration,different,missing 'body' could indicate a different entity,process,process
+kyphotic deformation,kyphotic deformity,same_class,deformation and deformity are synonymous,different,Different BFO types: quality vs material entity,quality,material entity
+injury level,level of injury,same_class,"identical meaning, word order variant",different,Different BFO types: quality vs immaterial entity,quality,immaterial entity
+biomaterial-based approaches,biomaterial-based strategies,same_class,approaches and strategies are synonymous,different,Different BFO types: material entity vs information entity,material entity,information entity
+novel treatment,novel treatment approach,same_class,approach is redundant modifier,different,Different BFO types: process vs information entity,process,information entity
+emergency care settings,emergency settings,same_class,care is implied in settings,narrower,Store term subtype: care settings are a kind of emergency settings,immaterial entity,immaterial entity
+ocular burns,burns of the ocular surface,same_class,synonyms for the same condition,broader,Ocular burns includes the ocular surface and other eye burns,material entity,material entity
+post-burn,post-burn injury,same_class,abbreviation expansion,different,Different BFO types: process vs process boundary; different meanings,process,process boundary
+tissue scarring,Scarring,same_class,Synonym for scarring,different,"Store term typed as material entity (scar tissue), ontology likely process",material entity,
+anti-fibrotic function,anti-fibrotic effects,same_class,synonymous terms,different,Type mismatch: function vs disposition,function,disposition
+Spearman's rank correlation,Spearman correlation,same_class,full name vs shortened,different,Type clash: information entity vs process,information entity,process
+HBO session,HBOT sessions,same_class,HBO and HBOT are synonymous; singular/plural variant,different,process boundary vs process type mismatch,process boundary,process
+transforming growth factor-beta/Smad signaling pathways,TGF-beta/Smad signaling,same_class,full name and abbreviation refer to same signaling pathway,different,material entity vs process type mismatch,material entity,process
+elderly individuals,elderly population,same_class,synonymous terms for group of elderly people,different,individuals vs population are distinct classes,material entity,material entity
+feature selection strategies,feature selection methods,same_class,strategies and methods are used interchangeably,different,strategies vs methods are not exact lexical synonyms,information entity,information entity
+bacteria species,bacterial species,same_class,bacteria and bacterial are used interchangeably,different,type mismatch (information entity vs continuant) and potential meaning difference,information entity,continuant
+bootstrap resamples,Bootstrap resampling,same_class,Plural noun and gerund refer to same process,different,resamples (output) vs resampling (process) are distinct,process,process
+antimicrobial characteristics,antimicrobial attributes,same_class,characteristics and attributes are synonyms,different,type mismatch: disposition vs quality,disposition,quality
+shorter duration of hospitalization,shorter hospitalization,same_class,duration is implied in shorter hospitalization,different,quality vs process/continuant,quality,continuant
+reconstructive,reconstructive procedure,same_class,nominal use of adjective means procedure,different,adjective vs process,quality,process
+grade of 4,grade 4,same_class,lexical variant,different,information entity vs continuant type mismatch,information entity,continuant
+hypofractionated regimens,hypofractionated radiotherapy schedules,same_class,synonyms for treatment schedules,different,broader term 'regimens' vs specific 'radiotherapy schedules',information entity,information entity
+proportion of ulcers healed,percentage of ulcers healed,same_class,proportion and percentage are interchangeable here,different,different BFO types: quality vs information entity,quality,information entity
+metabolic,metabolism,same_class,metabolic used as noun for metabolism,different,quality vs process type mismatch,quality,process
+venous insufficiency,Venous insufficiency disorder,same_class,"Insufficiency implies the disorder, suffix is redundant.",different,"continuant vs material entity; 'insufficiency' is a condition, 'disorder' defined as abnormal structure",continuant,material entity
+targeted preventive interventions,targeted preventive measures,same_class,interventions and measures are synonyms,different,"process vs continuant; 'interventions' are processes, 'measures' may be objects",process,continuant
+alternative etiology,alternative causes,same_class,etiology and causes are synonymous here,different,material entity vs continuant; 'etiology' may be a process or concept,material entity,continuant
+poorly controlled diabetes mellitus,poorly controlled diabetes,same_class,diabetes mellitus is commonly interchangeable with diabetes,narrower,'diabetes mellitus' is a subtype of 'diabetes',disposition,
+minimally invasive treatment alternative,minimally invasive alternative,same_class,treatment alternative is same as alternative,different,"process vs role; one is a treatment option, the other a role",process,role
+undermining borders,undermined borders,same_class,commonly used interchangeably in wound assessment,different,"immaterial entity (process) vs quality; 'undermining' is an action, 'undermined' is a state",immaterial entity,quality
+calf muscular vein thrombosis,Calf muscle vein thrombosis,same_class,lexical variant for same condition,different,process vs material entity,process,material entity
+intertrochanteric fracture,intertrochanteric femur fracture,same_class,same fracture type,different,process vs material entity,material entity,process
+moderate to high risk,moderate-to-high risk level,same_class,"lexical variant, same concept",different,tendency vs information entity,tendency,information entity
+high BMI,higher BMI,same_class,"synonymous labels, no definition to distinguish",different,comparative vs absolute quality,quality,quality
+gold-standard approach,gold standard,same_class,approach refers to the standard itself,different,types differ (information entity vs continuant) and labels are not synonymous,information entity,continuant
+patient's symptoms,patient symptoms,same_class,"possessive vs adjective, same meaning",different,types differ (quality vs material entity),quality,material entity
+complementary treatment measures,complementary therapy,same_class,synonym,different,BFO type mismatch (material entity vs likely process) and 'measures' may broaden scope,material entity,
+thigh region,thigh,same_class,Lexical variant referring to the same anatomical region.,different,BFO type mismatch: immaterial entity (region) vs continuant (anatomical structure),immaterial entity,continuant
+bony involvement,bone involvement,same_class,Synonymous terms for the same clinical concept.,different,BFO type mismatch: process vs continuant,process,continuant
+outpatient clinic settings,outpatient clinic,same_class,Plural form does not change meaning.,different,BFO type mismatch: immaterial entity (settings) vs independent continuant (clinic),immaterial entity,independent continuant
+minimally detectable change,minimal detectable change,same_class,Commonly used interchangeably in measurement.,different,different types: information entity vs quality,information entity,quality
+randomised controlled studies,randomised controlled trial,same_class,plural/singular lexical variant,different,"store term is information entity, ontology class likely process",information entity,
+therapeutic method,therapy method,same_class,synonyms: therapeutic/therapy,different,different types: process vs information entity,process,information entity
+wound care techniques,wound care methods,same_class,techniques and methods are synonyms,different,different types: process vs material entity,process,material entity
+wearable,wearable devices,same_class,wearable as noun refers to wearable device,different,different types: quality vs material entity,quality,material entity
+electroactive dressings,electroactive wound dressings,same_class,dressings understood as wound dressings in context,broader,"store term missing wound, thus more general",material entity,material entity
+overlapping,overlap,same_class,gerund and noun forms refer to the same concept,different,process vs quality (different BFO types),process,quality
+dynamic,dynamic nature,same_class,adjective and noun phrase refer to same quality,different,quality vs disposition (different BFO types),quality,disposition
+cardiovascular illness,cardiovascular diseases,same_class,illness and disease used interchangeably,different,different ontological types (disposition vs continuant),disposition,continuant
+random-effects meta-analysis model,random-effects meta-analysis,same_class,'model' is redundant; same concept,different,different ontological types (material entity vs process),material entity,process
+decrease in the quality of life,decreased quality of life,same_class,phrasal variant,different,different ontological types (process vs quality),process,quality
+middle-aged individuals,middle-aged,same_class,synonymous,different,different ontological types (material entity vs quality),material entity,quality
+healing phase,phases of healing,same_class,singular/plural variant,narrower,singular phase vs the set of phases,,process
+cross-sectional research design,cross-sectional design,same_class,'research' is implied; same concept,different,type mismatch: information entity vs continuant,information entity,continuant
+appetite loss,loss of appetite,same_class,synonymous phrasing,different,type mismatch: quality vs disposition,quality,disposition
+DFU complications,DFU-related complications,same_class,equivalent phrasing,different,type mismatch: process vs material entity,process,material entity
+Neuropathic ulcerations,neuropathic ulcer,same_class,ulcerations and ulcer often used interchangeably,different,type mismatch: disposition (ulceration process) vs material entity (ulcer),disposition,material entity
+aspartate aminotransferase values,aspartate aminotransferase level,same_class,values and level synonymous in context,different,type mismatch: quality vs information entity,quality,information entity
+interindividual variability,inter-individual variability,same_class,hyphen variant,narrower,"store term is a quality, ontology class is broader (specifically dependent continuant)",quality,specifically dependent continuant
+foot self-management behavior,foot self-care behavior,same_class,self-management and self-care are synonyms here,different,store term uses 'management' vs ontology's 'care',process,process
+microcirculation function,microcirculation,same_class,function is inherent to microcirculation,different,"function vs process; 'microcirculation function' likely refers to capability, not the process",function,
+standardize reporting,standardized reporting,same_class,"verb vs noun form, same concept",different,verb vs adjective-noun may denote different aspects,,
+cognitive deficits,cognitive impairment,same_class,both refer to reduced cognitive function; synonymous,different,'deficits' vs 'impairment' may have different connotations,quality,
+localized damage,localised damage,same_class,US vs UK spelling variant,different,Different types: process vs material entity.,process,material entity
+multimodal treatment concepts,multimodal therapeutic approach,same_class,likely synonyms for the same broad concept,different,Different types: information entity vs process.,information entity,
+mechanism-based approaches,mechanism-based,same_class,the plural and adjective form likely name the same concept,different,Different types: information entity vs quality.,information entity,quality
+infectious opportunistic pathogen,opportunistic pathogen,same_class,"infectious is inherent to opportunistic pathogen, same class",different,type mismatch: material entity vs role,material entity,role
+interpatient variability,inter-patient variability,same_class,"hyphen variation, same meaning",different,type mismatch: disposition vs quality,disposition,quality
+immune response dysregulation,immune dysregulation,same_class,synonymous phrasing,narrower,store term is a subtype (specific to response),process,
+organizational context,organisational context,same_class,US vs UK spelling,different,type mismatch: quality vs immaterial entity,quality,immaterial entity
+diminished sensation,reduced sensation,same_class,diminished and reduced are synonyms,different,type mismatch: quality vs tendency,quality,tendency
+sacral location,sacral,same_class,same anatomical location,different,type mismatch: quality vs independent continuant,quality,independent continuant
+vulnerable group,vulnerable population,same_class,synonymous nouns,different,role vs material entity type mismatch,role,material entity
+acute postoperative complications,acute postoperative medical complications,same_class,Minor addition of 'medical' does not change meaning,different,material entity vs disposition type mismatch,material entity,disposition
+T2-weighted sagittal images,T2-weighted sagittal MR images,same_class,Abbreviation expansion (MR) does not change meaning,different,process vs material entity type mismatch,process,material entity
+1-way analysis of variance,one-way analysis of variance,same_class,"Numeric vs word representation, same method",different,"store is information entity, ontology is process",information entity,process
+low Braden scores,low Braden Scale scores,same_class,abbreviation expansion,different,"store is information entity, ontology is quality",information entity,quality
+median length of hospital stay,median hospital stay,same_class,"same concept, abbreviated form",different,"store is quality, ontology is continuant",quality,continuant
+C-reactive protein CRP-to-albumin ratio,C-reactive protein-to-albumin ratio,same_class,includes abbreviation for the same entity,different,"store is material entity, ontology is information entity",material entity,information entity
+C-reactive protein/albumin ratio,C-reactive protein-to-albumin ratio,same_class,slash and 'to' are equivalent in this context,different,"store is material entity, ontology is information entity",material entity,information entity
+Department of Burn and Plastic Surgery,"Department of Burns, Plastic and Reconstructive Surgery",same_class,minor naming variant for the same department,different,distinct department names,immaterial entity,immaterial entity
+neurological disease,neurological disorders,same_class,disease and disorder used interchangeably,different,"store term typed as process, ontology class as material entity",process,material entity
+Braden Risk Assessment Tool,Braden Risk Assessment Scale,same_class,tool and scale refer to same instrument,different,"store term is material entity, ontology class is information entity",material entity,information entity
+organisation,organization,same_class,British vs American spelling,different,"store term typed as quality, unlikely same as organization",quality,
+relative increases,relative increase,same_class,singular/plural lexical variant,different,"store term typed as quality, ontology class typed as process",quality,process
+Joinpoint regression model,Joinpoint regression,same_class,model is implicit in regression method,different,model (information entity) vs regression (process),,process
+APACHE II scale,APACHE II score,same_class,scale and score are synonymous for this scoring system,different,"scale is the instrument, score is the numeric result",information entity,continuant
+decision tree technique,decision tree,same_class,technique is a synonym for the method,different,"store term is a process, ontology class is a continuant; top-level type mismatch",process,continuant
+CSSs,cSS,same_class,plural vs singular abbreviation without semantic change,different,"store term typed as process, ontology class as material entity",process,material entity
+health service,health care service,same_class,health service typically synonymous with health care service,broader,health service is more general than health care service,material entity,material entity
+reverse transcription-quantitative polymerase chain reaction,Reverse transcription real-time quantitative polymerase chain reaction,same_class,synonymous expansion; real-time is implicit in quantitative PCR,broader,"Store term lacks 'real-time' qualifier, making it more general.",process,process
+quantitative reverse transcription polymerase chain reaction,Reverse transcription real-time quantitative polymerase chain reaction,same_class,same method with word order and real-time omitted,broader,"Store term lacks 'real-time', broader concept.",process,process
+clinical management approaches,clinical management strategies,same_class,synonymous phrases,different,"Store term is a process, ontology class is an information entity.",process,information entity
+period of evaluation,evaluation period,same_class,lexical variants with identical meaning,different,different types (info entity vs process),information entity,process
+compromised tissue perfusion,poor tissue perfusion,same_class,synonymous modifiers 'compromised' and 'poor',different,different types (disposition vs quality),disposition,quality
+Kruskal-Wallis,Kruskal-Wallis H,same_class,same statistical test; 'H' is the statistic,different,different types (info entity vs process),information entity,process
+Baseline demographics,baseline demographic characteristics,same_class,synonymous phrases,different,different BFO types (material entity vs quality),material entity,quality
+shoe-wearing time,shoe wear time,same_class,variant wording with same meaning,different,different BFO types (quality vs information entity),quality,information entity
+combinatorial strategy,combinatorial approaches,same_class,synonymous in context,different,potential semantic difference; store typed as material entity,material entity,
+elevated fasting blood glucose,high fasting plasma glucose,same_class,clinical synonyms,different,different BFO types (quality vs tendency),quality,tendency
+forefoot region,forefoot,same_class,region is redundant,different,immaterial region vs material entity,immaterial entity,independent continuant
+cardiovascular disease events,cardiovascular events,same_class,'disease' is implied; both refer to cardiovascular adverse events,different,potential specificity difference,process,process
+prospective randomized clinical trial,prospective randomized trial,same_class,'clinical' is implicit,narrower,"store term adds 'clinical', making it a subtype",process,
+microRNA expression,miRNA expression,same_class,miRNA is standard abbreviation for microRNA,different,"Store term is information entity, ontology class is process; types differ.",information entity,process
+prophylactic option,prophylactic treatment option,same_class,"synonymous phrases, 'option' vs 'treatment option' carry same meaning",different,"Store term is role, ontology class is material entity; types differ.",role,material entity
+anatomic variations,anatomical variations,same_class,spelling variant (anatomic vs anatomical),different,type mismatch: material entity vs quality,material entity,quality
+period of four weeks,four weeks,same_class,"same duration, 'period of' is redundant",different,likely different BFO types; store as process,process,
+immunosuppressive,immunosuppressive agents,same_class,commonly used as a synonym for the agents class,different,quality vs material entity,quality,material entity
+lower limb oedema,lower limb edema,same_class,British vs American spelling,different,type mismatch: material entity vs disposition,material entity,disposition
+revascularization rates,rate of revascularization,same_class,"plural vs singular noun phrase, same concept",different,information entity vs quality,information entity,quality
+infectious condition,infection condition,same_class,"adjective vs noun form, same meaning",different,material entity vs quality,material entity,quality
+healing proportion,proportion of healing,same_class,word order variant,different,quality vs information entity,quality,information entity
+severe peripheral arterial disease,severe peripheral artery disease,same_class,arterial and artery are synonymous,different,material entity vs disposition,material entity,disposition
+occlusive arterial diseases,arterial occlusive disease,same_class,word order and plural/singular variant,different,different BFO types (material entity vs disposition),material entity,disposition
+discharged to home,discharged home,same_class,synonymous phrases,different,BFO type mismatch (process boundary vs process),process boundary,process
+frailty status,frailty state,same_class,status and state are synonyms in this context,different,different BFO types (quality vs disposition),quality,disposition
+perioperative transfusion,perioperative blood transfusion,same_class,transfusion in medical context implies blood,broader,"store term omits 'blood', making it more general",process,process
+patient-safety problem,patient safety issue,same_class,synonymous with minor punctuation difference,different,BFO type mismatch (material entity vs continuant),material entity,continuant
+organisational determinants,organizational determinants,same_class,British/American spelling variant,different,different BFO types (tendency vs material entity),tendency,material entity
+microbicidal activity,microbicidal properties,same_class,activity and properties are synonymous in this context,different,different BFO types (disposition vs quality),disposition,quality
+slow growth,slow-growing,same_class,noun vs adjective form of same concept,different,BFO type mismatch (process vs quality),process,quality
+facial region,facial,same_class,anatomical region and adjective refer to the same entity,different,immaterial entity vs quality,immaterial entity,quality
+Allocation concealment,allocation concealed,same_class,noun vs adjective form of same trial concept,different,process vs quality,process,quality
+blinding procedures,blinding,same_class,procedures is a synonym for the process of blinding,different,information entity vs process,information entity,process
+pre-implementation,pre-implementation phase,same_class,abbreviated form of phase,different,process boundary vs process,process boundary,process
+peak time,time to peak,same_class,"same concept, different wording order",different,process boundary vs quality,process boundary,quality
+laparoscopic,laparoscopic approach,same_class,shorthand for laparoscopic approach,different,quality vs process,quality,process
+spinal instrumentation procedures,spinal instrumentation,same_class,procedures is redundant,different,process vs material entity type mismatch,process,material entity
+high-risk subtypes,high-risk subgroups,same_class,subtypes and subgroups are synonyms,different,information entity vs material entity type mismatch,information entity,material entity
+guideline,The Guideline,same_class,article 'The' does not change meaning,different,generic vs specific named class,,information entity
+candida,Candida species,same_class,genus name 'Candida' often used for the group,different,"ambiguous scope: 'candida' may be genus, 'Candida species' may be species-level",material entity,material entity
+Statistical Packages for Social Sciences,Statistical Package for the Social Sciences,same_class,"minor wording variance, same software",different,ontological type mismatch (information entity vs material entity),information entity,material entity
+kidney transplant patients,renal transplant patients,same_class,kidney/renal synonym,different,ontological type mismatch (role vs material entity),role,material entity
+postural regulation,postural control,same_class,regulation and control are synonyms,different,process vs disposition type mismatch,process,disposition
+burden of injury,injury burden,same_class,"identical meaning, different word order",different,quality vs continuant type mismatch,quality,continuant
+heart injury,cardiac injury,same_class,heart and cardiac are synonyms,different,process vs specifically dependent continuant type mismatch,process,specifically dependent continuant
+HIF-1 signalling pathway,HIF-1 signaling pathway,same_class,British/American spelling variant,different,process vs material entity type mismatch despite similar labels,process,material entity
+PI prevalence rate,PI prevalence,same_class,prevalence is inherently a rate,different,rate adds specificity and type mismatch (information entity vs continuant),information entity,continuant
+gene therapy,gene therapy approaches,same_class,'approaches' is a generic qualifier,narrower,gene therapy is a subtype of gene therapy approaches,,process
+single-target treatments,single-target therapies,same_class,treatments and therapies are synonyms,different,"store term is material entity, ontology class is process",material entity,process
+Bioengineering approaches,bioengineering strategy,same_class,approaches and strategies are near synonyms,different,"store term is process, ontology class is information entity",process,information entity
+longer term survival,long-term survival,same_class,longer term and long-term are equivalent,different,comparative vs absolute temporal qualifier,process,
+pediatric cases,paediatric case,same_class,"pediatric vs paediatric spelling variant, cases/case plural",different,different BFO types (material entity vs information entity),material entity,information entity
+imaging examination,imaging evaluation,same_class,examination and evaluation are synonyms,different,potential semantic difference between examination and evaluation,process,process
+vital anatomical structures,vital structures,same_class,vital structures are typically anatomical,narrower,store term adds 'anatomical' restriction,material entity,material entity
+grade 1-2,grades 1 and 2,same_class,same grade range,different,different BFO types (information entity vs quality),information entity,quality
+long-term neurological impairments,long-term neurological deficits,same_class,deficits and impairments are synonymous,different,different BFO types (disposition vs material entity),disposition,material entity
+multimodal neuromonitoring strategies,multimodal neuromonitoring,same_class,'strategies' is an optional modifier,different,different BFO types (information entity vs process),information entity,process
+drowning incidents,drowning,same_class,incidents is a countable form,narrower,store term denotes specific occurrences,process,process
+radiological parameters,radiologic parameters,same_class,spelling variant,different,different BFO types (information entity vs quality),information entity,quality
+doxorubicin cardiotoxicity,doxorubicin-induced cardiotoxicity,same_class,doxorubicin cardiotoxicity is the same as doxorubicin-induced cardiotoxicity,different,different BFO types (disposition vs material entity),disposition,material entity
+sensorimotor,sensorimotor function,same_class,sensorimotor commonly refers to sensorimotor function,different,"store term is material entity, ontology class is function; different BFO types",material entity,function
+Histological observations,histological findings,same_class,observations and findings are synonyms in this context,different,"store term is process, ontology class is information entity; distinct BFO types",process,information entity
+biologic treatment,biologic therapies,same_class,treatment and therapies are synonyms,different,"store term is process, ontology class is material entity; incompatible BFO types",process,material entity
+human diseases,human disease,same_class,plural form of the same class,different,"store term is process, ontology class is material entity; distinct BFO categories",process,material entity
+dermatological outcomes,dermatologic outcomes,same_class,spelling variant of same term,different,"store term is material entity, ontology class is quality; type mismatch",material entity,quality
+burn TBSA,TBSA burned,same_class,"same meaning, word order variation",different,"store term is quality, ontology class is continuant; type mismatch and likely different meanings",quality,continuant
+burn causes,burn cause,same_class,plural vs singular,different,different BFO types (material entity vs information entity),material entity,information entity
+second- and third-degree burn percentages,percentage of second- and third-degree burns,same_class,same meaning with different phrasing,different,different BFO types (quality vs information entity),quality,information entity
+cell dosage,dosage of cells,same_class,synonymous expressions,different,different BFO types (information entity vs quality),information entity,quality
+untreated control,untreated control group,same_class,untreated control is shorthand for untreated control group,different,different BFO types (role vs material entity),role,material entity
+individualized dosing,individualized dosing strategies,same_class,commonly used interchangeably,different,different BFO types (process vs information entity),process,information entity
+metastatic,metastatic disease,same_class,metastatic is commonly used as shorthand for metastatic disease,different,quality vs disease entity,quality,
+favourable prognosis,good prognosis,same_class,synonyms,different,different BFO types (information entity vs quality),information entity,quality
+near-infrared light,near-infrared,same_class,light in the near-infrared range is the same class,different,"material entity vs quality, cannot be same class",material entity,quality
+localized drug delivery,localized drug delivery approach,same_class,approach is redundant; same concept,different,"process vs material entity, cannot be same class",process,material entity
+minor irritation,Mild irritation,same_class,minor and mild are synonyms.,different,"store term typed as material entity, ontology class typed as quality",material entity,quality
+acute knee injury,acute knee trauma,same_class,injury and trauma are synonyms in this context.,different,"store is material entity, ontology is process",material entity,process
+conservative surgical techniques,conservative surgery,same_class,conservative surgical techniques refer to conservative surgery.,different,'surgical techniques' vs 'surgery' are not synonymous,process,process
+M1 type,M1 phenotype,same_class,synonymous terms for macrophage polarization state,different,"store typed as material entity, ontology typed as continuant (likely not same)",material entity,continuant
+skin graft survival rate,survival rates of skin graft,same_class,word order and pluralization variant of same concept,different,type mismatch: quality vs information entity,quality,information entity
+presence of biofilm,biofilm presence,same_class,synonymous word order,different,type mismatch: quality vs material entity,quality,material entity
+pH-responsive hydrogel dressings,pH-responsive hydrogel wound dressings,same_class,dressings are implicitly wound dressings in context,broader,"store term lacks 'wound' qualifier, so more general",material entity,material entity
+airborne microbiological contamination,Airborne microbial contamination,same_class,microbiological vs microbial are synonyms,different,different BFO types (material entity vs process),material entity,process
+time onset,time of onset,same_class,"same meaning, minor phrasing variation.",different,different BFO types (quality vs process boundary),quality,process boundary
+drain removal time,drainage tube removal time,same_class,drain is short for drainage tube.,different,different BFO types (quality vs process boundary) and specificity,quality,process boundary
+multiplex PCR assay,multiplex PCR,same_class,assay is implied by PCR.,different,different BFO types (material entity vs process),material entity,process
+RAW264.7 macrophages,RAW264.7 cells,same_class,RAW264.7 cells are specifically macrophages.,narrower,macrophages are a specific type of cells,material entity,material entity
+adhesion properties,adhesion ability,same_class,synonymous qualities.,different,different BFO types (quality vs disposition),quality,disposition
+upward trend,upward positive trend,same_class,same meaning; 'positive' is redundant.,different,different BFO types (information entity vs process) and qualifier difference,information entity,process
+epithelial tissue damage,epithelial damage,same_class,synonymous,different,BFO type mismatch: quality vs continuant,quality,continuant
+noninvasive alternative,non-invasive alternative,same_class,orthographic variant,different,BFO type mismatch: material entity vs role,material entity,role
+optimal dosing,optimal dosage,same_class,synonymous terms,different,dosing (process) vs dosage (amount/concept),information entity,continuant
+years lived with disability,Years of life lived with disability,same_class,abbreviated form,different,BFO type mismatch: quality vs information entity,quality,information entity
+Cutaneous wound infections,infected skin wounds,same_class,same meaning: infection of skin wounds,different,Process vs material entity,process,material entity
+visiting nurses,visiting nurse,same_class,plural form of same term,different,Role vs material entity,role,material entity
+traditional skin grafting,traditional skin grafting methods,same_class,labels are equivalent; methods refers to the same procedure,different,Process vs information entity,process,information entity
+potential usefulness,potential utility,same_class,usefulness and utility are synonyms,different,Quality vs disposition,quality,disposition
+arterial diseases,arterial disease,same_class,plural vs singular; same concept,different,Material entity vs disease (likely disposition),material entity,
+antibiotic use duration,duration of antibiotic use,same_class,synonymous phrases,different,Quality vs information entity,quality,information entity
+acute and chronic wounds,acute or chronic wounds,same_class,common usage treats both as covering the two types,different,'and' vs 'or' changes logical meaning,material entity,material entity
+orthopaedic patients,orthopedic patients,same_class,British vs American spelling variant,different,different BFO types: material entity vs role,material entity,role
+type 1 or 2 diabetes,type 1 or type 2 diabetes,same_class,common abbreviation of the same phrase,different,different BFO types: disposition vs material entity,disposition,material entity
+closed bone fractures,closed fractures,same_class,bone is implicit in fractures context,narrower,"store term specifies bone, a subtype of closed fractures",material entity,material entity
+International Cartilage Repair Society grade,International Cartilage Regeneration & Joint Preservation Society grade,same_class,"same grading system, society name changed",different,different society names; likely distinct grades,information entity,information entity
+anti-oxidant activity,anti-oxidant activity property,same_class,"property is redundant, same class",different,different BFO types (disposition vs quality),disposition,quality
+mandibular osteomyelitis,osteomyelitis of mandible,same_class,"identical condition, only word order differs",different,different BFO types (material entity vs disposition),material entity,disposition
+alginate-based wound dressing,Alginate containing wound dressing,same_class,Synonymous material entity descriptions; both refer to the same dressing type,different,'based' vs 'containing' may imply different compositional relation,material entity,
+burn department,Department of Burns,same_class,"synonyms, same department name",different,types differ: immaterial entity vs material entity,immaterial entity,material entity
+Collagen-based dressings,collagen matrix dressing,same_class,synonymous dressings,broader,collagen-based includes collagen matrix and other types,material entity,material entity
+time to granulation tissue,time to granulation tissue formation,same_class,ellipsis of 'formation',different,information entity vs process type,information entity,process
+honey-impregnated dressings,medical honey-impregnated dressings,same_class,'medical' implied,broader,honey-impregnated includes non-medical honey dressings,material entity,material entity
+double-blind trial,double-blind clinical trial,same_class,identical concept with implied 'clinical',broader,double-blind trial includes non-clinical trials,process,
+Bonferroni post hoc analyses,Bonferroni's post hoc test,same_class,plural vs singular same statistical method,different,process vs information entity,process,information entity
+nonblanchable erythema,nonblanching erythema,same_class,synonymous medical terms,different,material entity vs quality,material entity,quality
+superficial and partial thickness burns,superficial to partial-thickness burns,same_class,range description synonyms,different,and vs to changes meaning,material entity,material entity
+Novel therapies,new therapies,same_class,novel and new are synonyms,different,material entity vs process,material entity,process
+first-line treatment option,first-line treatment of choice,same_class,both refer to the preferred initial treatment,different,role vs information entity,role,information entity
+cone-beam computed tomography images,cone beam computed tomography scans,same_class,both refer to the imaging data from CBCT; synonyms used interchangeably,different,information entity vs process,information entity,process
+Periapical Index,radiographic periapical index,same_class,common naming variant with added descriptor,broader,"store term lacks 'radiographic' qualifier, so broader",information entity,information entity
+dermal-epidermal junction,dermal-epidermal junction structure,same_class,structural entity named with or without 'structure',different,immaterial entity vs material entity,immaterial entity,material entity
+initiation of treatment,treatment initiation,same_class,synonymous process phrases,different,process boundary vs occurrent type mismatch,process boundary,occurrent
+immunological studies,Immunologic studies,same_class,"identical meaning, spelling variant",different,process vs information entity type mismatch,process,information entity
+traditional wound care approaches,traditional wound care paradigms,same_class,approaches and paradigms are synonyms,different,'approaches' and 'paradigms' are not exact synonyms,,information entity
+administration route,route of administration,same_class,word order variant of the same concept,different,type mismatch (quality vs immaterial entity),quality,immaterial entity
+LC3-II/I,LC3-II/LC3-I,same_class,abbreviation expansion,different,type mismatch (material entity vs quality),material entity,quality
+need for amputation,need of amputation,same_class,preposition variant,different,"store term typed as role, ontology as tendency; distinct BFO types",role,tendency
+grooves,groove structures,same_class,synonym; grooves are groove structures.,different,type mismatch: immaterial entity vs material entity,immaterial entity,material entity
+human cell-derived acellular dermal matrix,human acellular dermal matrix,same_class,core same; cell-derived redundant,different,'cell-derived' may indicate a distinct subtype; cannot assume synonymy without definition,material entity,material entity
+muscle impairment,muscle deficits,same_class,synonyms: impairment and deficits,different,Type mismatch: quality vs material entity.,quality,material entity
+Grade 3-4,grades 3 or 4,same_class,identical numeric range,different,Type mismatch: quality vs information entity.,quality,information entity
+VEGF-related pathways,vascular endothelial growth factor-related pathways,same_class,acronym expansion,different,type mismatch: material entity vs disposition,material entity,disposition
+anatomic parameters,anatomical parameters,same_class,synonymous spelling variant,different,type mismatch: information entity vs quality,information entity,quality
+nuclear factor kappa-light-chain-enhancer of activated B cells pathway,Nuclear Factor kappa-light-chain-enhancer of activated B cells signaling pathway,same_class,'pathway' and 'signaling pathway' used interchangeably,different,type mismatch: material entity vs process,material entity,process
+glial,glial cells,same_class,'glial' is shorthand for glial cells,different,"'glial' is an adjective, not a class name; not a synonym",material entity,material entity
+infrared,infrared light,same_class,infrared commonly refers to infrared light,different,type mismatch: quality vs material entity,quality,material entity
+conventional therapeutic limitations,conventional therapy limitations,same_class,synonymous terms,different,"Different BFO types: store term is material entity, ontology class is quality.",material entity,quality
+non-invasive therapeutic approach,non-invasive treatment modality,same_class,synonymous terms,different,"Different BFO types: store term is disposition, ontology class is material entity.",disposition,material entity
+exogenous electric field,external electric field,same_class,synonymous terms,different,"Different BFO types: store term is material entity, ontology class is immaterial entity.",material entity,immaterial entity
+copper release,copper ion release,same_class,"same class, 'ion' is implicit",broader,copper release more general than specific ion release,process,process
+PI3K/Akt pathway,PI3K-Akt signaling pathways,same_class,"same class, punctuation and plural variant",different,"material entity vs process, incompatible types",material entity,process
+wrinkle appearance,wrinkles,same_class,"same class, appearance is redundant",different,"quality vs continuant, different ontological categories",quality,continuant
+immunogenic responses,immunogenic response,same_class,"same class, plural variant",different,types differ: process vs disposition,process,disposition
+"single-centre, prospective observational study",single-center prospective observational study,same_class,"same class, spelling and punctuation variant",different,types differ: information entity vs process,information entity,process
+inflammatory levels,levels of inflammation,same_class,"same class, lexical variant",different,types differ: quality vs process,quality,process
+inflammation levels,levels of inflammation,same_class,"same class, lexical variant",different,types differ: quality vs process,quality,process
+pathogenic colonization,pathogenic microbial colonization,same_class,microbial is implied in wound context,broader,"store term lacks the qualifier microbial, making it more general",process,process
+disorders in postoperative wound healing,post-surgical wound healing disorders,same_class,postoperative and post-surgical synonyms,different,types differ: process vs material entity,process,material entity
+magnetic resonance spectroscopy,nuclear magnetic resonance spectroscopy,same_class,commonly refers to NMR in biomedicine,different,types differ: material entity vs process,material entity,process
+pseudotumor recurrence,recurrent pseudotumor,same_class,word order variant,different,process vs material entity,process,material entity
+mitogen-activated protein kinase pathways,mitogen-activated protein kinase signaling pathway,same_class,synonym; 'pathways' and 'signaling pathway' refer to same concept,different,material entity vs process,material entity,process
+coronary disease,coronary heart disease,same_class,synonymous in clinical usage,broader,coronary disease is more general than coronary heart disease,disposition,
+logistical,logistics,same_class,adjective and noun form of same concept,different,different BFO types: role vs process,role,process
+seroma incidence,incidence of seroma,same_class,"identical meaning, word order swapped",different,different BFO types: quality vs process,quality,process
+spinal disorders,spinal diseases,same_class,disorders and diseases are near-synonyms in this context,different,Different BFO types: disposition vs material entity.,disposition,material entity
+other fractures,fractures at other sites,same_class,likely referring to the same exclusion category,different,Residual category vs specific location; not synonyms.,material entity,material entity
+onset mechanism,mechanism of onset,same_class,word order variant,different,Different BFO types: process vs quality.,process,quality
+AO 15.2C fractures,AO 15.2C fracture type,same_class,Both refer to the same classification category for fractures.,different,material entity vs information entity,material entity,information entity
+glycolytic activity,glycolytic function,same_class,activity and function are synonyms in this biological context,different,process vs function (different BFO types),process,function
+culture-based techniques,culture-based methods,same_class,techniques and methods are synonyms,different,information entity vs process,information entity,process
+localized skin necrosis,local skin necrosis,same_class,localized and local are synonymous,different,material entity vs process,material entity,process
+immunodeficiency disorder,immunodeficiency,same_class,"immunodeficiency is inherently a disorder, terms are equivalent",different,Material entity vs disposition; different BFO types.,material entity,disposition
+antineoplastic therapies,Antineoplastic treatment,same_class,Therapies and treatment are synonyms for the same general class of antineoplastic interventions.,different,Material entity vs process; different BFO types.,material entity,process
+acute encephalopathy,acute encephalopathy syndrome,same_class,'Acute encephalopathy' and 'acute encephalopathy syndrome' refer to the same condition.,different,Disposition vs process; different BFO types.,disposition,process
+difficulty walking,difficulty in walking,same_class,Trivial lexical variant with no change in meaning.,different,Process vs disposition; different BFO types.,process,disposition
+Salmonella,Salmonella species,same_class, genus and its species-level designation used synonymously,different,genus vs species level ambiguity without definitions,material entity,material entity
+infectious diseases physician,infectious disease physician,same_class, plural vs singular 'diseases' is a trivial lexical variant,different,type mismatch: role vs material entity,role,material entity
+endoscopically confirmed remission,endoscopic remission,same_class,confirmed by endoscopy is equivalent to endoscopic,narrower,"store term adds 'confirmed' qualification, making it a subtype",quality,
+symptom management interventions,symptom management strategies,same_class,interventions and strategies are synonyms here,different,interventions vs strategies are not exact synonyms,information entity,information entity
+PRISMA-compliant systematic review,PRISMA-guided systematic review,same_class,compliant and guided are synonyms here,different,"Type mismatch: store term is a process, ontology class is an information entity.",process,information entity
+fracture localisation,fracture localization,same_class,spelling variant (s vs z),different,"Type mismatch: store term is a quality, ontology class is a process.",quality,process
+myocardial fibrosis,Cardiac fibrosis,same_class,Myocardial and cardiac are synonyms referring to the heart.,different,"Type mismatch: store term typed as continuant, ontology class typed as disposition.",continuant,disposition
+SPSS 23,SPSS version 23,same_class,version number abbreviation is equivalent,different,type mismatch: material entity vs information entity,material entity,information entity
+Bayesian neural network,Bayesian Neural Network model,same_class,model is redundant in the ontology class,different,type mismatch: material entity vs information entity,material entity,information entity
+hematocrit level,hematocrit value,same_class,level and value are synonyms in measurement context,different,type mismatch: information entity vs quality,information entity,quality
+advanced imaging modalities,advanced imaging methods,same_class,modalities and methods are synonyms,different,type mismatch: material entity vs process,material entity,process
+MRI sequences,magnetic resonance imaging sequences,same_class,MRI is an abbreviation for magnetic resonance imaging,different,"Type mismatch: store term is material entity, ontology class is information entity.",material entity,information entity
+knee trauma,traumatic knee injury,same_class,Trauma and injury are synonyms in this context,different,"Type mismatch: store term is process, ontology class is disposition.",process,disposition
+traumatic aetiology,traumatic causes,same_class,Aetiology and cause are synonyms,different,"Type mismatch: store term is tendency, ontology class is material entity.",tendency,material entity
+bioinformatics techniques,Bioinformatics methods,same_class,techniques and methods are synonyms,different,store type (material entity) vs ontology type (process) are disjoint,material entity,process
+serum 25D,serum 25D level,same_class,level is implied in measurement context,different,substance (material) vs quality,material entity,quality
+prognostic grouping,prognostic groups,same_class,grouping and groups are nominalizations of same concept,different,process/information vs material entity (group),information entity,material entity
+laser-based treatment,laser-based therapies,same_class,treatment and therapy are synonyms,different,"store term is process, ontology class is material entity",process,material entity
+keloid proliferation,keloid hyperplasia,same_class,proliferation and hyperplasia are synonyms in this context,different,process vs material entity and different meaning,process,material entity
+skin fibrosis,fibrosis of the skin,same_class,same condition expressed with different word order,different,process vs material entity,process,material entity
+palliative care clinicians,palliative care provider,same_class,clinician/provider synonym,narrower,clinicians are a subtype of providers,material entity,material entity
+antibiotic treatment duration,durations of antibiotic therapy,same_class,paraphrase with treatment/therapy synonym,different,different BFO types: quality vs information entity,quality,information entity
+osteomyelitis presence,presence of osteomyelitis,same_class,identical meaning with word order variation,different,different BFO types: quality vs material entity,quality,material entity
+nanoparticle),nanoparticle form,same_class,Parenthesis typo; same entity as nanoparticle form.,different,different concepts: particle vs its form,material entity,material entity
+descriptive and cross-sectional study,descriptive cross-sectional study,same_class,word order and conjunction variants of the same term,different,type mismatch (information entity vs process) and label difference,information entity,process
+DFU recurrence,recurrent DFU,same_class,paraphrase of the same condition,different,type mismatch: process vs material entity,process,material entity
+Patient reported outcome measures,patient-reported outcomes,same_class,synonymous terms for the same class,different,"measures are instruments, outcomes are results; different types and meaning",information entity,continuant
+HE,H&E,same_class,abbreviation/expansion variant,different,"store term is process, ontology class is material entity",process,material entity
+type-2 diabetes mellitus,type 2 diabetes,same_class,hyphen and mellitus variant,different,"store term typed as material entity, ontology class as continuant",material entity,continuant
+resections,surgical resection,same_class,plural form of the same procedure,broader,"store term includes all resections, not only surgical",process,process
+therapeutic methods,therapy method,same_class,plural and singular form of the same term,different,type mismatch (material entity vs information entity),material entity,information entity
+limb salvage approach,limb salvage strategy,same_class,synonymous nouns,different,type mismatch (process vs realizable entity),process,realizable entity
+Type 1 diabetes,type 1 diabetes mellitus,same_class,abbreviated form of the same disease name,different,type mismatch (continuant vs material entity),continuant,material entity
+heel regions,heel,same_class,region is implied by the anatomical class,different,Immaterial entity (region) vs material entity (heel); different types,immaterial entity,independent continuant
+Clinical decision support systems,computerised clinical decision support system,same_class,computerised is an optional qualifier; both refer to the same system type,broader,Store term is broader (includes non-computerised); ontology class is narrower,material entity,material entity
+multivariate Logistic regression analyses,multivariate logistic regression model,same_class,analyses and model are used interchangeably for the statistical method,different,Process (analysis) vs information entity (model); type mismatch,process,
+favourable attitudes,favorable attitude,same_class,British and American spelling variants; plural and singular,different,different BFO types (quality vs disposition) and plural vs singular,quality,disposition
+larger samples,larger sample sizes,same_class,samples and sample sizes are synonymous in this context,different,"material entity vs quality, distinct concepts",material entity,quality
+nutritional deficiencies,nutrition deficit,same_class,synonymous plural and singular forms,different,"type mismatch: store term is material entity, ontology class is disposition",material entity,disposition
+vitamin (role),vitamin,same_class,parenthetical role is a qualifier,different,"store term specifies role, ontology class is likely chemical entity",,
+low recurrences,low recurrence rate,same_class,plural and singular forms of the same noun phrase,different,"type mismatch: store term is quality, ontology class is information entity",quality,information entity
+limb-salvage techniques,limb salvage strategy,same_class,synonymous concepts,different,"process vs realizable entity, and different terms",process,realizable entity
+guidelines,The Guideline,same_class,plural and definite article are grammatical variants,different,generic plural versus specific singular named entity,,information entity
+placebo groups,placebo control group,same_class,synonymous terms for the control group,different,"different types: material entity vs role, and plural vs singular with different wording",material entity,role
+Microbiological investigations,microbiological evaluation,same_class,synonymous terms,different,investigations vs evaluation are not exact synonyms,process,process
+gene therapies,gene therapy approaches,same_class,plural and added generic noun are lexical variants,different,"different types: material entity vs process, and wording differs",material entity,process
+loci,locus,same_class,loci is plural of locus,different,"store term typed as material entity, ontology as immaterial entity",material entity,immaterial entity
+untreated controls,untreated control group,same_class,plural and group ellipsis variant,different,"store term likely refers to individual subjects, ontology class to a group",continuant,material entity
+Snakebite envenomation,Snake Envenomation,same_class,"identical condition, different word order",different,"store term is process, ontology class is material entity",,material entity
+pain management techniques,Pain Management Strategies,same_class,techniques and strategies are synonymous here,different,"type mismatch: store term typed as material entity, ontology class as process",material entity,process
+baseline values,baseline,same_class,values is implied by baseline,different,unsure if 'values' makes a distinct subclass; safer to map differently,continuant,
+Diabetic Foot Center,diabetic foot centre,same_class,center/centre spelling variant,different,"type mismatch: store term typed as independent continuant, ontology class as immaterial entity",independent continuant,immaterial entity
+e.g.,EG,same_class,abbreviation and expansion,different,type mismatch and likely different meanings,quality,material entity
+adverse side-effects,adverse effects,same_class,side-effects is redundant but same meaning,different,'side-effects' may be a subtype; no definition to confirm identity,disposition,
+nonhealable wounds,nonhealing wound,same_class,nonhealable and nonhealing are synonymous,different,nonhealable (cannot heal) vs nonhealing (not currently healing) are distinct,material entity,material entity
+dressing technique,dressing methods,same_class,technique and method are synonyms,different,information entity vs process; technique is not a method process,information entity,process
+evidence based management strategies,evidence-based management,same_class,strategies is a plural generic that does not change the class,different,information entity vs process,information entity,process
+patient risk levels,patient's level of risk,same_class,paraphrase with same meaning,different,different BFO types: information entity vs tendency,information entity,tendency
+Skin graft survival rates,survival rates of skin graft,same_class,same phrase with different word order,different,different types: quality vs information entity,quality,information entity
+collagen I/III ratios,collagen type I/III ratio,same_class,plural and 'type' insertion do not change class,different,different types: information entity vs quality,information entity,quality
+multimodal therapies,multimodal therapeutic approach,same_class,synonymous terms for the same approach,different,"store term classified as material entity, likely incompatible with process/approach",material entity,
+scalable strategies,Scalable Approach,same_class,strategies and approach are synonymous in this context,different,different words: strategies vs approach,material entity,material entity
+Major trauma,major traumatic injuries,same_class,trauma and traumatic injuries are synonymous,different,process vs material entity; trauma vs injuries,process,material entity
+immunosuppressed patients,immunosuppressed individuals,same_class,patients and individuals are synonymous in this context,narrower,patients are a subtype of individuals,continuant,continuant
+gastrointestinal disorders,gastrointestinal diseases,same_class,synonymous terms,different,disposition vs material entity mismatch,disposition,material entity
+pathological diagnoses,pathological diagnosis,same_class,plural/grammatical variant,different,information entity vs process mismatch,information entity,process
+Appetite loss,loss of appetite,same_class,lexical variant with same meaning,different,quality vs disposition mismatch,quality,disposition

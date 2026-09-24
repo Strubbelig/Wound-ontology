@@ -3,7 +3,7 @@
 The 10 Sep review is kept beside this one as `MAPPING_REVIEW_2026-09-10.md`; it
 was written against a 191-entry mapping over a 3,727-term store. The store is
 now **98,522 terms from 6,029 abstracts**, and the mapping the 21 Sep build left
-behind holds **14,101 live entries**. Everything below is about making that
+behind held 14,101 live entries, now **6,531**. Everything below is about making that
 reviewable rather than nominally reviewable.
 
 `review_mapping()` asks about every one of them at an interactive prompt.
@@ -14,7 +14,7 @@ first — by the rule the pipeline itself used to decide what to ask the model.
 
 `data/review/mapping_families_2026-09-23.csv` is the one to mark. One row is one
 **canonical**, with every term that collapses onto it in the `terms` cell:
-**4,813 entries are 3,574 families**, and the repetition is all inside the
+**4,659 entries are 3,456 families**, and the repetition is all inside the
 families — `Debridement process` gathers five spellings, and that is one
 decision, not five.
 
@@ -46,8 +46,9 @@ model's verdict and reason on every row, for when a family needs splitting.
 | `content` | at least one word is genuinely different | **yes** |
 
 The first two were accepted with no model call, because all 28 such pairs in the
-6 Sep sample were right, and nothing since has contradicted that. That is
-**9,283 entries** you are not being asked about.
+6 Sep sample were right, and nothing since has contradicted that. That is **1,872 entries** you are not being asked about — it was 9,283 until the
+singular rule moved into the store and 7,516 entries that only changed case or
+number stopped changing anything at all.
 
 The remaining **4,818 rows are `data/review/mapping_review_2026-09-22.csv`**,
 ordered by consequence, not alphabetically.
