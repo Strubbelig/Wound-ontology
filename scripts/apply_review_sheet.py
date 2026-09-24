@@ -87,7 +87,17 @@ def decisions(df: "pd.DataFrame") -> Decisions:
     restatement of the canonical from the term typed back, and restating the
     canonical is the one of the two that means nothing. Typing `a` there still
     reverses, because `a` is not `A`.
+
+    The term match is exact too WHENEVER the sheet holds that exact term. A
+    family can contain two spellings of one word: `Angiogenesis process` gathers
+    `angiogenesis` and `Angiogenesis`, and reversing onto `angiogenesis` made
+    BOTH rows think they were the chosen one, writing two inverse entries for one
+    canonical where the second silently overwrote the first. So case-insensitive
+    matching is the fallback for a name typed back by hand, not the rule: when
+    some row carries the correction verbatim, that row reverses and its siblings
+    re-point onto it — which is what reversing a family means.
     """
+    exact_terms = {str(t) for t in df["term"]}
     withdraw: list[str] = []
     repoint: dict[str, str] = {}
     reverse: dict[str, str] = {}
@@ -101,7 +111,9 @@ def decisions(df: "pd.DataFrame") -> Decisions:
         if corrected and corrected.lower() != "nan":
             if corrected == canonical:
                 pass                     # a restatement, not a decision
-            elif corrected.strip().lower() == term.strip().lower():
+            elif corrected == term or (
+                    corrected.strip().lower() == term.strip().lower()
+                    and corrected not in exact_terms):
                 reverse[term] = canonical
             else:
                 repoint[term] = corrected

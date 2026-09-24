@@ -142,3 +142,31 @@ def test_a_y_is_collected_as_a_decision_not_counted_as_unmarked():
 def test_a_blank_is_still_not_a_decision():
     w, r, rev, kept, un = _decisions(_sheet(term="wounds", canonical="Wound"))
     assert kept == [] and un == 1
+
+
+def test_only_the_row_that_carries_the_correction_verbatim_reverses():
+    """A family can hold two spellings of one word. `Angiogenesis process`
+    gathers `angiogenesis` and `Angiogenesis`; reversing onto `angiogenesis`
+    made both rows think they were chosen, writing two inverse entries for one
+    canonical where the second overwrote the first."""
+    df = pd.DataFrame([
+        {"term": "tissue angiogenesis", "canonical": "Angiogenesis process",
+         "keep(y/n)": "", "corrected canonical": "angiogenesis", "why": ""},
+        {"term": "angiogenesis", "canonical": "Angiogenesis process",
+         "keep(y/n)": "", "corrected canonical": "angiogenesis", "why": ""},
+        {"term": "Angiogenesis", "canonical": "Angiogenesis process",
+         "keep(y/n)": "", "corrected canonical": "angiogenesis", "why": ""},
+    ])
+    w, r, rev, kept, un = _decisions(df)
+    assert rev == {"angiogenesis": "Angiogenesis process"}
+    assert r == {"tissue angiogenesis": "angiogenesis",
+                 "Angiogenesis": "angiogenesis"}
+
+
+def test_a_hand_typed_name_still_reverses_when_no_row_matches_exactly():
+    """The fallback stays: a curator typing `case` at a row whose term is `Case`
+    is matching a concept, and no other row carries `case` verbatim."""
+    df = pd.DataFrame([{"term": "Case", "canonical": "cases", "keep(y/n)": "n",
+                        "corrected canonical": "case", "why": ""}])
+    _, _, rev, _, _ = _decisions(df)
+    assert rev == {"Case": "cases"}
