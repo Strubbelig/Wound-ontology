@@ -157,6 +157,38 @@ def _category_clashes(p) -> dict[tuple[str, str], str]:
     return out
 
 
+def _free_path(path: Path) -> Path:
+    """`path`, unless a sheet is already there with the curator's marks in it.
+
+    Running this twice in a day used to overwrite the morning's file. On
+    2026-09-24 it overwrote one holding 173 marks — recoverable only because
+    they had been committed and applied minutes earlier. The pipeline does not
+    write over a curated file (INSTRUCTIONS), and a review sheet becomes one the
+    moment somebody writes in it.
+
+    An unmarked sheet is regenerated output and is replaced in place; a marked
+    one is left alone and the new sheet goes beside it with a counter.
+    """
+    if not path.exists():
+        return path
+    try:
+        old = pd.read_csv(path).fillna("")
+    except Exception:
+        marks = 1                      # unreadable: assume it matters
+    else:
+        marks = sum(int((old[c].astype(str).str.strip() != "").sum())
+                    for c in ("keep(y/n)", "corrected canonical") if c in old.columns)
+    if not marks:
+        return path
+    for n in range(2, 100):
+        alt = path.with_name(f"{path.stem}_{n}{path.suffix}")
+        if not alt.exists():
+            print(f"[sheet] {path.name} has {marks} mark(s) in it — not overwriting. "
+                  f"Writing {alt.name} instead.")
+            return alt
+    raise SystemExit(f"[sheet] {path.name} is marked and 98 alternatives exist too.")
+
+
 def main() -> None:
     p = Orchestrator()
     mapping = dict(p.term_mapper.mapping)
@@ -292,7 +324,7 @@ def main() -> None:
                              order[r["variation"]],
                              -(r["term mentions"] + r["canonical mentions"])))
     df = pd.DataFrame(rows)
-    out = ROOT / "data" / "review" / f"mapping_review_{date.today()}.csv"
+    out = _free_path(ROOT / "data" / "review" / f"mapping_review_{date.today()}.csv")
     df.to_csv(out, index=False)
 
     # ── one row per family ───────────────────────────────────────────────────
@@ -321,7 +353,7 @@ def main() -> None:
                             0 if r["passes disagree"] else 1,
                             order[r["variation"]], -r["mentions"]))
     fdf = pd.DataFrame(fam)
-    fout = ROOT / "data" / "review" / f"mapping_families_{date.today()}.csv"
+    fout = _free_path(ROOT / "data" / "review" / f"mapping_families_{date.today()}.csv")
     fdf.to_csv(fout, index=False)
 
     total = len(mapping)

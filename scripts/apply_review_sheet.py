@@ -42,6 +42,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import NamedTuple
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -52,8 +53,22 @@ import pandas as pd
 from wound_ontology.orchestrator import Orchestrator
 
 
-def decisions(df: "pd.DataFrame") -> tuple[list[str], dict[str, str], dict[str, str], int]:
-    """(withdraw, re-point, reverse, unmarked) as the sheet's two curator columns say.
+class Decisions(NamedTuple):
+    withdraw: list[str]
+    repoint: dict[str, str]
+    reverse: dict[str, str]
+    kept: list[str]
+    unmarked: int
+
+
+def decisions(df: "pd.DataFrame") -> Decisions:
+    """(withdraw, re-point, reverse, kept, unmarked) as the curator columns say.
+
+    A `y` is a DECISION and is recorded as one. It writes no mapping — the entry
+    already stands — but a review that leaves no trace of what it approved is a
+    review that has to be redone: the 2026-09-24 sheet approved 164 rows and the
+    mapping could not tell them from the 4,486 nobody had looked at. `kept`
+    carries them so `main` can put `curator: {"verdict": "kept"}` on each.
 
     `corrected canonical` outranks `keep(y/n)`: saying where a term belongs is a
     stronger statement than saying it does not belong here. Anything else —
@@ -76,6 +91,7 @@ def decisions(df: "pd.DataFrame") -> tuple[list[str], dict[str, str], dict[str, 
     withdraw: list[str] = []
     repoint: dict[str, str] = {}
     reverse: dict[str, str] = {}
+    kept: list[str] = []
     unmarked = 0
     for _, row in df.iterrows():
         term = str(row["term"])
@@ -91,9 +107,11 @@ def decisions(df: "pd.DataFrame") -> tuple[list[str], dict[str, str], dict[str, 
                 repoint[term] = corrected
         elif keep == "n":
             withdraw.append(term)
-        elif keep not in ("y", "yes"):
+        elif keep in ("y", "yes"):
+            kept.append(term)
+        else:
             unmarked += 1
-    return withdraw, repoint, reverse, unmarked
+    return Decisions(withdraw, repoint, reverse, kept, unmarked)
 
 
 def main(argv: list[str]) -> int:
@@ -113,11 +131,11 @@ def main(argv: list[str]) -> int:
         if col not in df.columns:
             raise SystemExit(f"{sheet} has no {col!r} column — is it a review sheet?")
 
-    withdraw, repoint, reverse, unmarked = decisions(df)
+    withdraw, repoint, reverse, kept, unmarked = decisions(df)
 
     print(f"[review] {sheet.name}: {len(df):,} rows — "
           f"{len(withdraw)} to withdraw, {len(repoint)} to re-point, "
-          f"{len(reverse)} to reverse, "
+          f"{len(reverse)} to reverse, {len(kept)} approved as they stand, "
           f"{unmarked:,} left unmarked (an unmarked row is not a decision; "
           f"the entry stands).")
     for t, c in list(reverse.items())[:10]:
@@ -125,7 +143,7 @@ def main(argv: list[str]) -> int:
     if not apply:
         print("[review] dry run — nothing written. Re-run with --apply.")
         return 0
-    if not (withdraw or repoint or reverse):
+    if not (withdraw or repoint or reverse or kept):
         print("[review] nothing to do.")
         return 0
 
@@ -167,6 +185,16 @@ def main(argv: list[str]) -> int:
         p.term_mapper.judge(canonical, term,
                             curator={"verdict": "reversed", "reason": why})
 
+    # An approval changes no mapping and is still a decision. Without it the next
+    # sheet cannot tell a row the curator waved through from one nobody opened.
+    for term in kept:
+        canonical = mapping.get(term)
+        if canonical:
+            p.term_mapper.judge(term, canonical,
+                                curator={"verdict": "kept",
+                                         "reason": reasons.get(term, "")[:200]})
+    p.term_mapper.save()
+
     # Read it back. `add` and `remove` save as they go, so what the next step
     # loads is what is on disk, and that is what has to be checked.
     reloaded_mapper = Orchestrator().term_mapper
@@ -193,7 +221,8 @@ def main(argv: list[str]) -> int:
     print(f"[review] {len(refused_pairs)} refusal(s) on the record "
           f"({len(withdraw)} withdrawn, {len(reverse)} the refused half of a "
           f"reversal), {len(repoint)} re-pointed, {len(reverse)} reversed; "
-          f"verified against the file. {len(reloaded):,} entries remain.")
+          f"{len(kept)} approved as they stand; verified against the file. "
+          f"{len(reloaded):,} entries remain.")
     print("[review] run_apply_mapping() next — the store still holds the old "
           "spellings until it runs.")
     return 0
