@@ -35,7 +35,7 @@ def _decisions(df):
 # ── Reading the sheet ────────────────────────────────────────────────────────
 
 def test_the_term_in_the_corrected_column_is_a_reversal():
-    w, r, rev, _k, _ = _decisions(_sheet(term="subcutaneous tissue",
+    w, r, rev, _k, _, _amb = _decisions(_sheet(term="subcutaneous tissue",
                                      canonical="subcutaneous layer",
                                      **{"corrected canonical": "subcutaneous tissue"}))
     assert rev == {"subcutaneous tissue": "subcutaneous layer"}
@@ -44,19 +44,19 @@ def test_the_term_in_the_corrected_column_is_a_reversal():
 
 def test_a_reversal_is_read_case_insensitively():
     """A curator typing a name back is matching a concept, not a byte string."""
-    _, _, rev, _k, _ = _decisions(_sheet(term="Case", canonical="cases",
+    _, _, rev, _k, _, _amb = _decisions(_sheet(term="Case", canonical="cases",
                                      **{"corrected canonical": "  case  "}))
     assert rev == {"Case": "cases"}
 
 
 def test_a_different_label_is_still_a_re_point():
-    _, r, rev, _k, _ = _decisions(_sheet(term="fibroblasts", canonical="fibroblast cells",
+    _, r, rev, _k, _, _amb = _decisions(_sheet(term="fibroblasts", canonical="fibroblast cells",
                                      **{"corrected canonical": "fibroblast"}))
     assert r == {"fibroblasts": "fibroblast"} and rev == {}
 
 
 def test_the_canonical_typed_back_is_no_decision_at_all():
-    w, r, rev, _k, un = _decisions(_sheet(term="wounds", canonical="Wound",
+    w, r, rev, _k, un, _amb = _decisions(_sheet(term="wounds", canonical="Wound",
                                       **{"corrected canonical": "Wound"}))
     assert (w, r, rev) == ([], {}, {})
 
@@ -65,19 +65,19 @@ def test_a_canonical_that_differs_only_in_case_is_read_as_a_restatement():
     """`a -> A` with `A` in the column: a case-insensitive test cannot tell the
     canonical restated from the term typed back, and only one of those two means
     nothing. The exact match on the canonical is checked first."""
-    w, r, rev, _k, un = _decisions(_sheet(term="a", canonical="A",
+    w, r, rev, _k, un, _amb = _decisions(_sheet(term="a", canonical="A",
                                       **{"corrected canonical": "A"}))
     assert (w, r, rev) == ([], {}, {})
 
 
 def test_the_term_typed_back_still_reverses_when_only_the_case_differs():
-    _, _, rev, _k, _ = _decisions(_sheet(term="a", canonical="A",
+    _, _, rev, _k, _, _amb = _decisions(_sheet(term="a", canonical="A",
                                      **{"corrected canonical": "a"}))
     assert rev == {"a": "A"}
 
 
 def test_n_without_a_correction_is_still_a_plain_withdrawal():
-    w, _, rev, _k, _ = _decisions(_sheet(term="Diabetes mellitus", canonical="diabetes",
+    w, _, rev, _k, _, _amb = _decisions(_sheet(term="Diabetes mellitus", canonical="diabetes",
                                      **{"keep(y/n)": "n"}))
     assert w == ["Diabetes mellitus"] and rev == {}
 
@@ -85,7 +85,7 @@ def test_n_without_a_correction_is_still_a_plain_withdrawal():
 def test_a_reversal_outranks_an_n_on_the_same_row():
     """Both marks appear together on the real sheet — `n` to reject the
     direction, the term to say which direction is right."""
-    w, _, rev, _k, _ = _decisions(_sheet(term="case", canonical="cases",
+    w, _, rev, _k, _, _amb = _decisions(_sheet(term="case", canonical="cases",
                                      **{"keep(y/n)": "n", "corrected canonical": "case"}))
     assert rev == {"case": "cases"} and w == []
 
@@ -100,7 +100,7 @@ def test_an_empty_correction_read_back_as_the_string_nan_is_not_a_decision():
     """
     df = pd.read_csv(pd.io.common.StringIO(
         "term,canonical,keep(y/n),corrected canonical,why\na,A,,,\nb,B,,b,\n"))
-    w, r, rev, _k, un = _decisions(df)
+    w, r, rev, _k, un, _amb = _decisions(df)
     assert r == {} and rev == {"b": "B"} and un == 1
 
 
@@ -133,14 +133,14 @@ def test_a_y_is_collected_as_a_decision_not_counted_as_unmarked():
     """164 rows were approved on the 2026-09-24 sheet and the mapping could not
     tell them from the 4,486 nobody had opened, because `y` writes no mapping.
     It writes no mapping and it is still a verdict."""
-    w, r, rev, kept, un = _decisions(_sheet(term="wounds", canonical="Wound",
+    w, r, rev, kept, un, _amb = _decisions(_sheet(term="wounds", canonical="Wound",
                                             **{"keep(y/n)": "y"}))
     assert kept == ["wounds"] and un == 0
     assert (w, r, rev) == ([], {}, {})
 
 
 def test_a_blank_is_still_not_a_decision():
-    w, r, rev, kept, un = _decisions(_sheet(term="wounds", canonical="Wound"))
+    w, r, rev, kept, un, _amb = _decisions(_sheet(term="wounds", canonical="Wound"))
     assert kept == [] and un == 1
 
 
@@ -157,7 +157,7 @@ def test_only_the_row_that_carries_the_correction_verbatim_reverses():
         {"term": "Angiogenesis", "canonical": "Angiogenesis process",
          "keep(y/n)": "", "corrected canonical": "angiogenesis", "why": ""},
     ])
-    w, r, rev, kept, un = _decisions(df)
+    w, r, rev, kept, un, _amb = _decisions(df)
     assert rev == {"angiogenesis": "Angiogenesis process"}
     assert r == {"tissue angiogenesis": "angiogenesis",
                  "Angiogenesis": "angiogenesis"}
@@ -168,5 +168,5 @@ def test_a_hand_typed_name_still_reverses_when_no_row_matches_exactly():
     is matching a concept, and no other row carries `case` verbatim."""
     df = pd.DataFrame([{"term": "Case", "canonical": "cases", "keep(y/n)": "n",
                         "corrected canonical": "case", "why": ""}])
-    _, _, rev, _, _ = _decisions(df)
+    _, _, rev, _, _, _amb = _decisions(df)
     assert rev == {"Case": "cases"}

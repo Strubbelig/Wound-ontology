@@ -29,7 +29,7 @@ from conftest import memory_mapper
 
 
 def _mapper(data):
-    """The real TermMapping over an in-memory file — see tests/conftest.py."""
+    """The real TermMappingAndGate over an in-memory file — see tests/conftest.py."""
     return memory_mapper(data)
 
 

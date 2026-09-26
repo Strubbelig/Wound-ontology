@@ -81,7 +81,7 @@ def pytest_sessionstart(session) -> None:
     )
 
 
-# ── A real TermMapping over an in-memory file ────────────────────────────────
+# ── A real TermMappingAndGate over an in-memory file ────────────────────────────────
 #
 # Five test modules used to hand-roll a `_Mapping` double carrying `data`,
 # `add_batch` and `remove`. The doubles drifted apart from each other and from
@@ -91,7 +91,13 @@ def pytest_sessionstart(session) -> None:
 # retirement, the record format -- and only the file underneath is fake.
 
 class MemoryDataManager:
-    """DataManager's whole surface as far as TermMapping is concerned."""
+    """DataManager's whole surface as far as TermMappingAndGate is concerned.
+
+    A save ROUND-TRIPS through JSON and becomes what the next load returns, the
+    way a file does. Keeping the saved object by reference instead would make a
+    reload read the live records back and pass whatever the save did -- which is
+    the one thing a persistence test is for.
+    """
 
     def __init__(self, records: dict | None = None) -> None:
         self.records = dict(records or {})
@@ -101,16 +107,18 @@ class MemoryDataManager:
         return self.records
 
     def save_as_json(self, data, name):
-        self.written = data
+        import json
+        self.written = json.loads(json.dumps(data))
+        self.records = self.written
         return name
 
 
 def memory_mapping(data: dict | None = None):
-    """A real `TermMapping` whose file is a dict. Accepts the flat
+    """A real `TermMappingAndGate` whose file is a dict. Accepts the flat
     `term -> canonical` shape, which `_load` migrates exactly as it does on
     disk, or full records."""
-    from wound_ontology.mappers.term_mapping import TermMapping
-    return TermMapping(MemoryDataManager(dict(data or {})))
+    from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
+    return TermMappingAndGate(MemoryDataManager(dict(data or {})))
 
 
 def memory_mapper(data: dict | None = None, name: str = "test"):

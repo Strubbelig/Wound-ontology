@@ -129,12 +129,12 @@ def triage(pairs: dict[str, str]) -> tuple[dict[str, str], dict[str, str]]:
 
 
 def pair_key(term: str, canonical: str) -> str:
-    """The key a pair is remembered under, here and in `TermMapping`.
+    """The key a pair is remembered under, here and in `TermMappingAndGate`.
 
     One implementation, imported by both, because two copies of a key format is
     two chances for a verdict to be written where nothing will look for it.
     """
-    from wound_ontology.mappers.term_mapping import KEY_SEP
+    from wound_ontology.mappers.term_mapping_and_gate import KEY_SEP
     return f"{term}{KEY_SEP}{canonical}"
 
 

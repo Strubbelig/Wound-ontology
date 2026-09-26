@@ -14,7 +14,7 @@ stayed authoritative is a drift waiting to happen, and 2,548 of the terms they
 judged were not in the mapping at all, so their verdicts were reachable only by
 opening a cache file nobody downstream reads.
 
-After this, `TermMapping.pass_cache` is the cache: it reads and writes the
+After this, `TermMappingAndGate.pass_cache` is the cache: it reads and writes the
 records in place. The files stay on disk as a historical artifact; nothing
 loads them again.
 
@@ -49,7 +49,7 @@ sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "src"))
 
 from config.settings import BASE_PATH                        # noqa: E402
 from wound_ontology.data_manager.data_manager import DataManager   # noqa: E402
-from wound_ontology.mappers.term_mapping import KEY_SEP, TermMapping  # noqa: E402
+from wound_ontology.mappers.term_mapping_and_gate import KEY_SEP, TermMappingAndGate  # noqa: E402
 
 PASSES = {"pass1": "mapping_adjudication", "pass2": "mapping_second_opinion"}
 
@@ -67,7 +67,7 @@ def main() -> int:
         print(f"[fold] {name}: {total:,} distinct verdict(s) across "
               f"{len(files)} {prefix}_*.json file(s)")
 
-    gt = TermMapping(dm)
+    gt = TermMappingAndGate(dm)
     print(f"[fold] {len(gt.records):,} record(s), {len(gt.data):,} live; "
           f"already on record: "
           + ", ".join(f"{n} {gt.judged(n):,}" for n in PASSES))
@@ -99,7 +99,7 @@ def main() -> int:
     # Read back from DISK. Everything in each cache file must be on a record,
     # with the same verdict, or the fold did not happen and the files are still
     # the only copy.
-    reloaded = TermMapping(DataManager(base_path=BASE_PATH))
+    reloaded = TermMappingAndGate(DataManager(base_path=BASE_PATH))
     problems: list[str] = []
     for name, files in caches.items():
         on_record = reloaded.verdicts(name)

@@ -25,7 +25,7 @@ from wound_ontology.mappers.term_mapper import canonical_rank
 
 
 def _mapper(data):
-    """The real TermMapping over an in-memory file — see tests/conftest.py."""
+    """The real TermMappingAndGate over an in-memory file — see tests/conftest.py."""
     return memory_mapper(data)
 
 
@@ -85,7 +85,8 @@ def test_a_chain_ending_at_a_refused_anchor_is_withdrawn_not_walked():
 def test_a_forest_is_left_alone():
     m = _mapper({"wounds": "Wound", "wound": "Wound"})
     rep = m.resolve_chains()
-    assert rep == {"cycles": 0, "repointed": 0, "dropped": 0, "withdrawn": 0}
+    assert rep == {"cycles": 0, "repointed": 0, "dropped": 0, "withdrawn": 0,
+                   "contested": []}
     assert m.mapping == {"wounds": "Wound", "wound": "Wound"}
 
 
@@ -142,5 +143,137 @@ def test_two_spellings_of_one_folded_name_are_left_as_they_are():
     dropping it would hand the store the unhyphenated fallback instead."""
     m = _mapper({"Povidone Iodine": "Povidone-iodine"})
     rep = m.resolve_chains()
-    assert rep == {"cycles": 0, "repointed": 0, "dropped": 0, "withdrawn": 0}
+    assert rep == {"cycles": 0, "repointed": 0, "dropped": 0, "withdrawn": 0,
+                   "contested": []}
     assert m.mapping == {"Povidone Iodine": "Povidone-iodine"}
+
+
+# ── transitivity, and the shape that follows from it ─────────────────────────
+
+def test_a_chain_whose_first_hop_folds_to_one_node_is_resolved():
+    """The case the walk could not see and the check could.
+
+    `Subcutaneous Tissues -> subcutaneous tissues` folds to a single node, so
+    an exact-string walk skipped it as "one node, two spellings" and the raw
+    mapping kept a two-hop chain. `normalize` follows one hop, so the merge
+    half-landed. 2,206 entries on 2026-09-26, and `resolve_chains` raised
+    rather than finishing.
+    """
+    m = _mapper({"Subcutaneous Tissues": "subcutaneous tissues",
+                 "subcutaneous tissues": "subcutaneous tissue"})
+    m.resolve_chains()
+    assert m.mapping["Subcutaneous Tissues"] == "subcutaneous tissue"
+    assert m.mapping["subcutaneous tissues"] == "subcutaneous tissue"
+
+
+def test_a_curators_entry_follows_its_target_when_the_target_moves():
+    """Transitivity. `A -> B` and `B -> C` say A, B and C are one concept, so
+    A goes to C. A curator writing `A -> B` said those two are one thing; if B
+    has moved, following it is what honours that."""
+    m = _mapper({"adjunctive therapy": "Adjunct Therapy",
+                 "Adjunct Therapy": "adjunct therapy"})
+    m.resolve_chains()
+    assert m.mapping["adjunctive therapy"] == "adjunct therapy"
+
+
+def test_everything_lands_in_one_hop():
+    m = _mapper({"a": "b", "b": "c", "c": "d", "X": "b", "Y": "c"})
+    m.resolve_chains()
+    assert not [t for t, c in m.mapping.items() if c in m.mapping]
+
+
+def test_two_branches_of_one_component_meet_at_the_same_canonical():
+    m = _mapper({"a": "mid", "b": "mid", "mid": "end"})
+    m.resolve_chains()
+    assert set(m.mapping.values()) == {"end"}
+
+
+def test_a_refused_pair_leaves_the_component_instead_of_being_written():
+    m = _mapper({"a term": "mid term", "mid term": "end term"})
+    m._term_mapping.refuse("a term", "end term", reason="not the same thing")
+    rep = m.resolve_chains()
+    assert rep["withdrawn"] == 1
+    assert "a term" not in m.mapping
+
+
+def test_resolving_twice_changes_nothing_the_second_time():
+    m = _mapper({"a": "b", "b": "c", "P": "Q", "Q": "P"})
+    m.resolve_chains()
+    before = dict(m.mapping)
+    rep = m.resolve_chains()
+    assert rep["repointed"] == 0 and rep["dropped"] == 0
+    assert m.mapping == before
+
+
+def test_two_spellings_of_one_folded_name_pointing_different_ways_elect():
+    """A component can hold two CLAIMED canonicals.
+
+    `patient-reported outcomes -> patient-reported outcome` beside
+    `Patient-Reported Outcomes -> patient-reported outcome measure`: the two
+    terms fold to one name, so transitivity makes all four one concept, and it
+    cannot have two names. They elect, and the losers are reported -- if the
+    two really are different concepts, the fix is to refuse one of the edges
+    that joined them, not to leave a chain.
+    """
+    m = _mapper({"patient-reported outcomes": "patient-reported outcome",
+                 "Patient-Reported Outcomes": "patient-reported outcome measure"})
+    rep = m.resolve_chains()
+    assert len(rep["contested"]) == 1
+    winner, losers = rep["contested"][0]
+    assert winner == "patient-reported outcome measure"    # the longer label
+    assert losers == ["patient-reported outcome"]
+    assert set(m.mapping.values()) == {"patient-reported outcome measure"}
+
+
+def test_an_uncontested_component_reports_nothing_contested():
+    m = _mapper({"a": "b", "b": "c"})
+    assert m.resolve_chains()["contested"] == []
+
+
+def test_a_cycle_between_two_spellings_of_one_folded_name_is_broken():
+    """The component pass cannot see these: it only draws an edge when the
+    folds DIFFER, so `Co-assembly <-> co-assembly` is a single node with an
+    internal loop. 874 of them after pass 0, every one a capitalisation."""
+    m = _mapper({"Co-assembly": "co-assembly", "co-assembly": "Co-assembly"})
+    m.resolve_chains()
+    assert len(m.mapping) == 1
+    assert not [t for t, c in m.mapping.items() if c in m.mapping]
+
+
+def test_a_one_way_entry_between_two_spellings_is_not_a_cycle():
+    m = _mapper({"Povidone Iodine": "Povidone-iodine"})
+    m.resolve_chains()
+    assert m.mapping == {"Povidone Iodine": "Povidone-iodine"}
+
+
+def test_a_three_spelling_cycle_of_one_folded_name_is_broken():
+    m = _mapper({"a-b": "A-B", "A-B": "A-b", "A-b": "a-b"})
+    m.resolve_chains()
+    assert len(set(m.mapping.values())) == 1
+    assert not [t for t, c in m.mapping.items() if c in m.mapping]
+
+
+def test_a_chain_inside_one_folded_name_flattens():
+    """Three spellings of one name, and the store follows one hop.
+
+    Not a cycle, so the cycle breaker leaves it; not a cross-fold edge, so the
+    component pass never sees it. The last chained entry in the live mapping
+    after everything else resolved.
+
+    The hyphen is U+2011, a NON-BREAKING hyphen, which is what the abstract
+    actually contained. `normalize_term` strips it as punctuation, so
+    `IL\u201110` folds to `il10`; with an ordinary hyphen it folds to `il 10`
+    instead, the edge becomes cross-fold, and the component pass handles it.
+    An ASCII hyphen here tests a different code path and passes either way.
+    """
+    m = _mapper({"IL\u201110": "Il10", "Il10": "il10"})
+    m.resolve_chains()
+    assert m.mapping["IL\u201110"] == "il10"
+    assert not [t for t, c in m.mapping.items() if c in m.mapping]
+
+
+def test_the_same_chain_with_an_ordinary_hyphen_also_flattens():
+    # the cross-fold route to the same place: `il 10` -> `il10`
+    m = _mapper({"IL-10": "Il10", "Il10": "il10"})
+    m.resolve_chains()
+    assert m.mapping["IL-10"] == "il10"

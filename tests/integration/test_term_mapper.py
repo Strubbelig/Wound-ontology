@@ -18,7 +18,7 @@ import pytest
 
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.embedding.embedder import Embedder
-from wound_ontology.mappers.term_mapping import TermMapping
+from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
 from wound_ontology.mappers.term_mapper import TermMapper
 
 
@@ -65,7 +65,7 @@ def built(tmp_data_dir, embedder):
     every term it was given, which is what a test about coverage needs.
     """
     dm = DataManager(base_path=tmp_data_dir)
-    tm = TermMapping(dm, "term_mapping_test")
+    tm = TermMappingAndGate(dm, "term_mapping_test")
     mapper = TermMapper(term_mapping=tm, name="test_mapper")
     assignment = mapper.build_from_embeddings(
         TERMS,

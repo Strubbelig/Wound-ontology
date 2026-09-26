@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from wound_ontology.mappers.term_mapping import TermMapping
+from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
 from wound_ontology.mappers.term_mapper import TermMapper
 
 
@@ -48,7 +48,7 @@ def dm():
 
 @pytest.fixture
 def term_mapping(dm):
-    return TermMapping(dm, "term_mapping")
+    return TermMappingAndGate(dm, "term_mapping")
 
 
 @pytest.fixture
@@ -95,7 +95,7 @@ def test_apply_renames_index_and_columns_without_mutating_original(mapper):
 
 def test_empty_term_mapping_passthrough():
     dm = MockDM({})
-    tm = TermMapping(dm, "empty_term_mapping")
+    tm = TermMappingAndGate(dm, "empty_term_mapping")
     mapper = TermMapper(term_mapping=tm, name="empty")
     df = pd.DataFrame([[1, 0]], columns=["term_a", "term_b"])
 
@@ -105,7 +105,7 @@ def test_empty_term_mapping_passthrough():
 
 
 def test_term_mapper_has_default_name(dm):
-    tm = TermMapping(dm, "terms")
+    tm = TermMappingAndGate(dm, "terms")
     mapper = TermMapper(term_mapping=tm)
 
     assert mapper.__class__ is TermMapper
@@ -116,7 +116,7 @@ def test_term_mapper_has_default_name(dm):
 
 def _make_mapper(data=None):
     dm = MockDM(data or {})
-    tm = TermMapping(dm, "t")
+    tm = TermMappingAndGate(dm, "t")
     return TermMapper(term_mapping=tm, name="t")
 
 

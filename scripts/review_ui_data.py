@@ -37,8 +37,8 @@ def _clean(v) -> str:
 def main() -> int:
     fam_path = sorted((ROOT / "data" / "review").glob("mapping_families_*.csv"))[-1]
     row_path = sorted((ROOT / "data" / "review").glob("mapping_review_*.csv"))[-1]
-    fam = pd.read_csv(fam_path).fillna("")
-    rows = pd.read_csv(row_path).fillna("")
+    fam = pd.read_csv(fam_path, keep_default_na=False).fillna("")
+    rows = pd.read_csv(row_path, keep_default_na=False).fillna("")
     print(f"[ui] {fam_path.name}: {len(fam):,} families; {row_path.name}: {len(rows):,} rows")
 
     p = Orchestrator()

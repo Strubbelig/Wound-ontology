@@ -1,10 +1,10 @@
 """Curator layer for the term mapping.
 
-Inspects, reviews, and cleans the TermMapping.  The only layer that knows
+Inspects, reviews, and cleans the TermMappingAndGate.  The only layer that knows
 about blocklists, interactive prompts, and CSV review workflows.
 
 Layer 4 in the mapper stack:
-  DataManager (repo) → TermMapping (persistence) → TermMapper (action) → MappingCleaner (curator)
+  DataManager (repo) → TermMappingAndGate (persistence) → TermMapper (action) → MappingCleaner (curator)
 """
 
 from __future__ import annotations

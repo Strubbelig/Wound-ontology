@@ -35,7 +35,7 @@ class _Embedder:
 
 @pytest.fixture
 def mapper():
-    # The real TermMapping over an in-memory file — see tests/conftest.py.
+    # The real TermMappingAndGate over an in-memory file — see tests/conftest.py.
     m = memory_mapper()
     m._standard_embeddings = {}
     return m

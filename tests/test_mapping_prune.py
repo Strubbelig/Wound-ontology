@@ -26,7 +26,7 @@ from wound_ontology.mappers.term_mapper import TermMapper
 
 
 def _mapper(data):
-    """The real TermMapping over an in-memory file — see tests/conftest.py."""
+    """The real TermMappingAndGate over an in-memory file — see tests/conftest.py."""
     return memory_mapper(data)
 
 
@@ -127,7 +127,7 @@ def test_a_curator_refusal_survives_the_next_build():
     not (rule 33 — a decision is a verdict in the record, never a deletion)."""
     import numpy as np
 
-    from wound_ontology.mappers.term_mapping import TermMapping
+    from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
 
     class _DM:
         def __init__(self): self.saved = None
@@ -141,7 +141,7 @@ def test_a_curator_refusal_survives_the_next_build():
                 out[i, 0 if "wound" in t.lower() else 1] = 1.0
             return out
 
-    tm = TermMapping(_DM())
+    tm = TermMappingAndGate(_DM())
     mapper = TermMapper(tm, name="t")
     mapper.build_from_embeddings(["wounds", "wound"], _Emb(),
                                  similarity_threshold=0.95, frequencies={"wound": 9})
@@ -160,13 +160,13 @@ def test_a_curator_refusal_survives_the_next_build():
 def test_a_refusal_is_about_the_pair_not_the_term():
     """`materials` refused onto `material entity` must still be free to map onto
     something else."""
-    from wound_ontology.mappers.term_mapping import TermMapping
+    from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
 
     class _DM:
         def load_latest_json(self, name): return {}
         def save_as_json(self, data, name): pass
 
-    tm = TermMapping(_DM())
+    tm = TermMappingAndGate(_DM())
     mapper = TermMapper(tm, name="t")
     mapper.refuse("materials", "material entity", reason="a BFO category name")
     tm.add("materials", "Wound dressing material")
@@ -179,14 +179,14 @@ def test_the_old_flat_file_still_loads():
     """The file on disk is `term -> canonical` until something saves records over
     it, and a migration that needs remembering is a migration that gets
     forgotten."""
-    from wound_ontology.mappers.term_mapping import TermMapping
+    from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
 
     class _DM:
         def load_latest_json(self, name): return {"wounds": "Wound", "ulcers": "Ulcer"}
         def save_as_json(self, data, name): self.written = data
 
     dm = _DM()
-    tm = TermMapping(dm)
+    tm = TermMappingAndGate(dm)
     assert tm.data == {"wounds": "Wound", "ulcers": "Ulcer"}
     tm.judge("wounds", "Wound", pass1={"verdict": "same_class", "reason": "plural"})
     tm.save()

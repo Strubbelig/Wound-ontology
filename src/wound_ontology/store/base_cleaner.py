@@ -17,10 +17,14 @@ class BaseCleaner:
         self,
         allowed_predicates: list[str],
         extra_blocked_entities: set[str] | None = None,
+        gate=None,
     ):
         self.allowed_predicates: set[str] = set(allowed_predicates)
         self._extra_blocked: set[str]     = extra_blocked_entities or set()
-        self.blocker                       = Blocker()
+        # `gate` is the TermMappingAndGate record. Given one, its verdicts
+        # outrank the two exact lists, because they carry a reason and an author
+        # and the lists do not. Given none, the lists decide exactly as before.
+        self.blocker                       = Blocker(gate=gate)
         self._abort_review: bool           = False
 
     # ── Convenience properties (keep callers working without changes) ──────────
@@ -134,17 +138,70 @@ class BaseCleaner:
 
     # ── Persistence (delegate to Blocker's lists) ─────────────────────────────
 
+    # Every list write in StoreCleaner funnels through these four. With a gate
+    # they write the RECORD and re-export the literal, so the decision has an
+    # author and a reason and the file is a printout of it (rule 40). Without
+    # one they edit the literal directly, exactly as before.
+
+    def _gate_write(self, terms: set[str], verdict: str, reason: str) -> int:
+        from datetime import datetime
+        when = datetime.now().isoformat(timespec="seconds")
+        n = 0
+        for term in terms:
+            if self.blocker.gate_verdict(term)[0] == verdict:
+                continue
+            self.blocker.gate.gate(term, curator={"verdict": verdict,
+                                                  "reason": reason, "when": when})
+            n += 1
+        if n:
+            self.blocker.gate.save()
+            self._export_gate_lists()
+            self._reload_lists()
+        return n
+
+    def _export_gate_lists(self) -> None:
+        """Reprint the two literals from the gate, so the view keeps up."""
+        from wound_ontology.store.term_lists import export_gate_lists
+        export_gate_lists(self.blocker.gate, quiet=True)
+
     def _append_to_blocklist(self, new_terms: set[str]) -> int:
-        return self.blocker.terms.add(new_terms)
+        if self.blocker.gate is None:
+            return self.blocker.terms.add(new_terms)
+        return self._gate_write(new_terms, "out", "blocked during list review")
 
     def _append_to_whitelist(self, new_terms: set[str]) -> int:
-        return self.blocker.white_terms.add(new_terms)
+        if self.blocker.gate is None:
+            return self.blocker.white_terms.add(new_terms)
+        return self._gate_write(new_terms, "in", "kept during list review")
 
     def _remove_from_blocklist(self, terms: set[str]) -> int:
-        return self.blocker.terms.remove(terms)
+        """Under a gate this is a CHECK, not a write.
+
+        Every caller pairs it with `_append_to_whitelist` on the same terms, and
+        under the gate that one write already settles the verdict — a term the
+        gate answers `in` is absent from `gated("out")` by construction. So
+        nothing is left to remove, and the honest thing is to confirm it rather
+        than report a removal that did not happen. An unpaired call raises,
+        which is what a silent no-op would have hidden.
+        """
+        if self.blocker.gate is None:
+            return self.blocker.terms.remove(terms)
+        return self._confirm_not(terms, "out")
 
     def _remove_from_whitelist(self, terms: set[str]) -> int:
-        return self.blocker.white_terms.remove(terms)
+        if self.blocker.gate is None:
+            return self.blocker.white_terms.remove(terms)
+        return self._confirm_not(terms, "in")
+
+    def _confirm_not(self, terms: set[str], verdict: str) -> int:
+        still = sorted(t for t in terms if self.blocker.gate_verdict(t)[0] == verdict)
+        if still:
+            raise RuntimeError(
+                f"{len(still)} term(s) still read {verdict!r} after the paired "
+                f"write that should have changed them: {still[:5]}. Under the "
+                f"gate a removal is the other half of an append, never a "
+                f"deletion on its own.")
+        return len(terms)
 
     # ── Misc (kept for StoreCleaner compatibility) ────────────────────────────
 

@@ -1,7 +1,7 @@
 """Action layer for term-synonym clustering and mapping lookup.
 
-Takes a TermMapping (persistence layer) and operates on it.
-Has no file I/O — all persistence goes through TermMapping.
+Takes a TermMappingAndGate (persistence layer) and operates on it.
+Has no file I/O — all persistence goes through TermMappingAndGate.
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 from rapidfuzz.fuzz import ratio as _fuzz_ratio
 
-from wound_ontology.mappers.term_mapping import TermMapping
+from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
 from wound_ontology.utils.label_match import fold, singular_spelling, singularize
 from wound_ontology.utils.string_utils import normalize_term
 
@@ -45,22 +45,32 @@ def canonical_rank(term: str, anchors=frozenset(), frequencies: dict[str, int] |
     cluster's canonical with it and `resolve_chains` picks a cycle's winner with
     it; written twice they would drift, and the two would then disagree about
     which spelling of one concept is its name.
+
+    The term itself is the LAST component, so the order is total. Without it
+    `Derived Indices` and `derived indices` -- same frequency, same word count,
+    same length -- tie, and `max()` over a set returns whichever the process's
+    hash seed happened to iterate first. Two runs of the same pipeline chose
+    different canonicals for the same group; pass 0 found 773 such groups on the
+    2026-09-25 store by failing to converge on a second run. A canonical that
+    depends on the hash seed is not a decision, it is a coin toss with a
+    record.
     """
     freq = frequencies or {}
     return (1 if term in anchors else 0,
             freq.get(term, 0),
             len(normalize_term(term).split()),
-            -len(term))
+            -len(term),
+            term)
 
 
 class TermMapper:
     """Action layer: synonym clustering and mapping lookup.
 
     Layer 3 in the mapper stack:
-      DataManager (repo) → TermMapping (persistence) → TermMapper (action) → MappingCleaner (curator)
+      DataManager (repo) → TermMappingAndGate (persistence) → TermMapper (action) → MappingCleaner (curator)
     """
 
-    def __init__(self, term_mapping: TermMapping, name: str = "Term mapper") -> None:
+    def __init__(self, term_mapping: TermMappingAndGate, name: str = "Term mapper") -> None:
         self.name          = name
         self._term_mapping = term_mapping
         self._standard_embeddings: dict[str, np.ndarray] = {}
@@ -70,7 +80,7 @@ class TermMapper:
 
     @property
     def mapping(self) -> dict[str, str]:
-        """The raw mapping dict — read-only view of TermMapping.data."""
+        """The raw mapping dict — read-only view of TermMappingAndGate.data."""
         return self._term_mapping.data
 
     @property
@@ -91,7 +101,7 @@ class TermMapper:
                          columns=self._term_mapping.data)
 
     def save(self) -> None:
-        """Explicit save — delegates to TermMapping."""
+        """Explicit save — delegates to TermMappingAndGate."""
         self._term_mapping.save()
 
     def _report_skipped(self, skipped: list[tuple[str, str]], what: str) -> None:
@@ -116,7 +126,7 @@ class TermMapper:
         check. Withdrawing is how a refusal reaches the file rather than being
         quietly outvoted by it.
 
-        The record itself stays -- `TermMapping.retire` keeps the verdicts the
+        The record itself stays -- `TermMappingAndGate.retire` keeps the verdicts the
         pair cost credits to obtain -- and `reason` says on the record why the
         entry stopped being live.
         """
@@ -139,9 +149,36 @@ class TermMapper:
         self._term_mapping.annotate(term, **fields)
 
     def judge(self, term: str, canonical: str, **fields) -> None:
-        """Attach evidence to one PAIR — a pass verdict, a curator's mark."""
+        """Attach evidence to one PAIR — a pass verdict, a curator's mark.
+
+        Does NOT save; `save()` afterwards, once. `TermMappingAndGate.judge` says so
+        for the same reason and this wrapper used to add the save back: the
+        2026-09-25 bulk acceptance wrote 2,105 curator verdicts and saved the
+        whole 4.4 MB record after each one — 9 GB of writing, twenty minutes,
+        for a change that takes a second. A verdict carries no risk of being
+        half-written the way a mapping edit does, and every caller here already
+        saves and then reads the file back to check the write landed.
+        """
         self._term_mapping.judge(term, canonical, **fields)
-        self._term_mapping.save()
+
+    def gate(self, term: str, **fields) -> None:
+        """Record a gate verdict on `term` — in scope, or out.
+
+        Does NOT save, like `judge`; `save()` once when the batch is done.
+        """
+        self._term_mapping.gate(term, **fields)
+
+    def gate_verdict(self, term: str) -> tuple[str, str]:
+        """`(verdict, source)` the gate gives `term`, or `("", "")`."""
+        return self._term_mapping.gate_verdict(term)
+
+    def gated(self, verdict: str) -> dict[str, str]:
+        """`term -> source` for every term the gate answers `verdict`."""
+        return self._term_mapping.gated(verdict)
+
+    def gate_disagreements(self) -> list[dict]:
+        """The terms whose gate sources contradict each other — a view."""
+        return self._term_mapping.gate_disagreements()
 
     def subsumption_candidates(self) -> list[dict]:
         """The pairs a pass called narrower/broader — a view of the record."""
@@ -258,101 +295,201 @@ class TermMapper:
         data = self._term_mapping.data
         succ = {t: c for t, c in data.items() if t != c}
         fold = normalize_term
+        freq = frequencies or {}
 
-        # The graph is over FOLDED nodes, because that is the graph the store
-        # walks. Each node's outgoing edge is the first entry claiming it.
-        edge: dict[str, str] = {}          # folded node -> canonical, as written
-        for t, c in succ.items():
-            if fold(c) != fold(t):
-                edge.setdefault(fold(t), c)
-        spelling: dict[str, list[str]] = defaultdict(list)
-        for t, c in succ.items():
-            spelling[fold(t)].append(t)
-            spelling[fold(c)].append(c)
+        # ── the concepts, as connected components ───────────────────────────
+        #
+        # An entry is a claim that two spellings are one concept, and that
+        # claim is TRANSITIVE: `A -> B` and `B -> C` say A, B and C are one
+        # thing, so the question "where does A end up" is not a walk, it is
+        # "which spelling does that one thing go by". Chasing the chain was the
+        # wrong shape and it showed -- the walk ran over FOLDED nodes while the
+        # check ran over the raw mapping, so 2,206 entries whose first hop
+        # folded to one node were invisible to the resolution and visible to
+        # the check, and the function raised rather than finishing.
+        #
+        # Components cannot produce a chain or a cycle, because every member
+        # points at the same winner in one hop and the winner points nowhere.
+        # There is nothing left to iterate.
+        parent: dict[str, str] = {}
 
-        # ── the cycles among those nodes, and who wins each one ──────────────
-        winner_of: dict[str, str] = {}
-        seen: set[str] = set()
-        for start in list(edge):
-            if start in seen:
-                continue
-            path: list[str] = []
-            index: dict[str, int] = {}
-            node: str | None = start
-            while node is not None and node not in seen:
-                index[node] = len(path)
-                path.append(node)
-                seen.add(node)
-                nxt = edge.get(node)
-                node = fold(nxt) if nxt is not None else None
-            if node is not None and node in index:
-                members = path[index[node]:]
-                candidates = sorted({s for m in members for s in spelling[m]})
-                winner = max(candidates,
-                             key=lambda t: canonical_rank(t, anchors, frequencies))
-                for m in members:
-                    winner_of[m] = winner
+        def find(x: str) -> str:
+            parent.setdefault(x, x)
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
 
-        # ── where each node's chain ends, as the mapping spells it ───────────
-        cache: dict[str, str] = {}
+        def union(a: str, b: str) -> None:
+            ra, rb = find(a), find(b)
+            if ra != rb:
+                parent[ra] = rb
 
-        def terminal(node: str, arrived_as: str) -> str:
-            walked: list[str] = []
-            on_path: set[str] = set()
-            cur_node, cur_raw = node, arrived_as
-            while True:
-                if cur_node in cache:
-                    end = cache[cur_node]
-                    break
-                if cur_node in winner_of:
-                    end = winner_of[cur_node]
-                    break
-                nxt = edge.get(cur_node)
-                if nxt is None:
-                    end = cur_raw
-                    break
-                if cur_node in on_path:
-                    # Unreachable while the cycle pass above is intact, and a
-                    # loop rather than a raise if it ever is not.
-                    raise RuntimeError(
-                        f"[{self.name}] resolve_chains walked into an unbroken "
-                        f"cycle at {cur_raw!r}; the cycle pass missed it."
-                    )
-                on_path.add(cur_node)
-                walked.append(cur_node)
-                cur_node, cur_raw = fold(nxt), nxt
-            for w in walked:
-                cache[w] = end
-            return end
+        # Union over FOLDED names, because the store looks a term up by its
+        # exact spelling and then by `normalize_term`, so one capital letter is
+        # enough to hide a link from an exact-string walk and not enough to
+        # hide it from the store. The winner and every write stay exact
+        # strings: folding FINDS the component, it never renames anything.
+        spellings: dict[str, set[str]] = defaultdict(set)
+        out_edge: set[str] = set()
+        for term, canonical in succ.items():
+            spellings[fold(term)].add(term)
+            spellings[fold(canonical)].add(canonical)
+            if fold(term) != fold(canonical):
+                union(fold(term), fold(canonical))
+                out_edge.add(fold(term))
+        for node in spellings:
+            parent.setdefault(node, node)
+
+        members: dict[str, list[str]] = defaultdict(list)
+        for node in parent:
+            members[find(node)].append(node)
 
         repointed: dict[str, str] = {}
         dropped: list[str] = []
         refused: list[tuple[str, str]] = []
-        for term, current in succ.items():
-            if fold(current) == fold(term):
-                continue                      # one node; the entry is a spelling
-            end = terminal(fold(current), current)
-            if (end != current and accept_mapping is not None and end in anchors
-                    and not accept_mapping(term, end)):
-                refused.append((term, end))
-                continue
-            if fold(end) == fold(term):
-                dropped.append(term)
-            elif end != current:
-                repointed[term] = end
+        contested: list[tuple[str, list[str]]] = []
+        multi = 0
 
-        cycles = len(set(winner_of.values()))
+        # ── cycles INSIDE one folded node ───────────────────────────────────
+        #
+        # `Co-assembly -> co-assembly` and `co-assembly -> Co-assembly`: two
+        # spellings of one name pointing at each other. The component pass
+        # cannot see them, because it only draws an edge when the folds
+        # DIFFER, so the pair is a single node with an internal loop -- 874 of
+        # them after pass 0, every one a capitalisation.
+        #
+        # A one-way entry between two spellings of a name is not a cycle and
+        # is left alone: `Povidone Iodine -> Povidone-iodine` is the mapping
+        # choosing a spelling, which is its job.
+        for node, names in spellings.items():
+            inside = {t: succ[t] for t in names
+                      if t in succ and fold(succ[t]) == node}
+            if not inside:
+                continue
+            looped: set[str] = set()
+            for start in inside:
+                seen, cur = [], start
+                while cur in inside and cur not in seen:
+                    seen.append(cur)
+                    cur = inside[cur]
+                if cur in seen:
+                    looped.update(seen[seen.index(cur):])
+            if looped:
+                champion = max(sorted(looped),
+                               key=lambda t: canonical_rank(t, anchors, freq))
+                for member in sorted(looped):
+                    if member == champion:
+                        dropped.append(member)
+                    elif data.get(member) != champion:
+                        repointed[member] = champion
+            # A same-fold CHAIN is not a cycle and still has to flatten:
+            # `IL-10 -> Il10 -> il10` is three spellings of one name and the
+            # store follows one hop. Everything inside the node points at the
+            # node's sink; a lone `Povidone Iodine -> Povidone-iodine` already
+            # does, so nothing moves.
+            for member in sorted(inside):
+                if member in looped:
+                    continue
+                seen, cur = {member}, inside[member]
+                while cur in inside and cur not in seen and cur not in looped:
+                    seen.add(cur)
+                    cur = inside[cur]
+                if cur in looped:
+                    cur = repointed.get(cur, cur)
+                if cur != member and data.get(member) != cur:
+                    repointed[member] = cur
+        for nodes in members.values():
+            group = sorted({sp for n in nodes for sp in spellings.get(n, ())})
+            if len(nodes) < 2:
+                continue
+            # Each term has at most one target, so a connected component has
+            # either exactly one SINK -- a member nothing points out of, which
+            # is the canonical the mapping already chose -- or no sink at all,
+            # which means a cycle. Only the second needs an election.
+            # Re-electing when a sink exists would churn canonicals the curator
+            # settled: `wounds -> Wound` and `wound -> Wound` is already a star
+            # and there is nothing to resolve.
+            sink_nodes = [n for n in nodes if n not in out_edge]
+            sinks = sorted({sp for n in sink_nodes for sp in spellings[n]})
+            if len(sink_nodes) == 1:
+                # Among the sink's spellings, the one the mapping ALREADY
+                # points at wins. Re-ranking here would rename a canonical the
+                # curator settled: `wounds -> Wound` and `wound -> Wound` is a
+                # finished star, and electing `wound` on frequency would move
+                # every entry for nothing.
+                targets = [t for t in sinks if t in set(succ.values())]
+                winner = max(targets or sinks,
+                             key=lambda t: canonical_rank(t, anchors, freq))
+            elif not sink_nodes:
+                winner = max(sorted(group),
+                             key=lambda t: canonical_rank(t, anchors, freq))
+            else:
+                # Several sinks in one component: two spellings that FOLD
+                # together point at different canonicals, so the component has
+                # two claimed names for one concept. `patient-reported
+                # outcomes` -> `patient-reported outcome` beside
+                # `Patient-Reported Outcomes` -> `patient-reported outcome
+                # measure`. Transitivity says they are one thing, so they
+                # elect, and the ones that lose are reported -- if two sinks
+                # really are different concepts, the fix is to refuse one of
+                # the edges that joined them, not to keep a chain.
+                winner = max(sinks, key=lambda t: canonical_rank(t, anchors, freq))
+                contested.append((winner, [t for t in sinks if t != winner]))
+            if all(data.get(m) == winner for m in group
+                   if m != winner and m in succ) and winner not in succ:
+                continue                      # already a star; nothing to do
+            multi += 1
+            if (accept_mapping is not None and winner in anchors
+                    and not all(accept_mapping(m, winner) for m in group
+                                if m != winner)):
+                # The guard speaks per term. Any member it refuses leaves the
+                # component rather than being walked onto an anchor that is
+                # wrong for it -- the same meaning `refused` had before.
+                for member in sorted(group):
+                    if member != winner and not accept_mapping(member, winner):
+                        refused.append((member, winner))
+                        continue
+                    if member != winner and data.get(member) != winner:
+                        repointed[member] = winner
+                if winner in succ:
+                    dropped.append(winner)
+                continue
+            for member in sorted(group):
+                if member == winner:
+                    if member in succ:
+                        dropped.append(member)     # it won its own component
+                    continue
+                if member not in succ:
+                    # A spelling that only ever appears as a TARGET has no
+                    # entry, and giving it one here would invent a mapping
+                    # nobody proposed.
+                    continue
+                if self._term_mapping.is_refused(member, winner):
+                    refused.append((member, winner))
+                    continue
+                if data.get(member) != winner:
+                    repointed[member] = winner
+
+        cycles = multi
         report = {"cycles": cycles, "repointed": len(repointed),
-                  "dropped": len(dropped), "withdrawn": len(refused)}
+                  "dropped": len(dropped), "withdrawn": len(refused),
+                  "contested": contested}
         if not (repointed or dropped or refused):
             print(f"[{self.name}] mapping is already a forest — no chains, no cycles.")
             return report
         verb = "would re-point" if dry_run else "re-pointed"
-        print(f"[{self.name}] {verb} {len(repointed)} entr(ies) onto their final "
-              f"canonical and broke {cycles} cycle(s), dropping {len(dropped)} "
-              f"entr(ies) whose term won its own cycle.")
+        print(f"[{self.name}] {verb} {len(repointed)} entr(ies) onto their "
+              f"component's canonical across {cycles} component(s), dropping "
+              f"{len(dropped)} entr(ies) whose term won its own component.")
         for term, end in list(repointed.items())[:5]:
-            print(f"[{self.name}]     {term!r} -> {succ[term]!r} -> … -> {end!r}")
+            print(f"[{self.name}]     {term!r} -> {succ.get(term, '—')!r} -> … -> {end!r}")
+        if contested:
+            print(f"[{self.name}] {len(contested)} component(s) had more than one "
+                  f"claimed canonical — two spellings of one folded name pointing "
+                  f"different ways. They elected:")
+            for winner, losers in contested[:5]:
+                print(f"[{self.name}]     {winner!r} over {losers}")
         if refused:
             print(f"[{self.name}] withdrew {len(refused)} entr(ies) whose chain "
                   f"ends at an anchor the category guard refuses for that term:")

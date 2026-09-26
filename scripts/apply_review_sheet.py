@@ -32,6 +32,13 @@ Two columns are the curator's:
                         their `why` cell, so the column could not carry the
                         decision the curator was making.
 
+`NA`, `N/A`, `None`, `null` and `nan` are TERMS here, not missing values.
+`N/A -> NA` and `Na+ -> NA` are both live mapping entries, and pandas reads all
+four cells as missing by default: the review sheet showed a blank row, the UI
+showed a family with no canonical and no terms, and a decision on it would have
+been applied to the empty string. Every sheet is therefore read with
+`keep_default_na=False`, so a cell says what it says.
+
 Without --apply nothing is written; the counts are printed and nothing else.
 
 Every write is verified by reloading the file and reading it back. A review
@@ -59,6 +66,7 @@ class Decisions(NamedTuple):
     reverse: dict[str, str]
     kept: list[str]
     unmarked: int
+    ambiguous: list[tuple[str, str, list[str]]]
 
 
 def decisions(df: "pd.DataFrame") -> Decisions:
@@ -96,26 +104,54 @@ def decisions(df: "pd.DataFrame") -> Decisions:
     matching is the fallback for a name typed back by hand, not the rule: when
     some row carries the correction verbatim, that row reverses and its siblings
     re-point onto it — which is what reversing a family means.
+
+    And the fallback only fires when it identifies ONE term. `type 2 diabetes`
+    gathers both `Diabetes Mellitus type 2` and `diabetes mellitus type 2`, and
+    the curator corrected it to a third spelling, `Diabetes mellitus type 2`.
+    Case-insensitively that named both, so both rows read themselves as the
+    chosen one and each wrote an inverse entry for the same canonical — the
+    second overwriting the first. Two spellings cannot both be the name typed
+    back, so a correction matching several is not a reversal at all: it is a
+    re-point onto the spelling the curator actually wrote, which is the plainer
+    reading of typing a name that is in the family nowhere. `ambiguous` carries
+    these so the run says which families were read that way.
     """
     exact_terms = {str(t) for t in df["term"]}
+    # Case-insensitive matching is scoped to the FAMILY, not the whole sheet: the
+    # question a correction raises is "which of THIS family's terms did the
+    # curator type back", and another family's spelling of the same word cannot
+    # answer it either way.
+    siblings: dict[str, list[str]] = {}
+    for _, row in df.iterrows():
+        siblings.setdefault(str(row["canonical"]), []).append(str(row["term"]))
+    ambiguous: list[tuple[str, str, list[str]]] = []
     withdraw: list[str] = []
     repoint: dict[str, str] = {}
     reverse: dict[str, str] = {}
     kept: list[str] = []
     unmarked = 0
+    seen_ambiguous: set[tuple[str, str]] = set()
     for _, row in df.iterrows():
         term = str(row["term"])
         canonical = str(row["canonical"])
         corrected = str(row["corrected canonical"]).strip()
         keep = str(row["keep(y/n)"]).strip().lower()
         if corrected and corrected.lower() != "nan":
+            matches = [t for t in siblings.get(canonical, [])
+                       if t.strip().lower() == corrected.strip().lower()]
             if corrected == canonical:
                 pass                     # a restatement, not a decision
-            elif corrected == term or (
-                    corrected.strip().lower() == term.strip().lower()
-                    and corrected not in exact_terms):
+            elif corrected == term:
+                reverse[term] = canonical
+            elif (corrected.strip().lower() == term.strip().lower()
+                    and corrected not in exact_terms and len(matches) == 1):
                 reverse[term] = canonical
             else:
+                if (corrected.strip().lower() == term.strip().lower()
+                        and corrected not in exact_terms and len(matches) > 1):
+                    if (canonical, corrected) not in seen_ambiguous:
+                        seen_ambiguous.add((canonical, corrected))
+                        ambiguous.append((canonical, corrected, sorted(matches)))
                 repoint[term] = corrected
         elif keep == "n":
             withdraw.append(term)
@@ -123,7 +159,41 @@ def decisions(df: "pd.DataFrame") -> Decisions:
             kept.append(term)
         else:
             unmarked += 1
-    return Decisions(withdraw, repoint, reverse, kept, unmarked)
+    return Decisions(withdraw, repoint, reverse, kept, unmarked, ambiguous)
+
+
+def expand_families(df: "pd.DataFrame") -> "pd.DataFrame":
+    """One row per family becomes one row per member, and per canonical.
+
+    The members come from the `terms` column, so a decision on a family reaches
+    all of them — which is the point of the family sheet.
+
+    The canonical joins its own family whenever the family is being MOVED.
+    `silver-containing dressings` gathered 7 spellings and the curator
+    re-pointed it to `silver-containing dressing`; moving only the 7 leaves the
+    plural they were deleting standing as its own concept, still holding its own
+    mentions — the decision defeated by the shape of the sheet. A correction
+    names where the family belongs, and the canonical is in the family.
+
+    `y` and `n` get no such row: they change no mapping, and a canonical is the
+    target of its pairs, not one of them.
+    """
+    df = df.assign(term=df["terms"].str.split(" ; ")).explode("term")
+    df["term"] = df["term"].str.strip()
+    corrected = df["corrected canonical"].astype(str).str.strip()
+    canonical = df["canonical"].astype(str).str.strip()
+    moved = df[(corrected != "") & (corrected.str.lower() != "nan")
+               & (corrected != canonical)].drop_duplicates(subset=["canonical"]).copy()
+    if not len(moved):
+        return df
+    members = {(str(c), str(t)) for c, t in zip(df["canonical"], df["term"])}
+    moved = moved[[(str(c), str(c)) not in members for c in moved["canonical"]]]
+    if not len(moved):
+        return df
+    moved["term"] = moved["canonical"].astype(str)
+    print(f"[review] {len(moved)} canonical(s) join their own family, because a "
+          f"correction moves the family and the canonical is in it")
+    return pd.concat([df, moved], ignore_index=True)
 
 
 def main(argv: list[str]) -> int:
@@ -133,17 +203,20 @@ def main(argv: list[str]) -> int:
         print(__doc__)
         return 2
     sheet = Path(args[0])
-    df = pd.read_csv(sheet).fillna("")
+    df = pd.read_csv(sheet, keep_default_na=False).fillna("")
     if "terms" in df.columns and "term" not in df.columns:
-        # a family sheet: expand each family into its members, so everything
-        # below works on entries and one decision reaches all of them
-        df = df.assign(term=df["terms"].str.split(" ; ")).explode("term")
-        df["term"] = df["term"].str.strip()
+        df = expand_families(df)
+
     for col in ("term", "canonical", "keep(y/n)", "corrected canonical"):
         if col not in df.columns:
             raise SystemExit(f"{sheet} has no {col!r} column — is it a review sheet?")
 
-    withdraw, repoint, reverse, kept, unmarked = decisions(df)
+    withdraw, repoint, reverse, kept, unmarked, ambiguous = decisions(df)
+    for canonical, corrected, matches in ambiguous:
+        print(f"[review]  AMBIGUOUS  {canonical!r} corrected to {corrected!r}, which "
+              f"matches {len(matches)} of its terms case-insensitively "
+              f"({', '.join(repr(m) for m in matches)}) and none of them exactly "
+              f"— read as a re-point onto {corrected!r}, not a reversal")
 
     print(f"[review] {sheet.name}: {len(df):,} rows — "
           f"{len(withdraw)} to withdraw, {len(repoint)} to re-point, "
@@ -177,6 +250,12 @@ def main(argv: list[str]) -> int:
     for term in withdraw:
         canonical = mapping.get(term) or str(
             df.loc[df["term"] == term, "canonical"].iloc[0])
+        if canonical == term:
+            # a row whose term IS its canonical is not a pair, so there is no
+            # merge to refuse; silently refusing `x -> x` would write a verdict
+            # against a mapping that never existed
+            print(f"[review] {term!r} is its own canonical — nothing to refuse")
+            continue
         p.term_mapper.refuse(term, canonical,
                              reason=reasons.get(term, "")[:200], by="curator")
         refused_pairs[term] = canonical
@@ -219,6 +298,18 @@ def main(argv: list[str]) -> int:
             f"[review] {len(unremembered)} refusal(s) were applied but not "
             f"recorded, so the next build would re-propose them: "
             f"{unremembered[:5]}")
+    # `judge` does not save, so an approval only reaches disk through the
+    # save above. Nothing else would notice if it did not: an approval changes
+    # no mapping, so the entry reads back identical either way, and the
+    # decision would be silently gone at the next sheet.
+    unapproved = [t for t in kept
+                  if (c := mapping.get(t))
+                  and (reloaded_mapper._term_mapping.peek(t, c).get("curator") or {})
+                  .get("verdict") != "kept"]
+    if unapproved:
+        raise RuntimeError(
+            f"[review] {len(unapproved)} approval(s) were applied but not "
+            f"recorded: {unapproved[:5]}")
     wrong = {t: reloaded.get(t) for t, c in repoint.items() if reloaded.get(t) != c}
     wrong.update({c: reloaded.get(c) for t, c in reverse.items() if reloaded.get(c) != t})
     still_there += [t for t in reverse if t in reloaded]

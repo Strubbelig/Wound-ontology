@@ -441,6 +441,107 @@ class LLMClient:
         result = await self._execute_with_retry(self._call_json, prompt, ScopeCheckResponse, temperature=0.0, timeout=360)
         return result.inappropriate
 
+    async def gate_scope_batch(
+        self, candidates: list[tuple[str, int, list[str]]]
+    ) -> tuple[dict[str, tuple[str, str]], list[str]]:
+        """`({term: (verdict, reason)}, [echoes we could not place])`.
+
+        candidates: (term, pmid_count, sample_true_attrs)
+
+        A term missing from the answer is missing from the result. That is the
+        whole difference from `classify_scope_batch`, which returns only the
+        out-of-scope names and so cannot tell an in-scope judgement from an
+        omission -- the caller then treated every omission as "in scope" and
+        wrote it to the whitelist for good.
+
+        The model's echo of a term is matched exactly, then case-insensitively,
+        then through `normalize_term`, because a model asked about
+        `Kaplan-Meier analysis` may answer about `Kaplan Meier analysis` and an
+        exact-only match turns a judgement into a silent omission -- the same
+        failure one layer along. It is also matched after pulling the first
+        quoted span out of the echo: on 2026-09-25, 1,126 of 3,848 answers came
+        back as the whole input LINE, `"high-risk cohort" (in 2 abstracts):
+        is_a: material entity`, and the term is the quoted part of it.
+
+        Whatever still does not place is RETURNED, not dropped: an echo naming
+        nothing we asked about means the answer is about something else, and the
+        caller says so instead of quietly losing it.
+        """
+        import re as _re
+        from wound_ontology.utils.string_utils import normalize_term
+        from wound_ontology.llm.schemas import GateBatchResponse
+
+        lines = []
+        for term, freq, attrs in candidates:
+            attr_str = ", ".join(attrs) if attrs else "no attributes"
+            lines.append(f'- "{term}" (in {freq} abstracts): {attr_str}')
+        body = "\n".join(lines)
+
+        prompt = f"""
+        You are curating a clinical wound-care ontology. For EVERY term below,
+        say whether the ontology should carry it as a class.
+
+        OUT of scope:
+        - study design or methodology (randomized controlled trial, cohort study,
+          meta-analysis, propensity matching, Kaplan-Meier analysis)
+        - statistics and reporting (sample size, confidence interval, odds ratio,
+          p-value, PRISMA, registration numbers)
+        - study participant groupings (control group, intervention arm,
+          participants, patients)
+        - generic administrative or bibliometric vocabulary (research, findings,
+          data, Cochrane Library, tertiary care hospital)
+        - a measurement instrument with no wound content (Likert scale)
+
+        IN scope:
+        - a wound, wound complication, or wound-related condition
+        - a treatment, intervention, dressing, device, or drug used in wound care
+        - a pathogen, biological process, tissue, cell type, or molecule that
+          takes part in wound healing
+        - an anatomical structure wounds occur in
+        - a risk factor or comorbidity that drives wound outcomes
+        - a clinical sign, symptom or quality of a wound -- INCLUDING pain,
+          exudate, odour and their severities
+
+        Two judgements that are easy to get wrong, so read them twice:
+        - a MOLECULE or PROCESS named in a wound study (IL-6, TNF-alpha,
+          collagen synthesis, angiogenesis, re-epithelialization) is IN scope;
+          it is the biology, not the method.
+        - a NAMED THERAPY OR AGENT (silver sulfadiazine, photobiomodulation,
+          negative pressure wound therapy, VAC therapy) is IN scope even when the
+          abstract is a trial of it.
+
+        Answer with one entry per term, in the same order, each with a short
+        reason. Do not omit any term.
+
+        TERMS:
+        {body}
+        """
+        result = await self._execute_with_retry(
+            self._call_json, prompt, GateBatchResponse, temperature=0.0, timeout=360)
+        exact = {t: t for t, _, _ in candidates}
+        folded = {t.strip().lower(): t for t, _, _ in candidates}
+        normed = {normalize_term(t): t for t, _, _ in candidates}
+        out: dict[str, tuple[str, str]] = {}
+        unmatched: list[str] = []
+        for v in result.verdicts:
+            verdict = (v.verdict or "").strip().lower()
+            if verdict not in ("in", "out"):
+                unmatched.append(f"{v.term} (verdict {v.verdict!r})")
+                continue
+            def _place(echo: str) -> str | None:
+                return (exact.get(echo)
+                        or folded.get(echo.strip().lower())
+                        or normed.get(normalize_term(echo)))
+
+            term = _place(v.term)
+            if term is None and (q := _re.search(r'"([^"]+)"', v.term)):
+                term = _place(q.group(1))
+            if term is None:
+                unmatched.append(v.term)
+                continue
+            out[term] = (verdict, v.reason)
+        return out, unmatched
+
     async def validate_mere_batch(
         self, triples: list[tuple[str, str]]
     ) -> list[MereRelationResult]:

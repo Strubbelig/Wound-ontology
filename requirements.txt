@@ -70,3 +70,9 @@ pytest-asyncio           # without it every async test is silently skipped
 #   google-genai, google-api-core
 # If you do need the Bayesian stack, give it its own environment — it cannot
 # coexist with torch on an Intel Mac.
+
+# Pass 0 normalisation: British/American spelling before any model call (rule 41).
+# breame is the dictionary of known pairs; wordfreq is the guard that decides
+# whether a pattern rewrite is supported by evidence or is wrecking a word.
+breame>=0.1.2
+wordfreq>=3.1.1

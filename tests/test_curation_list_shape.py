@@ -136,7 +136,15 @@ def test_the_broad_keywords_no_longer_wave_methodology_through(blocker):
     Each of these is in the live store, each is caught by a KEYWORD_BLOCKLIST
     entry that means it, and each was exempted only because it happened to
     contain one of the eight demoted words.
+
+    Since rule 40 a keyword catch is no longer the last word: a `curator` or
+    `pass` verdict on the record outranks it, which is the whole point of the
+    gate. `Conventional Treatment` is the live example -- the 2026-09-25 scope
+    pass called it "treatment used in wound care" and it is in scope again on
+    purpose. So what this pins is the KEYWORD still matching; whether the term
+    ends up blocked is the gate's business, and `blocker` here carries none.
     """
+    assert blocker.gate is None, "this fixture must be the lists alone"
     for term, caught_by in (
         ("Wound Reporting In Animal And Human Preclinical Studies "
          "Reporting Standards", "reporting"),
@@ -148,7 +156,12 @@ def test_the_broad_keywords_no_longer_wave_methodology_through(blocker):
         ("Visual Analog Scale Pain Score", "pain"),
     ):
         assert blocker.block_kw.match(term), f"{term!r} no longer caught by {caught_by!r}"
-        assert blocker.is_blocked(term), f"{term!r} is exempt again"
+        if blocker.is_blocked(term):
+            continue
+        # Exempt is allowed now, but only with something on the record saying
+        # so. An exemption nobody can account for is what rule 40 removed.
+        assert (blocker.white_terms.match(term) or blocker.white_kw.match(term)), (
+            f"{term!r} is exempt and nothing explains it")
 
 
 def test_demoting_them_did_not_open_the_gate_on_the_domain(blocker):

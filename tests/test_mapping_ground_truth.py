@@ -18,7 +18,7 @@ import pytest
 
 from conftest import memory_mapper, memory_mapping
 from wound_ontology.mappers.mapping_adjudicator import pair_key
-from wound_ontology.mappers.term_mapping import KEY_SEP
+from wound_ontology.mappers.term_mapping_and_gate import KEY_SEP
 
 
 # ── The key ──────────────────────────────────────────────────────────────────

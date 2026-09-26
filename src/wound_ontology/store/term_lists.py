@@ -102,6 +102,91 @@ def _entry_line(term: str) -> str:
     return f"    {json.dumps(term, ensure_ascii=False)},"
 
 
+BANNER = (
+    "    # ╔══ GENERATED — do not edit by hand ════════════════════════════════════",
+    "    # ║ Every entry below is a view of a `gate` verdict on a term's record in",
+    "    # ║ data/cache/term_mapping_*.json (rule 40). Editing here is editing a",
+    "    # ║ printout: the next export overwrites it and the decision is lost, with",
+    "    # ║ nothing to say it ever existed. Change the record, then re-export with",
+    "    # ║ Orchestrator.export_gate_lists(). Section headers come from each",
+    "    # ║ entry's `gate.rule.section`, so `recluster` still regroups them.",
+    "    # ╚══════════════════════════════════════════════════════════════════════",
+)
+
+
+def write_generated_list(path: Path, var_name: str,
+                         sections: list[tuple[str, list[str]]]) -> int:
+    """Rewrite `var_name`'s literal in `path` from `sections`, and check it.
+
+    `sections` is `[(header label, [terms])]`, emitted in the order given with
+    the terms sorted inside each. The whole literal body is replaced, so this is
+    the one writer: a hand edit between exports is a decision with no record and
+    the banner says so.
+
+    Verified by re-parsing the file we just wrote and comparing the set, because
+    a generated view that silently generates the wrong thing is worse than one
+    that refuses (rule 30).
+    """
+    lines = path.read_text().splitlines()
+    try:
+        start = next(i for i, l in enumerate(lines) if _declares(l, var_name))
+    except StopIteration:
+        raise RuntimeError(f"{path.name} does not declare {var_name!r}")
+    end = _find_block_end(lines, var_name)
+
+    body: list[str] = list(BANNER)
+    wanted: set[str] = set()
+    for label, terms in sections:
+        if label:
+            body.append(f"    # {label.lstrip('# ').rstrip()}"
+                        if not label.lstrip().startswith("#") else f"    {label.strip()}")
+        for t in sorted(terms, key=str.lower):
+            body.append(_entry_line(t))
+            wanted.add(t)
+    path.write_text("\n".join(lines[:start + 1] + body + lines[end:]) + "\n")
+
+    reread = path.read_text().splitlines()
+    got = {v for l in reread[reread.index(lines[start]) + 1:
+                             _find_block_end(reread, var_name)]
+           if (v := _entry_value(l)) is not None}
+    if got != wanted:
+        raise RuntimeError(
+            f"{var_name}: the export did not read back — "
+            f"{len(wanted - got)} missing, {len(got - wanted)} unexpected "
+            f"({sorted(wanted - got)[:3]} / {sorted(got - wanted)[:3]}). File: {path}")
+    return len(wanted)
+
+
+GATE_LISTS = (("out", "blocklist.py", "METHODOLOGY_BLOCKLIST"),
+              ("in",  "whitelist.py",  "WHITELIST"))
+
+
+def export_gate_lists(gate, config_dir: Path | None = None,
+                      *, quiet: bool = False) -> dict[str, int]:
+    """Rewrite the two exact curation lists from `gate`. The lists are a VIEW.
+
+    Grouping comes from each entry's `gate.rule.section`, captured off the files
+    before the first export, so `recluster` still regroups them and a 207-section
+    blocklist does not come back as one undifferentiated block. Entries with no
+    section -- anything a pass or the curator added since -- collect under one
+    header naming the source that decided them.
+    """
+    config_dir = config_dir or _CONFIG_DIR
+    written: dict[str, int] = {}
+    for verdict, filename, var in GATE_LISTS:
+        by_section: dict[str, list[str]] = {}
+        for term, source in gate.gated(verdict).items():
+            rule = gate.peek_gate(term).get("rule") or {}
+            label = rule.get("section") or f"# ── decided by {source}, no section ──"
+            by_section.setdefault(label, []).append(term)
+        ordered = sorted(by_section.items(),
+                         key=lambda kv: (kv[0].startswith("# ── decided by"), kv[0]))
+        written[var] = write_generated_list(config_dir / filename, var, ordered)
+    if not quiet:
+        print("[gate] exported " + ", ".join(f"{v:,} to {k}" for k, v in written.items()))
+    return written
+
+
 def _pylist_add(path: Path, var_name: str, current: frozenset[str],
                 new_terms: set[str]) -> int:
     """Append truly-new terms into a Python set/frozenset literal."""

@@ -18,8 +18,8 @@ from wound_ontology.hierarchies.fca_hierarchy import FCAHierarchy
 from wound_ontology.fca.context_matrix import ContextMatrix
 from wound_ontology.fca.concept_lattice import ConceptLattice
 from wound_ontology.embedding.embedder import Embedder
-from wound_ontology.mappers.term_mapping import TermMapping
-from wound_ontology.mappers.term_mapper import TermMapper
+from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
+from wound_ontology.mappers.term_mapper import TermMapper, canonical_rank
 from wound_ontology.mappers.mapping_cleaner import MappingCleaner
 from wound_ontology.owl import OWLOntology, OntologyCurator
 from wound_ontology.reasoning import OWLReasoner
@@ -96,7 +96,11 @@ class Orchestrator:
         self.allowed_predicates = allowed_predicates
         self.pubcon        = PubmedConnector(self.dm, entrez_email)
         self.store         = ConceptStore(self.dm, "concept_store")
-        self.cleaner       = StoreCleaner(self.allowed_predicates)
+        # The gate is built before the cleaner because the cleaner's Blocker
+        # consults it: a curator's scope verdict outranks the lists it was
+        # imported from.
+        _term_mapping      = TermMappingAndGate(self.dm, file_name="term_mapping")
+        self.cleaner       = StoreCleaner(self.allowed_predicates, gate=_term_mapping)
         self.class_hier    = ClassHierarchy(self.dm)
         self.mere_hier     = MereologicalHierarchy(self.dm)
         self.context_matrix = ContextMatrix(self.dm, "context_matrix")
@@ -107,7 +111,6 @@ class Orchestrator:
         self.lattice       = ConceptLattice(self.dm, self.context_matrix)
         self.lattices: dict[str, ConceptLattice] = {}
         self.fca_hiers: dict[str, FCAHierarchy] = {}
-        _term_mapping        = TermMapping(self.dm, file_name="term_mapping")
         self.term_mapper     = TermMapper(_term_mapping, name="Term mapper")
         self.mapping_cleaner = MappingCleaner(self.term_mapper, allowed_predicates=self.allowed_predicates)
         self._embedder: Embedder | None = None
@@ -171,7 +174,8 @@ class Orchestrator:
 
     async def _mapping_milestone(self, store) -> None:
         """Periodic callback during extraction: clean store and rebuild term mapping."""
-        cleaner = StoreCleaner(self.allowed_predicates)
+        cleaner = StoreCleaner(self.allowed_predicates,
+                               gate=self.term_mapper._term_mapping)
         report  = cleaner.clean(store)
         StoreCleaner.print_report(report)
 
@@ -464,14 +468,211 @@ class Orchestrator:
         return out
 
     def blocked_names(self) -> set[str]:
-        """Names the methodology blocklist condemns, lowercased.
+        """Names the GATE condemns, lowercased.
 
-        The list is applied at extraction and never again, so the mapping could
-        rename a surviving variant back onto a blocked name. Held here so the
-        mapping can refuse to do that.
+        The blocklist is applied at extraction and never again, so the mapping
+        could rename a surviving variant back onto a blocked name. Held here so
+        the mapping can refuse to do that.
+
+        Read off the gate rather than `METHODOLOGY_BLOCKLIST`, which is where
+        the list's entries now live: a curator who lets `silver sulfadiazine`
+        back in has to see that reflected here, or the review sheet goes on
+        calling it blocked. Keyword blocks are deliberately absent, as they
+        always were -- this answers "is this name condemned by an entry", not
+        "would the blocker drop this string".
         """
-        from config.blocklist import METHODOLOGY_BLOCKLIST
-        return {b.strip().lower() for b in METHODOLOGY_BLOCKLIST}
+        return {t.strip().lower() for t in self.term_mapper.gated("out")}
+
+    def run_pass0_normalise(self, *, dry_run: bool = True,
+                            quiet: bool = False) -> dict:
+        """PASS 0: merge the spellings a rule can settle, before any model runs.
+
+        The curator's rule of 2026-09-25: exhaust the deterministic methods
+        first, and never pay a model to notice that `Surgical Site Infection`
+        and `surgical site infections` are one thing. Measured on the
+        2026-09-25 store, **9,650 of the 96,243 terms are a pure spelling
+        variant of another** -- 5,638 needing only the singular rule, 3,027 case
+        alone, 584 a hyphen, 272 British spelling -- against 2,820 that the
+        mapping had found.
+
+        Four deterministic steps, in this order:
+
+        1. the head noun to the singular (`singular_spelling`, rule 23a);
+        2. British to American (`utils.spelling`, rule 41);
+        3. case, hyphens and punctuation folded (`fold`);
+        4. group on the result, and map every member onto one spelling.
+
+        Singular BEFORE spelling, because `Statistical Analyses` goes to
+        `Statistical Analysis` and the noun never reaches the British-verb
+        reading of `analyses` that would make it `analyze`.
+
+        The surviving spelling is chosen by `canonical_rank` -- an ontology
+        label beats any store term (rule 36), then corpus frequency -- and is
+        then itself singularised and Americanised, unless it is an ontology
+        label, which is kept exactly as the ontology writes it.
+
+        Nothing here overrules a person. A pair the curator refused is skipped
+        by `add_batch`; a pair they ruled on is skipped here by name; and a
+        group whose members stop agreeing once their parentheticals are put
+        back is reported rather than merged, because `fold` strips those and
+        `vitamin (role)` is not `vitamin`.
+
+        Idempotent, so it runs after extraction and again before matching.
+        """
+        from collections import Counter
+
+        from wound_ontology.mappers.pass0 import pass0_pairs
+
+        freq: Counter = Counter()
+        for _, rec in self.store.dict.items():
+            entities = rec.get("entities", rec) if isinstance(rec, dict) else {}
+            for name in entities:
+                freq[name] += 1
+
+        gt = self.term_mapper._term_mapping
+        pairs, report = pass0_pairs(
+            freq, {str(a) for a in self.ontology_labels()}, self.term_mapper.mapping,
+            is_curated=lambda term, canonical: bool(
+                gt.peek(term, canonical).get("curator")))
+        if not quiet:
+            print(f"[pass0] {report['groups']:,} group(s) with more than one "
+                  f"spelling; {report['to write']:,} merge(s) to write, "
+                  f"{report['already']:,} already mapped that way, "
+                  f"{len(report['curated']):,} left alone because the curator "
+                  f"ruled on them, {len(report['unsafe']):,} unsafe to merge, "
+                  f"{report['minted']:,} canonical(s) not observed as written")
+        if dry_run:
+            print("[pass0] dry run — nothing written. Pass dry_run=False to apply.")
+            return report
+
+        skipped = gt.add_batch(pairs, {t: {"confidence": 1.0, "method": "pass0"}
+                                       for t in pairs})
+        report["refused"] = skipped
+        if skipped:
+            print(f"[pass0] {len(skipped)} pair(s) stand refused and were not "
+                  f"written: {skipped[:5]}")
+        gt.save()
+
+        reloaded = Orchestrator().term_mapper.mapping
+        wrong = {t: reloaded.get(t) for t, c in pairs.items()
+                 if (t, c) not in set(skipped) and reloaded.get(t) != c}
+        if wrong:
+            raise RuntimeError(f"[pass0] {len(wrong)} merge(s) did not read back "
+                               f"from the file: {list(wrong.items())[:5]}")
+        print(f"[pass0] {len(pairs) - len(skipped):,} merge(s) written and "
+              f"verified; {len(reloaded):,} entries in the mapping")
+        return report
+
+    def export_gate_lists(self, *, quiet: bool = False) -> dict[str, int]:
+        """Rewrite the two exact curation lists from the gate. The lists are a VIEW.
+
+        `METHODOLOGY_BLOCKLIST` and `WHITELIST` were the authoring surface until
+        2026-09-25, written by a cosine threshold and an LLM batch straight into
+        source files with no verdict, reason, date or author. They are now what
+        the gate says, printed: one writer, and an entry that cannot exist
+        without saying who put it there.
+        """
+        from wound_ontology.store.term_lists import export_gate_lists
+        return export_gate_lists(self.term_mapper._term_mapping, quiet=quiet)
+
+    def gate_lists_drift(self) -> dict[str, set[str]]:
+        """What the two literals hold that the gate does not, and the reverse.
+
+        Empty on both sides is the invariant. Anything in it means someone edited
+        a generated file, or an export is owed — and either way one of the two is
+        deciding things the other does not know about.
+        """
+        # Re-read the files, never `from config... import`: the modules are in
+        # `sys.modules` from before an export in the same process, and a drift
+        # check that answers from a stale import reports drift that is not there
+        # -- or misses drift that is.
+        import ast
+        from pathlib import Path
+
+        def _literal(filename: str, var: str) -> set[str]:
+            src = (Path(__file__).resolve().parents[2] / "config" / filename).read_text()
+            for node in ast.parse(src).body:
+                target = getattr(node, "target", None) or (getattr(node, "targets", [None]) or [None])[0]
+                if getattr(target, "id", "") != var:
+                    continue
+                value = node.value
+                if isinstance(value, ast.Call):        # frozenset({...})
+                    value = value.args[0]
+                return set(ast.literal_eval(value))
+            raise RuntimeError(f"config/{filename} does not declare {var}")
+
+        METHODOLOGY_BLOCKLIST = _literal("blocklist.py", "METHODOLOGY_BLOCKLIST")
+        WHITELIST = _literal("whitelist.py", "WHITELIST")
+        out = {t.strip().lower() for t in self.term_mapper.gated("out")}
+        keep = {t.strip().lower() for t in self.term_mapper.gated("in")}
+        file_out = {t.strip().lower() for t in METHODOLOGY_BLOCKLIST}
+        file_in = {t.strip().lower() for t in WHITELIST}
+        return {"blocklist only in file": file_out - out,
+                "blocklist only in gate": out - file_out,
+                "whitelist only in file": file_in - keep,
+                "whitelist only in gate": keep - file_in}
+
+    def gate_overrides(self) -> list[dict]:
+        """Every term the gate decides DIFFERENTLY from the lists alone.
+
+        `gate_disagreements()` compares the record's own sources and cannot see
+        this one: only 150 of the 4,138 blocked store names are blocked by the
+        exact list, and 3,988 by one of the 69 KEYWORDS, which are rules and are
+        not on the record. A pass saying `in` about a keyword-blocked term
+        therefore contradicts nothing the record holds — and is exactly the
+        finding worth reading, because the `pain` keyword alone takes 429 names,
+        `wound pain` and `Severe distal pain` among them, while WONT defines
+        `painful` as "a degree of wound pain that qualifies its bearer as
+        painful".
+
+        Compared against the files AS THEY ARE. Before an export that is "what
+        the passes changed" -- 581 terms on 2026-09-25. After one it is only what
+        the files CANNOT express, because membership has caught up and precedence
+        has not: an exact-list entry is read behind the whitelist keywords, while
+        a `curator` or `pass` verdict is read ahead of them, so a pass saying
+        `out` about a keyword-whitelisted term blocks it and the exported list
+        alone does not. Four terms on 2026-09-25 (`pain assessment`,
+        `pain-management techniques`, `predictive factors`,
+        `wound healing models`). Anything reading the literal without a gate
+        differs from `Blocker(gate=...)` on exactly those.
+
+        Rows are `{term, was, now, verdict, source, reason, mentions}`, sorted
+        by mentions, so the review starts where the store has most to lose.
+        """
+        from collections import Counter
+
+        from wound_ontology.store.blocker import Blocker
+
+        gate = self.term_mapper._term_mapping
+        plain = Blocker()                       # the lists, with no gate
+        gated = self.cleaner.blocker
+
+        freq: Counter = Counter()
+        for _, rec in self.store.dict.items():
+            ents = rec.get("entities", rec) if isinstance(rec, dict) else {}
+            for name in ents:
+                freq[name] += 1
+
+        rows = []
+        for term in freq:
+            before, after = plain.is_blocked(term), gated.is_blocked(term)
+            if before == after:
+                continue
+            verdict, source = gate.gate_verdict(term)
+            evidence = gate.peek_gate(term).get(source.split("+")[0]) or {}
+            rows.append({"term": term,
+                         "was": "blocked" if before else "kept",
+                         "now": "blocked" if after else "kept",
+                         "verdict": verdict, "source": source,
+                         "reason": evidence.get("reason", ""),
+                         "mentions": freq[term]})
+        rows.sort(key=lambda r: (-r["mentions"], r["term"].lower()))
+        return rows
+
+    def gate_sources(self) -> dict[str, str]:
+        """`lowercased name -> which source condemned it`, for the review sheets."""
+        return {t.strip().lower(): src
+                for t, src in self.term_mapper.gated("out").items()}
 
     def prune_inert_mappings(self, *, dry_run: bool = True) -> dict:
         """Drop entries whose result is what the store would produce anyway.
@@ -896,7 +1097,8 @@ class Orchestrator:
 
     def run_clean_store(self, extra_blocked_entities: set[str] | None = None) -> None:
         """Remove out-of-scope entities, invalid predicates, and empty entities from the store."""
-        cleaner = StoreCleaner(self.allowed_predicates, extra_blocked_entities)
+        cleaner = StoreCleaner(self.allowed_predicates, extra_blocked_entities,
+                               gate=self.term_mapper._term_mapping)
         report = cleaner.clean(self.store)
         StoreCleaner.print_report(report)
 

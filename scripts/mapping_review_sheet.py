@@ -172,7 +172,7 @@ def _free_path(path: Path) -> Path:
     if not path.exists():
         return path
     try:
-        old = pd.read_csv(path).fillna("")
+        old = pd.read_csv(path, keep_default_na=False).fillna("")
     except Exception:
         marks = 1                      # unreadable: assume it matters
     else:
@@ -297,6 +297,7 @@ def main() -> None:
     # Reading and overriding is faster than deciding from nothing, and a rule
     # that can be stated can be argued with; each suggestion carries its reason.
     blocked = p.blocked_names()
+    gate_src = p.gate_sources()
     clash = _category_clashes(p)
     for r in rows:
         why = []
@@ -316,6 +317,11 @@ def main() -> None:
         r["suggested"] = "n" if why else "y"
         r["why"] = "; ".join(why)
         r["blocked canonical"] = ("yes" if r["canonical"].strip().lower() in blocked else "")
+        # WHO condemned it. 201 of the 1,612 families the curator reviewed by
+        # hand had a canonical the blocklist already rejects, and a bare "yes"
+        # would not have told them whether that was their own ruling or a
+        # cosine threshold nobody can account for.
+        r["gate says"] = gate_src.get(r["canonical"].strip().lower(), "")
 
     # Disagreements first inside each section: two independently-evidenced
     # judgements differing is the strongest signal the sheet carries.
@@ -341,6 +347,7 @@ def main() -> None:
             "variation": strongest,
             "process": next((x for x in grp["process"] if x), ""),
             "blocked canonical": next((x for x in grp["blocked canonical"] if x), ""),
+            "gate says": next((x for x in grp["gate says"] if x), ""),
             "canonical is an alt term of": next((x for x in grp["canonical is an alt term of"] if x), ""),
             "passes disagree": int((grp["passes disagree"] == "yes").sum()),
             "LLM reason": next((x for x in grp["LLM reason"] if x), ""),

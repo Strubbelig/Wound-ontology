@@ -741,10 +741,9 @@ both names, and a cycle renames each term onto the other so nothing merges at
 all. `prune` did not catch either — it follows chains to decide whether an entry
 can still fire, and a chain that fires is exactly what it keeps.
 
-`TermMapper.resolve_chains` now re-points every entry onto its terminal and
-breaks each cycle with `canonical_rank` — the same rule `build_from_embeddings`
-uses to pick a cluster's canonical, hoisted to module level so the two cannot
-drift. It runs in `run_build_term_mapping` BEFORE the adjudication, because
+`TermMapper.resolve_chains` re-points every entry onto its concept's canonical.
+*(Rewritten 2026-09-26 — see below; it used to WALK each chain to its terminal,
+which was the wrong shape and could not finish.)* It runs in `run_build_term_mapping` BEFORE the adjudication, because
 collapsing `A -> B -> C` onto `A -> C` creates a pair no model has been asked
 about, and rule 18 says no mapping onto an existing class stands unasked. It
 verifies its own write and raises rather than leaving the file in the state it
@@ -753,21 +752,57 @@ for that term is withdrawn, not walked: the guard's refusal is not to be
 delivered through the back door. On the live file this re-pointed 349 entries,
 broke 1,444 cycles and withdrew 10, leaving 14,131.
 
-The walk folds both sides (rule 13), because the store's lookup does: it tries
-the exact spelling and then `normalize_term`. `deep partial thickness skin
-burns -> deep partial-thickness burns` beside `Deep partial-thickness burns ->
-deep partial-thickness burn wounds` is a chain that one capital letter hides
-from an exact-string walk and does not hide from the store, which found it on
-the next apply. Folding FINDS the chain and never rewrites the label at the end
-of one: two spellings that fold together are one node, so `Povidone Iodine ->
-Povidone-iodine` is left exactly as written — the mapping's spelling of a
-canonical is a decision, and dropping the entry would hand the store the
-unhyphenated fallback.
+It folds both sides (rule 13), because the store's lookup does: it tries the
+exact spelling and then `normalize_term`. `deep partial thickness skin burns ->
+deep partial-thickness burns` beside `Deep partial-thickness burns -> deep
+partial-thickness burn wounds` is a chain that one capital letter hides from an
+exact-string walk and does not hide from the store, which found it on the next
+apply. Folding FINDS the component and never rewrites the label inside one:
+`Povidone Iodine -> Povidone-iodine` is left exactly as written — the mapping's
+spelling of a canonical is a decision, and dropping the entry would hand the
+store the unhyphenated fallback.
+
+**A component, not a walk** *(2026-09-26).* An entry says two spellings are one
+concept, and that claim is TRANSITIVE: `A -> B` and `B -> C` say A, B and C are
+one thing, so "where does A end up" is not a walk, it is "which spelling does
+that one thing go by". Chasing the chain was the wrong shape and it showed —
+the walk ran over FOLDED nodes while the fixed-point check ran over the RAW
+mapping, so **2,206 entries whose first hop folded to one node were invisible to
+the resolution and visible to the check**, and the function raised rather than
+finishing. The mapping is now read as connected components, and a component
+cannot produce a chain or a cycle because every member points at the same
+winner in one hop and the winner points nowhere. Which spelling wins:
+
+* **one sink** — a member nothing points out of — is the canonical the mapping
+  already chose, and it is NOT re-elected. Re-ranking would rename canonicals
+  the curator settled: `wounds -> Wound` beside `wound -> Wound` is a finished
+  star with nothing to resolve.
+* **no sink** is a cycle, and it elects by `canonical_rank`.
+* **several sinks** is two spellings that fold together pointing different ways
+  — `patient-reported outcomes -> patient-reported outcome` beside
+  `Patient-Reported Outcomes -> patient-reported outcome measure`, 27 on the
+  live mapping. Transitivity makes them one thing, so they elect, and the
+  losers are REPORTED: if two sinks really are different concepts the fix is to
+  refuse one of the edges that joined them, not to keep a chain.
+
+Two shapes live inside a single folded node, where the component pass draws no
+edge at all. A **cycle** there (`Co-assembly <-> co-assembly`, 874 after pass 0)
+elects like any other. A **chain** there (`IL‑10 -> Il10 -> il10`, with a
+non-breaking hyphen, the last one standing) flattens onto the node's sink. A
+one-way entry between two spellings is neither, and stays.
+
+A curator's entry is followed, not overruled. They said these two are one
+concept; if the second has since moved, following it is what honours that.
 
 Enforced by: `TermMapper._canonical`, `TermMapper.resolve_chains`,
-`canonical_rank`; `tests/test_mapping_resolve_chains.py` (ten tests,
+`canonical_rank`; `tests/test_mapping_resolve_chains.py` (25 tests,
 mutation-checked: no cycle detection, one hop only, guard ignored, no
-verification, winner by min rank, dry run writing);
+verification, winner by min rank, dry run writing, union over exact strings or
+not at all, the standing canonical re-elected, a cycle not elected,
+target-only spellings given entries, the winner keeping its entry, refusals
+ignored, a finished star resolved anyway, a contested component unreported or
+elected arbitrarily, same-fold cycles or chains left alone, a one-way same-fold
+entry treated as a cycle);
 `test_the_singular_spelling_is_canonical_even_when_rarer`,
 `test_an_anchor_stays_canonical_however_it_is_spelled`,
 `test_the_rule_never_trades_one_concept_for_another`, and
@@ -1637,6 +1672,289 @@ a cache miss that creates records, verdicts left at the term level, a retire
 that deletes, an `add` that ignores a refusal, an `add_batch` that writes one, a
 subsumption view built from one pass or one run, an `import_pass` that
 overwrites a conflict, and a second key format.
+
+## 39. A review carries the curator's decision exactly, or it refuses to carry it
+
+*Decided 2026-09-25.*
+
+A review sheet is the one place a human's judgement enters the pipeline. Every
+step between the box they typed in and the record must be faithful or loud.
+Rehearsing the 2026-09-24 review — 1,612 families decided on a phone — against
+the real data found three ways it was neither.
+
+1. **A target that does not read as a LABEL is refused, not written.** The
+   curator typed `wound healing is a class in the onto and everything should
+   merge into that` into "where does this belong instead". Applied as typed it
+   would have minted a 74-character class name and pointed 995 mentions at it,
+   and nothing downstream could have caught it: `add` takes any string, and a
+   canonical nobody recognises looks exactly like one nobody has curated yet.
+   `review_ui_pull.label_shaped` rejects a target over eight words or holding a
+   finite verb; the run stops and names the family. `--resolve INDEX=VERDICT`
+   is how the reading is then recorded, with the original words kept in `why`,
+   because reading prose is an interpretation and the record should show it.
+
+2. **A decision on a family reaches the CANONICAL too.** 18 of the 19 re-points
+   in that review were a plural canonical being singularised. Moving only the
+   members left `silver-containing dressings` standing beside
+   `silver-containing dressing`, still holding its own mentions — the decision
+   defeated by the shape of the sheet. `expand_families` adds the canonical as a
+   member whenever a correction MOVES the family, and only then: `y` and `n`
+   change no mapping, and a canonical is the target of its pairs, not one of them.
+
+3. **A correction that names two terms is not a reversal.** Case-insensitive
+   matching exists so a curator can type a name back by hand. `type 2 diabetes`
+   gathers both `Diabetes Mellitus type 2` and `diabetes mellitus type 2`, and
+   the correction `Diabetes mellitus type 2` named both — so both rows read
+   themselves as the chosen one and each wrote an inverse entry for the same
+   canonical, the second overwriting the first. Two spellings cannot both be the
+   name typed back, so the fallback fires only when it identifies ONE, matching
+   is scoped to the family, and anything else is a re-point onto what the
+   curator actually wrote, reported by name.
+
+4. **A sheet cell says what it says.** `N/A -> NA` and `Na+ -> NA` are live
+   mapping entries, and pandas reads `NA`, `N/A`, `None`, `null` and `nan` as
+   missing by default. Family 3200 showed in the UI with no canonical and no
+   terms, and `.fillna("")` would have applied any decision on it to the empty
+   string. Every script that reads a review sheet passes
+   `keep_default_na=False`.
+
+5. **An approval is verified like any other write.** `TermMapper.judge` no
+   longer saves — the bulk acceptance wrote 2,105 verdicts and saved the whole
+   4.4 MB record after each one, 9 GB and twenty minutes for a second's work —
+   so the caller saves once. An approval changes no mapping, so the entry reads
+   back identical whether or not it landed; the applier therefore reads the
+   `curator` verdict back off the reloaded file and raises if it is not there.
+
+Enforced by: `scripts/review_ui_pull.py` (`label_shaped`, `parse_resolutions`),
+`scripts/apply_review_sheet.py` (`expand_families`, `decisions().ambiguous`, the
+approval read-back), `scripts/mapping_review_sheet.py` and
+`scripts/review_ui_data.py` (`keep_default_na=False`),
+`wound_ontology/mappers/term_mapper.judge`.
+`tests/test_review_prose_target.py` — 30 tests, mutation-checked against a
+missing length test, a missing verb test, prose applied anyway, the original
+words dropped, an unresolved verdict accepted, an unchecked resolution target,
+and a swallowed positional argument.
+`tests/test_review_family_move.py` — 17 tests, mutation-checked against a
+canonical that never joins its family, one that joins on `y`/`n`, a duplicated
+canonical, an ambiguous correction read as a reversal, an unreported ambiguity,
+matching scoped to the whole sheet, and an exact term that stops winning.
+`tests/test_review_sheet_na_terms.py` — 12 tests, mutation-checked against each
+of the three readers dropping `keep_default_na=False`.
+
+## 40. Whether a term belongs is a verdict on its record, beside where it belongs
+
+*Decided 2026-09-25. Extends rule 38 to the second question asked about a term.*
+
+`TermMapping` became `TermMappingAndGate`, and its record now answers both
+questions anyone asks about a term:
+
+```
+"silver sulfadiazine": {
+  "to": "Silver sulfadiazine", "pairs": { … },      # WHERE it belongs
+  "gate": {                                          # WHETHER it belongs
+    "rule":    {"verdict": "out", "by": "METHODOLOGY_BLOCKLIST",
+                "when": "imported 2026-09-25; provenance unknown"},
+    "pass1":   {"verdict": "out", "score": 0.94, "near": "sulfadiazine assay"},
+    "pass2":   {"verdict": "in",  "reason": "a topical antimicrobial for burns"},
+    "curator": {"verdict": "in",  "reason": …, "when": …}}}
+```
+
+**The failure.** Scope was decided in two Python literals — `METHODOLOGY_BLOCKLIST`
+(7,757 entries) and `WHITELIST` (2,684) — written by a cosine threshold
+(`cos ≥ 0.92` auto-blocks) and an LLM batch, straight into source files. No
+verdict, no reason, no date, no author, so nothing distinguishes an auto-block at
+0.921 from a decision the curator meant. Three consequences, all measured:
+
+* **201 of the 1,612 families the curator reviewed by hand on 2026-09-24 had a
+  canonical the blocklist already rejects.** They approved 167 of them. One
+  family in eight of an evening spent on concepts the pipeline had deleted,
+  because nothing in front of them said so.
+* The list had swallowed `silver sulfadiazine`, `photobiomodulation`,
+  `tissue repair`, `collagen synthesis`, `bone healing` and `vac therapy`.
+* The LLM pass whitelisted every term it did not name
+  (`llm_kept = [e for e in queue if e not in processed]`), so a short answer for
+  a batch of 50 was 50 permanent decisions nobody made.
+
+**The rules.**
+
+1. **Precedence is curator, then the passes, then the rule.** Rule 28 again: an
+   explicit decision outranks a heuristic, and a model is a heuristic.
+2. **Passes that contradict each other decide nothing** and fall through to the
+   rule. That is the whole reason for having two — a disagreement is a question
+   for the curator, and answering it by picking a pass throws away the only
+   signal saying the term needs looking at. `gate_disagreements()` is the queue.
+3. **A `rule` verdict keeps the position the list it came from had** — behind the
+   whitelist keywords. The fold is a MOVE, not a ruling: putting `rule` ahead of
+   the keywords changed two terms (`abusive head trauma`,
+   `absence of vaginal cleansing right before surgery`), and a migration that
+   changes a decision is a migration that lost one.
+4. **The KEYWORD lists are not in the gate and never will be.** A keyword matches
+   strings nobody has seen — `Blocker` applies the 69 of them to all 96,243 store
+   names — so it cannot be a per-term record. Rule 29.
+5. **The collaborator is tested `is not None`, never for truth.**
+   `TermMappingAndGate.__len__` counts the live MAPPING, so a gate holding ten
+   thousand scope verdicts and no mappings is falsy; `if self.gate` turned the
+   gate off and left the lists deciding, silently.
+6. **`gate()` does not save.** A pass writes thousands; the caller saves once,
+   as with `judge` (rule 39.5).
+
+**Verified, not assumed.** After the fold, `Blocker` condemns exactly the same
+**4,138 of the store's 96,243 names** as before, with an identical `score()`
+distribution — the decisions moved and not one of them changed. `blocked_names()`
+now reads `gated("out")`, so a curator who lets a term back in sees it reflected
+in the review sheet, which also gained a `gate says` column naming the source.
+
+7. **The two exact lists are a GENERATED VIEW, and say so.** *(2026-09-25,
+   later.)* `config/blocklist.py` and `config/whitelist.py` are printed from
+   `gated("out")` / `gated("in")` by `term_lists.export_gate_lists`, behind a
+   banner naming the record as the place to change. Every list write in
+   `StoreCleaner` funnels through four methods in `BaseCleaner`, and those now
+   write the record and re-export. A "remove" under a gate is the other half of
+   an append, never a deletion on its own: it confirms the paired write landed
+   and RAISES when called alone, because a silent no-op is what
+   `BlockKeywordList.remove` used to be. Section headers survive because each
+   entry carries `gate.rule.section`; hand-written prose does not, so the two
+   blocks that existed moved above the declarations where module documentation
+   belongs. Verified: membership identical across the round trip for all four
+   lists, and `Blocker` still condemns the same 4,138 names.
+
+8. **The gate matches the way the lists always have.** `TermList.match`
+   lowercases, strips a trailing parenthetical and runs `normalize_term`
+   (rule 13); an exact-match gate answered about `cohort` and said nothing about
+   `Cohort`, and **92,683 of the store's 96,243 names looked undecided to the
+   gate against 77,317 to the lists**. `gate_verdict` now falls back to the
+   normalised spelling — `normalize_term` alone, because it already lowercases
+   and strips, and a second implementation of one rule is the bug family
+   rules 25–29 exist for. Enumeration (`gated`, `gate_disagreements`) uses
+   `own_gate_verdict` and does NOT fall back, or every export would add the
+   alias spellings to the file and the next export would add theirs.
+
+9. **A pass contradicting a KEYWORD is invisible to `gate_disagreements`.** Only
+   150 of the 4,138 blocked store names are blocked by the exact list; 3,988 are
+   blocked by one of the 69 keywords, which are rules and not on the record, so
+   there is nothing on the record for a pass to contradict.
+   `Orchestrator.gate_overrides()` is the view that sees it: every term whose
+   fate the gate changes against the lists alone, with the verdict, the source,
+   the reason and the mention count.
+
+10. **The exported list carries membership, not precedence.** An exact-list
+    entry is matched BEHIND the whitelist keywords; a `curator` or `pass`
+    verdict is matched AHEAD of them. So a pass saying `out` about a
+    keyword-whitelisted term blocks it, and the literal alone does not —
+    4 terms on 2026-09-25. `Blocker(gate=...)` is the authority; a consumer
+    reading `METHODOLOGY_BLOCKLIST` without a gate is reading a good
+    approximation, not the decision. `gate_overrides()` is what lists the gap.
+
+**Not yet done, and named so it is not mistaken for done:** the review of what
+`gate_overrides()` turns up is the curator's, not the passes'. A pass verdict
+outranks every rule by design, so an unreviewed pass 2 run silently rewrites the
+blocklist — which is why the overrides are reported before anything downstream
+consumes them.
+
+Enforced by: `wound_ontology/mappers/term_mapping_and_gate.py`
+(`gate`, `gate_verdict`, `gated`, `gate_disagreements`, `GATE_VERDICTS`,
+`GATE_SOURCES`), `wound_ontology/store/blocker.py` (`gate_verdict`, the order in
+`is_blocked`), `wound_ontology/store/base_cleaner.py` (`gate=`),
+`Orchestrator.blocked_names` / `gate_sources`,
+`scripts/p4_fold_lists_into_gate.py` (the one-time move, SPENT, verified by
+reading back from disk). `tests/test_gate.py` — 34 tests, mutation-checked
+against a curator who does not outrank, contradicting passes that pick one,
+passes that do not outrank the rule, a view ignoring precedence or accepting a
+nonsense verdict, undetected or unordered disagreements, an unknown source or
+verdict accepted, a gate that saves per verdict, truthiness instead of
+`is not None`, a Blocker ignoring the gate, a `rule` verdict jumping the
+whitelist keywords, and a `peek_gate` that creates a record.
+
+## 41. Pass 0: a rule settles it, or nothing does
+
+*Decided 2026-09-25, extended 2026-09-26.*
+
+Before any SapBERT call and before any model call, the deterministic methods are
+exhausted. A model is never paid to notice that `Surgical Site Infection` and
+`surgical site infections` are one thing.
+
+**The failure.** The mapping was matching spellings with embeddings and an
+adjudicator, and the curator kept seeing plural-to-singular merges come back as
+model verdicts. Measured on the 2026-09-25 store: of 96,243 terms, **9,650 are a
+pure spelling variant of another** — 5,638 needing only the singular rule, 3,027
+case alone, 584 a hyphen, 272 British spelling — and the mapping had found
+2,820. The other 6,830 were queued for a model.
+
+**The four steps, in this order** (`mappers/pass0.py`):
+
+1. the head noun to the singular (`singular_spelling`, rule 23a);
+2. British to American (`utils/spelling.py`);
+3. case, hyphens and punctuation folded (`fold`);
+4. group on the result; every member maps onto one spelling.
+
+Singular BEFORE spelling. `Statistical Analyses` becomes `Statistical Analysis`
+and the noun never reaches the British-verb reading of `analyses` that `breame`
+answers with `analyzes`, which would then singularise to `analyze`.
+
+**The rules.**
+
+1. **Two layers for spelling, and the second needs evidence.** `breame` is a
+   dictionary of known pairs and knows what not to touch — `exercise`,
+   `surprise`, `advertise`, `comprise`, `expertise` all survive it. It is
+   general English, so it misses `oedema`, `haematoma`, `ischaemia`,
+   `epithelialisation`. The morphological patterns that catch those are
+   guarded twice: nothing above Zipf 4.5 is touched, and the candidate must be
+   strictly commoner than the original. Guarded only by "the result occurs in
+   the corpus" they produced `toe -> te`, `four -> for`,
+   `anaerobic -> anerobic` and `expertise -> expertize` — the last because a
+   typo in one abstract made `expertize` occur. **The corpus is not evidence.**
+2. **A dictionary is not evidence either.** `/usr/share/dict/words` is Webster
+   1934; it lists `oesophageal` as ordinary English and blocked a rewrite that
+   should happen. Frequency says which spelling won; a wordlist says which was
+   once standard.
+3. **`breame` is wrong about five medical words** and they are held back:
+   `disc` (intervertebral, optic, and DISC DIFFUSION), `aesthetic` (the
+   American Society for *Aesthetic* Plastic Surgery), `gases` (the plural;
+   `gasses` is the verb), `gauge`, `fillet`. Found by listing all 144
+   conversions the corpus triggers and reading them.
+4. **The canonical is chosen by `canonical_rank`, which must be a TOTAL order.**
+   `Derived Indices` and `derived indices` tie on anchor, frequency, word count
+   and length, and `max()` over a set then returns whichever the process's hash
+   seed iterated first. Two runs chose different canonicals; pass 0 found it by
+   failing to converge, wanting to rewrite 773 groups it had just written. The
+   term itself is now the last component of the rank.
+5. **An ontology label is never respelled.** It wins as canonical (rule 36) and
+   is kept exactly as the ontology writes it, plural or not. Rule 23a is advice
+   to the curator, not a licence to rewrite what they wrote.
+6. **A lone spelling is respelled too** *(2026-09-26, the curator's call)*.
+   `wounds` with no `wound` anywhere still becomes `wound`. Counted apart from
+   the groups, because settling a choice between spellings and rewriting the
+   only spelling there is are different acts: 22,724 of the former, 9,578 of
+   the latter.
+7. **`fold` strips a trailing parenthetical, so the group is checked before it
+   is merged.** `vitamin (role)` is not `vitamin` — a role class is not the
+   substance. Exactly one group on this corpus, and it is that one.
+8. **The target is followed to its end before it is written.** Pass 0 picks a
+   canonical from the spellings it can see, and that spelling may already be
+   mapped onward, often by a curator whose entry pass 0 must not touch. Writing
+   the pair anyway makes a CHAIN, and `ConceptStore.normalize` follows exactly
+   one hop, so the merge half-lands. A curator's entry is followed rather than
+   overruled: they said these two are one concept, and if the second has moved,
+   following it is what honours that.
+9. **It is idempotent**, so it runs after extraction and again before matching.
+   Two iterations reach a fixed point on the live store.
+
+**Known limitation, measured:** a title-cased acronym plural does not fold onto
+the acronym. `singularize('dfus')` is `'dfus'` — the stem is not a word, so no
+suffix rule recognises it — and the extractor title-cases acronyms, so `Dfus`
+cannot reach `DFU`. **8 terms** on this corpus; pinned by an `xfail`.
+
+Enforced by: `wound_ontology/mappers/pass0.py`,
+`wound_ontology/utils/spelling.py`, `Orchestrator.run_pass0_normalise`,
+`canonical_rank`. `tests/test_pass0.py` — 32 tests, mutation-checked against a
+missing singular or spelling step, the steps reordered, a missing or
+always-firing parenthetical guard, an anchor that loses or gets respelled,
+already-mapped or curator-ruled pairs overwritten, unfixed iteration order, a
+singleton left alone, a self-mapping, an unfollowed target and an unterminated
+walk. `tests/test_spelling.py` — 96 tests, mutation-checked against a missing
+`breame` layer, a missing frequency floor or comparison, dropped casing, each
+pattern family removed, the medical exceptions dropped, and the unanchored
+`our` rule removed or unguarded.
 
 ## Adding to this file
 

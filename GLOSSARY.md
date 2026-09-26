@@ -77,11 +77,25 @@ branches. Evidence of either a wrong merge or a wrong typing; both matter.
 
 ---
 
-## The term mapping
+## The term mapping and the gate
 
-**term mapping** — `data/cache/term_mapping_*.json`. Since 2026-09-24 it is the
-**ground truth**: one record per term holding everything ever decided about it.
-The plain `term -> canonical` dict everything applies is a *view* of it.
+**term mapping** — `data/cache/term_mapping_*.json`, held by
+`TermMappingAndGate`. Since 2026-09-24 it is the **ground truth**: one record per
+term holding everything ever decided about it. The plain `term -> canonical` dict
+everything applies is a *view* of it. The file name did not change with the
+class, and must not: it is how `DataManager` finds the record.
+
+**gate** — the second half of a record, added 2026-09-25: is this term a concept
+the ontology carries at all? Verdicts are `in` or `out`, from four sources in
+order of strength — `curator`, `pass2`, `pass1`, `rule`. Where the *mapping* asks
+where a term belongs, the gate asks whether it belongs, and both answers now sit
+on one record so a review can show them together.
+
+**gate source `rule`** — an entry imported from `METHODOLOGY_BLOCKLIST` or
+`WHITELIST` on 2026-09-25, labelled *provenance unknown*, because that is what it
+is: those lists were written by a cosine threshold and an LLM batch with no
+record of either. A `rule` verdict keeps the position in `Blocker` that its list
+had; a `curator` or `pass` verdict, being new evidence, goes ahead of everything.
 
 **ground truth** vs **view** — the ground truth is the one file a fact is stored
 in. A view is computed from it whenever asked and never stored, so it cannot go
@@ -214,7 +228,10 @@ consequence: the top 101 rows move half of everything.
 
 **methodology blocklist** — 7,757 names that are not clinical content
 (`randomized controlled trial`, `SPSS`). Applied at *extraction*, by exact
-lowercase name, and never again.
+lowercase name, and never again. Since 2026-09-25 its entries also live on the
+records as `gate.rule` verdicts, and `Blocker` reads the gate first; the literal
+in `config/blocklist.py` is still what `BlockList` loads, so the two are two
+writers until it becomes a generated view.
 
 **keyword blocklist / whitelist** — short words matched inside a name, whole-word
 only (rule 27: `rct` must not match "infa**rct**ion"). The whitelist protects names
@@ -223,9 +240,12 @@ the blocklist would otherwise catch.
 **noise term** — a name rejected by shape rather than by a list (empty, numeric,
 punctuation).
 
-**blocked canonical** — a mapping whose target is on the blocklist. Renaming a good
-term onto one resurrects the blocked name in the store and queues the whole family
-for deletion.
+**blocked canonical** — a mapping whose target the gate answers `out`. Renaming a
+good term onto one resurrects the blocked name in the store and queues the whole
+family for deletion. The review sheet's `gate says` column names which source
+condemned it, because 201 of the 1,612 families the curator reviewed by hand on
+2026-09-24 had one and a bare `yes` could not say whether that was their own
+ruling or a threshold nobody can account for.
 
 ---
 

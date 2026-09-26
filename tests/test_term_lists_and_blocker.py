@@ -205,6 +205,12 @@ class TestBlocker:
         b.block_kw._terms    = frozenset({"regression"})
         b.white_kw._terms    = frozenset({"wound care"})
         b.suspicious._terms  = frozenset({"study"})
+        # This double bypasses __init__, so every collaborator Blocker gains has
+        # to be named here. It went red the moment `gate` was added, which is
+        # the double doing its job -- `getattr(self, "gate", None)` in the class
+        # would have hidden exactly that. The gate's own behaviour is in
+        # tests/test_gate.py; here it is absent, and the lists decide.
+        b.gate = None
         return b
 
     def test_noise_term_is_blocked(self, blocker):

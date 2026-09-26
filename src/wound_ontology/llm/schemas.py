@@ -58,6 +58,28 @@ class ScopeCheckResponse(BaseModel):
     inappropriate: list[str]  # entity names from the input that are out of scope
 
 
+class GateVerdict(BaseModel):
+    """One term, judged in or out, with the reason."""
+
+    term: str
+    verdict: str          # "in" | "out"
+    reason: str = ""
+
+
+class GateBatchResponse(BaseModel):
+    """A verdict FOR EVERY TERM in the batch.
+
+    `ScopeCheckResponse` returns only the out-of-scope names, so a term the
+    model omitted is indistinguishable from one it judged in scope -- and
+    `review_susp_entities` whitelisted every omission, which meant a short or
+    truncated answer for a batch of 50 was 50 permanent decisions nobody made.
+    Asking for an explicit verdict per term makes silence visible: a term absent
+    from `verdicts` gets no gate verdict at all, and is asked again.
+    """
+
+    verdicts: list[GateVerdict]
+
+
 class MereRelationResult(BaseModel):
     child: str
     parent: str
