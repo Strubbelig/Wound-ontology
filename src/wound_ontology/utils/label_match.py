@@ -90,6 +90,17 @@ _INVARIANT: frozenset[str] = frozenset({
     "caries", "facies", "species", "series", "gas", "bias", "lens", "news",
     "genetics", "orthopedics", "pediatrics", "obstetrics", "diagnostics",
     "physics", "ethics", "statistics", "logistics", "mechanics",
+    # Latin present participles used as species epithets, and a few Latin
+    # nouns. They end -ans/-ens exactly as `clinicians`, `pathogens`,
+    # `specimens` and `regimens` do, and no suffix rule separates them, so
+    # they are listed for the same reason `_ES_STEM_IS_SINGULAR` is. Every
+    # one of these is in the 2026-09-26 store, being turned into a word that
+    # does not exist: `Candida albican`, `Serratia marcescen`,
+    # `Clostridium perfringen`, `thromboangiitis obliteran`.
+    "albicans", "marcescens", "perfringens", "corrodens", "obliterans",
+    "xylosoxidans", "ulcerans", "protuberans", "elegans", "necessitans",
+    "dissecans", "simulans", "adiacens", "sapiens",
+    "glans", "dens", "pseudomonas", "erysipelas",
 })
 
 #: Endings that look plural but are not. "sepsis", "dermis", "abscess",
@@ -256,6 +267,23 @@ def singular_spelling(label: str) -> str:
         # plural. They are section headings the methodology blocklist is meant
         # to keep out of the store in the first place, so this is the right
         # trade: an acronym is content and a heading is noise.
+        return label
+    if core[1:] != core[1:].lower():
+        # A token with an INTERNAL capital is an acronym or a chemical name --
+        # `miRNAs`, `microRNAs`, `iGAS`, `PrUMS`. Its case is not ours to
+        # normalise, and the round trip through the lowercase `naming_singular`
+        # was destroying it: `miRNAs` came back `mirna` and `iGAS` came back
+        # `iga`. Only a trailing LOWERCASE s is a plural on such a token; a
+        # trailing capital S is part of it.
+        if len(core) > 1 and core.endswith("s"):
+            return " ".join(words[:-1] + [core[:-1] + trailing])
+        return label
+    if core.endswith(("'s", "\u2019s", "'", "\u2019")):
+        # A genitive is not a plural. `naming_singular` read the final s of
+        # `patient's` as one and answered `patient'` -- a name no one would
+        # ever write. The same shape covers a quoted phrase, where the head is
+        # `'wound'`. 17 store names on the 2026-09-26 corpus: `patient's`,
+        # `fibroblasts'`, `growth factors'`, `'machine learning'`.
         return label
     lowered = core.lower()
     single = naming_singular(lowered)

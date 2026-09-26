@@ -1,7 +1,7 @@
 # GENERATED FILE - DO NOT EDIT BY HAND.
 # Regenerate with:  python scripts/build_extraction_schema.py
 # Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)
-# Generated:        2026-09-18
+# Generated:        2026-09-26
 id: https://w3id.org/wont/extraction
 name: wont-extraction
 title: WONT/MILD-derived extraction schema
@@ -150,7 +150,7 @@ enums:
       PATHOLOGICAL_DISORDER:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120022
         title: "pathological disorder"
-        description: "a disorder is an abnormal presence or organisation of material components — including the limiting case where the abnormal organisation consists in a normally-present component being absent."
+        description: "a disorder is an abnormal presence or organization of material components — including the limiting case where the abnormal organization consists in a normally-present component being absent."
       COMPOUND_PATHOLOGICAL_DISORDER:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120049
         title: "compound pathological disorder"
@@ -193,9 +193,9 @@ enums:
       ANTISEPTIC_METAL_ION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000022
         title: "Antiseptic metal ion"
-      ANTISEPTIC_PHENOL_DERIVATIVES:
+      ANTISEPTIC_PHENOL_DERIVATIVE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000025
-        title: "Antiseptic phenol derivatives"
+        title: "Antiseptic phenol derivative"
       ANTISEPTIC_SOLUTION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000026
         title: "Antiseptic solution"
@@ -574,9 +574,9 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000336
         title: "trace element"
         description: "A material entity that bears the role nutrient."
-      TRANSPARENT_POLYURETHANE_FILMS:
+      TRANSPARENT_POLYURETHANE_FILM:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000337
-        title: "Transparent polyurethane films"
+        title: "Transparent polyurethane film"
       TRAUMATIC_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339
         title: "Traumatic wound"
@@ -714,7 +714,7 @@ enums:
       MALIGNANCY:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000465
         title: "Malignancy"
-        description: "A neoplasm whose constituent cells are disposed to invade surrounding tissue or to metastasise."
+        description: "A neoplasm whose constituent cells are disposed to invade surrounding tissue or to metastasize."
       ANGIOPATHY:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000466
         title: "Angiopathy"
@@ -722,7 +722,7 @@ enums:
       DIABETIC_METABOLIC_DISORDER:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000467
         title: "Diabetic metabolic disorder"
-        description: "A pathological disorder consisting in the abnormal organisation of the insulin-secreting or insulin-responsive tissues of a patient, such that glucose homeostasis is not maintained."
+        description: "A pathological disorder consisting in the abnormal organization of the insulin-secreting or insulin-responsive tissues of a patient, such that glucose homeostasis is not maintained."
       VENOUS_INSUFFICIENCY_DISORDER:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000468
         title: "Venous insufficiency disorder"
@@ -738,7 +738,7 @@ enums:
       ABSCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000472
         title: "Abscess"
-        description: "A pathological disorder consisting in a localised collection of purulent material within a bodily structure, surrounded by inflamed and granulating tissue."
+        description: "A pathological disorder consisting in a localized collection of purulent material within a bodily structure, surrounded by inflamed and granulating tissue."
       MUCOSAL_BLISTER:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000473
         title: "Mucosal blister"
@@ -809,7 +809,7 @@ enums:
       DIRTY_WOUND_ACCORDING_TO_CDC:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000526
         title: "Dirty wound according to CDC"
-        description: "A wound with microbial burden assessed according to CDC that is an old traumatic wound with retained devitalised tissue, or one that involves existing clinical infection or perforated viscera."
+        description: "A wound with microbial burden assessed according to CDC that is an old traumatic wound with retained devitalized tissue, or one that involves existing clinical infection or perforated viscera."
       CLEAN_WOUND_ACCORDING_TO_IWII:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000527
         title: "Clean wound according to IWII"
@@ -987,11 +987,11 @@ enums:
       REDDENED:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000456
         title: "reddened"
-        description: "A colour that qualifies its bearer as reddened."
+        description: "A color that qualifies its bearer as reddened."
       LIVID:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000457
         title: "livid"
-        description: "A colour that qualifies its bearer as livid."
+        description: "A color that qualifies its bearer as livid."
       SOFTENED:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000458
         title: "softened"
@@ -1077,9 +1077,9 @@ enums:
       WOUND_PROTECTION_FUNCTION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120000
         title: "wound protection function"
-      WOUND_SIGNALLING_FUNCTION:
+      WOUND_SIGNALING_FUNCTION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120001
-        title: "wound signalling function"
+        title: "wound signaling function"
       FIRST_WOUND_DRESSING_LAYER_FUNCTION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120002
         title: "first wound dressing layer function"
@@ -1121,7 +1121,7 @@ enums:
       PHYSICIAN_ROLE:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120093
         title: "Physician role"
-        description: "A healthcare provider role that inheres in a person in virtue of that person being licensed to practise medicine."
+        description: "A healthcare provider role that inheres in a person in virtue of that person being licensed to practice medicine."
       WOUND_EXPERT_ROLE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000403
         title: "Wound expert role"
@@ -1134,10 +1134,10 @@ enums:
       THERAPEUTIC_ROLE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000582
         title: "therapeutic role"
-      LOCAL_ANAESTHETIC_DRUG_ROLE:
+      LOCAL_ANESTHETIC_DRUG_ROLE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000585
-        title: "local anaesthetic drug role"
-        description: "A clinical drug role borne by a substance used to produce local anaesthesia."
+        title: "local anesthetic drug role"
+        description: "A clinical drug role borne by a substance used to produce local anesthesia."
   TendencyTerm:
     description: >-
       Existing 'tendency' classes in MILD/WONT. Ground to one of these when the
@@ -1187,12 +1187,12 @@ enums:
         title: "disease diagnostic result"
         description: "An information content entity that classifies or groups one or more pathological disorders according to diagnostic criteria. Names such as 'substance use disorder' can denote this diagnostic layer when used as DSM/ICD-style categories or results; this diagnostic use is distinct from any material disease entity in the patient."
         aliases: ["diagnosis"]
-      CONFIRMED_DISEASE_DIAGNOSTIC_RESULT_BY_NOT_COMPLETELY_OBJECTIVE_CRITERIA:
+      CONFIRMED_DISEASE_DIAGNOSTIC_RESULT_BY_NOT_COMPLETELY_OBJECTIVE_CRITERION:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120026
-        title: "confirmed disease diagnostic result by not completely objective criteria"
-      CONFIRMED_DISEASES_DIAGNOSTIC_RESULT_BY_OBJECTIVE_CRITERIA:
+        title: "confirmed disease diagnostic result by not completely objective criterion"
+      CONFIRMED_DISEASES_DIAGNOSTIC_RESULT_BY_OBJECTIVE_CRITERION:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120027
-        title: "confirmed diseases diagnostic result by objective criteria"
+        title: "confirmed diseases diagnostic result by objective criterion"
       DISEASE_THRESHOLD_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120029
         title: "disease threshold specification"
@@ -1459,7 +1459,7 @@ enums:
       WOUND_HEALING_PHASE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000561
         title: "Wound healing phase"
-        description: "A wound classification grade of the scheme that divides wound healing into phases (hemostasis, inflammatory, proliferative, remodelling). The phases are labels assigned to stretches of the healing process, not processes themselves; each is about the processes it groups."
+        description: "A wound classification grade of the scheme that divides wound healing into phases (hemostasis, inflammatory, proliferative, remodeling). The phases are labels assigned to stretches of the healing process, not processes themselves; each is about the processes it groups."
       PROPHYLACTIC_ANTIBIOTIC_THERAPY_PLAN_SPECIFICATION:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000569
         title: "Prophylactic antibiotic therapy plan specification"
@@ -1614,9 +1614,9 @@ enums:
       KELOID_DEVELOPMENT_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000171
         title: "Keloid development process"
-      PROCESS_OF_ADMINISTERING_A_LOCAL_ANAESTHETIC_AGENT:
+      PROCESS_OF_ADMINISTERING_A_LOCAL_ANESTHETIC_AGENT:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000176
-        title: "Process of administering a local anaesthetic agent"
+        title: "Process of administering a local anesthetic agent"
       MECHANICAL_WOUND_DEBRIDEMENT_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000190
         title: "Mechanical wound debridement process"

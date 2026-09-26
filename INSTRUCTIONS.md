@@ -1867,7 +1867,10 @@ whitelist keywords, and a `peek_gate` that creates a record.
 
 ## 41. Pass 0: a rule settles it, or nothing does
 
-*Decided 2026-09-25, extended 2026-09-26.*
+*Decided 2026-09-25, extended 2026-09-26. **Where its answers are written
+changed on 2026-09-26 — see rule 43.** Everything below about WHICH spelling
+wins still stands; what changed is that the answer is applied to the label
+rather than recorded as a mapping entry.*
 
 Before any SapBERT call and before any model call, the deterministic methods are
 exhausted. A model is never paid to notice that `Surgical Site Infection` and
@@ -1955,6 +1958,316 @@ walk. `tests/test_spelling.py` — 96 tests, mutation-checked against a missing
 `breame` layer, a missing frequency floor or comparison, dropped casing, each
 pattern family removed, the medical exceptions dropped, and the unanchored
 `our` rule removed or unguarded.
+
+## 42. A normalisation runs until it stops moving, and a spelling it mints is not assumed to exist
+
+**Decided 2026-09-26.**
+
+Two halves of one mistake, both found by the same crash.
+
+**(a) One pass is not a fixed point.** The mapper groups terms by `fold` and
+names each group with `_canonical`, which may MINT a spelling per rule 23a. A
+minted spelling need not fold to the key of the group that minted it:
+`multi-drug resistant bacterias` folds to `multi drug resistant bacteria` and
+mints `multi-drug resistant bacteria`, whose own fold is
+`multi drug resistant bacterium` — the key of a **different** group, the one
+holding `multi-drug-resistant bacterium`. One pass leaves them as two terms and
+sends both to SapBERT as two concepts.
+
+Measured on the 2026-09-26 corpus: **649 of 90,435 groups** mint a canonical
+that belongs to another group, and **16 pairs of canonicals fold together** —
+`Autoimmune disease`/`autoimmune disease`,
+`mitogen-activated protein kinase`/`mitogen activated protein kinase`,
+`foreign-body response`/`foreign body response`. Folding again until the set
+stops moving takes **3 rounds** and removes **622** spellings from the 90,435
+sent to the model.
+
+This is rule 41's ninth clause — *it is idempotent* — applied to the mapper,
+and the curator's transitivity rule of 2026-09-25: a term folded in round 1
+onto a spelling round 2 folds again must end at the **final** spelling, not the
+intermediate. Follow every chain to its end; a chain that closes on itself maps
+nothing and is reported, never dropped in silence.
+
+**(b) A canonical is not necessarily an embedded term.** The clustering is
+indexed by the terms that went to the model. A minted canonical is in no
+cluster, so `assignment[c]` and `term_to_idx[c]` have no entry for it. Two
+builds died there — first the forest assertion, then the metadata step — each
+after fifty minutes of embedding. The canonical maps to itself; an identity
+entry needs no metadata, because it is dropped from the merges anyway; and a
+merge **onto** a minted spelling is scored against the cluster member the
+spelling was minted from, which is embedded. A confidence nobody computed is
+never written: if that member is unknown too, it raises.
+
+With (a) in force the clustered path mints nothing at all — measured: 0 of
+89,813 — so (b) is defence, and it is exercised by a normaliser that oscillates
+on purpose.
+
+**A cache that outlives one run must not be writable by a test.** The vector
+store keeps one row per term forever, so a unit test embedding `alpha one` with
+a toy embedder would put a made-up vector under a real name and the next real
+run would reuse it instead of asking SapBERT. An autouse fixture redirects the
+store for the whole suite. The previous cache was keyed by the whole term list
+and could only be hit by an identical list, which is why this hazard is new.
+
+Enforced by: `TermMapper.build_from_embeddings` (the fold rounds, the chain
+resolution, `minted_from`), `TermMapper._embeddings_for` and
+`_vector_store_paths`, and `tests/conftest.py`'s
+`_vector_store_stays_out_of_data_cache`. `tests/test_term_mapper.py` — 5 tests,
+mutation-checked against a single fold round, no chain resolution, a store that
+is never reused or is trusted when its rows and names disagree, identity
+entries not skipped, the canonical index looked up without a guard, a silent
+non-convergence, a silent cycle, and a minted canonical with no self-entry.
+
+
+## 43. Pass 0 renames the label, and it renames it everywhere a term string lives
+
+**Decided 2026-09-26.** The curator: *pass 0 should not create another mapping,
+it should change the labels right at the spot* — and then *it should be applied
+to the concept store AND the termmapping dict just to make sure nothing slipped
+through*.
+
+**What it replaced.** Pass 0 wrote its answers into the term mapping: 32,302
+entries of the form `Surgical Site Infections -> Surgical Site Infection`. Two
+costs, both paid elsewhere.
+
+The record a curator reads filled up with mechanical respellings, burying the
+few hundred decisions that need eyes — the same complaint that already kept
+identity entries out of the file, arriving through a different door.
+
+And the store went on holding the spelling the extractor produced, so every
+later step had to carry the mapping around to know what a term was really
+called. The term-mapping build had to inject **23,220 canonicals that were not
+store strings** into its clustering, with frequencies borrowed from whatever
+pointed at them, purely because pass 0's answers lived in the mapping instead
+of in the store. That injection is what pushed the term set past 121,000 and
+into the two crashes of rule 42.
+
+**The rule.** Pass 0 produces RENAMES, and applies them in place:
+
+* **the concept store** — entity names, the target half of every predicate
+  triple, and the keys of both verdict books, all in one traversal. They have
+  to move together: a rejection written against `diabetic foot ulcers` stops
+  applying the moment the entity is renamed, and the term comes back. Two names
+  landing on one keep the strongest evidence per triple, and the first verdict.
+  Every rename is stamped in the store's own `renamed` book with `by="pass0"`,
+  so the extractor's spelling stays recoverable — nothing is deleted (rule 33).
+* **the term mapping** — the record's key, its live target, the canonicals its
+  `pairs` are keyed by, and its gate section. All four, or the record comes
+  apart: the verdicts are about a PAIR, so respelling a canonical without them
+  detaches every judgement a model or a curator ever made about it. Two records
+  landing on one key merge, first-come winning every tie; two that point at
+  DIFFERENT canonicals are a real disagreement and are reported, never resolved
+  quietly; an entry whose target has become its own key is **deleted**.
+
+**A gate source that contradicts ITSELF across merged spellings decides
+nothing.** Merging two records folds their gate verdicts together, and the
+first version let first-come win per source — so when two spellings of one term
+carried the same source answering differently, one side vanished. **10 of them
+on the 2026-09-26 data**: `pain score`, `pain assessment`, `pain-management
+technique`, `predictive factor`, `traditional measurement` and `injury model`,
+where pass 2 said `in` of one spelling and `out` of another; and
+`quality-adjusted life year`, `quick disability of the arm, shoulder and hand`,
+`self-injection of paraffin` and `wide-awake local anesthesia no tourniquet
+technique`, where the imported lists had the same concept on the blocklist
+under one spelling and the whitelist under another — invisible until pass 0
+merged the spellings.
+
+Contradicting passes already decide nothing and fall through, because a
+disagreement is the only signal that says a term needs a person (rule 40). A
+source contradicting itself is the same situation, so it is treated the same
+way: the source is removed from the gate, both sides are kept in
+`gate_contested`, and the count is printed. Merging spellings turned ten
+invisible contradictions into ten visible questions, which is the point; the
+one thing it must not do is pick one quietly.
+
+**An identity mapping is deleted, not retired** (curator, 2026-09-26: *you can
+delete the sole spelling mappings — after normalising they are identity
+mappings*). Rule 37 keeps a retired entry because it carries verdicts that cost
+credits to obtain, and that reasoning does not reach here: a verdict about the
+pair *(term, term)* is a verdict about the spelling question pass 0 has just
+settled by rule. The record goes with the entry **unless** it also carries a
+gate verdict (whether the term belongs at all, rule 40) or a judgement about
+some OTHER canonical — those are different decisions that happen to live on the
+same record, and both counts are reported separately.
+
+**The per-label half runs at ingestion** (curator, 2026-09-26: *it should be run
+after every concept extraction on the new extract*). `clean_entity_str` and
+`clean_target_str` — the one gate every ingestion path goes through — apply the
+singular and American rules the moment an extract arrives, because they are a
+pure function of the label and have no reason to wait for a maintenance pass.
+The half that elects one spelling per group still needs the whole store and
+still runs as that pass. Those two functions had been byte-identical copies of
+each other, which is how the store came to hold `Tumor` as a subject beside
+`Tumours` as an object.
+
+**Only one of the two would be worse than either.** Normalising the store alone
+leaves the mapping holding spellings the rules reject, and the next apply puts
+them back.
+
+**Two guards moved.** A refusal on record used to be enforced by `add_batch` on
+the way into the mapping. Nothing writes to the mapping any more, so pass 0
+checks refusals and curator rulings itself — a rule does not overrule a person
+(rule 28). A declared BFO category keeps the spelling BFO gives it (rule 22).
+
+**Chains are revealed, not created.** `A -> B` beside `b -> C` was already a
+chain, because `B` and `b` are one term and the spelling hid it. The count of
+live entries whose target is itself a key is reported after every rename, so
+`resolve_chains` is known to be owed rather than discovered downstream.
+
+Enforced by: `mappers/pass0.pass0_renames`, `ConceptStore.apply_renames` and
+the `_rewrite_names` traversal it shares with `normalize`,
+`TermMappingAndGate.apply_renames`, `Orchestrator.run_pass0_normalise` (which
+reads both files back off disk and raises if a renamed spelling survives in
+either). `tests/test_pass0.py` and `tests/test_pass0_applies_in_place.py` —
+16 mutations, all caught: targets or verdict keys left behind, renames not
+recorded, weaker evidence winning a merge, mapping keys, targets or pair
+canonicals not renamed, a merge that overwrites instead of absorbing, a gate
+dropped on a merge, identities left live, target conflicts resolved in silence,
+chains uncounted, refusals or curator rulings ignored, declared categories
+elected against, and mapping-only strings left out of the grouping.
+
+
+## 44. One normaliser
+
+**Decided 2026-09-26.** The curator, watching the third one being debugged:
+*why are there several functions for normalising? One is enough.*
+
+There were three — `normalised_label`, `group_key` and `character_key` — each
+hand-rolling the same steps in its own order. Every bug in them was the same
+bug: a new one disagreeing with the old ones about where a step goes. In one
+afternoon that produced four, all on live data:
+
+| symptom | disagreement |
+|---|---|
+| `Ulcers (DFU)` never reached `ulcer` | parenthetical stripped *after* singularising |
+| `Case` and `cases` read as two strings | the *lookup* singulariser (`cases` → `cas`) instead of the naming one |
+| `DFU` and `DFUs` held apart | lowercased *before* the acronym rule could fire |
+| `OUTCOME MEASURES` held apart from `outcome measure` | lowercased *after* it |
+
+So the order of the steps, and what each class of character is worth, live in
+exactly one function — `utils/normalise.normalise(label)` — which answers three
+questions at once because they are three projections of one pipeline:
+
+* **`name`** — what the term should be CALLED. Singular head (rule 23a), then
+  British to American (rule 41), in that order, keeping the writer's case and
+  any parenthetical.
+* **`key`** — what two spellings of one term SHARE. `fold` of the name, so the
+  singular and British rules are already applied and two spellings cannot
+  disagree about them.
+* **`strict`** — the key, keeping every character `fold` would throw away.
+
+`strict` earns its place: `normalize_term` strips *all* punctuation, and that is
+how `Na+` meets `NA`, `Phase I/II` meets `Phase III`, `JAK/STAT` meets `Jakstat`
+and `P < 0.05` meets `P > 0.05`. Two labels with the same `key` and a different
+`strict` are not two spellings of one term, they are two terms that met by
+losing a character. Pass 0 **splits** such a group rather than refusing it —
+one odd member (`patient's` beside `Patients`, `patient`, `patients`) used to
+hold the whole group back, 1,132 of them on live data.
+
+The three fields are computed on first use and held, because the ingestion path
+asks for `name` 179,000 times and never wants the other two.
+
+**Not collapsed, and why:** `normalize_term`, `fold`, `singularize` and
+`naming_singular` remain. They are the *steps* this function is built from, not
+competing answers to the same question, and `fold` in particular is the key
+every other index in the project is already written against. Folding them in
+would change stored keys, so it is a measurement, not a refactor.
+
+**What the ontology labels taught the singulariser.** Checking all 1,888 labels
+in WONT, MILD and the imported modules against the normaliser — a test set it
+had never seen — found two defects that were live in the store from the moment
+ingestion started normalising:
+
+* **Latin present participles used as species epithets** end `-ans`/`-ens`
+  exactly as `clinicians`, `pathogens`, `specimens` and `regimens` do, and no
+  suffix rule separates them. The store held `Candida albican`, `Serratia
+  marcescen`, `Clostridium perfringen`, `thromboangiitis obliteran`,
+  `Achromobacter xylosoxidan`, `Mycobacterium ulceran`, `Pseudomona`,
+  `erysipela`, `glan`, `den`. Listed in `_INVARIANT`, for the same reason
+  `_ES_STEM_IS_SINGULAR` is a list.
+* **A token with an internal capital** is an acronym or a chemical name and its
+  case is not ours to normalise. The round trip through the lowercase
+  `naming_singular` was destroying it: `miRNAs` came back `mirna` and `iGAS`
+  came back `iga`. Only a trailing LOWERCASE `s` is a plural on such a token; a
+  trailing capital `S` is part of it.
+
+**The ontology's own labels are not normalised** (measured 2026-09-26, and the
+reason is in the data). Of the 58 changes the normaliser would make to the
+imported modules, **every one is wrong**: 20 are OBO relation labels, which are
+verbs by convention (`regulates` → `regulate`, `precedes` → `precede`); two are
+proper nouns (`Waters` is Waters Corporation, `Helicos` is Helicos
+BioSciences); eleven are ChEBI class plurals that name a class of derivatives
+and are distinct from the singular class; four are taxa (`Bacteria` →
+`Bacterium`, `Homo sapiens` → `Homo sapien`); and four are not class labels at
+all but `rdfs:label` on anonymous axiom-annotation nodes. Editing them would
+also mean the modules no longer match upstream, which is the one thing module
+extraction exists to guarantee.
+
+There is no matching problem to fix by doing it: the anchor match goes through
+`key`, which normalises both sides identically, and rule 36 keeps the ontology's
+own spelling as the canonical. The one real consequence runs the other way —
+WONT's four British labels pull the store back to British against rule 41 — and
+that is a curation decision about four labels in a curated file, not a pipeline
+step.
+
+Enforced by: `utils/normalise.py`, `ConceptStore.clean_entity_str` /
+`clean_target_str`, `utils/label_match._INVARIANT` and `singular_spelling`.
+`tests/test_pass0.py`, `tests/test_pass0_applies_in_place.py`,
+`tests/test_naming_singular.py`.
+
+
+## 45. A timeout belongs to the transport, not to a wrapper around it
+
+**Decided 2026-09-26.** The term-mapping build stopped dead for **3h40m** and
+nothing said so. The evidence when it was finally checked: 4h03m elapsed
+against **7m52s of CPU — 2.5 seconds of it in the last two hours** — no open
+sockets at all, no pending timers, and the main thread parked in
+`select_kqueue_control_impl`. An event loop waiting on an empty kqueue is not
+slow, it is awaiting a future that nothing will ever complete.
+
+**Why the timeout did not save it.** `asyncio.wait_for` does not abort a
+request. It CANCELS the inner task and then *awaits the cancellation
+finishing*. If the HTTP client's teardown never finishes, `wait_for` hangs
+after its own timeout has already fired, and nothing wrapped around it can
+help, because the await that never returns is inside the timeout mechanism
+itself. The log's last two lines were a timeout and a recovery; the call after
+them never opened a socket, which is what waiting for a connection slot looks
+like — a cancelled request can leave its slot in the pool un-returned.
+
+**The rule.** The budget goes to the transport, which enforces it without
+cancelling anything:
+
+* `timeout=httpx.Timeout(default, connect=…, pool=…)` on the client. `pool` is
+  the one that matters here: without it, the call after a leaked slot waits
+  forever and opens nothing.
+* the per-call budget (240s for extraction, 360s for the batch judgements)
+  is passed to the REQUEST, not only to the wrapper, or the transport enforces
+  the default instead.
+* `max_retries=0` on the SDK client. It retries twice by default, inside our
+  own budget, which multiplies the wall time and makes `[LLM] Retry 1` a lie
+  about how many attempts were made. Retrying is `_execute_with_retry`'s job.
+* `wait_for` stays, with slack, as a BACKSTOP. If it ever fires now, that is a
+  defect worth seeing, not a normal timeout — so it must not race the thing it
+  is backing up.
+
+**What it cost, measured:** nothing, as it happened. The clustering had been
+saved at 11:05 (records 51,745 → 54,249, live 37,300 → 40,479) and the
+adjudication had banked no verdicts at all (pass1 7,423 and pass2 4,813, byte
+for byte what they were before the run). But that was luck, not design: four
+hours of a run that reports progress only at the end is four hours of nothing
+to show.
+
+**The general rule behind it:** a step that can wait forever must be able to
+say so. "No silent failure" covers hanging as well as failing — a process at
+0% CPU with no output is indistinguishable from a working one unless something
+is watching the difference.
+
+Enforced by: `LLMClient.__init__` and `LLMClient._call_json`.
+`tests/test_llm_timeout.py` — 6 tests, 6 mutations, all caught: no transport
+timeout, no pool timeout, a connect leash as long as the read leash, the SDK's
+retries left on, the per-call budget not reaching the request, and a backstop
+that races the transport instead of backing it up.
+
 
 ## Adding to this file
 

@@ -1,5 +1,7 @@
 from __future__ import annotations
 import asyncio
+
+import httpx
 import json
 from pathlib import Path
 
@@ -46,6 +48,11 @@ from wound_ontology.llm.schemas import (
 )
 
 _OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+
+#: The transport's own ceiling on a single request, in seconds. Every call site
+#: passes its own budget (240s for extraction, 360s for the batch judgements)
+#: and that wins per request; this is what applies when nobody says.
+_DEFAULT_TIMEOUT = 300.0
 _DEFAULT_MODEL = "deepseek/deepseek-v4-flash"
 
 
@@ -59,9 +66,31 @@ class LLMClient:
     """
 
     def __init__(self, api_key: str, model_id: str = _DEFAULT_MODEL):
+        # A TRANSPORT timeout, not just an `asyncio.wait_for` around the call.
+        #
+        # On 2026-09-26 the term-mapping build hung for 3h40m after two
+        # timeout-and-retry cycles: no open sockets, no timers, 2.5 seconds of
+        # CPU in two hours, the event loop parked in kqueue forever.
+        # `asyncio.wait_for` does not abort a request, it CANCELS it and then
+        # awaits the cancellation finishing -- and if the HTTP client's
+        # teardown never finishes, `wait_for` hangs after its own timeout has
+        # already fired. Nothing above it can help, because the await that
+        # never returns is inside the timeout mechanism itself.
+        #
+        # A transport timeout fails the request at the socket, so a stall
+        # becomes an ordinary exception the retry wrapper can see. `pool` is
+        # the one that matters most here: a cancelled request can leave its
+        # connection slot un-returned, and without a pool timeout the next
+        # call waits for a free connection forever -- which is exactly the
+        # shape of the hang, since no socket was ever opened for it.
         self._client  = openai_sdk.AsyncOpenAI(
             api_key=api_key,
             base_url=_OPENROUTER_BASE_URL,
+            # The SDK retries twice by default, inside our own budget, which
+            # both multiplies the wall time and makes the retry log a lie
+            # about how many attempts were made. Retrying is this class's job.
+            max_retries=0,
+            timeout=httpx.Timeout(_DEFAULT_TIMEOUT, connect=30.0, pool=60.0),
         )
         self.model_id = model_id
         # Circuit breaker — set by callers that want early abort on sustained failures.
@@ -135,6 +164,7 @@ class LLMClient:
                 messages=[{"role": "user", "content": full_prompt}],
                 response_format={"type": "json_object"},
                 temperature=temperature,
+                timeout=timeout,
             )
             raw = resp.choices[0].message.content.strip()
             # Remove code fences if the model wrapped JSON inside them.
@@ -143,7 +173,11 @@ class LLMClient:
                 return schema.model_validate_json(raw)
             return schema.parse_raw(raw)
 
-        return await asyncio.wait_for(_inner(), timeout=timeout)
+        # The per-call budget goes to the TRANSPORT, which can enforce it
+        # without cancellation. `wait_for` stays as a backstop, with slack, so
+        # that it fires only if the transport somehow did not -- and if it ever
+        # does fire, that is a defect worth seeing rather than a normal timeout.
+        return await asyncio.wait_for(_inner(), timeout=timeout + 30)
 
     # ── Prompt builders ────────────────────────────────────────────────────────
 

@@ -9,6 +9,7 @@ from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.utils.string_utils import normalize_term, smart_title
 from config.blocklist import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST, is_noise_term as _is_noise_term
 from wound_ontology.llm.category_vocab import declared_category
+from wound_ontology.utils.normalise import normalise
 from wound_ontology.utils.label_match import singular_spelling as _singular_spelling
 
 
@@ -150,20 +151,35 @@ class ConceptStore:
 
     @staticmethod
     def clean_entity_str(term: str) -> str:
-        """String-only cleaning: strip parenthetical abbreviations, preserve original casing.
+        """The spelling the store keeps for a term the moment it arrives.
 
         'Systemic Sclerosis (SSc)' -> 'Systemic Sclerosis'
-        Applied at ingestion time — before any mapper or title-casing.
+        'Diabetic Foot Ulcers'     -> 'Diabetic Foot Ulcer'
+        'Necrotising fasciitis'    -> 'Necrotizing fasciitis'
+
+        The parenthetical is stripped, and then pass 0's per-label rules run
+        here rather than being waited for -- the curator, 2026-09-26: the
+        normalisation *should be run after every concept extraction on the new
+        extract*. Singular head noun (rule 23a) and American spelling (rule
+        41) are a pure function of the label and have no reason to wait for a
+        maintenance pass. The other half of pass 0, which elects one spelling
+        per group, needs the whole store and still runs as that pass.
+
+        Casing is untouched, as it always was: this is the extraction's own
+        spelling with the rules applied, not a house style.
         """
-        return re.sub(r'\s*\([^)]*\)', '', term).strip()
+        return normalise(re.sub(r'\s*\([^)]*\)', '', term).strip()).name
 
     @staticmethod
     def clean_target_str(term: str) -> str:
-        """String-only cleaning: strip parenthetical abbreviations, preserve original casing.
+        """The spelling the store keeps for a predicate's target.
 
-        Applied at ingestion time — before any mapper or title-casing.
+        The same rules as `clean_entity_str`: a target and an entity are the
+        same term seen from two sides, and the store held `Tumor` as a subject
+        beside `Tumours` as an object for exactly as long as these two
+        functions did different things.
         """
-        return re.sub(r'\s*\([^)]*\)', '', term).strip()
+        return normalise(re.sub(r'\s*\([^)]*\)', '', term).strip()).name
 
     def __init__(self, data_manager: DataManager, file_name: str):
         self.dm = data_manager
@@ -517,68 +533,13 @@ class ConceptStore:
         def clean_target(term: str) -> str:
             return store_name(term, canonical_of(term), target=True)
 
-        renames_by_mapping: dict[str, str] = {}
-
-        normalized: dict = {}
-        for key, pmid_data in self._dict.items():
-            if key == self.DECISIONS:
-                continue
-            entities = pmid_data.get("entities", {})
-            new_entities: dict[str, dict] = {}
-            for entity, attrs in entities.items():
-                new_entity = clean_entity(entity)
-                if canonical_of(entity) is not None and new_entity != entity:
-                    renames_by_mapping[entity] = new_entity
-                merged: dict[str, float] = {}
-                for triple, value in attrs.items():
-                    if ":" in triple:
-                        pred, tgt = triple.split(":", 1)
-                        new_triple = f"{pred.strip()}: {clean_target(tgt.strip())}"
-                    else:
-                        new_triple = triple
-                    merged[new_triple] = max(merged.get(new_triple, 0.0), float(value))
-                # Merge when Title-casing collapses two variants to the same name.
-                # If the same normalized entity appears twice, keep the strongest
-                # evidence (max value) for every attribute triple.
-                if new_entity in new_entities:
-                    for triple, value in merged.items():
-                        new_entities[new_entity][triple] = max(
-                            new_entities[new_entity].get(triple, 0.0), value
-                        )
-                else:
-                    new_entities[new_entity] = merged
-            normalized[key] = {**pmid_data, "entities": new_entities}
-
-        # The verdicts are keyed by the names they were written against, and
-        # those names just changed. Rename them the same way, or a rejection
-        # of `diabetic foot ulcers` stops applying to `Diabetic Foot Ulcer`
-        # and the term comes back. Two old names collapsing onto one new one
-        # is a merge; the verdict that survives is the first one, and it is
-        # counted.
-        if self.DECISIONS in self._dict:
-            dec = self._dict[self.DECISIONS]
-            ev: dict = {}
-            merged_verdicts = 0
-            for entity, v in dec.get("entity_verdicts", {}).items():
-                new = clean_entity(entity)
-                if new in ev:
-                    merged_verdicts += 1
-                ev.setdefault(new, v)
-            cv: dict = {}
-            for entity, cells in dec.get("cell_verdicts", {}).items():
-                dest = cv.setdefault(clean_entity(entity), {})
-                for triple, v in cells.items():
-                    if ":" in triple:
-                        pred, tgt = triple.split(":", 1)
-                        triple = f"{pred.strip()}: {clean_target(tgt.strip())}"
-                    if triple in dest:
-                        merged_verdicts += 1
-                    dest.setdefault(triple, v)
-            normalized[self.DECISIONS] = {**dec, "entity_verdicts": ev, "cell_verdicts": cv}
-            if merged_verdicts:
-                print(f"[ConceptStore] {merged_verdicts} verdict(s) fell onto a name "
-                      f"another verdict already covers after normalisation; the "
-                      f"earlier one is kept.")
+        normalized, renames_by_mapping, merged_verdicts = self._rewrite_names(
+            clean_entity, clean_target,
+            changed=lambda term, new: canonical_of(term) is not None)
+        if merged_verdicts:
+            print(f"[ConceptStore] {merged_verdicts} verdict(s) fell onto a name "
+                  f"another verdict already covers after normalisation; the "
+                  f"earlier one is kept.")
 
         self._dict = normalized
         for old, new in renames_by_mapping.items():
@@ -586,6 +547,103 @@ class ConceptStore:
         self.save()
         n_entities = sum(len(d.get("entities", {})) for d in self._dict.values())
         print(f"[ConceptStore] Normalization applied — {n_entities} entity records updated.")
+
+    def _rewrite_names(self, entity_fn, target_fn, *, changed=None):
+        """One traversal that moves every name in the store at once.
+
+        Entity names, the target half of every predicate triple, and the keys
+        of both verdict books go together. They have to: a rejection written
+        against `diabetic foot ulcers` stops applying the moment the entity is
+        renamed `Diabetic Foot Ulcer`, and the term comes back.
+
+        Two old names landing on one new one is a merge. For evidence the
+        strongest value wins; for a verdict the first one does, and it is
+        counted rather than dropped in silence.
+
+        `changed(old, new)` says whether a rename is worth RECORDING -- the
+        mapping path only records what the mapping caused, since `store_name`
+        also title-cases and that is not a decision anyone made. Returns
+        `(new_dict, {old: new}, merged_verdict_count)` and writes nothing.
+        """
+        recorded: dict[str, str] = {}
+        rewritten: dict = {}
+        for key, pmid_data in self._dict.items():
+            if key == self.DECISIONS:
+                continue
+            entities = pmid_data.get("entities", {})
+            new_entities: dict[str, dict] = {}
+            for entity, attrs in entities.items():
+                new_entity = entity_fn(entity)
+                if new_entity != entity and (changed is None
+                                             or changed(entity, new_entity)):
+                    recorded[entity] = new_entity
+                merged: dict[str, float] = {}
+                for triple, value in attrs.items():
+                    if ":" in triple:
+                        pred, tgt = triple.split(":", 1)
+                        new_triple = f"{pred.strip()}: {target_fn(tgt.strip())}"
+                    else:
+                        new_triple = triple
+                    merged[new_triple] = max(merged.get(new_triple, 0.0), float(value))
+                if new_entity in new_entities:
+                    for triple, value in merged.items():
+                        new_entities[new_entity][triple] = max(
+                            new_entities[new_entity].get(triple, 0.0), value
+                        )
+                else:
+                    new_entities[new_entity] = merged
+            rewritten[key] = {**pmid_data, "entities": new_entities}
+
+        merged_verdicts = 0
+        if self.DECISIONS in self._dict:
+            dec = self._dict[self.DECISIONS]
+            ev: dict = {}
+            for entity, v in dec.get("entity_verdicts", {}).items():
+                new = entity_fn(entity)
+                if new in ev:
+                    merged_verdicts += 1
+                ev.setdefault(new, v)
+            cv: dict = {}
+            for entity, cells in dec.get("cell_verdicts", {}).items():
+                dest = cv.setdefault(entity_fn(entity), {})
+                for triple, v in cells.items():
+                    if ":" in triple:
+                        pred, tgt = triple.split(":", 1)
+                        triple = f"{pred.strip()}: {target_fn(tgt.strip())}"
+                    if triple in dest:
+                        merged_verdicts += 1
+                    dest.setdefault(triple, v)
+            rewritten[self.DECISIONS] = {**dec, "entity_verdicts": ev,
+                                         "cell_verdicts": cv}
+        return rewritten, recorded, merged_verdicts
+
+    def apply_renames(self, renames: dict[str, str], *, by: str) -> dict:
+        """Rewrite exactly the names in `renames`, in place, and record each.
+
+        Pass 0's half of the curator's rule of 2026-09-26: the label changes
+        at the spot rather than becoming a mapping entry that some later step
+        has to apply. Nothing is deleted -- every rename is stamped in the
+        store's own `renamed` book with `by`, so the spelling the extractor
+        produced stays recoverable (rule 33).
+
+        EXACT keys only. `normalize` matches on a folded key because the
+        mapping is written against extraction spellings and the store has
+        moved on; pass 0 is given every string the store holds, so a folded
+        fallback here could only rename something it never looked at and never
+        reported.
+        """
+        if not renames:
+            return {"renamed": 0, "entities": 0, "merged verdicts": 0}
+        look = lambda term: renames.get(term, term)          # noqa: E731
+        rewritten, recorded, merged_verdicts = self._rewrite_names(look, look)
+        self._dict = rewritten
+        for old, new in recorded.items():
+            self.record_rename(old, new, by=by)
+        self.save()
+        n_entities = sum(len(d.get("entities", {}))
+                         for k, d in self._dict.items() if k != self.DECISIONS)
+        return {"renamed": len(recorded), "entities": n_entities,
+                "merged verdicts": merged_verdicts}
 
 
     async def add_llm_extracts(

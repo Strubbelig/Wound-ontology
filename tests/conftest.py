@@ -125,3 +125,29 @@ def memory_mapper(data: dict | None = None, name: str = "test"):
     """A real `TermMapper` over `memory_mapping`."""
     from wound_ontology.mappers.term_mapper import TermMapper
     return TermMapper(memory_mapping(data), name=name)
+
+
+@pytest.fixture(autouse=True)
+def _vector_store_stays_out_of_data_cache(tmp_path_factory, monkeypatch):
+    """No test may write a fake vector into the project's SapBERT store.
+
+    `TermMapper._embeddings_for` keeps one growing file of term -> vector in
+    data/cache, so a term embedded once is never embedded again. Every unit
+    test embeds with a toy embedder: without this, `alpha one` would enter the
+    real store with a three-dimensional made-up vector, and the next real run
+    would silently reuse it instead of asking SapBERT. The old cache was keyed
+    by the whole term list and could only be hit by an identical list, so this
+    hazard is new with the per-term store.
+    """
+    from pathlib import Path
+
+    from wound_ontology.mappers.term_mapper import TermMapper
+
+    sandbox = Path(tmp_path_factory.mktemp("vector_store"))
+    monkeypatch.setattr(
+        TermMapper,
+        "_vector_store_paths",
+        lambda self: (sandbox / "sapbert_vectors.npy",
+                      sandbox / "sapbert_vectors_terms.json"),
+    )
+    return sandbox

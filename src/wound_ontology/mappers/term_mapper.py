@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from collections import defaultdict
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from rapidfuzz.fuzz import ratio as _fuzz_ratio
@@ -31,6 +33,13 @@ def _string_sim(a: str, b: str) -> float:
 
 def _is_generic(term: str) -> bool:
     return normalize_term(term) in _GENERIC_TERMS
+
+
+#: Rows of the similarity matrix computed at a time. The whole matrix is n^2
+#: float32 and n was 90,435 on the 2026-09-26 corpus -- 32.7 GB on a 17 GB
+#: machine. Module level so a test can shrink it and check that a pair
+#: straddling two blocks is still found.
+SIMILARITY_BLOCK = 1000
 
 
 def canonical_rank(term: str, anchors=frozenset(), frequencies: dict[str, int] | None = None):
@@ -676,6 +685,82 @@ class TermMapper:
 
     # ── SapBERT clustering ────────────────────────────────────────────────────
 
+    #: One row per term, grown in place across runs. Keyed by TERM, not by the
+    #: list: the first version of this cache hashed the whole term list, so
+    #: dropping 622 spellings out of 90,435 missed the cache and cost another
+    #: fifty minutes of CPU for the 89,813 vectors that had not changed.
+    VECTOR_STORE = "sapbert_vectors"
+
+    def _vector_store_paths(self) -> tuple[Path, Path]:
+        cache = Path(__file__).resolve().parents[3] / "data" / "cache"
+        return (cache / f"{self.VECTOR_STORE}.npy",
+                cache / f"{self.VECTOR_STORE}_terms.json")
+
+    def _embeddings_for(self, terms: list[str], embedder):
+        """`embedder.embed(terms)`, with every vector ever computed kept on disk.
+
+        Embedding 90,435 terms takes the better part of an hour on a CPU, and a
+        crash anywhere after it throws the hour away -- there were two, both in
+        the metadata step. Only the terms the store has never seen are sent to
+        the model; the rest are read back by name, so a re-run after a fix, or
+        a run whose term set moved a little, is seconds rather than an hour.
+        """
+        import json
+
+        import numpy as np
+
+        if not terms:
+            return np.empty((0, 0))
+
+        vec_path, terms_path = self._vector_store_paths()
+        store = None
+        known: dict[str, int] = {}
+        if vec_path.exists() and terms_path.exists():
+            store = np.load(vec_path)
+            kept = json.loads(terms_path.read_text(encoding="utf-8"))
+            if len(kept) != store.shape[0]:
+                # Never guess which of the two is right: a row/name mismatch
+                # would attach one term's vector to another term's name, which
+                # is a wrong merge nobody would ever see. Start again instead.
+                print(f"[{self.name}] vector store is inconsistent "
+                      f"({store.shape[0]} rows, {len(kept)} names); rebuilding it.")
+                store, kept = None, []
+            else:
+                known = {t: i for i, t in enumerate(kept)}
+
+        wanted = list(dict.fromkeys(terms))
+        missing = [t for t in wanted if t not in known]
+        if known:
+            print(f"[{self.name}] vector store: {len(wanted) - len(missing):,} of "
+                  f"{len(wanted):,} terms already embedded, {len(missing):,} to do.")
+        if missing:
+            fresh = np.asarray(embedder.embed(missing))
+            if store is not None and fresh.shape[1] != store.shape[1]:
+                # A different model. Mixing the two would be silent nonsense.
+                print(f"[{self.name}] the embedder returns {fresh.shape[1]} "
+                      f"dimensions and the store holds {store.shape[1]}; "
+                      f"the store is from another model and is being replaced.")
+                store, known = None, {}
+                missing = wanted
+                fresh = np.asarray(embedder.embed(missing))
+            base = len(known)
+            for i, t in enumerate(missing):
+                known[t] = base + i
+            store = fresh if store is None else np.vstack([store, fresh])
+            try:
+                vec_path.parent.mkdir(parents=True, exist_ok=True)
+                np.save(vec_path, store)
+                names = [""] * len(known)
+                for t, i in known.items():
+                    names[i] = t
+                terms_path.write_text(json.dumps(names), encoding="utf-8")
+                print(f"[{self.name}] vector store now holds {len(names):,} terms "
+                      f"({store.nbytes/1e6:.0f} MB)")
+            except OSError as e:                  # a full disk must not lose the run
+                print(f"[{self.name}] could not write the vector store ({e}); "
+                      f"continuing with the vectors in memory")
+        return np.asarray([store[known[t]] for t in terms])
+
     def build_from_embeddings(
         self,
         terms: list[str],
@@ -736,8 +821,14 @@ class TermMapper:
         def _rank(t: str):
             return canonical_rank(t, anchor_set, freq)
 
-        def _canonical(members: list[str]) -> str:
+        def _canonical(members: list[str]) -> tuple[str, str]:
             """Pick the cluster's canonical, then take the singular spelling of it.
+
+            Returns `(canonical, source)`. `source` is the member the canonical
+            was derived from; it is the canonical itself unless the spelling
+            was MINTED, in which case the canonical is in no cluster and has no
+            embedding, and `source` is the only thing a cosine can be measured
+            against.
 
             The canonical becomes a class LABEL in the exported ontology, and an
             OBO class label is singular. `_rank` decides on frequency, and the
@@ -755,7 +846,7 @@ class TermMapper:
             """
             best = max(members, key=_rank)
             if best in anchor_set:
-                return best
+                return best, best
             def _is_singular(m: str) -> bool:
                 words = m.split()
                 return bool(words) and singularize(words[-1]) == words[-1].lower()
@@ -765,7 +856,9 @@ class TermMapper:
             # Rule 23 could only pick a singular spelling that existed; the
             # curator's rule of 2026-09-23 is that the name is singular whether
             # or not anybody wrote it that way.
-            return max(same, key=_rank) if same else singular_spelling(best)
+            if same:
+                return max(same, key=_rank), best
+            return singular_spelling(best), best
 
         # ── Step 0: pre-merge by folded form (no SapBERT) ────────────────────
         # `fold`, not `normalize_term`: normalize_term folds punctuation and case
@@ -782,49 +875,128 @@ class TermMapper:
         # Measured over the 4114 terms the mapper is given: fold unites exactly
         # 8 groups that normalize_term splits, every one a singular/plural pair
         # of the same term, and not one of them involves an anchor.
-        norm_groups: dict[str, list[str]] = defaultdict(list)
-        for t in unique_terms:
-            norm_groups[fold(t)].append(t)
-
+        # ONE PASS IS NOT ENOUGH. A minted canonical need not fold to the key of
+        # the group that minted it: `multi-drug resistant bacterias` folds to
+        # `multi drug resistant bacteria` and mints `multi-drug resistant
+        # bacteria`, which folds to `multi drug resistant bacterium` -- the key
+        # of a DIFFERENT group, whose canonical is `multi-drug-resistant
+        # bacterium`. Two spellings of one term then went to SapBERT as two
+        # terms. Measured on the 2026-09-26 corpus: 649 of 90,435 groups mint a
+        # canonical belonging to another group, and 16 pairs of canonicals fold
+        # together -- `Autoimmune disease`/`autoimmune disease`,
+        # `mitogen-activated protein kinase`/`mitogen activated protein kinase`,
+        # `foreign-body response`/`foreign body response`. So fold again, until
+        # the set stops moving. It also closes the mint route through step 3:
+        # after the fixed point no canonical spells differently from itself.
         pre_merged: dict[str, str] = {}
-        embed_terms: list[str] = []
         self.refused_mappings: list[tuple[str, str]] = []
-        for members in norm_groups.values():
-            canonical = _canonical(members)
-            embed_terms.append(canonical)
-            for t in members:
-                if t == canonical:
-                    continue
-                # The validator has to run here as well as on the clustered path.
-                # It did not, and `Process` was mapped to BFO's `process` by
-                # normalised-form pre-merge -- the one mapping guaranteed to break
-                # category detection, arriving through the door nobody was watching.
-                if (accept_mapping is not None and canonical in anchor_set
-                        and not accept_mapping(t, canonical)):
-                    self.refused_mappings.append((t, canonical))
-                    continue
-                pre_merged[t] = canonical
+        MAX_FOLD_ROUNDS = 10
+        pool: list[str] = unique_terms
+        converged = False
+        rounds = 0
+        for rounds in range(1, MAX_FOLD_ROUNDS + 1):
+            norm_groups: dict[str, list[str]] = defaultdict(list)
+            for t in pool:
+                norm_groups[fold(t)].append(t)
+            canonicals: list[str] = []
+            for members in norm_groups.values():
+                canonical, _source = _canonical(members)
+                canonicals.append(canonical)
+                for t in members:
+                    if t == canonical:
+                        continue
+                    # The validator has to run here as well as on the clustered
+                    # path. It did not, and `Process` was mapped to BFO's
+                    # `process` by normalised-form pre-merge -- the one mapping
+                    # guaranteed to break category detection, arriving through
+                    # the door nobody was watching.
+                    if (accept_mapping is not None and canonical in anchor_set
+                            and not accept_mapping(t, canonical)):
+                        self.refused_mappings.append((t, canonical))
+                        continue
+                    pre_merged[t] = canonical
+            nxt = list(dict.fromkeys(canonicals))
+            converged = set(nxt) == set(pool)
+            if rounds > 1:
+                print(f"[{self.name}] fold round {rounds}: {len(pool):,} -> "
+                      f"{len(nxt):,} spellings"
+                      f"{' (fixed point)' if converged else ''}.")
+            pool = nxt
+            if converged:
+                break
+        embed_terms: list[str] = pool
+        if not converged:
+            # Not fatal -- the metadata step below no longer assumes a canonical
+            # is embedded -- but it means two spellings of one term may still be
+            # clustered as two, and that must not pass in silence.
+            print(f"[{self.name}] WARNING: the folded pre-merge did not settle in "
+                  f"{MAX_FOLD_ROUNDS} rounds; {len(embed_terms):,} spellings are "
+                  f"going to the model and some of them may be the same term.")
+
+        # A term folded in round 1 points at a spelling round 2 may have folded
+        # again. Follow each chain to its end: without this the metadata step
+        # would record a mapping onto a spelling that is no longer a canonical.
+        resolved: dict[str, str] = {}
+        looped: list[str] = []
+        for t, first in pre_merged.items():
+            seen, cur = {t}, first
+            while cur in pre_merged and cur not in seen:
+                seen.add(cur)
+                cur = pre_merged[cur]
+            if cur == t:
+                looped.append(t)
+                continue
+            resolved[t] = cur
+        chained = sum(1 for t, c in resolved.items() if pre_merged[t] != c)
+        # `set(embed_terms)` once. Inside the comprehension it was rebuilt for
+        # every one of the 32,000 folded terms -- 2.9 billion membership tests,
+        # and the build sat there saying nothing.
+        canonical_set = set(embed_terms)
+        survived = [t for t in resolved if t in canonical_set]
+        for t in survived:
+            del resolved[t]
+        pre_merged = resolved
 
         if pre_merged:
-            print(f"[{self.name}] Pre-merged {len(pre_merged)} terms by folded form.")
+            print(f"[{self.name}] Pre-merged {len(pre_merged)} terms by folded form "
+                  f"in {rounds} round(s); {chained} re-pointed by a later round.")
+        if looped:
+            print(f"[{self.name}] {len(looped)} term(s) fold in a cycle and were "
+                  f"left unmapped: {', '.join(repr(t) for t in looped[:5])}")
+        if survived:
+            print(f"[{self.name}] {len(survived)} term(s) were both folded away and "
+                  f"elected canonical; kept as canonical: "
+                  f"{', '.join(repr(t) for t in survived[:5])}")
 
         print(f"[{self.name}] Embedding {len(embed_terms)} terms with SapBERT...")
-        emb: np.ndarray = embedder.embed(embed_terms)
-        sim_matrix: np.ndarray = emb @ emb.T
+        emb = self._embeddings_for(embed_terms, embedder)
 
         n = len(embed_terms)
         term_to_idx = {t: i for i, t in enumerate(embed_terms)}
 
         # ── Step 1: valid pairs ───────────────────────────────────────────────
-        rows, cols = np.where(sim_matrix >= similarity_threshold)
+        #
+        # In BLOCKS. `emb @ emb.T` is one array of n^2 float32, and the corpus
+        # made n 90,435: **32.7 GB on a 17 GB machine**. It would have embedded
+        # for forty minutes and then died, or swapped for hours first. A block
+        # of 1,000 rows is 362 MB and only the pairs above the threshold are
+        # kept, which is a few hundred thousand, not eight billion.
+        BLOCK = SIMILARITY_BLOCK
         valid: set[tuple[int, int]] = set()
-        for i, j in zip(rows.tolist(), cols.tolist()):
-            if i >= j:
-                continue
-            a, b = embed_terms[i], embed_terms[j]
-            if (_is_generic(a) or _is_generic(b)) and _string_sim(a, b) < 0.90:
-                continue
-            valid.add((i, j))
+        score: dict[tuple[int, int], float] = {}
+        for start in range(0, n, BLOCK):
+            block = emb[start:start + BLOCK] @ emb.T
+            rows, cols = np.where(block >= similarity_threshold)
+            for r, c in zip(rows.tolist(), cols.tolist()):
+                i = start + r
+                if i >= c:
+                    continue
+                a, b = embed_terms[i], embed_terms[c]
+                if (_is_generic(a) or _is_generic(b)) and _string_sim(a, b) < 0.90:
+                    continue
+                valid.add((i, c))
+                score[(i, c)] = float(block[r, c])
+            del block
 
         print(f"[{self.name}] {len(valid)} valid pairs "
               f"(cosine ≥ {similarity_threshold}) …")
@@ -833,7 +1005,7 @@ class TermMapper:
         cluster_of: list[int]          = list(range(n))
         cl_members: dict[int, set[int]] = {i: {i} for i in range(n)}
 
-        for i, j in sorted(valid, key=lambda p: sim_matrix[p[0], p[1]], reverse=True):
+        for i, j in sorted(valid, key=lambda p: score[p], reverse=True):
             ci, cj = cluster_of[i], cluster_of[j]
             if ci == cj:
                 continue
@@ -853,8 +1025,11 @@ class TermMapper:
 
         # ── Step 3: pick canonical per cluster ───────────────────────────────
         assignment: dict[str, str] = {}
+        minted_from: dict[str, str] = {}
         for members in clusters.values():
-            canonical = _canonical(members)
+            canonical, source = _canonical(members)
+            if canonical not in term_to_idx:
+                minted_from[canonical] = source
             if accept_mapping is not None and canonical in anchor_set:
                 kept = [t for t in members
                         if t == canonical or accept_mapping(t, canonical)]
@@ -864,6 +1039,17 @@ class TermMapper:
                 members = kept
             for t in members:
                 assignment[t] = canonical
+            # `_canonical` may MINT a spelling: rule 23a says the name is
+            # singular whether or not anybody wrote it that way, so a cluster
+            # of `multi-drug resistant bacteria` alone is named
+            # `multi-drug resistant bacterium`, which is in no cluster and
+            # therefore had no entry of its own. The forest assertion below
+            # then died with a KeyError on the canonical it was checking --
+            # after fifty minutes of embedding. A canonical maps to itself.
+            # The fold fixed point above should now leave nothing to mint here;
+            # this stays because the assertion is about `assignment`, not about
+            # what the pre-merge happens to have achieved.
+            assignment.setdefault(canonical, canonical)
 
         n_non_identity = sum(1 for t, c in assignment.items() if t != c)
         max_size       = max(len(v) for v in clusters.values())
@@ -886,11 +1072,33 @@ class TermMapper:
         for term, canonical in assignment.items():
             if term in pre_merged:
                 continue
+            if term == canonical:
+                # An identity entry is dropped from `merges` below and its
+                # metadata is never read. Skipping it is not an optimisation:
+                # a MINTED canonical has no embedding, so scoring it against
+                # itself is the second crash this build died of.
+                continue
             idx_t = term_to_idx[term]
-            idx_c = term_to_idx[canonical]
+            idx_c = term_to_idx.get(canonical)
+            if idx_c is None:
+                source = minted_from.get(canonical)
+                if source is None or source not in term_to_idx:
+                    raise AssertionError(
+                        f"{canonical!r} is a canonical with no embedding and no "
+                        f"record of the member it was minted from. The mapping "
+                        f"would get a confidence nobody computed; refusing to "
+                        f"write one."
+                    )
+                # The merge is still the SapBERT cluster; what has no cosine is
+                # the rename at the end of it. Score against the member the
+                # spelling was minted from, which is in the cluster.
+                idx_c = term_to_idx[source]
             metadata_batch[term] = {
                 "standard": canonical,
-                "confidence": float(sim_matrix[idx_t, idx_c]),
+                # not necessarily a pair above the threshold -- complete
+                # linkage puts terms in one cluster through others -- so it is
+                # computed rather than looked up
+                "confidence": float(emb[idx_t] @ emb[idx_c]),
                 "method": "sapbert_cluster",
             }
 

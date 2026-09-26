@@ -290,8 +290,44 @@ class BaseList(ABC):
     _PATH: Path
     _VAR_NAME: str
 
+    #: CLASS attributes, because not every subclass calls `super().__init__()`
+    #: and an instance without them made `ensure_loaded` raise instead of load.
+    _loaded: bool = False
+    __terms: frozenset[str] = frozenset()
+
+    @property
+    def _terms(self) -> frozenset[str]:
+        return self.__terms
+
+    @_terms.setter
+    def _terms(self, value) -> None:
+        """Handing a list its terms IS loading it.
+
+        Otherwise `ensure_loaded` would read the real config file over the top
+        of terms a caller had just set — which is exactly what a test that
+        builds a list with three words in it does not want.
+        """
+        self.__terms = frozenset(value)
+        self._loaded = True
+
     def __init__(self) -> None:
-        self._terms: frozenset[str] = frozenset()
+        # The backing field directly: a fresh list has NOT been loaded, and
+        # going through the setter would claim it had.
+        self._BaseList__terms: frozenset[str] = frozenset()
+        self._loaded: bool = False
+
+    def ensure_loaded(self) -> None:
+        """Read the file if nobody has yet.
+
+        A list that has never been loaded holds the empty set, and `match`
+        answered `False` for everything -- silently, which is the one thing it
+        must not do. `BlockList().match('caregiving practice')` said "not
+        blocked" about a term that is on the blocklist, and nothing anywhere
+        said why. An empty list is also a legitimate state, so emptiness
+        cannot be the signal; whether `load` has run is.
+        """
+        if not self._loaded:
+            self.load()
 
     # ── Subclass contract ─────────────────────────────────────────────────────
 
@@ -431,6 +467,7 @@ class TermList(BaseList):
         molecules central to wound healing -- and they are whitelisted rather
         than being activated by a matcher fix.
         """
+        self.ensure_loaded()
         lower = term.strip().lower()
         base  = re.sub(r"\s*\([^)]*\)\s*$", "", lower).strip()
         if lower in self._terms or base in self._terms:
@@ -538,6 +575,7 @@ class KeywordList(BaseList):
         hazard: `male` matched "fe*male*", `race` matched "t*race*ability".
         """
         lower = term.strip().lower()
+        self.ensure_loaded()
         return any(_starts_a_word(kw, lower) for kw in self._terms)
 
 
@@ -795,6 +833,7 @@ class BlockList(TermList):
         import importlib, config.blocklist as _m
         importlib.reload(_m)
         self._terms = frozenset(_m.METHODOLOGY_BLOCKLIST)
+        self._loaded = True
 
     # ── Clustering ────────────────────────────────────────────────────────────
 
@@ -878,6 +917,7 @@ class WhiteList(TermList):
         import importlib, config.whitelist as _m
         importlib.reload(_m)
         self._terms = frozenset(_m.WHITELIST)
+        self._loaded = True
 
 
 def _starts_a_word(keyword: str, text: str) -> bool:
@@ -902,6 +942,7 @@ class BlockKeywordList(KeywordList):
         import importlib, config.blocklist as _m
         importlib.reload(_m)
         self._terms = frozenset(_m.KEYWORD_BLOCKLIST)
+        self._loaded = True
 
 
 class WhiteKeywordList(KeywordList):
@@ -914,6 +955,7 @@ class WhiteKeywordList(KeywordList):
         import importlib, config.whitelist as _m
         importlib.reload(_m)
         self._terms = frozenset(_m.KEYWORD_WHITELIST)
+        self._loaded = True
 
 
 class SuspiciousList(KeywordList):
@@ -926,3 +968,4 @@ class SuspiciousList(KeywordList):
         import importlib, config.suspicious_list as _m
         importlib.reload(_m)
         self._terms = frozenset(_m.SUSPICIOUS_KEYWORDS)
+        self._loaded = True

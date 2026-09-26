@@ -122,9 +122,16 @@ def test_a_demoted_keyword_exempts_itself_and_nothing_else(lists, blocker, word)
 
     Removal alone would have dropped the exemption entirely; the point was to
     narrow it to the word itself, not to withdraw it.
+
+    The membership check is case-insensitive because the list is now GENERATED
+    from the gate (rule 40) and carries whichever spelling pass 0 elected: the
+    store says `Wound` more often than `wound`, so that is the spelling on
+    record. `TermList.match` lowercases (rule 13), so the exemption is
+    unaffected — and the three assertions below are the ones that say so.
+    Asserting the exact casing would pin a spelling nothing depends on.
     """
     assert word not in lists["KEYWORD_WHITELIST"]
-    assert word in lists["WHITELIST"]
+    assert word in {t.lower() for t in lists["WHITELIST"]}
     assert not blocker.is_blocked(word)
     assert not blocker.white_kw.match(word)
     assert blocker.white_terms.match(word)
@@ -153,7 +160,14 @@ def test_the_broad_keywords_no_longer_wave_methodology_through(blocker):
         ("Education Prevention Treatment Approach", "education"),
         ("Structured Treatment Algorithm", "structured"),
         ("Burn Models", "model"),
-        ("Visual Analog Scale Pain Score", "pain"),
+        # `pain` was a keyword here until 2026-09-26, when the curator ruled
+        # the concept in scope and it came off KEYWORD_BLOCKLIST. `Visual
+        # Analog Scale Pain Score` is still out -- the exact
+        # METHODOLOGY_BLOCKLIST catches it and pass 2 says `out` -- which is
+        # the direction rule 40 was always going: an explicit record about the
+        # instrument rather than a broad word that also caught the symptom.
+        # Measured at the removal: of 86,489 store names, dropping the keyword
+        # freed exactly 2.
     ):
         assert blocker.block_kw.match(term), f"{term!r} no longer caught by {caught_by!r}"
         if blocker.is_blocked(term):

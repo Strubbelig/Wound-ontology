@@ -728,6 +728,144 @@ class TermMappingAndGate:
         self._dirty()
         self.save()
 
+    @staticmethod
+    def _absorb(keep: dict, other: dict, term: str, report: dict) -> None:
+        """Fold `other` into `keep`; `keep` was seen first and wins every tie."""
+        for canonical, judgement in (other.get("pairs") or {}).items():
+            dest = keep.setdefault("pairs", {}).setdefault(canonical, {})
+            for field, value in judgement.items():
+                dest.setdefault(field, value)
+        for source, verdict in (other.get("gate") or {}).items():
+            gate = keep.setdefault("gate", {})
+            standing = gate.get(source)
+            if standing is None:
+                gate[source] = verdict
+                continue
+            if standing.get("verdict") == verdict.get("verdict"):
+                continue                      # the same answer twice; fold it
+            # Two spellings of one term whose SAME source answers differently.
+            # First-come used to win and the other side was gone: 10 of them
+            # on the 2026-09-26 data, `pain score` among them, where pass 2
+            # had said `in` of one spelling and `out` of another. Surfacing
+            # disagreement is the whole reason the gate holds two passes
+            # (rule 40), so a source that contradicts ITSELF decides nothing
+            # either -- exactly as contradicting passes decide nothing -- and
+            # both sides are kept where a person can see them.
+            keep.setdefault("gate_contested", []).append(
+                {"source": source, "kept": standing, "dropped": verdict})
+            gate.pop(source, None)
+            report["gate conflicts"].append(
+                (term, source, standing.get("verdict"), verdict.get("verdict")))
+        if other.get("to") and keep.get("to") and other["to"] != keep["to"]:
+            # Two spellings of one term that point at DIFFERENT canonicals is a
+            # real disagreement, not a spelling question. Both targets survive
+            # in `pairs`; which one is live is reported, never chosen quietly.
+            report["target conflicts"].append((term, keep["to"], other["to"]))
+        elif other.get("to") and not keep.get("to"):
+            keep["to"] = other["to"]
+        for field in ("confidence", "method", "retired"):
+            if field in other and field not in keep:
+                keep[field] = other[field]
+
+    def apply_renames(self, renames: dict[str, str], *, by: str) -> dict:
+        """Rewrite every term string the file holds, in place.
+
+        The curator's instruction of 2026-09-26: pass 0 is applied to the
+        concept store AND to the mapping, *just to make sure nothing slipped
+        through*. Renaming only the store would leave this file holding
+        spellings the rules reject, and the next apply would put them back.
+
+        Four places hold a term string and all four move together, or the
+        record comes apart: the record's own key, its live target, the
+        canonicals its `pairs` are keyed by -- the verdicts are about a PAIR,
+        so a canonical that is respelled without them detaches every judgement
+        a model or a curator ever made about it -- and the gate section, which
+        travels with the record it sits on.
+
+        Two records landing on one key merge, first-come winning every tie.
+        An entry whose target has become its own key is DELETED, not retired:
+        it settles nothing, and the curator's ruling of 2026-09-26 is that a
+        mapping that is only a spelling is not a decision worth keeping. The
+        record goes with it unless it also carries a gate verdict or a
+        judgement about another canonical.
+        """
+        report: dict = {"keys renamed": 0, "targets renamed": 0,
+                        "pair keys renamed": 0, "records merged": 0,
+                        "identities dropped": 0, "records deleted": 0,
+                        "target conflicts": [], "gate conflicts": [],
+                        "chains": 0}
+        if not renames:
+            return report
+
+        def look(term: str) -> str:
+            return renames.get(term, term)
+
+        merged: dict[str, dict] = {}
+        for term in sorted(self._records):
+            rec = self._records[term]
+            new_term = look(term)
+            if new_term != term:
+                report["keys renamed"] += 1
+            target = rec.get("to")
+            if target:
+                new_target = look(target)
+                if new_target != target:
+                    rec["to"] = new_target
+                    report["targets renamed"] += 1
+            pairs = rec.get("pairs") or {}
+            new_pairs: dict[str, dict] = {}
+            for canonical, judgement in pairs.items():
+                c = look(canonical)
+                if c != canonical:
+                    report["pair keys renamed"] += 1
+                if c in new_pairs:
+                    for field, value in judgement.items():
+                        new_pairs[c].setdefault(field, value)
+                else:
+                    new_pairs[c] = dict(judgement)
+            rec["pairs"] = new_pairs
+            if new_term in merged:
+                report["records merged"] += 1
+                self._absorb(merged[new_term], rec, new_term, report)
+            else:
+                merged[new_term] = rec
+
+        # The curator, 2026-09-26: *you can delete the sole spelling mappings
+        # from the termmapping dict -- after normalising they are identity
+        # mappings.* They are, and an identity decides nothing: rule 37 keeps
+        # a retired entry because it carries verdicts that cost credits, and
+        # a verdict about the pair (term, term) is a verdict about the
+        # spelling question pass 0 has just settled by rule. So the entry
+        # goes, and so does the record -- UNLESS it also carries a gate
+        # verdict (whether the term belongs at all, rule 40) or a judgement
+        # about some OTHER canonical. Those are different decisions that
+        # happen to live on the same record, and they are kept.
+        empty: list[str] = []
+        for term, rec in merged.items():
+            if rec.get("to") != term:
+                continue
+            rec["to"] = None
+            rec["pairs"] = {c: j for c, j in (rec.get("pairs") or {}).items()
+                            if c != term}
+            report["identities dropped"] += 1
+            if not rec["pairs"] and not rec.get("gate"):
+                empty.append(term)
+        for term in empty:
+            del merged[term]
+        report["records deleted"] = len(empty)
+
+        self._records = merged
+        self._dirty()
+        # Renaming does not CREATE chains, it reveals ones the spelling hid:
+        # `A -> B` beside `b -> C` was already a chain, because `B` and `b` are
+        # one term. `resolve_chains` is what breaks them, and it is owed a run
+        # whenever this is not zero -- so it is counted rather than left to be
+        # noticed downstream.
+        live = self.data
+        report["chains"] = sum(1 for c in live.values() if c in live)
+        self.save()
+        return report
+
     def retire(self, *terms: str, reason: str = "") -> int:
         """Unmap *terms*, keeping everything decided about them; saves if
         anything changed. Returns how many were actually mapped.

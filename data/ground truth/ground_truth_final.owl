@@ -896,7 +896,7 @@ wont:WONT_0000025 rdf:type owl:Class ;
                                     owl:onProperty ns1:RO_0000087 ;
                                     owl:someValuesFrom ns1:CHEBI_48218
                                   ] ;
-                  rdfs:label "Antiseptic phenol derivatives" .
+                  rdfs:label "Antiseptic phenol derivative" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000026
@@ -1607,7 +1607,7 @@ wont:WONT_0000176 rdf:type owl:Class ;
                                                          rdf:type owl:Class
                                                        ]
                                   ] ;
-                  rdfs:label "Process of administering a local anaesthetic agent"@en .
+                  rdfs:label "Process of administering a local anesthetic agent"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000177
@@ -2400,7 +2400,7 @@ wont:WONT_0000336 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000337
 wont:WONT_0000337 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000398 ;
-                  rdfs:label "Transparent polyurethane films" .
+                  rdfs:label "Transparent polyurethane film" .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338
@@ -3178,14 +3178,14 @@ wont:WONT_0000455 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000456
 wont:WONT_0000456 rdf:type owl:Class ;
                   rdfs:subClassOf ns1:PATO_0000014 ;
-                  ns1:IAO_0000115 "A colour that qualifies its bearer as reddened."@en ;
+                  ns1:IAO_0000115 "A color that qualifies its bearer as reddened."@en ;
                   rdfs:label "reddened"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000457
 wont:WONT_0000457 rdf:type owl:Class ;
                   rdfs:subClassOf ns1:PATO_0000014 ;
-                  ns1:IAO_0000115 "A colour that qualifies its bearer as livid."@en ;
+                  ns1:IAO_0000115 "A color that qualifies its bearer as livid."@en ;
                   rdfs:label "livid"@en .
 
 
@@ -3241,7 +3241,7 @@ wont:WONT_0000464 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000465
 wont:WONT_0000465 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000464 ;
-                  ns1:IAO_0000115 "A neoplasm whose constituent cells are disposed to invade surrounding tissue or to metastasise."@en ;
+                  ns1:IAO_0000115 "A neoplasm whose constituent cells are disposed to invade surrounding tissue or to metastasize."@en ;
                   rdfs:comment "PATO_0002097 'neoplastic, malignant' is a quality and cannot subsume a material disease entity, so it is bridged rather than used as a parent. Minted under MILD_120020 because the imported DOID module contains no neoplasm or carcinoma class."@en ;
                   rdfs:label "Malignancy"@en ;
                   skos:relatedMatch ns1:PATO_0002097 .
@@ -3258,7 +3258,7 @@ wont:WONT_0000466 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000467
 wont:WONT_0000467 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120022 ;
-                  ns1:IAO_0000115 "A pathological disorder consisting in the abnormal organisation of the insulin-secreting or insulin-responsive tissues of a patient, such that glucose homeostasis is not maintained."@en ;
+                  ns1:IAO_0000115 "A pathological disorder consisting in the abnormal organization of the insulin-secreting or insulin-responsive tissues of a patient, such that glucose homeostasis is not maintained."@en ;
                   rdfs:comment "Bridging annotation, not subsumption. The OBO term is a nosological category / specifically dependent continuant, whereas this class is the material pathological disorder itself. Asserting rdfs:subClassOf between them is a category error, so the relation is recorded as skos:relatedMatch instead."@en ;
                   rdfs:label "Diabetic metabolic disorder"@en ;
                   skos:relatedMatch ns1:DOID_9351 .
@@ -3303,7 +3303,7 @@ wont:WONT_0000471 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000472
 wont:WONT_0000472 rdf:type owl:Class ;
                   rdfs:subClassOf mild:MILD_120022 ;
-                  ns1:IAO_0000115 "A pathological disorder consisting in a localised collection of purulent material within a bodily structure, surrounded by inflamed and granulating tissue."@en ;
+                  ns1:IAO_0000115 "A pathological disorder consisting in a localized collection of purulent material within a bodily structure, surrounded by inflamed and granulating tissue."@en ;
                   rdfs:comment "Bridging annotation, not subsumption. The OBO term is a phenotypic abnormality / nosological category, i.e. a specifically dependent continuant, whereas this class is the material pathological disorder itself. Asserting rdfs:subClassOf between them is a category error that renders both unsatisfiable, so the relation is recorded as skos:relatedMatch instead."@en ;
                   rdfs:label "Abscess"@en ;
                   skos:relatedMatch ns1:HP_0025615 .
@@ -3728,7 +3728,7 @@ wont:WONT_0000525 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000526
 wont:WONT_0000526 rdf:type owl:Class ;
                   rdfs:subClassOf wont:WONT_0000524 ;
-                  ns1:IAO_0000115 "A wound with microbial burden assessed according to CDC that is an old traumatic wound with retained devitalised tissue, or one that involves existing clinical infection or perforated viscera."@en ;
+                  ns1:IAO_0000115 "A wound with microbial burden assessed according to CDC that is an old traumatic wound with retained devitalized tissue, or one that involves existing clinical infection or perforated viscera."@en ;
                   rdfs:label "Dirty wound according to CDC"@en .
 
 
@@ -4004,7 +4004,7 @@ wont:WONT_0000561 rdf:type owl:Class ;
                                     owl:onProperty ns1:IAO_0000136 ;
                                     owl:someValuesFrom ns1:GO_0042060
                                   ] ;
-                  ns1:IAO_0000115 "A wound classification grade of the scheme that divides wound healing into phases (hemostasis, inflammatory, proliferative, remodelling). The phases are labels assigned to stretches of the healing process, not processes themselves; each is about the processes it groups."@en ;
+                  ns1:IAO_0000115 "A wound classification grade of the scheme that divides wound healing into phases (hemostasis, inflammatory, proliferative, remodeling). The phases are labels assigned to stretches of the healing process, not processes themselves; each is about the processes it groups."@en ;
                  rdfs:label "Wound healing phase"@en .
 
 
@@ -4163,8 +4163,8 @@ wont:WONT_0000584 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000585
 wont:WONT_0000585 rdf:type owl:Class ;
                   rdfs:subClassOf ns1:DRON_00000001 ;
-                  ns1:IAO_0000115 "A clinical drug role borne by a substance used to produce local anaesthesia."@en ;
-                  rdfs:label "local anaesthetic drug role"@en .
+                  ns1:IAO_0000115 "A clinical drug role borne by a substance used to produce local anesthesia."@en ;
+                  rdfs:label "local anesthetic drug role"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000586
@@ -4229,7 +4229,7 @@ wont:WONT_120000 rdf:type owl:Class ;
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120001
 wont:WONT_120001 rdf:type owl:Class ;
                  rdfs:subClassOf ns1:BFO_0000034 ;
-                 rdfs:label "wound signalling function"@en .
+                 rdfs:label "wound signaling function"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_120002
@@ -4401,7 +4401,7 @@ wont:WONT_0000564 rdf:type owl:NamedIndividual ,
 wont:WONT_0000565 rdf:type owl:NamedIndividual ,
                            wont:WONT_0000561 ;
                   ns1:IAO_0000136 ns1:GO_0048771 ;
-                  rdfs:label "Remodelling phase"@en .
+                  rdfs:label "Remodeling phase"@en .
 
 
 ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000123

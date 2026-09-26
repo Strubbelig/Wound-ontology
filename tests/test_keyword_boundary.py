@@ -52,10 +52,40 @@ def test_the_cti_entry_is_gone_from_the_whitelist():
 
 
 def test_practices_is_blocked_again():
+    """The term is `practice` now, not `practices`.
+
+    Pass 0 made the store singular (rule 43) and the curation lists are
+    generated from the gate, so both sides carry the singular. `TermList.match`
+    folds case and punctuation but deliberately does NOT singularise — see
+    `test_the_matcher_does_not_singularise_and_that_is_measured` below.
+    """
     from wound_ontology.store.blocker import Blocker
     b = Blocker()
-    assert b.is_blocked("practices")
+    assert b.is_blocked("practice")
     assert b.is_blocked("mortality prediction")
+
+
+def test_the_matcher_does_not_singularise_and_that_is_measured():
+    """It is the obvious next step after rule 44, and it is wrong.
+
+    Making `TermList.match` compare on `normalise(...).key` would let a list
+    entry catch both spellings, which sounds strictly better. Measured on the
+    86,489 names of the 2026-09-26 store it blocks **74 more**, and they are
+    not methodology: `Head and neck squamous cell carcinoma`, `CD8 T cell`,
+    `Incompetent perforator vein`, `Primary closure`, `NLRP3-deficient mouse`,
+    `antimicrobial ion`. Singular forms of blocklist entries collide with
+    clinical content in a way the plural forms did not.
+
+    The store is singular now, so the list and the names it is matched against
+    already agree; folding harder buys nothing and costs those 74.
+    """
+    from wound_ontology.store.term_lists import BlockList
+    lst = BlockList()
+    assert lst.match("caregiving practice"), "the list moved; pick another entry"
+    assert not lst.match("caregiving practices"), (
+        "the matcher started singularising; re-measure before allowing it — "
+        "it blocked 74 clinical terms last time, including "
+        "'Head and neck squamous cell carcinoma'")
 
 
 def test_the_deliberate_whitelist_entries_still_hold():
@@ -64,3 +94,16 @@ def test_the_deliberate_whitelist_entries_still_hold():
     b = Blocker()
     assert not b.is_blocked("amputation-free survival")
     assert not b.is_blocked("wound area reduction")
+
+
+def test_a_list_nobody_loaded_does_not_answer_no():
+    """`BlockList().match(...)` used to return False for everything.
+
+    A list that has never read its file holds the empty set, so every question
+    got a confident "not on the list" about terms that are on it. An empty
+    list is a legitimate state, so emptiness cannot be the signal — whether
+    `load` has run is.
+    """
+    from wound_ontology.store.term_lists import BlockKeywordList, BlockList
+    assert BlockList().match("caregiving practice")
+    assert BlockKeywordList().match("randomized trial")

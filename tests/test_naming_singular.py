@@ -145,3 +145,50 @@ def test_the_words_that_only_look_plural_are_still_safe():
 def test_the_curators_row():
     """`case -> cases` is what started this."""
     assert singular_spelling("cases") == "case"
+
+
+def test_a_genitive_is_not_a_plural():
+    """`naming_singular` read the final s of `patient's` as a plural and
+    answered `patient'` — a name nobody would ever write. The same shape
+    covers a quoted phrase, whose head is `'wound'`. 17 store names on the
+    2026-09-26 corpus."""
+    from wound_ontology.utils.label_match import singular_spelling
+    for label in ["patient's", "fibroblasts'", "growth factors'",
+                  "'machine learning'", "'wound'"]:
+        assert singular_spelling(label) == label
+
+
+def test_a_latin_species_epithet_is_not_a_plural():
+    """`albicans`, `marcescens`, `perfringens` end -ans/-ens exactly as
+    `clinicians`, `pathogens` and `specimens` do, and no suffix rule separates
+    them. Every one of these was in the store being turned into a word that
+    does not exist — `Candida albican`, `Serratia marcescen`."""
+    from wound_ontology.utils.label_match import singular_spelling
+    for label in ["Candida albicans", "Serratia marcescens",
+                  "Clostridium perfringens", "Eikenella corrodens",
+                  "thromboangiitis obliterans", "Achromobacter xylosoxidans",
+                  "Mycobacterium ulcerans", "Homo sapiens", "Pseudomonas",
+                  "erysipelas", "glans", "dens"]:
+        assert singular_spelling(label) == label, label
+
+
+def test_a_real_plural_with_the_same_ending_still_singularises():
+    """The list must not swallow the ordinary words that share the ending."""
+    from wound_ontology.utils.label_match import singular_spelling
+    for plural, single in [("clinicians", "clinician"), ("pathogens", "pathogen"),
+                           ("specimens", "specimen"), ("regimens", "regimen"),
+                           ("N-glycans", "N-glycan"), ("antigens", "antigen")]:
+        assert singular_spelling(plural) == single
+
+
+def test_an_internal_capital_is_not_ours_to_normalise():
+    """A token with an internal capital is an acronym or a chemical name. The
+    round trip through the lowercase `naming_singular` was destroying it:
+    `miRNAs` came back `mirna` and `iGAS` came back `iga` — in the store, from
+    2026-09-26, because ingestion normalises."""
+    from wound_ontology.utils.label_match import singular_spelling
+    assert singular_spelling("miRNAs") == "miRNA"
+    assert singular_spelling("microRNAs") == "microRNA"
+    # a trailing CAPITAL S is part of the acronym, not a plural
+    assert singular_spelling("iGAS") == "iGAS"
+    assert singular_spelling("PrUMS") == "PrUMS"

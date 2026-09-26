@@ -485,7 +485,15 @@ class Orchestrator:
 
     def run_pass0_normalise(self, *, dry_run: bool = True,
                             quiet: bool = False) -> dict:
-        """PASS 0: merge the spellings a rule can settle, before any model runs.
+        """PASS 0: fix the spellings a rule can settle, before any model runs.
+
+        **It renames, it does not map** (curator, 2026-09-26: *pass 0 should
+        not create another mapping, it should change the labels right at the
+        spot*), and it renames in BOTH places a term string lives -- the
+        concept store and the term mapping -- *just to make sure nothing
+        slipped through*. Normalising only the store would leave the mapping
+        holding spellings the rules reject, and the next apply would put them
+        back.
 
         The curator's rule of 2026-09-25: exhaust the deterministic methods
         first, and never pay a model to notice that `Surgical Site Infection`
@@ -511,56 +519,113 @@ class Orchestrator:
         then itself singularised and Americanised, unless it is an ontology
         label, which is kept exactly as the ontology writes it.
 
-        Nothing here overrules a person. A pair the curator refused is skipped
-        by `add_batch`; a pair they ruled on is skipped here by name; and a
-        group whose members stop agreeing once their parentheticals are put
-        back is reported rather than merged, because `fold` strips those and
-        `vitamin (role)` is not `vitamin`.
+        Nothing here overrules a person. A pair the curator ruled on, and a
+        pair with a refusal standing against it, are both left alone and named
+        -- the refusal check used to be `add_batch`'s job on the way into the
+        mapping, and nothing writes to the mapping any more, so it moved into
+        pass 0 itself. A declared BFO category keeps the spelling BFO gives it
+        (rule 22), and a group whose members stop agreeing once their
+        parentheticals are put back is reported rather than merged, because
+        `fold` strips those and `vitamin (role)` is not `vitamin`.
 
         Idempotent, so it runs after extraction and again before matching.
         """
         from collections import Counter
 
-        from wound_ontology.mappers.pass0 import pass0_pairs
+        from wound_ontology.llm.category_vocab import declared_category
+        from wound_ontology.mappers.pass0 import pass0_renames
 
         freq: Counter = Counter()
-        for _, rec in self.store.dict.items():
-            entities = rec.get("entities", rec) if isinstance(rec, dict) else {}
-            for name in entities:
+        targets: set[str] = set()
+        for key, rec in self.store.dict.items():
+            if key == self.store.DECISIONS or not isinstance(rec, dict):
+                continue
+            for name, attrs in rec.get("entities", {}).items():
                 freq[name] += 1
+                for triple in attrs:
+                    if ":" in triple:
+                        targets.add(triple.split(":", 1)[1].strip())
 
         gt = self.term_mapper._term_mapping
-        pairs, report = pass0_pairs(
-            freq, {str(a) for a in self.ontology_labels()}, self.term_mapper.mapping,
-            is_curated=lambda term, canonical: bool(
-                gt.peek(term, canonical).get("curator")))
+        # Every string the MAPPING holds as well, so nothing slips through: its
+        # keys, its live targets and the canonicals its pair verdicts are keyed
+        # by. A canonical that only the mapping knows about is still a term,
+        # and leaving it unnormalised is how an un-singularised spelling gets
+        # put back the next time the mapping is applied.
+        others: set[str] = set(targets)
+        for term, rec in gt.records.items():
+            others.add(term)
+            if rec.get("to"):
+                others.add(rec["to"])
+            others.update(rec.get("pairs") or {})
+
+        renames, report = pass0_renames(
+            freq, {str(a) for a in self.ontology_labels()}, others,
+            declares=declared_category)
         if not quiet:
             print(f"[pass0] {report['groups']:,} group(s) with more than one "
-                  f"spelling; {report['to write']:,} merge(s) to write, "
-                  f"{report['already']:,} already mapped that way, "
-                  f"{len(report['curated']):,} left alone because the curator "
-                  f"ruled on them, {len(report['unsafe']):,} unsafe to merge, "
-                  f"{report['minted']:,} canonical(s) not observed as written")
+                  f"spelling, {report['respelled']:,} lone spelling(s) respelled; "
+                  f"{report['to write']:,} rename(s) to apply, "
+                  f"{report['minted']:,} spelling(s) nobody wrote")
+            print(f"[pass0] held back: {len(report['characters']):,} group(s) "
+                  f"held together only by a discarded character, "
+                  f"{len(report['unsafe']):,} with two different parentheticals, "
+                  f"{len(report['ontology sense']):,} on an ontology label's own "
+                  f"parenthetical, {len(report['declared']):,} declaring two "
+                  f"categories")
         if dry_run:
             print("[pass0] dry run — nothing written. Pass dry_run=False to apply.")
             return report
 
-        skipped = gt.add_batch(pairs, {t: {"confidence": 1.0, "method": "pass0"}
-                                       for t in pairs})
-        report["refused"] = skipped
-        if skipped:
-            print(f"[pass0] {len(skipped)} pair(s) stand refused and were not "
-                  f"written: {skipped[:5]}")
-        gt.save()
+        # The store first: it is the record, and the mapping is a view of what
+        # is still to be decided about it.
+        report["store"] = self.store.apply_renames(renames, by="pass0")
+        report["mapping"] = gt.apply_renames(renames, by="pass0")
+        if not quiet:
+            st, mp = report["store"], report["mapping"]
+            print(f"[pass0] store: {st['renamed']:,} name(s) renamed, "
+                  f"{st['entities']:,} entity records, "
+                  f"{st['merged verdicts']:,} verdict(s) merged")
+            print(f"[pass0] mapping: {mp['keys renamed']:,} key(s), "
+                  f"{mp['targets renamed']:,} target(s) and "
+                  f"{mp['pair keys renamed']:,} pair key(s) renamed; "
+                  f"{mp['records merged']:,} record(s) merged; "
+                  f"{mp['identities dropped']:,} entr(ies) dropped as pure "
+                  f"spelling ({mp['records deleted']:,} record(s) gone entirely, "
+                  f"the rest kept for a gate or another canonical)")
+            if mp["chains"]:
+                print(f"[pass0] {mp['chains']:,} live entr(ies) now point at a "
+                      f"term that is itself mapped — the rename revealed chains "
+                      f"the spelling was hiding; resolve_chains is owed a run.")
+        if report["mapping"]["gate conflicts"]:
+            clashes = report["mapping"]["gate conflicts"]
+            print(f"[pass0] {len(clashes)} merged record(s) carry a gate source "
+                  f"that contradicts ITSELF across the spellings; that source now "
+                  f"decides nothing and both sides are kept in `gate_contested`:")
+            for term, source, kept, dropped in clashes[:10]:
+                print(f"[pass0]     {term!r}: {source} said both {kept!r} and {dropped!r}")
+        if report["mapping"]["target conflicts"]:
+            conflicts = report["mapping"]["target conflicts"]
+            print(f"[pass0] {len(conflicts)} merged record(s) pointed at DIFFERENT "
+                  f"canonicals; the first is live and both are kept in `pairs`:")
+            for term, kept, lost in conflicts[:10]:
+                print(f"[pass0]     {term!r} -> {kept!r} (also claimed {lost!r})")
 
-        reloaded = Orchestrator().term_mapper.mapping
-        wrong = {t: reloaded.get(t) for t, c in pairs.items()
-                 if (t, c) not in set(skipped) and reloaded.get(t) != c}
-        if wrong:
-            raise RuntimeError(f"[pass0] {len(wrong)} merge(s) did not read back "
-                               f"from the file: {list(wrong.items())[:5]}")
-        print(f"[pass0] {len(pairs) - len(skipped):,} merge(s) written and "
-              f"verified; {len(reloaded):,} entries in the mapping")
+        # Read both back off disk. A rename that did not land is a term the
+        # rest of the pipeline still sees in the old spelling, and it would
+        # only show up as a mysterious duplicate class weeks later.
+        fresh = Orchestrator()
+        left_in_store = {n for n in fresh.store.entities_raw() if n in renames}
+        left_in_mapping = {t for t in fresh.term_mapper._term_mapping.records
+                           if t in renames}
+        if left_in_store or left_in_mapping:
+            raise RuntimeError(
+                f"[pass0] {len(left_in_store)} name(s) in the store and "
+                f"{len(left_in_mapping)} key(s) in the mapping still hold a "
+                f"spelling pass 0 renamed: "
+                f"{sorted(left_in_store)[:3]} {sorted(left_in_mapping)[:3]}")
+        print(f"[pass0] {len(renames):,} rename(s) applied and verified against "
+              f"both files on disk.")
         return report
 
     def export_gate_lists(self, *, quiet: bool = False) -> dict[str, int]:
@@ -839,6 +904,28 @@ class Orchestrator:
                 "the wrong existing classes."
             )
         freq = self._collect_store_terms_with_freq()
+        # Every canonical the mapping ALREADY uses joins the clustering, with
+        # the frequency of everything that points at it. Pass 0 mints a
+        # canonical that no abstract wrote -- `wounds` and `Wounds` collapse
+        # onto `wound` -- and a clustering that only saw store strings would
+        # not know `wound` exists, would re-canonicalise its members onto a
+        # spelling that does, and would undo 22,475 singularisations without
+        # saying so. Inheriting the members' frequency is what makes
+        # `canonical_rank` keep choosing it.
+        inherited: dict[str, int] = {}
+        for term, canonical in self.term_mapper.mapping.items():
+            inherited[canonical] = inherited.get(canonical, 0) + freq.get(term, 0)
+        minted = 0
+        for canonical, carried in inherited.items():
+            if canonical not in freq:
+                freq[canonical] = carried
+                minted += 1
+            else:
+                freq[canonical] = max(freq[canonical], carried)
+        if minted:
+            print(f"[Orchestrator] {minted:,} canonical(s) the mapping uses are not "
+                  f"store strings; added to the clustering with the frequency of "
+                  f"what points at them.")
         anchors: set[str] = set()
         terms = list(freq.keys())
         if use_ontology_anchors:
