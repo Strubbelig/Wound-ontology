@@ -46,6 +46,20 @@ from typing import Callable, Iterable
 from wound_ontology.mappers.term_mapper import canonical_rank
 from wound_ontology.utils.label_match import fold
 from wound_ontology.utils.normalise import PARENTHETICAL, normalise
+from wound_ontology.utils.spelling import zipf
+
+#: An alphabetic run. Digits, units and Greek letters are not words and are
+#: not held against a spelling.
+WORDISH = re.compile(r"[A-Za-z]+")
+
+
+def invented_words(term: str) -> int:
+    """How many of `term`'s alphabetic tokens the language has never seen.
+
+    The tiebreaker for a seam group, where `canonical_rank` has nothing left
+    to say. See `_elect`.
+    """
+    return sum(1 for w in WORDISH.findall(term) if zipf(w.lower()) == 0.0)
 
 def pass0_renames(
     frequencies: dict[str, int],
@@ -125,8 +139,32 @@ def pass0_renames(
                 return
             canonical = declared[0]
         else:
-            winner = max(sorted(members),
-                         key=lambda t: canonical_rank(t, anchors, frequencies))
+            ranked = {m: canonical_rank(m, anchors, frequencies)
+                      for m in sorted(members)}
+            # Below the ontology test and the corpus count, `canonical_rank`
+            # falls back to WORD COUNT -- a longer label is the more specific
+            # of two spellings. Inside a group that met over a SEAM that
+            # reasoning is false by construction: the members are the same
+            # words with the boundary somewhere else, so the extra word is
+            # not more specific, it is a boundary in the wrong place.
+            # `Cumberland Ankle Instability Tool` and `Cumberl and Ankle
+            # Instability Tool` both appear in one abstract each, the corpus
+            # said nothing, the extra word won, and pass 0 was about to
+            # rename the instrument onto the typo.
+            #
+            # So when the corpus is silent, ask the language: a tokenisation
+            # that invents a word loses to one that does not. Measured over
+            # the 2026-09-26 store this changes exactly one election out of
+            # 522 -- that one. It is deliberately the LAST word before word
+            # count and never reaches past frequency: `postradiation` and
+            # `antibiofilm` are not in a general-English list either, and the
+            # corpus is entitled to prefer them.
+            top = max(ranked.values())
+            tied = [m for m, r in ranked.items() if r[:2] == top[:2]]
+            if len(tied) > 1:
+                fewest = min(invented_words(m) for m in tied)
+                tied = [m for m in tied if invented_words(m) == fewest]
+            winner = max(tied, key=ranked.__getitem__)
             canonical = winner if winner in anchors else norm[winner].name
 
         wrote = False

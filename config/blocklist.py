@@ -1118,7 +1118,6 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "pain rating",
     "pain reduction",
     "pain relief",
-    "pain score",
     "pain severity",
     "palatal donor site",
     "palatine tonsil",
@@ -7717,6 +7716,11 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "video-based educational intervention",
     "vocational rehabilitation",
     "wellness intervention",
+    # ── decided by curator, no section ──
+    "injury model",
+    "predictive factor",
+    "quality-adjusted life year",
+    "traditional measurement",
     # ── decided by pass2, no section ──
     "'machine learning'",
     "16 S sequencing",
@@ -9895,7 +9899,6 @@ METHODOLOGY_BLOCKLIST: set[str] = {
     "PVT prediction model",
     "quality education initiative",
     "quality surveillance",
-    "quality-adjusted life year",
     "quality-by-design manufacturing",
     "quantile regression",
     "quasi-experimental trial",

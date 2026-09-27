@@ -1846,6 +1846,7 @@ WHITELIST: frozenset[str] = frozenset({
     "pain level",
     "Pain management",
     "Pain management plan specification",
+    "pain score",
     "painful",
     "Pallor",
     "pars plana vitrectomy",
@@ -4138,6 +4139,12 @@ WHITELIST: frozenset[str] = frozenset({
     # ── training intervention · educational intervention · training ─────────────────
     "non-invasive treatment modality",
     "Traditional treatment",
+    # ── decided by curator, no section ──
+    "pain assessment",
+    "pain-management technique",
+    "quick disability of the arm, shoulder and hand",
+    "self-injection of paraffin",
+    "wide-awake local anesthesia no tourniquet technique",
     # ── decided by pass2, no section ──
     "\"compartment syndrome\"",
     "3D printed auxetic-structured insole",

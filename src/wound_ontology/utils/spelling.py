@@ -103,7 +103,14 @@ NEVER_CONVERT = frozenset({
 CORE_ZIPF = 4.5
 
 
-def _zipf(word: str) -> float:
+@functools.lru_cache(maxsize=100_000)
+def zipf(word: str) -> float:
+    """How common `word` is in English, 0.0 if the language has never seen it.
+
+    The one accessor (rule 44). Pass 0 asks it too -- a tokenisation that
+    invents a word loses an election to one that does not -- so it is public
+    and cached rather than reimported per caller.
+    """
     from wordfreq import zipf_frequency
     return zipf_frequency(word, "en")
 
@@ -118,7 +125,7 @@ def american_word(word: str) -> str:
     known = get_american_spelling(word)
     if known and known != word:
         return known
-    if _zipf(word) >= CORE_ZIPF:
+    if zipf(word) >= CORE_ZIPF:
         return word
     for pattern, replacement in PATTERNS:
         if (pattern, replacement) in MID_WORD and len(word) < MID_WORD_MIN:
@@ -126,7 +133,7 @@ def american_word(word: str) -> str:
         candidate = re.sub(pattern, replacement, word)
         if candidate == word:
             continue
-        if _zipf(candidate) > _zipf(word):
+        if zipf(candidate) > zipf(word):
             return candidate
     return word
 

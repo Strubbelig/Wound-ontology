@@ -51,9 +51,9 @@ def test_an_ordinary_word_that_ends_like_a_british_one_is_left_alone(word):
 
 
 def test_a_core_english_word_is_never_touched_by_a_pattern():
-    from wound_ontology.utils.spelling import CORE_ZIPF, _zipf
-    assert _zipf("four") >= CORE_ZIPF
-    assert _zipf("oedema") < CORE_ZIPF
+    from wound_ontology.utils.spelling import CORE_ZIPF, zipf
+    assert zipf("four") >= CORE_ZIPF
+    assert zipf("oedema") < CORE_ZIPF
 
 
 def test_an_archaic_dictionary_would_have_blocked_a_real_rewrite():
@@ -74,9 +74,9 @@ def test_an_ise_word_that_is_not_a_verb_ending_survives(word):
 
 
 def test_a_rewrite_needs_the_candidate_to_be_the_commoner_word():
-    from wound_ontology.utils.spelling import _zipf
-    assert _zipf("edema") > _zipf("oedema")
-    assert _zipf("expertize") < _zipf("expertise")
+    from wound_ontology.utils.spelling import zipf
+    assert zipf("edema") > zipf("oedema")
+    assert zipf("expertize") < zipf("expertise")
 
 
 # ── casing and whole labels ──────────────────────────────────────────────────

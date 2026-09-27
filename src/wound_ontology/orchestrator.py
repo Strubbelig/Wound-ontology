@@ -519,11 +519,12 @@ class Orchestrator:
         then itself singularised and Americanised, unless it is an ontology
         label, which is kept exactly as the ontology writes it.
 
-        Nothing here overrules a person. A pair the curator ruled on, and a
-        pair with a refusal standing against it, are both left alone and named
-        -- the refusal check used to be `add_batch`'s job on the way into the
-        mapping, and nothing writes to the mapping any more, so it moved into
-        pass 0 itself. A declared BFO category keeps the spelling BFO gives it
+        Nothing here asks a person's leave, and that is deliberate (curator,
+        2026-09-26: *there is no place for any disagreement with the pass 0
+        renaming*). The guard that skipped a pair a curator had ruled on was
+        measured before it was removed: all 385 such pairs were pure spelling,
+        so the guard was not protecting a decision, it was preserving a second
+        spelling of one. A declared BFO category keeps the spelling BFO gives it
         (rule 22), and a group whose members stop agreeing once their
         parentheticals are put back is reported rather than merged, because
         `fold` strips those and `vitamin (role)` is not `vitamin`.

@@ -2269,6 +2269,180 @@ retries left on, the per-call budget not reaching the request, and a backstop
 that races the transport instead of backing it up.
 
 
+## 46. A word boundary is not a spelling difference
+
+**Decided 2026-09-27.** The curator, handed `intraabdominal complication` →
+`intra-abdominal complication` to adjudicate by hand: *why. this should have
+been treated by the dehyphenation in string normalize.*
+
+It should have been. It was not, and the reason is one character.
+`normalize_term` turns a hyphen into a **space**:
+
+```
+intra-abdominal complication  →  "intra abdominal complication"
+intraabdominal complication   →  "intraabdominal complication"
+```
+
+Two keys, two groups, two terms — so pass 0 had nothing to say, the clustering
+proposed the pair at cosine 0.97, the two gate passes disagreed about it, and a
+person was asked to rule on a hyphen. Worse, the *Unicode* hyphen is deleted
+rather than spaced (`[^\w\s]` does not spare U+2011), so one spelling of one
+word folded two different ways depending on which dash character the author
+typed: `re-tear` → `re tear`, `re‑tear` → `retear`.
+
+**The rule.** Hyphen, space and nothing are three ways of writing one seam, and
+a seam is not a character a spelling is allowed to differ in. `key` and
+`strict` therefore carry **no spaces at all**. The seam is closed **last**,
+after the head noun is singularised, because `singular_spelling` needs the
+words to still be words — close it first and `antimicrobial agents` has no head
+to make singular.
+
+`strict` closes it too, and must: `key` merging a group that `strict` splits
+straight back apart over the very difference `key` merged on is not a rule, it
+is two rules disagreeing (rule 44). What `strict` still keeps is every
+character `fold` *discards* — `p < 0.05` stays apart from `p > 0.05`, `Na+`
+from `NA`, `Phase I/II` from `Phase III` — and those groups are held back for a
+person exactly as before.
+
+**What it was hiding, measured on the 2026-09-26 store and mapping.** Pass 0
+had been applied and was at a fixed point but for 19 groups the mapping build
+had since added. With the seam closed it finds **522 groups with more than one
+spelling, 526 renames** — so **503 groups, 888 store names**, were sitting
+apart over a hyphen. They are not marginal: `health care provider` /
+`healthcare provider`, `anti-microbial activity` / `antimicrobial activity`,
+`end point` / `endpoint`, `bed sore` / `bedsore`, `MMP-1` / `MMP1`,
+`post-operative wound` / `postoperative wound`. **Ten of the 695 pairs in the
+open curator queue** were this and nothing else.
+
+The groups held back by a discarded character go 162 → 189: the wider key
+introduces 27 more groups that `strict` then splits — `organ space` versus
+`organ/space`, `JAK-STAT` versus `JAK/STAT`, `p = 0.001` versus `p < 0.001`.
+That is the guard working, not a regression.
+
+**Not changed:** `fold` and `normalize_term` themselves. `fold` splits on
+spaces to find the head noun, and `LabelIndex` and the keyword lists are built
+on it; the boundary rule belongs where the question *"are these two spellings
+of one term?"* is asked, which is `Normalised`. One consequence is left
+standing and named: the ontology label index still matches on `fold`, so an
+ontology class written `health care provider` does not meet a store term
+written `healthcare provider` until pass 0 has renamed one onto the other.
+
+### What closing the seam broke, and what it cost to fix
+
+Merging the groups handed the ELECTION a question it had never been asked.
+`canonical_rank` ends in word count — *a longer label is the more specific of
+two spellings* — and inside a seam group that reasoning is false by
+construction: the members are the same words with the boundary somewhere else,
+so an extra word is not more specific, it is a boundary in the wrong place.
+
+`Cumberland Ankle Instability Tool` and `Cumberl and Ankle Instability Tool`
+each appear in exactly one abstract. The corpus said nothing, the extra word
+won, and pass 0 was about to rename the instrument onto the typo.
+
+**So when the corpus is silent, the language is asked**: among the members that
+tie on being an ontology label and on corpus frequency, a tokenisation that
+invents a word the language has never seen loses to one that does not
+(`pass0.invented_words`, on `spelling.zipf`). It is the last word *before* word
+count and it never reaches past frequency — `postradiation`, `antibiofilm` and
+`intraobserver` are in no general-English list either, and a medical corpus
+that writes them is entitled to them. Measured over the whole 2026-09-26
+store it changes **exactly one election out of 522**: that one.
+
+`spelling._zipf` became `spelling.zipf`, public and `lru_cache`d — one
+accessor, two callers, rather than a second import of `wordfreq` (rule 44).
+
+Enforced by: `utils/normalise.Normalised.key` and `.strict`;
+`mappers/pass0.invented_words` and the election in `_elect`.
+`tests/test_pass0.py` — 8 tests, 8 mutations, all caught. The seam: the key
+keeping its spaces (the bug itself), `strict` keeping its spaces (the split
+undoing the merge), the seam closed before the head noun is singularised, and
+`strict` reduced to the key so it stops guarding the discarded characters. The
+election: no lexicon at all, the lexicon reaching past the corpus count, the
+lexicon preferring the invented word, and a digit run counted as a word.
+
+
+## 47. A decision is stored with the question it answers, and applying it is a write that is read back
+
+**Decided 2026-09-27.** The Contradiction Queue came back with 705 answers.
+Applying them found three defects, in the step between a person deciding and
+the record holding the decision. None of them was a bug in what the curator
+said; all three were ways of losing it.
+
+**The decision did not carry its question.** The page stored what the curator
+SAID -- term, verdict, note -- and not what it ASKED, so a pair decision
+arrived with no canonical. Reading it back off the live mapping does not work,
+because these pairs are in the queue precisely because the two passes
+disagreed and the adjudicator WITHDREW the mapping: **634 of the 695 pair
+decisions resolved to nothing** and printed `NO CANONICAL ... skipped`. The
+fix has two halves, and both matter. The applier can be handed the queue
+payload and match on the row id (`--queue`), checking the term as well as
+reading the canonical, because the ids are positional and a payload rebuilt
+against a different queue would file every verdict against the wrong pair. And
+the NEXT page stores the question in the answer: the Canonical Tie-Breaks page
+writes the spellings it asked about into each decision document, so its
+applier needs nothing but the folder.
+
+**A confirmation was a note, not a mapping.** `same_class` wrote the verdict
+onto the pair and left the mapping withdrawn, so **135 of the 499
+confirmations changed nothing a build would see**. A verdict that agrees with
+a proposal has to reinstate it.
+
+**A batch collided with itself.** The check for "is this canonical already
+spoken for?" read the mapping as it stood BEFORE the batch, where nothing had
+written yet. Two pairs of reversals each claimed one canonical --
+`inflammation level` and `inflammatory level` both onto `levels of
+inflammation`, `near-infrared radiation` and `near-infrared light` both onto
+`near-infrared` -- and the second write replaced the first. **Of 179
+reversals, 177 landed.** The read-back caught the two; the point of the fix is
+that the read-back should have nothing to catch.
+
+**Every clash check asked about the SOURCE, and none about the target.** A
+mapping has to bottom out in a name, and `A -> B -> A` bottoms out nowhere.
+`orthopedics -> orthopedic` was standing, the queue confirmed `orthopedic ->
+orthopedics`, the source was free, every check passed -- and the write closed
+a two-cycle. **26 of them**, none of which existed before that run. So the
+question is not asked of the graph as it IS but of the graph as it WILL BE:
+the batch's own edges, minus the arrows the batch removes, over what stands.
+31 edges closed a loop and were held back. What that cost is worth saying
+exactly: **29 of the 30 loops were already joined under one name**, pointing
+the other way, so the curator's ruling that they are one class was already
+true and only the choice of name differed. One was not -- three spellings of
+a chronic leg ulcer, joined in a ring -- and that one is a real open question.
+
+**660 of the 695 pairs already carried a curator verdict** from the phone
+review of 2026-09-25, in that review's own vocabulary -- `kept`, `refused`,
+`repointed` -- and 79 of them said `refused` where the queue now said
+`reverse`. The same person, looking again with the two passes' reasoning in
+front of them. The new verdict stands; the old one moves to `curator_history`
+rather than being overwritten out of existence (rule 33).
+
+**The rule.** A queue that answers questions must store the question with the
+answer. Applying the answers is a write, and a write is verified by reading it
+back -- every kind of it, not the kinds that were easy to check. What cannot
+be written is NAMED and handed back to the curator, because a page stops
+offering a row the moment it is answered: a decision this step drops is not
+deferred, it is one the curator believes they made and will never be asked for
+again.
+
+**What it came to.** 705 decisions: 10 gate verdicts, 475 confirmations live
+again, 16 refusals, 173 reversals, 1 subsumption candidate, and **30 rows
+named as clashes** rather than guessed at. Those 30 went back as 28 canonical
+tie-breaks -- one class, several names, which name does it keep -- and came
+back answered, 54 spellings repointed onto 28 canonicals, no clash and nothing
+held.
+
+Enforced by: `scripts/apply_contradiction_verdicts.py` (`_with_queue`,
+`confirmation_clashes`, `reversal_clashes`, `record_curator`) and
+`scripts/apply_canonical_tiebreaks.py` (`plan`, `apply_writes`), each read
+back off disk before it reports success.
+`tests/test_contradiction_verdicts.py` -- 32 tests, 18 mutations;
+`tests/test_canonical_tiebreaks.py` -- 12 tests, 11 mutations. All caught,
+two of them only after the check they aimed at was lifted out of `main` into
+a function a test can reach -- which is the other half of the rule: a step
+that cannot be tested without the whole store will be tested by the live
+data, once, in production.
+
+
 ## Adding to this file
 
 When a universal design choice is made:

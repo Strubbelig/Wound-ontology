@@ -53,6 +53,82 @@ def test_two_different_things_do_not_share_a_key():
     assert normalise("venous leg ulcer").key != normalise("arterial leg ulcer").key
 
 
+# ── the seam: hyphen, space and nothing are one character ────────────────────
+#
+# The curator, 2026-09-27, handed `intraabdominal complication` ->
+# `intra-abdominal complication` to adjudicate by hand: *this should have been
+# treated by the dehyphenation.* It was not. `normalize_term` turns a hyphen
+# into a space, so the dehyphenated spelling met `intra abdominal` and never
+# met `intraabdominal`, and 888 store names sat in 439 groups that a person
+# was being asked to reunite one pair at a time.
+
+@pytest.mark.parametrize("a,b", [
+    ("intra-abdominal complication", "intraabdominal complication"),
+    ("intra-abdominal complication", "intra abdominal complication"),
+    ("health care provider", "healthcare provider"),
+    ("anti-microbial activity", "antimicrobial activity"),
+    ("end point", "endpoint"),
+    ("MMP-1", "MMP1"),
+    ("re-tear", "re\u2011tear"),              # ASCII hyphen vs U+2011
+])
+def test_a_seam_written_two_ways_is_one_term(a, b):
+    assert normalise(a).key == normalise(b).key
+    assert normalise(a).strict == normalise(b).strict
+
+
+def test_the_seam_closes_after_the_head_noun_is_singularised():
+    """Removing the spaces first would leave `singular_spelling` no head."""
+    assert normalise("anti-microbial agents").key == normalise("antimicrobial agent").key
+
+
+def test_a_character_that_is_not_a_seam_still_splits_the_group():
+    """`strict` is what stops the wider key from merging two real terms."""
+    for a, b in [("p < 0.05", "p > 0.05"), ("Na+", "NA"), ("Phase I/II", "Phase III")]:
+        assert normalise(a).key == normalise(b).key, (a, b)
+        assert normalise(a).strict != normalise(b).strict, (a, b)
+
+
+def test_pass0_settles_a_dehyphenation_instead_of_asking_the_curator():
+    pairs, _ = _pairs({"intra-abdominal complication": 5,
+                       "intraabdominal complication": 2})
+    assert pairs == {"intraabdominal complication": "intra-abdominal complication"}
+
+
+def test_the_language_breaks_a_seam_tie_the_corpus_cannot():
+    """Closing the seam handed the election a question it could not answer.
+
+    Both spellings appear in one abstract, so `canonical_rank` fell through
+    to WORD COUNT -- and `Cumberl and Ankle Instability Tool` has one word
+    more than the instrument's actual name. Pass 0 was about to rename the
+    instrument onto the typo.
+    """
+    pairs, _ = _pairs({"Cumberland Ankle Instability Tool": 1,
+                       "Cumberl and Ankle Instability Tool": 1})
+    assert pairs == {"Cumberl and Ankle Instability Tool":
+                     "Cumberland Ankle Instability Tool"}
+
+
+def test_a_digit_is_not_a_word_the_language_failed_to_learn():
+    """`POD7` and `POD 7` are one term, and neither of them invents a word.
+
+    Counting the digits into the token makes `pod7` a string no English list
+    has ever seen, so the unspaced spelling would look like a typo and lose
+    an election for a reason that has nothing to do with English.
+    """
+    from wound_ontology.mappers.pass0 import invented_words
+    assert invented_words("POD7") == invented_words("POD 7") == 0
+
+
+def test_the_corpus_still_outranks_the_language():
+    """The language only speaks where the corpus is silent.
+
+    `antibiofilm` is in no general-English word list, and a medical corpus
+    that writes it three times to one `anti-biofilm` is entitled to it.
+    """
+    pairs, _ = _pairs({"antibiofilm": 3, "anti-biofilm": 1})
+    assert pairs == {"anti-biofilm": "antibiofilm"}
+
+
 # ── what it writes ───────────────────────────────────────────────────────────
 
 def test_every_variant_maps_onto_one_spelling():

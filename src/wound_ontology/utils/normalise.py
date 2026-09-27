@@ -18,6 +18,18 @@ they are three projections of one pipeline and not three pipelines:
     key     what two spellings of one term SHARE
     strict  the key, keeping every character `fold` would throw away
 
+A word boundary is not one of the characters a spelling is allowed to differ
+in, so `key` and `strict` carry no spaces at all: a hyphen, a space and
+nothing are three ways of writing one seam, and `intra-abdominal`,
+`intra abdominal` and `intraabdominal` are one term written three ways. The
+curator, 2026-09-27, on being asked to adjudicate the last pair by hand: *this
+should have been treated by the dehyphenation.* It was not, because
+`normalize_term` turns a hyphen into a SPACE, so the dehyphenated spelling
+never met the undashed one -- and a U+2011 hyphen is deleted outright instead,
+which left `re-tear` folding to `re tear` while `re\u2011tear` folded to
+`retear`. The seam is removed LAST, after the head noun is singularised,
+because `singular_spelling` needs the words to still be words.
+
 `strict` exists because `normalize_term` strips all punctuation, and that is
 how `Na+` meets `NA`, `Phase I/II` meets `Phase III` and `P < 0.05` meets
 `P > 0.05`. Two labels with the same `key` and a different `strict` are not two
@@ -78,12 +90,14 @@ class Normalised:
         """What two spellings of one term SHARE.
 
         `fold` lowercases, drops the parenthetical, flattens hyphens, strips
-        the remaining punctuation and singularises the head again. Built on
-        the NAME rather than the raw label so the British and singular rules
-        are already applied and two spellings cannot disagree about them.
+        the remaining punctuation and singularises the head again; then every
+        word boundary goes, so a seam written as a hyphen, as a space or as
+        nothing at all reads the same. Built on the NAME rather than the raw
+        label so the British and singular rules are already applied and two
+        spellings cannot disagree about them.
         """
         if self._key is None:
-            self._key = fold(self.name)
+            self._key = WHITESPACE.sub("", fold(self.name))
         return self._key
 
     @property
@@ -99,14 +113,16 @@ class Normalised:
         ways: `DFUs` is an acronym plural only while it still has its capitals,
         and `OUTCOME MEASURES` only stops being exempt from rule 23a once it
         loses them. Safe to apply twice -- the function is unchanged on an
-        already-singular head.
+        already-singular head. The spaces go last, with `key`'s, or a group
+        `key` merged over a seam would be split straight back apart by the
+        very difference it was merged over.
         """
         if self._strict is None:
             bare = PARENTHETICAL.sub("", self.label)
             bare = ASCII_DASHES.sub(" ", UNICODE_DASHES.sub("", bare))
             bare = WHITESPACE.sub(" ", bare).strip()
-            self._strict = american_spelling(
-                singular_spelling(singular_spelling(bare).lower()))
+            self._strict = WHITESPACE.sub("", american_spelling(
+                singular_spelling(singular_spelling(bare).lower())))
         return self._strict
 
     def __repr__(self) -> str:                          # pragma: no cover
