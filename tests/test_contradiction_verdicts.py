@@ -57,6 +57,27 @@ def test_anything_it_cannot_place_is_named_not_dropped(row):
     assert unknown == [row], "a decision this script cannot apply must be reported"
 
 
+def test_reverse_is_a_pair_verdict_the_applier_knows():
+    """The curator's fifth button: one class, named the wrong way round.
+
+    It is two writes, not one — the inverse entry AND a refusal on the
+    original pair. Without the refusal the next build proposes the direction
+    that was just rejected, and the adjudication cache approves it from
+    memory; that is the exact failure rule 37 was written for.
+    """
+    scope, pairs, held, unknown = mod.classify(
+        [_row(queue="pairs", verdict="reverse", term="a", canonical="b")])
+    assert len(pairs) == 1 and not unknown
+
+
+def test_every_button_on_the_page_is_a_verdict_the_applier_accepts():
+    """The page and this script are two lists of the same vocabulary. When
+    they drift, the curator's answer lands in `unrecognised` and is lost."""
+    on_the_page = {"same_class", "narrower", "broader", "reverse", "different"}
+    assert on_the_page == mod.PAIR
+    assert {"in", "out", "unsure"} == mod.SCOPE
+
+
 # ── reading the store's export ───────────────────────────────────────────────
 
 def test_it_reads_one_document_per_file(tmp_path):

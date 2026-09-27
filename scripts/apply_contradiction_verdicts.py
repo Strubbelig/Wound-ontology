@@ -20,7 +20,12 @@ queues, which land in two different places:
                     class, so the mapping is withdrawn and the pair is kept as
                     a subsumption candidate; `different` refuses the pair,
                     which is what stops the next build proposing it again
-                    (rule 37).
+                    (rule 37); and `reverse` says the two ARE one class but
+                    named the wrong way round, which is two writes, not one --
+                    the inverse entry AND a refusal on the original pair,
+                    because without the refusal the next build proposes the
+                    direction the curator just rejected and the cache approves
+                    it from memory.
 
 Dry by default. Nothing is written without `--write`, and after writing it
 reads both back off disk and raises if a verdict did not land -- a decision
@@ -39,7 +44,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "src"))
 
 SCOPE = {"in", "out", "unsure"}
-PAIR = {"same_class", "narrower", "broader", "different"}
+PAIR = {"same_class", "narrower", "broader", "reverse", "different"}
 
 
 def _load(folder: Path) -> list[dict]:
@@ -110,7 +115,7 @@ def main() -> None:
                                    "by": "curator via the contradiction queue"})
 
     # ── pairs ────────────────────────────────────────────────────────────────
-    refused, withdrawn, confirmed = [], [], []
+    refused, withdrawn, confirmed, reversed_ = [], [], [], []
     for r in pairs:
         term, canonical, v = r["term"], r.get("canonical"), r["verdict"]
         if not canonical:
@@ -130,11 +135,32 @@ def main() -> None:
             confirmed.append((term, canonical))
         elif v == "different":
             refused.append((term, canonical))
+        elif v == "reverse":
+            reversed_.append((term, canonical))
         else:
             withdrawn.append((term, canonical, v))
 
     print(f"[verdicts]   {len(confirmed)} confirmed, {len(refused)} refused, "
-          f"{len(withdrawn)} kept as subsumption candidates")
+          f"{len(withdrawn)} kept as subsumption candidates, "
+          f"{len(reversed_)} reversed")
+
+    # A reverse points the canonical at the term. If that canonical already
+    # points somewhere else, this would quietly overwrite a live decision, so
+    # it is reported and skipped instead.
+    def _standing(canonical: str) -> str | None:
+        return (gt.records.get(canonical) or {}).get("to")
+
+    clashing = set()
+    for term, canonical in reversed_:
+        standing = _standing(canonical)
+        if standing not in (None, term):
+            clashing.add((term, canonical))
+            print(f"[verdicts]   CLASH reversing {term!r}: {canonical!r} already maps "
+                  f"to {standing!r}; left alone")
+    reversed_ = [p for p in reversed_ if p not in clashing]
+    for term, canonical in reversed_:
+        print(f"[verdicts]   reverse {term!r} -> {canonical!r}  becomes  "
+              f"{canonical!r} -> {term!r}")
 
     if write:
         for term, canonical in refused:
@@ -143,6 +169,23 @@ def main() -> None:
                 "when": stamp}
             if gt.records[term].get("to") == canonical:
                 gt.records[term]["to"] = None
+        for term, canonical in reversed_:
+            # Both writes, together. The inverse alone leaves the original
+            # direction free to come back on the next build.
+            gt.record(term)["pairs"].setdefault(canonical, {})["refused"] = {
+                "by": "curator",
+                "reason": "the contradiction queue: reversed, the canonical is the term",
+                "when": stamp}
+            if gt.records[term].get("to") == canonical:
+                gt.records[term]["to"] = None
+            inverse = gt.record(canonical)
+            inverse["to"] = term
+            inverse["method"] = "curator"
+            inverse["confidence"] = 1.0
+            inverse.setdefault("pairs", {}).setdefault(term, {})["curator"] = {
+                "verdict": "same_class",
+                "reason": "the contradiction queue: reversed from the other direction",
+                "when": stamp}
         for term, canonical, v in withdrawn:
             if gt.records.get(term, {}).get("to") == canonical:
                 gt.records[term]["to"] = None
@@ -159,10 +202,14 @@ def main() -> None:
                    if fresh.peek_gate(r["term"]).get("curator", {}).get("verdict")
                    != r["verdict"]]
         lost = [t for t, c in refused if not fresh.is_refused(t, c)]
-        if missing or lost:
+        unflipped = [f"{c} -> {t}" for t, c in reversed_
+                     if fresh.records.get(c, {}).get("to") != t
+                     or not fresh.is_refused(t, c)]
+        if missing or lost or unflipped:
             raise RuntimeError(
-                f"[verdicts] {len(missing)} gate verdict(s) and {len(lost)} refusal(s) "
-                f"did not read back from disk: {missing[:3]} {lost[:3]}")
+                f"[verdicts] {len(missing)} gate verdict(s), {len(lost)} refusal(s) and "
+                f"{len(unflipped)} reversal(s) did not read back from disk: "
+                f"{missing[:3]} {lost[:3]} {unflipped[:3]}")
         print(f"[verdicts] written and verified against the file on disk.")
     else:
         print("[verdicts] dry run — nothing written. Pass --write to apply.")
