@@ -39,6 +39,100 @@ def test_the_preferred_spelling(label, expected):
     assert normalise(label).name == expected
 
 
+@pytest.mark.parametrize("label,expected", [
+    ("lower limb wound", "lower extremity wound"),
+    ("LOWER LIMBS", "LOWER EXTREMITIES"),
+    ("Bioengineering strategy", "Bioengineering approach"),
+    ("prevention strategies", "prevention approach"),
+    ("fungating wound management", "fungating wound care"),
+    ("WOUND-MANAGEMENT STRATEGIES", "WOUND-CARE APPROACHES"),
+])
+def test_the_curators_preferred_vocabulary(label, expected):
+    assert normalise(label).name == expected
+
+
+@pytest.mark.parametrize("label,expected", [
+    ("dressing technique", "dressing method"),
+    ("cutaneous ulcer", "skin ulcer"),
+    ("follow-up evaluation", "follow-up assessment"),
+    ("blunt trauma", "blunt injury"),
+    ("susceptibility testing", "susceptibility test"),
+    ("inflammation biomarker", "inflammatory biomarker"),
+    ("cellular proliferation", "cell proliferation"),
+    ("diabetes foot ulcer", "diabetic foot ulcer"),
+    ("infectious process", "infection process"),
+    ("surgery duration", "surgical duration"),
+    ("biopsy specimen", "biopsy sample"),
+    ("CRP value", "CRP level"),
+    ("histopathologic alteration", "histopathological change"),
+    ("antimicrobial action", "antimicrobial activity"),
+    ("demographic feature", "demographic characteristic"),
+    ("full debridement", "complete debridement"),
+    ("antibiotic usage", "antibiotic use"),
+    ("bony consolidation", "bone consolidation"),
+    ("bypass operation", "bypass surgery"),
+    ("microbiological confirmation", "microbial confirmation"),
+    ("pharmacological intervention", "pharmacologic intervention"),
+    ("physiological response", "physiologic response"),
+    ("previous amputation", "prior amputation"),
+    ("dermatological complication", "dermatologic complication"),
+    ("radiological finding", "radiologic finding"),
+    ("oncological outcome", "oncologic outcome"),
+    ("histopathologic pattern", "histopathological pattern"),
+    ("numerical rating scale", "numeric rating scale"),
+    ("preventative treatment", "preventive treatment"),
+    ("post-surgical recovery", "postoperative recovery"),
+])
+def test_the_thirty_approved_preferred_names(label, expected):
+    assert normalise(label).name == expected
+
+
+@pytest.mark.parametrize("label", [
+    "inflammation in wound",
+    "cellular and humoral immunity",
+    "diabetes-related wound",
+    "infectious or inflammatory disease",
+    "surgery after injury",
+    "bony and soft tissue",
+])
+def test_a_modifier_rule_does_not_rewrite_a_head_or_relation(label):
+    assert normalise(label).name == label
+
+
+@pytest.mark.parametrize("preferred,variant", [
+    ("chronic lower extremity wound", "chronic lower-limb wound"),
+    ("bioengineering approach", "bioengineering strategy"),
+    ("fungating wound care", "fungating wound management"),
+    ("dressing method", "dressing technique"),
+    ("skin ulcer", "cutaneous ulcer"),
+    ("inflammatory biomarker", "inflammation biomarker"),
+    ("cell proliferation", "cellular proliferation"),
+    ("diabetic foot ulcer", "diabetes foot ulcer"),
+    ("postoperative recovery", "post-surgical recovery"),
+])
+def test_preferred_vocabulary_shares_both_group_keys(preferred, variant):
+    assert normalise(preferred).key == normalise(variant).key
+    assert normalise(preferred).strict == normalise(variant).strict
+
+
+def test_preferred_vocabulary_wins_even_when_the_old_name_is_more_frequent():
+    pairs, _ = _pairs({"chronic lower-limb wound": 20,
+                       "chronic lower extremity wound": 1,
+                       "bioengineering strategy": 12,
+                       "bioengineering approach": 1,
+                       "fungating wound management": 21,
+                       "fungating wound care": 1})
+    assert pairs["chronic lower-limb wound"] == "chronic lower-extremity wound"
+    assert pairs["bioengineering strategy"] == "bioengineering approach"
+    assert pairs["fungating wound management"] == "fungating wound care"
+
+
+def test_preferred_vocabulary_does_not_rewrite_unrelated_management():
+    assert normalise("pain management strategy").name == "pain management approach"
+    assert normalise("case management").name == "case management"
+    assert normalise("limbic system").name == "limbic system"
+
+
 @pytest.mark.parametrize("a,b", [
     ("Surgical Site Infection", "surgical site infections"),
     ("split-thickness skin graft", "Split Thickness Skin Grafts"),
@@ -157,6 +251,17 @@ def test_an_ontology_label_is_not_respelled_even_when_it_is_plural():
                            anchors=["Pressure Ulcers"])
     assert pairs == {"pressure ulcer": "Pressure Ulcers"}
     assert report["minted"] == 0
+
+
+def test_two_ontology_labels_are_both_immutable():
+    """Imported ontologies can give the same label different case.
+
+    Neither source label lives in the mutable store, so reporting one as a
+    rename creates permanent phantom work on every fixed-point check.
+    """
+    pairs, report = _pairs({}, anchors=["Abscess", "abscess"])
+    assert pairs == {}
+    assert report["to write"] == 0
 
 
 def test_a_canonical_can_be_a_spelling_nobody_wrote():

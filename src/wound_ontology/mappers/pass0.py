@@ -1,4 +1,4 @@
-"""Pass 0: the spellings a rule can settle, fixed before any model is asked.
+"""Pass 0: names a rule can settle, fixed before any model is asked.
 
 The curator's rule of 2026-09-25 -- exhaust the deterministic methods first,
 and never pay a model to notice that `Surgical Site Infection` and `surgical
@@ -6,12 +6,13 @@ site infections` are one thing. Measured on the 2026-09-25 store, **9,650 of
 96,243 terms are a pure spelling variant of another**: 5,638 needing only the
 singular rule, 3,027 case alone, 584 a hyphen, 272 British spelling.
 
-Four steps, in this order:
+Five steps, in this order:
 
 1. the head noun to the singular (`singular_spelling`, rule 23a);
 2. British to American (`utils.spelling`, rule 41);
-3. case, hyphens and punctuation folded (`fold`);
-4. group on the result, and elect one surviving spelling.
+3. the curator's preferred vocabulary (`canonical_vocabulary`, rules 48–49);
+4. case, hyphens and punctuation folded (`fold`);
+5. group on the result, and elect one surviving name.
 
 Singular BEFORE spelling: `Statistical Analyses` becomes `Statistical Analysis`
 and the noun never reaches the British-verb reading of `analyses` that `breame`
@@ -76,10 +77,11 @@ def pass0_renames(
     the ontology writes them. `others` are strings that must be normalised but
     carry no frequency of their own -- the term mapping's keys and canonicals.
 
-    **No person is consulted.** Pass 0 decides how a word is SPELLED -- the
-    singular, the American form, the case and the hyphens -- and there is
-    nothing there to disagree with: nobody holds that `haemorrhage` and
-    `hemorrhage` are two terms. An earlier version of this function skipped
+    **No person is consulted per term.** Pass 0 decides how a name is written
+    -- the singular, the American form, the case, the hyphens, and the small
+    preferred vocabulary the curator settled globally -- rather than asking
+    the same question for every compound containing it. An earlier version of
+    this function skipped
     any pair a curator had ruled on or refused, which read as respect and was
     not: measured on the 2026-09-26 data it held back **385 pairs, every one
     of them a pure spelling variant** -- `Aetiology`/`etiology`,
@@ -169,7 +171,12 @@ def pass0_renames(
 
         wrote = False
         for member in sorted(members):
-            if member == canonical:
+            # Every ontology label is immutable, not only the one that won the
+            # election. Two imported ontologies can contribute case variants
+            # (`Abscess` and `abscess`); returning a rename for the losing
+            # anchor reports work neither store can apply and makes Pass 0 look
+            # permanently non-idempotent.
+            if member == canonical or member in anchors:
                 continue
             renames[member] = canonical
             wrote = True

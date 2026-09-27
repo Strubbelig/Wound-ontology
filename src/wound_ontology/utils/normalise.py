@@ -54,6 +54,123 @@ UNICODE_DASHES = re.compile(r"[‐-―]")
 ASCII_DASHES = re.compile(r"[-_]")
 WHITESPACE = re.compile(r"\s+")
 
+#: Canonical vocabulary chosen by the curator.  These are deliberately small,
+#: explicit rules rather than a general synonym table: each one says which of
+#: two already-adjudicated names survives.  Inflected forms are listed too
+#: because only a label's head noun is singularised.
+CANONICAL_WORDS = {
+    "action": "activity",
+    "actions": "activities",
+    "alteration": "change",
+    "alterations": "changes",
+    "cutaneous": "skin",
+    "dermatological": "dermatologic",
+    "evaluation": "assessment",
+    "evaluations": "assessments",
+    "feature": "characteristic",
+    "features": "characteristics",
+    "full": "complete",
+    "histopathologic": "histopathological",
+    "limb": "extremity",
+    "limbs": "extremities",
+    "microbiological": "microbial",
+    "numerical": "numeric",
+    "oncological": "oncologic",
+    "operation": "surgery",
+    "operations": "surgeries",
+    "pharmacological": "pharmacologic",
+    "physiological": "physiologic",
+    "preventative": "preventive",
+    "previous": "prior",
+    "radiological": "radiologic",
+    "specimen": "sample",
+    "specimens": "samples",
+    "strategy": "approach",
+    "strategies": "approaches",
+    "technique": "method",
+    "techniques": "methods",
+    "testing": "test",
+    "trauma": "injury",
+    "traumas": "injuries",
+    "usage": "use",
+    "usages": "uses",
+    "value": "level",
+    "values": "levels",
+}
+CANONICAL_WORD = re.compile(
+    r"\b(?:" + "|".join(
+        sorted(map(re.escape, CANONICAL_WORDS), key=len, reverse=True)) + r")\b",
+    re.IGNORECASE,
+)
+
+#: These six choices cross a noun/adjective boundary, so they apply only when
+#: the word modifies a following noun-like token.  The blockers are relations
+#: and constructions where the word is the head instead (`inflammation in the
+#: wound`, `diabetes-related complication`).
+CANONICAL_MODIFIERS = {
+    "bony": "bone",
+    "cellular": "cell",
+    "diabetes": "diabetic",
+    "infectious": "infection",
+    "inflammation": "inflammatory",
+    "surgery": "surgical",
+}
+CANONICAL_MODIFIER = re.compile(
+    r"\b(?:" + "|".join(sorted(CANONICAL_MODIFIERS, key=len, reverse=True))
+    + r")\b",
+    re.IGNORECASE,
+)
+MODIFIER_FOLLOWER = re.compile(r"^[\s-]+([A-Za-z]+)")
+MODIFIER_BLOCKERS = frozenset({
+    "after", "and", "as", "associated", "based", "before", "by", "caused",
+    "dependent", "during", "for", "from", "in", "induced", "mediated", "of",
+    "on", "or", "related", "specific", "to", "versus", "vs", "with", "without",
+})
+
+WOUND_MANAGEMENT = re.compile(
+    r"(?P<prefix>\bwound[\s-]+)(?P<word>management)\b", re.IGNORECASE)
+POSTSURGICAL = re.compile(r"\bpost(?:[\s-]+)?surgical\b", re.IGNORECASE)
+
+
+def _with_case_of(source: str, replacement: str) -> str:
+    """Write `replacement` with the ordinary casing pattern of `source`."""
+    if source.isupper():
+        return replacement.upper()
+    if source.istitle():
+        return replacement.title()
+    return replacement
+
+
+def canonical_vocabulary(label: str) -> str:
+    """Apply the curator's unambiguous preferred-name rules to `label`.
+
+    `management` is changed only in the phrase `wound management`; a general
+    management/care rewrite would conflate many unrelated concepts.  Word
+    boundaries keep `limbic` and similar words out.  The function preserves
+    lower, title and upper case and is idempotent.
+    """
+    label = WOUND_MANAGEMENT.sub(
+        lambda match: (match.group("prefix")
+                       + _with_case_of(match.group("word"), "care")),
+        label,
+    )
+    label = POSTSURGICAL.sub(
+        lambda match: _with_case_of(match.group(0), "postoperative"), label)
+    label = CANONICAL_WORD.sub(
+        lambda match: _with_case_of(
+            match.group(0), CANONICAL_WORDS[match.group(0).lower()]),
+        label,
+    )
+
+    def modifier(match: re.Match) -> str:
+        follower = MODIFIER_FOLLOWER.match(label[match.end():])
+        if not follower or follower.group(1).lower() in MODIFIER_BLOCKERS:
+            return match.group(0)
+        return _with_case_of(
+            match.group(0), CANONICAL_MODIFIERS[match.group(0).lower()])
+
+    return CANONICAL_MODIFIER.sub(modifier, label)
+
 
 class Normalised:
     """What one label is called, what it shares, and what it keeps.
@@ -74,15 +191,17 @@ class Normalised:
     def name(self) -> str:
         """What the term should be CALLED.
 
-        Singular head noun (rule 23a), then British to American (rule 41), in
-        that order: `Statistical Analyses` becomes `Statistical Analysis` and
-        the noun never reaches the British-verb reading of `analyses` that
-        `breame` answers with `analyzes`. The writer's own case is kept -- this
-        is a name, not a key -- and so is any parenthetical, because on an
-        ontology label it is part of the official name (`vitamin (role)`).
+        Singular head noun (rule 23a), British to American (rule 41), then the
+        curator's preferred vocabulary (rules 48–49), in that order. `Statistical
+        Analyses` becomes `Statistical Analysis` and the noun never reaches the
+        British-verb reading of `analyses` that `breame` answers with
+        `analyzes`. The writer's own case is kept -- this is a name, not a key
+        -- and so is any parenthetical, because on an ontology label it is part
+        of the official name (`vitamin (role)`).
         """
         if self._name is None:
-            self._name = american_spelling(singular_spelling(self.label))
+            self._name = canonical_vocabulary(
+                american_spelling(singular_spelling(self.label)))
         return self._name
 
     @property
@@ -121,8 +240,9 @@ class Normalised:
             bare = PARENTHETICAL.sub("", self.label)
             bare = ASCII_DASHES.sub(" ", UNICODE_DASHES.sub("", bare))
             bare = WHITESPACE.sub(" ", bare).strip()
-            self._strict = WHITESPACE.sub("", american_spelling(
-                singular_spelling(singular_spelling(bare).lower())))
+            self._strict = WHITESPACE.sub("", canonical_vocabulary(
+                american_spelling(
+                    singular_spelling(singular_spelling(bare).lower()))))
         return self._strict
 
     def __repr__(self) -> str:                          # pragma: no cover

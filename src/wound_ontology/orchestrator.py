@@ -485,7 +485,7 @@ class Orchestrator:
 
     def run_pass0_normalise(self, *, dry_run: bool = True,
                             quiet: bool = False) -> dict:
-        """PASS 0: fix the spellings a rule can settle, before any model runs.
+        """PASS 0: fix the names a rule can settle, before any model runs.
 
         **It renames, it does not map** (curator, 2026-09-26: *pass 0 should
         not create another mapping, it should change the labels right at the
@@ -503,12 +503,13 @@ class Orchestrator:
         alone, 584 a hyphen, 272 British spelling -- against 2,820 that the
         mapping had found.
 
-        Four deterministic steps, in this order:
+        Five deterministic steps, in this order:
 
         1. the head noun to the singular (`singular_spelling`, rule 23a);
         2. British to American (`utils.spelling`, rule 41);
-        3. case, hyphens and punctuation folded (`fold`);
-        4. group on the result, and map every member onto one spelling.
+        3. the curator's preferred vocabulary (`canonical_vocabulary`, rules 48–49);
+        4. case, hyphens and punctuation folded (`fold`);
+        5. group on the result, and map every member onto one name.
 
         Singular BEFORE spelling, because `Statistical Analyses` goes to
         `Statistical Analysis` and the noun never reaches the British-verb

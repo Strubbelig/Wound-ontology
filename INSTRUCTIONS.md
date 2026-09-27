@@ -1883,12 +1883,13 @@ pure spelling variant of another** — 5,638 needing only the singular rule, 3,0
 case alone, 584 a hyphen, 272 British spelling — and the mapping had found
 2,820. The other 6,830 were queued for a model.
 
-**The four steps, in this order** (`mappers/pass0.py`):
+**The five steps, in this order** (`mappers/pass0.py`):
 
 1. the head noun to the singular (`singular_spelling`, rule 23a);
 2. British to American (`utils/spelling.py`);
-3. case, hyphens and punctuation folded (`fold`);
-4. group on the result; every member maps onto one spelling.
+3. the curator's preferred vocabulary (`canonical_vocabulary`, rules 48–49);
+4. case, hyphens and punctuation folded (`fold`);
+5. group on the result; every member maps onto one name.
 
 Singular BEFORE spelling. `Statistical Analyses` becomes `Statistical Analysis`
 and the noun never reaches the British-verb reading of `analyses` that `breame`
@@ -2149,8 +2150,8 @@ exactly one function — `utils/normalise.normalise(label)` — which answers th
 questions at once because they are three projections of one pipeline:
 
 * **`name`** — what the term should be CALLED. Singular head (rule 23a), then
-  British to American (rule 41), in that order, keeping the writer's case and
-  any parenthetical.
+  British to American (rule 41), then the curator's preferred vocabulary
+  (rules 48–49), in that order, keeping the writer's case and any parenthetical.
 * **`key`** — what two spellings of one term SHARE. `fold` of the name, so the
   singular and British rules are already applied and two spellings cannot
   disagree about them.
@@ -2441,6 +2442,73 @@ two of them only after the check they aimed at was lifted out of `main` into
 a function a test can reach -- which is the other half of the rule: a step
 that cannot be tested without the whole store will be tested by the live
 data, once, in production.
+
+
+## 48. A repeated naming decision is a Pass 0 rule, not another queue row
+
+**Decided 2026-09-27.** The curator settled three recurrent names globally:
+
+* `limb` is written `extremity` (and `limbs` as `extremities`);
+* `strategy` is written `approach` (and `strategies` as `approaches`);
+* `wound management` is written `wound care`.
+
+The adjudication record already contains 17 limb/extremity, 12
+strategy/approach and 21 care/management same-class pairs. Asking again for
+every compound does not add judgment; it makes the curator repeat one. Once a
+choice is universal and directional, Pass 0 owns it and applies it to new
+terms before any model or review queue sees them.
+
+This is a preferred-name layer, not permission to run a thesaurus over the
+store. `management` changes only immediately after `wound`; `case management`
+and `pain management` remain management. Word boundaries keep `limbic` out.
+Case and plural number are preserved. The layer runs after singularisation and
+American spelling and before the group key is made, and it is used by both
+`name` and `strict`; changing only the name would let the character guard split
+the two preferred-name variants straight back apart. An ontology's own label
+still keeps its exact wording under rule 36.
+
+Enforced by: `utils.normalise.canonical_vocabulary` and
+`utils.normalise.Normalised`; `tests/test_pass0.py` covers case, plurals,
+hyphenated phrases, grouping, frequency not overruling the preferred name,
+idempotence through the existing fixed-point test, and the management/limbic
+boundaries.
+
+
+## 49. Thirty recurrent same-class choices are preferred vocabulary
+
+**Decided 2026-09-27.** After the first three preferred-name rules, the curator
+approved the next thirty recurrent choices mined from the adjudication record:
+
+| old | preferred | old | preferred |
+|---|---|---|---|
+| technique | method | cutaneous | skin |
+| evaluation | assessment | trauma | injury |
+| testing | test | inflammation (modifier) | inflammatory |
+| cellular (modifier) | cell | diabetes (modifier) | diabetic |
+| infectious (modifier) | infection | surgery (modifier) | surgical |
+| specimen | sample | value | level |
+| alteration | change | action | activity |
+| feature | characteristic | full | complete |
+| usage | use | bony (modifier) | bone |
+| operation | surgery | microbiological | microbial |
+| pharmacological | pharmacologic | physiological | physiologic |
+| previous | prior | dermatological | dermatologic |
+| radiological | radiologic | oncological | oncologic |
+| histopathologic | histopathological | numerical | numeric |
+| preventative | preventive | post-surgical / postsurgical | postoperative |
+
+Singular and plural forms are explicit where English does not derive the target
+mechanically (`actions` → `activities`, `traumas` → `injuries`). The six
+noun/adjective choices fire only when followed by a noun-like token and not a
+relation or construction such as `inflammation in`, `cellular and`, or
+`diabetes-related`; Pass 0 is choosing a compound's name, not rewriting prose.
+All replacements preserve ordinary lower, title and upper case, and the same
+function is applied to `name` and `strict` so the character guard cannot undo
+the grouping.
+
+Enforced by: `utils.normalise.CANONICAL_WORDS`, `CANONICAL_MODIFIERS`,
+`canonical_vocabulary`; `tests/test_pass0.py` has one naming case for every
+approved rule plus modifier-boundary, grouping and fixed-point coverage.
 
 
 ## Adding to this file

@@ -57,7 +57,7 @@ def test_a_punctuation_entry_is_not_inert(pipeline):
 
 
 def test_a_content_entry_is_not_inert(pipeline):
-    p = _with(pipeline, {"cutaneous wound": "Skin wound"})
+    p = _with(pipeline, {"wound pain": "painful wound"})
     assert p.prune_inert_mappings(dry_run=True)["inert"] == 0
 
 
@@ -71,11 +71,11 @@ def test_applying_it_removes_exactly_the_inert_ones(pipeline):
     p = _with(pipeline, {"Healing": "healing",                 # case: inert
                          "patients": "patient",                # plural: inert now
                          "Povidone Iodine": "Povidone-iodine", # punctuation: NOT
-                         "cutaneous wound": "Skin wound"})     # content: NOT
+                         "wound pain": "painful wound"})       # content: NOT
     rep = p.prune_inert_mappings(dry_run=False)
     assert rep == {"inert": 2, "kept": 2}
     assert p.term_mapper.mapping == {"Povidone Iodine": "Povidone-iodine",
-                                     "cutaneous wound": "Skin wound"}
+                                     "wound pain": "painful wound"}
 
 
 def test_a_category_name_is_never_counted_as_inert_by_accident(pipeline):
