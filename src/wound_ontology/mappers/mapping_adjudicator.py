@@ -156,6 +156,9 @@ async def adjudicate(
     parents: dict[str, list[str]] | None = None,
     cache: dict[str, dict] | None = None,
     batch_size: int = 20,
+    checkpoint=None,
+    checkpoint_every: int = 10,
+    label: str = "",
 ) -> AdjudicationReport:
     """Adjudicate anchor mappings, asking the model only where it is needed.
 
@@ -171,7 +174,20 @@ async def adjudicate(
     them. A cached verdict was still a model verdict; it is only the second call
     that is skipped, not the judgement. Pass `cache=None` to re-ask everything,
     which is what to do after the ontology's definitions change.
+
+    IT SAYS WHERE IT IS. This loop is sequential and network-bound, and it used
+    to print nothing between its first line and its last. On 2026-09-26 a build
+    sat in it for 3h40m without a word, and answering "is it still running?"
+    took socket byte counters, because a healthy run and a dead one produce
+    exactly the same output: none. Every chunk now reports its position, the
+    verdicts so far, and the time it expects to need.
+
+    `checkpoint()` is called every `checkpoint_every` chunks, for a caller that
+    wants the verdicts on disk as they arrive. The same build banked **nothing**
+    from four hours of adjudication because the only save was at the end, and
+    the run never reached it.
     """
+    import time
     from wound_ontology.utils.string_utils import smart_title
 
     report = AdjudicationReport()
@@ -230,9 +246,29 @@ async def adjudicate(
 
     items = list(pending.items())
     answers: dict[tuple[str, str], tuple[str, str]] = {}
-    for start in range(0, len(items), batch_size):
+    chunks = (len(items) + batch_size - 1) // batch_size
+    what = f" [{label}]" if label else ""
+    if chunks:
+        print(f"[Adjudicator]{what} {len(items):,} pair(s) to ask in "
+              f"{chunks:,} chunk(s) of {batch_size}.")
+    started = time.monotonic()
+    for i, start in enumerate(range(0, len(items), batch_size), 1):
         chunk = dict(items[start:start + batch_size])
-        answers.update(await _ask(chunk))
+        fresh = await _ask(chunk)
+        answers.update(fresh)
+        # Into the cache HERE, not after the loop. A checkpoint that runs
+        # while the verdicts are still in a local dict saves an empty record,
+        # which is worse than not checkpointing: it looks like progress.
+        for (t, c), (verdict, reason) in fresh.items():
+            cache[_key(t, c)] = {"verdict": verdict, "reason": reason}
+        gone = time.monotonic() - started
+        left = gone / i * (chunks - i)
+        print(f"[Adjudicator]{what} chunk {i:,}/{chunks:,} — "
+              f"{len(answers):,} verdict(s), {gone/60:.1f} min gone, "
+              f"~{left/60:.0f} min left", flush=True)
+        if checkpoint is not None and i % checkpoint_every == 0:
+            checkpoint()
+            print(f"[Adjudicator]{what} checkpointed at chunk {i:,}.", flush=True)
 
     missing = {t: c for t, c in pending.items() if (t, c) not in answers}
     if missing:
@@ -253,6 +289,9 @@ async def adjudicate(
         )
 
     for (term, canonical), (verdict, reason) in answers.items():
+        # Already cached above for everything the chunk loop answered; the
+        # re-ask pass below it is not, so this stays idempotent rather than
+        # conditional.
         cache[_key(term, canonical)] = {"verdict": verdict, "reason": reason}
         _record(term, canonical, verdict, reason)
 

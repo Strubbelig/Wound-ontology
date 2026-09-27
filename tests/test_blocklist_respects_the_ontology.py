@@ -160,12 +160,23 @@ def test_score_and_is_blocked_agree_about_precedence(blocker):
 def test_the_whitelist_outranks_both_blocklists(blocker):
     """What actually freed the 33, and the reason removal alone was not enough.
 
-    `pain management` is a WONT class (WONT_0000222) and the KEYWORD_BLOCKLIST
-    holds `pain`, so taking it out of METHODOLOGY_BLOCKLIST would have left it
-    blocked by the keyword.
+    `Patient education` is a WONT class and the KEYWORD_BLOCKLIST holds
+    `education`, so taking it out of METHODOLOGY_BLOCKLIST would have left it
+    blocked by the keyword. Only the whitelist outranking both frees it.
+
+    This was written against `pain management` and WONT_0000222, which made
+    the same point while `pain` was a keyword. The curator ruled the concept
+    in scope on 2026-09-26 and it came off KEYWORD_BLOCKLIST, so that term no
+    longer exercises the keyword branch — it is kept below, because it must
+    still come out unblocked, but the branch needs a term the keyword list
+    still catches.
     """
-    assert blocker.block_kw.match("pain management")
-    assert blocker.white_terms.match("pain management")
+    assert blocker.block_kw.match("Patient education")
+    assert blocker.white_terms.match("Patient education")
+    assert not blocker.is_blocked("Patient education")
+
+    # the original case: still a WONT class, still not blocked, no longer
+    # reached by a keyword at all
     assert not blocker.is_blocked("pain management")
 
 

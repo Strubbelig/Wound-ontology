@@ -1036,6 +1036,9 @@ class Orchestrator:
         # `readjudicate` stops it reading, not writing: every pair is asked
         # again and the new answers still land on the record.
         cache = self.term_mapper._term_mapping.pass_cache("pass1", read=not readjudicate)
+        # The verdicts go to disk as they arrive. The 2026-09-26 build spent
+        # four hours here and banked nothing, because the only save was after
+        # the loop and the loop never finished.
         report = self._run_sync(adj.adjudicate(
             anchor_pairs, self.llm,
             store_categories=self.store_categories(),
@@ -1043,12 +1046,16 @@ class Orchestrator:
             definitions=self.ontology_definitions(),
             parents=self.ontology_parents(),
             cache=cache,
+            checkpoint=self.term_mapper.save,
+            label="anchor pairs",
         ))
         # No categories on this path, deliberately. See the docstring: the store's
         # own per-abstract typings are not an ontology, and passing them here made
         # the model refuse `haemorrhage -> Hemorrhage` on a category clash.
         report.extend(self._run_sync(adj.adjudicate(
             store_pairs, self.llm, cache=cache,
+            checkpoint=self.term_mapper.save,
+            label="store pairs",
         )))
         self.term_mapper.save()
         print(f"[Orchestrator] Anchor adjudication: {report.summary()}.")

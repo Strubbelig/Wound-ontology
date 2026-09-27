@@ -270,3 +270,64 @@ def test_a_store_to_store_merge_that_loses_a_subtype_is_caught():
     assert report.accepted_by_model == {}
     assert report.subsumption_candidates[0][:3] == (
         "diabetes mellitus", "diabetes", "narrower")
+
+
+# ── it says where it is ──────────────────────────────────────────────────────
+
+def _many(n):
+    """`n` content pairs the model must be asked about."""
+    return {f"term number {i} thing": f"Class number {i} entity" for i in range(n)}
+
+
+def test_every_chunk_reports_its_position(capsys):
+    """The loop used to print nothing between its first line and its last.
+
+    On 2026-09-26 a build sat in it for 3h40m without a word, and answering
+    "is it still running?" took socket byte counters — because a healthy run
+    and a dead one produce exactly the same output: none.
+    """
+    pairs = _many(7)
+    llm = _LLM({p: ("same_class", "ok") for p in pairs.items()})
+    _run(adj.adjudicate(pairs, llm, batch_size=2))
+    out = capsys.readouterr().out
+    assert "7 pair(s) to ask in 4 chunk(s)" in out
+    for i in range(1, 5):
+        assert f"chunk {i}/4" in out, f"chunk {i} never reported itself"
+
+
+def test_the_report_carries_a_time_estimate(capsys):
+    pairs = _many(4)
+    llm = _LLM({p: ("same_class", "ok") for p in pairs.items()})
+    _run(adj.adjudicate(pairs, llm, batch_size=2))
+    out = capsys.readouterr().out
+    assert "min gone" in out and "min left" in out
+
+
+def test_verdicts_are_checkpointed_along_the_way():
+    """Four hours of adjudication banked nothing on 2026-09-26, because the
+    only save was after the loop and the loop never finished."""
+    pairs = _many(6)
+    llm = _LLM({p: ("same_class", "ok") for p in pairs.items()})
+    saves = []
+    cache: dict = {}
+    _run(adj.adjudicate(pairs, llm, batch_size=1, cache=cache,
+                        checkpoint=lambda: saves.append(len(cache)),
+                        checkpoint_every=2))
+    assert saves, "nothing was ever checkpointed"
+    assert saves == sorted(saves), "the cache should only grow"
+    assert saves[0] > 0, "the first checkpoint saved an empty cache"
+
+
+def test_no_checkpoint_callback_means_no_checkpointing():
+    pairs = _many(4)
+    llm = _LLM({p: ("same_class", "ok") for p in pairs.items()})
+    _run(adj.adjudicate(pairs, llm, batch_size=2))     # must not raise
+
+
+def test_a_label_says_which_pass_is_talking(capsys):
+    """Two adjudications run back to back; their lines have to be tellable
+    apart or the progress is worse than none."""
+    pairs = _many(2)
+    llm = _LLM({p: ("same_class", "ok") for p in pairs.items()})
+    _run(adj.adjudicate(pairs, llm, batch_size=1, label="anchor pairs"))
+    assert "[anchor pairs]" in capsys.readouterr().out
