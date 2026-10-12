@@ -7,6 +7,10 @@ whose blocklist entry was later withdrawn stayed gone, because there was
 nothing left to un-block. Now every one of them writes a verdict -- who, when,
 why -- beside the assertion, every reader applies the verdicts through ONE
 function, and a verdict can be lifted.
+
+Since rule 51 (2026-09-27) the verdicts are written onto the TERM's record in
+the term mapping and gate dict, not into a `decisions` record beside the
+PMIDs; the store's file is evidence only, and its view applies them.
 """
 from __future__ import annotations
 
@@ -83,13 +87,24 @@ def test_a_verdict_names_a_thing_that_is_in_the_store(capsys):
     assert "not in the store" in capsys.readouterr().out
 
 
-def test_the_decisions_record_carries_no_entities_key():
-    """A legacy reader doing rec.get("entities", {}) must see nothing there."""
+def test_a_verdict_goes_to_the_term_dict_and_the_file_stays_evidence():
+    """Rule 51: nothing but PMIDs (and synthetic evidence) sits in the file."""
     st = _store(_two_abstracts())
     st.reject_entities(["Skin"], by="blocklist")
-    assert "entities" not in st.dict[DECISIONS]
-    assert DECISIONS not in dict(st.records())
+    st.reject_cells([("Wound", "part_of: Skin")], by="reasoner_gate")
+    assert DECISIONS not in st.dict
+    assert st.terms.records["Skin"]["rejected"]["by"] == "blocklist"
+    assert st.terms.records["Wound"]["relations"]["part_of: Skin"]["by"] == "reasoner_gate"
     assert st.document_keys() == ["1", "2"]
+
+
+def test_a_file_that_still_holds_decisions_is_refused():
+    """A pre-rule-51 file's verdicts would be ignored by the view -- 2,330
+    rejected entities back in the hierarchy, and nothing said. Loud instead."""
+    raw = _two_abstracts()
+    raw[DECISIONS] = {"entity_verdicts": {"Skin": {"status": "rejected", "by": "blocklist"}}}
+    with pytest.raises(ValueError, match="p4_split_evidence_and_decisions"):
+        _store(raw)
 
 
 # ── one reading, everywhere ──────────────────────────────────────────────────
@@ -104,8 +119,12 @@ def test_every_reader_applies_the_same_verdicts():
                    for e, a in ents.items() for t in a}
     seen_fake = {(e, t) for _, ents in records_of(SimpleNamespace(dict=raw))
                  for e, a in ents.items() for t in a}
-    seen_store = {(e, t) for _, e, t, _ in _store(raw).assertions()}
-    assert seen_direct == seen_fake == seen_store
+    st = _store(_two_abstracts())
+    st.reject_entities(["Skin"], by="blocklist")
+    st.reject_cells([("Wound", "has_quality: Chronic")], by="reasoner_gate")
+    seen_store = {(e, t) for _, e, t, _ in st.assertions()}
+    seen_store_fn = {(e, t) for _, ents in records_of(st) for e, a in ents.items() for t in a}
+    assert seen_direct == seen_fake == seen_store == seen_store_fn
     assert ("Skin", "is_a: material entity") not in seen_direct
     assert ("Wound", "has_quality: Chronic") not in seen_direct
     assert ("Wound", "part_of: Skin") in seen_direct
@@ -139,25 +158,53 @@ def test_the_hierarchy_does_not_see_a_rejected_entity():
 
 # ── the cleaner ──────────────────────────────────────────────────────────────
 
-def test_the_cleaner_rejects_by_name_and_can_be_told_to_reconsider():
-    """The capability the delete never had: withdraw the list entry, clean
-    again, and the term stands again."""
+def test_scope_is_read_live_so_withdrawing_a_list_entry_needs_no_lifting():
+    """The capability the delete never had -- withdraw the list entry and the
+    term stands again -- now needs no second clean: the view asks the gate
+    each time, and the store holds no copy of the answer (rule 51, merged
+    2026-09-28)."""
     st = _store(_two_abstracts())
     c = StoreCleaner(["is_a", "has_quality", "part_of"], extra_blocked_entities={"skin"})
+    st.scope = c._is_blocked
     report = c.clean(st)
     # `Randomized Controlled Trial` is on the real methodology blocklist, so two.
     assert report["blocked_entities"] == 2
-    assert st.verdict("Skin")["by"] == "blocklist"
-    assert "Skin" not in st.entities
+    assert "Skin" not in st.entities and "Randomized Controlled Trial" not in st.entities
+    assert ("Wound", "part_of: Skin") not in {(e, t) for _, e, t, _ in st.assertions()}
+    assert st.verdict("Skin") is None, "scope is not written into the store"
     assert "Skin" in st.dict["2"]["entities"]
 
-    c2 = StoreCleaner(["is_a", "has_quality", "part_of"])       # entry withdrawn
-    report = c2.clean(st)
-    # two entities plus the `part_of: Skin` cell, whose target was blocked too
-    assert report["verdicts_lifted"] == 3, "the earlier verdicts were not reconsidered"
-    assert st.verdict("Skin") is None
+    st.scope = StoreCleaner(["is_a", "has_quality", "part_of"])._is_blocked  # entry withdrawn
     assert "Skin" in st.entities
-    assert st.verdict("Randomized Controlled Trial")["by"] == "blocklist", "still on the list"
+    assert ("Wound", "part_of: Skin") in {(e, t) for _, e, t, _ in st.assertions()}
+    assert "Randomized Controlled Trial" not in st.entities, "still on the list"
+
+
+def test_a_curator_scope_ruling_reaches_the_store_at_once():
+    """Without a Blocker the gate itself decides; a ruling needs no clean."""
+    st = _store(_two_abstracts())
+    st.terms.gate("Skin", curator={"verdict": "out"})
+    assert "Skin" not in st.entities
+    st.terms.gate("Skin", curator={"verdict": "in"})
+    assert "Skin" in st.entities
+
+
+
+@pytest.mark.parametrize("category", ["process", "material entity", "Process", "quality"])
+def test_a_bfo_category_is_never_out_of_scope(category):
+    """2026-09-28: the scope pass was asked about `process`, `material entity`
+    and the other category names -- they are typing TARGETS, so they sat in
+    the undecided pool -- and answered `out` ("generic upper-level class").
+    The view drops a cell whose target is out of scope, so every `is_a:
+    <category>` typing in the store vanished, and with it the category the
+    mapping guard, the hierarchies and the reasoner gate all read. A category
+    is declared, never gated (rules 20, 22)."""
+    st = _store(_two_abstracts())
+    st.terms.gate(category, pass2={"verdict": "out"})
+    st.terms.gate(category.lower(), pass2={"verdict": "out"})
+    kept = {(e, t) for _, e, t, _ in st.assertions()}
+    assert ("Wound", "is_a: material entity") in kept
+    assert not st.out_of_scope({category})
 
 
 def test_a_rogue_predicate_is_a_cell_verdict():
@@ -254,11 +301,15 @@ def test_a_verdict_follows_its_entity_through_normalisation():
     class _Mapper:
         mapping = {"diabetic foot ulcers": "Diabetic Foot Ulcer", "lower limbs": "Lower Limb"}
     st.normalize(_Mapper())
-    assert "Diabetic Foot Ulcer" in st.dict["1"]["entities"]
-    assert st.verdict("Diabetic Foot Ulcer")["by"] == "blocklist"
-    assert st.rejected_cells()["Diabetic Foot Ulcer"]["part_of: Lower Limb"]["by"] == "reasoner_gate"
-    assert st.decisions()["renamed"]["diabetic foot ulcers"]["to"] == "Diabetic Foot Ulcer"
+    # the evidence is as written, the view reads the mapped names ...
+    assert list(st.dict["1"]["entities"]) == ["diabetic foot ulcers"]
+    shown = dict(st.view(include_rejected=True))["1"]
+    assert shown == {"Diabetic Foot Ulcer": {"is_a: material entity": 1.0,
+                                             "part_of: Lower Limb": 1.0}}
+    # ... and the verdicts written against the old name still apply to the new
     assert st.entities == []
+    st.lift_decisions("blocklist")
+    assert dict(st.records())["1"] == {"Diabetic Foot Ulcer": {"is_a: material entity": 1.0}}
 
 
 def test_summary_is_measured():

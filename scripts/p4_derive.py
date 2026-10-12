@@ -1,0 +1,61 @@
+"""P4 steps 3-7: reasoner checks, hierarchies, FCA, extension of WONT, competency questions.
+
+    python -u scripts/p4_derive.py > output/p4_derive_<date>.log 2>&1
+
+Runs after the mapping build and the reviews. Each step is timed and logged;
+any exception stops the run (no silent continuation, rule 1).
+
+Deliberately NOT run: `run_store_fill`. It asks the model to fill "missing"
+attributes and writes them into the concept store, which rule 51 reserves for
+what the abstracts said -- derived content is never injected into the evidence
+(rule 3). `run_matrix_nan_fill` is also left out of this pass: it spends a
+model call per undecided FCA cell and is only worth it once the lattice has
+been looked at.
+"""
+from __future__ import annotations
+
+import sys
+import time
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "src"))
+
+from dotenv import load_dotenv  # noqa: E402
+load_dotenv(ROOT / ".env")
+
+
+def log(*a):
+    print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}]", *a, flush=True)
+
+
+def step(name, fn):
+    log(f"START {name}")
+    t0 = time.time()
+    out = fn()
+    log(f"END   {name} ({time.time() - t0:.0f} s)")
+    return out
+
+
+def main() -> int:
+    from config.settings import ALLOWED_PREDICATES, BASE_PATH, ENTREZ_EMAIL
+    from wound_ontology.orchestrator import Orchestrator
+
+    p = Orchestrator(entrez_email=ENTREZ_EMAIL, allowed_predicates=ALLOWED_PREDICATES,
+                     base_path=BASE_PATH)
+    step("reasoner skeleton", p.build_reasoner_skeleton)
+    step("reasoner check of store relations (ELK)", lambda: p.run_gate_store_relations(apply=True))
+    step("build hierarchies", p.run_build_hierarchies)
+    step("reasoner check of is_a edges (ELK)", p.run_gate_hierarchy_edges)
+    step("formal concept analysis (wound subtree)", lambda: p.run_fca(
+        subtree_root="Wound",
+        predicates=["has_quality", "part_of", "has_participant", "has_disposition", "inheres_in"]))
+    out = ROOT / "output" / "owl" / "wont_extended.ttl"
+    step("extend WONT", lambda: p.run_extend_ground_truth(output_file=str(out)))
+    step("competency questions", lambda: p.run_competency_check(ontology_file=str(out)))
+    log("ALL DONE")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

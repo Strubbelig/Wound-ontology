@@ -147,3 +147,23 @@ def test_summary_counts_by_source(hier):
     hier._set_edge("C", "D", source=SOURCE_TEXT)
     hier._set_edge("E", "F", source=SOURCE_TEXT)
     assert hier.provenance_summary() == {SOURCE_CURATED: 1, SOURCE_TEXT: 2}
+
+
+# ── `placed` (2026-10-02): checked placements under existing classes ─────────
+
+def test_placed_sits_between_curated_and_text():
+    from wound_ontology.hierarchies.base_hierarchy import SOURCE_PLACED
+    assert SOURCE_RANK[SOURCE_CURATED] > SOURCE_RANK[SOURCE_PLACED] > SOURCE_RANK[SOURCE_TEXT]
+
+
+def test_a_placement_is_stamped_placed_and_outranks_the_text(hier):
+    from wound_ontology.hierarchies.base_hierarchy import SOURCE_PLACED
+    hier.get_data(FakeStore(), placed=[("Chronic Wound", "Wound"), ("Venous Ulcer", "Chronic Wound")])
+    assert hier.source_of("Chronic Wound", "Wound") == SOURCE_PLACED
+    assert hier.source_of("Venous Ulcer", "Chronic Wound") == SOURCE_PLACED
+
+
+def test_curated_still_outranks_a_placement(hier):
+    hier.get_data(FakeStore(), placed=[("Chronic Wound", "Wound")],
+                  curated=pd.DataFrame({"Class": ["Chronic Wound"], "Parent class": ["Wound"]}))
+    assert hier.source_of("Chronic Wound", "Wound") == SOURCE_CURATED

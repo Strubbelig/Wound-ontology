@@ -2511,6 +2511,1337 @@ Enforced by: `utils.normalise.CANONICAL_WORDS`, `CANONICAL_MODIFIERS`,
 approved rule plus modifier-boundary, grouping and fixed-point coverage.
 
 
+## 50. Every abstract keeps what it actually said, through every rename
+
+> **Superseded the same day by rule 51.** The `as_extracted` book existed only
+> because the store was rewritten in place. Rule 51 stops rewriting it, so what
+> an abstract said IS the store, and the book, its carry-through and its
+> backfill script are gone. The failure below is still why rule 51 exists.
+
+**Decided 2026-09-27.** The curator: *if the mapping applies there is no
+provenance check — we don't know what was extracted and what it was mapped
+into.*
+
+Each document in the concept store carries `as_extracted`: `{the name as the
+store now spells it: [the strings the extractor wrote that now read as that
+name]}`. It is written at ingestion, before a single character is cleaned, and
+every rename carries it forward: the normalisation, pass 0, the mapping apply
+and the sense split. Two spellings merging keep both origins. The global
+`renamed` book still says WHY a name moved; the per-document book says WHAT
+this abstract wrote. Neither can stand in for the other.
+
+**The failure.** The only trace was the global `renamed` book, and it had four
+holes, all measured on the 2026-09-27 store:
+
+* **It was global.** Keyed by the old name, it could say `Diabetic Foot Ulcers
+  -> Diabetic Foot Ulcer`, but once `DFU` merged into the same name, nothing
+  said which of the two a given abstract had used.
+* **The literal string was gone at ingestion.** `clean_entity_str` strips the
+  parenthetical and singularises before anything is stored, so `Diabetic Foot
+  Ulcers (DFUs)` never reached the file.
+* **Target renames were not recorded.** `_rewrite_names` stamped entity names
+  only; 1,808 names the store holds today could be traced to their snapshot
+  spelling only by their spelling key, because they had only ever moved as
+  targets.
+* **`by: "mapping"` named no decision.** A mapping rename now carries
+  `evidence`: the entry, the canonical, its method, and the pass and curator
+  verdicts on the pair. A name renamed twice keeps the first rename under
+  `history` instead of overwriting it.
+
+**The sense split** (`split_irreconcilable_terms`) renames per abstract, so the
+global book, keyed by the old name, could never hold it. Only the per-document
+book can.
+
+**The existing store was seeded from the earliest snapshot, and says so.** The
+extractor's literal strings for the 6,029 abstracts ingested before this rule
+were never kept. `scripts/p4_backfill_as_extracted.py` seeded each book from the
+2026-09-22 snapshot, taken before the first mapping apply, and stamped every
+such document `as_extracted_from` with that source. A literal string and a
+snapshot spelling are never presented as the same thing. Alignment was complete:
+215,819 snapshot names followed the rename book to a current name, 1,808
+matched by pass 0's spelling key, none were ambiguous, and every one of the
+214,813 current names received an origin.
+
+Enforced by: `concept_store.AS_EXTRACTED`, `note_extracted`, `carry_extracted`;
+both ingestion paths; `ConceptStore._rewrite_names` (the book, and target
+renames recorded); `ConceptStore.record_rename` (`evidence`, `history`);
+`ConceptStore.normalize` (the mapping entry as evidence);
+`split_irreconcilable_terms`. `tests/test_extraction_provenance.py` has 9 tests,
+mutation-checked against: no carry through a rename, a carry that keeps one
+origin of a merge, target renames unrecorded, no history, no carry through the
+split, ingestion dropping a target's origin, no mapping evidence, and a repeated
+rename overwriting the first stamp.
+
+
+## 51. The concept store is evidence; every decision about a term lives in the term dict
+
+**Decided 2026-09-27.** The curator, on seeing the store hold a `decisions`
+record beside the PMIDs: *doesn't that make the concept store and the term
+mapper dict overlap weirdly? … as it is right now is not to my liking.*
+
+**The rule.** Two records and one view:
+
+* **The concept store** holds what each abstract said and nothing else. One
+  record per PMID (plus synthetic evidence such as `predefined`), entities and
+  relations as extracted. It is never rewritten after it arrives. No key other
+  than evidence sits in it; a file that still holds a `decisions` record is
+  refused on load, because its verdicts would otherwise be silently ignored.
+* **The term mapping and gate dict** holds every decision about a term, on
+  that term's record: `spelling` (an ALIAS -- this string is now written
+  differently, by whom, when), the mapping (`to`, `pairs`), the gate,
+  `rejected` (the store rejection of the whole term), `relations` (rejected
+  relations of it), `senses` (the per-category split). An alias carries
+  nothing but its spelling; `apply_renames` moves every decision to the new
+  spelling and leaves the alias. A write addressed to an alias lands on its
+  current spelling.
+* **The view** (`ConceptStore.view` / `records`) is the evidence resolved
+  through the term dict: raw string → spelling (aliases followed) → mapping
+  (exact key, then folded) → verdicts → senses. `mapped=False` stops at the
+  spelling, which is what the mapping build and pass 0 read. Everything
+  downstream reads the view.
+
+**What changed in practice.**
+
+* Pass 0 no longer rewrites the store: a rename is an alias in the term dict.
+  The mapping is no longer "applied" to the store: the view reads the live
+  mapping. The sense split writes `senses`, and the view renames each mention
+  by the category its own abstract gave it.
+* Ingestion stores the extractor's literal string and records its cleaned
+  name (parenthetical stripped, singular, American) as a spelling `by:
+  "ingestion"` -- except for a string the store already holds or one that
+  carries a decision, which pass 0 owns: an alias re-spells a string in EVERY
+  abstract, and `vitamins`, an ontology label, must stay `vitamins`.
+* The view does not title-case. Pass 0 elects one spelling per term and
+  records it; title-casing in `normalize` had been undoing that election. A
+  case-only or plural mapping entry is therefore no longer inert -- as
+  `prune_inert_mappings` predicted it would be the day the store stopped
+  title-casing.
+* Provenance is a lookup, not a book: `ConceptStore.trace(name)` lists the
+  strings the abstracts wrote that resolve to the name, their PMIDs, each
+  spelling step with its author, and the mapping entry and verdicts that sent
+  it there.
+
+**The migration** (`scripts/p4_split_evidence_and_decisions.py`, one-time):
+the evidence is the 2026-09-22 snapshot, taken before the first mapping apply,
+because the extractor's literal strings for these 6,029 abstracts were never
+kept -- each record says so in `evidence_from`. The store's rename book became
+38,262 aliases; 695 more were reconstructed for strings that had moved only as
+relation targets before target renames were recorded, and are marked so; 27
+book entries recorded renames a later decision reversed (pass 0's
+`histopathological → histopathologic` before rule 49 turned it round, the
+`action potential` repair) and are kept as `spelling_reversed` history on the
+current name rather than as aliases, since an alias would re-spell today's
+name into the one it replaced. 2,330 rejected entities and 6,436 rejected
+cells moved onto their terms' records. **Nothing was written until the view
+reproduced the store exactly -- 6,029 records, 265,687 cells, with the
+rejections applied and with them shown -- and the files were read back from
+disk and checked again.**
+
+**Scope is the gate's, read live** *(2026-09-28, the curator: "merge into
+gate")*. The 2,330 `rejected` terms and 6,436 rejected relations were all
+written `by: "blocklist"` on 2026-09-20 -- the cleaner's copy of the lists'
+answer, frozen, deciding the question the gate decides. They are removed
+(`scripts/p4_merge_rejections_into_gate.py`, the removed verdicts kept in
+`data/backup/store_blocklist_rejections_removed_2026-09-28.json`), and the view
+asks the gate for every term and every relation target through
+`ConceptStore.scope` -- the cleaner's Blocker, so gate verdicts, the exact lists
+and the keywords in rule 40's order. `clean_entities` and `clean_targets` now
+report and write nothing. `rejected` and `relations` remain for verdicts that
+are NOT about scope: the predicate filter, the prune, the reasoner gate.
+Measured when it was applied: 331 terms came back (rejected then, in scope now:
+`pain score`, `donor site`, `MRSA`), 2,394 left (out of scope now, never
+rejected: `patient`, `complication`, `risk factor`), and the names downstream
+went from 79,755 to 77,692. The largest leavers were out on an exact-list entry
+with no author, which is why gate pass 2's `unaudited` queue runs next.
+
+Enforced by: `ConceptStore.view` / `resolver` / `trace` / `_spell_ingested` /
+`_scope_test` (`scope`),
+the refusal in `ConceptStore.__init__`, `store_name`;
+`TermMappingAndGate.spell` / `resolve` / `is_alias` / `aliases`, the alias
+handling in `apply_renames` and `_absorb`, `record()` resolving aliases;
+`Orchestrator.run_pass0_normalise` (one write, aliases skipped as terms).
+`tests/test_evidence_and_decisions.py` (14 tests) plus the rewritten store,
+pass 0, splitting, singular and inert-mapping tests, mutation-checked against
+12 breakages: no alias for undecided strings, relation targets not respelled,
+`record()` not resolving aliases, `spell` overwriting decisions, a merge
+dropping a rejection, the alias not written, ingestion re-spelling a settled
+name, a view ignoring spelling, mapping or cell verdicts, a legacy file
+accepted, and verdicts matched on the final name only.
+
+
+
+## 52. A category name is never gated, and a spelling decision can be reversed
+
+**Decided 2026-09-28.** Two things found the same afternoon.
+
+*Categories.* Gate pass 2 was run over the undecided names, and the fifteen
+BFO category names (`process`, `material entity`, `quality`, ...) were among
+them, because every abstract types its terms with `is_a: <category>` and a
+category name is therefore a relation TARGET like any other. The model
+answered `out` for all of them ("generic upper-level class, not
+wound-specific"). The view drops a cell whose target is out of scope (rule
+51), so that one answer removed **every typing in the store** -- 179,497
+cells -- and with it the category that the mapping guard, the hierarchies and
+the reasoner gate read. Nothing raised; two guard tests failed because
+`Necrosis Process` no longer had a category to refuse on. A category is
+declared, never matched (rule 20) and never renamed (rule 22); it is also
+never gated. The view treats a declared category as in scope whatever the gate
+says, and pass 2 no longer asks about one. The 13 pass-2 answers already on
+record are left as written and have no effect.
+
+*Reversal.* The curator reversed rule 49's -ic choices (below). Pass 0 had
+written `pharmacological X -> pharmacologic X` as an alias; renaming
+`pharmacologic X` back made that alias point at itself, and `apply_renames`
+refused the whole write as a clash. A rename that sends the current spelling
+back onto its own alias now retires the alias into `spelling_reversed` on the
+restored record, which is the shape the rule 51 migration already used for 27
+such strings.
+
+*Rule 49 amended (curator, 2026-09-28: "exactly the other way").* The -ic /
+-ical pairs are written -ical: `dermatologic -> dermatological`, `oncologic ->
+oncological`, `pharmacologic -> pharmacological`, `physiologic ->
+physiological`, `radiologic -> radiological`, and new `biologic(s) ->
+biological(s)`, with the product name `XCM BIOLOGIC` protected.
+`histopathological` already pointed this way; `numerical -> numeric` is
+unchanged and is the one pair still pointing to -ic.
+
+Enforced by: `ConceptStore._scope_test` (declared categories exempt),
+`scripts/p4_gate_pass2.py` `wanted()`, the reversal branch in
+`TermMappingAndGate.apply_renames`, `utils.normalise.CANONICAL_WORDS` and
+`PROTECTED_PHRASES`. Tests: `test_a_bfo_category_is_never_out_of_scope` (4),
+`test_a_spelling_decision_can_be_reversed`,
+`test_a_reversed_spelling_with_no_decisions_leaves_no_empty_record`,
+`test_ical_is_the_preferred_form` (4), `test_biologics_in_the_plural_become_biologicals`,
+`test_a_product_name_keeps_its_biologic`, and the flipped rule-49 cases;
+mutation-checked against 7 breakages, all caught.
+
+
+**Added 2026-09-30.** Nor is a category class ever the subject of an abstract's
+relation in the reasoner gate. `tendency --has realization--> therapy`, from
+one abstract about the bare word, was asserted on MILD's tendency class; once
+`therapy` was ruled an information entity the class became unsatisfiable,
+and so did every tendency and every curated class that mentions one -- 7,361
+classes, 20,844 relations quarantined. The gate now holds such a relation
+back by name before reasoning (`ReasonerGate.check`;
+`test_a_relation_on_a_category_class_is_held_back_not_reasoned`), and a
+timed-out `robot explain` is reported instead of aborting the run.
+
+The same night showed the general form of that failure: one relation that is
+wrong by itself on a hub term (`healing --has as process boundary at end-->
+completely healed`, a quality where an instant is required) makes the hub
+unsatisfiable, and the gate's "drop every relation touching an unsatisfiable
+term" then quarantined 20,777 relations. Found by delta debugging down to six
+relations. The gate now first asserts every relation on a fresh copy of its
+subject and object (category and grounding only) and reasons once: a copy
+that is unsatisfiable is a relation wrong on its own, and it alone is held
+back before the batch is reasoned (`_locally_inconsistent`;
+`test_a_relation_wrong_on_its_own_is_held_back_without_taking_its_neighbours`).
+
+## 53. A treatment approach is a therapy; NPWT has one name
+
+**Decided 2026-09-28 (curator).** Three more preferred names, applied by pass 0.
+
+*Therapy.* `... approach`, `... strategy` and `... intervention` are written
+`... therapy` -- but only as the HEAD noun and only where the word names a
+treatment. Measured first: the three words sit in 1,570 names, and a blanket
+rename writes `search therapy`, `coping therapy`, `diagnostic therapy`,
+`surgical therapy` for an access route, and `therapeutic therapy`. So:
+`therapeutic`/`treatment` + the word collapse to `therapy`; a prevention or
+preventive strategy is `prophylaxis`, which WONT models as a plan
+specification apart from treatment; and the word stays where the modifier is
+method (search, coping, implementation, GRADE, design, evaluation,
+assessment, research, statistical, educational, management, care ...), an
+access route (surgical, open, invasive, endoscopic, anterior ...) or a time
+point (pre-/post-intervention). Outside the head, rule 48's strategy ->
+approach still applies. Applied: 1,205 renames; `interventions` alone was 141
+mentions and `surgical intervention` 97.
+
+*NPWT.* NPWT, VAC, V.A.C., vacuum therapy, vacuum-assisted closure and
+negative pressure therapy are `negative pressure wound therapy`, inside
+compounds too (`VAC dressing`); a trailing therapy/treatment is absorbed.
+Vacuum sealing drainage is a different technique, and the endoscopic and
+endoluminal vacuum procedures for gut leaks are too. `NPWT` itself (101
+mentions) had never been merged with its expansion.
+
+*-ical.* `numeric -> numerical` joins rule 52's flip, so every -ic/-ical pair
+now points to -ical.
+
+Enforced by: `utils.normalise._therapy_head` and the `THERAPY_*` sets,
+`_npwt` / `NPWT_SYNONYM`, `CANONICAL_WORDS`. Tests in `tests/test_pass0.py`:
+`test_a_treatment_approach_is_a_therapy` (18), `test_vac_and_vacuum_therapy_are_npwt`
+(13), `test_what_is_not_npwt_keeps_its_name` (4); mutation-checked against 7
+breakages (each exception set, the collapse, the whole rule, the therapy
+absorption, the endoscopic exemption, the numerical flip), all caught.
+
+*`diabetes mellitus` (found the same day).* Rule 49's modifier choice
+`diabetes -> diabetic` fired on `diabetes mellitus` and wrote `diabetic
+mellitus` into 28 names (259 mentions), because `mellitus` looked like the
+noun it modifies. `mellitus` and `insipidus` are now blockers
+(`test_diabetes_mellitus_is_a_name_not_a_modifier`). Fixing the rule did not
+fix the names: pass 0 normalises the CURRENT spelling, and `diabetic mellitus`
+no longer contains anything the rule touches. A rule that wrote a wrong name
+therefore needs a one-off correction of the names it wrote -- done here as 19
+renames `by: "pass0 correction ..."`, 17 of them reversing the pass-0 alias.
+`ConceptStore.apply_renames({})` also returns a full report now; pass 0 with
+nothing to do had crashed printing it.
+
+
+## 54. A leading grade or word of praise is not part of the name
+
+**Decided 2026-09-28 (curator, Naming Rulings page, one row per word).** 40
+leading words are stripped by pass 0 -- the praise and filler words (`novel`,
+`effective`, `optimal`, `key`, `advanced`, `conventional`, `standard` ...) and,
+on the curator's choice, the grades as well (`massive`, `severe`, `mild`,
+`moderate`, `large`, `extensive`, `major`, `minor` ...): `massive rotator cuff
+tear` is a rotator cuff tear. `small` and `big` are left alone; `giant` is
+kept and the name recorded as a `narrower` subtype of the name without it.
+
+Stripped from the front only, repeatedly (`severe, extensive burns` -> `burn`),
+never from a one-word name, never before a function word (`standard of care`),
+and never from a name that starts with an exception: the curator's own
+(`major amputation`, `Large wound` -- a defined WONT class --, `moderate to
+severe`, `current smoker`, `mild cognitive impairment` ...) and a second list of
+fixed names the review never showed because they were out of scope when the
+page was built (`standard deviation`, `multiple sclerosis`, `major adverse`
+event composites, `traditional Chinese medicine`, `new onset`). Applied: 2,128
+renames; a `narrower` answer whose term the strip turned into an already-mapped
+term (`major SSI` -> `SSI`) is dropped, since it is now that term.
+
+Enforced by: `utils.normalise._strip_leading_adjectives`, `LEADING_ADJECTIVES`,
+`LEADING_ADJECTIVE_EXCEPTIONS`; `test_a_leading_grade_or_praise_is_stripped`
+(14), mutation-checked against 3 breakages (the whole rule, the exceptions, the
+function-word guard).
+
+
+## 55. A rebuild never undoes a curator's mapping, under any spelling
+
+**Decided 2026-09-28**, after the first rebuild following the day's reviews undid
+curator decisions three ways, none of them loudly:
+
+1. *Cycles.* The curator made `microRNA` the name (`miRNA -> microRNA`); the
+   rebuild re-proposed `microRNA -> miRNA`, the two formed a cycle, and the
+   frequency election retired the curator's entry. `resolve_chains` now elects
+   the target of a curator-ruled live pair; and a curator's reversal also
+   refuses the backward pair, so it is not proposed again.
+2. *Spelling of the pair.* `bone infection -> Osteomyelitis` was ruled under
+   the spelling the review showed; the rebuild re-spelled the canonical to the
+   class label, and pass 1's cached `narrower` on the new spelling withdrew the
+   mapping. The withdrawal now looks for a curator verdict on any pair whose
+   key folds to the live target, and withdraws only the live mapping it objects
+   to, never a term since mapped elsewhere.
+3. *Typings read through the mapping.* The category guard asked for the
+   typing of `Necrosis Process` in the MAPPED view, where an accepted mapping
+   onto `Necrosis` had already absorbed it -- so it found none, allowed the
+   mapping, and the mapping hid the evidence. `store_typings` reads the
+   unmapped view. A sweep then withdrew the 21 live mappings the guard refuses
+   and no curator ruled on.
+
+Enforced by: `TermMapper.resolve_chains` (cycle election),
+`Orchestrator._adjudicate_anchor_mappings` (`ruled`, `is_live`),
+`Orchestrator.store_typings`, `scripts/apply_scope_notes.py` (reversal
+refuses). Tests: `test_a_cycle_elects_the_curators_target_over_the_commoner_spelling`,
+`test_a_curator_ruling_under_the_old_spelling_still_protects_the_live_pair`
+(both mutation-checked), and the live guard tests in
+`tests/test_ontology_anchors.py`, which caught (3).
+
+
+## 56. Rule 49's `trauma -> injury` is withdrawn
+
+**Decided 2026-09-28 (curator: "Trauma into injury is wrong").** A trauma is the
+event; an injury is what it leaves. The word rule is removed from
+`CANONICAL_WORDS` (`test_trauma_is_not_renamed_injury`), and what it had
+written was undone by `scripts/revert_trauma_rule.py`, because pass 0 cannot
+see a rule that no longer matches the current spelling (the rule 53 lesson):
+233 names built only from trauma strings were renamed back with their
+decisions (`psychological injury` -> `psychological trauma`); in 56 names that
+also held genuine injury strings (`head injury` from `head trauma` and `head
+injury`) only the 78 trauma strings were given their own name, which starts
+without a scope decision. Read back: no string the abstracts wrote with
+`trauma` resolves to a name with `injury`.
+
+The same day the curator put the bare words `injury` and `treatment` back in
+scope (a `curator` verdict), reversing the merged-scope ruling that had put
+them out; names containing either word keep their own decisions.
+
+## 57. A decided category is a term decision; a head rule settles only a dispute
+
+**Decided 2026-09-29.** When the abstracts type a term irreconcilably (a
+process in one, a material entity in another) the term has no category and
+cannot be placed. A person's decision about it lives in the term dict as the
+record's `category` section (`verdict`, `source`, `by`, `note`, `when`), and
+the view types every mention of the term with it: a category cell at or below
+the decision stands, every other category cell is replaced by the decision, a
+mention the abstract gave no category keeps none, and a non-category `is_a`
+(`is_a: Wound`) is untouched. The concept store keeps what each abstract said
+(rule 50). When the view stops at the spelling, a synonym takes its
+canonical's decision.
+
+Precedence: a WONT/MILD class keeps the ontology's category; a `term ruling`
+outranks a `head rule: <word>` and is never overwritten by one
+(`set_category` returns `kept`); a later term ruling replaces a head rule and
+keeps it under `history`. Two spellings decided differently are reported as
+`category conflicts` when they merge.
+
+Head rules (`config/category_head_rules.py`, the Signature Words page): the
+head word is the word before the first preposition, else the last. **A head
+rule decides only a term whose abstracts disagree irreconcilably** (curator:
+"disputes only"). Measured before applying: 601 disputes settled, but 2,406
+terms every abstract typed alike would have flipped (`systolic blood
+pressure` quality -> information entity), so the rule does not reach them.
+
+`temporal region` (BFO_0000008, under occurrent, disjoint from process) was
+added as a category the same day for `operative time`, `hospital stay`, `time
+to healing` -- a stretch of time, not what happens in it.
+
+Applied by `scripts/apply_category_rulings.py` (dry by default, backup, read
+back from the file and from the view); measured by
+`scripts/measure_head_rules.py`. Tests: `tests/test_category_decisions.py`.
+
+## 58. No abbreviations, and no guessing which string is one
+
+**Decided 2026-09-30 (curator: "no abbreviations ever"; "no guessing here").**
+A term that is only an abbreviation is never a class name. Which string is
+one is decided by a typographic rule, not a model: one token, no lowercase
+letter except a plural `s`, at least two capitals (digits and `- / & + .`
+allowed) -- `TEN`, `TEWL`, `PT/OT`, `20CRW`. Such a term goes out of scope,
+or is mapped to its full form when the full form is known without guessing
+(the curator named it: `AKI -> acute kidney injury`). A curator's own ruling
+on an abbreviation stands and is reported (`MRI` was ruled a material
+entity). Strings the rule misses because they hold lowercase letters
+(`iNPWT`, `SSc`, `PI3K/Akt`) are the curator's to rule, not the rule's.
+
+The full form is read from the abstracts (Schwartz & Hearst, plus a check
+that the long form spells the letters word by word, which refuses
+`protective equipment` for PPE): `scripts/expand_abbreviations.py`. Then the
+curator's rule (2026-09-30): **no full form in any abstract -> out of scope;
+abstracts defining it as different things -> out of scope (`PI` = pressure
+injury / plaque index / povidone-iodine, `FG`, `SSD`); one concept spelled
+differently -> kept under one full form (`PAD` artery/arterial, `VAS`)**
+(`scripts/apply_abbreviation_rulings.py`). Measured: of 1,556 in-scope
+abbreviation-only names, 825 renamed, 726 out, 5 already ruled.
+
+## 59. A placement stands only after a second check; a refused parent is kept as a suggestion
+
+**Decided 2026-10-01 (curator: "these have to be checked again, maybe with a
+better model, maybe you check all of them yourself").** The placement model's
+answer (`is_a` / `same` / `none` against the ten nearest WONT/MILD/module
+classes) is a proposal, never a decision. Every `is_a` and `same` answer gets
+exactly one independent second check before it is used:
+
+* the most reliable 2,309 (an `is_a` mentioned in two or more abstracts whose
+  parent shares a word with the term or sits at SapBERT >= 0.65, and every
+  `same` at >= 0.75) get a yes/no question to the model, one statement at a
+  time (`scripts/p4_verify_placements.py`): 1,510 + 203 yes, 453 + 143 no;
+* the other 16,150 were read row by row by Claude
+  (`data/review/placement_selfcheck_2026-10-01/verdicts_XX.txt`): 4,100
+  parents refused, 79 replaced by one of the offered alternatives, 89 `same`
+  demoted to `is_a`;
+* 143 answers name no offered class or none at all and are dropped.
+
+A refused parent is not deleted: the term becomes a `candidate` with the
+refused parent kept as `suggested`, so a curator sees what was proposed. A
+term the model placed nowhere stays `unplaced`. The join is
+`scripts/merge_placement_checks.py` (refuses on a row in both checks, a row
+with two verdicts, or an alternative whose label resolves to other than one
+class; writes `placement_merged_2026-10-01.json` and reads it back): 13,453
+placed, 310 synonyms, 4,696 candidates, 15,055 unplaced, 143 dropped.
+
+The failure that motivated it: the sandbox review found generic parents
+taking whatever was near them -- procedures under biological processes,
+brain injuries under `Traumatic wound`, risk scales under `Wound
+classification grade`, anatomical regions under `spatial region` -- at
+10-30% of rows per chunk, worst under `planned process`, `polymer`,
+`tissue remodeling` and `Wound`.
+
+A reply that hits the token cap is reported and its rows left unanswered;
+a rerun with `--batch-size 5` asks only those (7 batches, 140 rows, on
+2026-10-01).
+
+**Then every verify row was read by Claude too (curator: "do it").** The
+model's yes/no is a check, not the last word: `placement_verifycheck_2026-10-01/`
+holds the 2,305 rows still current, with the model's answer and reason on
+each line; Claude lists only where it disagrees (`n:Y` accept against a
+model no, `n:0` refuse against a model yes, `n:I`, `n:1..4`), an unlisted row
+agrees. Disagreement measured: 200 of 2,305 (8.7%) -- 89 refused that the
+model accepted (procedures under biological processes such as `rotator cuff
+repair < Tissue repair process`, scar and risk scales under `Wound
+classification scale`, `PI ...` abbreviations, non-wound infections), 68
+accepted that it refused (mostly wording objections: `material complication
+disease entity`, misspellings, `-ation` forms), 41 `same` demoted to `is_a`.
+The merge takes Claude's verdict where one is listed. After it: 13,446
+placed, 331 synonyms, 4,680 candidates, 15,055 unplaced, 143 dropped.
+
+**ELK before anything is written (curator: "what does elk have to say").**
+`scripts/elk_check_placements.py` asserts every `placed`/`synonym` outcome on
+the skeleton TBox -- the term as a fresh class under its own category and
+under its parent (or equivalent to its class) -- and reasons once with ELK.
+2026-10-01: 13,778 asserted, 0 unsatisfiable placements, 0 existing classes
+made unsatisfiable; the check was shown to fire by injecting a process under
+`Wound` (ELK names it). ELK can only catch a placement that contradicts its
+category; a consistent but wrong parent is what the row-by-row reading is for.
+
+**Order (curator, 2026-10-01: "we do fca first"):** placements are written
+into the term dict, then FCA runs, and only then is the WONT addition built
+-- never placements straight into `wont_extended_core.ttl`.
+
+## 60. A label is never mapped away (rule 36, closing its gap)
+
+**Found 2026-10-01** while asking why placement `same` answers slipped the
+mapping. Anchors are the labels no abstract wrote; a label an abstract DID
+write is ranked by corpus frequency like any store string and can lose:
+18 WONT/MILD labels pointed at a store spelling (`Wound treatment process ->
+wound therapy`, `Impaired wound healing process -> impaired wound healing`,
+`Wound healing by primary intention process -> Wound healing by primary
+intention`), three against a curator who had kept the label direction (a
+rule 55 breach too). Rule 1 of the canonical policy only re-spells what
+folds to a label, so it never saw them.
+
+`TermMapper.enforce_canonical_policy` rule 4 turns such an entry round: the
+store spelling and everything mapped onto it map onto the label, the label is
+unmapped with the reason on record. A curator's direction (`method: curator`,
+or `reverse` on the opposite pair) is held and reported (`painful -> painful
+condition`, `threshold value -> threshold`); a turned-round claim the category
+guard refuses only unmaps the label. Every build runs it. Tests:
+`tests/test_canonical_policy.py` (rule 4, four tests, mutation-checked).
+Applying it to the current file alone, without rules 1-3's other pending
+changes: `scripts/apply_label_restore.py --write` -- written and read back
+2026-10-01: 16 labels canonical again, 27 entries onto them.
+
+The same day the curator refused 12 kept merges whose canonical adds a
+qualifier that narrows the meaning (`wound healing -> impaired wound
+healing`, `injury -> traumatic injury`, `mobility -> reduced mobility`,
+`oxidative stress -> high oxidative stress`, ...): a review-page keep of a
+whole cluster at one timestamp let the broader term through with its
+narrower siblings. Found by listing every mapping whose canonical's words
+strictly contain the term's (704) and reading the added word. Written with
+`scripts/curator_refuse_pair.py` (refused, not deleted; the old `kept` under
+`curator_history`).
+
+## 61. Disorder wins; pressure injury is pressure ulcer -- inside every name
+
+**Decided 2026-10-02 (curator: "illness, disorder, pathology, disease,
+condition and dysfunction are used completely interchangably" -- "disorder
+wins. condition can stay where it is a condition"; "pressure ulcer and
+pressure injury are the sam thing. still, there is sacral pressure ulcer and
+sacral pressure injury").** Two pass 0 rules in `canonical_vocabulary`, applied
+inside compound names as the NPWT rule is (rule 53):
+
+* `pressure injury/injuries -> pressure ulcer(s)` (`_pressure_ulcer`): 161
+  names, 20 of them merging with an existing pressure-ulcer name.
+* `disease, illness, pathology, dysfunction -> disorder` (`_disorder`). Kept:
+  eponyms (`Crohn's disease`, `Buerger disease`), fixed names (`multiple organ
+  dysfunction syndrome`, `critical illness`, `illness perception`), `pathology`
+  the discipline (`surgical pathology`, `pathology report`), and proper names of
+  institutions, classifications and instruments (`Centers for Disease Control`,
+  `International Classification of Diseases`, `Global Burden of Disease`,
+  `Ocular Surface Disease Index`) -- `DISORDER_KEEP`. `condition` becomes
+  `disorder` only in the 90-odd names listed in `DISORDER_CONDITION`, read one
+  by one from the 233 that use it; `wound condition`, `hypoxic condition`,
+  `culture condition` name a state and stay.
+* A WONT/MILD label keeps its own word (`Autoimmune disease`): pass 0 keeps
+  labels as written and the variants join it.
+
+Applied by pass 0: 1,060 renames, 48 groups merged (`skin condition`, `skin
+disease`, `skin dysfunction`, `skin pathology` -> `skin disorder`). The first
+run also renamed 40-odd proper names (`Centers for Disorder Control`); the
+phrases were then protected and 33 names given back their word
+(`scripts/restore_disease_proper_names.py`, reversal through `apply_renames`).
+
+Found on the way: a rename did not reach the sense labels of a two-senses
+ruling (`biopsy` -> `biopsy specimen`, renamed to `biopsy sample` on 09-27), so
+the view kept writing the old spelling. `apply_renames` now renames sense
+labels too (`test_a_rename_reaches_the_sense_labels_of_a_two_senses_ruling`).
+
+## 62. No abbreviations, widened: mixed case, and inside names
+
+**Decided 2026-10-02 (curator: "there are still abbreviations like MSC-Exo and
+i-PRF" -- "keep microRNA send the rest out" -- "inside names too please").**
+Rule 58's typographic test missed abbreviations holding lowercase letters.
+
+* **Whole names** (`scripts/expand_abbreviations.py --wide`, then
+  `scripts/apply_abbreviation_wide.py`): one token with a run of two or more
+  capitals. Every row read; the rule of 2026-09-30 applied: 90 mapped onto
+  their full form (`i-PRF -> injectable platelet-rich fibrin`; three corrected
+  where the match lost a word: `sTBI -> severe traumatic brain injury`), 246
+  out of scope, `microRNA` kept.
+* **Inside names** (`scripts/expand_abbreviations_inside.py`): every part of a
+  name holding two capitals in a row (Roman numerals, chemical formulas such
+  as `CO2`, isoform suffixes such as `factor-BB`, and `microRNA` excepted) is
+  written out from, in order, the name's OWN abstracts (an abbreviation means
+  what its papers say: a corpus-wide lookup had made `4-HNE` "human neutrophil
+  elastase"), rule 58's decision on that abbreviation, and an exact synonym the
+  ontology lists for one class (`RNA`, `NK cell`). One form -> renamed (pass 0
+  style, alias kept); none or several -> the name goes out. Applied: 2,116
+  renamed, 1,026 out of scope.
+
+**Incident, same day.** A dry run of the inside-names script wrote 1,026
+out-of-scope verdicts: a helper named `write` shadowed the script's `--write`
+flag. The term dict file it saved was moved to `data/quarantine` and the
+previous version (byte-identical to the backup taken one step earlier) became
+the latest again; nothing of it remained. The flag is now `DO_WRITE` and the
+write path re-checks `--write` in `argv`.
+
+**Second incident, same day: the renames were wrong where nobody had read
+them.** Checking the newly placed names turned up `Z-deep neck abscess-binding
+protein 1`; a read of all 2,116 renames found about 120 wrong. Causes, and what
+replaced them (version 2 of the script, every changed row read):
+
+* *A whole-name decision taken from one abstract, used for every name.* `DNA`
+  had been defined once as `deep neck abscess` (PMID 41841442) and rule 58
+  mapped it so; seven of its eight abstracts mean the molecule, and every
+  `... DNA` name followed (`cell-free deep neck abscess`). Likewise
+  `alpha-SMA -> alpha-supplementary motor area`, `SOD activity -> semiocclusive
+  dressing activity`. Every rule-58 decision whose term is used in more
+  abstracts than define it was checked by reading each undefined use: 22 are
+  used for different things in their own abstracts (`NLR` = neutrophil ratio /
+  negative likelihood ratio, `DF` = diabetic foot / dermal fibroblast, `PM`,
+  `TM`, `CAD`, ...) and go out (`WHOLE_OUT`); `DNA` is mapped to
+  `deoxyribonucleic acid`, the meaning of 7 of 8 abstracts and of the corpus's
+  own definition (PMID 42579608).
+* *The shortest tail.* Schwartz & Hearst took `level laser therapy` for LLLT,
+  `saphenous vein` for SSV. `spelled_definitions` (in
+  `expand_abbreviations.py`) takes the tail that spells the abbreviation letter
+  by letter with one content word per letter where it can (`low-level laser
+  therapy`), and refuses sentence fragments and a long form holding its own
+  short form (`the APG group`). Whole names corrected the same way: `LLLT`,
+  `OOT`, `PEGDA`, `PPC`, `PI-DGAME`.
+* *The fill from elsewhere.* A part the name's abstracts leave undefined may
+  still be filled from the whole corpus, but only when every spelled
+  definition there and the curator's decision name ONE concept, and every such
+  fill was read: 40-odd borrowed a meaning that is not the paper's (`AMP-activated
+  protein kinase -> antimicrobial peptide-...`, `HO-1 -> heterotopic
+  ossification-1`, `Braden QD -> quantum dots`) and are refused by name
+  (`READ_OUT`).
+* *Smaller faults.* Doubled words (`wound bed score score`), abbreviations left
+  inside the written-out form (`enhanced PRP`), a token and its part replaced
+  over each other (`...stem cellsnchymal stem cell`), `IL` read as a Roman
+  numeral (so `IL-6` was never written out), full-width brackets. The curator's
+  one-concept lists (KEEP, 2026-09-30 and 2026-10-02) and the abbreviations the
+  curator kept as names (`RNA`, `MRI`, besides `microRNA`) now count inside
+  names too.
+
+Applied (`--write`, read back): 441 renamed (330 of them first-run outs that the
+corrected reading writes out; their out lifted), 56 out, 6 whole names
+remapped, 22 whole names out. Report: `output/abbreviation_inside_v2_2026-10-02.json`.
+
+**And a scope leak.** Scope is pooled over a concept (rule 28), so an
+abbreviation ruled out while still mapped onto its full form put the full form
+out: `DF` took `diabetic foot` with it, `%TBSA` `total body surface area`,
+`BMP-2` `Bone Morphogenetic Protein 2` (26 full forms). A rule-58 out now
+unmaps the abbreviation (`scripts/fix_out_leaks.py`, refusal kept); `NLR`, `EC`,
+`GF`, whose full form's curator `in` had swallowed the out, unmapped the same
+way. The disorder rule's protected phrases gained `disease-modifying` and
+`coronavirus disease` (8 names given back their word).
+
+**Review page, three outcomes per term (curator, 2026-10-02).** On the
+superclass/synonym review page a term is *accepted* (the class stands),
+*refused* (the class is wrong; the term stays in scope and keeps it only as a
+suggestion), or *excluded* ("add a button to exclude a term. some are not
+necessary or unspecific nonsense like clinical method"): the term itself is
+not wanted and goes out of scope, as a curator gate verdict. The step that
+writes the page's decisions into the term dict must honour all three. The
+page edits a copy of what it loads: stored documents come back read-only, and
+editing them in place made every click on an already-decided group fail
+silently.
+
+## 63. One class per label
+
+**Decided 2026-10-02 (curator: "wont has its own disease class. dont reuse
+ogms. same with the protein class. we dont need several class of several
+ontologies with the same name that have some wont classes as children").** 17
+labels exist in more than one ontology of the class pool, and WONT itself holds
+bare HP/DOID copies (`Abscess`, `Pressure ulcer`, `Osteomyelitis`,
+`Lymphocele`) beside its WONT_ class. A superclass or synonym target is always
+the one class for its label: the ground truth's own copy (its WONT_ class
+first), then MILD, then COB, then UBERON. OGMS `disease` (a disposition) is
+replaced by MILD `material disease entity`, where the curator's ruling of
+2026-09-29 already sends the word; the 89 terms placed under it are retyped
+material entity. Enforced in `scripts/merge_placement_checks.py`
+(`one_class`, `REDIRECT`): 425 targets redirected. ELK then found one term
+whose typing contradicted the WONT class it now sat under (`cervicofacial
+abscess`, typed disposition), retyped with the reason (`RETYPE`). The import
+modules themselves still carry the duplicate classes; removing them is module
+work (rule 34).
+
+## 64. Placements enter the hierarchy as `placed`, behind an evidence cut
+
+**Decided 2026-10-02 (curator: "go on with what we have now and work through
+the rest with fca and proper ontology at the end"; then, on the first view of
+the tree, "so many nonsense terms" -- ">=2 abstracts" -- restatements "check
+and convert").**
+
+* **Applied as the page stood** (`scripts/apply_placements.py`): a kept
+  superclass becomes the pair judgement `placement: {verdict: narrower}`
+  (13,143: 3,809 accepted, 9,334 by the page's default "accepted unless
+  refused"); an accepted synonym is mapped (318); a refusal is a refused pair;
+  an exclusion a curator gate `out`. Undecided synonyms would not be mapped
+  (none were left).
+* **A fourth hierarchy source, `placed`**, ranked curated (4) > placed (3) >
+  text (2) > fca (1): checked twice, so above what one abstract implied; not
+  authored, so below WONT/MILD. Read from `TermMappingAndGate.placements()`
+  (refused pairs, mapped terms and out-of-scope terms give no edge) by
+  `run_build_hierarchies` into `BaseHierarchy.get_data(placed=...)`.
+* **Evidence cut**: a placed term becomes a class only when
+  `PLACEMENT_MIN_ABSTRACTS = 2` abstracts mention it. 76% of the placements
+  (9,997 of 13,146) rest on one abstract; below the cut the placement stays in
+  the term dict, unbuilt, and comes back the moment a second abstract names
+  the term.
+* **Restatements**: a kept placement that only renames its class ("wound
+  assessment" under Wound diagnostic process) is not a subclass. Each kept
+  placement is asked `same / narrower / unclear`
+  (`scripts/p4_restatement_check.py`), every `same` is read by Claude, and the
+  confirmed ones become synonyms of the class.
+* First ELK run on the rebuilt hierarchy: 216 edges quarantined, all `text`
+  (typings that contradicted a placement); every placed edge kept.
+* The hierarchy reads WONT/MILD subclass axioms only, so classes the
+  placements use from the import modules (`planned process`, `1-D extent`)
+  appear without a parent -- to be fixed before the build.
+
+## 65. FCA reads an unstated property as absent; ancestors pass down only corroborated attributes
+
+**Decided 2026-10-02 (curator: "Absent = false"; on inheritance: "class level
+only inheritance and everything inheritance, that I don't make a guess but a
+data driven choice").**
+
+* **Closed world, for FCA only.** A property no abstract states of a class is
+  read as not holding, one lattice is built, and every concept is certain
+  (`ConceptLattice.get_data_and_run_fca(unknown="absent")`, the `run_fca`
+  default). The cells read that way are counted and printed. The ontology
+  itself stays open world; FCA output is a suggestion that is reviewed anyway.
+  Motivated by the Wound subtree: the open-world dual build left 23% of the
+  context undecided and gave 1 certain concept, 0 named.
+* **Evidence cut on attributes** (`ContextMatrix.get_data(min_support=2)`): a
+  measured attribute counts only when two abstracts state it of that object.
+  `Wound` is named in 1,013 abstracts and carried 207 attributes, 145 of them
+  from one abstract each (`skin itching`).
+* **Class-level inheritance** (`inherit="class_level"`, the `run_fca`
+  default). An ancestor's attribute passes to its subclasses only when its own
+  descendants state it significantly more often than everything outside its
+  subtree does: one-sided Fisher exact test over every store entity with
+  measured attributes, Benjamini-Hochberg at FDR 0.05
+  (`ContextMatrix._class_level_attributes`, every test kept in
+  `inheritance_tests`). An attribute that no descendant can corroborate (none
+  has measured attributes) is not inherited. No cut on the share of the
+  ancestor's abstracts: the top attribute of `Wound`, `wound area`, is in 3.2%
+  of them, so any guessed share decides the outcome by itself.
+* **Chosen by measurement** (`scripts/fca_inheritance_compare.py`, output
+  `data/review/fca_inheritance_comparison_2026-10-02.json`). On the Wound
+  subtree, 322 objects × 94 measured attributes:
+
+  | inherit | inherited cells | hierarchy edges contradicted | concepts | new groupings | members' own cells |
+  |---|---|---|---|---|---|
+  | all | 20,564 | 0 / 326 | 47 | 5 | 1% |
+  | class_level | 11,231 | 174 / 326 | 53 | 5 | 22% |
+  | none | 0 | 197 / 326 | 93 | 18 | 100% |
+
+  `all` and `class_level` propose the same groupings, but under `all` each one
+  pulls in 20 to 52 descendants that state none of the shared attributes.
+  `class_level` keeps the groupings and drops the passengers. The contradicted
+  edges cost nothing downstream: `fca` is the lowest-ranked source and enters
+  only after review. `none` gives more groupings, but 9 of its 18 rest on
+  `part_of: <a wound class>`, a misread subclass statement (below).
+* **Limit, measured:** only 29 of the 322 Wound classes have any attribute
+  (has_quality, part_of, has_participant, has_disposition, inheres_in) stated
+  in two abstracts. FCA can only group among those.
+* **Open:** `part_of` between a wound and a wound class (`Heel Pressure Ulcer
+  part_of Pressure ulcer`, `Wound part_of Wound`) is a misread `is_a` and
+  passes the class-level test. It must not become a part_of axiom in the WONT
+  addition.
+
+## 66. Few good axioms over many bad ones: a relation enters the ontology only when both ends are typed right
+
+**Decided 2026-10-02 (curator: "Has quality contamination, which might be a
+material entity, makes no sense ontologically ... I'd rather take little nodes
+and edges and add them to the onto than bad ones").**
+
+* **Precision over recall.** A relation that cannot be shown sound stays out,
+  even when it might have grouped correctly in FCA.
+* **Typing check on both ends** (`scripts/relation_typing_check.py`, output
+  `data/review/relation_typing_check_2026-10-02.json`). A term's OWN category
+  (its most specific BFO ancestor in the class hierarchy, read against a fixed
+  BFO tree) must be what the predicate requires (RO/BFO domain and range:
+  has_quality -> quality, has_disposition -> disposition, inheres_in ->
+  specifically dependent continuant to independent continuant, part_of /
+  has_part -> both ends of one kind, ...). Verdicts: ok / violates /
+  undetermined. Only `ok` may become an axiom.
+* **Measured on the store view, 26,372 relations:** 21,061 ok, 2,097 violate,
+  3,214 undetermined. With >= 2 abstracts: 1,349, of which 1,007 ok, 107
+  violate, 235 undetermined. Examples: `Wound has_quality contamination`
+  (contamination typed material entity) violates while `Wound has_quality
+  contaminated` passes -- the two are not synonyms; `Diabetic foot ulcer
+  has_quality material disease entity` (6 abstracts) violates.
+* **Wrong values are dropped, not repaired.** Of 156 wrongly typed values on
+  has_quality / has_disposition / has_function / has_role, 4 have a same-stem
+  term of the right category, and the main one (`time to healed`) is junk.
+* **Why ELK did not catch it:** the skeleton TBox carries no domain or range
+  for RO_0000086 has quality, BFO_0000197 inheres in or RO_0000091 has
+  disposition, so a restriction with a material filler on has quality clashes
+  with nothing. The relation gate (`run_gate_store_relations`) last ran
+  2026-10-01, before the renames of rules 61-63.
+* **Found on the way:** the class hierarchy puts Role under Quality (BFO: under
+  realizable entity) and leaves Disposition, Function, Realizable Entity and
+  Process Boundary without a parent.
+* **Still open:** one abstract's report about a wound is not a property of
+  every wound (`Wound has_quality contaminated`: there are clean wounds). The
+  export (`owl/extend.py`) writes every store relation as `C SubClassOf R some
+  T` and 23,392 of its 24,621 relations rest on one abstract; the class-level
+  test of rule 65 inherited `contamination` to every wound, because enrichment
+  is not universality. A relation needs a universality reading (all / some)
+  before it becomes an axiom.
+* **Universality, read by Claude 2026-10-02** (curator: "do it yourself").
+  Every one of the 1,007 relations with >= 2 abstracts and both ends typed
+  right was read as the axiom it would become, `C SubClassOf R some T`
+  (criteria in `data/review/relation_universality_2026-10-02/README.txt`,
+  verdicts in `verdicts_*.txt`, joined and checked by
+  `scripts/compile_universality.py`): **203 all, 537 some, 267 no.** Only
+  `all` may become an axiom. Of the `no`: 180 are subclass statements misread
+  as part-hood (`Acute wound part_of Wound`, `amputation part_of surgical
+  procedure`, `antibiotic has_part meropenem`), 26 self-loops, 7 the wrong
+  bearer (`Wound pain inheres_in Wound`: the pain is the patient's). `some` is
+  where the abstracts report instances: `Wound has_quality contaminated`,
+  `X participates_in wound healing` (141 of 150 participates_in rows),
+  every causal link (42 of 45).
+
+## 67. BFO is whole and right everywhere; the WONT addition is built from checked edges and read relations only
+
+**Decided 2026-10-03 (curator: "why the heck is role under quality. BFO is the
+top onto of WONT. WONT and all modules end up as a schema for extraction and in
+the concept store, so every BFO class should be in there and with correct
+hierarchy"; on the export and the domain/range axioms: "do it").**
+
+* **Why role sat under quality.** The class hierarchy is keyed by label.
+  obi_module states ChEBI `role` (CHEBI_50906) under PATO `quality`
+  (PATO_0000001), carried over from pato.owl on purpose so the ChEBI leaf
+  module is grounded. Module ancestry (rule 64) climbed from a placement parent
+  into ChEBI `role` and wrote its parent as the parent of the one `Role` node,
+  stamped curated. BFO's own `role ⊑ realizable entity` never entered: the
+  hierarchy read subsumption from WONT + MILD only, and those hold no BFO
+  axiom. Now a non-BFO class carrying a BFO label is not climbed
+  (`curated_seed.module_ancestry`, reported), and BFO's tree comes from BFO.
+* **All of BFO in the modules.** Seeded by use, the module closure held 20 of
+  BFO 2020's 36 classes and 19 of its 35 edges (no object, site, fiat object
+  part, object aggregate, history, relational quality, spatial and temporal
+  region subtypes, fiat boundaries). `build_disease_proposal.sh` FIX 4 seeds
+  BFO core whole; after the rebuild 36/36 and 35/35, only obi_module changed
+  (+16 classes). `bfo_module.owl`, `iao_module.owl` and `ro_module.owl` are
+  June leftovers MILD does not import.
+* **All of BFO in the hierarchy** (`curated_seed.bfo_edges`, called by
+  `run_build_hierarchies`): BFO's 35 edges plus the two extraction categories
+  that are not BFO labels -- `information entity` (typed BFO_0000031) under
+  generically dependent continuant, `tendency` (MILD_120005) under realizable
+  entity -- stamped curated. Every BFO node now has exactly its BFO parent.
+* **All of BFO in the extraction schema** (`schema_builder.collect`): the 20 BFO
+  classes that are not typing categories are grounding targets under the
+  category their BFO ancestry gives them; `entity` is the root and not a
+  target. The 16 typing categories are unchanged.
+* **The reasoner skeleton takes BFO and the relations from the modules**
+  (`skeleton.add_bfo_and_relation_axioms`): BFO's 35 edges, 39 disjointness
+  pairs, and rdfs:domain / rdfs:range of every exported relation as RO / BFO /
+  IAO / OBI declare them (15 domains, 14 ranges). ELK is OWL 2 EL: an
+  intersection keeps its named members (`inheres in` range independent
+  continuant), a union is left out and reported (`concretizes`, `occupies
+  temporal region` domains). The skeleton is stale when a module is newer.
+  Tested: `X has_quality some material disease entity`, `X has_quality some
+  process` and `X participates_in some material entity` are now unsatisfiable;
+  `X has_quality some quality` is not.
+* **Withheld until rule 68 (2026-10-03), now restored:** RO's range of `has disposition`
+  (disposition). MILD makes disposition, role and tendency pairwise disjoint,
+  and WONT/MILD bear `wound infecting tendency` by `has disposition`
+  (Staphylococcus aureus, Escherichia coli, WONT_120019 pathogen with wound
+  infecting tendency), so with the range those three and MRSA infection are
+  unsatisfiable. The ground truth is not changed here.
+* **The export** (`run_extend_ground_truth`, `owl/extend.py`): relations are
+  only the 203 read as true of every instance (rule 66), never the store and
+  never the mereological hierarchy's unread part_of edges; `store` and
+  `relations` together are refused. Subclass edges: curated and placed whole, a
+  text edge only when its child is named in >= 2 abstracts.
+* **The core** (`scripts/build_wont_core.py`, replacing `split_extension.py`,
+  whose head-noun and unreviewed-candidate placements were not checked): a new
+  class enters only through a `placed` edge to a curated class or to another
+  core class, with its BFO typing; no text is_a edge; a read relation only when
+  its filler is curated, a category or in the core. ELK then settles it
+  (`elk_unsat`): a new class it finds unsatisfiable loses its relations, then,
+  if still unsatisfiable, goes to the candidates; one only below an
+  unsatisfiable curated class stays and is reported.
+* **The edge gate had been calling an inconsistent hierarchy clean.**
+  `ReasonerGate._unsatisfiable` ignored ROBOT's exit code, so "the ontology is
+  inconsistent" came back as no unsatisfiable class: 36,644 edges "clean" while
+  `Allergy` sat under disposition and material disease entity. It now raises
+  unless ELK listed classes. The inconsistency itself came from WONT's 48 named
+  individuals (Wagner grades, burn zones) under classes the text edges emptied;
+  the edge graph now carries no individuals (the gate asks which CLASSES an
+  edge empties). And the gate blamed only the empty class's own edges, so the
+  cause on ANOTHER class went free: `Nutrient is_a Material Entity` (text)
+  leaves nothing that can be protein's `has role some nutrient`, and 31 placed
+  children of Protein were dropped. Before a placed or curated edge goes, the
+  gate now asks ROBOT for one explanation per root unsatisfiable class and
+  drops the lower-ranked edges it names (`_explained_pairs`).
+  Result: **1,127 edges quarantined, all text; every curated (882) and placed
+  (3,107) edge kept; the 35,517 kept edges have 0 unsatisfiable classes.**
+* **Built 2026-10-03:** 7,299 minted, **3,095 in the core** (3,083 placed
+  edges, 2,070 BFO typings, 55 read relations; `Negative Pressure Wound
+  Therapy Dressing` lost its relation, whose filler had resolved to the NPWT
+  *plan specification*), 4,204 candidates under their category in
+  `wont_candidates.ttl`. 82 read relations sit on existing WONT classes and are
+  withheld (WONT is never altered), 63 on candidate classes, 2 point outside
+  the core. ELK over the core and its import closure: 11 unsatisfiable -- the
+  ground truth's own 4 (above, `has disposition` with a tendency) and 7 new
+  classes placed under them (MRSA, MSSA, MDR S. aureus, S. aureus isolate,
+  ESBL E. coli, Acinetobacter baumannii, burn-wound pathogen).
+
+## 68. A tendency is borne by `has tendency`, never by `has disposition`
+
+**Decided 2026-10-03 (curator: "separate has tendency relation").**
+
+* MILD makes disposition, role and tendency pairwise disjoint, and RO_0000091
+  `has disposition` has the range disposition. WONT bore `wound infecting
+  tendency` (WONT_120018) by RO_0000091 on Staphylococcus aureus, Escherichia
+  coli and in the definition of WONT_120019 pathogen with wound infecting
+  tendency, so under its own import closure WONT had 4 unsatisfiable classes
+  (those three and WONT_0000447 MRSA infection) -- ELK, and HermiT after 2 h
+  57 min, agreed.
+* **MILD_120101 `has tendency`** (MILD): subproperty of RO_0000053 `has
+  characteristic` (range specifically dependent continuant, which a tendency
+  is), domain independent continuant, range MILD_120005 tendency; not a
+  subproperty of RO_0000091, whose range would reimpose disposition.
+* **The three axioms in WONT now use it** -- the one change made to
+  `ground_truth_final.owl` by this pipeline, on the curator's ruling, three
+  lines, backed up in `data/backup/has_tendency_2026-10-03/`. WONT under its
+  import closure: 0 unsatisfiable classes (ELK).
+* `has disposition` stays in the extraction schema (`schema_builder.
+  REQUIRED_PATTERNS`, material entity -> disposition): the relation list is
+  derived from WONT/MILD usage, and with its last WONT use gone it had dropped
+  out silently although the store holds 102 such relations. `has_tendency` is
+  in ALLOWED_PREDICATES. The skeleton carries RO's range of `has disposition`
+  again.
+* **The shift in the store** (curator: "do the has disposition to has tendency
+  shift for tendency targets"; `scripts/shift_has_tendency.py`): a
+  `has_disposition` cell reads as `has_tendency` when its value's most
+  frequent typing across the store is tendency and the abstracts asserting the
+  pair do not type it disposition or function. 124 of 216 pairs shift (risk
+  factor 42, amputation risk 12, risk of infection 10, ...). A first draft
+  followed the asserting abstract's typing alone and would have made
+  `Osteomyelitis`, `Smoking` and `diabetic peripheral neuropathy`
+  tendencies. The store is not edited: each shifted cell carries a
+  `repredicated` decision in the term dict (`ConceptStore.repredicate_cells`),
+  which the view applies (`_cell_predicate`); the assertion stays as the
+  abstract wrote it. `relation_typing_check.py` knows `has_tendency`.
+* **Why the old extraction made them:** the schema licensed `has disposition`
+  for material entity -> tendency, learned from exactly the three WONT axioms
+  this rule corrected.
+
+## 69. Relations on existing WONT classes: the curator decides, and a wound-wide quality goes on Wound once
+
+**Decided 2026-10-03 (curator: "I wouldn't be categorical. Show these in a UI
+for my judgement"; "most of these axioms are true for wound, not only pressure
+ulcer. The axioms will be inherited by wound subclasses anyway"; "wound
+healing and wound healing process are the same").**
+
+* The export withholds every axiom on a curated class (`touch_existing=False`,
+  rule 67): 82 of the 203 read relations. They were put before the curator
+  (https://claude.ai/artifact/BRc7QuBRBmXJV4tXcCun8A; data
+  `data/review/withheld_relations_2026-10-03.json`, built by
+  `scripts/withheld_relations_data.py`, which resolves and mints against the
+  CORE -- minting against WONT's own counter reused the core's ids and made 18
+  relations look unsatisfiable that were not), each with its PMIDs, the class
+  each end resolves to, and ELK's verdict for that axiom alone.
+* **A quality every wound has is asserted once, on Wound**, and inherited:
+  area, size, depth (PATO), length, volume (WONT), age (PATO, ticked as the
+  wound's age), degree of microbial burden (WONT's class; the curator unticked
+  `bacterial load` and `bacterial burden`). Bearer-specific names (wound
+  surface area, ulcer area, burn size, burn wound depth, ...) were unticked:
+  no axiom, no mapping. Per-subclass statements of these qualities give no
+  axiom.
+* **A WONT plan specification stands for the process that realizes it** where
+  the abstracts speak of the act: dressing change -> Wound Dressing Change
+  (WONT_0007699), negative pressure wound therapy -> Application Of Negative
+  Pressure Wound Therapy (WONT_0001008), surgical debridement -> Surgical
+  wound debridement process (WONT_0000299), antibiotic therapy -> Antibiotic
+  administration process (WONT_0000589). (All 10 relations ELK rejected were
+  this mismatch.)
+* `scripts/apply_axiom_review.py` turns the page's database into
+  `data/review/curator_axioms_2026-10-03.json` (47 axioms: 7 on Wound, 40
+  single; 6 left out, 2 undecided) and records the identities in the term
+  dict (`wound healing process` = `wound healing`, `wound age` = `age`).
+  `build_wont_core.py` adds every curator axiom to the core, brings a filler
+  that is only a candidate into the core with its BFO typing (8), and never
+  drops a curator axiom: if ELK rejects one the build stops and names it.
+  Result: core 3,103 new classes, 0 unsatisfiable (ELK).
+
+## 70. Ulcer and wound are one term; ulceration is ulcer; leg is lower extremity
+
+**Decided 2026-10-04 (curator: "we should do something against the ulcer vs.
+wound synonym" -- asked how, "same class (synonyms)"; ulceration "same as
+ulcer"; "leg should be converted to lower extremity always, because the
+suggested FCA edges are only that. basically non expressive nonsense").**
+
+* **Inside every name** (`normalise.canonical_vocabulary`, so it also holds for
+  every future extraction): `ulceration(s)` -> `ulcer(s)` (`_ulceration`);
+  `leg` and `lower leg` -> `lower extremity`, `legs` -> `lower extremities`
+  (`_lower_extremity`). Kept as written (`LEG_KEEP`, read one by one from the
+  356 names using the word): `upper leg` (the thigh); instruments, scales and
+  studies (FLACC, Leg Ulcer Measurement Tool, Venous Leg Ulcer Self-efficacy
+  Tool, European leg ulcer series, the HEALS trial, the S2k guideline);
+  programmes (Leg Club); tests, exercises and procedures (straight leg raise,
+  single-leg hop / stance / squat, leg press, leg extension, short-leg cast
+  and splint, cross-leg flap and anastomosis, in-bed leg cycling, leg muscle
+  pump).
+* **Ulcer and wound** are one term in what two spellings share
+  (`Normalised.key` and `.strict`, `_ulcer_is_wound`), never in a name: pass 0
+  groups `X ulcer` with `X wound` and elects one name -- an ontology label
+  first (rule 36; `Diabetic foot ulcer`, `Chronic wound`, `venous wound`),
+  then the spelling more abstracts use. A lone `gastric ulcer` keeps its word.
+  A WONT/MILD label is never renamed: `Venous leg ulcer` keeps `leg`, and
+  `venous lower extremity ulcer` joins it.
+* Applied 2026-10-04 by pass 0: 543 renames (208 ulcer <-> wound, 199 leg,
+  97 ulceration, 62 respellings already owed); the bare `ulcer` (297
+  abstracts) is now `Wound`. A second pass writes 0.
+* **Found on the way:** `resolve_chains` let the category guard withdraw a
+  mapping the curator had ruled (`wound healing process` = `wound healing`,
+  2026-10-03; two ROC-curve names and `undermining border` since 2026-09-27).
+  A curator `same_class` ruling now outranks the guard (`ruled` in
+  `TermMapper.resolve_chains`); the six withdrawn rulings were restored.
+* The gate list files are views of the term dict (rule 51); after a rename
+  they are rewritten (`term_lists.export_gate_lists`), or
+  `test_the_live_files_and_the_live_gate_agree` fails.
+* The FCA nesting page (https://claude.ai/artifact/FNFH2gPgddHPECcPDBj1gb) is
+  superseded: its edges were this naming problem, not structure.
+* **Minted WONT ids are not stable across builds.** The export numbers new
+  classes from WONT's highest id on every run, so after the renames
+  WONT_0004067 was `Ligamentous Rupture`, not `Length`, and the curator axiom
+  "every wound has some length" emptied Wound and 983 classes below it (ELK:
+  inconsistent through WONT's individuals). Curator axioms now refer to a
+  minted class by NAME, through the term dict (current name first); only
+  WONT's own and imported IRIs are kept as IRIs (`build_wont_core.py`,
+  `stable_or_by_name`). A curator axiom WONT already states is skipped
+  (7 of 49). The id registry of rule 71 now keeps minted ids stable.
+* The read relations (rule 66) carry the names of their day; the export now
+  passes every name through the store's resolver (`run_extend_ground_truth`),
+  so `ulcer` exports as `Wound` (19 relations renamed) instead of being
+  minted as a class of its own.
+* The core builder now sees through an inconsistent result as the gate does
+  (`elk_unsat` re-reasons without WONT's individuals and names the empty
+  classes) and stops with the failing graph saved when a curated class goes
+  empty. Result 2026-10-04: 2,954 new classes, 0 unsatisfiable (ELK); 10
+  placed edges dropped by the gate where a merged record brought two
+  contradicting placements.
+
+## 71. A minted WONT id belongs to its class for good
+
+**Decided 2026-10-04 (curator: "fix the unstable numbering").**
+
+* The export used to number minted classes from WONT's highest id on every
+  run; any change upstream moved every id after it (rule 70: WONT_0004067
+  became `Ligamentous Rupture`). An id that moves cannot be published, cited
+  or reviewed against.
+* **`data/registry/wont_ids.json`** (`owl/id_registry.py`, `IdRegistry`) maps
+  what a name shares with its spellings (`Normalised.key`) to one IRI. The
+  export (`extend_ground_truth(registry=..., former_names=...)`, built by
+  `run_extend_ground_truth`) asks it before minting:
+  * seen before -> the same id;
+  * renamed -> the same id, found through the term dict's aliases (a former
+    spelling counts only when it is no longer a name of its own in that build,
+    so two live classes are never merged);
+  * two registered classes joined by a rename -> one id survives (the one
+    registered under the current name, else the older) and the other is
+    marked `obsolete`, `replaced_by` the survivor -- never reused, never
+    silently dropped (OBO practice);
+  * new -> the next number after every id ever issued.
+* **WONT's main series continues consecutively** (curator, 2026-10-04: "I'll
+  reset Protégé every time"): a new id is the next number after WONT's own
+  highest id and after every id the registry ever issued. After each export
+  the next free id is printed and written to
+  `output/owl/NEXT_FREE_WONT_ID.txt`, for Protégé's new-entity counter. If a
+  hand-made WONT class ever takes an id the registry holds, the export stops
+  and names it (`registry id ... is a curated class in the ground truth`)
+  rather than letting two classes share an IRI. (A separate block from
+  WONT_0500000 was used for one hour and discarded before anything was
+  published.)
+* A label changes only on a real rename, not between case variants of one
+  name meeting in one build.
+* Seeded 2026-10-04: 7,212 ids, WONT_0000591 to WONT_0007802, consecutive
+  after WONT's own WONT_0000590; next free WONT_0007803. Two consecutive
+  exports gave identical (IRI, label) for every minted class (0 issued, 0
+  merged on the second). The registry is backed up before every write
+  (`data/backup/registry/`) and read back after it.
+* 2026-10-06: a title-cased hyphenated label lost its final s in the key
+  (`Retro-Rectus` -> `retrorectu`, but `retro-rectus` -> `retrorectus`;
+  `singular_spelling` read the capital after the hyphen as an acronym's).
+  Fixed in `label_match.singular_spelling`; the five registry entries keyed
+  the old way (Complete-Thickness, Extremity-Loss, Neo-Epidermis,
+  Pro-Angiogenesis, Retro-Rectus) got the corrected key added, the old one
+  kept. All 7,212 ids answer to both spellings of their label
+  (`tests/test_hyphen_title_case.py`).
+* Open: once ids are published, an obsolete id should appear in the release as
+  a deprecated class with `term replaced by` (IAO_0100001); nothing has been
+  published yet, so none is emitted.
+
+## 72. Nothing goes into the WONT addition that the curator has not seen
+
+**Decided 2026-10-05 (curator, on the 44 relations on new classes: "have i
+ever reviewed these?" -- no, only Claude had read them -- "make the page yes.
+and everything else that could be worth my judgement should be in this ui
+too").**
+
+* A relation from the abstracts on a **new** class goes into the addition only
+  when the curator marked it "add". `scripts/build_wont_core.py` reads
+  `data/review/new_class_relation_decisions.json`; every other such relation
+  is held out and listed in `core_build_report.json` ("relations held for the
+  curator"). Claude's reading of a relation as true in every case is
+  evidence for the curator, not a decision. (Relations on existing WONT
+  classes already needed the curator: rule 69.)
+* Everything else worth a person's judgement is collected by
+  `scripts/judgement_queue_data.py` into one list and shown on one page
+  (`scripts/judgement_queue_page.py`): those relations; new classes whose name
+  is a label or exact synonym of an existing class; parents whose missing
+  parent keeps classes out; terms whose every parent the reasoner
+  contradicted; classes in only because a curator axiom names them; parents
+  the abstracts suggest for existing WONT/MILD classes (notes for WONT's next
+  revision only -- WONT is not changed).
+* Decisions live in the page's shared store and are read back with
+  ArtifactData before anything is applied; an item's id is stable across
+  rebuilds (`item_id`), so a decision survives a new version of the page.
+* Write to the curator in plain words, not in the pipeline's own terms
+  ("given a parent class", not "adjudicated placement").
+
+## 73. A decision is written to the record that exists, found without case, or not at all
+
+**Decided 2026-10-07 (applying the judgement queue).**
+
+* A page shows a built class's label ("Cell Process"); the term dict keys its
+  record by the spelling in the abstracts ("cell process"). `record()` creates
+  an empty record for a spelling it does not know, so a decision written under
+  the page's spelling lands where no view reads it and is lost without a word.
+  An applier matches the page's name to the term dict's keys without case,
+  follows aliases (`resolve`), and writes only when that gives exactly one
+  current spelling. No record, or more than one: the run names the term and
+  writes nothing for it (`scripts/apply_judgement_queue.py`).
+* After writing, the applier reads back every decision AND says which written
+  parents still do not count (`placements()`): a term out of scope or mapped
+  onto a class takes the parent onto its record but not into the build.
+  Found on the first run: `sample` (out of scope by the methodology list) and
+  `disorder course` (already mapped onto MILD's course of the disease process).
+* The same holds for the class side of a pair: Likert scale's placement was
+  keyed `categorical level specification`, and a refusal written as
+  `Categorical Level Specification` refused a pair nobody reads. The applier
+  matches the pair's class without case too, and refuses to guess when a record
+  holds one class under two spellings.
+
+## 74. A renamed import is still the import
+
+**Decided 2026-10-07 (the judgement queue's "waiting for a parent" section).**
+
+* The naming rules rename inside the pipeline (specimen -> sample, value ->
+  level, cellular -> cell, action -> activity, disease -> disorder). An
+  imported class's own label is not renamed, so after the rename the export
+  found `sample from organism` nowhere and minted OBI_0001479 again as a WONT
+  class with no parent; 14 imported classes were twinned this way, and seven of
+  them (cell process 50, scalar level specification 5, sample from organism 4,
+  cell anatomical entity 3, processed sample, sample and sample collection
+  process 2 each) kept 68 checked classes out of the WONT addition.
+* `extend_ground_truth(import_names=...)`: a term no import defines is looked
+  for under its other names -- the class the term dict maps it onto (it IS that
+  class), else its former spellings -- and used only when every name that
+  answers gives the same class. Every such match is listed in the run
+  (`resolved_other_name`); the 14 of the first run were each read.
+* Never through DOID (`import_skip`): curator, on Metabolic Disorder, "Dont
+  reuse doid".
+* A curator's "leave them out" for the children of such a parent is written as
+  refusals of those child -> parent pairs, so the fix does not bring them in.
+
+## 75. An inconsistent ontology is asked again without WONT's individuals, and that is said
+
+**Decided 2026-10-08 (the relation gate stopped `p4_derive.py` on 2026-10-07).**
+
+* WONT holds 48 named individuals (Shea, Wagner, Gustilo grades, zones of a
+  burn). When relations empty a class one of them is a member of, ELK reports
+  no unsatisfiable class but "the ontology is inconsistent", which names no
+  culprit. On 2026-10-07 that stopped the relation gate, and the rebuild ran
+  without it (`p4_derive_2026-10-07b.log`).
+* Every reasoner call of the gate (`ReasonerGate._unsatisfiable`) now does what
+  `build_wont_core.elk_unsat` already did: on "inconsistent" it asks again
+  without the individuals (`gate.without_individuals`), so the emptied classes
+  are named and their relations held back as usual. It says so in the run, in
+  `GateResult.without_individuals` and in the quarantine file
+  (`asked_without_individuals`), naming each individual and the emptied class
+  it sits in. The explanation is asked of the same graph without individuals.
+* It still stops when nothing can be named: inconsistent with no individuals
+  in the graph, or inconsistent without them too, or no class empty once they
+  are out. Any other ELK failure is never taken for an inconsistency.
+* A clean result still means consistent WITH the individuals: the last pass
+  only ends on an empty answer, and an inconsistent graph never gives one.
+* **A crashed check puts its earlier verdicts back.** `run_gate_store_relations`
+  lifts the gate's own verdicts and saves before re-checking; the crash of
+  2026-10-07 left its 14 rejections lifted in the saved store. It now restores
+  them before the error goes on, and says so.
+* Tested: `tests/test_gate_individuals.py` (including a real ELK run on WONT's
+  `Shea classification grade`).
+
+## 76. The relation check holds back causes, not everything near an empty class
+
+**Decided 2026-10-09 (curator: "ok, do it", on the 20,363 held back).**
+
+* With the individuals out of the way (rule 75), the check of 2026-10-08 ran
+  through and held back **20,363 of 24,584 relations** (10-01: 14). Since
+  rule 67 the reasoner knows what each relation connects (`inheres in` wants
+  a property, `is about` a piece of information, `has quality` a quality).
+  31 terms got relations asking for two kinds at once (`wound size` inheres
+  in a wound AND is about something), so they went empty; `Wound has quality
+  wound size` emptied Wound, and through Wound 6,756 classes, MILD's core
+  among them. The check held back every relation touching an empty class at
+  once, so the knock-ons went with the causes.
+* An empty class makes everything that must have one empty too. Most empty
+  classes are knock-ons; the check must find the few relations that empty a
+  class by themselves. `ReasonerGate._causes`, each pass, in one reasoner run
+  over the batch without the suspect relations, tests on a fresh copy of the
+  subject:
+  * each relation on an empty class against its REAL target -- empty means it
+    clashes with what the target is (`X has quality report`, the report being
+    about something);
+  * for a term with none of those, its relations two relation types at a time
+    -- empty means the two ask for incompatible kinds. **Both groups are held
+    back**: which one the abstracts got wrong is the curator's call, not a
+    guess (rule 12, rule 66).
+  Then the batch is asked again; knock-ons come back by themselves.
+* **A loop hides its cause unless the empty target is replaced by its kind.**
+  The first version found 196 causes on 2026-10-09 (empty classes 6,756 ->
+  6,721) and then none, and fell back to holding back 20,348. Measured: with
+  the relations pointing AT an empty class removed, nothing is empty -- every
+  empty class was empty only through another. A loop: `X has quality note`
+  needs a quality, `note is about X` makes the note a piece of information,
+  so X is empty and the note, being about X, too; each probe saw an empty
+  target and proved nothing. A target that is empty is now a stand-in with
+  the target's category or class and one bare relation of each type it has
+  (`∃is about.Thing`): its kind, without its emptiness.
+* **A timed-out ROBOT is ended whole** (`gate._run_robot`). `robot` is a
+  script that starts Java; `subprocess.run` killed only the script, and the
+  explanation that timed out on 2026-10-08 09:10 was still reasoning 25 hours
+  later at ~180 % CPU. ROBOT now runs in its own process group, and a timeout
+  ends the group.
+* Only when no cause is found does a pass fall back to holding back every
+  relation that touches an empty class, and it says so ("the old way. Expect
+  collateral loss"). Classes still empty when the check stops are printed and
+  kept in `GateResult.still_empty` and the quarantine file (rule 1); before,
+  "cannot attribute further" ended the check without a word.
+* **Two relation types clash whatever they point at**, so that test uses
+  `Thing` as target, never the real one: `pressure ulcer stage` inheres in
+  Pressure ulcer AND is about pressure ulcer stage -- itself -- and against its
+  own (empty) self as target the clash proved nothing; 6,702 classes, Wound
+  among them, stayed empty (`robot explain` on Wound found it in 10 s). All of
+  a term's relation types together are tried too.
+* Tested with the real reasoner on a small ontology with BFO's disjointness
+  and the RO/IAO domains and ranges (`tests/test_gate_individuals.py`): the
+  clashing relations go, the knock-ons stay -- two kinds at once, a clash with
+  the target's kind, a loop, a term about itself.
+* **Result, 2026-10-09** (`p4_derive_2026-10-09b.log`): 1,268 of 24,584 held
+  back -- 6 on a category class, 999 wrong on their own, **263 causes** (72
+  against what their target is, 191 on 30 terms asking for two kinds at once;
+  59 on `risk factor` alone) -- 23,316 kept, nothing left empty, two passes.
+  Edge check 1,124 held back, 35,236 kept; competency questions 49/49. The
+  WONT core is unchanged (3,048 classes, 0 unsatisfiable): it takes only
+  placed edges and the 203 read relations, which this check never touched.
+* **The causes go to the curator** (rule 72; curator, 2026-10-09: "Yes
+  please"). `GateResult.causes` records each one with its sides: a term asked
+  to be two kinds (the statements of each relation type), or a statement whose
+  target is the wrong kind (the target's statements that make it so, found by
+  `ReasonerGate._target_blame`). Written for the real store to
+  `data/review/relation_clashes_2026-10-09.json` (same 1,268 held back as the
+  real run, checked), shown as the section "Statements that contradict each
+  other" of the judgement page (`judgement_queue_data.py`, 102 items: 72
+  statements, 30 terms). Almost all have `is about` on one side. A decision
+  is to become a curator rejection of the side named wrong (which the relation
+  check then never sees, so the other side comes back); not applied yet.
+
+## 77. A score, grade or stage is information about a thing, never its quality; a curator's decision reaches every statement of its type
+
+**Decided 2026-10-10 (curator, on the first 50 contradicting statements: "Many
+problematic axioms are the same type"; notes: "Ulcer grade is an information
+entity", "Biomarker is a role of a molecule", "A gene itself is not a
+biomarker", "Low risk is completely subjective").**
+
+* **`X has quality T` is wrong when T is information about X**: a grade,
+  stage, score, type, classification, characteristic, composition, culture
+  result, rate of an event, or a judgement such as "low risk". 39 of 39 such
+  statements the curator saw were left out (`Wound has quality ulcer grade`,
+  `Pressure ulcer has quality stage 4`, `Wound has quality wound type`). A
+  measured property stays a quality: `exudate has quality exudate volume`,
+  `Wound exudate has quality exudate amount` were kept, and their stray
+  `is about exudate` was dropped instead.
+* **A process is not the end or start point of another process**
+  (`anticoagulation therapy has as process boundary at end complete
+  resolution`: out).
+* **`has role biomarker` belongs to a molecule** (erythropoietin, interleukin-10,
+  microRNA, 25-hydroxyvitamin D: kept), not to a gene (out). All of them were
+  held back by two stray statements, `biomarker is about deep vein thrombosis`
+  and `biomarker is about periorbital necrotizing fasciitis`; those two went.
+* **Same type, applied by Claude and labelled so.** 12 undecided statements
+  of exactly these types were held out under the author `same type as the
+  curator's decisions`, each with the decision it follows
+  (`data/review/relation_clash_decisions_2026-10-10.json`). Anything doubtful
+  stays with the curator: a ratio (`collagen type I/III ratio`), a value
+  (`660 nm`), a disease as quality (`Malignancy`), `slough component has role
+  biomarker`, and all 30 terms asked to be two kinds.
+* **Not by word rule.** Of 1,744 `has quality` statements that passed the
+  check, 113 name their target like information, but many are real
+  properties (a dressing's moisture vapor transmission rate, a wound's
+  duration); a word list would drop good statements (rule 27). Only 9 of the
+  113 come from >= 2 abstracts, the least a relation needs to reach WONT.
+* Written by `scripts/apply_clash_decisions.py` (backup, one write per author,
+  every decision read back): 58 statements held out (46 curator, 12 same
+  type), and the curator's note "neuropathy is the disease, so a material
+  entity" as a term ruling for `diabetic peripheral neuropathy`. The relation
+  check lifts only its own verdicts, so these stand through every rebuild;
+  `scripts/run_relation_check.py` re-runs the check alone.
+* **Result** (`relation_check_2026-10-10.log`): one pass, nothing left empty;
+  1,202 held back, 23,324 kept (24,584 less the 58). The kept biomarker and
+  exudate statements are back in, and so is `slough component has role
+  biomarker`, which nothing contradicts any more. Left for the curator (35):
+  4 single statements and 31 terms asked to be two kinds -- one new, a
+  consequence of a keep: `microRNA has role biomarker` (kept) against
+  `microRNA is about wound tissue`. Page republished from
+  `data/review/relation_clashes_2026-10-10.json` (`scripts/relation_clashes_for_review.py`).
+* **Second round, all 35 decided** (`relation_clash_decisions_2026-10-10b.json`):
+  100 statements held out by the curator; 10 terms the curator said to
+  delete ("Delete it"; `stage 3`: "alone is nothing") are out of scope by a
+  curator verdict -- burn/injury/wound characteristic, sign, stage 3,
+  taxonomic and tissue composition, wound healing status, wound parameter,
+  wound status. The kept sides decide the kind: a measured property keeps
+  `inheres in` (wound size, volume, width, duration, total body surface area
+  -- "a wound area, thus a quality"), a stage or score keeps `is about`
+  (pressure ulcer stage, wound pain score, pH level, granulation tissue
+  coverage, closure rate).
+* **Its six consequences** (`…_2026-10-10c.json`, author `same type`): four
+  `has quality` statements pointing at a term the curator had just ruled
+  information (`Pressure ulcer has quality pressure ulcer stage`, `Wound has
+  quality pH level`, …) and two `… has quality Skin` (Skin kept as a material
+  thing).
+* **Result** (`relation_check_2026-10-10c.log`): no empty class, and no
+  inconsistency with WONT's individuals any more; 1,005 held back (6 on a
+  category class, 999 wrong on their own), 23,384 kept. Curator notes kept
+  for later, not applied: red-spectrum laser "has quality wave length below
+  xx nm"; skin perfusion pressure "inheres in blood flow" (the kept statement
+  says extremity); wound pain score "belongs to the other scores next to the
+  wound scores" (a parent); wound-related symptom "is a symptom".
+
+## 78. A refused model account stops the step before it saves
+
+**Decided 2026-10-11 (the rebuild of that day).**
+
+* `p4_derive_2026-10-11.log`: every one of the 91 concept-naming calls failed
+  with "Error code: 402 ... This request requires more credits" (364
+  attempts, none recovered). `create_superclass_names` printed one line per
+  failure, named 0, saved a lattice without names over the named one of
+  2026-10-09 (14 names), and the run ended ALL DONE (rule 1).
+* Now a 401/402/403 from the model service raises at the first refusal, before
+  anything is saved; any other failure is counted and reported as "N of M
+  concept(s) could not be named", and naming none at all raises
+  (`tests/test_name_category_guard.py`).
+* The unnamed output of 2026-10-11 is in `data/cache/failed_fca_naming_2026-10-11/`
+  (moved, not deleted), so the latest lattice on disk is again the named one
+  of 2026-10-09. The WONT core, the class tree and the competency questions do
+  not use the named concepts and are sound from that run (3,046 new classes,
+  0 unsatisfiable; 49/49).
+
 ## Adding to this file
 
 When a universal design choice is made:

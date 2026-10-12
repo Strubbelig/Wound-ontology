@@ -95,6 +95,9 @@ ALLOWED_PREDICATES = [
     "has_role",
     "has_specified_input",
     "has_specified_output",
+    # MILD_120101, 2026-10-03 (curator: "separate has tendency relation"): the
+    # bearer of a tendency, which MILD keeps disjoint from disposition.
+    "has_tendency",
     "immediately_causally_downstream_of",
     "inheres_in",
     "is_about",

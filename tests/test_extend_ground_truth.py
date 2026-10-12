@@ -386,3 +386,19 @@ def test_folding_is_what_puts_one_class_under_two_categories(gt, tmp_path):
     g.parse(str(out), format="turtle")
     parents = {str(p) for p in g.objects(rdflib.URIRef(folded_iri), RDFS.subClassOf)}
     assert parents == {OBO + "BFO_0000019", OBO + "BFO_0000040"}
+
+
+def test_the_extension_reads_the_view_not_the_raw_evidence(gt, tmp_path):
+    """2026-09-28: `_iter_store_relations` read `store.dict`, so every term the
+    scope review had put OUT, and every unmapped spelling, was minted --
+    65,085 classes, 25,931 of them out of scope. It reads `records()` now."""
+    class ViewStore(FakeStore):
+        def records(self):
+            yield "1", {"Novel Ulcer": {"has_quality: Chronic": 1.0}}
+    store = ViewStore({"1": {"entities": {
+        "Novel Ulcer": {"has_quality: Chronic": 1.0},
+        "Randomized Controlled Trial": {"has_part: Control Group": 1.0}}}})
+    extend_ground_truth(gt, tmp_path / "out.ttl", store=store)
+    g = rdflib.Graph(); g.parse(str(tmp_path / "out.ttl"), format="turtle")
+    labels = {str(o) for o in g.objects(None, RDFS.label)}
+    assert "Randomized Controlled Trial" not in labels and "Control Group" not in labels

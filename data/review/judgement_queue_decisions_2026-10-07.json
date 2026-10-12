@@ -1,0 +1,668 @@
+{
+ "source": "WONT Judgement Queue https://claude.ai/artifact/V6Ejezr8tobgJeiwHgy8uM (read with ArtifactData 2026-10-07); relations are in new_class_relation_decisions.json",
+ "rule": "INSTRUCTIONS.md rules 39 and 72",
+ "decisions": [
+  {
+   "item_id": "c092bd4b294",
+   "section": "conflicts",
+   "subject": "wound-healing therapeutic",
+   "decision": "yes",
+   "typed_parent": "material",
+   "note": "",
+   "decided": "2026-10-08T00:04:09.218Z",
+   "item_parents": [
+    "Material used for wound treatment",
+    "Wound treatment process"
+   ],
+   "parent": {
+    "label": "Material used for wound treatment",
+    "iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000188",
+    "why": "read as the suggested parent; confirmed by curator 2026-10-07"
+   }
+  },
+  {
+   "item_id": "c58c642d9d4",
+   "section": "conflicts",
+   "subject": "wound opening",
+   "decision": "yes",
+   "typed_parent": "immaterial",
+   "note": "",
+   "decided": "2026-10-08T00:04:27.366Z",
+   "item_parents": [
+    "Wound dehiscence process",
+    "immaterial anatomical entity"
+   ],
+   "parent": {
+    "label": "immaterial anatomical entity",
+    "iri": "http://purl.obolibrary.org/obo/UBERON_0000466",
+    "why": "read as the suggested parent; confirmed by curator 2026-10-07"
+   }
+  },
+  {
+   "item_id": "c80f8670635",
+   "section": "conflicts",
+   "subject": "complete wound closure",
+   "decision": "yes",
+   "typed_parent": "threshold crossing Event only",
+   "note": "",
+   "decided": "2026-10-08T00:02:47.880Z",
+   "item_parents": [
+    "Wound closure process",
+    "threshold crossing event"
+   ],
+   "parent": {
+    "label": "threshold crossing event",
+    "iri": "http://purl.obolibrary.org/obo/MILD_120031",
+    "why": "exact label; 'only' = drop the other suggested parent (Wound closure process)"
+   }
+  },
+  {
+   "item_id": "ca9b8ebbd98",
+   "section": "conflicts",
+   "subject": "wound healing activity",
+   "decision": "yes",
+   "typed_parent": "wound healing",
+   "note": "It’s the process herw",
+   "decided": "2026-10-08T00:03:52.310Z",
+   "item_parents": [
+    "therapeutic function",
+    "wound healing"
+   ],
+   "parent": {
+    "label": "wound healing",
+    "iri": "http://purl.obolibrary.org/obo/GO_0042060",
+    "why": "exact label; curator note: it is the process here"
+   }
+  },
+  {
+   "item_id": "caf9de87e49",
+   "section": "conflicts",
+   "subject": "pressure ulcer therapy",
+   "decision": "yes",
+   "typed_parent": "Wound treatment plan specification",
+   "note": "",
+   "decided": "2026-10-08T00:03:20.207Z",
+   "item_parents": [
+    "Wound treatment plan specification",
+    "Wound treatment process"
+   ],
+   "parent": {
+    "label": "Wound treatment plan specification",
+    "iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000200",
+    "why": "exact label"
+   }
+  },
+  {
+   "item_id": "d3f977a635f",
+   "section": "duplicates",
+   "subject": "Skin Disorder",
+   "decision": "no",
+   "typed_parent": "",
+   "note": "Dont reuse doid",
+   "decided": "2026-10-07T23:56:21.786Z",
+   "item_iri": "WONT_0006431",
+   "item_matches": [
+    {
+     "label": "skin disease",
+     "said": "skin disease",
+     "source": "DOID",
+     "iri": "DOID_37"
+    }
+   ],
+   "item_parents": [
+    "pathological disorder"
+   ],
+   "item_bfo": "continuant"
+  },
+  {
+   "item_id": "d663a0e62ff",
+   "section": "duplicates",
+   "subject": "Complete-Thickness",
+   "decision": "yes",
+   "typed_parent": "",
+   "note": "",
+   "decided": "2026-10-07T23:55:52.220Z",
+   "item_iri": "WONT_0001855",
+   "item_matches": [
+    {
+     "label": "Full-thickness",
+     "said": "Full-thickness",
+     "source": "WONT",
+     "iri": "WONT_0000502"
+    }
+   ],
+   "item_parents": [
+    "depth"
+   ],
+   "item_bfo": "continuant"
+  },
+  {
+   "item_id": "da5f7e4debd",
+   "section": "duplicates",
+   "subject": "Metabolic Disorder",
+   "decision": "no",
+   "typed_parent": "",
+   "note": "Dont reuse doid",
+   "decided": "2026-10-07T23:56:13.199Z",
+   "item_iri": "WONT_0004396",
+   "item_matches": [
+    {
+     "label": "disease of metabolism",
+     "said": "metabolic disease",
+     "source": "DOID",
+     "iri": "DOID_0014667"
+    }
+   ],
+   "item_parents": [
+    "pathological disorder"
+   ],
+   "item_bfo": ""
+  },
+  {
+   "item_id": "dafd82a9ad3",
+   "section": "duplicates",
+   "subject": "Chronic Skin Wound",
+   "decision": "yes",
+   "typed_parent": "",
+   "note": "",
+   "decided": "2026-10-07T23:55:50.753Z",
+   "item_iri": "WONT_0001686",
+   "item_matches": [
+    {
+     "label": "Chronic cutaneous wound",
+     "said": "Chronic cutaneous wound",
+     "source": "HP",
+     "iri": "HP_0032676"
+    }
+   ],
+   "item_parents": [
+    "Chronic wound"
+   ],
+   "item_bfo": ""
+  },
+  {
+   "item_id": "f203e462aea",
+   "section": "fillers",
+   "subject": "Nonhealing",
+   "decision": "yes",
+   "typed_parent": "quality",
+   "note": "",
+   "decided": "2026-10-08T00:06:38.318Z",
+   "item_iri": "WONT_0004858",
+   "item_uses": [
+    "Chronic wound has quality nonhealing"
+   ],
+   "item_bfo": "quality",
+   "parent": {
+    "label": "quality",
+    "iri": "http://purl.obolibrary.org/obo/BFO_0000019",
+    "why": "confirmed by curator 2026-10-07"
+   }
+  },
+  {
+   "item_id": "f3540f9adfd",
+   "section": "fillers",
+   "subject": "Antibiotic",
+   "decision": "yes",
+   "typed_parent": "drug",
+   "note": "",
+   "decided": "2026-10-08T00:05:06.670Z",
+   "item_iri": "WONT_0000929",
+   "item_uses": [
+    "Antibiotic administration process has participant antibiotic"
+   ],
+   "item_bfo": "material entity",
+   "parent": {
+    "label": "drug product",
+    "iri": "http://purl.obolibrary.org/obo/DRON_00000074",
+    "why": "curator chose DRON drug product 2026-10-07 (ChEBI drug is a role and would clash with material entity)"
+   }
+  },
+  {
+   "item_id": "f386d0db8bf",
+   "section": "fillers",
+   "subject": "Negative Pressure Wound Therapy System",
+   "decision": "yes",
+   "typed_parent": "device",
+   "note": "",
+   "decided": "2026-10-08T00:07:01.462Z",
+   "item_iri": "WONT_0004733",
+   "item_uses": [
+    "Application Of Negative Pressure Wound Therapy has participant negative pressure wound therapy system"
+   ],
+   "item_bfo": "material entity",
+   "parent": {
+    "label": "device",
+    "iri": "http://purl.obolibrary.org/obo/COB_0001300",
+    "why": "confirmed by curator 2026-10-07"
+   }
+  },
+  {
+   "item_id": "f59348bb1bb",
+   "section": "fillers",
+   "subject": "Healing",
+   "decision": "yes",
+   "typed_parent": "process",
+   "note": "",
+   "decided": "2026-10-08T00:05:44.678Z",
+   "item_iri": "WONT_0003287",
+   "item_uses": [
+    "Granulation tissue formation process part of healing"
+   ],
+   "item_bfo": "process",
+   "parent": {
+    "label": "process",
+    "iri": "http://purl.obolibrary.org/obo/BFO_0000015",
+    "why": "exact label"
+   }
+  },
+  {
+   "item_id": "f6aaad3108b",
+   "section": "fillers",
+   "subject": "Devitalized Tissue",
+   "decision": "yes",
+   "typed_parent": "Material entity",
+   "note": "",
+   "decided": "2026-10-08T00:05:23.562Z",
+   "item_iri": "WONT_0002212",
+   "item_uses": [
+    "Debridement process has input devitalized tissue"
+   ],
+   "item_bfo": "material entity",
+   "parent": {
+    "label": "material entity",
+    "iri": "http://purl.obolibrary.org/obo/BFO_0000040",
+    "why": "exact label"
+   }
+  },
+  {
+   "item_id": "fa393992f40",
+   "section": "fillers",
+   "subject": "Granulation Tissue",
+   "decision": "yes",
+   "typed_parent": "material entity",
+   "note": "",
+   "decided": "2026-10-08T00:05:35.673Z",
+   "item_iri": "WONT_0003216",
+   "item_uses": [
+    "Granulation tissue formation process has output granulation tissue"
+   ],
+   "item_bfo": "material entity",
+   "parent": {
+    "label": "material entity",
+    "iri": "http://purl.obolibrary.org/obo/BFO_0000040",
+    "why": "exact label"
+   }
+  },
+  {
+   "item_id": "fabbda11f7e",
+   "section": "fillers",
+   "subject": "Hydrogel",
+   "decision": "yes",
+   "typed_parent": "Material entity",
+   "note": "",
+   "decided": "2026-10-08T00:05:59.363Z",
+   "item_iri": "WONT_0003469",
+   "item_uses": [
+    "Hydrogel containing wound dressing has part hydrogel"
+   ],
+   "item_bfo": "material entity",
+   "parent": {
+    "label": "material entity",
+    "iri": "http://purl.obolibrary.org/obo/BFO_0000040",
+    "why": "exact label"
+   }
+  },
+  {
+   "item_id": "fc9f9f0acc0",
+   "section": "fillers",
+   "subject": "Surgical Wound",
+   "decision": "yes",
+   "typed_parent": "material entity",
+   "note": "",
+   "decided": "2026-10-08T00:06:54.958Z",
+   "item_iri": "WONT_0006845",
+   "item_uses": [
+    "excision has output surgical wound"
+   ],
+   "item_bfo": "independent continuant",
+   "parent": {
+    "label": "Wound",
+    "iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+    "why": "curator typed 'material entity' on the page; changed to Wound in chat 2026-10-07 ('yes please') so it is a kind of wound, not a sibling"
+   }
+  },
+  {
+   "item_id": "p151795d1b9",
+   "section": "parents",
+   "subject": "Disorder Course",
+   "decision": "yes",
+   "typed_parent": "Courage of the disease process",
+   "note": "",
+   "decided": "2026-10-08T00:02:00.568Z",
+   "item_children": [
+    "wound course"
+   ],
+   "item_bfo": "",
+   "parent": {
+    "label": "course of the disease process",
+    "iri": "http://purl.obolibrary.org/obo/MILD_120028",
+    "why": "curator 2026-10-07: 'Wonts Course of the disease process'"
+   }
+  },
+  {
+   "item_id": "p7ed3ba20cd",
+   "section": "parents",
+   "subject": "Activity Specification",
+   "decision": "no",
+   "typed_parent": "",
+   "note": "",
+   "decided": "2026-10-07T23:58:36.561Z",
+   "item_children": [
+    "source control",
+    "surgical option",
+    "therapeutic method",
+    "treatment measure"
+   ],
+   "item_bfo": ""
+  },
+  {
+   "item_id": "p865cbbf9a0",
+   "section": "parents",
+   "subject": "Cell Process",
+   "decision": "yes",
+   "typed_parent": "biological process",
+   "note": "",
+   "decided": "2026-10-07T23:57:50.144Z",
+   "item_children": [
+    "amino acid metabolism",
+    "cell adhesion",
+    "cell apoptosis",
+    "cell death",
+    "cell differentiation",
+    "cell infiltration",
+    "cell lysis",
+    "cell metabolism",
+    "cell migration",
+    "cell pathway",
+    "cell recruitment",
+    "cell response",
+    "cell signaling",
+    "cell survival",
+    "cell uptake",
+    "cell-to-cell communication",
+    "cytokine release",
+    "cytokine secretion",
+    "cytokine signaling",
+    "cytoskeletal dynamic",
+    "deoxyribonucleic acid replication",
+    "differentiation",
+    "endothelial cell activity",
+    "energy metabolism",
+    "expression of inflammatory cytokine",
+    "fibroblast activity",
+    "fibroblast behavior",
+    "gene expression",
+    "glycolysis",
+    "growth factor signaling",
+    "immune cell activity",
+    "immune cell polarization",
+    "immune cell recruitment",
+    "intercellular signaling",
+    "keratinocyte differentiation",
+    "keratinocyte migration",
+    "lactate metabolism",
+    "metabolic change",
+    "metabolic pathway",
+    "metabolism",
+    "nuclear translocation",
+    "oxidative phosphorylation",
+    "phosphorylation",
+    "pro-inflammatory cytokine expression",
+    "programmed cell death",
+    "protein expression",
+    "regulated cell death",
+    "signal transduction",
+    "signaling pathway",
+    "transformation"
+   ],
+   "item_bfo": "",
+   "parent": {
+    "label": "biological_process",
+    "iri": "http://purl.obolibrary.org/obo/GO_0008150",
+    "why": "exact label"
+   }
+  },
+  {
+   "item_id": "p880bfb51e6",
+   "section": "parents",
+   "subject": "Sample Collection Process",
+   "decision": "yes",
+   "typed_parent": "process",
+   "note": "",
+   "decided": "2026-10-08T00:01:31.404Z",
+   "item_children": [
+    "biopsy",
+    "needle aspiration"
+   ],
+   "item_bfo": "",
+   "parent": {
+    "label": "process",
+    "iri": "http://purl.obolibrary.org/obo/BFO_0000015",
+    "why": "exact label"
+   }
+  },
+  {
+   "item_id": "p9354c1172b",
+   "section": "parents",
+   "subject": "Sample From Organism",
+   "decision": "yes",
+   "typed_parent": "Material entity",
+   "note": "",
+   "decided": "2026-10-07T23:58:52.227Z",
+   "item_children": [
+    "bacterial isolate",
+    "exudate sample",
+    "microbial isolate",
+    "patient sample"
+   ],
+   "item_bfo": "",
+   "parent": {
+    "label": "material entity",
+    "iri": "http://purl.obolibrary.org/obo/BFO_0000040",
+    "why": "exact label"
+   }
+  },
+  {
+   "item_id": "pac90ec6604",
+   "section": "parents",
+   "subject": "Categorical Level Specification",
+   "decision": "no",
+   "typed_parent": "",
+   "note": "Put likert Scale to the Other scales",
+   "decided": "2026-10-07T23:59:27.778Z",
+   "item_children": [
+    "Likert scale",
+    "type I",
+    "Type II"
+   ],
+   "item_bfo": ""
+  },
+  {
+   "item_id": "pcc4115d45b",
+   "section": "parents",
+   "subject": "Scalar Level Specification",
+   "decision": "yes",
+   "typed_parent": "Information entity",
+   "note": "",
+   "decided": "2026-10-08T00:02:13.005Z",
+   "item_children": [
+    "patient satisfaction rate",
+    "psoas muscle index",
+    "symptom score",
+    "systemic immune-inflammatory index",
+    "systemic inflammatory response index"
+   ],
+   "item_bfo": "",
+   "parent": {
+    "label": "information content entity",
+    "iri": "http://purl.obolibrary.org/obo/IAO_0000030",
+    "why": "confirmed by curator 2026-10-07"
+   }
+  },
+  {
+   "item_id": "pd99aaef20c",
+   "section": "parents",
+   "subject": "Processed Sample",
+   "decision": "yes",
+   "typed_parent": "Prozessed material entity",
+   "note": "",
+   "decided": "2026-10-08T00:00:55.796Z",
+   "item_children": [
+    "fresh frozen plasma",
+    "human platelet lysate"
+   ],
+   "item_bfo": "",
+   "parent": {
+    "label": "processed material entity",
+    "iri": "http://purl.obolibrary.org/obo/COB_0000026",
+    "why": "spelling; confirmed by curator 2026-10-07"
+   }
+  },
+  {
+   "item_id": "pdd78fb4fb1",
+   "section": "parents",
+   "subject": "Sample",
+   "decision": "yes",
+   "typed_parent": "Prozessed material entity",
+   "note": "",
+   "decided": "2026-10-08T00:00:53.783Z",
+   "item_children": [
+    "deep tissue sample",
+    "swab"
+   ],
+   "item_bfo": "",
+   "parent": {
+    "label": "processed material entity",
+    "iri": "http://purl.obolibrary.org/obo/COB_0000026",
+    "why": "spelling; confirmed by curator 2026-10-07"
+   }
+  },
+  {
+   "item_id": "ped22c16d5e",
+   "section": "parents",
+   "subject": "Cell Anatomical Entity",
+   "decision": "yes",
+   "typed_parent": "Material entity",
+   "note": "",
+   "decided": "2026-10-07T23:59:52.943Z",
+   "item_children": [
+    "cell membrane",
+    "intracellular component",
+    "red blood cell membrane"
+   ],
+   "item_bfo": "",
+   "parent": {
+    "label": "material entity",
+    "iri": "http://purl.obolibrary.org/obo/BFO_0000040",
+    "why": "exact label"
+   }
+  },
+  {
+   "item_id": "pac90ec6604/Likert scale",
+   "section": "parents",
+   "subject": "Likert scale",
+   "decision": "yes",
+   "parent": {
+    "label": "Wound classification scale",
+    "iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000066",
+    "why": "curator note 'Put likert Scale to the Other scales'; confirmed in chat 2026-10-07: 'Then Put it to classification scale'"
+   },
+   "note": "its former parent Categorical Level Specification is left out; Type I and Type II go with it"
+  },
+  {
+   "item_id": "scope/sample",
+   "section": "scope",
+   "subject": "sample",
+   "decision": "in",
+   "why": "curator in chat 2026-10-07: 'I think sample should be in' (was out by the methodology list and the scope pass)"
+  },
+  {
+   "item_id": "p7ed3ba20cd/source control",
+   "section": "children",
+   "subject": "source control",
+   "decision": "refuse",
+   "parent": {
+    "label": "activity specification"
+   },
+   "why": "curator chose 'leave them out' for the children of activity specification (2026-10-07); refused so the renamed-import fix does not bring them in"
+  },
+  {
+   "item_id": "p7ed3ba20cd/surgical option",
+   "section": "children",
+   "subject": "surgical option",
+   "decision": "refuse",
+   "parent": {
+    "label": "activity specification"
+   },
+   "why": "curator chose 'leave them out' for the children of activity specification (2026-10-07); refused so the renamed-import fix does not bring them in"
+  },
+  {
+   "item_id": "p7ed3ba20cd/therapeutic method",
+   "section": "children",
+   "subject": "therapeutic method",
+   "decision": "refuse",
+   "parent": {
+    "label": "activity specification"
+   },
+   "why": "curator chose 'leave them out' for the children of activity specification (2026-10-07); refused so the renamed-import fix does not bring them in"
+  },
+  {
+   "item_id": "p7ed3ba20cd/treatment measure",
+   "section": "children",
+   "subject": "treatment measure",
+   "decision": "refuse",
+   "parent": {
+    "label": "activity specification"
+   },
+   "why": "curator chose 'leave them out' for the children of activity specification (2026-10-07); refused so the renamed-import fix does not bring them in"
+  },
+  {
+   "item_id": "pac90ec6604/type I",
+   "section": "children",
+   "subject": "type I",
+   "decision": "refuse",
+   "parent": {
+    "label": "categorical level specification"
+   },
+   "why": "curator chose 'leave them out' for the children of categorical level specification (2026-10-07); refused so the renamed-import fix does not bring them in"
+  },
+  {
+   "item_id": "pac90ec6604/Type II",
+   "section": "children",
+   "subject": "Type II",
+   "decision": "refuse",
+   "parent": {
+    "label": "categorical level specification"
+   },
+   "why": "curator chose 'leave them out' for the children of categorical level specification (2026-10-07); refused so the renamed-import fix does not bring them in"
+  },
+  {
+   "item_id": "da5f7e4debd/metabolic disease",
+   "section": "children",
+   "subject": "Metabolic Disorder",
+   "decision": "refuse",
+   "parent": {
+    "label": "metabolic disease"
+   },
+   "why": "curator: 'Dont reuse doid' -- the DOID class's other name refused too"
+  },
+  {
+   "item_id": "ca9b8ebbd98/category",
+   "section": "category",
+   "subject": "wound healing activity",
+   "decision": "process",
+   "why": "curator note on the judgement page, 2026-10-07: \"It's the process here\" (parent wound healing); the head rule 'activity' had made it a function, which a process cannot be a kind of"
+  }
+ ]
+}

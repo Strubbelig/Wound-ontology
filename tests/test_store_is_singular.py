@@ -9,6 +9,12 @@ down 5,072 times in a file of decisions. The curator's rule of 2026-09-23 —
 `ConceptStore.normalize` singularises the head noun of every name it keeps,
 after the mapping has had its say, so a plural canonical cannot reintroduce one.
 
+Rule 51 (2026-09-27) moved where the rule is applied, not the rule. The store
+keeps what each abstract said; a new string's singular is recorded as its
+SPELLING at ingestion (`_spell_ingested`), and pass 0 respells the mapping's
+canonicals, so a plural canonical cannot reintroduce a plural either. The view
+reads both. The tests below check the name the view gives.
+
 The exemption is the one rule 22 already states: a declared BFO category is
 never normalised, so `process` does not become `proces` and the fifteen
 category names keep their exact spelling.
@@ -19,53 +25,64 @@ from wound_ontology.store.concept_store import ConceptStore
 from wound_ontology.utils.label_match import singular_spelling
 
 
-class _Mapper:
-    def __init__(self, mapping=None):
-        self.mapping = mapping or {}
-
-
-def _store(tmp_path, entities):
-    st = ConceptStore.__new__(ConceptStore)
+def _ingested(entities, mapping=None):
+    """A store that received `entities` through ingestion's spelling step."""
+    class _DM:
+        def load_latest_json(self, _): return {}
+        def save_as_json(self, *_): pass
+    st = ConceptStore(_DM(), "concept_store")
     st._dict = {"1": {"entities": entities}}
-    st.dm = None
-    st.save = lambda: None
+    st._spell_ingested(st._dict["1"], set())
+    if mapping is not None:
+        class _M:
+            pass
+        m = _M()
+        m.mapping = mapping
+        st.normalize(mapper=m)
     return st
 
 
-def test_a_plural_entity_becomes_singular(tmp_path):
-    st = _store(tmp_path, {"patients": {"is_a: material entity": 1.0}})
-    st.normalize(mapper=_Mapper())
-    assert list(st._dict["1"]["entities"]) == ["Patient"]
+def _view(st):
+    return dict(st.records())["1"]
 
 
-def test_a_plural_target_becomes_singular_too(tmp_path):
-    st = _store(tmp_path, {"wound": {"has_part: granulation tissues": 1.0}})
-    st.normalize(mapper=_Mapper())
-    assert list(st._dict["1"]["entities"]["Wound"]) == ["has_part: Granulation Tissue"]
+def test_a_plural_entity_reads_singular():
+    st = _ingested({"patients": {"is_a: material entity": 1.0}})
+    assert list(_view(st)) == ["patient"]
+    assert list(st.dict["1"]["entities"]) == ["patients"], "the evidence is as written"
 
 
-def test_a_plural_canonical_cannot_reintroduce_a_plural(tmp_path):
-    """The mapping has its say first; the singular rule applies to the result."""
-    st = _store(tmp_path, {"thermal burns": {"is_a: material entity": 1.0}})
-    st.normalize(mapper=_Mapper({"thermal burns": "thermal burn injuries"}))
-    assert list(st._dict["1"]["entities"]) == ["Thermal Burn Injury"]
+def test_a_plural_target_reads_singular_too():
+    st = _ingested({"wound": {"has_part: granulation tissues": 1.0}})
+    assert list(_view(st)["wound"]) == ["has_part: granulation tissue"]
 
 
-def test_a_declared_category_is_untouched(tmp_path):
+def test_a_plural_canonical_cannot_reintroduce_a_plural():
+    """Pass 0 respells the canonical in the mapping itself (rule 43), so the
+    view never meets the plural."""
+    st = _ingested({"thermal burns": {"is_a: material entity": 1.0}})
+    st.terms.add("thermal burn", "thermal burn injuries", confidence=1.0, method="manual")
+    st.terms.apply_renames({"thermal burn injuries": "thermal burn injury"}, by="pass0")
+    st._live_mapping = True
+    assert list(_view(st)) == ["thermal burn injury"]
+
+
+def test_a_declared_category_is_untouched():
     """Rule 22: a category is declared, never normalised — and `process` must
     not be singularised into something that is no longer a category name."""
-    st = _store(tmp_path, {"process": {"is_a: process": 1.0}})
-    st.normalize(mapper=_Mapper())
-    assert list(st._dict["1"]["entities"]) == ["process"]
+    st = _ingested({"process": {"is_a: process": 1.0}})
+    assert list(_view(st)) == ["process"]
+    assert not st.terms.aliases()
 
 
-def test_two_spellings_collapse_onto_one_record(tmp_path):
-    st = _store(tmp_path, {"Wounds": {"is_a: material entity": 1.0},
-                           "wound": {"has_quality: chronic": 1.0}})
-    st.normalize(mapper=_Mapper())
-    assert list(st._dict["1"]["entities"]) == ["Wound"]
-    assert set(st._dict["1"]["entities"]["Wound"]) == {"is_a: material entity",
-                                                       "has_quality: Chronic"}
+def test_two_spellings_collapse_onto_one_record():
+    """Ingestion singularises; the case difference left is pass 0's to settle."""
+    st = _ingested({"Wounds": {"is_a: material entity": 1.0},
+                    "wound": {"has_quality: chronic": 1.0}})
+    assert set(_view(st)) == {"Wound", "wound"}
+    st.apply_renames({"Wound": "wound"}, by="pass0")
+    assert _view(st) == {"wound": {"is_a: material entity": 1.0,
+                                   "has_quality: chronic": 1.0}}
 
 
 @pytest.mark.parametrize("plural, singular", [

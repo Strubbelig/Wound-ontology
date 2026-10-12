@@ -223,7 +223,11 @@ def _pylist_remove(path: Path, var_name: str, terms: set[str]) -> int:
             filtered.append(line)
             continue
         val = _entry_value(line)
-        if val is not None and val in to_remove:
+        # Case-folded on BOTH sides: the needle always was, and since the lists
+        # became a generated view of the gate (2026-09-25) they hold terms in
+        # their written case -- `"3 As"`, `"PASCA" lesion` -- which a lowered
+        # needle never matched, so `remove` reported success and deleted nothing.
+        if val is not None and val.strip().lower() in to_remove:
             removed += 1
             continue
         filtered.append(line)

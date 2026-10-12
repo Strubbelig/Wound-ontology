@@ -144,7 +144,18 @@ class LLMClient:
 
     # ── Core call ──────────────────────────────────────────────────────────────
 
-    async def _call_json(self, prompt: str, schema: type, temperature=0.0, timeout=240):
+    #: Output budget for the batch judgements (scope, mapping adjudication).
+    #: Without one, OpenRouter reserves credit for the model's whole output
+    #: window -- 131,072 tokens -- per request in flight, and on 2026-09-28 a
+    #: pass of eight parallel batches ran into the account's in-flight budget
+    #: with 402s long before the credit was actually spent. Measured on 25-term
+    #: scope batches: 3,238 / 12,136 / 13,379 output tokens, almost all of it
+    #: reasoning, so the cap leaves 2.4x the largest. A reply that hits it ends
+    #: in `finish_reason == "length"` and is raised, never parsed half-written.
+    BATCH_MAX_TOKENS = 32_768
+
+    async def _call_json(self, prompt: str, schema: type, temperature=0.0, timeout=240,
+                         max_tokens: int | None = None):
         """POST to OpenRouter, enforce JSON mode, parse into Pydantic schema."""
         schema_json = (
             schema.model_json_schema()
@@ -165,7 +176,11 @@ class LLMClient:
                 response_format={"type": "json_object"},
                 temperature=temperature,
                 timeout=timeout,
+                **({"max_tokens": max_tokens} if max_tokens else {}),
             )
+            if max_tokens and resp.choices[0].finish_reason == "length":
+                raise RuntimeError(f"the reply hit the {max_tokens:,}-token cap and "
+                                   f"was cut off; raise BATCH_MAX_TOKENS")
             raw = resp.choices[0].message.content.strip()
             # Remove code fences if the model wrapped JSON inside them.
             raw = raw.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
@@ -551,7 +566,8 @@ class LLMClient:
         {body}
         """
         result = await self._execute_with_retry(
-            self._call_json, prompt, GateBatchResponse, temperature=0.0, timeout=360)
+            self._call_json, prompt, GateBatchResponse, temperature=0.0, timeout=360,
+            max_tokens=self.BATCH_MAX_TOKENS)
         exact = {t: t for t, _, _ in candidates}
         folded = {t.strip().lower(): t for t, _, _ in candidates}
         normed = {normalize_term(t): t for t, _, _ in candidates}
@@ -773,6 +789,6 @@ class LLMClient:
         """
         result = await self._execute_with_retry(
             self._call_json, prompt, MappingVerdictBatch,
-            temperature=0.0, timeout=360,
+            temperature=0.0, timeout=360, max_tokens=self.BATCH_MAX_TOKENS,
         )
         return result.results

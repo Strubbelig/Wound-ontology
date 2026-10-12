@@ -1,0 +1,277 @@
+{
+ "made": "2026-10-04",
+ "rows": [
+  {
+   "id": "n01",
+   "child": "Chronic Lower-Extremity Ulcer",
+   "parent": "Chronic Lower Extremity Wound",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001680",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001679",
+   "child_curated": false,
+   "source": "FCA, Chronic Wound subtree",
+   "shared": "shared: part of lower extremity, part of skin (model: true of every instance)",
+   "reading": "An ulcer is a wound; same site.",
+   "claude": "agree",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Chronic wound"
+   ]
+  },
+  {
+   "id": "n02",
+   "child": "Chronic Leg Ulcer",
+   "parent": "Chronic Lower-Extremity Ulcer",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001675",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001680",
+   "child_curated": false,
+   "source": "FCA, Chronic Wound subtree",
+   "shared": "shared: part of lower extremity, part of skin (model: true of every instance)",
+   "reading": "The leg is part of the lower extremity.",
+   "claude": "agree",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Chronic wound"
+   ]
+  },
+  {
+   "id": "n03",
+   "child": "Chronic Foot Ulcer",
+   "parent": "Chronic Lower-Extremity Ulcer",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001664",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001680",
+   "child_curated": false,
+   "source": "FCA, Chronic Wound subtree",
+   "shared": "shared: part of lower extremity, part of skin (model: true of every instance); part of foot",
+   "reading": "The foot is part of the lower extremity.",
+   "claude": "agree",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Chronic wound"
+   ]
+  },
+  {
+   "id": "n04",
+   "child": "Chronic Heel Ulcer",
+   "parent": "Chronic Foot Ulcer",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001665",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001664",
+   "child_curated": false,
+   "source": "FCA, Chronic Wound subtree",
+   "shared": "shared: part of lower extremity, part of skin (model: true of every instance); part of foot (shared only by these two)",
+   "reading": "The heel is part of the foot.",
+   "claude": "agree",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Chronic wound"
+   ]
+  },
+  {
+   "id": "n05",
+   "child": "Chronic Leg And Foot Ulcer",
+   "parent": "Chronic Lower-Extremity Ulcer",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001674",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001680",
+   "child_curated": false,
+   "source": "FCA, Chronic Wound subtree",
+   "shared": "shared: part of lower extremity, part of skin (model: true of every instance)",
+   "reading": "Leg and/or foot: lower extremity either way; not under leg or foot alone.",
+   "claude": "agree",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Chronic wound"
+   ]
+  },
+  {
+   "id": "n06",
+   "child": "Non-Healing Chronic Lower Leg Ulcer",
+   "parent": "Chronic Leg Ulcer",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004864",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001675",
+   "child_curated": false,
+   "source": "FCA, Chronic Wound subtree",
+   "shared": "shared: part of lower extremity, part of skin (model: true of every instance); nonhealing",
+   "reading": "A lower-leg ulcer is a leg ulcer.",
+   "claude": "agree",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Chronic wound"
+   ]
+  },
+  {
+   "id": "n07",
+   "child": "Chronic Leg Wound",
+   "parent": "Chronic Lower Extremity Wound",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001676",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001679",
+   "child_curated": false,
+   "source": "FCA, Chronic Wound subtree",
+   "shared": "shared: part of lower extremity, part of skin (model: true of every instance)",
+   "reading": "The leg is part of the lower extremity.",
+   "claude": "agree",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Chronic wound"
+   ]
+  },
+  {
+   "id": "n08",
+   "child": "Chronic Leg Ulcer",
+   "parent": "Chronic Leg Wound",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001675",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001676",
+   "child_curated": false,
+   "source": "FCA, Chronic Wound subtree",
+   "shared": "shared: part of lower extremity, part of skin (model: true of every instance)",
+   "reading": "An ulcer is a wound; a second parent beside Chronic Lower-Extremity Ulcer.",
+   "claude": "agree",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Chronic wound"
+   ]
+  },
+  {
+   "id": "n09",
+   "child": "Lower-Extremity Hard-To-Heal Wound",
+   "parent": "Chronic Lower Extremity Wound",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004247",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001679",
+   "child_curated": false,
+   "source": "FCA, Chronic Wound subtree",
+   "shared": "shared: part of lower extremity, part of skin (model: true of every instance); nonhealing",
+   "reading": "Hard-to-heal and chronic are used as one here; it sits under Chronic Wound already.",
+   "claude": "agree",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Chronic wound"
+   ]
+  },
+  {
+   "id": "n10",
+   "child": "Chronic Neuropathic Ulcer",
+   "parent": "Chronic Lower-Extremity Ulcer",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001682",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001680",
+   "child_curated": false,
+   "source": "FCA, Chronic Wound subtree",
+   "shared": "shared: part of lower extremity, part of skin (model: true of every instance)",
+   "reading": "The model says every neuropathic ulcer is on the lower extremity; usually on the foot, but not by definition.",
+   "claude": "doubt",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Chronic wound"
+   ]
+  },
+  {
+   "id": "n11",
+   "child": "Chronic Ulcer",
+   "parent": "Chronic Lower Extremity Wound",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001692",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001679",
+   "child_curated": false,
+   "source": "FCA, Chronic Wound subtree",
+   "shared": "shared: part of lower extremity, part of skin (model: true of every instance)",
+   "reading": "FCA grouped it because the model said lower extremity for every instance; chronic ulcers occur anywhere. Rather the other way: the lower-extremity ulcers are chronic ulcers (next section).",
+   "claude": "disagree",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Chronic wound"
+   ]
+  },
+  {
+   "id": "n12",
+   "child": "Chronic Lower-Extremity Ulcer",
+   "parent": "Chronic Ulcer",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001680",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001692",
+   "child_curated": false,
+   "source": "the class names, correcting the Chronic Ulcer grouping",
+   "shared": "-",
+   "reading": "A chronic lower-extremity ulcer is a chronic ulcer.",
+   "claude": "agree",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Chronic wound"
+   ]
+  },
+  {
+   "id": "n13",
+   "child": "Diabetic foot ulcer",
+   "parent": "Chronic wound",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000549",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000442",
+   "child_curated": true,
+   "source": "FCA, Wound subtree, abstracts only",
+   "shared": "shared with Chronic wound: time to healing, wound area, chronic, pain",
+   "reading": "WONT places it under Diabetic wound only. Most are chronic, but an acute, new diabetic foot ulcer is still one.",
+   "claude": "doubt",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Diabetic wound"
+   ]
+  },
+  {
+   "id": "n14",
+   "child": "Pressure ulcer",
+   "parent": "Chronic wound",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000534",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000442",
+   "child_curated": true,
+   "source": "FCA, Wound subtree, abstracts only",
+   "shared": "shared with Chronic wound: wound size, depth, healing rate",
+   "reading": "A stage 1 pressure injury is acute; not every pressure ulcer is chronic.",
+   "claude": "disagree",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Wound"
+   ]
+  },
+  {
+   "id": "n15",
+   "child": "Ulcus cruris mixtum",
+   "parent": "Chronic wound",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000346",
+   "parent_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000442",
+   "child_curated": true,
+   "source": "FCA, Wound subtree, abstracts only",
+   "shared": "shared with Diabetic foot ulcer and Pressure ulcer: chronic-wound qualities",
+   "reading": "A mixed arterial-venous leg ulcer is a chronic leg ulcer by definition.",
+   "claude": "agree",
+   "elk": "ok",
+   "already": false,
+   "child_parents": [
+    "Skin wound"
+   ]
+  },
+  {
+   "id": "n16",
+   "child": "Chronic Foot Ulcer",
+   "parent": "(new class: chronic ulcer with amputation risk)",
+   "child_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001664",
+   "parent_iri": "",
+   "child_curated": false,
+   "source": "FCA, Chronic Wound subtree",
+   "shared": "shared with Chronic Neuropathic Ulcer only: amputation risk",
+   "reading": "A risk is a tendency, not a kind of ulcer; no new class.",
+   "claude": "disagree",
+   "elk": "not applicable (no class)",
+   "already": false,
+   "child_parents": [
+    "Chronic wound"
+   ]
+  }
+ ]
+}

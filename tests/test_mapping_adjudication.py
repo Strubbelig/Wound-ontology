@@ -331,3 +331,58 @@ def test_a_label_says_which_pass_is_talking(capsys):
     llm = _LLM({p: ("same_class", "ok") for p in pairs.items()})
     _run(adj.adjudicate(pairs, llm, batch_size=1, label="anchor pairs"))
     assert "[anchor pairs]" in capsys.readouterr().out
+
+
+# ── The curator outranks pass 1 ───────────────────────────────────────────────
+
+def _adjudicating_pipeline(records, llm):
+    from conftest import memory_mapper
+    from wound_ontology.orchestrator import Orchestrator
+
+    pipeline = Orchestrator.__new__(Orchestrator)
+    pipeline.term_mapper = memory_mapper(records)
+    pipeline.llm = llm
+    pipeline._collect_store_terms_with_freq = lambda store=None: {
+        t: 1 for r in records.items() for t in r[:1] + (r[1]["to"],)}
+    pipeline.store_categories = pipeline.ontology_categories = dict
+    pipeline.ontology_definitions = pipeline.ontology_parents = dict
+
+    class _DM:
+        def save_as_csv(self, *a, **k):
+            pass
+    pipeline.dm = _DM()
+    return pipeline
+
+
+def test_a_curator_ruling_survives_a_pass_1_rerun():
+    """`_adjudicate_anchor_mappings` withdraws what pass 1 does not confirm, and
+    the report includes CACHED verdicts. A pair the curator put back over pass
+    1's `different` must not be withdrawn again by the next run."""
+    records = {
+        "Chi-squared": {"to": "chi-squared test", "pairs": {"chi-squared test": {
+            "pass1": {"verdict": "different", "reason": "a statistic, not a test"},
+            "curator": {"verdict": "same_class", "reason": "queue"}}}},
+        "prophylactic option": {"to": "prophylactic treatment", "pairs": {
+            "prophylactic treatment": {
+                "pass1": {"verdict": "different", "reason": "option is not treatment"}}}},
+    }
+    pipeline = _adjudicating_pipeline(records, _LLM({}))
+    pipeline._adjudicate_anchor_mappings(set())
+    mapping = pipeline.term_mapper.mapping
+    assert mapping.get("Chi-squared") == "chi-squared test"
+    assert "prophylactic option" not in mapping
+
+
+def test_a_curator_ruling_under_the_old_spelling_still_protects_the_live_pair():
+    """2026-09-28: the curator mapped `bone infection` onto `Osteomyelitis`; the
+    rebuild re-spelled the canonical to the class label and pass 1's cached
+    `narrower` on that new pair withdrew the mapping, because the ruling sat on
+    the pair under the old spelling."""
+    records = {
+        "bone infection": {"to": "osteomyelitis", "pairs": {
+            "Osteomyelitis": {"curator": {"verdict": "same_class", "reason": "naming"}},
+            "osteomyelitis": {"pass1": {"verdict": "narrower", "reason": "subtype"}}}},
+    }
+    pipeline = _adjudicating_pipeline(records, _LLM({}))
+    pipeline._adjudicate_anchor_mappings(set())
+    assert pipeline.term_mapper.mapping.get("bone infection") == "osteomyelitis"

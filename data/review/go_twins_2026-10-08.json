@@ -1,0 +1,569 @@
+{
+ "made": "2026-10-08",
+ "method": "every new class in output/owl/wont_extended_core.ttl matched to the full GO (Import ontologies/go.owl, release 2026-03-25, deprecated classes excluded) by exact label or exact synonym only, also through former spellings; each match read by Claude",
+ "rows": [
+  {
+   "wont": "Antibody",
+   "wont_iri": "WONT_0000942",
+   "go": "GO_0042571",
+   "go_label": "immunoglobulin complex, circulating",
+   "how": "exact synonym",
+   "parents": [
+    "CHEBI_33694",
+    "material entity"
+   ],
+   "claude_reading": "different thing -- keep the WONT class: GO's is a circulating immunoglobulin complex (a location-bound complex), not the molecule"
+  },
+  {
+   "wont": "Binding",
+   "wont_iri": "WONT_0001210",
+   "go": "GO_0005488",
+   "go_label": "binding",
+   "how": "label",
+   "parents": [
+    "biological_process",
+    "process"
+   ],
+   "claude_reading": "different thing -- keep the WONT class: GO's is a molecular function; WONT's is a process -- different BFO kinds"
+  },
+  {
+   "wont": "Bone Formation",
+   "wont_iri": "WONT_0001338",
+   "go": "GO_0001503",
+   "go_label": "ossification",
+   "how": "exact synonym",
+   "parents": [
+    "GO_0048646",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Bone Growth",
+   "wont_iri": "WONT_0001343",
+   "go": "GO_0098868",
+   "go_label": "bone growth",
+   "how": "label",
+   "parents": [
+    "GO_0040007",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Bone Regeneration",
+   "wont_iri": "WONT_0001360",
+   "go": "GO_1990523",
+   "go_label": "bone regeneration",
+   "how": "label",
+   "parents": [
+    "process",
+    "tissue regeneration"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Bone Resorption",
+   "wont_iri": "WONT_0001363",
+   "go": "GO_0045453",
+   "go_label": "bone resorption",
+   "how": "label",
+   "parents": [
+    "process",
+    "tissue remodeling"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Catabolism",
+   "wont_iri": "WONT_0001542",
+   "go": "GO_0009056",
+   "go_label": "catabolic process",
+   "how": "exact synonym",
+   "parents": [
+    "biological_process",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Cell Adhesion",
+   "wont_iri": "WONT_0001560",
+   "go": "GO_0007155",
+   "go_label": "cell adhesion",
+   "how": "label",
+   "parents": [
+    "GO_0009987",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Cell Death",
+   "wont_iri": "WONT_0001567",
+   "go": "GO_0008219",
+   "go_label": "cell death",
+   "how": "label",
+   "parents": [
+    "BFO_0000003",
+    "GO_0009987"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Cell Differentiation",
+   "wont_iri": "WONT_0001569",
+   "go": "GO_0030154",
+   "go_label": "cell differentiation",
+   "how": "label",
+   "parents": [
+    "GO_0009987",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Cell Growth",
+   "wont_iri": "WONT_0001571",
+   "go": "GO_0016049",
+   "go_label": "cell growth",
+   "how": "label",
+   "parents": [
+    "GO_0040007",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Cell Membrane",
+   "wont_iri": "WONT_0001575",
+   "go": "GO_0005886",
+   "go_label": "plasma membrane",
+   "how": "exact synonym",
+   "parents": [
+    "GO_0110165",
+    "material entity"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Cell Migration",
+   "wont_iri": "WONT_0001577",
+   "go": "GO_0016477",
+   "go_label": "cell migration",
+   "how": "label",
+   "parents": [
+    "GO_0009987",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Cell Redox Homeostasis",
+   "wont_iri": "WONT_0001581",
+   "go": "GO_0045454",
+   "go_label": "cell redox homeostasis",
+   "how": "label",
+   "parents": [
+    "GO_0065007",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Deoxyribonucleic Acid Replication",
+   "wont_iri": "WONT_0002177",
+   "go": "GO_0006260",
+   "go_label": "DNA replication",
+   "how": "label of former spelling 'DNA replication'",
+   "parents": [
+    "GO_0009987",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Enucleation",
+   "wont_iri": "WONT_0002600",
+   "go": "GO_0090601",
+   "go_label": "enucleation",
+   "how": "label",
+   "parents": [
+    "excision"
+   ],
+   "claude_reading": "different thing -- keep the WONT class: GO's is a red blood cell expelling its nucleus; WONT's is surgical removal (under excision)"
+  },
+  {
+   "wont": "Envenomation",
+   "wont_iri": "WONT_0002601",
+   "go": "GO_0035738",
+   "go_label": "venom-mediated perturbation of biological process",
+   "how": "exact synonym",
+   "parents": [
+    "Wound causing process",
+    "process"
+   ],
+   "claude_reading": "different thing -- keep the WONT class: GO's is what the venomous organism does to another; WONT's is the wound-causing process"
+  },
+  {
+   "wont": "Extracellular Matrix Organization",
+   "wont_iri": "WONT_0002719",
+   "go": "GO_0030198",
+   "go_label": "extracellular matrix organization",
+   "how": "label",
+   "parents": [
+    "process",
+    "tissue remodeling"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Gene Expression",
+   "wont_iri": "WONT_0003105",
+   "go": "GO_0010467",
+   "go_label": "gene expression",
+   "how": "label",
+   "parents": [
+    "GO_0009987",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Homeostasis",
+   "wont_iri": "WONT_0003400",
+   "go": "GO_0042592",
+   "go_label": "homeostatic process",
+   "how": "exact synonym",
+   "parents": [
+    "GO_0065007",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Host Cell",
+   "wont_iri": "WONT_0003418",
+   "go": "GO_0043657",
+   "go_label": "host cell",
+   "how": "label",
+   "parents": [
+    "CL_0000000",
+    "material entity"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Hypersensitivity",
+   "wont_iri": "WONT_0003497",
+   "go": "GO_0002524",
+   "go_label": "hypersensitivity",
+   "how": "label",
+   "parents": [
+    "BFO_0000002",
+    "HP_0002715"
+   ],
+   "claude_reading": "different thing -- keep the WONT class: GO's is the immune process; WONT's is the condition (under an HP immune abnormality)"
+  },
+  {
+   "wont": "Innate Immune Response",
+   "wont_iri": "WONT_0003782",
+   "go": "GO_0045087",
+   "go_label": "innate immune response",
+   "how": "label",
+   "parents": [
+    "GO_0006952",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Invasive Growth",
+   "wont_iri": "WONT_0003888",
+   "go": "GO_0036267",
+   "go_label": "invasive filamentous growth",
+   "how": "exact synonym",
+   "parents": [
+    "GO_0040007",
+    "process"
+   ],
+   "claude_reading": "different thing -- keep the WONT class: GO's is fungal filamentous growth only"
+  },
+  {
+   "wont": "Keratinocyte Differentiation",
+   "wont_iri": "WONT_0003962",
+   "go": "GO_0030216",
+   "go_label": "keratinocyte differentiation",
+   "how": "label",
+   "parents": [
+    "GO_0009987",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Keratinocyte Migration",
+   "wont_iri": "WONT_0003965",
+   "go": "GO_0051546",
+   "go_label": "keratinocyte migration",
+   "how": "label",
+   "parents": [
+    "GO_0009987",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Lactate Metabolism",
+   "wont_iri": "WONT_0003992",
+   "go": "GO_0006089",
+   "go_label": "lactate metabolic process",
+   "how": "exact synonym",
+   "parents": [
+    "GO_0009987",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Lipid Metabolism",
+   "wont_iri": "WONT_0004084",
+   "go": "GO_0006629",
+   "go_label": "lipid metabolic process",
+   "how": "exact synonym",
+   "parents": [
+    "biological_process",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Lymphangiogenesis",
+   "wont_iri": "WONT_0004228",
+   "go": "GO_0001946",
+   "go_label": "lymphangiogenesis",
+   "how": "label",
+   "parents": [
+    "GO_0001944",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Menopause",
+   "wont_iri": "WONT_0004372",
+   "go": "GO_0042697",
+   "go_label": "menopause",
+   "how": "label",
+   "parents": [
+    "BFO_0000003",
+    "GO_0032501"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Metabolism",
+   "wont_iri": "WONT_0004407",
+   "go": "GO_0008152",
+   "go_label": "metabolic process",
+   "how": "exact synonym",
+   "parents": [
+    "GO_0009987",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Methylation",
+   "wont_iri": "WONT_0004432",
+   "go": "GO_0032259",
+   "go_label": "methylation",
+   "how": "label",
+   "parents": [
+    "GO_0003824",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Neurogenesis",
+   "wont_iri": "WONT_0004760",
+   "go": "GO_0022008",
+   "go_label": "neurogenesis",
+   "how": "label",
+   "parents": [
+    "GO_0048856",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Nuclear Translocation",
+   "wont_iri": "WONT_0004886",
+   "go": "GO_0051170",
+   "go_label": "import into nucleus",
+   "how": "exact synonym",
+   "parents": [
+    "GO_0009987",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Oxidative Phosphorylation",
+   "wont_iri": "WONT_0005039",
+   "go": "GO_0006119",
+   "go_label": "oxidative phosphorylation",
+   "how": "label",
+   "parents": [
+    "GO_0009987",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Paracrine Signaling",
+   "wont_iri": "WONT_0005099",
+   "go": "GO_0038001",
+   "go_label": "paracrine signaling",
+   "how": "label",
+   "parents": [
+    "GO_0065007",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Phosphorylation",
+   "wont_iri": "WONT_0005328",
+   "go": "GO_0016310",
+   "go_label": "phosphorylation",
+   "how": "label",
+   "parents": [
+    "GO_0009987",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Platelet Activation",
+   "wont_iri": "WONT_0005388",
+   "go": "GO_0030168",
+   "go_label": "platelet activation",
+   "how": "label",
+   "parents": [
+    "coagulation",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Platelet Aggregation",
+   "wont_iri": "WONT_0005389",
+   "go": "GO_0070527",
+   "go_label": "platelet aggregation",
+   "how": "label",
+   "parents": [
+    "coagulation",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Programmed Cell Death",
+   "wont_iri": "WONT_0005693",
+   "go": "GO_0012501",
+   "go_label": "programmed cell death",
+   "how": "label",
+   "parents": [
+    "GO_0009987",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Secretion",
+   "wont_iri": "WONT_0006277",
+   "go": "GO_0046903",
+   "go_label": "secretion",
+   "how": "label",
+   "parents": [
+    "biological_process",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Signal Transduction",
+   "wont_iri": "WONT_0006349",
+   "go": "GO_0007165",
+   "go_label": "signal transduction",
+   "how": "label",
+   "parents": [
+    "GO_0009987",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Signaling",
+   "wont_iri": "WONT_0006350",
+   "go": "GO_0023052",
+   "go_label": "signaling",
+   "how": "label",
+   "parents": [
+    "biological_process",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Stem Cell Differentiation",
+   "wont_iri": "WONT_0006663",
+   "go": "GO_0048863",
+   "go_label": "stem cell differentiation",
+   "how": "label",
+   "parents": [
+    "GO_0032502",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Thermoregulation",
+   "wont_iri": "WONT_0007005",
+   "go": "GO_0001659",
+   "go_label": "temperature homeostasis",
+   "how": "exact synonym",
+   "parents": [
+    "GO_0065007",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Tissue Homeostasis",
+   "wont_iri": "WONT_0007096",
+   "go": "GO_0001894",
+   "go_label": "tissue homeostasis",
+   "how": "label",
+   "parents": [
+    "GO_0065007",
+    "process"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  },
+  {
+   "wont": "Extracellular Matrix",
+   "wont_iri": "WONT_0002713",
+   "go": "GO_0031012",
+   "go_label": "extracellular matrix",
+   "how": "label",
+   "parents": [
+    "FMA_67165",
+    "material entity"
+   ],
+   "claude_reading": "same thing -- a twin of the GO class"
+  }
+ ]
+}

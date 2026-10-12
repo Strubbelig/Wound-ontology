@@ -277,3 +277,14 @@ def test_the_same_chain_with_an_ordinary_hyphen_also_flattens():
     m = _mapper({"IL-10": "Il10", "Il10": "il10"})
     m.resolve_chains()
     assert m.mapping["IL-10"] == "il10"
+
+
+def test_a_cycle_elects_the_curators_target_over_the_commoner_spelling():
+    """2026-09-28: the curator made `microRNA` the name (`miRNA -> microRNA`);
+    the rebuild re-proposed `microRNA -> miRNA`, the two formed a cycle, and the
+    election by frequency retired the curator's entry as "spelling of its own
+    canonical". A curator's same_class verdict on the live pair decides."""
+    m = _mapper({"miRNA": "microRNA", "microRNA": "miRNA"})
+    m._term_mapping.judge("miRNA", "microRNA", curator={"verdict": "same_class"})
+    m.resolve_chains(frequencies={"miRNA": 50, "microRNA": 2})
+    assert m.mapping == {"miRNA": "microRNA"}

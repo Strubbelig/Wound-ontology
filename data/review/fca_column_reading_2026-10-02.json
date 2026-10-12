@@ -1,0 +1,38 @@
+{
+ "read_by": "Claude, every one of the 94 measured attributes of the Wound-subtree context, 2026-10-02",
+ "why": "curator on the Chronic Wound verdict matrix: 'most columns are shit'",
+ "keep": {
+  "has_quality: acute": ["has_quality: acute"],
+  "has_quality: chronic": ["has_quality: chronic"],
+  "has_quality: hard-to-heal": ["has_quality: hard-to-heal"],
+  "has_quality: nonhealing": ["has_quality: nonhealing"],
+  "has_quality: colonized": ["has_quality: colonized"],
+  "has_quality: contaminated": ["has_quality: contaminated", "has_quality: contamination"],
+  "has_quality: infected": ["has_quality: infected"],
+  "has_quality: inflamed": ["has_quality: inflamed"],
+  "has_quality: hypoxic": ["has_quality: hypoxia"],
+  "has_quality: macerated": ["has_quality: maceration"],
+  "has_quality: moist": ["has_quality: moist"],
+  "has_quality: exudative": ["has_quality: exudative"],
+  "has_quality: neuropathic": ["has_quality: neuropathic"],
+  "has_quality: malodorous": ["has_quality: malodor", "has_quality: malodorous", "has_quality: malodour"],
+  "has_quality: painful": ["has_quality: pain", "has_quality: painful condition", "has_quality: wound pain"],
+  "has_quality: red": ["has_quality: redness"],
+  "has_quality: unstageable": ["has_quality: unstageable"],
+  "has_quality: second degree": ["has_quality: ii degree"],
+  "has_quality: superficial second degree": ["has_quality: superficial ii degree"],
+  "has_disposition: amputation risk": ["has_disposition: amputation risk"],
+  "has_disposition: pressure ulcer risk": ["has_disposition: pressure ulcer risk"],
+  "has_disposition: risk of infection": ["has_disposition: risk of infection"],
+  "part_of: extremity": ["part_of: extremity"],
+  "part_of: lower extremity": ["part_of: lower extremity"],
+  "part_of: foot": ["part_of: foot"],
+  "part_of: skin": ["part_of: skin"]
+ },
+ "drop": {
+  "determinable, not a value (every wound has one, so it separates nothing)": ["has_quality: area", "has_quality: bacterial burden", "has_quality: bacterial load", "has_quality: degree of microbial burden", "has_quality: depth", "has_quality: diabetic foot ulcer duration", "has_quality: diabetic foot ulcers size", "has_quality: disorder stage", "has_quality: exudate type", "has_quality: healing rate", "has_quality: initial size", "has_quality: length", "has_quality: odor", "has_quality: percentage area reduction", "has_quality: ph level", "has_quality: quality of healing", "has_quality: severity of the wound", "has_quality: size", "has_quality: surface area", "has_quality: time to healing", "has_quality: total body surface area burned", "has_quality: ulcer area", "has_quality: ulcer severity", "has_quality: ulcer size", "has_quality: ulcer volume", "has_quality: volume", "has_quality: width", "has_quality: wound age", "has_quality: wound area", "has_quality: wound characteristic", "has_quality: wound condition", "has_quality: wound depth", "has_quality: wound duration", "has_quality: wound grade", "has_quality: wound healing rate", "has_quality: wound healing time", "has_quality: wound length", "has_quality: wound odor", "has_quality: wound size", "has_quality: wound status", "has_quality: wound surface area", "has_quality: wound volume"],
+  "outcome state of one wound at one time, not a property of a kind": ["has_quality: complete closure", "has_quality: complete healing", "has_quality: complete wound closure", "has_quality: epithelialized", "has_quality: healed state"],
+  "part_of a wound class: a misread subclass statement": ["part_of: acute wound", "part_of: burn injury", "part_of: chronic wound", "part_of: diabetic foot ulcer", "part_of: diabetic wound", "part_of: foot ulcer", "part_of: hard-to-heal wound", "part_of: pressure ulcer", "part_of: ulcer", "part_of: venous leg ulcer", "part_of: wound"],
+  "category error": ["has_quality: material disease entity", "part_of: complication", "part_of: diabetes mellitus", "part_of: diabetic foot", "has_disposition: risk factor"]
+ }
+}

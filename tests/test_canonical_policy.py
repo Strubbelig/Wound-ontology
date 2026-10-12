@@ -154,3 +154,41 @@ def test_only_a_content_difference_is_put_to_the_guard():
     rep2 = m2.enforce_canonical_policy(
         label_spellings={"necrosis": "Necrosis"}, accept_mapping=accept)
     assert rep2["refused"] == 1 and m2.mapping == {}
+
+
+# ── rule 4: a label is never mapped away (2026-10-01) ────────────────────────
+
+L4 = {"impaired wound healing process": "Impaired wound healing process"}
+
+
+def test_a_label_mapped_onto_a_store_spelling_is_turned_round():
+    """An abstract wrote the label, so it was no anchor and frequency picked the
+    store spelling: the WONT class was folded into `impaired wound healing`."""
+    m = _mapper({"Impaired wound healing process": "impaired wound healing",
+                 "compromised wound healing": "impaired wound healing"})
+    rep = m.enforce_canonical_policy(label_spellings=L4)
+    assert rep["labels_restored"] == 1
+    assert m.mapping == {"impaired wound healing": "Impaired wound healing process",
+                         "compromised wound healing": "Impaired wound healing process"}
+
+
+def test_a_curators_direction_is_held_and_reported():
+    m = _mapper({"Impaired wound healing process": "impaired wound healing"})
+    m._term_mapping.records["Impaired wound healing process"]["method"] = "curator"
+    rep = m.enforce_canonical_policy(label_spellings=L4)
+    assert rep["labels_held"] == 1 and rep["labels_restored"] == 0
+    assert m.mapping == {"Impaired wound healing process": "impaired wound healing"}
+
+
+def test_a_turned_round_claim_the_guard_refuses_only_unmaps_the_label():
+    m = _mapper({"Impaired wound healing process": "impaired wound healing"})
+    rep = m.enforce_canonical_policy(label_spellings=L4, accept_mapping=lambda t, c: False)
+    assert rep["labels_unmapped"] == 1
+    assert m.mapping == {}
+
+
+def test_rule_4_dry_run_writes_nothing():
+    m = _mapper({"Impaired wound healing process": "impaired wound healing"})
+    rep = m.enforce_canonical_policy(label_spellings=L4, dry_run=True)
+    assert rep["labels_restored"] == 1
+    assert m.mapping == {"Impaired wound healing process": "impaired wound healing"}

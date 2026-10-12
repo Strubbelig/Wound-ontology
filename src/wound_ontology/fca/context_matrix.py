@@ -215,6 +215,9 @@ class ContextMatrix:
         predicates: list | None = None,
         scale_hierarchy=None,
         inherit_attributes: bool = True,
+        min_support: int = 1,
+        inherit: str | None = None,
+        inherit_fdr: float = 0.05,
     ) -> None:
         """
         Build the FCA context matrix from a ConceptStore (already normalized).
@@ -251,8 +254,42 @@ class ContextMatrix:
                      still free to order them the wrong way round. Sound here
                      because these are class-level assertions -- an axiom on a
                      superclass holds of every subclass.
+        min_support
+                   – a measured attribute counts for an object only when at
+                     least this many abstracts state it of that object
+                     (2026-10-02). The store merges every abstract that names
+                     `wound`: 1,013 of them, giving `Wound` 207 attributes of
+                     which 145 rest on one abstract (`skin itching`). With
+                     inheritance each of those became true of all 322 objects
+                     of the Wound subtree. One abstract's remark about a wound
+                     is not an axiom about Wound.
+        inherit    – which of an ancestor's own attributes pass down (rule 65):
+                     "all" (every one that survives `min_support`), "none", or
+                     "class_level": only those the ancestor's own descendants
+                     corroborate. An attribute `a` stated of ancestor A is
+                     class level when A's descendants state `a` themselves
+                     significantly more often than everything outside A's
+                     subtree does (one-sided Fisher exact test over every
+                     store entity with measured attributes under `predicates`,
+                     Benjamini-Hochberg at `inherit_fdr`). No cut on how many
+                     of A's abstracts state it: the top attribute of `Wound`
+                     (`wound area`) is in 32 of 1,013 abstracts, 3.2%, so any
+                     guessed share would decide the outcome on its own.
+                     None (default) keeps the old switch: `inherit_attributes`
+                     True -> "all", False -> "none".
+        inherit_fdr
+                   – the false discovery rate of the class-level test.
         """
+        if inherit is None:
+            inherit = "all" if inherit_attributes else "none"
+        if inherit not in ("all", "none", "class_level"):
+            raise ValueError(f"inherit must be 'all', 'none' or 'class_level', got {inherit!r}")
+        inherit_attributes = inherit != "none"
+        self.inheritance_tests: list[dict] = []
         flat_map: dict[str, dict] = {}
+        # Every store entity's own measured attributes, the slice or not: the
+        # class-level test compares a subtree against everything outside it.
+        universe: dict[str, set] = {}
 
         # Remember what this view is of, before anything can go wrong, so that
         # rebuild() can re-derive exactly this slice once the store changes.
@@ -262,7 +299,11 @@ class ContextMatrix:
             "predicates": predicates,
             "scale_hierarchy": scale_hierarchy,
             "inherit_attributes": inherit_attributes,
+            "min_support": min_support,
+            "inherit": inherit,
+            "inherit_fdr": inherit_fdr,
         }
+        support: dict[tuple[str, str], int] = {}
 
         # `entities` normally comes from hierarchy.subtree_of(), whose names are
         # smart_title'd; store keys are as extracted. Comparing them raw matched
@@ -274,6 +315,14 @@ class ContextMatrix:
 
         for _, ents in records_of(store):
             for entity_name, attrs in ents.items():
+                if inherit == "class_level":
+                    own = universe.setdefault(smart_title(entity_name), set())
+                    for triple, value in attrs.items():
+                        if value == 1.0 and ":" in str(triple):
+                            pred, tgt = triple.split(":", 1)
+                            pred = pred.strip().lower()
+                            if predicates is None or pred in predicates:
+                                own.add(f"{pred}: {tgt.strip()}")
                 if entities is not None and smart_title(entity_name) not in entities:
                     continue
                 if entity_name not in flat_map:
@@ -287,9 +336,22 @@ class ContextMatrix:
                     triple = f"{pred}: {tgt}"
                     if predicates is not None and pred not in predicates:
                         continue
+                    if value == 1.0:
+                        k = (entity_name, triple)
+                        support[k] = support.get(k, 0) + 1
                     flat_map[entity_name][triple] = max(
                         flat_map[entity_name].get(triple, 0.0), value
                     )
+
+        if min_support > 1:
+            dropped = 0
+            for entity_name, attrs in flat_map.items():
+                for triple in [t for t, v in attrs.items()
+                               if v == 1.0 and support.get((entity_name, t), 0) < min_support]:
+                    del attrs[triple]
+                    dropped += 1
+            print(f"[ContextMatrix] evidence cut: {dropped:,} measured attribute(s) stated by "
+                  f"fewer than {min_support} abstracts left out (they stay in the store).")
 
         if scale_hierarchy is not None:
             # Curated edges are no longer pushed through the store -- they are read
@@ -347,6 +409,8 @@ class ContextMatrix:
                 dest = original.setdefault(smart_title(entity), {})
                 for attr, value in attrs.items():
                     dest[attr] = max(dest.get(attr, 0.0), value)
+            passes = (self._class_level_attributes(original, universe, scale_hierarchy, inherit_fdr)
+                      if inherit == "class_level" else None)
             membership = inherited = scaled_objects = 0
             scaled_keys: set[str] = set()
             for entity in list(flat_map):
@@ -367,6 +431,8 @@ class ContextMatrix:
                     if not inherit_attributes:
                         continue
                     for attr, value in original.get(smart_title(ancestor), {}).items():
+                        if passes is not None and (smart_title(ancestor), attr) not in passes:
+                            continue
                         prev = flat_map[entity].get(attr)
                         if prev is None:
                             inherited += 1
@@ -388,7 +454,7 @@ class ContextMatrix:
                         flat_map[entity][key] = 0.0
                         closed += 1
             print(f"[ContextMatrix] Conceptual scaling: {membership} superclass "
-                  f"attributes + {inherited} inherited attributes across "
+                  f"attributes + {inherited} inherited attributes ({inherit}) across "
                   f"{scaled_objects}/{len(flat_map)} objects "
                   f"from {type(scale_hierarchy).__name__}; "
                   f"{closed} cells closed to 0 over {len(known)} placed objects.")
@@ -420,6 +486,63 @@ class ContextMatrix:
                   f"this slice. Nothing is lost — the store holds all of it.")
 
         print(f"FCA matrix built: {len(self.df)} entities × {len(self.attributes)} triples.")
+
+    def _class_level_attributes(self, original, universe, hier, fdr) -> set[tuple[str, str]]:
+        """(ancestor, attribute) pairs that pass the class-level test (rule 65).
+
+        For each ancestor A with descendants and each attribute `a` A itself
+        carries in this view: k of A's n descendants with any measured
+        attribute state `a` themselves, against k2 of the n2 store entities
+        outside A's subtree. One-sided Fisher exact test (descendants more
+        often), Benjamini-Hochberg over every pair tested. A pair whose
+        descendants carry no measured attribute at all cannot be tested and
+        does not pass: nothing corroborates it. Every test is kept in
+        `self.inheritance_tests`.
+        """
+        from scipy.stats import fisher_exact
+        has_data = {e for e, s in universe.items() if s}
+        total = {}
+        for e in has_data:
+            for a in universe[e]:
+                total[a] = total.get(a, 0) + 1
+        tests = []
+        untestable = 0
+        for anc, attrs in original.items():
+            own = {a for a, v in attrs.items() if v == 1.0 and not a.startswith("is_a:")}
+            if not own or anc not in hier.concepts:
+                continue
+            sub = {smart_title(d) for d in hier.subtree_of(anc)}
+            desc = (sub - {anc}) & has_data
+            if not (sub - {anc}):
+                continue
+            n, n2 = len(desc), len(has_data - sub)
+            for a in own:
+                if not n:
+                    untestable += 1
+                    continue
+                k = sum(1 for d in desc if a in universe[d])
+                k_in_sub = sum(1 for d in sub & has_data if a in universe[d])
+                k2 = total.get(a, 0) - k_in_sub
+                p = fisher_exact([[k, n - k], [k2, n2 - k2]], alternative="greater")[1]
+                tests.append({"ancestor": anc, "attribute": a, "k": k, "n": n,
+                              "k_outside": k2, "n_outside": n2, "p": float(p)})
+        # Benjamini-Hochberg
+        m = len(tests)
+        for rank, t in enumerate(sorted(tests, key=lambda t: t["p"]), start=1):
+            t["_bh"] = t["p"] * m / rank
+        running = 1.0
+        for t in sorted(tests, key=lambda t: -t["p"]):
+            running = min(running, t["_bh"])
+            t["q"] = running
+            del t["_bh"]
+        passes = {(t["ancestor"], t["attribute"]) for t in tests if t["q"] <= fdr}
+        for t in tests:
+            t["class_level"] = (t["ancestor"], t["attribute"]) in passes
+        self.inheritance_tests = tests
+        print(f"[ContextMatrix] class-level test: {m} (ancestor, attribute) pair(s) tested, "
+              f"{len(passes)} pass at FDR {fdr}; {m - len(passes)} not inherited; "
+              f"{untestable} untestable (no descendant has measured attributes), not inherited.")
+        return passes
 
     def rebuild(self) -> None:
         """Re-derive this view from the store it was built from.

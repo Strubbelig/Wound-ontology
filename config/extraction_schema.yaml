@@ -1,7 +1,7 @@
 # GENERATED FILE - DO NOT EDIT BY HAND.
 # Regenerate with:  python scripts/build_extraction_schema.py
 # Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)
-# Generated:        2026-09-26
+# Generated:        2026-10-03
 id: https://w3id.org/wont/extraction
 name: wont-extraction
 title: WONT/MILD-derived extraction schema
@@ -116,6 +116,20 @@ enums:
         is_a: occurrent
         annotations:
           precision: precise
+      temporal region:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000008
+        description: "A stretch or point of time over which processes unfold: an operative time, a hospital stay, a follow-up period. Not the process that happens in it."
+        is_a: occurrent
+        annotations:
+          precision: precise
+  OccurrentTerm:
+    description: >-
+      Existing 'occurrent' classes in MILD/WONT. Ground to one of these when the
+      term already exists; leave empty when it is genuinely new.
+    permissible_values:
+      SPATIOTEMPORAL_REGION:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000011
+        title: "spatiotemporal region"
   RealizableEntityTerm:
     description: >-
       Existing 'realizable entity' classes in MILD/WONT. Ground to one of these when the
@@ -130,6 +144,15 @@ enums:
       Existing 'material entity' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
+      FIAT_OBJECT_PART:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000024
+        title: "fiat object part"
+      OBJECT_AGGREGATE:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000027
+        title: "object aggregate"
+      OBJECT:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000030
+        title: "object"
       DEVELOPED_MATERIAL_DISEASE_ENTITY:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120001
         title: "Developed material disease entity"
@@ -879,11 +902,51 @@ enums:
       NECROSIS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120020
         title: "Necrosis"
+  ImmaterialEntityTerm:
+    description: >-
+      Existing 'immaterial entity' classes in MILD/WONT. Ground to one of these when the
+      term already exists; leave empty when it is genuinely new.
+    permissible_values:
+      SPATIAL_REGION:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000006
+        title: "spatial region"
+      TWO_DIMENSIONAL_SPATIAL_REGION:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000009
+        title: "two-dimensional spatial region"
+      ZERO_DIMENSIONAL_SPATIAL_REGION:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000018
+        title: "zero-dimensional spatial region"
+      ONE_DIMENSIONAL_SPATIAL_REGION:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000026
+        title: "one-dimensional spatial region"
+      THREE_DIMENSIONAL_SPATIAL_REGION:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000028
+        title: "three-dimensional spatial region"
+      SITE:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000029
+        title: "site"
+      CONTINUANT_FIAT_BOUNDARY:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000140
+        title: "continuant fiat boundary"
+        description: "b is a continuant fiat boundary = Def. b is an immaterial entity that is of zero, one or two dimensions and does not include a spatial region as part. (axiom label in BFO2 Reference: [029-001])"
+      FIAT_LINE:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000142
+        title: "fiat line"
+      FIAT_SURFACE:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000146
+        title: "fiat surface"
+      FIAT_POINT:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000147
+        title: "fiat point"
   QualityTerm:
     description: >-
       Existing 'quality' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
+      RELATIONAL_QUALITY:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000145
+        title: "relational quality"
+        description: "b is a relational quality = Def. for some independent continuants c, d and for some time t: b quality_of c at t & b quality_of d at t. (axiom label in BFO2 Reference: [057-001])"
       REDNESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000257
         title: "Redness"
@@ -1486,6 +1549,9 @@ enums:
       Existing 'process' classes in MILD/WONT. Ground to one of these when the
       term already exists; leave empty when it is genuinely new.
     permissible_values:
+      HISTORY:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000182
+        title: "history"
       INTENDED_DISORDER_ELIMINATION_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120011
         title: "intended disorder elimination process"
@@ -1883,6 +1949,24 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120031
         title: "threshold crossing event"
         description: "A process boundary that occupies a temporal instant and that has as participant a measurement datum that is about a phenotypic abnormality."
+  TemporalRegionTerm:
+    description: >-
+      Existing 'temporal region' classes in MILD/WONT. Ground to one of these when the
+      term already exists; leave empty when it is genuinely new.
+    permissible_values:
+      ONE_DIMENSIONAL_TEMPORAL_REGION:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000038
+        title: "one-dimensional temporal region"
+      ZERO_DIMENSIONAL_TEMPORAL_REGION:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000148
+        title: "zero-dimensional temporal region"
+        aliases: ["temporal instant."]
+      TEMPORAL_INTERVAL:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000202
+        title: "temporal interval"
+      TEMPORAL_INSTANT:
+        meaning: http://purl.obolibrary.org/obo/BFO_0000203
+        title: "temporal instant"
   RelationType:
     description: >-
       Object properties actually used by MILD/WONT. The permitted subject and
@@ -1912,7 +1996,7 @@ enums:
       HAS_DISPOSITION:
         meaning: http://purl.obolibrary.org/obo/RO_0000091
         title: "has disposition"
-        description: "Permitted category pairs: material entity -> tendency"
+        description: "Permitted category pairs: material entity -> disposition"
       HAS_FUNCTION:
         meaning: http://purl.obolibrary.org/obo/RO_0000085
         title: "has function"
@@ -1953,6 +2037,10 @@ enums:
         meaning: http://purl.obolibrary.org/obo/OBI_0000299
         title: "has specified output"
         description: "Permitted category pairs: process -> information entity"
+      HAS_TENDENCY:
+        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120101
+        title: "has tendency"
+        description: "Permitted category pairs: material entity -> tendency"
       IMMEDIATELY_CAUSALLY_DOWNSTREAM_OF:
         meaning: http://purl.obolibrary.org/obo/RO_0002405
         title: "immediately causally downstream of"
@@ -1976,7 +2064,7 @@ enums:
       OCCUPIES_TEMPORAL_REGION:
         meaning: http://purl.obolibrary.org/obo/BFO_0000199
         title: "occupies temporal region"
-        description: "Permitted category pairs: process boundary -> occurrent"
+        description: "Permitted category pairs: process boundary -> temporal region"
       OUTPUT_OF:
         meaning: http://purl.obolibrary.org/obo/RO_0002353
         title: "output of"

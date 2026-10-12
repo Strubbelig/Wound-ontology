@@ -64,12 +64,22 @@ def main(argv: list[str]) -> int:
     from collections import Counter
     freq: Counter = Counter()
     from wound_ontology.store.concept_store import records_of
-    for _, ents in records_of(store):
+    for _, ents in store.view(mapped=False):
         for name in ents:
             freq[name] += 1
 
-    out_terms = sorted(gt.gated("out"))
-    in_terms = sorted(gt.gated("in"))
+    # Only AUTHORED decisions are inherited: a curator's or the model's, each
+    # with a reason. On 2026-09-28, 1,275 of the first run's 1,598 verdicts
+    # had copied an imported list entry with no author ("provenance unknown")
+    # onto a neighbour -- the unaudited amplification the `unaudited` queue of
+    # pass 2 exists to undo, done again one hop further out.
+    def authored(pool: dict[str, str]) -> list[str]:
+        # nor an inherited one: a copy of a copy is two hops from anyone
+        # who looked at the term.
+        return sorted(t for t, src in pool.items() if src not in ("rule", "pass1"))
+
+    out_terms = authored(gt.gated("out"))
+    in_terms = authored(gt.gated("in"))
     undecided = sorted((t for t in freq if not gt.gate_verdict(t)[0]),
                        key=lambda t: (-freq[t], t.lower()))
     if limit:
@@ -81,9 +91,12 @@ def main(argv: list[str]) -> int:
         return 0
 
     emb = p._ensure_embedder()
+    # Through the vector store: ~88,000 of these terms are already embedded,
+    # and embedding them again is most of an hour on a CPU.
+    vectors = p.term_mapper._embeddings_for
     print("[pass1] embedding the two decided sides…", flush=True)
-    o = np.array(emb.embed(out_terms))
-    i = np.array(emb.embed(in_terms))
+    o = np.asarray(vectors(out_terms, emb))
+    i = np.asarray(vectors(in_terms, emb))
 
     # Chunked, because the full matrix is not a thing that fits: 77,317 x 10,441
     # float32 is 3.2 GB, and the machine would swap or the process would die
@@ -94,7 +107,7 @@ def main(argv: list[str]) -> int:
     tally = {"out": 0, "in": 0, "too close": 0, "below the floor": 0}
     for start in range(0, len(undecided), CHUNK):
         block = undecided[start:start + CHUNK]
-        u = np.array(emb.embed(block))
+        u = np.asarray(vectors(block, emb))
         so, si = cosine_similarity(u, o), cosine_similarity(u, i)
         for k, term in enumerate(block):
             jo, ji = int(so[k].argmax()), int(si[k].argmax())

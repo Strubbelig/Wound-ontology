@@ -14,34 +14,132 @@ from wound_ontology.utils.label_match import singular_spelling as _singular_spel
 
 
 def store_name(term: str, canonical: str | None = None, *, target: bool = False) -> str:
-    """The name the store keeps for `term`, given the mapping's answer for it.
+    """The name the view gives `term`, given the mapping's answer for it.
 
-    One implementation of "what does this term end up called", used by
-    `normalize` to rename and by `Orchestrator.prune_inert_mappings` to decide
+    One implementation of "what does this term end up called", used by the
+    view's resolver and by `Orchestrator.prune_inert_mappings` to decide
     whether a mapping entry changes anything at all. Written twice they would
     drift, and the prune would delete entries that were doing work.
 
-    Three rules in order: a declared BFO category is returned as declared and
-    never touched (rule 22); the mapping's canonical wins over the raw term; and
-    the result is title-cased and its head noun made singular (curator,
-    2026-09-23), so a plural cannot come back in through a plural canonical.
+    Two rules: a declared BFO category is returned as declared and never
+    renamed (rule 22), and otherwise the mapping's canonical wins, declared if
+    it names a category. Until rule 51 the store also title-cased and
+    singularised every name here; pass 0 elects and records the spelling now,
+    so the view keeps it exactly -- and a case-only or plural entry is no
+    longer inert, because nothing else would produce its canonical.
     """
     declared = declared_category(term)
     if declared is not None:
         return declared
-    clean = ConceptStore.clean_target_str if target else ConceptStore.clean_entity_str
-    name = (smart_title(canonical) if canonical is not None
-            else smart_title(normalize_term(clean(term))))
-    name = _singular_spelling(name)
-    # ...and so is a term that MAPS onto one. The mapping holds `roles -> Role`;
-    # without declaring the result, `roles` would come out `Role` while the bare
-    # `role` came out `role` -- two spellings of the one category, which is the
-    # bug this rename exists to end.
-    return declared_category(name) or name
+    if canonical is None:
+        return term
+    return declared_category(canonical) or canonical
 
 
 DECISIONS = "decisions"
 REJECTED = "rejected"
+REPREDICATED = "repredicated"
+
+
+class _NoFile:
+    """The term dict of a store that was not handed one: kept in memory."""
+
+    def load_latest_json(self, _name):
+        return {}
+
+    def save_as_json(self, _data, _name):
+        return None
+
+
+def _is_typing(triple: str) -> bool:
+    return triple.split(":", 1)[0].strip().lower().replace(" ", "_") in ("is_a", "subclass_of")
+
+
+def _sense_of(attrs: dict) -> str | None:
+    """The one BFO category an abstract typed a term as, or None."""
+    here = {declared_category(t.split(":", 1)[1].strip())
+            for t, v in attrs.items()
+            if v == 1.0 and ":" in t and _is_typing(t)
+            and declared_category(t.split(":", 1)[1].strip())}
+    return next(iter(here)) if len(here) == 1 else None
+
+
+def _sense_key(name: str) -> str:
+    """The key a term's senses are filed under: case variants are ONE conflict
+    (rule 13), as the hierarchy that consumes the split groups them."""
+    return smart_title(name.strip())
+
+
+def _apply_senses(entities: dict, senses: dict) -> dict:
+    """Rename each split term, in ONE abstract, to the sense that abstract typed
+    it as; its appearances as a target in the same abstract follow. A mention
+    typed with no category, or with two, keeps the unsplit name."""
+    chosen = {}
+    for entity, attrs in entities.items():
+        split = senses.get(_sense_key(entity))
+        if split:
+            label = split.get(_sense_of(attrs))
+            if label:
+                chosen[entity] = label
+    if chosen:
+        # a target is the same term seen from the other side (rule 13 again)
+        by_key = {_sense_key(e): label for e, label in chosen.items()}
+        for attrs in entities.values():
+            for triple in attrs:
+                if ":" in triple:
+                    tgt = triple.split(":", 1)[1].strip()
+                    if tgt not in chosen and _sense_key(tgt) in by_key:
+                        chosen[tgt] = by_key[_sense_key(tgt)]
+    if not chosen:
+        return entities
+    out: dict[str, dict[str, float]] = {}
+    for entity, attrs in entities.items():
+        dest = out.setdefault(chosen.get(entity, entity), {})
+        for triple, value in attrs.items():
+            if ":" in triple:
+                pred, tgt = triple.split(":", 1)
+                triple = f"{pred.strip()}: {chosen.get(tgt.strip(), tgt.strip())}"
+            dest[triple] = max(dest.get(triple, 0.0), value)
+    return out
+
+def _category_chain(cat: str) -> set[str]:
+    from wound_ontology.llm.extraction_models import CATEGORY_PARENT
+    out = set()
+    while cat:
+        out.add(cat); cat = CATEGORY_PARENT.get(cat)
+    return out
+
+
+def _apply_categories(entities: dict, decided: dict[str, str]) -> dict:
+    """Type each decided term, in ONE abstract, as the category a person decided
+    it names (rule 57). A category cell at or below the decision stands (a
+    `function` under a decided `disposition` is the same answer, sharper); every
+    other category cell is replaced by the decision, at the strongest value it
+    replaces. A mention the abstract gave no category keeps none: a decision
+    resolves a disagreement, it does not invent a typing. Non-category `is_a`
+    targets (`is_a: Wound`) are not categories and are untouched."""
+    for entity, cat in decided.items():
+        attrs = entities.get(entity)
+        if not attrs:
+            continue
+        drop, keep = [], False
+        for triple in attrs:
+            pred, _, tgt = triple.partition(":")
+            if pred.strip() != "is_a":
+                continue
+            c = declared_category(tgt.strip())
+            if c is None:
+                continue
+            if cat in _category_chain(c):
+                keep = True
+            else:
+                drop.append(triple)
+        if not drop:
+            continue
+        value = max(attrs.pop(t) for t in drop)
+        if not keep:
+            attrs[f"is_a: {cat}"] = max(attrs.get(f"is_a: {cat}", 0.0), value)
+    return entities
 
 
 def _rejected_in(raw: dict) -> tuple[set[str], dict[str, set[str]]]:
@@ -83,7 +181,10 @@ def effective_records(raw: dict) -> Iterator[tuple[str, dict[str, dict[str, floa
 
 
 def records_of(store) -> Iterator[tuple[str, dict[str, dict[str, float]]]]:
-    """`effective_records` for anything with a `.dict`, or a dict itself."""
+    """The effective records of anything: a ConceptStore's view (rule 51), or,
+    for a raw dict or a test fake with a `.dict`, `effective_records` of it."""
+    if hasattr(store, "records") and not isinstance(store, dict):
+        return store.records()
     raw = store if isinstance(store, dict) else store.dict
     return effective_records(raw)
 
@@ -112,34 +213,30 @@ def _declared_category(term: str) -> str | None:
 
 class ConceptStore:
     """
-    Single staging area for all concept data — LLM extractions and predefined edges alike.
+    What each abstract said, and the view of it everything downstream reads.
 
-    Internal format (same as the old ExtractionCache):
-      {
-        "<pmid>": { "entities": { "<entity>": { "<pred>: <target>": 1.0 | 0.0 } }, "meta_stamp": "..." },
-        "predefined": { "entities": { ... }, "meta_stamp": "predefined" },
-        "llm_fill_nan": { "entities": { ... }, "meta_stamp": "..." },   # verdicts, by provenance
-        "decisions": { "entity_verdicts": {...}, "cell_verdicts": {...},
-                       "renamed": {...}, "meta_stamp": "..." },
-      }
+    The file holds EVIDENCE only (rule 51), one record per abstract::
 
-    The store is the ONE record; everything else -- hierarchies, the context
-    matrix, the lattice -- is a view rebuilt from it. So a decision about an
-    assertion is kept HERE too, beside the assertion, under the reserved key
-    ``decisions``. Nothing an abstract said is ever deleted: a blocklisted term,
-    a rogue predicate, a triple the reasoner gate quarantined are REJECTED,
-    which is a verdict carrying who decided (`by`), when, and why. Until
-    2026-09-12 all of those were `del` -- the 606-abstract extraction had 278
-    entities removed mid-run by the blocklist with no trace in the file, and the
-    quarantine lived in a gitignored directory. A verdict can be lifted; a
-    deletion cannot.
+      {"<pmid>": {"entities": {"<as extracted>": {"<pred>: <as extracted>": 1.0}},
+                  "meta_stamp": "...", "schema_report": {...}},
+       "predefined" / "llm_fill" / ...: synthetic records, same shape}
 
-    Readers go through `records()` / `assertions()`, which apply the verdicts.
-    `dict` is the raw file and is what the tests inspect.
+    Nothing in it is rewritten after it arrives. Every decision about a TERM --
+    how it is spelled now, what it maps onto, whether it is rejected, which of
+    its relations are rejected, how it splits into senses -- lives on that
+    term's record in the term mapping and gate dict (`self.terms`). `records()`
+    is the evidence resolved through those records: raw string -> spelling ->
+    mapping -> verdicts. A rename is therefore a line in the term dict, not an
+    edit of 6,029 abstracts, and what an abstract said is always the file
+    itself.
 
-    Normalization (mapper + Title Case) is applied via normalize() after both LLM
-    extraction and predefined ingestion are complete, so all downstream consumers
-    (hierarchies, FCA matrix) receive clean, deduplicated names.
+    Until 2026-09-27 the store was rewritten in place by pass 0, the mapping
+    apply and the sense split, and kept its own `decisions` record beside the
+    PMIDs: a second place deciding things about terms, and the reason a
+    provenance book had to be carried through every rename.
+
+    Readers go through `records()` / `assertions()` / `view()`. `dict` is the
+    raw evidence and is what a test inspects to see what was STORED.
     """
 
     DECISIONS = DECISIONS
@@ -148,6 +245,7 @@ class ConceptStore:
     verdicts in it cannot be misread as a store with extra assertions."""
 
     REJECTED = REJECTED
+    REPREDICATED = REPREDICATED
 
     @staticmethod
     def clean_entity_str(term: str) -> str:
@@ -181,10 +279,38 @@ class ConceptStore:
         """
         return normalise(re.sub(r'\s*\([^)]*\)', '', term).strip()).name
 
-    def __init__(self, data_manager: DataManager, file_name: str):
+    def __init__(self, data_manager: DataManager, file_name: str, terms=None):
+        """`terms` is the term mapping and gate dict every decision lives in.
+        Without one the store keeps an in-memory dict of its own, so a store
+        built for a test still records and applies its verdicts; the live
+        mapping is applied only through a `terms` handed in (or `normalize`)."""
         self.dm = data_manager
         self.file_name = file_name
         self._dict = self.dm.load_latest_json(self.file_name)
+        if (self._dict or {}).get(DECISIONS):
+            # A pre-rule-51 file: its verdicts would be silently ignored by the
+            # view, which reads them from the term dict. Refuse instead.
+            raise ValueError(
+                f"{file_name!r} still holds a `decisions` record; its rejections "
+                f"and renames belong in the term dict now. Run "
+                f"scripts/p4_split_evidence_and_decisions.py first (rule 51).")
+        self._terms = terms
+        self._live_mapping = terms is not None
+        self._mapper = None
+        #: `name -> True` when the gate puts the term out of scope. The
+        #: orchestrator hands in its Blocker, which is the gate plus the keyword
+        #: lists; without one, the gate's own effective verdict decides.
+        self.scope = None
+
+    @property
+    def terms(self):
+        """The term mapping and gate dict every decision lives in (rule 51);
+        an in-memory one for a store that was not handed one."""
+        if getattr(self, "_terms", None) is None:
+            from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
+            self._terms = TermMappingAndGate(_NoFile())
+            self._live_mapping = False
+        return self._terms
 
     # ── Core storage ──────────────────────────────────────────────────────────
 
@@ -199,62 +325,190 @@ class ConceptStore:
         self.dict.update(new_data)
         self.save()
 
-    # ── The effective view: assertions minus verdicts ─────────────────────────
+    # ── The view: evidence resolved through the term dict (rule 51) ──────────
 
     def document_keys(self) -> list[str]:
         """Every record key that holds assertions -- PMIDs and the synthetic
-        provenance records -- and not the decisions record."""
+        records. A pre-rule-51 file's `decisions` record is not one."""
         return [k for k in self.dict if k != self.DECISIONS]
 
-    def decisions(self) -> dict:
-        """The decisions record, created empty on first use (not saved until a
-        verdict is written)."""
-        rec = self.dict.get(self.DECISIONS)
-        if rec is None:
-            rec = {"entity_verdicts": {}, "cell_verdicts": {}, "renamed": {},
-                   "meta_stamp": "decisions"}
-            self.dict[self.DECISIONS] = rec
-        for k in ("entity_verdicts", "cell_verdicts", "renamed"):
-            rec.setdefault(k, {})
-        return rec
+    def _mapping(self, mapped: bool) -> dict[str, str]:
+        if not mapped:
+            return {}
+        mapper = getattr(self, "_mapper", None)
+        if mapper is not None:
+            return dict(getattr(mapper, "mapping", mapper) or {})
+        terms = self.terms
+        return terms.data if getattr(self, "_live_mapping", False) else {}
 
-    def rejected_entities(self) -> dict[str, dict]:
-        """{entity -> verdict} for every entity rejected as a whole."""
-        return {e: v for e, v in self.decisions()["entity_verdicts"].items()
-                if v.get("status") == self.REJECTED}
+    def resolver(self, *, mapped: bool = True):
+        """`name(raw) -> (spelled, final)` for this view.
 
-    def rejected_cells(self) -> dict[str, dict[str, dict]]:
-        """{entity -> {triple -> verdict}} for every single cell rejected."""
-        out: dict[str, dict[str, dict]] = {}
-        for e, cells in self.decisions()["cell_verdicts"].items():
-            kept = {t: v for t, v in cells.items() if v.get("status") == self.REJECTED}
-            if kept:
-                out[e] = kept
-        return out
+        `spelled` is the string's current spelling (its aliases followed);
+        `final` is where the mapping sends that spelling. The mapping is looked
+        up exactly and then on the folded key, as the in-place apply did,
+        because its keys were written against spellings the store has since
+        moved on from. Memoised: 100,000 names resolve in well under a second.
+        """
+        resolve = self.terms.resolve
+        term_map = self._mapping(mapped)
+        folded: dict[str, str] = {}
+        for k, v in term_map.items():
+            folded.setdefault(normalize_term(k), v)
+        cache: dict[str, tuple[str, str]] = {}
 
-    def verdict(self, entity: str, triple: str | None = None) -> dict | None:
-        """The verdict that applies to `entity` (or to one of its cells), or None
-        if it stands as asserted. An entity-level verdict covers every cell."""
-        ev = self.decisions()["entity_verdicts"].get(entity)
-        if ev is not None and ev.get("status") == self.REJECTED:
-            return ev
-        if triple is None:
-            return None
-        cv = self.decisions()["cell_verdicts"].get(entity, {}).get(triple)
-        if cv is not None and cv.get("status") == self.REJECTED:
-            return cv
+        def name(raw: str) -> tuple[str, str]:
+            hit = cache.get(raw)
+            if hit is None:
+                spelled = resolve(raw)
+                c = None
+                if term_map and declared_category(spelled) is None:
+                    c = term_map.get(spelled) or term_map.get(raw) \
+                        or folded.get(normalize_term(spelled))
+                    c = resolve(c) if c is not None else None
+                hit = cache[raw] = (spelled, store_name(spelled, c))
+            return hit
+        return name
+
+    def _scope_test(self):
+        """`name -> bool`: is the term out of scope? Memoised for one view.
+
+        Scope is the GATE's question (rule 40), asked live (rule 51): the store
+        keeps no copy of the answer, so a curator's `in` or a pass's `out`
+        reaches everything downstream the moment it is written. Until
+        2026-09-28 the cleaner wrote the blocklist's answer into the store as
+        rejections -- 2,330 terms and 6,436 relations, frozen as of 2026-09-20
+        and deciding the same question as the gate's 10,531 `out` verdicts.
+        """
+        test = getattr(self, "scope", None)
+        if test is None:
+            terms = self.terms
+            test = lambda n: terms.effective_gate_verdict(n)[0] == "out"   # noqa: E731
+        cache: dict[str, bool] = {}
+
+        def out_of_scope(n: str) -> bool:
+            hit = cache.get(n)
+            if hit is None:
+                # A BFO category is declared, never gated (rules 20, 22). The
+                # scope pass of 2026-09-28 answered `out` for `process`,
+                # `material entity` and the rest, and since every typing is an
+                # `is_a: <category>` cell, that one answer emptied the store of
+                # its categories.
+                hit = cache[n] = (declared_category(n) is None and bool(test(n)))
+            return hit
+        return out_of_scope
+
+    def out_of_scope(self, names) -> set[str]:
+        """The names among `names` the gate puts out of scope."""
+        test = self._scope_test()
+        return {n for n in names if test(n)}
+
+    def _verdict_on(self, *names: str) -> dict | None:
+        records = self.terms.records
+        for n in names:
+            v = (records.get(n) or {}).get("rejected")
+            if v is not None and v.get("status") == self.REJECTED:
+                return v
         return None
 
+    def _cell_verdict(self, owners: tuple[str, ...], pred: str,
+                      targets: tuple[str, ...]) -> dict | None:
+        records = self.terms.records
+        for owner in owners:
+            rel = (records.get(owner) or {}).get("relations")
+            if not rel:
+                continue
+            for t in targets:
+                v = rel.get(f"{pred}: {t}")
+                if v is not None and v.get("status") == self.REJECTED:
+                    return v
+        return None
+
+    def _cell_predicate(self, owners: tuple[str, ...], pred: str,
+                        targets: tuple[str, ...]) -> str | None:
+        """The predicate a decision gives this cell instead of the one written
+        (rule 68: `has_disposition` with a tendency value reads as
+        `has_tendency`), or None."""
+        records = self.terms.records
+        for owner in owners:
+            rel = (records.get(owner) or {}).get("relations")
+            if not rel:
+                continue
+            for t in targets:
+                v = rel.get(f"{pred}: {t}")
+                if v is not None and v.get("status") == self.REPREDICATED:
+                    return v["to"]
+        return None
+
+    def view(self, *, mapped: bool = True, include_rejected: bool = False
+             ) -> Iterator[tuple[str, dict[str, dict[str, float]]]]:
+        """(key, {name: {triple: value}}) per record: the evidence, resolved.
+
+        `mapped=False` stops at the spelling -- what the mapping BUILD wants,
+        since it proposes merges between the terms as they are written.
+        `include_rejected=True` keeps what a verdict rejects -- what a pass
+        that re-asks about rejected terms wants. Two strings that resolve to
+        one name in one abstract merge, the strongest evidence winning.
+        """
+        name = self.resolver(mapped=mapped)
+        senses = {_sense_key(t): r["senses"] for t, r in self.terms.records.items()
+                  if r.get("senses")}
+        # Decided categories (rule 57), by the name the view shows and, when the
+        # view stops at the spelling, by the name the term maps to as well: a
+        # synonym names what its canonical names.
+        cats = {t.lower(): c["verdict"] for t, c in self.terms.categories().items()}
+        via_map = self.resolver(mapped=True) if (cats and not mapped) else None
+
+        def decided_for(final: str, raw: str) -> str | None:
+            c = cats.get(final.lower())
+            if c is None and via_map is not None:
+                c = cats.get(via_map(raw)[1].lower())
+            return c
+        out_of_scope = self._scope_test()
+        for key, rec in self.dict.items():
+            if key == self.DECISIONS or not isinstance(rec, dict):
+                continue
+            out: dict[str, dict[str, float]] = {}
+            decided: dict[str, str] = {}
+            for raw, attrs in rec.get("entities", {}).items():
+                if not isinstance(attrs, dict):
+                    continue
+                spelled, final = name(raw)
+                owners = (spelled, final) if spelled != final else (final,)
+                if not include_rejected and (self._verdict_on(*owners)
+                                             or any(map(out_of_scope, owners))):
+                    continue
+                dest = out.setdefault(final, {})
+                if cats and final not in decided:
+                    c = decided_for(final, raw)
+                    if c:
+                        decided[final] = c
+                for triple, value in attrs.items():
+                    if ":" in triple:
+                        pred, tgt = triple.split(":", 1)
+                        pred = pred.strip()
+                        t_spelled, t_final = name(tgt.strip())
+                        targets = ((t_spelled, t_final) if t_spelled != t_final
+                                   else (t_final,))
+                        if not include_rejected and (
+                                any(map(out_of_scope, targets))
+                                or self._cell_verdict(owners, pred, targets)):
+                            continue
+                        pred = self._cell_predicate(owners, pred, targets) or pred
+                        triple = f"{pred}: {t_final}"
+                    dest[triple] = max(dest.get(triple, 0.0), float(value))
+            if decided:
+                out = _apply_categories(out, decided)
+            yield key, (_apply_senses(out, senses) if senses else out)
+
     def records(self) -> Iterator[tuple[str, dict[str, dict[str, float]]]]:
-        """(key, {entity: {triple: value}}) for every assertion record, with the
-        rejected entities and cells left out. A fresh copy: mutate the raw
-        `dict` if you mean to change the store, and write a verdict if you mean
-        to reject something."""
-        return effective_records(self.dict)
+        """(key, {entity: {triple: value}}) for every assertion record: the
+        evidence resolved through the term dict, rejected entities and cells
+        left out. Fresh on every call; write a decision to change it."""
+        return self.view()
 
     def effective_dict(self) -> dict:
-        """The store in its file shape -- {key: {"entities": ..., "meta_stamp": ...}}
-        -- after the verdicts are applied. For readers that take the raw shape."""
+        """The view in the file's shape -- {key: {"entities": ..., "meta_stamp": ...}}."""
         return {key: {**{k: v for k, v in self.dict[key].items() if k != "entities"},
                       "entities": ents}
                 for key, ents in self.records()}
@@ -266,7 +520,70 @@ class ConceptStore:
                 for triple, value in attrs.items():
                     yield key, entity, triple, value
 
-    # ── Verdicts ──────────────────────────────────────────────────────────────
+    def trace(self, name: str) -> dict:
+        """Where a name in the view comes from: the strings the abstracts wrote
+        that resolve to it, each with its PMIDs and its spelling steps, and the
+        mapping entry that sent it there if one did."""
+        resolve = self.resolver(mapped=True)
+        aliases = self.terms.aliases()
+        found: dict[str, set[str]] = {}
+        for key, rec in self.dict.items():
+            if key == self.DECISIONS or not isinstance(rec, dict):
+                continue
+            for raw, attrs in rec.get("entities", {}).items():
+                strings = [raw] + [t.split(":", 1)[1].strip() for t in attrs if ":" in t]
+                for s in strings:
+                    if resolve(s)[1] == name:
+                        found.setdefault(s, set()).add(key)
+        out = {}
+        for raw, keys in sorted(found.items()):
+            steps, s, seen = [], raw, set()
+            while s in aliases and s not in seen:
+                seen.add(s)
+                steps.append({"from": s, **aliases[s]})
+                s = aliases[s]["to"]
+            spelled = resolve(raw)[0]
+            entry = self.terms.records.get(spelled) or {}
+            out[raw] = {"documents": sorted(keys), "spelling": steps,
+                        "mapped_by": ({"entry": spelled, "to": entry.get("to"),
+                                       "method": entry.get("method"),
+                                       "pair": (entry.get("pairs") or {}).get(entry.get("to"))}
+                                      if spelled != name and entry.get("to") else None)}
+        return out
+
+    # ── Verdicts: written to the term dict ────────────────────────────────────
+
+    def decisions(self) -> dict:
+        """A read-only picture of the decisions in the shape the store's own
+        `decisions` record had until rule 51. They live in the term dict now;
+        writing to this dict changes nothing."""
+        return {"entity_verdicts": self.rejected_entities(),
+                "cell_verdicts": self.rejected_cells(),
+                "renamed": self.terms.aliases()}
+
+    def rejected_entities(self) -> dict[str, dict]:
+        """{entity -> verdict} for every entity rejected as a whole."""
+        return {t: r["rejected"] for t, r in self.terms.records.items()
+                if (r.get("rejected") or {}).get("status") == self.REJECTED}
+
+    def rejected_cells(self) -> dict[str, dict[str, dict]]:
+        """{entity -> {triple -> verdict}} for every single cell rejected."""
+        out: dict[str, dict[str, dict]] = {}
+        for t, r in self.terms.records.items():
+            kept = {tr: v for tr, v in (r.get("relations") or {}).items()
+                    if v.get("status") == self.REJECTED}
+            if kept:
+                out[t] = kept
+        return out
+
+    def verdict(self, entity: str, triple: str | None = None) -> dict | None:
+        """The verdict that applies to `entity` (or to one of its cells), or None
+        if it stands as asserted. An entity-level verdict covers every cell."""
+        ev = self._verdict_on(entity)
+        if ev is not None or triple is None:
+            return ev
+        pred, _, tgt = triple.partition(":")
+        return self._cell_verdict((entity,), pred.strip(), (tgt.strip(),))
 
     @staticmethod
     def _stamp(by: str, note: str) -> dict:
@@ -275,7 +592,7 @@ class ConceptStore:
 
     def reject_entities(self, names: Iterable[str], *, by: str, note: str = "") -> int:
         """Reject every cell of each named entity. Returns how many of the names
-        are actually in the store -- a name that is not is reported, not
+        are actually in the view -- a name that is not is reported, not
         rejected, because a verdict on nothing is a typo in a list."""
         names = set(names)
         present = set(self.entities_raw())
@@ -283,33 +600,50 @@ class ConceptStore:
         if missing:
             print(f"[ConceptStore] {len(missing)} name(s) rejected by {by!r} are not "
                   f"in the store and were skipped: {missing[:5]}")
-        verdicts = self.decisions()["entity_verdicts"]
         n = 0
         for name in sorted(names & present):
-            verdicts[name] = self._stamp(by, note)
+            self.terms.record(name)["rejected"] = self._stamp(by, note)
             n += 1
         if n:
-            self.save()
+            self.terms._dirty()
+            self.terms.save()
         return n
 
     def reject_cells(self, cells: Iterable[tuple[str, str]], *, by: str, note: str = "") -> int:
         """Reject single (entity, triple) cells. Returns how many were present."""
         wanted = set(cells)
-        present: set[tuple[str, str]] = set()
-        for key in self.document_keys():
-            for entity, attrs in self.dict[key].get("entities", {}).items():
-                for triple in attrs:
-                    if (entity, triple) in wanted:
-                        present.add((entity, triple))
+        present = {(e, t) for _, ents in self.view(include_rejected=True)
+                   for e, attrs in ents.items() for t in attrs if (e, t) in wanted}
         missing = sorted(wanted - present)
         if missing:
             print(f"[ConceptStore] {len(missing)} cell(s) rejected by {by!r} are not "
                   f"in the store and were skipped: {missing[:5]}")
-        verdicts = self.decisions()["cell_verdicts"]
         for entity, triple in sorted(present):
-            verdicts.setdefault(entity, {})[triple] = self._stamp(by, note)
+            self.terms.record(entity).setdefault("relations", {})[triple] = \
+                self._stamp(by, note)
         if present:
-            self.save()
+            self.terms._dirty()
+            self.terms.save()
+        return len(present)
+
+    def repredicate_cells(self, cells: dict, *, by: str, note: str = "") -> int:
+        """Read single (entity, triple) cells under another predicate:
+        `cells` maps (entity, "pred: target") -> new predicate. The assertion
+        stays in the store as written; the decision sits beside it in the term
+        dict and the view applies it. Returns how many cells were present."""
+        present = {(e, t) for _, ents in self.view(include_rejected=True)
+                   for e, attrs in ents.items() for t in attrs if (e, t) in cells}
+        missing = sorted(set(cells) - present)
+        if missing:
+            print(f"[ConceptStore] {len(missing)} cell(s) repredicated by {by!r} are not "
+                  f"in the store and were skipped: {missing[:5]}")
+        for entity, triple in sorted(present):
+            stamp = self._stamp(by, note)
+            stamp.update({"status": self.REPREDICATED, "to": cells[(entity, triple)]})
+            self.terms.record(entity).setdefault("relations", {})[triple] = stamp
+        if present:
+            self.terms._dirty()
+            self.terms.save()
         return len(present)
 
     def lift_decisions(self, by: str) -> dict:
@@ -318,41 +652,40 @@ class ConceptStore:
         lifted, in a shape `restore_decisions` accepts, so a caller whose
         re-decision then cannot run puts them back rather than leaving the
         store un-vetted."""
-        dec = self.decisions()
         lifted = {"entity_verdicts": {}, "cell_verdicts": {}}
-        for e, v in list(dec["entity_verdicts"].items()):
-            if v.get("by") == by:
-                lifted["entity_verdicts"][e] = dec["entity_verdicts"].pop(e)
-        for e, cells in list(dec["cell_verdicts"].items()):
-            for t, v in list(cells.items()):
-                if v.get("by") == by:
-                    lifted["cell_verdicts"].setdefault(e, {})[t] = cells.pop(t)
-            if not cells:
-                dec["cell_verdicts"].pop(e)
+        for t, r in self.terms.records.items():
+            if (r.get("rejected") or {}).get("by") == by:
+                lifted["entity_verdicts"][t] = r.pop("rejected")
+            rel = r.get("relations") or {}
+            for tr in [tr for tr, v in rel.items() if v.get("by") == by]:
+                lifted["cell_verdicts"].setdefault(t, {})[tr] = rel.pop(tr)
+            if "relations" in r and not r["relations"]:
+                r.pop("relations")
         n = len(lifted["entity_verdicts"]) + sum(len(c) for c in lifted["cell_verdicts"].values())
         if n:
-            self.save()
+            self.terms._dirty()
+            self.terms.save()
             print(f"[ConceptStore] {n} verdict(s) by {by!r} lifted.")
         return lifted
 
     def restore_decisions(self, lifted: dict) -> int:
-        dec = self.decisions()
-        dec["entity_verdicts"].update(lifted.get("entity_verdicts", {}))
-        n = len(lifted.get("entity_verdicts", {}))
+        n = 0
+        for e, v in lifted.get("entity_verdicts", {}).items():
+            self.terms.record(e)["rejected"] = v
+            n += 1
         for e, cells in lifted.get("cell_verdicts", {}).items():
-            dec["cell_verdicts"].setdefault(e, {}).update(cells)
+            self.terms.record(e).setdefault("relations", {}).update(cells)
             n += len(cells)
         if n:
-            self.save()
+            self.terms._dirty()
+            self.terms.save()
         return n
 
-    def record_rename(self, old: str, new: str, *, by: str) -> None:
-        """A mapping decision applied to the store: `old` now reads `new`."""
-        if old == new:
-            return
-        self.decisions()["renamed"][old] = {
-            "to": new, "by": by,
-            "when": _dt.datetime.now().isoformat(timespec="seconds")}
+    def record_rename(self, old: str, new: str, *, by: str,
+                      evidence: dict | None = None) -> None:
+        """`old` is now written `new`: an alias in the term dict (rule 51)."""
+        if self.terms.spell(old, new, by=by, evidence=evidence):
+            self.terms.save()
 
     def summary(self) -> dict:
         """Counts for the three buckets, measured, not estimated."""
@@ -371,7 +704,7 @@ class ConceptStore:
                 "rejected_entities": len(self.rejected_entities()),
                 "rejected_cells": sum(len(c) for c in self.rejected_cells().values()),
                 "verdicts_by": {f"{lvl}:{who}": n for (lvl, who), n in sorted(by.items())},
-                "renamed": len(self.decisions()["renamed"])}
+                "renamed": len(self.terms.aliases())}
 
     # ── Derived views ─────────────────────────────────────────────────────────
 
@@ -431,10 +764,10 @@ class ConceptStore:
         return sorted(all_entities)
 
     def entities_raw(self) -> list[str]:
-        """Every entity name in the file, rejected ones included."""
+        """Every entity name in the view, rejected ones included."""
         names: set[str] = set()
-        for key in self.document_keys():
-            names.update(self.dict[key].get("entities", {}))
+        for _, ents in self.view(include_rejected=True):
+            names.update(ents)
         return sorted(names)
 
     @entities.setter
@@ -489,30 +822,25 @@ class ConceptStore:
             raise TypeError(f"source must be a DataFrame or dict, got {type(source).__name__}")
 
     def normalize(self, mapper=None) -> None:
+        """Read the store through `mapper`'s mapping from now on.
+
+        Nothing is rewritten (rule 51): the evidence stays as the abstracts
+        wrote it and the view resolves every name through the mapping. What
+        this used to do in place -- rename 6,029 abstracts, then title-case
+        every name -- is what made a provenance book necessary, and the
+        title-casing is superseded by pass 0, which elects one spelling per
+        term and records it.
+
+        A folded mapping key claimed by two canonicals is reported, as before:
+        the first is used.
         """
-        Apply term mapping and Title Case to every entity name and predicate target
-        stored in the ConceptStore — in-place.
-
-        mapper – shared TermMapper for all medical terms, whether they appear as
-                 entity names or predicate targets (None = title-case only).
-
-        Call this after both add_llm_extracts() and add_predefined() are complete,
-        and after the mapper has been trained on the full term list.
-        """
-        term_map = mapper.mapping if mapper else {}
-
-        # This method title-cases the store, so from the second run onwards the
-        # store's spelling is no longer the extraction spelling the mapping is
-        # keyed by, and an exact lookup silently stops finding anything: 12 of
-        # 3574 live terms were an exact key where 68 matched on a normalised one.
-        # The mapping could therefore only ever be applied ONCE, and every later
-        # correction to it -- a withdrawn merge, a re-pointed canonical -- was
-        # unreachable. Rule 13: normalise both sides, never one.
-        folded_map: dict[str, str] = {}
+        self._mapper = mapper
+        term_map = self._mapping(True)
+        folded: dict[str, str] = {}
         collisions: dict[str, set[str]] = {}
         for k, v in term_map.items():
             key = normalize_term(k)
-            prev = folded_map.setdefault(key, v)
+            prev = folded.setdefault(key, v)
             if prev != v:
                 collisions.setdefault(key, {prev}).add(v)
         if collisions:
@@ -520,131 +848,30 @@ class ConceptStore:
                               sorted(collisions.items())[:3])
             print(f"[ConceptStore] WARNING: {len(collisions)} normalised mapping "
                   f"key(s) claim more than one canonical; the first is used. {shown}")
-
-        def canonical_of(term: str) -> str | None:
-            """The mapping's answer for `term`, whatever spelling it arrived in."""
-            if term in term_map:
-                return term_map[term]
-            return folded_map.get(normalize_term(term))
-
-        def clean_entity(term: str) -> str:
-            return store_name(term, canonical_of(term))
-
-        def clean_target(term: str) -> str:
-            return store_name(term, canonical_of(term), target=True)
-
-        normalized, renames_by_mapping, merged_verdicts = self._rewrite_names(
-            clean_entity, clean_target,
-            changed=lambda term, new: canonical_of(term) is not None)
-        if merged_verdicts:
-            print(f"[ConceptStore] {merged_verdicts} verdict(s) fell onto a name "
-                  f"another verdict already covers after normalisation; the "
-                  f"earlier one is kept.")
-
-        self._dict = normalized
-        for old, new in renames_by_mapping.items():
-            self.record_rename(old, new, by="mapping")
-        self.save()
-        n_entities = sum(len(d.get("entities", {})) for d in self._dict.values())
-        print(f"[ConceptStore] Normalization applied — {n_entities} entity records updated.")
-
-    def _rewrite_names(self, entity_fn, target_fn, *, changed=None):
-        """One traversal that moves every name in the store at once.
-
-        Entity names, the target half of every predicate triple, and the keys
-        of both verdict books go together. They have to: a rejection written
-        against `diabetic foot ulcers` stops applying the moment the entity is
-        renamed `Diabetic Foot Ulcer`, and the term comes back.
-
-        Two old names landing on one new one is a merge. For evidence the
-        strongest value wins; for a verdict the first one does, and it is
-        counted rather than dropped in silence.
-
-        `changed(old, new)` says whether a rename is worth RECORDING -- the
-        mapping path only records what the mapping caused, since `store_name`
-        also title-cases and that is not a decision anyone made. Returns
-        `(new_dict, {old: new}, merged_verdict_count)` and writes nothing.
-        """
-        recorded: dict[str, str] = {}
-        rewritten: dict = {}
-        for key, pmid_data in self._dict.items():
-            if key == self.DECISIONS:
-                continue
-            entities = pmid_data.get("entities", {})
-            new_entities: dict[str, dict] = {}
-            for entity, attrs in entities.items():
-                new_entity = entity_fn(entity)
-                if new_entity != entity and (changed is None
-                                             or changed(entity, new_entity)):
-                    recorded[entity] = new_entity
-                merged: dict[str, float] = {}
-                for triple, value in attrs.items():
-                    if ":" in triple:
-                        pred, tgt = triple.split(":", 1)
-                        new_triple = f"{pred.strip()}: {target_fn(tgt.strip())}"
-                    else:
-                        new_triple = triple
-                    merged[new_triple] = max(merged.get(new_triple, 0.0), float(value))
-                if new_entity in new_entities:
-                    for triple, value in merged.items():
-                        new_entities[new_entity][triple] = max(
-                            new_entities[new_entity].get(triple, 0.0), value
-                        )
-                else:
-                    new_entities[new_entity] = merged
-            rewritten[key] = {**pmid_data, "entities": new_entities}
-
-        merged_verdicts = 0
-        if self.DECISIONS in self._dict:
-            dec = self._dict[self.DECISIONS]
-            ev: dict = {}
-            for entity, v in dec.get("entity_verdicts", {}).items():
-                new = entity_fn(entity)
-                if new in ev:
-                    merged_verdicts += 1
-                ev.setdefault(new, v)
-            cv: dict = {}
-            for entity, cells in dec.get("cell_verdicts", {}).items():
-                dest = cv.setdefault(entity_fn(entity), {})
-                for triple, v in cells.items():
-                    if ":" in triple:
-                        pred, tgt = triple.split(":", 1)
-                        triple = f"{pred.strip()}: {target_fn(tgt.strip())}"
-                    if triple in dest:
-                        merged_verdicts += 1
-                    dest.setdefault(triple, v)
-            rewritten[self.DECISIONS] = {**dec, "entity_verdicts": ev,
-                                         "cell_verdicts": cv}
-        return rewritten, recorded, merged_verdicts
+        n = sum(len(e) for _, e in self.records())
+        print(f"[ConceptStore] Mapping applied through the view — {n} entity records.")
 
     def apply_renames(self, renames: dict[str, str], *, by: str) -> dict:
-        """Rewrite exactly the names in `renames`, in place, and record each.
+        """Record that each string in `renames` is now written differently.
 
-        Pass 0's half of the curator's rule of 2026-09-26: the label changes
-        at the spot rather than becoming a mapping entry that some later step
-        has to apply. Nothing is deleted -- every rename is stamped in the
-        store's own `renamed` book with `by`, so the spelling the extractor
-        produced stays recoverable (rule 33).
-
-        EXACT keys only. `normalize` matches on a folded key because the
-        mapping is written against extraction spellings and the store has
-        moved on; pass 0 is given every string the store holds, so a folded
-        fallback here could only rename something it never looked at and never
-        reported.
+        The renames go to the term dict, where `apply_renames` moves every
+        decision to the new spelling and leaves the old one as an alias; the
+        evidence is not touched. Returns the term dict's report, plus how many
+        names in the view the renames reached.
         """
         if not renames:
-            return {"renamed": 0, "entities": 0, "merged verdicts": 0}
-        look = lambda term: renames.get(term, term)          # noqa: E731
-        rewritten, recorded, merged_verdicts = self._rewrite_names(look, look)
-        self._dict = rewritten
-        for old, new in recorded.items():
-            self.record_rename(old, new, by=by)
-        self.save()
-        n_entities = sum(len(d.get("entities", {}))
-                         for k, d in self._dict.items() if k != self.DECISIONS)
-        return {"renamed": len(recorded), "entities": n_entities,
-                "merged verdicts": merged_verdicts}
-
+            # The same shape as a real report, so a caller that prints one
+            # does not crash on a run with nothing to do (2026-09-28).
+            return {**self.terms.apply_renames({}, by=by),
+                    "renamed": 0, "entities": 0, "merged verdicts": 0}
+        in_view = {n for _, ents in self.view(mapped=False, include_rejected=True)
+                   for e, attrs in ents.items()
+                   for n in [e, *(t.split(":", 1)[1].strip() for t in attrs if ":" in t)]}
+        report = self.terms.apply_renames(renames, by=by)
+        report.update({"renamed": len(in_view & set(renames)),
+                       "entities": sum(len(e) for _, e in self.view(include_rejected=True)),
+                       "merged verdicts": report.get("records merged", 0)})
+        return report
 
     async def add_llm_extracts(
         self,
@@ -726,7 +953,15 @@ class ConceptStore:
             to_process.append(row)
 
         if not to_process:
-            print("All abstracts already in store.")
+            # Two different situations, never one message: an empty abstract
+            # table is not "everything already extracted" (2026-10-01: the
+            # integration test read that line over an empty table).
+            if df_pubmed is None or len(df_pubmed) == 0:
+                print("[ConceptStore] Nothing to extract: the abstract table is EMPTY "
+                      "(no PubMed search loaded or run).")
+            else:
+                print(f"All {len(seen) + duplicate_rows or len(df_pubmed)} abstract row(s) "
+                      f"already in store.")
             return
 
         print(f"Parallel Extraction: {len(to_process)} new abstracts in waves of {batch_size}..."
@@ -775,18 +1010,20 @@ class ConceptStore:
                     allowed_set = set(allowed_predicates)
                     entities_map: dict[str, dict] = {}
                     for ent in extracted:
-                        entity_name = ConceptStore.clean_entity_str(ent.object.strip())
+                        # The string as the extractor wrote it is what is
+                        # stored (rule 51); the cleaned name decides only
+                        # whether it is kept, and is recorded as its spelling.
+                        raw_entity = ent.object.strip()
+                        entity_name = ConceptStore.clean_entity_str(raw_entity)
                         if entity_name.lower() in _METHODOLOGY_BLOCKLIST or _is_noise_term(entity_name):
                             continue
                         attr_logic: dict[str, float] = {}
                         for a in ent.true_attributes:
                             if a.predicate in allowed_set:
-                                target = ConceptStore.clean_target_str(a.target)
-                                attr_logic[f"{a.predicate}: {target}"] = 1.0
+                                attr_logic[f"{a.predicate}: {a.target.strip()}"] = 1.0
                         for a in ent.false_attributes:
                             if a.predicate in allowed_set:
-                                target = ConceptStore.clean_target_str(a.target)
-                                triple = f"{a.predicate}: {target}"
+                                triple = f"{a.predicate}: {a.target.strip()}"
                                 if triple not in attr_logic:
                                     attr_logic[triple] = 0.0
 
@@ -803,15 +1040,21 @@ class ConceptStore:
                             if attr_logic.get(mereological) == 1.0:
                                 attr_logic[mereological] = 0.0
 
-                        entities_map[entity_name] = attr_logic
+                        entities_map[raw_entity] = attr_logic
 
                     return pmid, {"entities": entities_map, "meta_stamp": meta_id}
 
                 except Exception as e:
-                    print(f"Failed PMID {pmid}: {e}")
+                    print(f"Failed PMID {pmid}: {type(e).__name__}: {e}")
                     return pmid, None
 
         tasks = [asyncio.create_task(extract_one(row)) for row in to_process]
+        # Names the store already holds are settled -- pass 0 decided how they
+        # are written -- so ingestion's cleaning never re-spells one of them
+        # (rule 51). Only strings new to the store get an ingestion spelling.
+        settled = {n for _, ents in self.view(mapped=False, include_rejected=True)
+                   for e, attrs in ents.items()
+                   for n in [e, *(t.split(":", 1)[1].strip() for t in attrs if ":" in t)]}
         succeeded = 0
         entities_since_milestone = 0
 
@@ -820,6 +1063,7 @@ class ConceptStore:
                 pmid, result = await f
                 if result:
                     self._dict[pmid] = result
+                    self._spell_ingested(result, settled)
                     self.save()
                     print(f"Cached PMID {pmid}")
                     succeeded += 1
@@ -896,26 +1140,12 @@ class ConceptStore:
         for _, rec_entities in self.records():
             for entity, attrs in rec_entities.items():
                 for triple, value in attrs.items():
-                    if value != 1.0 or ":" not in triple:
+                    if value != 1.0 or ":" not in triple or not _is_typing(triple):
                         continue
-                    pred, target = triple.split(":", 1)
-                    if pred.strip().lower().replace(" ", "_") not in ("is_a", "subclass_of"):
-                        continue
-                    declared = declared_category(target.strip())
+                    declared = declared_category(triple.split(":", 1)[1].strip())
                     if declared is not None:
-                        # Group by the NORMALISED name, as the hierarchy does.
-                        # Grouping by the raw store key hid every conflict whose
-                        # mentions differed in case: "granulation" carried
-                        # material entity and "Granulation" carried process, so
-                        # each looked consistent here while the hierarchy — which
-                        # smart_titles — saw one term typed two irreconcilable
-                        # ways. Rule 13: normalise both sides of a comparison.
-                        typings.setdefault(smart_title(entity.strip()), set()).add(declared)
+                        typings.setdefault(_sense_key(entity), set()).add(declared)
 
-        # A coarse category is the model declining to answer, not a sense. Splitting
-        # on one produced `complications Continuant` and `complications Occurrent`
-        # beside three real senses -- classes that assert nothing. Drop them first
-        # and judge the term on what it was actually typed as.
         typings = {t: (c - COARSE_CATEGORIES) or c for t, c in typings.items()}
 
         splittable = {t: c for t, c in typings.items()
@@ -926,61 +1156,27 @@ class ConceptStore:
             return report
 
         for term, cats in splittable.items():
-            # smart_title on the whole label: store keys arrive in whatever case
-            # the abstract used, so without it one term yields "necrosis Material
-            # Entity" and another "Necrosis Material Entity" -- two classes for
-            # one sense.
             report["split"][term] = {
                 c: smart_title(f"{term} {self._category_phrase(c)}")
                 for c in sorted(cats)
             }
-
-        def renamed(label: str, sense: dict) -> str:
-            return sense.get(smart_title(label.strip()), label)
-
-        for rec in self.dict.values():
-            entities = rec.get("entities", {})
-            # Which sense each splittable term carries IN THIS abstract.
-            sense: dict[str, str] = {}
-            for entity, attrs in entities.items():
-                key = smart_title(entity.strip())
+        for _, ents in self.records():
+            for entity, attrs in ents.items():
+                key = _sense_key(entity)
                 if key not in splittable:
                     continue
-                here = {declared_category(t.split(":", 1)[1].strip())
-                        for t, v in attrs.items()
-                        if v == 1.0 and ":" in t
-                        and t.split(":", 1)[0].strip().lower().replace(" ", "_")
-                        in ("is_a", "subclass_of")
-                        and declared_category(t.split(":", 1)[1].strip())}
-                chosen = next(iter(here)) if len(here) == 1 else None
-                target = report["split"][key].get(chosen) if chosen else None
-                if target is not None:
-                    sense[key] = target
+                if report["split"][key].get(_sense_of(attrs)):
+                    report["mentions"] += 1
                 else:
-                    # No category here, two at once, or only a coarse one — which
-                    # is not a sense and so has no split to map to. The mention is
-                    # left alone rather than guessed at.
                     report["unsensed"][key] = report["unsensed"].get(key, 0) + 1
 
-            if not sense:
-                continue
-            rebuilt: dict[str, dict] = {}
-            for entity, attrs in entities.items():
-                new_entity = renamed(entity, sense)
-                if new_entity != entity:
-                    report["mentions"] += 1
-                dest = rebuilt.setdefault(new_entity, {})
-                for triple, value in attrs.items():
-                    if ":" in triple:
-                        # split(":", 1) leaves the separator's space on the
-                        # target, so strip before re-joining or the rebuilt key
-                        # is "is_a:  Process" and no longer matches anything.
-                        pred, target = triple.split(":", 1)
-                        triple = f"{pred.strip()}: {renamed(target.strip(), sense)}"
-                    dest[triple] = max(dest.get(triple, 0.0), value)
-            rec["entities"] = rebuilt
-
-        self.save()
+        # The senses are a decision about the TERM, so they go on its record;
+        # the view renames each mention by the category its own abstract gave
+        # it (rule 51). Nothing in the evidence is rewritten.
+        for term, senses in report["split"].items():
+            self.terms.record(term)["senses"] = senses
+        self.terms._dirty()
+        self.terms.save()
         print(f"[ConceptStore] split {len(report['split'])} irreconcilable term(s) "
               f"into {sum(len(v) for v in report['split'].values())} sense(s) "
               f"across {report['mentions']} mention(s).")
@@ -1143,6 +1339,32 @@ class ConceptStore:
             # The stamp is printed by merge_entity_records, which owns it now.
             print(f"[ConceptStore] Fill complete — {confirmed_total} new confirmed attributes.")
 
+    def _spell_ingested(self, payload: dict, settled: set[str]) -> int:
+        """Record ingestion's cleaning of each NEW string as its spelling.
+
+        The evidence keeps `Diabetic Foot Ulcers (DFUs)` as written; the term
+        dict records that it reads `Diabetic Foot Ulcer`, by `ingestion`. A
+        string the store already holds is left to pass 0, and so is one that
+        carries a decision of its own (an ontology label, a mapping key):
+        aliasing either would re-spell it in every abstract, not just this one.
+        """
+        from wound_ontology.mappers.term_mapping_and_gate import DECISION_SECTIONS
+        n = 0
+        for raw, attrs in payload.get("entities", {}).items():
+            for string in [raw, *(t.split(":", 1)[1].strip() for t in attrs if ":" in t)]:
+                if string in settled or self.terms.is_alias(string):
+                    continue
+                settled.add(string)
+                rec = self.terms.records.get(string) or {}
+                if any(rec.get(k) for k in DECISION_SECTIONS):
+                    continue
+                clean = self.clean_entity_str(string)
+                if clean != string and self.terms.resolve(clean) != string:
+                    n += self.terms.spell(string, clean, by="ingestion")
+        if n:
+            self.terms.save()
+        return n
+
     # ── Persistence ───────────────────────────────────────────────────────────
 
     def save(self) -> None:
@@ -1169,11 +1391,13 @@ async def _extract_schema_constrained(llm, text, meta_id):
         name = ConceptStore.clean_entity_str(label.strip())
         if not name or name.lower() in _METHODOLOGY_BLOCKLIST or _is_noise_term(name):
             continue
+        # As extracted (rule 51): the cleaned name is recorded as the string's
+        # spelling by `_spell_ingested`, never written over it.
         cleaned = {}
         for triple, value in attrs.items():
             pred, target = triple.split(":", 1)
-            cleaned[f"{pred}: {ConceptStore.clean_target_str(target)}"] = value
-        entities_map[name] = cleaned
+            cleaned[f"{pred.strip()}: {target.strip()}"] = value
+        entities_map[label.strip()] = cleaned
 
     payload = {"entities": entities_map, "meta_stamp": meta_id}
     if any(report.get(k) for k in ("rejected_terms", "rejected_relations",

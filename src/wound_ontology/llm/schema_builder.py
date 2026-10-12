@@ -82,6 +82,7 @@ BFO_SKELETON = {
     "BFO_0000017": "BFO_0000020", "BFO_0000019": "BFO_0000020",
     "BFO_0000016": "BFO_0000017", "BFO_0000023": "BFO_0000017",
     "BFO_0000034": "BFO_0000016", "BFO_0000035": "BFO_0000003",
+    "BFO_0000008": "BFO_0000003",
     "OGMS_0000045": "BFO_0000040", "IAO_0000030": "BFO_0000031",
 }
 
@@ -145,6 +146,12 @@ ANCHORS: list[tuple[str, str, str | None, bool, str]] = [
      "Something that happens and unfolds over time; it has temporal parts."),
     ("process boundary", OBO + "BFO_0000035", "occurrent", False,
      "The instantaneous start or end of a process."),
+    # Curator, 2026-09-29: `operative time`, `hospital stay`, `time to healing`
+    # name a stretch of time, not something happening in it ("its a time
+    # interval, not a quality"). BFO's own class, carried by the BFO module.
+    ("temporal region", OBO + "BFO_0000008", "occurrent", False,
+     "A stretch or point of time over which processes unfold: an operative time, a "
+     "hospital stay, a follow-up period. Not the process that happens in it."),
 ]
 
 
@@ -315,10 +322,23 @@ def yaml_str(s: str) -> str:
 
 
 def collect(onto: Onto):
-    """Own MILD/WONT classes grouped by category, plus observed relation patterns."""
+    """Own MILD/WONT classes and every BFO class, grouped by category, plus
+    observed relation patterns.
+
+    BFO joined 2026-10-03 (curator: "WONT and all modules end up as a schema for
+    extraction and in the concept store, so every BFO class should be in there
+    and with correct hierarchy"). The categories are 16 BFO-labelled anchors;
+    the other BFO classes -- object, site, fiat object part, object aggregate,
+    history, relational quality, the spatial and temporal regions and fiat
+    boundaries -- were offered nowhere. They are grounding targets under the
+    category their BFO ancestry gives them; an anchor stays a category, not a
+    target.
+    """
+    anchors = {i for _, i, _, _, _ in ANCHORS} | {OBO + "BFO_0000001"}   # entity: the root, above every category
     own = sorted(
         (c for c in set(onto.g.subjects(RDF.type, OWL.Class))
-         if isinstance(c, URIRef) and (str(c).startswith(MILD) or str(c).startswith(WONT))),
+         if isinstance(c, URIRef) and (str(c).startswith(MILD) or str(c).startswith(WONT)
+                                       or (str(c).startswith(OBO + "BFO_") and str(c) not in anchors))),
         key=str,
     )
     by_cat: dict[str, list] = collections.defaultdict(list)
@@ -344,7 +364,22 @@ def collect(onto: Onto):
                 continue
             patterns[(sc, str(p), oc)] += 1
             prop_labels.setdefault(str(p), onto.label(p) or str(p).rsplit("/", 1)[-1])
+    # Relations the schema offers even when no WONT/MILD axiom uses them right
+    # now (2026-10-03). The relation list is otherwise derived from usage, and
+    # WONT's only `has disposition` axioms were the three that bore a tendency;
+    # once those moved to MILD_120101 `has tendency` (curator: "separate has
+    # tendency relation"), `has disposition` dropped out of the extraction
+    # schema although the store holds 102 such relations. Its license is RO's
+    # own: an independent continuant bears a disposition.
+    for sc, p, oc, lab in REQUIRED_PATTERNS:
+        patterns[(sc, p, oc)] += 0
+        prop_labels.setdefault(p, lab)
     return own, dict(by_cat), unresolved, patterns, prop_labels
+
+
+REQUIRED_PATTERNS: list[tuple[str, str, str, str]] = [
+    ("material entity", OBO + "RO_0000091", "disposition", "has disposition"),
+]
 
 
 # ── LinkML emitter ─────────────────────────────────────────────────────────

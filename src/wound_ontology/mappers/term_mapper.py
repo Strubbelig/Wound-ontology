@@ -306,6 +306,19 @@ class TermMapper:
         fold = normalize_term
         freq = frequencies or {}
 
+        # A curator's same-class ruling outranks the category guard (2026-10-04:
+        # the guard withdrew "wound healing process" -> "wound healing", which
+        # the curator had stated the day before).
+        def ruled(term: str, end: str) -> bool:
+            for target in {end, data.get(term)} - {None}:
+                cur = (self._term_mapping.peek(term, target).get("curator") or {}).get("verdict")
+                if cur == "same_class":
+                    return True
+            return False
+        if accept_mapping is not None:
+            guard = accept_mapping
+            accept_mapping = lambda term, end: ruled(term, end) or guard(term, end)  # noqa: E731
+
         # ── the concepts, as connected components ───────────────────────────
         #
         # An entry is a claim that two spellings are one concept, and that
@@ -431,7 +444,15 @@ class TermMapper:
                 winner = max(targets or sinks,
                              key=lambda t: canonical_rank(t, anchors, freq))
             elif not sink_nodes:
-                winner = max(sorted(group),
+                # A cycle. Where the curator ruled on one of its live pairs,
+                # the target they chose is the name (2026-09-28: `miRNA ->
+                # microRNA` was re-proposed backwards by a rebuild and lost the
+                # frequency vote); otherwise the usual rank decides.
+                chosen = sorted({data[m] for m in group if data.get(m) and
+                                 (self._term_mapping.peek(m, data[m]).get("curator") or {})
+                                 .get("verdict") in ("same_class", "kept", "reverse", "reversed",
+                                                     "repointed")})
+                winner = max(chosen or sorted(group),
                              key=lambda t: canonical_rank(t, anchors, freq))
             else:
                 # Several sinks in one component: two spellings that FOLD
@@ -545,7 +566,7 @@ class TermMapper:
     def enforce_canonical_policy(self, *, label_spellings: dict[str, str] | None = None,
                                  blocked=frozenset(), accept_mapping=None,
                                  dry_run: bool = False) -> dict:
-        """Hold every canonical in the file to three rules, and report what moves.
+        """Hold every canonical in the file to four rules, and report what moves.
 
         The rules are decisions taken elsewhere; this is where they reach the
         file, so a mapping built before one of them existed is brought up to it
@@ -593,6 +614,19 @@ class TermMapper:
            for `review_lists`, not for a mapping pass. So the pairs are counted
            and returned, and the caller writes them out as a work item.
 
+        4. A LABEL IS NEVER MAPPED AWAY (2026-10-01, rule 36 in INSTRUCTIONS).
+           Anchors are the labels NO abstract wrote; a label an abstract did
+           write is ranked by frequency like any store string, and lost:
+           `Impaired wound healing process -> impaired wound healing`,
+           `Wound treatment process -> wound therapy` -- 18 WONT/MILD classes
+           folded into a store spelling, three of them against a curator who had
+           kept the label direction. Rule 1 cannot see it: the two do not fold
+           together. So the entry is turned round -- the store spelling and
+           everything mapped onto it now map onto the label -- unless a curator
+           chose the direction (`method: curator`, or `reverse` on the pair the
+           other way), which is reported and left. If the category guard refuses
+           the turned-round claim, the label is only unmapped, and reported.
+
         Returns counts, and the entries behind each of them.
         """
         from wound_ontology.mappers.mapping_adjudicator import label_difference
@@ -601,6 +635,59 @@ class TermMapper:
         is_label = set(labels.values())
         blocked = {b.strip().lower() for b in blocked}
         data = self._term_mapping.data
+
+        # ── rule 4: a label mapped onto a store spelling is turned round ────
+        recs = self._term_mapping.records
+        restored: dict[str, str] = {}            # label -> the store spelling it pointed at
+        held: list[tuple[str, str]] = []
+        unmapped: list[tuple[str, str]] = []
+        for term, canonical in list(data.items()):
+            if term not in is_label or term == canonical or canonical in is_label:
+                continue
+            if labels.get(normalize_term(canonical)) is not None:
+                continue                         # folds to a label: rule 1's case
+            back = (recs.get(canonical, {}).get("pairs", {}).get(term) or {}).get("curator") or {}
+            if recs.get(term, {}).get("method") == "curator" or back.get("verdict") == "reverse":
+                held.append((term, canonical))
+                continue
+            if (accept_mapping is not None and label_difference(canonical, term) == "content"
+                    and not accept_mapping(canonical, term)):
+                unmapped.append((term, canonical))
+                continue
+            restored[term] = canonical
+        moves = {}
+        for label, store in restored.items():
+            moves[store] = label
+            moves.update({m: label for m, c in data.items() if c == store and m != label})
+        if restored or held or unmapped:
+            verb = "would turn round" if dry_run else "turned round"
+            print(f"[{self.name}] {verb} {len(restored)} label(s) mapped onto a store "
+                  f"spelling ({len(moves)} entr(ies) now onto the label); "
+                  f"{len(held)} held by a curator's direction, {len(unmapped)} only "
+                  f"unmapped because the guard refuses the turned-round claim.")
+            for l, s in restored.items():
+                print(f"[{self.name}]     {l!r} -> {s!r} … now {s!r} -> {l!r}")
+            for l, s in held:
+                print(f"[{self.name}]     HELD {l!r} -> {s!r} (curator's direction)")
+            for l, s in unmapped:
+                print(f"[{self.name}]     UNMAPPED {l!r} (was -> {s!r}; guard refuses {s!r} -> {l!r})")
+        if not dry_run and (restored or unmapped):
+            self._term_mapping.retire(
+                *restored, *[l for l, _ in unmapped],
+                reason="rule 36: the ontology's own label is the canonical, never mapped away")
+            if moves:
+                self._report_skipped(self._term_mapping.add_batch(
+                    moves, {t: {"confidence": 1.0, "method": "ontology_label"} for t in moves}),
+                    "label restored")
+            data = self._term_mapping.data
+            wrong = [l for l in [*restored, *(l for l, _ in unmapped)] if data.get(l)]
+            wrong += [t for t, l in moves.items() if data.get(t) != l]
+            if wrong:
+                raise RuntimeError(f"[{self.name}] rule 4 did not land on {len(wrong)} "
+                                   f"entr(ies): {wrong[:5]}")
+        rule4 = {"labels_restored": len(restored), "labels_held": len(held),
+                 "labels_unmapped": len(unmapped), "restored_entries": restored,
+                 "held_entries": held, "unmapped_entries": unmapped, "moved_entries": moves}
         respelled: dict[str, str] = {}
         refused: list[tuple[str, str, str]] = []
         on_blocklist: list[tuple[str, str]] = []
@@ -638,8 +725,9 @@ class TermMapper:
                   "identities": len(identities),
                   "blocked_canonical": len(on_blocklist)}
         if not (respelled or refused or on_blocklist or identities):
-            print(f"[{self.name}] every canonical already follows the policy.")
-            return report | {"respelled_entries": {}, "refused_entries": [],
+            if not (restored or held or unmapped):
+                print(f"[{self.name}] every canonical already follows the policy.")
+            return report | rule4 | {"respelled_entries": {}, "refused_entries": [],
                              "blocked_entries": []}
 
         verb = "would re-spell" if dry_run else "re-spelled"
@@ -679,7 +767,7 @@ class TermMapper:
                     f"{len(missed)} re-spelling(s) read back wrong and "
                     f"{len(left)} withdrawn entr(ies) are still in the file."
                 )
-        return report | {"respelled_entries": respelled,
+        return report | rule4 | {"respelled_entries": respelled,
                          "refused_entries": refused,
                          "blocked_entries": on_blocklist}
 

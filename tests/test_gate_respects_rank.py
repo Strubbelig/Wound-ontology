@@ -36,7 +36,7 @@ class _Gate(ReasonerGate):
         parents = {p for c, p in g if c == "Necrosis"}
         return {BATCH_NS + _slug("Necrosis")} if self._bad_when(parents) else set()
 
-    def _explain(self, g):
+    def _explain(self, g, max_expl=5):
         return "explanation"
 
 
@@ -114,3 +114,25 @@ def test_a_consequence_is_not_judged_before_its_cause():
     r = _Inheriting(None).check_edges(edges, sources=sources)
     assert r.quarantined == [("Necrosis", "Process")]
     assert ("Dry Necrosis", "Necrosis") in r.accepted
+
+
+class _RemoteCause(_Gate):
+    """`Protein` is empty while `Nutrient is_a Material Entity` stands -- an
+    edge on ANOTHER class (2026-10-03). The explanation names it."""
+
+    def _unsatisfiable(self, g):
+        self.passes += 1
+        return {BATCH_NS + _slug("Protein")} if ("Nutrient", "Material Entity") in g else set()
+
+    def _explain(self, g, max_expl=5):
+        n, m = BATCH_NS + _slug("Nutrient"), BATCH_NS + _slug("Material Entity")
+        return f"  - [Nutrient]({n}) SubClassOf [Material Entity]({m})\n"
+
+
+def test_a_cause_on_another_class_goes_before_a_placed_edge():
+    from wound_ontology.hierarchies.base_hierarchy import SOURCE_PLACED
+    edges = [("Protein", "Biomacromolecule"), ("Nutrient", "Material Entity")]
+    sources = {edges[0]: SOURCE_PLACED, edges[1]: SOURCE_TEXT}
+    r = _RemoteCause(lambda p: False).check_edges(edges, sources=sources)
+    assert r.quarantined == [("Nutrient", "Material Entity")]
+    assert ("Protein", "Biomacromolecule") in r.accepted

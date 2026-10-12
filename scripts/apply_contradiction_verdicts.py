@@ -382,6 +382,10 @@ def main() -> None:
             inverse["to"] = term
             inverse["method"] = "curator"
             inverse["confidence"] = 1.0
+            # As for a confirmation: the entry is live again, so a `retired`
+            # stamp left from an earlier withdrawal is false. 51 live entries
+            # carried one after the 2026-09-27 queues.
+            inverse.pop("retired", None)
             record_curator(
                 inverse.setdefault("pairs", {}).setdefault(term, {}),
                 {"verdict": "same_class",
@@ -399,9 +403,24 @@ def main() -> None:
         # Read both back. A verdict that did not land is worse than one never
         # made: the queue has stopped offering it.
         fresh = Orchestrator().term_mapper._term_mapping
+        # Through the alias: a term renamed since the queue was built (pass 0,
+        # rule 51) had its verdict written to the current spelling, and
+        # reading the old string reported 27 landed verdicts as lost
+        # (2026-09-28). Two rows that now name ONE concept with opposite
+        # rulings are a real conflict, reported separately.
+        by_name: dict[str, set[str]] = {}
+        for r in scope:
+            by_name.setdefault(fresh.resolve(r["term"]), set()).add(r["verdict"])
+        clashes = sorted(n for n, vs in by_name.items() if len(vs) > 1)
         missing = [r["term"] for r in scope
-                   if fresh.peek_gate(r["term"]).get("curator", {}).get("verdict")
+                   if fresh.resolve(r["term"]) not in clashes
+                   and fresh.peek_gate(fresh.resolve(r["term"])).get("curator", {}).get("verdict")
                    != r["verdict"]]
+        if clashes:
+            print(f"[verdicts] {len(clashes)} concept(s) got opposite rulings under two "
+                  f"old spellings; the later write stands: "
+                  + ", ".join(f"{n!r} now {fresh.peek_gate(n).get('curator', {}).get('verdict')}"
+                              for n in clashes))
         lost = [t for t, c in refused if not fresh.is_refused(t, c)]
         unmapped = [f"{t} -> {c}" for t, c in confirmed
                     if fresh.records.get(t, {}).get("to") != c
@@ -418,6 +437,12 @@ def main() -> None:
                 f"did not read back from disk: "
                 f"{missing[:3]} {lost[:3]} {unflipped[:3]} {unmapped[:3]}")
         print(f"[verdicts] written and verified against the file on disk.")
+        if scope:
+            # The two exact lists are a VIEW of the gate (rule 40.7). A scope
+            # verdict written here without re-exporting left `whitelist.py`
+            # one term behind the record on 2026-09-27, and only
+            # test_the_live_files_and_the_live_gate_agree noticed.
+            Orchestrator().export_gate_lists()
     else:
         print("[verdicts] dry run — nothing written. Pass --write to apply.")
 

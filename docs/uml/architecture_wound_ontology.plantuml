@@ -1,0 +1,78 @@
+' Condensed component view of the pipeline, for the thesis. The full,
+' generated diagrams are classes_/packages_wound_ontology.plantuml (pyreverse).
+' Render: java -jar plantuml.jar -tsvg architecture_wound_ontology.plantuml
+
+@startuml architecture
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam componentStyle rectangle
+left to right direction
+title Ontology learning pipeline: components and data flow
+
+database "PubMed\n(NCBI E-utilities)" as PubMed
+file "WONT\n(curated, Turtle)" as WONT
+file "MILD\n(curated, Turtle)" as MILD
+file "Import modules\n(BFO, OGMS, OBI, PATO, GO,\nCHEBI, DOID, HP, FMA, ...)" as Modules
+
+package "Acquisition" {
+  [PubMedQueryValidator] as QV
+  [PubmedConnector] as PC
+}
+package "Extraction" {
+  [schema_builder\n(schema generated\nfrom the ontologies)] as SB
+  [LLMClient\n(two-stage prompts,\nOpenRouter)] as LLM
+  [extraction_models\n(Pydantic validation)] as EM
+}
+package "Evidence and decisions" {
+  database "Evidence store\n(ConceptStore)" as CS
+  database "Terminology decision register\n(TermMappingAndGate)" as TR
+  [Resolved evidence\n(computed view)] as VIEW
+}
+package "Terminology" {
+  [pass0 / normalise / spelling\n(deterministic normalisation)] as P0
+  [Embedder\n(SapBERT)] as EMB
+  [TermMapper + MappingAdjudicator\n(synonym proposal and adjudication)] as TM
+  [Blocker + scope classification\n(keyword rules, LLM, nearest neighbour)] as SC
+  [Curator review pages\n(artifact + applier scripts)] as CUR
+}
+package "Structure" {
+  [reasoning.skeleton + ReasonerGate\n(ROBOT/ELK consistency check)] as RG
+  [ClassHierarchy / MereologicalHierarchy\n(+ curated seed)] as HI
+  [ContextMatrix + ConceptLattice\n(formal concept analysis)] as FCA
+}
+package "Ontology output and evaluation" {
+  [owl.extend\n(extend WONT)] as EXT
+  [evaluation.competency\n(competency questions)] as CQ
+  [OWLReasoner\n(HermiT, full closure)] as HT
+}
+
+QV --> PC
+PubMed --> PC
+PC --> LLM : abstracts
+WONT --> SB
+MILD --> SB
+Modules --> SB
+SB --> LLM : category tree,\nrelation domains,\ngrounding labels
+LLM --> EM
+EM --> CS : validated entities\nand relations
+CS --> VIEW
+TR --> VIEW
+P0 --> TR : spelling-variant records
+EMB --> TM
+TM --> TR : mappings, pair judgements
+SC --> TR : scope decisions
+CUR --> TR : curator decisions
+VIEW --> TM
+VIEW --> SC
+VIEW --> RG
+WONT --> RG
+MILD --> RG
+RG --> TR : relation rejections
+VIEW --> HI
+HI --> FCA
+FCA --> HI : accepted superclasses
+HI --> EXT
+WONT --> EXT
+EXT --> CQ
+EXT --> HT
+@enduml

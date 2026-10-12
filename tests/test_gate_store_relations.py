@@ -296,3 +296,41 @@ def test_the_reasoner_gate_resolver_agrees_with_mild():
     assert g.least_common_category(["material entity", "process"]) is None
     assert g.least_common_category(["quality"]) == "quality"
 
+
+
+def test_a_relation_on_a_category_class_is_held_back_not_reasoned(tmp_path):
+    """`tendency --has realization--> therapy` from one abstract must not become
+    an axiom on MILD's tendency class (2026-09-30: it made the class, and
+    7,361 others, unsatisfiable)."""
+    from wound_ontology.llm.extraction_models import CATEGORY_IRI, BFOCategory, RelationType
+    from wound_ontology.reasoning.gate import ReasonerGate
+
+    gate = ReasonerGate.__new__(ReasonerGate)
+    gate.available = lambda: None
+    seen = []
+
+    def fake_unsat(graph):
+        seen.append(graph)
+        return set()
+    gate._unsatisfiable = fake_unsat
+    gate._locally_inconsistent = lambda ents, rels: []
+    gate.build_batch_graph = lambda ents, rels: list(rels)
+
+    class E:
+        def __init__(self, label, cat, grounded=None):
+            self.label, self.category, self.grounded_to = label, cat, grounded
+
+    class R:
+        def __init__(self, s, p, o):
+            self.subject, self.predicate, self.object = s, p, o
+
+    gate._iri_for = lambda e: e.grounded_to or f"urn:wont:batch#{e.label}"
+    ents = [E("tendency", BFOCategory.Tendency, CATEGORY_IRI["tendency"]),
+            E("therapy", BFOCategory.InformationEntity),
+            E("smoking", BFOCategory.Tendency)]
+    held = R("tendency", RelationType.HAS_REALIZATION, "therapy")
+    kept = R("smoking", RelationType.HAS_REALIZATION, "therapy")
+    res = gate.check(ents, [held, kept])
+    assert held in res.quarantined_relations
+    assert kept in res.accepted_relations
+    assert all(held not in g for g in seen)

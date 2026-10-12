@@ -268,6 +268,21 @@ def singular_spelling(label: str) -> str:
         # to keep out of the store in the first place, so this is the right
         # trade: an acronym is content and a heading is noise.
         return label
+    segments = core.split("-")
+    if len(segments) > 1 and segments[-1] and all(s[1:] == s[1:].lower() for s in segments):
+        # A hyphenated word in title case -- `Retro-Rectus`, `Full-Thickness`,
+        # `T-Cells`. Its capitals open each part; none is internal. Read as an
+        # acronym below, it lost its final s whatever that s was: `Retro-Rectu`,
+        # `Complete-Thicknes`, while `retro-rectus` kept it, so one term had
+        # two keys and two WONT ids (found 2026-10-05). Singularised exactly as
+        # the lowercase spelling is, then each part gets its capital back, so
+        # the two spellings cannot disagree (`Follow-Ups` -> `Follow-Up`).
+        single = naming_singular(core.lower())
+        parts = single.split("-")
+        if single == core.lower() or len(parts) != len(segments):
+            return label
+        parts = [p[:1].upper() + p[1:] if s[:1].isupper() else p for p, s in zip(parts, segments)]
+        return " ".join(words[:-1] + ["-".join(parts) + trailing])
     if core[1:] != core[1:].lower():
         # A token with an INTERNAL capital is an acronym or a chemical name --
         # `miRNAs`, `microRNAs`, `iGAS`, `PrUMS`. Its case is not ours to

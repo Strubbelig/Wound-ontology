@@ -17,7 +17,7 @@ Two things it must never do, both of which it did before these tests:
 import pytest
 
 from wound_ontology.mappers.pass0 import pass0_renames
-from wound_ontology.utils.normalise import normalise
+from wound_ontology.utils.normalise import canonical_vocabulary, normalise
 
 
 def _pairs(freq, anchors=(), others=(), declared=()):
@@ -42,8 +42,8 @@ def test_the_preferred_spelling(label, expected):
 @pytest.mark.parametrize("label,expected", [
     ("lower limb wound", "lower extremity wound"),
     ("LOWER LIMBS", "LOWER EXTREMITIES"),
-    ("Bioengineering strategy", "Bioengineering approach"),
-    ("prevention strategies", "prevention approach"),
+    ("Bioengineering strategy", "Bioengineering therapy"),
+    ("prevention strategies", "prophylaxis"),
     ("fungating wound management", "fungating wound care"),
     ("WOUND-MANAGEMENT STRATEGIES", "WOUND-CARE APPROACHES"),
 ])
@@ -55,7 +55,6 @@ def test_the_curators_preferred_vocabulary(label, expected):
     ("dressing technique", "dressing method"),
     ("cutaneous ulcer", "skin ulcer"),
     ("follow-up evaluation", "follow-up assessment"),
-    ("blunt trauma", "blunt injury"),
     ("susceptibility testing", "susceptibility test"),
     ("inflammation biomarker", "inflammatory biomarker"),
     ("cellular proliferation", "cell proliferation"),
@@ -72,14 +71,16 @@ def test_the_curators_preferred_vocabulary(label, expected):
     ("bony consolidation", "bone consolidation"),
     ("bypass operation", "bypass surgery"),
     ("microbiological confirmation", "microbial confirmation"),
-    ("pharmacological intervention", "pharmacologic intervention"),
-    ("physiological response", "physiologic response"),
+    ("pharmacologic agent", "pharmacological agent"),
+    ("physiologic response", "physiological response"),
     ("previous amputation", "prior amputation"),
-    ("dermatological complication", "dermatologic complication"),
-    ("radiological finding", "radiologic finding"),
-    ("oncological outcome", "oncologic outcome"),
+    ("dermatologic complication", "dermatological complication"),
+    ("radiologic finding", "radiological finding"),
+    ("oncologic outcome", "oncological outcome"),
+    ("biologic therapy", "biological therapy"),
+    ("Biologic agent", "Biological agent"),
     ("histopathologic pattern", "histopathological pattern"),
-    ("numerical rating scale", "numeric rating scale"),
+    ("numeric rating scale", "numerical rating scale"),
     ("preventative treatment", "preventive treatment"),
     ("post-surgical recovery", "postoperative recovery"),
 ])
@@ -91,7 +92,7 @@ def test_the_thirty_approved_preferred_names(label, expected):
     "inflammation in wound",
     "cellular and humoral immunity",
     "diabetes-related wound",
-    "infectious or inflammatory disease",
+    "infectious or inflammatory disorder",   # "disease" -> "disorder" since 2026-10-02
     "surgery after injury",
     "bony and soft tissue",
 ])
@@ -99,9 +100,24 @@ def test_a_modifier_rule_does_not_rewrite_a_head_or_relation(label):
     assert normalise(label).name == label
 
 
+@pytest.mark.parametrize("label,expected", [
+    ("Compound Muscle Action Potentials", "Compound Muscle Action Potential"),
+    ("action potential", "action potential"),
+    ("action-potential duration", "action-potential duration"),
+    ("ACTION POTENTIAL", "ACTION POTENTIAL"),
+    # the exemption is the phrase, not the word
+    ("antimicrobial action and action potential",
+     "antimicrobial activity and action potential"),
+])
+def test_action_potential_is_a_fixed_term(label, expected):
+    """Curator, 2026-09-27: `action -> activity` must not reach into
+    electrophysiology's `action potential`."""
+    assert normalise(label).name == expected
+
+
 @pytest.mark.parametrize("preferred,variant", [
     ("chronic lower extremity wound", "chronic lower-limb wound"),
-    ("bioengineering approach", "bioengineering strategy"),
+    ("bioengineering therapy", "bioengineering strategy"),
     ("fungating wound care", "fungating wound management"),
     ("dressing method", "dressing technique"),
     ("skin ulcer", "cutaneous ulcer"),
@@ -123,7 +139,7 @@ def test_preferred_vocabulary_wins_even_when_the_old_name_is_more_frequent():
                        "fungating wound management": 21,
                        "fungating wound care": 1})
     assert pairs["chronic lower-limb wound"] == "chronic lower-extremity wound"
-    assert pairs["bioengineering strategy"] == "bioengineering approach"
+    assert pairs["bioengineering strategy"] == "bioengineering therapy"
     assert pairs["fungating wound management"] == "fungating wound care"
 
 
@@ -508,3 +524,232 @@ def test_a_minted_canonical_outranks_the_spelling_it_replaced():
     inherited = sum(freq.values())
     assert canonical_rank("wound", frequencies={**freq, "wound": inherited}) > \
         canonical_rank("wounds", frequencies={**freq, "wound": inherited})
+
+
+@pytest.mark.parametrize("label, expected", [
+    # -ical is the preferred form (curator, 2026-09-28), and already-preferred
+    # names are left alone -- `biological` must not become `biologicalal`.
+    ("pharmacological agent", "pharmacological agent"),
+    ("biological therapy", "biological therapy"),
+    ("biological process", "biological process"),
+    ("BIOLOGIC", "BIOLOGICAL"),
+])
+def test_ical_is_the_preferred_form(label, expected):
+    assert normalise(label).name == expected
+
+
+def test_biologics_in_the_plural_become_biologicals():
+    assert canonical_vocabulary("regenerative biologics") == "regenerative biologicals"
+
+
+def test_a_product_name_keeps_its_biologic():
+    """`XCM BIOLOGIC Tissue Matrix` is a brand, not the adjective."""
+    assert canonical_vocabulary("XCM BIOLOGIC Tissue Matrix") == "XCM BIOLOGIC Tissue Matrix"
+
+
+@pytest.mark.parametrize("label, expected", [
+    # Curator, 2026-09-28: VAC and vacuum therapy are negative pressure wound
+    # therapy. The abbreviations are expanded inside compounds as well, so a
+    # `VAC dressing` and an `NPWT dressing` are one name.
+    ("NPWT", "negative pressure wound therapy"),
+    ("VAC", "negative pressure wound therapy"),
+    ("V.A.C. therapy", "negative pressure wound therapy"),
+    ("vacuum therapy", "negative pressure wound therapy"),
+    ("Vacuum therapy", "Negative pressure wound therapy"),
+    ("vacuum-assisted closure", "negative pressure wound therapy"),
+    ("vacuum assisted closure therapy", "negative pressure wound therapy"),
+    ("VAC dressing", "negative pressure wound therapy dressing"),
+    ("incisional NPWT", "incisional negative pressure wound therapy"),
+    ("NPWT therapy", "negative pressure wound therapy"),
+    ("negative pressure therapy", "negative pressure wound therapy"),
+    ("Negative-pressure treatment", "Negative pressure wound therapy"),
+    ("negative pressure wound therapy", "negative pressure wound therapy"),
+])
+def test_vac_and_vacuum_therapy_are_npwt(label, expected):
+    assert canonical_vocabulary(label) == expected
+
+
+@pytest.mark.parametrize("label", [
+    "endoscopic vacuum-assisted closure",     # a gastrointestinal leak procedure
+    "Endoluminal vacuum therapy",
+    "vacuum",                                 # the physical condition alone
+    "vacuum sealing drainage",                # not ruled on
+])
+def test_what_is_not_npwt_keeps_its_name(label):
+    assert canonical_vocabulary(label) == label
+
+
+@pytest.mark.parametrize("label, expected", [
+    # Curator, 2026-09-28: a treatment approach, strategy or intervention is a therapy.
+    ("biomaterial-based approach", "biomaterial-based therapy"),
+    ("regenerative strategies", "regenerative therapy"),
+    ("surgical intervention", "surgical therapy"),
+    ("Interventions", "Therapy"),
+    ("therapeutic strategies", "therapy"),
+    ("treatment approach", "therapy"),
+    ("novel treatment strategy", "therapy"),         # adjective stripped too
+    ("prevention strategies", "prophylaxis"),
+    ("preventive interventions", "prophylaxis"),
+    # ...and where the word means something else, it stays.
+    ("search strategy", "search approach"),            # rule 48 still applies
+    ("coping strategies", "coping approach"),
+    ("GRADE approach", "GRADE approach"),
+    ("surgical approach", "surgical approach"),
+    ("minimally invasive approach", "minimally invasive approach"),
+    ("post-intervention", "post-intervention"),
+    ("pain management strategy", "pain management approach"),
+    ("intervention group", "intervention group"),
+    ("diagnostic strategies", "diagnostic approach"),
+])
+def test_a_treatment_approach_is_a_therapy(label, expected):
+    assert normalise(label).name == expected
+
+
+@pytest.mark.parametrize("label", [
+    "diabetes mellitus", "Diabetes Mellitus type 2", "gestational diabetes mellitus",
+    "central diabetes insipidus"])
+def test_diabetes_mellitus_is_a_name_not_a_modifier(label):
+    """Rule 49's `diabetes -> diabetic` is for `diabetes foot ulcer`; applied to
+    `diabetes mellitus` it wrote `diabetic mellitus` (28 names, 259 mentions)."""
+    assert canonical_vocabulary(label) == label
+
+
+@pytest.mark.parametrize("label, expected", [
+    # Curator, 2026-09-28: leading grades and praise are not part of the name.
+    ("massive rotator cuff tears", "rotator cuff tear"),
+    ("Severe Sepsis", "Sepsis"),
+    ("severe, extensive burns", "burn"),
+    ("advanced wound care", "wound care"),
+    ("key predictors", "predictor"),
+    # ...never a one-word name, never before a function word,
+    ("mild", "mild"),
+    ("standard of care", "standard of care"),
+    # never a curator's exception or a fixed name,
+    ("major amputation", "major amputation"),
+    ("Large wound", "Large wound"),
+    ("moderate to severe pain", "moderate to severe pain"),
+    ("standard deviation", "standard deviation"),
+    ("multiple sclerosis", "multiple sclerosis"),
+    # and never a word the curator left alone.
+    ("small wounds", "small wound"),
+    ("giant cell", "giant cell"),
+])
+def test_a_leading_grade_or_praise_is_stripped(label, expected):
+    assert normalise(label).name == expected
+
+
+@pytest.mark.parametrize("label", ["blunt trauma", "head trauma", "trauma"])
+def test_trauma_is_not_renamed_injury(label):
+    """Rule 49's `trauma -> injury` was withdrawn by the curator, 2026-09-28."""
+    assert normalise(label).name == label
+
+
+# ── 2026-10-02: pressure ulcer, and disorder for its five synonyms ──────────
+
+@pytest.mark.parametrize("label, expected", [
+    ("sacral pressure injury", "sacral pressure ulcer"),
+    ("Pressure injuries", "Pressure ulcers"),
+    ("hospital-acquired pressure injury", "hospital-acquired pressure ulcer"),
+    ("pressure injury risk assessment", "pressure ulcer risk assessment"),
+])
+def test_pressure_injury_is_pressure_ulcer_inside_every_name(label, expected):
+    assert canonical_vocabulary(label) == expected
+
+
+@pytest.mark.parametrize("label, expected", [
+    ("skin disease", "skin disorder"),
+    ("skin dysfunction", "skin disorder"),
+    ("skin pathology", "skin disorder"),
+    ("skin condition", "skin disorder"),
+    ("respiratory illness", "respiratory disorder"),
+    ("cardiovascular diseases", "cardiovascular disorders"),
+    ("chronic illnesses", "chronic disorders"),
+    ("disease-free survival", "disorder-free survival"),
+])
+def test_disorder_wins_over_its_synonyms(label, expected):
+    assert canonical_vocabulary(label) == expected
+
+
+@pytest.mark.parametrize("label", [
+    "wound condition", "hypoxic condition", "culture condition",          # a state
+    "Crohn's disease", "Buerger disease", "Paget's disease",               # eponyms
+    "multiple organ dysfunction syndrome", "critical illness polyneuropathy",
+    "illness perception", "surgical pathology", "pathology report",        # fixed / discipline
+])
+def test_what_is_not_a_disorder_synonym_keeps_its_word(label):
+    assert canonical_vocabulary(label) == label
+
+
+def test_variants_share_one_key():
+    keys = {normalise(t).key for t in ("skin disease", "skin condition", "skin pathology",
+                                        "skin dysfunction", "Skin disorder")}
+    assert len(keys) == 1
+
+
+@pytest.mark.parametrize("label", [
+    "Centers for Disease Control and Prevention",
+    "Global Burden of Disease 2021",
+    "International Classification of Diseases, 10th Revision code",
+    "Infectious Diseases Society of America",
+    "National Institute of Diabetes and Digestive and Kidney Diseases",
+    "Ocular Surface Disease Index",
+    "classification of Periodontal and Peri-Implant Diseases and Conditions",
+    "biological disease-modifying antirheumatic drug",
+    "recent coronavirus disease 2019 infection",
+])
+def test_a_proper_name_keeps_its_disease(label):
+    # only the disease word is under test (`infectious -> infection` is an
+    # older modifier rule that also reaches into the society's name)
+    out = canonical_vocabulary(label)
+    assert "isease" in out and "isorder" not in out
+
+
+# ── 2026-10-04: leg is lower extremity; ulceration is ulcer; ulcer and wound are one term ──
+
+@pytest.mark.parametrize("label,expected", [
+    ("chronic leg ulcer", "chronic lower extremity ulcer"),
+    ("Chronic Lower Leg Wound", "Chronic Lower Extremity Wound"),
+    ("recurrent lower-leg ulcers", "recurrent lower-extremity ulcers"),
+    ("both legs", "both lower extremities"),
+    ("venous leg ulceration", "venous lower extremity ulcer"),
+    # fixed names and the thigh stay as written
+    ("upper leg", "upper leg"),
+    ("single-leg hop", "single-leg hop"),
+    ("time to straight leg raise", "time to straight leg raise"),
+    ("Face, Legs, Activity, Cry, Consolability score", "Face, Legs, Activity, Cry, Consolability score"),
+    ("Leg Ulcer Measurement Tool", "Leg Ulcer Measurement Tool"),
+    ("community leg club", "community leg club"),
+    ("colleague", "colleague"),
+])
+def test_leg_is_lower_extremity_inside_names(label, expected):
+    from wound_ontology.utils.normalise import canonical_vocabulary
+    assert canonical_vocabulary(label) == expected
+
+
+@pytest.mark.parametrize("a,b", [
+    ("Chronic Leg Ulcer", "Chronic Lower-Extremity Wound"),
+    ("Diabetic foot ulcer", "Diabetic Foot Wound"),
+    ("Hard-To-Heal Ulcer", "hard-to-heal wounds"),
+])
+def test_ulcer_and_wound_share_a_key(a, b):
+    from wound_ontology.utils.normalise import normalise
+    assert normalise(a).key == normalise(b).key
+    assert normalise(a).strict == normalise(b).strict
+
+
+def test_a_lone_ulcer_keeps_its_word():
+    """The equivalence groups spellings; it never renames one."""
+    from wound_ontology.utils.normalise import canonical_vocabulary
+    assert canonical_vocabulary("gastric ulcer") == "gastric ulcer"
+
+
+def test_pass0_elects_the_ontology_label_across_ulcer_and_wound():
+    from wound_ontology.mappers.pass0 import pass0_renames
+    renames, _ = pass0_renames({"Diabetic Foot Wound": 12, "diabetic foot ulcer": 595},
+                               anchors={"Diabetic foot ulcer"})
+    assert renames["Diabetic Foot Wound"] == "Diabetic foot ulcer"
+    renames, _ = pass0_renames({"chronic leg ulcer": 11, "Chronic Leg Wound": 6,
+                                "Chronic Lower Extremity Wound": 10, "Chronic Lower-Extremity Ulcer": 4},
+                               anchors=set())
+    assert len(set(renames.values())) == 1          # one term
+    assert "leg" not in next(iter(renames.values())).lower()

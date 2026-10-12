@@ -611,7 +611,7 @@ ns1:IDO_0000586 rdf:type owl:Class .
 ns1:NCBITaxon_1280 rdf:type owl:Class ;
                    rdfs:subClassOf ns1:NCBITaxon_2 ,
                                    [ rdf:type owl:Restriction ;
-                                     owl:onProperty ns1:RO_0000091 ;
+                                     owl:onProperty mild:MILD_120101 ;
                                      owl:someValuesFrom wont:WONT_120018
                                    ] ;
                    rdfs:label "Staphylococcus aureus" .
@@ -637,7 +637,7 @@ ns1:NCBITaxon_287 rdf:type owl:Class ;
 ns1:NCBITaxon_562 rdf:type owl:Class ;
                   rdfs:subClassOf ns1:NCBITaxon_2 ,
                                   [ rdf:type owl:Restriction ;
-                                    owl:onProperty ns1:RO_0000091 ;
+                                    owl:onProperty mild:MILD_120101 ;
                                     owl:someValuesFrom wont:WONT_120018
                                   ] ;
                   rdfs:label "Escherichia coli" .
@@ -4354,7 +4354,7 @@ wont:WONT_120018 rdf:type owl:Class ;
 wont:WONT_120019 rdf:type owl:Class ;
                  owl:equivalentClass [ owl:intersectionOf ( ns1:BFO_0000040
                                                             [ rdf:type owl:Restriction ;
-                                                              owl:onProperty ns1:RO_0000091 ;
+                                                              owl:onProperty mild:MILD_120101 ;
                                                               owl:someValuesFrom wont:WONT_120018
                                                             ]
                                                           ) ;

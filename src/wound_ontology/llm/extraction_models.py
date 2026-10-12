@@ -3,7 +3,7 @@
 
 Regenerate with:  python scripts/build_extraction_schema.py
 Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)
-Generated:        2026-09-26
+Generated:        2026-10-03
 
 Mirrors config/extraction_schema.yaml. Emitted directly rather than via
 `gen-pydantic` so the pipeline has no hard dependency on the linkml generator;
@@ -35,6 +35,7 @@ class BFOCategory(str, Enum):
     InformationEntity = 'information entity'
     Process = 'process'
     ProcessBoundary = 'process boundary'
+    TemporalRegion = 'temporal region'
 
 
 CATEGORY_IRI: dict[str, str] = {
@@ -53,6 +54,7 @@ CATEGORY_IRI: dict[str, str] = {
     'information entity': 'http://purl.obolibrary.org/obo/BFO_0000031',
     'process': 'http://purl.obolibrary.org/obo/BFO_0000015',
     'process boundary': 'http://purl.obolibrary.org/obo/BFO_0000035',
+    'temporal region': 'http://purl.obolibrary.org/obo/BFO_0000008',
 }
 
 CATEGORY_GLOSS: dict[str, str] = {
@@ -71,6 +73,7 @@ CATEGORY_GLOSS: dict[str, str] = {
     'information entity': 'Information: a datum, a specification, a classification result, a scale, a plan specification.',
     'process': 'Something that happens and unfolds over time; it has temporal parts.',
     'process boundary': 'The instantaneous start or end of a process.',
+    'temporal region': 'A stretch or point of time over which processes unfold: an operative time, a hospital stay, a follow-up period. Not the process that happens in it.',
 }
 
 # The BFO subsumption tree over the categories. Every extracted term is
@@ -91,6 +94,7 @@ CATEGORY_PARENT: dict[str, str | None] = {
     'information entity': 'continuant',
     'process': 'occurrent',
     'process boundary': 'occurrent',
+    'temporal region': 'occurrent',
 }
 
 # Coarse categories are legitimate answers, not failures: a model unsure
@@ -135,10 +139,16 @@ def is_refinement_of(fine: str, coarse: str) -> bool:
 # ── Grounding vocabularies, one per category ──────────────────────────────
 # label -> IRI, for terms that already exist in MILD/WONT.
 GROUNDING: dict[str, dict[str, str]] = {
+    'occurrent': {
+        'spatiotemporal region': 'http://purl.obolibrary.org/obo/BFO_0000011',
+    },
     'realizable entity': {
         'treatment plan': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120090',
     },
     'material entity': {
+        'fiat object part': 'http://purl.obolibrary.org/obo/BFO_0000024',
+        'object aggregate': 'http://purl.obolibrary.org/obo/BFO_0000027',
+        'object': 'http://purl.obolibrary.org/obo/BFO_0000030',
         'Developed material disease entity': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120001',
         'unknown-disorder disease': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120007',
         'genetic variant': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120009',
@@ -363,7 +373,20 @@ GROUNDING: dict[str, dict[str, str]] = {
         'pathogen with wound infecting tendency': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120019',
         'Necrosis': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120020',
     },
+    'immaterial entity': {
+        'spatial region': 'http://purl.obolibrary.org/obo/BFO_0000006',
+        'two-dimensional spatial region': 'http://purl.obolibrary.org/obo/BFO_0000009',
+        'zero-dimensional spatial region': 'http://purl.obolibrary.org/obo/BFO_0000018',
+        'one-dimensional spatial region': 'http://purl.obolibrary.org/obo/BFO_0000026',
+        'three-dimensional spatial region': 'http://purl.obolibrary.org/obo/BFO_0000028',
+        'site': 'http://purl.obolibrary.org/obo/BFO_0000029',
+        'continuant fiat boundary': 'http://purl.obolibrary.org/obo/BFO_0000140',
+        'fiat line': 'http://purl.obolibrary.org/obo/BFO_0000142',
+        'fiat surface': 'http://purl.obolibrary.org/obo/BFO_0000146',
+        'fiat point': 'http://purl.obolibrary.org/obo/BFO_0000147',
+    },
     'quality': {
+        'relational quality': 'http://purl.obolibrary.org/obo/BFO_0000145',
         'Redness': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000257',
         'Thread size': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000315',
         'Thread size 0': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000316',
@@ -534,6 +557,7 @@ GROUNDING: dict[str, dict[str, str]] = {
         'Wound classification result': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_120017',
     },
     'process': {
+        'history': 'http://purl.obolibrary.org/obo/BFO_0000182',
         'intended disorder elimination process': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120011',
         'predisposition realizing disorder development process': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120012',
         'disorder development process': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120021',
@@ -651,6 +675,12 @@ GROUNDING: dict[str, dict[str, str]] = {
     'process boundary': {
         'threshold crossing event': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120031',
     },
+    'temporal region': {
+        'one-dimensional temporal region': 'http://purl.obolibrary.org/obo/BFO_0000038',
+        'zero-dimensional temporal region': 'http://purl.obolibrary.org/obo/BFO_0000148',
+        'temporal interval': 'http://purl.obolibrary.org/obo/BFO_0000202',
+        'temporal instant': 'http://purl.obolibrary.org/obo/BFO_0000203',
+    },
 }
 
 # label -> IAO_0000115 definition, for prompt construction.
@@ -727,6 +757,8 @@ DEFINITIONS: dict[str, str] = {
     'Wound complication': 'A material complication disease entity that has as part a wound complication disorder.',
     'Wound complication disorder': "A pathological disorder that is the output of a process in the course of a wound: the disorder-level counterpart of a wound complication (MILD_120053's pattern). Wound dehiscence is one; the disorders of a surgical site infection are others.",
     'pathogen with wound infecting tendency': 'A pathogen that bears a wound infecting tendency.',
+    'continuant fiat boundary': 'b is a continuant fiat boundary = Def. b is an immaterial entity that is of zero, one or two dimensions and does not include a spatial region as part. (axiom label in BFO2 Reference: [029-001])',
+    'relational quality': 'b is a relational quality = Def. for some independent continuants c, d and for some time t: b quality_of c at t & b quality_of d at t. (axiom label in BFO2 Reference: [057-001])',
     'degree of wound pain': 'A quality that inheres in a patient, that is the extent of the pain that patient feels, and that is causally influenced by a wound.',
     'degree of maceration': 'A quality of a wound edge that is the extent to which its tissue has been softened by prolonged exposure to moisture.',
     'macerated': 'A degree of maceration that qualifies its bearer as macerated.',
@@ -848,6 +880,7 @@ class RelationType(str, Enum):
     HAS_ROLE = 'has role'
     HAS_SPECIFIED_INPUT = 'has specified input'
     HAS_SPECIFIED_OUTPUT = 'has specified output'
+    HAS_TENDENCY = 'has tendency'
     IMMEDIATELY_CAUSALLY_DOWNSTREAM_OF = 'immediately causally downstream of'
     INHERES_IN = 'inheres in'
     IS_ABOUT = 'is about'
@@ -878,6 +911,7 @@ RELATION_IRI: dict[str, str] = {
     RelationType.HAS_ROLE.value: 'http://purl.obolibrary.org/obo/RO_0000087',
     RelationType.HAS_SPECIFIED_INPUT.value: 'http://purl.obolibrary.org/obo/OBI_0000293',
     RelationType.HAS_SPECIFIED_OUTPUT.value: 'http://purl.obolibrary.org/obo/OBI_0000299',
+    RelationType.HAS_TENDENCY.value: 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120101',
     RelationType.IMMEDIATELY_CAUSALLY_DOWNSTREAM_OF.value: 'http://purl.obolibrary.org/obo/RO_0002405',
     RelationType.INHERES_IN.value: 'http://purl.obolibrary.org/obo/BFO_0000197',
     RelationType.IS_ABOUT.value: 'http://purl.obolibrary.org/obo/IAO_0000136',
@@ -912,7 +946,7 @@ RELATION_DOMAINS: dict[str, set[tuple[str, str]]] = {
         ('process', 'process boundary'),
     },
     RelationType.HAS_DISPOSITION.value: {
-        ('material entity', 'tendency'),
+        ('material entity', 'disposition'),
     },
     RelationType.HAS_FUNCTION.value: {
         ('material entity', 'function'),
@@ -948,6 +982,9 @@ RELATION_DOMAINS: dict[str, set[tuple[str, str]]] = {
     RelationType.HAS_SPECIFIED_OUTPUT.value: {
         ('process', 'information entity'),
     },
+    RelationType.HAS_TENDENCY.value: {
+        ('material entity', 'tendency'),
+    },
     RelationType.IMMEDIATELY_CAUSALLY_DOWNSTREAM_OF.value: {
         ('process', 'process'),
     },
@@ -970,7 +1007,7 @@ RELATION_DOMAINS: dict[str, set[tuple[str, str]]] = {
         ('information entity', 'process'),
     },
     RelationType.OCCUPIES_TEMPORAL_REGION.value: {
-        ('process boundary', 'occurrent'),
+        ('process boundary', 'temporal region'),
     },
     RelationType.OUTPUT_OF.value: {
         ('material entity', 'process'),

@@ -25,11 +25,17 @@ from wound_ontology.store.concept_store import records_of
 # from co-occurrence, not from anyone asserting the subsumption.
 
 SOURCE_CURATED = "curated"
+SOURCE_PLACED = "placed"
 SOURCE_TEXT = "text"
 SOURCE_FCA = "fca"
 
+# `placed` (2026-10-02): an extracted term put under an existing WONT/MILD
+# class by the placement step, read by Claude and kept by the curator's review
+# (rule 59). Checked twice, so above what one abstract implied; not authored,
+# so below the curated ontology itself.
 SOURCE_RANK: dict[str, int] = {
-    SOURCE_CURATED: 3,
+    SOURCE_CURATED: 4,
+    SOURCE_PLACED: 3,
     SOURCE_TEXT: 2,
     SOURCE_FCA: 1,
 }
@@ -366,7 +372,8 @@ class BaseHierarchy(ABC):
 
     # ── Public methods ─────────────────────────────────────────────────────────
 
-    def get_data(self, store, curated=None, fca=(), reconcile_categories=None) -> None:
+    def get_data(self, store, curated=None, fca=(), reconcile_categories=None,
+                 placed=()) -> None:
         """Populate the hierarchy by reading its sources. Rebuilds from scratch.
 
         This is a *reader*, not a merge point. Each source keeps its own identity
@@ -379,6 +386,9 @@ class BaseHierarchy(ABC):
                   from WONT and MILD. Stamped `curated`.
         fca     – iterable of accepted lattice slices, each a sequence of
                   (child, parent) pairs. Stamped `fca`.
+        placed  – (term, class label) pairs the placement step put under an
+                  existing WONT/MILD class and the review kept
+                  (`TermMappingAndGate.placements()`). Stamped `placed`.
         reconcile_categories
                 – callable(categories) -> category | None, deciding which single
                   BFO category a term typed several ways actually gets. Pass
@@ -517,10 +527,14 @@ class BaseHierarchy(ABC):
                       SOURCE_CURATED)
         from_curated = len(edges) - from_store
 
+        for child, parent in placed or ():
+            _note((smart_title(str(child)), smart_title(str(parent))), SOURCE_PLACED)
+        from_placed = len(edges) - from_store - from_curated
+
         for accepted in fca or ():
             for child, parent in accepted:
                 _note((smart_title(str(child)), smart_title(str(parent))), SOURCE_FCA)
-        from_fca = len(edges) - from_store - from_curated
+        from_fca = len(edges) - from_store - from_curated - from_placed
 
         if not edges:
             self._df = pd.DataFrame(dtype=float)
@@ -545,9 +559,10 @@ class BaseHierarchy(ABC):
         # which is the point of rebuilding rather than merging.
         self._prov = dict(edge_source)
         counts = {src: sum(1 for v in self._prov.values() if v == src)
-                  for src in (SOURCE_CURATED, SOURCE_TEXT, SOURCE_FCA)}
+                  for src in (SOURCE_CURATED, SOURCE_PLACED, SOURCE_TEXT, SOURCE_FCA)}
         print(f"[{self.__class__.__name__}] {len(self._prov)} edges from "
-              f"{from_store} store + {from_curated} curated + {from_fca} accepted-FCA "
+              f"{from_store} store + {from_curated} curated + {from_placed} placed + "
+              f"{from_fca} accepted-FCA "
               f"assertions — after rank: "
               + ", ".join(f"{n} {src}" for src, n in counts.items() if n))
 

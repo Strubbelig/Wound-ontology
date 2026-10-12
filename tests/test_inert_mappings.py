@@ -36,17 +36,21 @@ def _with(p, data):
     return p
 
 
-def test_a_case_only_entry_is_inert(pipeline):
+def test_a_case_only_entry_is_not_inert_once_the_store_stops_title_casing(pipeline):
+    """Rule 51 (2026-09-27): the view keeps the spelling pass 0 elected and
+    title-cases nothing, so `Healing -> healing` DOES change a name now -- the
+    prune's own docstring predicted it: were the store to stop title-casing,
+    these entries would matter again."""
     p = _with(pipeline, {"Healing": "healing"})
-    assert p.prune_inert_mappings(dry_run=True)["inert"] == 1
+    assert p.prune_inert_mappings(dry_run=True)["inert"] == 0
 
 
-def test_a_plural_entry_is_inert_now_that_the_store_singularises(pipeline):
-    """It was not, until 2026-09-23. The prune reads the store's own rule, so
-    when the rule moved, the answer moved with it — which is the whole reason it
-    is not modelled here."""
+def test_a_plural_entry_is_not_inert_either(pipeline):
+    """The view does not singularise; ingestion and pass 0 record the singular
+    as a spelling. An entry `patients -> patient` is the only thing that would
+    change this name, so it is doing work."""
     p = _with(pipeline, {"patients": "patient"})
-    assert p.prune_inert_mappings(dry_run=True)["inert"] == 1
+    assert p.prune_inert_mappings(dry_run=True)["inert"] == 0
 
 
 def test_a_punctuation_entry_is_not_inert(pipeline):
@@ -68,13 +72,14 @@ def test_dry_run_keeps_the_entries(pipeline):
 
 
 def test_applying_it_removes_exactly_the_inert_ones(pipeline):
-    p = _with(pipeline, {"Healing": "healing",                 # case: inert
-                         "patients": "patient",                # plural: inert now
-                         "Povidone Iodine": "Povidone-iodine", # punctuation: NOT
-                         "wound pain": "painful wound"})       # content: NOT
+    p = _with(pipeline, {"Material Entity": "material entity",  # category: inert
+                         "Healing": "healing",                  # case: NOT, since rule 51
+                         "Povidone Iodine": "Povidone-iodine",  # punctuation: NOT
+                         "wound pain": "painful wound"})        # content: NOT
     rep = p.prune_inert_mappings(dry_run=False)
-    assert rep == {"inert": 2, "kept": 2}
-    assert p.term_mapper.mapping == {"Povidone Iodine": "Povidone-iodine",
+    assert rep == {"inert": 1, "kept": 3}
+    assert p.term_mapper.mapping == {"Healing": "healing",
+                                     "Povidone Iodine": "Povidone-iodine",
                                      "wound pain": "painful wound"}
 
 

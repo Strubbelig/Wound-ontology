@@ -64,6 +64,29 @@ The record
         "Wound care process": {"pass1": {"verdict": "different", "reason": "..."}},
      }}
 
+Since 2026-09-27 (rule 51) the record also holds what used to be rewritten
+into the concept store, which now keeps only what each abstract said::
+
+    {"spelling":  {"to": "cut", "by": "pass0", "when": "..."},   # an ALIAS record
+     "rejected":  {"status": "rejected", "by": "blocklist", "note": "...", "when": "..."},
+     "relations": {"is_a: Neoplasm": {"status": "rejected", "by": "...", ...}},
+     "senses":    {"process": "Necrosis Process", "material entity": "Necrosis Material Entity"}}
+
+Since 2026-09-29 (rule 57) it also holds the BFO category a person decided the
+term names, when the abstracts disagree about it::
+
+    {"category":  {"verdict": "material entity", "source": "head rule: injury",
+                   "by": "curator", "note": "...", "when": "..."}}
+
+`source` is `term ruling` (the term itself was judged) or `head rule: <word>`
+(its head word was); a term ruling outranks a head rule and is never
+overwritten by one.
+
+A record with `spelling` is an ALIAS: the string is written differently now,
+and the record says to what, by whom and when. It carries nothing else --
+`apply_renames` moves every decision to the new spelling and leaves only the
+alias behind -- and every view that enumerates TERMS skips it.
+
 `pairs` is keyed by CANONICAL, not flattened onto the term, because a term is
 judged against more than one canonical across builds -- 192 of them in the
 2026-09-24 file. Refusing `materials -> material entity` must not stop
@@ -113,6 +136,17 @@ GATE_VERDICTS = ("in", "out")
 #: Where a gate verdict can come from, strongest first. Rule 28: an explicit
 #: decision outranks a heuristic, and a model is a heuristic.
 GATE_SOURCES = ("curator", "pass2", "pass1", "rule")
+
+#: The alias section: this string now reads as another (rule 51).
+SPELLING = "spelling"
+
+#: Sections that are decisions about a term. An alias carries none of them.
+DECISION_SECTIONS = ("to", "pairs", "gate", "gate_contested", "rejected",
+                     "relations", "senses", "category", "retired")
+
+#: The category section (rule 57), and what outranks what inside it.
+CATEGORY = "category"
+TERM_RULING = "term ruling"
 
 
 def _now() -> str:
@@ -199,6 +233,9 @@ class TermMappingAndGate:
             if not isinstance(value, dict):                      # v1: flat
                 records[term] = {"to": value, "pairs": {}}
                 continue
+            if SPELLING in value:                                # an alias: nothing to migrate
+                records[term] = dict(value)
+                continue
             rec = dict(value)
             rec.setdefault("to", None)
             pairs = {c: dict(j) for c, j in (rec.get("pairs") or {}).items()}
@@ -231,7 +268,13 @@ class TermMappingAndGate:
         return self._records
 
     def record(self, term: str) -> dict:
-        """The record for `term`, created empty if there is none."""
+        """The record for `term`, created empty if there is none.
+
+        A string that is now written differently (an alias, rule 51) hands
+        back the record of its current spelling: a decision written onto the
+        alias would sit where no view reads it.
+        """
+        term = self.resolve(term)
         rec = self._records.setdefault(term, {"to": None, "pairs": {}})
         rec.setdefault("pairs", {})
         return rec
@@ -247,6 +290,66 @@ class TermMappingAndGate:
     def is_refused(self, term: str, canonical: str) -> dict | None:
         """The refusal standing against this exact pair, if there is one."""
         return self.peek(term, canonical).get("refused")
+
+    # ── Spelling: how a string is written now (rule 51) ──────────────────────
+
+    def is_alias(self, term: str) -> bool:
+        """True when `term` is a string that is now written differently."""
+        return SPELLING in self._records.get(term, {})
+
+    def aliases(self) -> dict[str, dict]:
+        """`{old spelling: its spelling section}`, every alias on record."""
+        return {t: r[SPELLING] for t, r in self._records.items() if SPELLING in r}
+
+    def resolve(self, term: str) -> str:
+        """The spelling `term` is written as now: its aliases followed to the end.
+
+        A cycle cannot be written by `spell`, but a file edited by hand could
+        hold one, and following it forever is not an answer: it raises.
+        """
+        seen: set[str] = set()
+        while True:
+            alias = self._records.get(term, {}).get(SPELLING)
+            if alias is None:
+                return term
+            if term in seen:
+                raise RuntimeError(f"spelling cycle through {sorted(seen)[:5]}")
+            seen.add(term)
+            term = alias["to"]
+
+    def spell(self, old: str, new: str, *, by: str,
+              evidence: dict | None = None, when: str | None = None) -> bool:
+        """Record that `old` is now written `new`. Returns whether anything changed.
+
+        Only the spelling is written. An `old` that still carries decisions is
+        refused: they would sit on a string no view reads any more, which is
+        how a decision gets lost without anyone deleting it. `apply_renames`
+        is the path that moves decisions AND leaves the alias.
+
+        A second spelling of the same string keeps the first under `history`;
+        the same spelling twice is one record.
+        """
+        if old == new:
+            return False
+        if self.resolve(new) == old:
+            raise ValueError(f"spelling {old!r} -> {new!r} would close a cycle")
+        rec = self._records.get(old)
+        if rec is not None:
+            held = [s for s in DECISION_SECTIONS if rec.get(s)]
+            if held:
+                raise ValueError(f"{old!r} still carries {held}; move them with "
+                                 f"apply_renames, not spell")
+        prior = (rec or {}).get(SPELLING)
+        if prior is not None and prior.get("to") == new:
+            return False
+        entry = {"to": new, "by": by, "when": when or _now()}
+        if evidence:
+            entry["evidence"] = evidence
+        if prior is not None:
+            entry["history"] = prior.pop("history", []) + [prior]
+        self._records[old] = {SPELLING: entry}
+        self._dirty()
+        return True
 
     # ── Read access: the live mapping ────────────────────────────────────────
 
@@ -345,6 +448,27 @@ class TermMappingAndGate:
                 })
         return sorted(rows, key=lambda r: (r["store term"], r["ontology class"]))
 
+    def placements(self) -> list[tuple[str, str]]:
+        """`(term, class label)`: every term placed under an existing class.
+
+        The placement step (rule 59) records its kept superclasses on the pair
+        as `placement: {verdict: "narrower", ...}`. A pair counts unless it is
+        refused, and only while the term is in scope and still its own name (a
+        term mapped onto a class is that class, not beneath it). This is the
+        `placed` source of the class hierarchy (`BaseHierarchy.get_data`).
+        """
+        out = []
+        for term, rec in self._records.items():
+            if SPELLING in rec or rec.get("to"):
+                continue
+            for canonical, j in rec.get("pairs", {}).items():
+                if (j.get("placement") or {}).get("verdict") != "narrower" or j.get("refused"):
+                    continue
+                if self.effective_gate_verdict(term)[0] == "out":
+                    continue
+                out.append((term, canonical))
+        return sorted(out)
+
     def disagreements(self) -> list[dict]:
         """Pairs where the two passes did not say the same thing.
 
@@ -364,6 +488,39 @@ class TermMappingAndGate:
                                  "pass 2 reason": j["pass2"].get("reason", ""),
                                  "mapped": rec.get("to") == canonical})
         return sorted(rows, key=lambda r: (r["term"], r["canonical"]))
+
+    # ── Read access: the category (rule 57) ──────────────────────────────────
+
+    def categories(self) -> dict[str, dict]:
+        """`{term: category section}` for every term whose category was decided."""
+        return {t: r[CATEGORY] for t, r in self._records.items()
+                if isinstance(r.get(CATEGORY), dict) and SPELLING not in r}
+
+    def set_category(self, term: str, verdict: str, *, source: str,
+                     by: str = "curator", note: str = "") -> str:
+        """Decide the BFO category `term` names. Does not save.
+
+        Returns what happened: `set`, `same` (already so), or `kept` -- a term
+        ruling stands and a head rule does not overwrite it. A verdict that is
+        not a declared category raises: a category is declared, never matched
+        (rules 20, 25), and a typo here would type thousands of mentions.
+        """
+        from wound_ontology.llm.category_vocab import declared_category
+        cat = declared_category(verdict)
+        if cat is None:
+            raise ValueError(f"{term!r}: {verdict!r} is not a BFO category")
+        rec = self.record(term)
+        standing = rec.get(CATEGORY)
+        if standing and standing.get("verdict") == cat and standing.get("source") == source:
+            return "same"
+        if standing and standing.get("source") == TERM_RULING and source != TERM_RULING:
+            return "kept"
+        entry = {"verdict": cat, "source": source, "by": by, "note": note, "when": _now()}
+        if standing:
+            entry["history"] = standing.pop("history", []) + [standing]
+        rec[CATEGORY] = entry
+        self._dirty()
+        return "set"
 
     # ── Read access: the gate ────────────────────────────────────────────────
 
@@ -756,6 +913,28 @@ class TermMappingAndGate:
             gate.pop(source, None)
             report["gate conflicts"].append(
                 (term, source, standing.get("verdict"), verdict.get("verdict")))
+        # Rule 51's sections: a store rejection, relation verdicts and senses
+        # travel with the record like everything else, first-come on a tie.
+        if other.get("rejected") and not keep.get("rejected"):
+            keep["rejected"] = other["rejected"]
+        for triple, verdict in (other.get("relations") or {}).items():
+            keep.setdefault("relations", {}).setdefault(triple, verdict)
+        for category, label in (other.get("senses") or {}).items():
+            keep.setdefault("senses", {}).setdefault(category, label)
+        # A decided category travels too (rule 57). Two spellings decided
+        # differently is a disagreement: a term ruling beats a head rule, and
+        # two of a kind keep the first and are reported, never chosen quietly.
+        mine, theirs = keep.get(CATEGORY), other.get(CATEGORY)
+        if theirs and not mine:
+            keep[CATEGORY] = theirs
+        elif mine and theirs and mine.get("verdict") != theirs.get("verdict"):
+            if theirs.get("source") == TERM_RULING and mine.get("source") != TERM_RULING:
+                keep[CATEGORY] = theirs
+            report.setdefault("category conflicts", []).append(
+                (term, mine.get("verdict"), theirs.get("verdict")))
+        # Withdrawn verdicts are history (2026-09-28): a merge keeps both sides'.
+        if other.get("gate_withdrawn"):
+            keep["gate_withdrawn"] = keep.get("gate_withdrawn", []) + other["gate_withdrawn"]
         if other.get("to") and keep.get("to") and other["to"] != keep["to"]:
             # Two spellings of one term that point at DIFFERENT canonicals is a
             # real disagreement, not a spelling question. Both targets survive
@@ -793,7 +972,7 @@ class TermMappingAndGate:
                         "pair keys renamed": 0, "records merged": 0,
                         "identities dropped": 0, "records deleted": 0,
                         "target conflicts": [], "gate conflicts": [],
-                        "chains": 0}
+                        "category conflicts": [], "chains": 0}
         if not renames:
             return report
 
@@ -801,11 +980,41 @@ class TermMappingAndGate:
             return renames.get(term, term)
 
         merged: dict[str, dict] = {}
+        aliases: dict[str, dict] = {}
+        reversed_: dict[str, dict] = {}
         for term in sorted(self._records):
             rec = self._records[term]
+            if SPELLING in rec:
+                # An alias is a spelling decision already taken. It stays, and
+                # where its target is renamed now, it follows so the chain
+                # still ends at the current spelling.
+                entry = rec[SPELLING]
+                if look(entry["to"]) == term:
+                    # The rename sends the current spelling back onto this very
+                    # string: a spelling decision REVERSED (curator, 2026-09-28:
+                    # -ical, not -ic). The alias gives way -- kept as history on
+                    # the restored record -- instead of pointing at itself.
+                    reversed_[term] = dict(entry)
+                    report["spellings reversed"] = report.get("spellings reversed", 0) + 1
+                    continue
+                if look(entry["to"]) != entry["to"]:
+                    entry["to"] = look(entry["to"])
+                aliases[term] = rec
+                continue
             new_term = look(term)
             if new_term != term:
                 report["keys renamed"] += 1
+                # The old spelling stays on record as an alias (rule 51):
+                # the concept store still holds it as the abstracts wrote it.
+                aliases[term] = {SPELLING: {"to": new_term, "by": by, "when": _now()}}
+            if rec.get("relations"):
+                renamed_rel: dict[str, dict] = {}
+                for triple, verdict in rec["relations"].items():
+                    if ":" in triple:
+                        pred, tgt = triple.split(":", 1)
+                        triple = f"{pred.strip()}: {look(tgt.strip())}"
+                    renamed_rel.setdefault(triple, verdict)
+                rec["relations"] = renamed_rel
             target = rec.get("to")
             if target:
                 new_target = look(target)
@@ -830,6 +1039,21 @@ class TermMappingAndGate:
             else:
                 merged[new_term] = rec
 
+        # Most renamed strings carry no decision at all -- they are store names
+        # nobody has mapped or gated -- and they need the alias just as much:
+        # it is the only record that the abstract's spelling now reads as
+        # another.
+        for old, new in renames.items():
+            if old == new:
+                continue
+            standing = aliases.get(old, {}).get(SPELLING)
+            if standing is None:
+                aliases[old] = {SPELLING: {"to": new, "by": by, "when": _now()}}
+            elif standing["to"] != new:
+                prior = dict(standing)
+                aliases[old] = {SPELLING: {"to": new, "by": by, "when": _now(),
+                                           "history": prior.pop("history", []) + [prior]}}
+
         # The curator, 2026-09-26: *you can delete the sole spelling mappings
         # from the termmapping dict -- after normalising they are identity
         # mappings.* They are, and an identity decides nothing: rule 37 keeps
@@ -848,12 +1072,40 @@ class TermMappingAndGate:
             rec["pairs"] = {c: j for c, j in (rec.get("pairs") or {}).items()
                             if c != term}
             report["identities dropped"] += 1
-            if not rec["pairs"] and not rec.get("gate"):
+            if not rec["pairs"] and not any(rec.get(s) for s in
+                                            ("gate", "rejected", "relations", "senses",
+                                             CATEGORY, "gate_withdrawn",
+                                             "spelling_reversed")):
                 empty.append(term)
         for term in empty:
             del merged[term]
         report["records deleted"] = len(empty)
 
+        for term, entry in reversed_.items():
+            rec = merged.setdefault(term, {})
+            rec["spelling_reversed"] = rec.get("spelling_reversed", []) + [entry]
+
+        clash = sorted(set(aliases) & set(merged))
+        if clash:
+            # A string that is both renamed away and renamed onto: the alias
+            # would hide the decisions now filed under it.
+            raise RuntimeError(f"[mapping] {len(clash)} string(s) are renamed away "
+                               f"and onto at once: {clash[:5]}")
+        # A sense label (a curator's two-senses ruling names the sense terms)
+        # is a term string too: left in the old spelling, the view goes on
+        # writing it after the rename (`biopsy` -> `biopsy specimen`, found
+        # 2026-10-02 when pass 0 read back a name it had renamed on 09-27).
+        report["sense labels renamed"] = 0
+        for rec in merged.values():
+            senses = rec.get("senses")
+            if not senses:
+                continue
+            for category, label in list(senses.items()):
+                if look(label) != label:
+                    senses[category] = look(label)
+                    report["sense labels renamed"] += 1
+        merged.update(aliases)
+        report["aliases"] = len(aliases)
         self._records = merged
         self._dirty()
         # Renaming does not CREATE chains, it reveals ones the spelling hid:

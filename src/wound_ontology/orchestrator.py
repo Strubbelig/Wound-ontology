@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import os
 import re
+from collections import Counter
 import pandas as pd
 from wound_ontology.utils.string_utils import smart_title
 from wound_ontology.hierarchies.base_hierarchy import SOURCE_FCA as _SOURCE_FCA
@@ -70,6 +71,11 @@ def _slugify(name: str) -> str:
     return slug or "unnamed"
 
 
+
+#: A placed term becomes a class only when this many abstracts mention it
+#: (curator, 2026-10-02). Below it the placement stays on record, unbuilt.
+PLACEMENT_MIN_ABSTRACTS = 2
+
 class Orchestrator:
     def __init__(
         self,
@@ -95,12 +101,16 @@ class Orchestrator:
 
         self.allowed_predicates = allowed_predicates
         self.pubcon        = PubmedConnector(self.dm, entrez_email)
-        self.store         = ConceptStore(self.dm, "concept_store")
         # The gate is built before the cleaner because the cleaner's Blocker
         # consults it: a curator's scope verdict outranks the lists it was
-        # imported from.
+        # imported from. And before the store, because every decision about a
+        # term lives in it and the store is read THROUGH it (rule 51).
         _term_mapping      = TermMappingAndGate(self.dm, file_name="term_mapping")
+        self.store         = ConceptStore(self.dm, "concept_store", terms=_term_mapping)
         self.cleaner       = StoreCleaner(self.allowed_predicates, gate=_term_mapping)
+        # Scope is read live from the gate, through the same Blocker the
+        # cleaner and the lists use (rule 51; merged 2026-09-28).
+        self.store.scope   = self.cleaner._is_blocked
         self.class_hier    = ClassHierarchy(self.dm)
         self.mere_hier     = MereologicalHierarchy(self.dm)
         self.context_matrix = ContextMatrix(self.dm, "context_matrix")
@@ -158,9 +168,11 @@ class Orchestrator:
     def _collect_store_terms_with_freq(self, store=None) -> dict[str, int]:
         store = store or self.store
         freq: dict[str, int] = {}
-        for pmid_data in store.dict.values():
+        # The terms as they are WRITTEN, before the mapping merges them: the
+        # build proposes those merges (rule 51's view, `mapped=False`).
+        for _, entities in store.view(mapped=False, include_rejected=True):
             seen_in_pmid: set[str] = set()
-            for entity, attrs in pmid_data.get("entities", {}).items():
+            for entity, attrs in entities.items():
                 if entity not in seen_in_pmid:
                     freq[entity] = freq.get(entity, 0) + 1
                     seen_in_pmid.add(entity)
@@ -391,7 +403,18 @@ class Orchestrator:
         from wound_ontology.utils.string_utils import smart_title
 
         typings: dict[str, set[str]] = {}
-        for _, entity, triple, value in self.store.assertions():
+        # UNMAPPED: the typing belongs to the term as written. Read through the
+        # mapping, a term mapped onto another has no typing of its own, so the
+        # category guard -- which asks exactly about such pairs -- saw
+        # `Necrosis Process` as untyped, allowed `Necrosis Process -> Necrosis`,
+        # and the accepted mapping then hid the evidence that should have
+        # refused it (2026-09-28, the rebuild after rule 51 made the store a view).
+        def _unmapped():
+            for key, ents in self.store.view(mapped=False):
+                for entity, attrs in ents.items():
+                    for triple, value in attrs.items():
+                        yield key, entity, triple, value
+        for _, entity, triple, value in _unmapped():
             if value != 1.0 or ":" not in triple:
                 continue
             pred, target = triple.split(":", 1)
@@ -539,10 +562,8 @@ class Orchestrator:
 
         freq: Counter = Counter()
         targets: set[str] = set()
-        for key, rec in self.store.dict.items():
-            if key == self.store.DECISIONS or not isinstance(rec, dict):
-                continue
-            for name, attrs in rec.get("entities", {}).items():
+        for _, entities in self.store.view(mapped=False, include_rejected=True):
+            for name, attrs in entities.items():
                 freq[name] += 1
                 for triple in attrs:
                     if ":" in triple:
@@ -556,6 +577,8 @@ class Orchestrator:
         # put back the next time the mapping is applied.
         others: set[str] = set(targets)
         for term, rec in gt.records.items():
+            if gt.is_alias(term):
+                continue                    # a spelling already decided (rule 51)
             others.add(term)
             if rec.get("to"):
                 others.add(rec["to"])
@@ -581,8 +604,9 @@ class Orchestrator:
 
         # The store first: it is the record, and the mapping is a view of what
         # is still to be decided about it.
-        report["store"] = self.store.apply_renames(renames, by="pass0")
-        report["mapping"] = gt.apply_renames(renames, by="pass0")
+        # One write (rule 51): the term dict records every rename as an alias
+        # and moves the decisions; the evidence is not touched.
+        report["store"] = report["mapping"] = self.store.apply_renames(renames, by="pass0")
         if not quiet:
             st, mp = report["store"], report["mapping"]
             print(f"[pass0] store: {st['renamed']:,} name(s) renamed, "
@@ -617,9 +641,13 @@ class Orchestrator:
         # rest of the pipeline still sees in the old spelling, and it would
         # only show up as a mysterious duplicate class weeks later.
         fresh = Orchestrator()
-        left_in_store = {n for n in fresh.store.entities_raw() if n in renames}
-        left_in_mapping = {t for t in fresh.term_mapper._term_mapping.records
-                           if t in renames}
+        left_in_store = {n for _, ents in fresh.store.view(mapped=False, include_rejected=True)
+                         for e, attrs in ents.items()
+                         for n in [e, *(t.split(":", 1)[1].strip() for t in attrs if ":" in t)]
+                         if n in renames}
+        fresh_gt = fresh.term_mapper._term_mapping
+        left_in_mapping = {t for t in fresh_gt.records
+                           if t in renames and not fresh_gt.is_alias(t)}
         if left_in_store or left_in_mapping:
             raise RuntimeError(
                 f"[pass0] {len(left_in_store)} name(s) in the store and "
@@ -715,8 +743,7 @@ class Orchestrator:
         gated = self.cleaner.blocker
 
         freq: Counter = Counter()
-        for _, rec in self.store.dict.items():
-            ents = rec.get("entities", rec) if isinstance(rec, dict) else {}
+        for _, ents in self.store.view(mapped=False, include_rejected=True):
             for name in ents:
                 freq[name] += 1
 
@@ -784,15 +811,13 @@ class Orchestrator:
             return report
         verb = "would drop" if dry_run else "dropped"
         print(f"[Orchestrator] {verb} {len(inert):,} entr(ies) whose canonical is "
-              f"what the store's own title-casing produces anyway; {report['kept']:,} "
-              f"kept. Plural and punctuation entries are NOT among them — the "
-              f"store neither singularises nor keeps punctuation on its own.")
+              f"what the view calls the term anyway; {report['kept']:,} kept.")
         for t in inert[:5]:
             print(f"[Orchestrator]     {t!r} -> {mapping[t]!r} — both give "
                   f"{store_name(t)!r}")
         if not dry_run:
             self.term_mapper.withdraw(
-                *inert, reason="the store's own title-casing produces the canonical anyway")
+                *inert, reason="the view already gives the term this name")
         return report
 
     def _category_compatible_mapping(self, anchors: set[str]):
@@ -1062,7 +1087,40 @@ class Orchestrator:
         self.term_mapper.save()
         print(f"[Orchestrator] Anchor adjudication: {report.summary()}.")
 
-        withdrawn = [t for t, _, _, _ in report.refused + report.subsumption_candidates]
+        # A curator's verdict on the pair outranks pass 1 (rule 28). The report
+        # carries CACHED verdicts too, so without this every re-run withdrew
+        # again each pair the curator had put back over pass 1's objection --
+        # 75 of them on 2026-09-27, all from that day's contradiction queue.
+        gt = self.term_mapper._term_mapping
+        not_same = report.refused + report.subsumption_candidates
+        from wound_ontology.utils.string_utils import normalize_term as _norm
+
+        def ruled(t: str, c: str) -> bool:
+            # The curator's verdict may sit on the pair under the spelling it
+            # was given (`Angiogenesis process`) while the live mapping has
+            # since been re-spelled to the class label (`angiogenesis`), so
+            # the LIVE pair is asked too (2026-09-28: `bone infection ->
+            # Osteomyelitis` and `formation of blood vessel` were withdrawn
+            # over the curator's same_class that way).
+            live = gt.data.get(t)
+            if gt.peek(t, c).get("curator") or (live and gt.peek(t, live).get("curator")):
+                return True
+            keys = {_norm(c)} | ({_norm(live)} if live else set())
+            return any(_norm(k) in keys and (j.get("curator") or {}).get("verdict")
+                       for k, j in (gt.record(t).get("pairs") or {}).items())
+
+        def is_live(t: str, c: str) -> bool:
+            # Only the mapping pass 1 objected to is withdrawn: `withdraw`
+            # unmaps the TERM, and a term since mapped elsewhere must keep it.
+            live = gt.data.get(t)
+            return bool(live) and _norm(live) == _norm(c)
+
+        overruled = [(t, c) for t, c, _, _ in not_same if ruled(t, c)]
+        withdrawn = [t for t, c, _, _ in not_same if not ruled(t, c) and is_live(t, c)]
+        if overruled:
+            print(f"[Orchestrator] {len(overruled)} pair(s) pass 1 did not confirm "
+                  f"stay as they are: the curator ruled on them, and a ruling "
+                  f"outranks a pass.")
         if withdrawn:
             n = self.term_mapper.withdraw(
                 *withdrawn, reason="pass 1 did not confirm the two as the same class")
@@ -1270,9 +1328,46 @@ class Orchestrator:
         # itself by construction and left the reasoner to clean up: 42 of 48
         # quarantined edges were exactly that. Reconcile to the category MILD
         # says subsumes them all, and give no category edge where there is none.
+        # The `placed` source (rule 59, written by scripts/apply_placements.py):
+        # extracted terms under existing WONT/MILD classes, checked and kept.
+        placed = self.term_mapper._term_mapping.placements()
+        # Evidence cut (curator, 2026-10-02: 76% of the placed terms occur in
+        # one abstract -- "wound exploration", "wound scanning" -- "so many
+        # nonsense terms"; answer: ">=2 abstracts"). A term below the cut keeps
+        # its placement in the term dict, it just does not become a class.
+        seen = {}
+        for key, ents in self.store.view():
+            for name in ents:
+                seen.setdefault(name, set()).add(key)
+        kept = [(t, c) for t, c in placed if len(seen.get(t, ())) >= PLACEMENT_MIN_ABSTRACTS]
+        print(f"[Orchestrator] {len(placed):,} placement edge(s) in the term dict; "
+              f"{len(kept):,} kept by the evidence cut (>= {PLACEMENT_MIN_ABSTRACTS} abstracts), "
+              f"{len(placed) - len(kept):,} below it (kept in the term dict, not built).")
+        placed = kept
+        # The module classes a placement hangs from need their own parents, or
+        # they float at the top (`planned process`): add the import modules'
+        # chains above exactly those classes, stamped curated like WONT/MILD.
+        if curated_label_sources:
+            from wound_ontology.hierarchies.curated_seed import module_ancestry
+            gtm = self.term_mapper._term_mapping
+            used = {((gtm.peek(t, c).get("placement") or {}).get("iri")) for t, c in placed} - {None}
+            chains = module_ancestry(used, curated_label_sources)
+            if len(chains):
+                predefined_df = pd.concat([predefined_df, chains], ignore_index=True).drop_duplicates()
+            print(f"[Orchestrator] module ancestry above {len(used):,} placement parent(s): "
+                  f"{len(chains):,} edge(s) added to the curated tier.")
+            # BFO is the top ontology: its whole tree, curated (2026-10-03, see
+            # curated_seed.bfo_edges). Before this, role sat under quality and
+            # disposition, function, realizable entity had no parent.
+            from wound_ontology.hierarchies.curated_seed import bfo_edges
+            bfo = bfo_edges(curated_label_sources)
+            predefined_df = pd.concat([predefined_df, bfo], ignore_index=True).drop_duplicates()
+            print(f"[Orchestrator] BFO: {len(bfo):,} edge(s) of BFO's own tree (and the two "
+                  f"non-BFO extraction categories) added to the curated tier.")
         self.class_hier.get_data(
             self.store, curated=predefined_df, fca=fca_slices,
             reconcile_categories=self.reasoner_gate.least_common_category,
+            placed=placed,
         )
         self.mere_hier.get_data(self.store)
 
@@ -1309,9 +1404,27 @@ class Orchestrator:
         batch_size: int = 10,
         commit_fca: bool = False,
         scale: bool = True,
+        min_support: int = 1,
+        inherit: str = "class_level",
+        unknown: str = "absent",
+        name: bool = True,
     ) -> None:
         """
         Build FCA matrix → concept lattice → FCAHierarchy.
+
+        inherit      – "class_level" (default) | "all" | "none": which of an
+                       ancestor's own attributes pass to its subclasses (rule
+                       65, see ContextMatrix.get_data). Chosen on the Wound
+                       subtree by scripts/fca_inheritance_compare.py: "all"
+                       and "class_level" proposed the same groupings, but under
+                       "all" each dragged in 20-52 descendants that state none
+                       of the shared attributes (1% of the grouping's cells
+                       their own, against 22%).
+        unknown      – "absent" (default, rule 65): a property no abstract
+                       states does not hold, for FCA; "both": the open-world
+                       dual build, certain vs. candidate concepts.
+        name         – False builds the lattice without naming its concepts
+                       (no model calls), e.g. to compare settings first.
 
         subtree_root – restrict entities to the subtree of this concept.
         hierarchy    – which hierarchy to use for subtree lookup (default: class_hier).
@@ -1363,12 +1476,16 @@ class Orchestrator:
         self.context_matrix.get_data(
             self.store, entities=entities, predicates=predicates,
             scale_hierarchy=hier if scale else None,
+            min_support=min_support,
+            inherit=inherit,
         )
-        self.context_matrix.nan_report()
+        if unknown != "absent":
+            self.context_matrix.nan_report()
 
         async def _internal():
-            self.lattice.get_data_and_run_fca()
-            await self.lattice.create_superclass_names(self.llm, batch_size=batch_size)
+            self.lattice.get_data_and_run_fca(unknown=unknown)
+            if name:
+                await self.lattice.create_superclass_names(self.llm, batch_size=batch_size)
 
         self._run_sync(_internal())
 
@@ -1556,16 +1673,104 @@ class Orchestrator:
         out = _Path(output_file) if output_file else (
             _Path(PROJECT_ROOT) / "output" / "owl" / "wont_extended.ttl"
         )
+        # Rule 66 (2026-10-03): only what was shown sound goes in.
+        #  * relations: the ones read as true of every instance, nothing else --
+        #    not the store's 26,372 and not the mereological hierarchy's text
+        #    part_of edges, which nobody read;
+        #  * subclass edges: curated and placed whole; a text edge only when its
+        #    child is named in >= PLACEMENT_MIN_ABSTRACTS abstracts (the cut of
+        #    rule 64, applied here to text as well).
+        import json as _json
+        read = _Path(PROJECT_ROOT) / "data" / "review" / "relation_universality_2026-10-02" / "result.json"
+        if not read.exists():
+            raise FileNotFoundError(f"{read} is missing: the WONT addition takes only read relations "
+                                    f"(rule 66); run scripts/compile_universality.py")
+        axioms = _json.loads(read.read_text(encoding="utf-8"))["axioms"]
+        # The reading was done on the names of its day; a later rename (rule 70:
+        # `ulcer` is now `Wound`) must reach it, or the export mints the old
+        # name as a class of its own. Every name goes through the store's
+        # resolver, the same one the view uses.
+        resolve = self.store.resolver(mapped=True)
+        relations = [(resolve(a["subject"])[1], a["predicate"], resolve(a["value"])[1]) for a in axioms]
+        renamed = sum(1 for a, r in zip(axioms, relations) if (a["subject"], a["value"]) != (r[0], r[2]))
+        if renamed:
+            print(f"[Orchestrator] {renamed} read relation(s) carry a name renamed since the reading; "
+                  f"exported under the current name")
+        named = {}
+        for key, ents in self.store.view():
+            for name in ents:
+                named.setdefault(smart_title(name), set()).add(key)
+        edges, cut = [], Counter()
+        for child in self.class_hier.df.index:
+            for parent in self.class_hier.parents_of(child):
+                if child == parent:
+                    continue
+                src = self.class_hier.source_of(child, parent) or "text"
+                if src == "text" and len(named.get(smart_title(child), ())) < PLACEMENT_MIN_ABSTRACTS:
+                    cut["text, child in < 2 abstracts"] += 1
+                    continue
+                if src == "fca" and not include_fca:
+                    cut["fca, not included"] += 1
+                    continue
+                edges.append((str(child), str(parent)))
+                cut[f"kept {src}"] += 1
+        print(f"[Orchestrator] WONT addition input: {len(relations)} read relation(s) (rule 66); "
+              f"subclass edges {dict(cut)}")
+        # Rule 71: persistent ids for minted classes. A renamed class keeps its
+        # id through its former spellings (the term dict's aliases).
+        from wound_ontology.owl.id_registry import IdRegistry
+        from wound_ontology.utils.normalise import normalise as _normalise
+        registry = IdRegistry(_Path(PROJECT_ROOT) / "data" / "registry" / "wont_ids.json",
+                              namespace="https://bioportal.bioontology.org/ontologies/WONT/")
+        tdict = self.term_mapper._term_mapping
+        live_keys = {_normalise(n).key for c, p in edges for n in (c, p)} | \
+                    {_normalise(n).key for s_, _p, t_ in relations for n in (s_, t_)}
+        former: dict[str, list[str]] = {}
+        for old in tdict.aliases():
+            now = tdict.resolve(old)
+            if now != old:
+                former.setdefault(_normalise(now).key, []).append(old)
+        from wound_ontology.owl.extend import IMPORT_SKIP, other_names
         report = extend_ground_truth(
             ground_truth=GROUND_TRUTH_TTL,
             output=out,
             class_hier=self.class_hier,
-            mere_hier=self.mere_hier,
-            store=self.store,
-            fca_hier=self.fca_hier if include_fca else None,
+            class_edges=edges,
+            relations=relations,
             touch_existing=touch_existing,
             lexicon=lexicon,
+            registry=registry,
+            # A former spelling counts only once it is no longer a name of its
+            # own in this build; otherwise two live classes would be merged.
+            former_names=lambda term: [f for f in former.get(_normalise(term).key, ())
+                                       if _normalise(f).key not in live_keys],
+            # Rule 74: a term no import defines is looked for under the class the
+            # term dict maps it onto (it IS that class), else under its former
+            # spellings (`sample from organism` was OBI's `specimen from organism`).
+            import_names=other_names(tdict),
+            import_skip=IMPORT_SKIP,
         )
+        print(f"[Orchestrator] found in an import under another name (rule 74): "
+              f"{ {t: f'{o} -> {i.rsplit(chr(47), 1)[-1]}' for t, (o, i) in sorted(report.resolved_other_name.items())} }")
+        registry.save(backup_dir=_Path(PROJECT_ROOT) / "data" / "backup" / "registry")
+        # The next free WONT id, for Protégé's new-entity counter (curator:
+        # "I'll reset Protégé every time").
+        import re as _re
+        used = [int(m.group(1)) for iri in registry.entries
+                for m in [_re.search(r"WONT_(\d+)$", iri)] if m]
+        from wound_ontology.owl.extend import next_free_id as _nfi
+        import rdflib as _rdflib
+        _gt = _rdflib.Graph(); _gt.parse(str(GROUND_TRUTH_TTL), format="turtle")
+        nxt = max([_nfi(_gt) - 1, *(u for u in used if u < 100000)]) + 1
+        free_file = out.parent / "NEXT_FREE_WONT_ID.txt"
+        free_file.write_text(f"WONT_{nxt:07d}\n", encoding="utf-8")
+        assert free_file.read_text(encoding="utf-8").strip() == f"WONT_{nxt:07d}"
+        print(f"[Orchestrator] next free WONT id: WONT_{nxt:07d} (set Protégé's counter to {nxt}; "
+              f"written to {free_file.name})")
+        ch = registry.changes
+        print(f"[Orchestrator] ids (rule 71): {ch['reused']:,} kept, {ch['issued']:,} issued, "
+              f"{ch['renamed']:,} under a new name, {len(ch['merged'])} merged into another "
+              f"(obsolete, replaced_by); registry {len(registry.entries):,} entries, read back")
         print(f"[Orchestrator] Extended ground truth -> {out}")
         print(report.summary())
         return report
@@ -1781,6 +1986,11 @@ class Orchestrator:
                       "exist, so this measures the GROUND TRUTH, not the pipeline's "
                       "output. Run run_extend_ground_truth() first if that is not "
                       "what you meant.")
+        # MILD and the modules whichever file was named (2026-09-28): with an
+        # explicit `ontology_file` they used to be skipped, and the extended
+        # WONT scored 44/49 -- `Foot`, `Wound Healing`, `increased area` and
+        # `prophylaxis plan specification` all live in the imports.
+        if True:
             g.parse(str(_MILD), format="turtle")
             sources.append(_P(_MILD).name)
             if with_imports:
@@ -1845,14 +2055,21 @@ class Orchestrator:
         # nothing. Rebuild instead, and announce which source moved.
         if _P(_SK).exists() and not force:
             cached = _P(_SK).stat().st_mtime
-            newer = [s for s in (_GT, _MILD) if _P(s).stat().st_mtime > cached]
+            from config.settings import MILD_MODULES_DIR as _MODS
+            newer = [s for s in (_GT, _MILD, *sorted(_P(_MODS).glob("*_module.owl")))
+                     if _P(s).stat().st_mtime > cached]
             if not newer:
                 print(f"[Orchestrator] Reusing skeleton TBox at {_SK}")
                 return str(_SK)
             for src in newer:
                 print(f"[Orchestrator] Skeleton TBox is STALE: {_P(src).name} is "
                       f"newer than {_P(_SK).name} — rebuilding.")
-        path, n = build_skeleton(_GT, _MILD, _SK)
+        from config.settings import MILD_MODULES_DIR as _MODS
+        _mods = sorted(_P(_MODS).glob("*_module.owl"))
+        if not _mods:
+            raise FileNotFoundError(f"no import modules in {_MODS}: the skeleton takes BFO's axioms "
+                                    f"and the relations' domains and ranges from them (rule 66)")
+        path, n = build_skeleton(_GT, _MILD, _SK, modules=_mods)
         print(f"[Orchestrator] Skeleton TBox built: {path} ({n} triples)")
         return str(path)
 
@@ -1909,7 +2126,7 @@ class Orchestrator:
         st = store or self.store
         lifted = st.lift_decisions(self.GATE_AUTHOR) if apply else None
         entities, relations, report = store_to_gate_inputs(
-            st.dict, resolve_conflict=self.reasoner_gate.least_common_category)
+            st, resolve_conflict=self.reasoner_gate.least_common_category)
         print("[Orchestrator] " + describe_gate_inputs(entities, relations, report)
               .replace("\n", "\n[Orchestrator] "))
 
@@ -1941,8 +2158,26 @@ class Orchestrator:
                 print(f"[Orchestrator] {n} earlier gate verdict(s) put back.")
             return None
 
-        result = self.reasoner_gate.check(entities, relations)
+        try:
+            result = self.reasoner_gate.check(entities, relations)
+        except BaseException:
+            # `lift_decisions` has already saved the store without the gate's
+            # verdicts. On 2026-10-07 the check crashed here and its 14
+            # rejections stayed lifted: the next run took them as never made.
+            if lifted:
+                n = st.restore_decisions(lifted)
+                print(f"[Orchestrator] *** the reasoner check failed; {n} earlier "
+                      f"gate verdict(s) put back before stopping. ***")
+            raise
         print(f"[Orchestrator] {result.summary()}")
+        if result.without_individuals:
+            print(f"[Orchestrator] *** WONT's named individuals were set aside for "
+                  f"{len(result.without_individuals)} reasoner run(s), because a class "
+                  f"those relations emptied holds one of them and an empty class with "
+                  f"a member is a contradiction that names no culprit. The emptied "
+                  f"classes are named instead and their relations held back as usual: ***")
+            for note in result.without_individuals:
+                print(f"[Orchestrator]     {note}")
         if result.skipped:
             print(f"[Orchestrator] *** GATE DID NOT RUN: {result.skipped} ***\n"
                   f"[Orchestrator] *** All {len(relations)} relation(s) were accepted "

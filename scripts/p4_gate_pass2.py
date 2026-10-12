@@ -55,21 +55,35 @@ def main(argv: list[str]) -> int:
                          "and a scope pass that guesses is the thing being removed.")
     gt = p.term_mapper._term_mapping
 
-    # The RAW store, not `records_of`: the effective view already hides what a
-    # previous blocklist run rejected, and those are exactly the terms worth
+    # Rejected terms INCLUDED, not `records_of`: the effective view hides what
+    # a previous blocklist run rejected, and those are exactly the terms worth
     # re-asking -- `silver sulfadiazine` is not going to argue for itself from
-    # behind the verdict that removed it.
+    # behind the verdict that removed it. Unmapped, because the gate is asked
+    # about terms as they are written (rule 51).
     freq: Counter = Counter()
     attrs: dict[str, list[str]] = {}
-    for _, rec in p.store.dict.items():
-        ents = rec.get("entities", rec) if isinstance(rec, dict) else {}
+    for _, ents in p.store.view(mapped=False, include_rejected=True):
         for name, cells in ents.items():
             freq[name] += 1
             if name not in attrs and isinstance(cells, dict):
                 attrs[name] = [a for a, v in cells.items() if v == 1.0][:3]
 
+    from wound_ontology.llm.category_vocab import declared_category
+    from wound_ontology.utils.label_match import fold as _fold
+    curated = {_fold(str(l)) for l in p.ontology_labels()}
+
     def wanted(term: str) -> bool:
         if freq[term] < min_mentions:
+            return False
+        if _fold(term) in curated:
+            # A class WONT or MILD asserts is in scope by the curator's own
+            # hand (rule 26); asked anyway on 2026-09-28, the model put
+            # `Planimetry` and `Tissue repair process` out.
+            return False
+        if declared_category(term) is not None:
+            # A BFO category is declared, never gated (rules 20, 22): asked on
+            # 2026-09-28, the model called `process` and `material entity`
+            # "generic, out", which the view read as removing every typing.
             return False
         if (gt.peek_gate(term).get("pass2") or {}):
             return False                      # already answered; --readjudicate is not this
@@ -147,10 +161,20 @@ def main(argv: list[str]) -> int:
                           f"unjudged: {type(e).__name__}: {e}", flush=True)
                     return
                 answered.update(got)
+                # Onto the record as they arrive, and to disk every 50 batches:
+                # a run of thousands of calls that saves only at the end banks
+                # nothing when it dies, as the 2026-09-26 adjudication did.
+                for term, (verdict, reason) in got.items():
+                    gt.gate(term, pass2={"verdict": verdict, "reason": reason[:300],
+                                         "when": when})
                 silent.extend(t for t in batch if t not in got)
                 if stray:
                     unplaced.extend(stray)
                 done += 1
+                if done % 50 == 0:
+                    gt.save()
+                    print(f"[pass2]   checkpoint: {len(answered):,} verdicts on disk",
+                          flush=True)
                 if done % 10 == 0 or done == len(batches):
                     print(f"[pass2]   {done}/{len(batches)} batches, "
                           f"{len(answered):,} answered, {len(silent):,} unanswered, "
@@ -160,8 +184,6 @@ def main(argv: list[str]) -> int:
 
     p._run_sync(run())
 
-    for term, (verdict, reason) in answered.items():
-        gt.gate(term, pass2={"verdict": verdict, "reason": reason[:300], "when": when})
     gt.save()
 
     from wound_ontology.data_manager.data_manager import DataManager

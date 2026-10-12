@@ -32,6 +32,23 @@ class _FakeStore:
             "read from the ontologies as their own source."
         )
 
+    def view(self):
+        return iter(())
+
+
+class _FakeTermDict:
+    """No placements (rule 64): the `placed` source is tested in test_placements_view."""
+
+    def placements(self):
+        return []
+
+    def peek(self, *a):
+        return {}
+
+
+class _FakeTermMapper:
+    _term_mapping = _FakeTermDict()
+
 
 class _FakeDM:
     def list_prefixes(self, *a, **kw):
@@ -51,8 +68,9 @@ class _FakeHier:
         self.concepts, self.roots = [], []
         self._prov = {}
 
-    def get_data(self, store, curated=None, fca=(), reconcile_categories=None):
+    def get_data(self, store, curated=None, fca=(), reconcile_categories=None, placed=()):
         self.curated = curated
+        self.placed = list(placed)
         self.fca = list(fca)
         self.reconciler = reconcile_categories
         if curated is None or curated.empty:
@@ -77,6 +95,7 @@ def pipeline():
     p.dm = _FakeDM()
     p.class_hier = _FakeHier()
     p.mere_hier = _FakeHier()
+    p.term_mapper = _FakeTermMapper()
     return p
 
 

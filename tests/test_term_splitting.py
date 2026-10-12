@@ -46,16 +46,25 @@ NECROSIS = {
 }
 
 
+def _names(s):
+    """Every entity name in the view (rule 51: the split is read, not written)."""
+    return {e for _, ents in s.view(include_rejected=True) for e in ents}
+
+
+def _entities(s):
+    return {e: a for _, ents in s.view(include_rejected=True) for e, a in ents.items()}
+
+
 def _store(data):
-    # deepcopy: the split mutates the store's dict in place, as it should, so a
-    # shared module-level fixture would leak one test's split into the next.
+    # deepcopy: the split records senses in the store's term dict (rule 51);
+    # a copy keeps a module-level fixture from being shared by two stores.
     return ConceptStore(_DM(copy.deepcopy(data)), "concept_store")
 
 
 def test_each_sense_becomes_its_own_term(resolver):
     s = _store(NECROSIS)
     s.split_irreconcilable_terms(resolver)
-    names = {e for rec in s.dict.values() for e in rec["entities"]}
+    names = _names(s)
     assert names == {"Necrosis Material Entity", "Necrosis Process"}
 
 
@@ -73,7 +82,7 @@ def test_each_sense_keeps_the_relations_its_abstract_asserted(resolver):
     follow the sense the abstract meant."""
     s = _store(NECROSIS)
     s.split_irreconcilable_terms(resolver)
-    ents = {e: a for rec in s.dict.values() for e, a in rec["entities"].items()}
+    ents = _entities(s)
     assert "part_of: Wound Bed" in ents["Necrosis Material Entity"]
     assert "has_participant: Tissue" in ents["Necrosis Process"]
 
@@ -81,8 +90,8 @@ def test_each_sense_keeps_the_relations_its_abstract_asserted(resolver):
 def test_each_split_term_now_has_exactly_one_category(resolver):
     s = _store(NECROSIS)
     s.split_irreconcilable_terms(resolver)
-    for rec in s.dict.values():
-        for _, attrs in rec["entities"].items():
+    for _, ents in s.view(include_rejected=True):
+        for _, attrs in ents.items():
             cats = [a for a in attrs if a.startswith("is_a: ")]
             assert len(cats) == 1
 
@@ -97,7 +106,7 @@ def test_references_to_the_term_are_renamed_too(resolver):
     }
     s = _store(data)
     s.split_irreconcilable_terms(resolver)
-    ents = {e: a for rec in s.dict.values() for e, a in rec["entities"].items()}
+    ents = _entities(s)
     assert "has_part: Necrosis Material Entity" in ents["Eschar"]
 
 
@@ -109,7 +118,7 @@ def test_a_reconcilable_conflict_is_left_alone(resolver):
     s = _store(data)
     rep = s.split_irreconcilable_terms(resolver)
     assert rep["split"] == {}
-    assert {e for rec in s.dict.values() for e in rec["entities"]} == {"Closure"}
+    assert _names(s) == {"Closure"}
 
 
 def test_a_consistently_typed_term_is_untouched(resolver):
@@ -117,7 +126,7 @@ def test_a_consistently_typed_term_is_untouched(resolver):
             "2": {"entities": {"Wound": {"is_a: material entity": 1.0}}}}
     s = _store(data)
     s.split_irreconcilable_terms(resolver)
-    assert {e for rec in s.dict.values() for e in rec["entities"]} == {"Wound"}
+    assert _names(s) == {"Wound"}
 
 
 def test_a_mention_with_no_category_is_left_and_reported(resolver):
@@ -127,7 +136,7 @@ def test_a_mention_with_no_category_is_left_and_reported(resolver):
     s = _store(data)
     rep = s.split_irreconcilable_terms(resolver)
     assert rep["unsensed"].get("Necrosis") == 1
-    assert "Necrosis" in {e for rec in s.dict.values() for e in rec["entities"]}
+    assert "Necrosis" in _names(s)
 
 
 def test_the_rebuilt_triples_keep_the_stores_format(resolver):
@@ -135,8 +144,8 @@ def test_the_rebuilt_triples_keep_the_stores_format(resolver):
     naively produced "is_a: process" — a key nothing downstream matches."""
     s = _store(NECROSIS)
     s.split_irreconcilable_terms(resolver)
-    for rec in s.dict.values():
-        for _, attrs in rec["entities"].items():
+    for _, ents in s.view(include_rejected=True):
+        for _, attrs in ents.items():
             for triple in attrs:
                 assert ":  " not in triple, triple
                 assert triple == triple.strip()
@@ -190,5 +199,5 @@ def test_case_variants_of_one_term_are_one_conflict(resolver):
     rep = s.split_irreconcilable_terms(resolver)
     assert set(rep["split"]["Granulation"].values()) == {
         "Granulation Material Entity", "Granulation Process"}
-    names = {e for rec in s.dict.values() for e in rec["entities"]}
+    names = _names(s)
     assert names == {"Granulation Material Entity", "Granulation Process"}

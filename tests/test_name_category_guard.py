@@ -224,3 +224,37 @@ def test_names_already_taken_are_passed_on(lattice):
 
     assert "Wound" in llm.seen[1]["existing"], \
         "the second call could not know the first name; that is how duplicates got in"
+
+
+
+# ── a refused account stops the step (2026-10-11) ───────────────────────────
+
+class _Refusing:
+    def __init__(self, message):
+        self.message, self.calls = message, 0
+
+    async def generate_semantic_name(self, *a, **kw):
+        self.calls += 1
+        raise RuntimeError(self.message)
+
+
+def _two_concepts(lattice):
+    lattice._lattice = [_Concept(["Chronic Wound", "Bite Wound"]),
+                        _Concept(["Chronic Wound", "Scratch Wound"], intent=("is_a: wound", "has_quality: chronic"))]
+
+
+def test_an_account_without_credits_stops_naming_at_once(lattice):
+    """2026-10-11: all 91 calls failed with 402, the step went on and saved an
+    unnamed lattice over the named one, and the run said ALL DONE."""
+    _two_concepts(lattice)
+    llm = _Refusing("Error code: 402 - {'error': {'message': 'This request requires more credits'}}")
+    with pytest.raises(RuntimeError, match="refused the account"):
+        asyncio.run(lattice.create_superclass_names(llm))
+    assert llm.calls == 1
+
+
+def test_naming_nothing_at_all_is_an_error(lattice, capsys):
+    _two_concepts(lattice)
+    with pytest.raises(RuntimeError, match="none of the 2"):
+        asyncio.run(lattice.create_superclass_names(_Refusing("timed out")))
+    assert "2 of 2 concept(s) could not be named" in capsys.readouterr().out

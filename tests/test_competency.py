@@ -479,3 +479,34 @@ def test_a_genuinely_absent_class_is_still_unresolved(plural_graph):
                             triple=("Osteomyelitis", "is_a", "Wound"))
     (res,) = run_suite(plural_graph, [cq])
     assert res.verdict is Verdict.UNRESOLVED
+
+
+def test_a_class_wins_a_label_it_shares_with_an_individual():
+    """WONT labels the quality class and the IWII grade individual both
+    `contaminated`; resolution followed rdflib's hash order until 2026-09-28."""
+    import rdflib
+    from rdflib.namespace import OWL, RDF, RDFS
+    from wound_ontology.evaluation.competency import label_index
+    for first in ("individual", "class"):
+        g = rdflib.Graph()
+        ind, cls = rdflib.URIRef("urn:x:ind"), rdflib.URIRef("urn:x:cls")
+        pairs = [(ind, OWL.NamedIndividual), (cls, OWL.Class)]
+        if first == "class":
+            pairs.reverse()
+        for s, t in pairs:
+            g.add((s, RDF.type, t)); g.add((s, RDFS.label, rdflib.Literal("contaminated")))
+        assert label_index(g).get("contaminated")[0] == cls
+
+
+
+def test_the_ontologys_own_class_wins_a_label_it_shares_with_an_import():
+    """WONT's `chronic` (a wound quality) against PATO's (a process duration)."""
+    import rdflib
+    from rdflib.namespace import OWL, RDF, RDFS
+    from wound_ontology.evaluation.competency import label_index
+    own = rdflib.URIRef("https://bioportal.bioontology.org/ontologies/WONT/WONT_1")
+    pato = rdflib.URIRef("http://purl.obolibrary.org/obo/PATO_0001863")
+    g = rdflib.Graph()
+    for s in (pato, own):
+        g.add((s, RDF.type, OWL.Class)); g.add((s, RDFS.label, rdflib.Literal("chronic")))
+    assert label_index(g).get("chronic")[0] == own

@@ -58,13 +58,21 @@ WHITESPACE = re.compile(r"\s+")
 #: explicit rules rather than a general synonym table: each one says which of
 #: two already-adjudicated names survives.  Inflected forms are listed too
 #: because only a label's head noun is singularised.
+#:
+#: The -ic / -ical pairs are written -ical (curator, 2026-09-28: "exactly the
+#: other way"), reversing the 2026-09-27 choice of dermatologic, oncologic,
+#: pharmacologic, physiologic and radiologic, and adding biologic -> biological.
+#: `numeric -> numerical` was flipped the same day, so every -ic/-ical pair
+#: now points to -ical.
 CANONICAL_WORDS = {
     "action": "activity",
     "actions": "activities",
     "alteration": "change",
     "alterations": "changes",
     "cutaneous": "skin",
-    "dermatological": "dermatologic",
+    "biologic": "biological",
+    "biologics": "biologicals",
+    "dermatologic": "dermatological",
     "evaluation": "assessment",
     "evaluations": "assessments",
     "feature": "characteristic",
@@ -74,15 +82,15 @@ CANONICAL_WORDS = {
     "limb": "extremity",
     "limbs": "extremities",
     "microbiological": "microbial",
-    "numerical": "numeric",
-    "oncological": "oncologic",
+    "numeric": "numerical",
+    "oncologic": "oncological",
     "operation": "surgery",
     "operations": "surgeries",
-    "pharmacological": "pharmacologic",
-    "physiological": "physiologic",
+    "pharmacologic": "pharmacological",
+    "physiologic": "physiological",
     "preventative": "preventive",
     "previous": "prior",
-    "radiological": "radiologic",
+    "radiologic": "radiological",
     "specimen": "sample",
     "specimens": "samples",
     "strategy": "approach",
@@ -90,8 +98,8 @@ CANONICAL_WORDS = {
     "technique": "method",
     "techniques": "methods",
     "testing": "test",
-    "trauma": "injury",
-    "traumas": "injuries",
+    # `trauma -> injury` withdrawn 2026-09-28 (curator: "Trauma into injury
+    # is wrong"): a trauma is the event, an injury what it leaves.
     "usage": "use",
     "usages": "uses",
     "value": "level",
@@ -102,6 +110,17 @@ CANONICAL_WORD = re.compile(
         sorted(map(re.escape, CANONICAL_WORDS), key=len, reverse=True)) + r")\b",
     re.IGNORECASE,
 )
+
+#: Fixed technical terms a preferred word must not reach into (curator,
+#: 2026-09-27). `action potential` is electrophysiology, not an activity:
+#: `Compound Muscle Action Potentials` had become `Compound Muscle Activity
+#: Potential`, found through the first `as_extracted` book read (rule 50).
+PROTECTED_PHRASES = re.compile(
+    r"\bactions?[\s-]+potentials?\b"
+    # A product name, not the adjective: `XCM BIOLOGIC Tissue Matrix`
+    # (curator, 2026-09-28).
+    r"|\bXCM[\s-]+BIOLOGIC\b",
+    re.IGNORECASE)
 
 #: These six choices cross a noun/adjective boundary, so they apply only when
 #: the word modifies a following noun-like token.  The blockers are relations
@@ -125,7 +144,289 @@ MODIFIER_BLOCKERS = frozenset({
     "after", "and", "as", "associated", "based", "before", "by", "caused",
     "dependent", "during", "for", "from", "in", "induced", "mediated", "of",
     "on", "or", "related", "specific", "to", "versus", "vs", "with", "without",
+    # `diabetes mellitus` is one disease name, not a modifier and its head:
+    # rule 49 had made 28 names `diabetic mellitus` (found 2026-09-28).
+    "mellitus", "insipidus",
 })
+
+#: Curator, 2026-09-28 (Naming Rulings, adjectives tab): a leading word that
+#: grades or praises is not part of the concept's name -- `massive rotator cuff
+#: tear` is a rotator cuff tear, `novel therapeutics` are therapeutics. Stripped
+#: from the FRONT only, repeatedly (`severe, extensive burn`), never from a
+#: one-word name, never where what follows is a function word (`standard of
+#: care`), and never from a name that starts with an exception. The curator's
+#: exceptions come first; the second list is fixed names the review page never
+#: showed because they were out of scope at the time (`standard deviation`,
+#: `multiple sclerosis`, `major adverse limb event`). `small` and `big` are left
+#: alone; `giant` is kept and recorded as a subtype instead (no rule here).
+LEADING_ADJECTIVES = frozenset(['adequate', 'advanced', 'appropriate', 'better', 'certain', 'conventional', 'current', 'different', 'effective', 'emerging', 'excessive', 'extensive', 'favorable', 'good', 'improved', 'innovative', 'key', 'large', 'main', 'major', 'marked', 'massive', 'mild', 'minor', 'moderate', 'modern', 'multiple', 'new', 'novel', 'optimal', 'poor', 'potential', 'profound', 'proper', 'severe', 'significant', 'standard', 'substantial', 'successful', 'traditional'])
+LEADING_ADJECTIVE_EXCEPTIONS = (
+    ['current or past', 'current smoker', 'large bowel', 'large intestine', 'large wound', 'major amputation', 'major lower extremity', 'marked improvement', 'mild cognitive impairment', 'minor amputation', 'moderate and severe', 'moderate to severe', 'multiple organ dysfunction syndrome', 'multiple organ failure', 'new zealand']
+    + ['multiple sclerosis', 'multiple myeloma', 'standard deviation', 'standard error', 'severe acute respiratory syndrome', 'large language model', 'major adverse', 'key opinion leader', 'traditional chinese medicine', 'advanced glycation end', 'advanced practice', 'new onset', 'new-onset'])
+_FUNCTION_WORDS = frozenset({"of", "to", "and", "or", "with", "for", "in", "on",
+                             "at", "by", "vs", "versus", "than"})
+_LEAD = re.compile(r"^([A-Za-z]+)[\s,-]+(?=\S)")
+
+
+def _strip_leading_adjectives(label: str) -> str:
+    while True:
+        m = _LEAD.match(label)
+        if not m or m.group(1).lower() not in LEADING_ADJECTIVES:
+            return label
+        low = WHITESPACE.sub(" ", label.replace("-", " ")).lower()
+        if any(low.startswith(e.replace("-", " ")) for e in LEADING_ADJECTIVE_EXCEPTIONS):
+            return label
+        rest = label[m.end():]
+        if not rest or rest.split()[0].lower().strip(",") in _FUNCTION_WORDS:
+            return label
+        label = rest
+
+
+#: Curator, 2026-09-28: VAC and vacuum therapy ARE negative pressure wound
+#: therapy. Expanded inside compounds too (`VAC dressing`, `incisional NPWT`),
+#: so a trailing `therapy`/`treatment` is absorbed rather than doubled. The
+#: endoscopic/endoluminal vacuum procedures for gastrointestinal leaks are a
+#: different thing and keep their names; bare `vacuum` and `vacuum sealing
+#: drainage` is a different technique (curator, 2026-09-28); `negative
+#: pressure therapy` is NPWT (same ruling).
+NPWT_SYNONYM = re.compile(
+    r"\b(?:NPWT|VAC|V\.A\.C\.?|vacuum[\s-]+assisted[\s-]+closure|vacuum(?=[\s-]+therapy)"
+    r"|negative[\s-]+pressure(?=[\s-]+(?:therapy|treatment)\b))"
+    r"(?:[\s-]+(?:therapy|treatment))?(?![\w-])",
+    re.IGNORECASE)
+NPWT_EXEMPT_BEFORE = re.compile(r"\b(?:endoscopic|endoluminal)[\s-]+$", re.IGNORECASE)
+NPWT = "negative pressure wound therapy"
+
+
+def _npwt(label: str) -> str:
+    def sub(match: re.Match) -> str:
+        if NPWT_EXEMPT_BEFORE.search(label[:match.start()]):
+            return match.group(0)
+        src = match.group(0)
+        if match.start() == 0 and src[:1].isupper() and not src.split()[0].isupper():
+            return NPWT[:1].upper() + NPWT[1:]
+        return NPWT
+    return NPWT_SYNONYM.sub(sub, label)
+
+
+#: Curator, 2026-09-28: a treatment named `... approach`, `... strategy` or
+#: `... intervention` is a `... therapy`. Only the HEAD noun is renamed, and
+#: never where the word means something else: a search, coping or design
+#: strategy is method, a surgical or anterior approach is an access route,
+#: pre-/post-intervention is a time point. `therapeutic strategy` and
+#: `treatment approach` collapse to `therapy`, and a prevention strategy is
+#: prophylaxis, not therapy.
+THERAPY_HEAD = re.compile(
+    r"(?P<word>approach(?:es)?|strateg(?:y|ies)|interventions?)$", re.IGNORECASE)
+THERAPY_PREV = re.compile(r"([A-Za-z]+)[\s-]*$")
+THERAPY_NOT_A_TREATMENT = frozenset({
+    "search", "coping", "implementation", "grade", "diagnostic", "design",
+    "evaluation", "assessment", "research", "sampling", "recruitment",
+    "statistical", "analytic", "analytical", "modeling", "modelling",
+    "communication", "teaching", "educational", "learning", "management",
+    "care", "pre", "post"})
+THERAPY_ACCESS_ROUTE = frozenset({
+    "surgical", "open", "invasive", "endoscopic", "laparoscopic",
+    "arthroscopic", "percutaneous", "endovascular", "robotic", "anterior",
+    "posterior", "lateral", "medial", "dorsal", "volar", "transfemoral",
+    "transradial", "retrograde", "antegrade"})
+THERAPY_COLLAPSE = frozenset({"therapeutic", "treatment", "therapy"})
+THERAPY_PROPHYLAXIS = frozenset({"prevention", "preventive", "preventative",
+                                 "prophylactic"})
+
+
+def _therapy_head(label: str) -> str:
+    m = THERAPY_HEAD.search(label)
+    if not m or (m.start() and not label[m.start() - 1] in " -"):
+        return label
+    word = m.group("word")
+    before = label[:m.start()]
+    prev_m = THERAPY_PREV.search(before)
+    prev = prev_m.group(1).lower() if prev_m else ""
+    if prev in THERAPY_NOT_A_TREATMENT:
+        return label
+    if word.lower().startswith("approach") and prev in THERAPY_ACCESS_ROUTE:
+        return label
+    if prev in THERAPY_COLLAPSE or prev in THERAPY_PROPHYLAXIS:
+        target = "therapy" if prev in THERAPY_COLLAPSE else "prophylaxis"
+        return before[:prev_m.start()] + _with_case_of(prev_m.group(1), target)
+    return before + _with_case_of(word, "therapy")
+
+
+#: Curator, 2026-10-02: "pressure ulcer and pressure injury are the same
+#: thing. still, there is sacral pressure ulcer and sacral pressure injury".
+#: WONT's label is `Pressure ulcer`; the phrase is rewritten inside every name.
+PRESSURE_INJURY = re.compile(r"\b(?P<p>pressure)(?P<sep>[\s-]+)(?P<w>injur(?:y|ies))\b", re.IGNORECASE)
+
+
+def _pressure_ulcer(label: str) -> str:
+    def sub(m: re.Match) -> str:
+        w = m.group("w")
+        return m.group("p") + m.group("sep") + _with_case_of(
+            w, "ulcers" if w.lower().endswith("ies") else "ulcer")
+    return PRESSURE_INJURY.sub(sub, label)
+
+
+#: Curator, 2026-10-04: "leg should be converted to lower extremity always"
+#: (the FCA nesting proposals were only leg / foot / lower extremity over
+#: again). Rewritten inside every name: `lower leg` and `leg` become `lower
+#: extremity`, `legs` `lower extremities`. Kept as written: `upper leg` (the
+#: thigh), and fixed names of instruments, tests, exercises, procedures and
+#: programmes, read one by one on 2026-10-04 from the 356 names that use the
+#: word. A WONT/MILD label keeps its own word (pass 0 keeps labels as
+#: written, so `venous lower extremity ulcer` joins `Venous leg ulcer`).
+LEG_WORD = re.compile(r"\b(?:(?P<lower>lower)(?P<sep>[\s-]+))?(?P<w>legs?)\b", re.IGNORECASE)
+LEG_KEEP = re.compile(
+    r"\bupper[\s-]+legs?\b"
+    r"|\bface,?[\s-]+legs,?[\s-]+activity\b"
+    r"|\bleg[\s-]+ulcer[\s-]+measurement[\s-]+tool\b"
+    r"|\bvenous[\s-]+leg[\s-]+ulcer[\s-]+self-efficacy[\s-]+tool\b"
+    r"|\bleg[\s-]+clubs?\b"
+    r"|\beuropean[\s-]+leg[\s-]+ulcer[\s-]+series\b"
+    r"|\bhealing[\s-]+of[\s-]+excisional[\s-]+wounds[\s-]+on[\s-]+lower[\s-]+legs\b"
+    r"|\bs2k[\s-]+guideline[\s-]+on[\s-]+venous[\s-]+leg[\s-]+ulcers?\b"
+    r"|\bstraight[\s-]+leg[\s-]+raises?\b"
+    r"|\b(?:single|short|cross|between)-legs?\b"
+    r"|\bshort[\s-]+leg[\s-]+(?:polypropylene[\s-]+)?splints?\b"
+    r"|\bleg[\s-]+(?:press|extensions?|cycling|muscle[\s-]+pump)\b"
+    r"|\bcross[\s-]+leg\b",
+    re.IGNORECASE)
+
+
+def _lower_extremity(label: str) -> str:
+    keep = [m.span() for m in LEG_KEEP.finditer(label)]
+
+    def sub(m: re.Match) -> str:
+        if any(a <= m.start("w") < b for a, b in keep):
+            return m.group(0)
+        plural = m.group("w").lower() == "legs"
+        out = _with_case_of(m.group("w"), "lower extremities" if plural else "lower extremity")
+        if m.group("lower"):
+            # `lower leg` -> `lower extremity`, written in the case of `lower`
+            out = _with_case_of(m.group("lower"), "lower") + m.group("sep") + out.split(" ", 1)[1] \
+                if m.group("w")[0].isupper() == m.group("lower")[0].isupper() else out
+            return out
+        return out
+    return LEG_WORD.sub(sub, label)
+
+
+#: Curator, 2026-10-04: "ulceration" is the same as "ulcer". Rewritten inside
+#: every name (`venous leg ulceration` -> `venous leg ulcer`).
+ULCERATION = re.compile(r"\b(?P<w>ulcerations?)\b", re.IGNORECASE)
+
+
+def _ulceration(label: str) -> str:
+    return ULCERATION.sub(lambda m: _with_case_of(
+        m.group("w"), "ulcers" if m.group("w").lower().endswith("s") else "ulcer"), label)
+
+
+#: Curator, 2026-10-04: "we should do something against the ulcer vs. wound
+#: synonym" -- `X ulcer` and `X wound` are one term. Applied to what two
+#: spellings SHARE (`Normalised.key`, `.strict`), never to the name: pass 0
+#: groups them and elects one name (an ontology label first, then the
+#: spelling more abstracts use), so a lone `gastric ulcer` keeps its word.
+ULCER_AS_WOUND = re.compile(r"\bulcers?\b")
+
+
+def _ulcer_is_wound(folded: str) -> str:
+    return ULCER_AS_WOUND.sub("wound", folded)
+
+
+#: Curator, 2026-10-02: "illness, disorder, pathology, disease, condition and
+#: dysfunction are used completely interchangably" -- "disorder wins.
+#: condition can stay where it is a condition." Rewritten inside every name;
+#: a WONT/MILD label keeps its own word (pass 0 keeps labels as written, so
+#: `autoimmune disorder` joins the label `Autoimmune disease`). Kept as written:
+#: an eponymous disease (`Crohn's disease`, `Buerger disease`); fixed names
+#: (`multiple organ dysfunction syndrome`, `critical illness`,
+#: `tick-associated rash illness`, `illness perception`); `pathology` the
+#: discipline (`surgical pathology`, `pathology report`). `condition` becomes
+#: `disorder` only in the names in DISORDER_CONDITION, read one by one on
+#: 2026-10-02 from the 233 names that use it; `wound condition`, `hypoxic
+#: condition`, `culture condition` and the like name a state and stay.
+DISORDER_WORD = re.compile(
+    r"\b(?P<w>diseases?|illness(?:es)?|patholog(?:y|ies)|dysfunctions?)\b", re.IGNORECASE)
+DISORDER_EPONYM_BEFORE = re.compile(
+    r"(?:'s|’s|\b(?:addison|alzheimer|behcet|bowen|buerger|chagas|charcot-marie-tooth|crohn|"
+    r"cushing|dupuytren|graves|hansen|hirschsprung|hodgkin|huntington|kawasaki|kienbock|"
+    r"kummell|legg-calve-perthes|lyme|osgood-schlatter|paget|parkinson|peyronie|peyronies|"
+    r"raynaud|sjogren|whipple|wilson))[\s-]+$", re.IGNORECASE)
+DISORDER_KEEP = re.compile(
+    r"\bmulti(?:ple)?[\s-]*organ[\s-]+dysfunction[\s-]+syndromes?\b"
+    r"|\bcritical[\s-]+illness(?:es)?\b"
+    r"|\btick-associated[\s-]+rash[\s-]+illness\b"
+    r"|\billness[\s-]+(?:perception|experience|belief|trajectory)\b"
+    r"|\b(?:forensic|surgical|final|oral|cell)[\s-]+patholog(?:y|ies)\b"
+    r"|\bpatholog(?:y|ies)[\s-]+(?:report|result|assessment|department|examination)s?\b"
+    r"|\bpatholog(?:y|ies)-(?:guided|validated|triggered|timing)\b"
+    # proper names of institutions, classifications and instruments (found
+    # 2026-10-02: `Centers for Disorder Control and Prevention`)
+    r"|\bcenters?[\s-]+for[\s-]+disease[\s-]+control\b"
+    r"|\bburden[\s-]+of[\s-]+diseases?\b"
+    r"|\bclassification[\s-]+of[\s-]+diseases?\b"
+    r"|\bdiseases?[\s-]+society[\s-]+of[\s-]+america\b"
+    r"|\binfection[\s-]+diseases[\s-]+and[\s-]+travel[\s-]+medicine\b"
+    r"|\bdigestive[\s-]+and[\s-]+kidney[\s-]+diseases?\b"
+    r"|\bocular[\s-]+surface[\s-]+disease[\s-]+index\b"
+    r"|\bperi-implant[\s-]+diseases[\s-]+and[\s-]+conditions?\b"
+    # fixed terms that are not the name of a disease (found 2026-10-02 in the
+    # abbreviations written out: DMARD, COVID-19)
+    r"|\bdisease[\s-]+modifying\b"
+    r"|\bcoronavirus[\s-]+disease\b",
+    re.IGNORECASE)
+DISORDER_CONDITION = frozenset({
+    "skin condition", "chronic condition", "diabetic condition", "comorbid condition",
+    "health condition", "inflammatory condition", "neurosurgical condition",
+    "dermatological condition", "life-threatening condition", "debilitating condition",
+    "infection condition", "acute condition", "ischemic condition", "autoinflammatory condition",
+    "degenerative condition", "rare condition", "neurological condition", "long-term condition",
+    "pathological condition", "musculoskeletal condition", "extremity-threatening condition",
+    "neuropathic condition", "medical condition", "underlying condition", "neuromuscular condition",
+    "cardiovascular condition", "otorhinolaryngological condition", "febrile condition",
+    "ear condition", "orthopedic condition", "serious medical condition", "autoimmune condition",
+    "rare congenital condition", "long-term neurological condition", "iatrogenic condition",
+    "geriatric condition", "pre-existing metabolic condition", "neuropathy-induced condition",
+    "foot-related condition", "comorbid chronic condition", "diabetes-related foot condition",
+    "emergency general surgical condition", "brain condition", "debilitating medical condition",
+    "pre-existing condition", "desquamating skin condition", "blistering skin condition",
+    "refractory condition", "monogenic condition", "pulmonary condition", "common oral condition",
+    "sinus condition", "cardiac, pulmonary, or renal condition", "neurologic condition",
+    "oncological condition", "dental condition", "immune-related condition",
+    "pre-existing chronic condition", "chronic overuse condition", "malignant condition",
+    "physical health condition", "neurodevelopmental condition", "immune-mediated condition",
+    "underlying health condition", "intermittent autoimmune condition", "underlying medical condition",
+    "abnormal skin condition", "urinary condition", "degenerative and inflammatory condition",
+    "meniscal condition", "pathologic condition", "chronic joint condition",
+    "chronic autoinflammatory condition", "autoimmune skin condition", "long-term health condition",
+    "predisposing condition", "exclusionary medical condition", "prolonged medical condition",
+    "serious underlying medical condition", "metabolic condition", "oral condition",
+    "periodontal condition", "vascular condition", "respiratory condition",
+    "critical ischemic condition", "distressing condition", "orthopaedic condition",
+})
+CONDITION_WORD = re.compile(r"\b(?P<w>conditions?)\b", re.IGNORECASE)
+
+
+def _disorder(label: str) -> str:
+    keep = [m.span() for m in DISORDER_KEEP.finditer(label)]
+
+    def sub(m: re.Match) -> str:
+        if any(a <= m.start() < b for a, b in keep):
+            return m.group(0)
+        w = m.group("w")
+        if w.lower().startswith("disease") and DISORDER_EPONYM_BEFORE.search(label[:m.start()]):
+            return m.group(0)
+        plural = w.lower().endswith(("s", "ies")) and not w.lower().startswith("illness") \
+            or w.lower().startswith("illnesses")
+        return _with_case_of(w, "disorders" if plural else "disorder")
+
+    label = DISORDER_WORD.sub(sub, label)
+    if " ".join(label.lower().replace("conditions", "condition").split()) in DISORDER_CONDITION:
+        label = CONDITION_WORD.sub(
+            lambda m: _with_case_of(m.group("w"),
+                                    "disorders" if m.group("w").lower().endswith("s") else "disorder"),
+            label)
+    return label
+
 
 WOUND_MANAGEMENT = re.compile(
     r"(?P<prefix>\bwound[\s-]+)(?P<word>management)\b", re.IGNORECASE)
@@ -149,6 +450,13 @@ def canonical_vocabulary(label: str) -> str:
     boundaries keep `limbic` and similar words out.  The function preserves
     lower, title and upper case and is idempotent.
     """
+    label = _strip_leading_adjectives(label)
+    label = _npwt(label)
+    label = _therapy_head(label)
+    label = _pressure_ulcer(label)
+    label = _ulceration(label)
+    label = _lower_extremity(label)
+    label = _disorder(label)
     label = WOUND_MANAGEMENT.sub(
         lambda match: (match.group("prefix")
                        + _with_case_of(match.group("word"), "care")),
@@ -156,11 +464,14 @@ def canonical_vocabulary(label: str) -> str:
     )
     label = POSTSURGICAL.sub(
         lambda match: _with_case_of(match.group(0), "postoperative"), label)
-    label = CANONICAL_WORD.sub(
-        lambda match: _with_case_of(
-            match.group(0), CANONICAL_WORDS[match.group(0).lower()]),
-        label,
-    )
+    protected = [m.span() for m in PROTECTED_PHRASES.finditer(label)]
+
+    def word(match: re.Match) -> str:
+        if any(start <= match.start() < end for start, end in protected):
+            return match.group(0)
+        return _with_case_of(match.group(0), CANONICAL_WORDS[match.group(0).lower()])
+
+    label = CANONICAL_WORD.sub(word, label)
 
     def modifier(match: re.Match) -> str:
         follower = MODIFIER_FOLLOWER.match(label[match.end():])
@@ -216,7 +527,7 @@ class Normalised:
         spellings cannot disagree about them.
         """
         if self._key is None:
-            self._key = WHITESPACE.sub("", fold(self.name))
+            self._key = WHITESPACE.sub("", _ulcer_is_wound(fold(self.name)))
         return self._key
 
     @property
@@ -240,9 +551,9 @@ class Normalised:
             bare = PARENTHETICAL.sub("", self.label)
             bare = ASCII_DASHES.sub(" ", UNICODE_DASHES.sub("", bare))
             bare = WHITESPACE.sub(" ", bare).strip()
-            self._strict = WHITESPACE.sub("", canonical_vocabulary(
+            self._strict = WHITESPACE.sub("", _ulcer_is_wound(canonical_vocabulary(
                 american_spelling(
-                    singular_spelling(singular_spelling(bare).lower()))))
+                    singular_spelling(singular_spelling(bare).lower()))).lower()))
         return self._strict
 
     def __repr__(self) -> str:                          # pragma: no cover

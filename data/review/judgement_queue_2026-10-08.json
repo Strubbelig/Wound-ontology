@@ -1,0 +1,180 @@
+{
+ "made": "2026-10-08T03:42:32",
+ "items": [
+  {
+   "id": "r000",
+   "section": "relations",
+   "subject": "Complete Wound Closure",
+   "predicate": "has participant",
+   "value": "Wound",
+   "key": "complete wound closure|http://purl.obolibrary.org/obo/RO_0000057|wound",
+   "abstracts": 2,
+   "pmids": [
+    "39928474",
+    "40129130"
+   ],
+   "reading": "",
+   "as_written": [
+    "complete wound closure has participant Wound"
+   ],
+   "subject_parents": [
+    "threshold crossing event"
+   ],
+   "elk": "no contradiction",
+   "flags": []
+  },
+  {
+   "id": "r001",
+   "section": "relations",
+   "subject": "Granulation Tissue",
+   "predicate": "part of",
+   "value": "Wound",
+   "key": "granulation tissue|http://purl.obolibrary.org/obo/BFO_0000050|wound",
+   "abstracts": 5,
+   "pmids": [
+    "23294989",
+    "27428720",
+    "31134552",
+    "31978478",
+    "40270716",
+    "41541046"
+   ],
+   "reading": "granulation tissue forms in a healing wound",
+   "as_written": [
+    "granulation tissue part of Wound"
+   ],
+   "subject_parents": [],
+   "elk": "no contradiction",
+   "flags": []
+  },
+  {
+   "id": "r002",
+   "section": "relations",
+   "subject": "Lower Extremity",
+   "predicate": "has part",
+   "value": "Lower Extremity",
+   "key": "lower extremity|http://purl.obolibrary.org/obo/BFO_0000051|lower extremity",
+   "abstracts": 2,
+   "pmids": [
+    "39890082",
+    "42527036"
+   ],
+   "reading": "",
+   "as_written": [
+    "lower extremity has part leg"
+   ],
+   "subject_parents": [
+    "gross anatomical part"
+   ],
+   "elk": "no contradiction",
+   "flags": [
+    "points at itself"
+   ]
+  },
+  {
+   "id": "r003",
+   "section": "relations",
+   "subject": "Negative Pressure Wound Therapy Dressing",
+   "predicate": "participates in",
+   "value": "Negative pressure wound therapy plan specification",
+   "key": "negative pressure wound therapy dressing|http://purl.obolibrary.org/obo/RO_0000056|negative pressure wound therapy plan specification",
+   "abstracts": 3,
+   "pmids": [
+    "31839387",
+    "37407900",
+    "42009792"
+   ],
+   "reading": "",
+   "as_written": [
+    "negative pressure wound therapy dressing participates in Negative pressure wound therapy"
+   ],
+   "subject_parents": [
+    "Wound dressing"
+   ],
+   "elk": "contradiction: Negative Pressure Wound Therapy Dressing",
+   "flags": [
+    "reasoner finds a contradiction"
+   ]
+  },
+  {
+   "id": "r004",
+   "section": "relations",
+   "subject": "Surgical Site Infection Event",
+   "predicate": "has participant",
+   "value": "Surgical site infection",
+   "key": "surgical site infection event|http://purl.obolibrary.org/obo/RO_0000057|surgical site infection",
+   "abstracts": 2,
+   "pmids": [
+    "42304142",
+    "42417091"
+   ],
+   "reading": "",
+   "as_written": [
+    "surgical site infection event has participant Surgical site infection"
+   ],
+   "subject_parents": [
+    "Wound infection process"
+   ],
+   "elk": "no contradiction",
+   "flags": []
+  },
+  {
+   "id": "r005",
+   "section": "relations",
+   "subject": "Targeted Antibiotic Therapy",
+   "predicate": "has input",
+   "value": "Antibiotic",
+   "key": "targeted antibiotic therapy|http://purl.obolibrary.org/obo/RO_0002233|antibiotic",
+   "abstracts": 2,
+   "pmids": [
+    "41747021",
+    "41774203"
+   ],
+   "reading": "",
+   "as_written": [
+    "targeted antibiotic therapy has input antibiotic"
+   ],
+   "subject_parents": [
+    "Antibiotic administration process"
+   ],
+   "elk": "no contradiction",
+   "flags": []
+  },
+  {
+   "id": "d006",
+   "section": "duplicates",
+   "subject": "Metabolic Disorder",
+   "iri": "WONT_0004396",
+   "bfo": "",
+   "parents": [
+    "pathological disorder"
+   ],
+   "matches": [
+    {
+     "label": "disease of metabolism",
+     "said": "metabolic disease",
+     "source": "DOID",
+     "iri": "DOID_0014667"
+    }
+   ]
+  },
+  {
+   "id": "d007",
+   "section": "duplicates",
+   "subject": "Skin Disorder",
+   "iri": "WONT_0006431",
+   "bfo": "continuant",
+   "parents": [
+    "pathological disorder"
+   ],
+   "matches": [
+    {
+     "label": "skin disease",
+     "said": "skin disease",
+     "source": "DOID",
+     "iri": "DOID_37"
+    }
+   ]
+  }
+ ]
+}

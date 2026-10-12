@@ -1,0 +1,2561 @@
+{
+ "made": "2026-10-03",
+ "rows": [
+  {
+   "id": "w000",
+   "subject": "2nd degree burn",
+   "subject_label": "Second-degree burn wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000483",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "depth",
+   "value_label": "depth",
+   "value_iri": "http://purl.obolibrary.org/obo/PATO_0001595",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "22879314",
+    "38959345"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Thermal wound"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-depth",
+   "section": "cluster"
+  },
+  {
+   "id": "w001",
+   "subject": "Alginate containing wound dressing",
+   "subject_label": "Alginate containing wound dressing",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000011",
+   "predicate": "has part",
+   "property_iri": "http://purl.obolibrary.org/obo/BFO_0000051",
+   "value": "alginate",
+   "value_label": "Alginate",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000790",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "38683776",
+    "38754593"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound dressing"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w002",
+   "subject": "Antibiotic therapy",
+   "subject_label": "Antibiotic therapy plan specification",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000016",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "antibiotic",
+   "value_label": "antibiotic",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007889",
+   "value_is_new": true,
+   "abstracts": 4,
+   "pmids": [
+    "38843043",
+    "41398612",
+    "41549141",
+    "42024695"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "treatment plan specification"
+   ],
+   "already_in_wont": false,
+   "elk": "unsatisfiable: Antibiotic therapy plan specification, Systemic antibiotic therapy plan specification, Topical antibiotic therapy plan specification, WONT_0000935, WONT_0000936, WONT_0006942",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w003",
+   "subject": "Burn injury",
+   "subject_label": "Thermal wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "burn size",
+   "value_label": "Burn Size",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001434",
+   "value_is_new": false,
+   "abstracts": 4,
+   "pmids": [
+    "42102185",
+    "42155954",
+    "42252703",
+    "42296008"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Traumatic wound",
+    "output of some Wound causing heat impact process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-area",
+   "section": "cluster"
+  },
+  {
+   "id": "w004",
+   "subject": "Burn injury",
+   "subject_label": "Thermal wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "burn surface area",
+   "value_label": "Burn Surface Area",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001435",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "24462294",
+    "42114458"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Traumatic wound",
+    "output of some Wound causing heat impact process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-area",
+   "section": "cluster"
+  },
+  {
+   "id": "w005",
+   "subject": "Burn injury",
+   "subject_label": "Thermal wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "burn wound depth",
+   "value_label": "Burn Wound Depth",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001442",
+   "value_is_new": false,
+   "abstracts": 5,
+   "pmids": [
+    "26546385",
+    "29895402",
+    "39317544",
+    "41950739",
+    "42155954"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Traumatic wound",
+    "output of some Wound causing heat impact process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-depth",
+   "section": "cluster"
+  },
+  {
+   "id": "w006",
+   "subject": "Burn injury",
+   "subject_label": "Thermal wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "depth",
+   "value_label": "depth",
+   "value_iri": "http://purl.obolibrary.org/obo/PATO_0001595",
+   "value_is_new": false,
+   "abstracts": 4,
+   "pmids": [
+    "31995352",
+    "38959345",
+    "39818735",
+    "42025001"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Traumatic wound",
+    "output of some Wound causing heat impact process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-depth",
+   "section": "cluster"
+  },
+  {
+   "id": "w007",
+   "subject": "Burn injury",
+   "subject_label": "Thermal wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "total burn area",
+   "value_label": "Total Burn Area",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007222",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "41958135",
+    "42209184"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Traumatic wound",
+    "output of some Wound causing heat impact process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-area",
+   "section": "cluster"
+  },
+  {
+   "id": "w008",
+   "subject": "Chronic wound",
+   "subject_label": "Chronic wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000442",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "bacterial load",
+   "value_label": "Bacterial Load",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001127",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "22584529",
+    "42117760"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-bacterial",
+   "section": "cluster"
+  },
+  {
+   "id": "w009",
+   "subject": "Chronic wound",
+   "subject_label": "Chronic wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000442",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "chronic",
+   "value_label": "chronic",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000477",
+   "value_is_new": false,
+   "abstracts": 4,
+   "pmids": [
+    "27632443",
+    "32573571",
+    "41368844",
+    "42152755"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": null,
+   "section": "kind"
+  },
+  {
+   "id": "w010",
+   "subject": "Chronic wound",
+   "subject_label": "Chronic wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000442",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "nonhealing",
+   "value_label": "nonhealing",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007890",
+   "value_is_new": true,
+   "abstracts": 2,
+   "pmids": [
+    "27632443",
+    "40306934"
+   ],
+   "note": "a chronic wound is one failing to heal",
+   "existing_axioms": [
+    "Wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": null,
+   "section": "kind"
+  },
+  {
+   "id": "w011",
+   "subject": "Chronic wound",
+   "subject_label": "Chronic wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000442",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "volume",
+   "value_label": "Volume",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007581",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "38353651",
+    "40917036"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-volume",
+   "section": "cluster"
+  },
+  {
+   "id": "w012",
+   "subject": "Chronic wound",
+   "subject_label": "Chronic wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000442",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "wound size",
+   "value_label": "Wound Size",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007801",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "38353651",
+    "41576249"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-size",
+   "section": "cluster"
+  },
+  {
+   "id": "w013",
+   "subject": "Chronic wound",
+   "subject_label": "Chronic wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000442",
+   "predicate": "participates in",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000056",
+   "value": "impaired healing process",
+   "value_label": "Impaired Healing Process",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003629",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "41176770",
+    "42068816"
+   ],
+   "note": "impaired healing is what makes it chronic",
+   "existing_axioms": [
+    "Wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": null,
+   "section": "kind"
+  },
+  {
+   "id": "w014",
+   "subject": "Debridement process",
+   "subject_label": "Debridement process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000084",
+   "predicate": "has input",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0002233",
+   "value": "devitalized tissue",
+   "value_label": "devitalized tissue",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007891",
+   "value_is_new": true,
+   "abstracts": 4,
+   "pmids": [
+    "35881424",
+    "35994428",
+    "38752844",
+    "41805438"
+   ],
+   "note": "debridement removes devitalized tissue",
+   "existing_axioms": [
+    "Wound cleansing process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w015",
+   "subject": "Debridement process",
+   "subject_label": "Debridement process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000084",
+   "predicate": "has input",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0002233",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 9,
+   "pmids": [
+    "34173213",
+    "36064130",
+    "38366933",
+    "41071303",
+    "41167789",
+    "41326035",
+    "41611290",
+    "41653020",
+    "42209181"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound cleansing process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w016",
+   "subject": "Debridement process",
+   "subject_label": "Debridement process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000084",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 12,
+   "pmids": [
+    "23701261",
+    "31658542",
+    "32734789",
+    "39897483",
+    "40850821",
+    "40920746",
+    "41322864",
+    "41517776",
+    "42024695",
+    "42082225",
+    "42368393",
+    "42469979"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound cleansing process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w017",
+   "subject": "Diabetic foot ulcer",
+   "subject_label": "Diabetic foot ulcer",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000549",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "area",
+   "value_label": "area",
+   "value_iri": "http://purl.obolibrary.org/obo/PATO_0001323",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "36905796",
+    "42676444"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Diabetic wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-area",
+   "section": "cluster"
+  },
+  {
+   "id": "w018",
+   "subject": "Diabetic foot ulcer",
+   "subject_label": "Diabetic foot ulcer",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000549",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "depth",
+   "value_label": "depth",
+   "value_iri": "http://purl.obolibrary.org/obo/PATO_0001595",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "36905796",
+    "42589650"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Diabetic wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-depth",
+   "section": "cluster"
+  },
+  {
+   "id": "w019",
+   "subject": "Diabetic foot ulcer",
+   "subject_label": "Diabetic foot ulcer",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000549",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "diabetic foot ulcer duration",
+   "value_label": "Diabetic Foot Ulcer Duration",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002260",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "27839965",
+    "34477854"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Diabetic wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": null,
+   "section": "kind"
+  },
+  {
+   "id": "w020",
+   "subject": "Diabetic foot ulcer",
+   "subject_label": "Diabetic foot ulcer",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000549",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "Diabetic foot ulcers size",
+   "value_label": "Diabetic Foot Ulcers Size",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002279",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "38861211",
+    "40801628"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Diabetic wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-size",
+   "section": "cluster"
+  },
+  {
+   "id": "w021",
+   "subject": "Diabetic foot ulcer",
+   "subject_label": "Diabetic foot ulcer",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000549",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "ulcer area",
+   "value_label": "Ulcer Area",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007356",
+   "value_is_new": false,
+   "abstracts": 6,
+   "pmids": [
+    "34477854",
+    "38599150",
+    "38754593",
+    "40320289",
+    "40636711",
+    "42631595"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Diabetic wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-area",
+   "section": "cluster"
+  },
+  {
+   "id": "w022",
+   "subject": "Diabetic foot ulcer",
+   "subject_label": "Diabetic foot ulcer",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000549",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "wound size",
+   "value_label": "Wound Size",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007801",
+   "value_is_new": false,
+   "abstracts": 3,
+   "pmids": [
+    "33657252",
+    "40750992",
+    "41962023"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Diabetic wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-size",
+   "section": "cluster"
+  },
+  {
+   "id": "w023",
+   "subject": "Diabetic foot ulcer",
+   "subject_label": "Diabetic foot ulcer",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000549",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "wound surface area",
+   "value_label": "Wound Surface Area",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007812",
+   "value_is_new": false,
+   "abstracts": 3,
+   "pmids": [
+    "25509057",
+    "27049838",
+    "38909998"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Diabetic wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-area",
+   "section": "cluster"
+  },
+  {
+   "id": "w024",
+   "subject": "Diabetic foot ulcer",
+   "subject_label": "Diabetic foot ulcer",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000549",
+   "predicate": "part of",
+   "property_iri": "http://purl.obolibrary.org/obo/BFO_0000050",
+   "value": "foot",
+   "value_label": "foot",
+   "value_iri": "",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "38683771",
+    "42086085"
+   ],
+   "note": "a diabetic foot ulcer is on the foot",
+   "existing_axioms": [
+    "Diabetic wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": null,
+   "section": "kind"
+  },
+  {
+   "id": "w025",
+   "subject": "Dressing change",
+   "subject_label": "Dressing change plan specification",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000094",
+   "predicate": "has input",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0002233",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "15739654",
+    "42706049"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound treatment plan specification"
+   ],
+   "already_in_wont": false,
+   "elk": "unsatisfiable: Dressing change plan specification, WONT_0006695",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w026",
+   "subject": "Dressing change",
+   "subject_label": "Dressing change plan specification",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000094",
+   "predicate": "has input",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0002233",
+   "value": "Wound dressing",
+   "value_label": "Wound dressing",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000398",
+   "value_is_new": false,
+   "abstracts": 3,
+   "pmids": [
+    "32517523",
+    "38664028",
+    "40600255"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound treatment plan specification"
+   ],
+   "already_in_wont": false,
+   "elk": "unsatisfiable: Dressing change plan specification, WONT_0006695",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w027",
+   "subject": "Dressing change",
+   "subject_label": "Dressing change plan specification",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000094",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 7,
+   "pmids": [
+    "23985209",
+    "31658542",
+    "32340421",
+    "33379851",
+    "36001700",
+    "41517776",
+    "42640993"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound treatment plan specification"
+   ],
+   "already_in_wont": false,
+   "elk": "unsatisfiable: Dressing change plan specification, WONT_0006695",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w028",
+   "subject": "Dressing change",
+   "subject_label": "Dressing change plan specification",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000094",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "Wound dressing",
+   "value_label": "Wound dressing",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000398",
+   "value_is_new": false,
+   "abstracts": 8,
+   "pmids": [
+    "25687836",
+    "26551647",
+    "31000315",
+    "31230798",
+    "34688520",
+    "34794261",
+    "36748871",
+    "41990613"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound treatment plan specification"
+   ],
+   "already_in_wont": false,
+   "elk": "unsatisfiable: Dressing change plan specification, WONT_0006695",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w029",
+   "subject": "Enzymatic wound debridement process",
+   "subject_label": "Enzymatic wound debridement process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000098",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "40159332",
+    "41956834"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Debridement process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w030",
+   "subject": "Granulation tissue formation process",
+   "subject_label": "Granulation tissue formation process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000132",
+   "predicate": "has output",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0002234",
+   "value": "granulation tissue",
+   "value_label": "granulation tissue",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007892",
+   "value_is_new": true,
+   "abstracts": 8,
+   "pmids": [
+    "22966096",
+    "31600109",
+    "31839387",
+    "35148575",
+    "37933900",
+    "38861209",
+    "41625239",
+    "42013180"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound healing related physiological process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w031",
+   "subject": "Granulation tissue formation process",
+   "subject_label": "Granulation tissue formation process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000132",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 3,
+   "pmids": [
+    "35022147",
+    "40419293",
+    "40920746"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound healing related physiological process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w032",
+   "subject": "Granulation tissue formation process",
+   "subject_label": "Granulation tissue formation process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000132",
+   "predicate": "part of",
+   "property_iri": "http://purl.obolibrary.org/obo/BFO_0000050",
+   "value": "healing",
+   "value_label": "healing",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007893",
+   "value_is_new": true,
+   "abstracts": 6,
+   "pmids": [
+    "26419713",
+    "40159332",
+    "42181178",
+    "42637500",
+    "7657809",
+    "9853438"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound healing related physiological process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w033",
+   "subject": "Granulation tissue formation process",
+   "subject_label": "Granulation tissue formation process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000132",
+   "predicate": "part of",
+   "property_iri": "http://purl.obolibrary.org/obo/BFO_0000050",
+   "value": "wound healing",
+   "value_label": "wound healing",
+   "value_iri": "http://purl.obolibrary.org/obo/GO_0042060",
+   "value_is_new": false,
+   "abstracts": 7,
+   "pmids": [
+    "11775238",
+    "22966096",
+    "35148575",
+    "40091352",
+    "40835588",
+    "41456143",
+    "41962586"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound healing related physiological process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w034",
+   "subject": "Hydrogel containing wound dressing",
+   "subject_label": "Hydrogel containing wound dressing",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000151",
+   "predicate": "has part",
+   "property_iri": "http://purl.obolibrary.org/obo/BFO_0000051",
+   "value": "hydrogel",
+   "value_label": "hydrogel",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007894",
+   "value_is_new": true,
+   "abstracts": 2,
+   "pmids": [
+    "21482863",
+    "23701261"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound dressing"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w035",
+   "subject": "Hypertrophic scar",
+   "subject_label": "Hypertrophic scar",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000556",
+   "predicate": "output of",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0002353",
+   "value": "Impaired wound healing process",
+   "value_label": "Impaired wound healing process",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000544",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "39333369",
+    "39700364"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "material entity",
+    "output of some Excessive collagen deposition process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w036",
+   "subject": "Negative pressure wound therapy",
+   "subject_label": "Negative pressure wound therapy plan specification",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000213",
+   "predicate": "has input",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0002233",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "24263388",
+    "41520662"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound treatment plan specification"
+   ],
+   "already_in_wont": false,
+   "elk": "unsatisfiable: Negative pressure wound therapy plan specification",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w037",
+   "subject": "Negative pressure wound therapy",
+   "subject_label": "Negative pressure wound therapy plan specification",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000213",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "negative pressure wound therapy system",
+   "value_label": "negative pressure wound therapy system",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007895",
+   "value_is_new": true,
+   "abstracts": 2,
+   "pmids": [
+    "42017782",
+    "42339526"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound treatment plan specification"
+   ],
+   "already_in_wont": false,
+   "elk": "unsatisfiable: Negative pressure wound therapy plan specification",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w038",
+   "subject": "Negative pressure wound therapy",
+   "subject_label": "Negative pressure wound therapy plan specification",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000213",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 16,
+   "pmids": [
+    "32352675",
+    "33379851",
+    "37079789",
+    "39965522",
+    "40920746",
+    "41196186",
+    "41577464",
+    "42013179",
+    "42013202",
+    "42024695",
+    "42060505",
+    "42082225",
+    "42104753",
+    "42177612",
+    "42258248",
+    "42469979"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound treatment plan specification"
+   ],
+   "already_in_wont": false,
+   "elk": "unsatisfiable: Negative pressure wound therapy plan specification",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w039",
+   "subject": "Negative pressure wound therapy",
+   "subject_label": "Negative pressure wound therapy plan specification",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000213",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "Wound dressing",
+   "value_label": "Wound dressing",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000398",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "24263388",
+    "42258248"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound treatment plan specification"
+   ],
+   "already_in_wont": false,
+   "elk": "unsatisfiable: Negative pressure wound therapy plan specification",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w040",
+   "subject": "Pressure ulcer",
+   "subject_label": "Pressure ulcer",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000534",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "depth",
+   "value_label": "depth",
+   "value_iri": "http://purl.obolibrary.org/obo/PATO_0001595",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "40047814",
+    "40346762"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-depth",
+   "section": "cluster"
+  },
+  {
+   "id": "w041",
+   "subject": "Pressure ulcer",
+   "subject_label": "Pressure ulcer",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000534",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "severity of the wound",
+   "value_label": "severity of the wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007896",
+   "value_is_new": true,
+   "abstracts": 2,
+   "pmids": [
+    "40380711",
+    "42084459"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": null,
+   "section": "kind"
+  },
+  {
+   "id": "w042",
+   "subject": "Pressure ulcer",
+   "subject_label": "Pressure ulcer",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000534",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "surface area",
+   "value_label": "Surface Area",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006844",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "41299841",
+    "41692567"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-area",
+   "section": "cluster"
+  },
+  {
+   "id": "w043",
+   "subject": "Pressure ulcer",
+   "subject_label": "Pressure ulcer",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000534",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "wound size",
+   "value_label": "Wound Size",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007801",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "40091352",
+    "41037479"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-size",
+   "section": "cluster"
+  },
+  {
+   "id": "w044",
+   "subject": "Pressure ulcer",
+   "subject_label": "Pressure ulcer",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000534",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "wound surface area",
+   "value_label": "Wound Surface Area",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007812",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "33620327",
+    "40346762"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-area",
+   "section": "cluster"
+  },
+  {
+   "id": "w045",
+   "subject": "Pressure ulcer",
+   "subject_label": "Pressure ulcer",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000534",
+   "predicate": "output of",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0002353",
+   "value": "pressure ulcer development",
+   "value_label": "Pressure Ulcer Development",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005619",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "26075375",
+    "38625804"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound",
+    "≡ (class expression)"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": null,
+   "section": "kind"
+  },
+  {
+   "id": "w046",
+   "subject": "Re-Epithelialization",
+   "subject_label": "Epithelialization process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000100",
+   "predicate": "part of",
+   "property_iri": "http://purl.obolibrary.org/obo/BFO_0000050",
+   "value": "wound healing",
+   "value_label": "wound healing",
+   "value_iri": "http://purl.obolibrary.org/obo/GO_0042060",
+   "value_is_new": false,
+   "abstracts": 4,
+   "pmids": [
+    "37572339",
+    "38747268",
+    "42262985",
+    "42397770"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound healing related physiological process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w047",
+   "subject": "Scarring process",
+   "subject_label": "Scarring process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000471",
+   "predicate": "part of",
+   "property_iri": "http://purl.obolibrary.org/obo/BFO_0000050",
+   "value": "wound healing",
+   "value_label": "wound healing",
+   "value_iri": "http://purl.obolibrary.org/obo/GO_0042060",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "38067126",
+    "38257078"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound healing related physiological process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w048",
+   "subject": "Surgical debridement",
+   "subject_label": "Surgical debridement plan specification",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000581",
+   "predicate": "has input",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0002233",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 4,
+   "pmids": [
+    "38324424",
+    "38469778",
+    "41713884",
+    "41760579"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "treatment plan specification"
+   ],
+   "already_in_wont": false,
+   "elk": "unsatisfiable: Surgical debridement plan specification",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w049",
+   "subject": "Surgical excision",
+   "subject_label": "excision",
+   "subject_iri": "http://purl.obolibrary.org/obo/OBI_0600022",
+   "predicate": "has output",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0002234",
+   "value": "surgical wound",
+   "value_label": "surgical wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007897",
+   "value_is_new": true,
+   "abstracts": 2,
+   "pmids": [
+    "35998557",
+    "42705663"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Mechanical wound debridement process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w050",
+   "subject": "Wagner and Anderson wound classification grade",
+   "subject_label": "Wagner and Anderson wound classification grade",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000376",
+   "predicate": "is about",
+   "property_iri": "http://purl.obolibrary.org/obo/IAO_0000136",
+   "value": "Diabetic foot ulcer",
+   "value_label": "Diabetic foot ulcer",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000549",
+   "value_is_new": false,
+   "abstracts": 7,
+   "pmids": [
+    "33231614",
+    "34477854",
+    "38324422",
+    "41024096",
+    "42095181",
+    "42217301",
+    "42311555"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "wound classification grade"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w051",
+   "subject": "Wagner and Anderson wound classification grade",
+   "subject_label": "Wagner and Anderson wound classification grade",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000376",
+   "predicate": "is about",
+   "property_iri": "http://purl.obolibrary.org/obo/IAO_0000136",
+   "value": "ulcer",
+   "value_label": "Ulcer",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007354",
+   "value_is_new": false,
+   "abstracts": 3,
+   "pmids": [
+    "27428720",
+    "31536746",
+    "42699197"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "wound classification grade"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w052",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has part",
+   "property_iri": "http://purl.obolibrary.org/obo/BFO_0000051",
+   "value": "tissue",
+   "value_label": "Tissue",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007117",
+   "value_is_new": false,
+   "abstracts": 3,
+   "pmids": [
+    "35451982",
+    "38684120",
+    "42246388"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": null,
+   "section": "wound"
+  },
+  {
+   "id": "w053",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has part",
+   "property_iri": "http://purl.obolibrary.org/obo/BFO_0000051",
+   "value": "Wound base",
+   "value_label": "Wound base",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000382",
+   "value_is_new": false,
+   "abstracts": 7,
+   "pmids": [
+    "22886330",
+    "30016138",
+    "30840551",
+    "35736844",
+    "36748871",
+    "38494195",
+    "42640993"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": null,
+   "section": "wound"
+  },
+  {
+   "id": "w054",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has part",
+   "property_iri": "http://purl.obolibrary.org/obo/BFO_0000051",
+   "value": "wound tissue",
+   "value_label": "wound tissue",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007898",
+   "value_is_new": true,
+   "abstracts": 2,
+   "pmids": [
+    "37805732",
+    "41678557"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": null,
+   "section": "wound"
+  },
+  {
+   "id": "w055",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "area",
+   "value_label": "area",
+   "value_iri": "http://purl.obolibrary.org/obo/PATO_0001323",
+   "value_is_new": false,
+   "abstracts": 4,
+   "pmids": [
+    "31134552",
+    "32517523",
+    "33320742",
+    "41774678"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-area",
+   "section": "cluster"
+  },
+  {
+   "id": "w056",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "bacterial burden",
+   "value_label": "Bacterial Burden",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001113",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "23080237",
+    "36251505"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-bacterial",
+   "section": "cluster"
+  },
+  {
+   "id": "w057",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "bacterial load",
+   "value_label": "Bacterial Load",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001127",
+   "value_is_new": false,
+   "abstracts": 3,
+   "pmids": [
+    "34186547",
+    "36001700",
+    "40632071"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-bacterial",
+   "section": "cluster"
+  },
+  {
+   "id": "w058",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "degree of microbial burden",
+   "value_label": "degree of microbial burden",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000478",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "32567234",
+    "40632071"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": true,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-bacterial",
+   "section": "cluster"
+  },
+  {
+   "id": "w059",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "depth",
+   "value_label": "depth",
+   "value_iri": "http://purl.obolibrary.org/obo/PATO_0001595",
+   "value_is_new": false,
+   "abstracts": 7,
+   "pmids": [
+    "31134552",
+    "33320742",
+    "38146127",
+    "38959345",
+    "39727218",
+    "40047814",
+    "42246388"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": true,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-depth",
+   "section": "cluster"
+  },
+  {
+   "id": "w060",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "length",
+   "value_label": "Length",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004067",
+   "value_is_new": false,
+   "abstracts": 5,
+   "pmids": [
+    "38146127",
+    "38661243",
+    "38706636",
+    "40047814",
+    "41378595"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-length",
+   "section": "cluster"
+  },
+  {
+   "id": "w061",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "size",
+   "value_label": "size",
+   "value_iri": "http://purl.obolibrary.org/obo/PATO_0000117",
+   "value_is_new": false,
+   "abstracts": 6,
+   "pmids": [
+    "36054775",
+    "37226466",
+    "39402007",
+    "40663871",
+    "41071295",
+    "41774678"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": true,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-size",
+   "section": "cluster"
+  },
+  {
+   "id": "w062",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "surface area",
+   "value_label": "Surface Area",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006844",
+   "value_is_new": false,
+   "abstracts": 3,
+   "pmids": [
+    "26060395",
+    "35901189",
+    "41071295"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-area",
+   "section": "cluster"
+  },
+  {
+   "id": "w063",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "volume",
+   "value_label": "Volume",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007581",
+   "value_is_new": false,
+   "abstracts": 5,
+   "pmids": [
+    "33095125",
+    "33320742",
+    "39950603",
+    "41774678",
+    "42049196"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-volume",
+   "section": "cluster"
+  },
+  {
+   "id": "w064",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "wound age",
+   "value_label": "Wound Age",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007634",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "37028088",
+    "42710152"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-age",
+   "section": "cluster"
+  },
+  {
+   "id": "w065",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "wound depth",
+   "value_label": "Wound Depth",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007691",
+   "value_is_new": false,
+   "abstracts": 5,
+   "pmids": [
+    "38494195",
+    "38661243",
+    "39727218",
+    "40227969",
+    "41071295"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-depth",
+   "section": "cluster"
+  },
+  {
+   "id": "w066",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "wound length",
+   "value_label": "wound length",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007899",
+   "value_is_new": true,
+   "abstracts": 2,
+   "pmids": [
+    "40187385",
+    "41483988"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-length",
+   "section": "cluster"
+  },
+  {
+   "id": "w067",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "wound size",
+   "value_label": "Wound Size",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007801",
+   "value_is_new": false,
+   "abstracts": 27,
+   "pmids": [
+    "20632489",
+    "20713816",
+    "26695998",
+    "33320764",
+    "33646060",
+    "36054775",
+    "36251505",
+    "37253699",
+    "37269235",
+    "38661243",
+    "38850544",
+    "38861211",
+    "39888392",
+    "39928474",
+    "40044793",
+    "40227969",
+    "40341457",
+    "40545465",
+    "40572787",
+    "41176771",
+    "41205151",
+    "41390212",
+    "41483988",
+    "41490225",
+    "41678557",
+    "42267675",
+    "42637500"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-size",
+   "section": "cluster"
+  },
+  {
+   "id": "w068",
+   "subject": "Wound",
+   "subject_label": "Wound",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "predicate": "has quality",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000086",
+   "value": "wound surface area",
+   "value_label": "Wound Surface Area",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007812",
+   "value_is_new": false,
+   "abstracts": 3,
+   "pmids": [
+    "35901189",
+    "41071303",
+    "42458776"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "pathological disorder",
+    "has quality some size",
+    "has quality some closure",
+    "has quality some depth",
+    "has quality some degree of time after disease inception",
+    "has quality some degree of microbial burden",
+    "output of some Wound development process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": true,
+   "cluster": "q-area",
+   "section": "cluster"
+  },
+  {
+   "id": "w069",
+   "subject": "Wound base",
+   "subject_label": "Wound base",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000382",
+   "predicate": "part of",
+   "property_iri": "http://purl.obolibrary.org/obo/BFO_0000050",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 9,
+   "pmids": [
+    "16875120",
+    "24633056",
+    "30016138",
+    "33379851",
+    "37079789",
+    "37121663",
+    "38743855",
+    "38850544",
+    "39809598"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "material entity",
+    "part of some Wound",
+    "has quality some degree of granulation",
+    "has quality some degree of necrosis",
+    "has quality some degree of fibrin coverage",
+    "has quality some degree of epithelialization"
+   ],
+   "already_in_wont": true,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w070",
+   "subject": "Wound closure process",
+   "subject_label": "Wound closure process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000388",
+   "predicate": "has input",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0002233",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "39837084",
+    "41760579"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound treatment process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w071",
+   "subject": "Wound closure process",
+   "subject_label": "Wound closure process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000388",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 5,
+   "pmids": [
+    "20479444",
+    "41643652",
+    "42024695",
+    "42236572",
+    "42684027"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound treatment process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w072",
+   "subject": "Wound dressing composed of polyurethane foam",
+   "subject_label": "Wound dressing composed of polyurethane foam",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000400",
+   "predicate": "has part",
+   "property_iri": "http://purl.obolibrary.org/obo/BFO_0000051",
+   "value": "polyurethane foam",
+   "value_label": "Polyurethane Foam",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005490",
+   "value_is_new": false,
+   "abstracts": 3,
+   "pmids": [
+    "23330329",
+    "29314659",
+    "42640993"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound-integrating wound dressing"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w073",
+   "subject": "Wound edge",
+   "subject_label": "Wound edge",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000401",
+   "predicate": "part of",
+   "property_iri": "http://purl.obolibrary.org/obo/BFO_0000050",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "37121663",
+    "42397770"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "material entity",
+    "part of some Wound",
+    "has quality some degree of maceration",
+    "has quality some degree of skin adherence to underlying tissue"
+   ],
+   "already_in_wont": true,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w074",
+   "subject": "Wound exudate",
+   "subject_label": "Wound exudate",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000404",
+   "predicate": "part of",
+   "property_iri": "http://purl.obolibrary.org/obo/BFO_0000050",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 7,
+   "pmids": [
+    "23103485",
+    "30016138",
+    "39066542",
+    "40665945",
+    "42015781",
+    "42049196",
+    "42148521"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "material entity"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w075",
+   "subject": "wound healing",
+   "subject_label": "wound healing",
+   "subject_iri": "http://purl.obolibrary.org/obo/GO_0042060",
+   "predicate": "has input",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0002233",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 7,
+   "pmids": [
+    "15924896",
+    "22018774",
+    "39536842",
+    "39837084",
+    "40149931",
+    "40341457",
+    "41674187"
+   ],
+   "note": "",
+   "existing_axioms": [],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w076",
+   "subject": "wound healing",
+   "subject_label": "wound healing",
+   "subject_iri": "http://purl.obolibrary.org/obo/GO_0042060",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 32,
+   "pmids": [
+    "15924896",
+    "22066961",
+    "29956440",
+    "30204574",
+    "31230798",
+    "31823556",
+    "32340421",
+    "33181730",
+    "33300848",
+    "35466808",
+    "35797263",
+    "36001700",
+    "37828852",
+    "38329829",
+    "38548398",
+    "38664028",
+    "38814846",
+    "39834284",
+    "40145987",
+    "40419293",
+    "40419356",
+    "40843573",
+    "41075878",
+    "41774678",
+    "42015781",
+    "42209181",
+    "42488423",
+    "42525152",
+    "42632041",
+    "42682399",
+    "42706049",
+    "42710152"
+   ],
+   "note": "",
+   "existing_axioms": [],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w077",
+   "subject": "wound healing process",
+   "subject_label": "wound healing",
+   "subject_iri": "http://purl.obolibrary.org/obo/GO_0042060",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 3,
+   "pmids": [
+    "29956440",
+    "33646060",
+    "42015781"
+   ],
+   "note": "",
+   "existing_axioms": [],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w078",
+   "subject": "Wound infection process",
+   "subject_label": "Wound infection process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000410",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "pathogen",
+   "value_label": "pathogen",
+   "value_iri": "",
+   "value_is_new": false,
+   "abstracts": 2,
+   "pmids": [
+    "39760042",
+    "42497179"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound complication process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w079",
+   "subject": "Wound infection process",
+   "subject_label": "Wound infection process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000410",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 3,
+   "pmids": [
+    "31230798",
+    "40859204",
+    "42289342"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Wound complication process"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w080",
+   "subject": "Wound treatment process",
+   "subject_label": "Wound treatment process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000423",
+   "predicate": "has input",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0002233",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 6,
+   "pmids": [
+    "15924896",
+    "18808638",
+    "26695998",
+    "40981686",
+    "41440266",
+    "42060496"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Disease disorder treatment process",
+    "has participant some Wound"
+   ],
+   "already_in_wont": false,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  },
+  {
+   "id": "w081",
+   "subject": "Wound treatment process",
+   "subject_label": "Wound treatment process",
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000423",
+   "predicate": "has participant",
+   "property_iri": "http://purl.obolibrary.org/obo/RO_0000057",
+   "value": "Wound",
+   "value_label": "Wound",
+   "value_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "value_is_new": false,
+   "abstracts": 16,
+   "pmids": [
+    "25547983",
+    "30016138",
+    "31446917",
+    "33181730",
+    "37079789",
+    "37604151",
+    "39965522",
+    "40632071",
+    "41643652",
+    "41725096",
+    "41871340",
+    "41896289",
+    "42060505",
+    "42175410",
+    "42574336",
+    "42702723"
+   ],
+   "note": "",
+   "existing_axioms": [
+    "Disease disorder treatment process",
+    "has participant some Wound"
+   ],
+   "already_in_wont": true,
+   "elk": "ok",
+   "under_wound": false,
+   "cluster": null,
+   "section": "other"
+  }
+ ],
+ "elk_all_together": "unsatisfiable",
+ "clusters": [
+  {
+   "id": "q-area",
+   "canonical": "area",
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001323",
+   "terms": [
+    "area",
+    "surface area",
+    "wound surface area",
+    "ulcer area",
+    "burn surface area",
+    "total burn area",
+    "burn size"
+   ],
+   "why": "The area of the wound in question; the bearer is the subject, not part of the quality's name. Curator's notes: burn size = burn surface area = total burn area."
+  },
+  {
+   "id": "q-size",
+   "canonical": "size",
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000117",
+   "terms": [
+    "size",
+    "wound size",
+    "Diabetic foot ulcers size"
+   ],
+   "why": "PATO size is the determinable over area, volume and length; untick here and tick under area if 'wound size' means its area."
+  },
+  {
+   "id": "q-depth",
+   "canonical": "depth",
+   "iri": "http://purl.obolibrary.org/obo/PATO_0001595",
+   "terms": [
+    "depth",
+    "wound depth",
+    "burn wound depth"
+   ],
+   "why": "The depth of the wound in question."
+  },
+  {
+   "id": "q-length",
+   "canonical": "length",
+   "iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004067",
+   "terms": [
+    "length",
+    "wound length"
+   ],
+   "why": "PATO length is not in the import modules; WONT's Length class is used."
+  },
+  {
+   "id": "q-volume",
+   "canonical": "volume",
+   "iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007581",
+   "terms": [
+    "volume"
+   ],
+   "why": "PATO volume is not in the import modules; WONT's Volume class is used."
+  },
+  {
+   "id": "q-bacterial",
+   "canonical": "bacterial load",
+   "iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001127",
+   "terms": [
+    "bacterial load",
+    "bacterial burden",
+    "degree of microbial burden"
+   ],
+   "why": "Three names for the amount of bacteria in the wound."
+  },
+  {
+   "id": "q-age",
+   "canonical": "age",
+   "iri": "http://purl.obolibrary.org/obo/PATO_0000011",
+   "terms": [
+    "wound age"
+   ],
+   "why": "The age of the wound in question (PATO age)."
+  }
+ ]
+}

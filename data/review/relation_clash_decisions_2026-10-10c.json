@@ -1,0 +1,55 @@
+{
+ "made": "2026-10-10",
+ "source": "consequences of the curator's second round (data/review/relation_clash_decisions_2026-10-10b.json), found by the relation check of 2026-10-10 20:5x",
+ "rule": "INSTRUCTIONS.md rule 77",
+ "reject": [
+  {
+   "subject": "Pressure ulcer",
+   "predicate": "has quality",
+   "object": "pressure ulcer stage",
+   "by": "same type",
+   "why": "curator ruled 'pressure ulcer stage' information (keeps its 'is about'); rule 77: has quality never points at information",
+   "item": "consequence of relation_clash_decisions_2026-10-10b.json"
+  },
+  {
+   "subject": "Wound",
+   "predicate": "has quality",
+   "object": "granulation tissue coverage",
+   "by": "same type",
+   "why": "curator ruled 'granulation tissue coverage' information (keeps its 'is about'); rule 77: has quality never points at information",
+   "item": "consequence of relation_clash_decisions_2026-10-10b.json"
+  },
+  {
+   "subject": "Wound",
+   "predicate": "has quality",
+   "object": "pH level",
+   "by": "same type",
+   "why": "curator ruled 'pH level' information (keeps its 'is about'); rule 77: has quality never points at information",
+   "item": "consequence of relation_clash_decisions_2026-10-10b.json"
+  },
+  {
+   "subject": "Wound",
+   "predicate": "has quality",
+   "object": "wound pain score",
+   "by": "same type",
+   "why": "curator ruled 'wound pain score' information (keeps its 'is about'); rule 77: has quality never points at information",
+   "item": "consequence of relation_clash_decisions_2026-10-10b.json"
+  },
+  {
+   "subject": "localized skin diphtheria",
+   "predicate": "has quality",
+   "object": "Skin",
+   "by": "same type",
+   "why": "curator kept Skin as a material thing (disposition, function, role); a quality is never skin",
+   "item": "consequence of relation_clash_decisions_2026-10-10b.json"
+  },
+  {
+   "subject": "skin fistula",
+   "predicate": "has quality",
+   "object": "Skin",
+   "by": "same type",
+   "why": "curator kept Skin as a material thing (disposition, function, role); a quality is never skin",
+   "item": "consequence of relation_clash_decisions_2026-10-10b.json"
+  }
+ ]
+}

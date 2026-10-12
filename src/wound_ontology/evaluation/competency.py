@@ -169,13 +169,29 @@ def label_index(graph: rdflib.Graph) -> LabelIndex:
     claims a key first keeps it, and resolution does not depend on graph
     iteration order.
     """
+    # Classes before individuals, own before imported, sorted within each: "first claim wins"
+    # only means something if the order is fixed. It was rdflib's hash order,
+    # and WONT labels a quality class AND an IWII grade individual
+    # `contaminated` (and `infected`), so CQ040/CQ093 passed or failed
+    # depending on the run (found 2026-09-28 on the split extension).
+    classes = set(graph.subjects(RDF.type, OWL.Class))
+
+    def ordered(pred):
+        rows = [(s, o) for s, o in graph.subject_objects(pred) if isinstance(s, rdflib.URIRef)]
+        # Then the ontology's OWN classes before imported ones: WONT has its own
+        # `chronic` because PATO's is a duration of a process (a false friend),
+        # and its own `Pressure ulcer` beside HP's phenotype of that name.
+        own = ("https://bioportal.bioontology.org/ontologies/WONT/",
+               "https://bioportal.bioontology.org/ontologies/MILD/")
+        return sorted(rows, key=lambda so: (so[0] not in classes,
+                                            not str(so[0]).startswith(own),
+                                            str(so[0]), str(so[1])))
+
     idx = LabelIndex()
-    for s, o in graph.subject_objects(RDFS.label):
-        if isinstance(s, rdflib.URIRef):
-            idx.add(str(o), s, preferred=False)
-    for s, o in graph.subject_objects(ALT_TERM):
-        if isinstance(s, rdflib.URIRef):
-            idx.add(str(o), s, preferred=False)
+    for s, o in ordered(RDFS.label):
+        idx.add(str(o), s, preferred=False)
+    for s, o in ordered(ALT_TERM):
+        idx.add(str(o), s, preferred=False)
     return idx
 
 

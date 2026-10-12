@@ -144,8 +144,8 @@ def _iter_store_attributes(store_data: dict):
     term can be typed differently by two abstracts -- which is the disagreement
     this module has to surface rather than let the last writer win.
     """
-    from wound_ontology.store.concept_store import effective_records
-    for _, ents in effective_records(store_data):
+    from wound_ontology.store.concept_store import records_of
+    for _, ents in records_of(store_data):
         for label, attrs in ents.items():
             for attr, value in attrs.items():
                 if value == 1.0:

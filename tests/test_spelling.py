@@ -175,3 +175,16 @@ def test_our_inside_a_word_converts_too(british, american):
                                   "flourish", "nourish", "bourbon", "encourage"])
 def test_an_ordinary_our_word_survives_the_unanchored_rule(word):
     assert american_word(word) == word
+
+
+def test_a_rename_reaches_the_sense_labels_of_a_two_senses_ruling():
+    """2026-10-02: `biopsy` was split into `biopsy` and `biopsy specimen`; the
+    rename `biopsy specimen -> biopsy sample` (specimen -> sample) left the
+    sense label in the old spelling, and the view kept writing it."""
+    from conftest import memory_mapping
+    gt = memory_mapping({"biopsy": {"to": None, "pairs": {},
+                                    "senses": {"process": "biopsy",
+                                               "material entity": "biopsy specimen"}}})
+    rep = gt.apply_renames({"biopsy specimen": "biopsy sample"}, by="test")
+    assert gt.records["biopsy"]["senses"]["material entity"] == "biopsy sample"
+    assert rep["sense labels renamed"] == 1

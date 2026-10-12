@@ -15,6 +15,11 @@ instead of in the store.
 
 Normalising only one of the two would be worse than either: the mapping would
 keep handing the store back spellings the rules had just rejected.
+
+Rule 51 (2026-09-27) moved WHERE the label changes: the concept store keeps
+what each abstract said, and the rename is an alias in the term dict that the
+store's view reads through. The store tests below therefore read the view, and
+check that the evidence itself is untouched.
 """
 
 import pytest
@@ -41,10 +46,15 @@ def _store(data):
 
 # ── the store ────────────────────────────────────────────────────────────────
 
-def test_an_entity_name_is_rewritten_where_it_stands():
+def _view(s):
+    return dict(s.records())
+
+
+def test_an_entity_name_reads_the_new_spelling_and_the_evidence_keeps_the_old():
     s = _store({"1": {"entities": {"Tumours": {"is_a: Neoplasm": 1.0}}}})
     s.apply_renames({"Tumours": "Tumor"}, by="pass0")
-    assert list(s.dict["1"]["entities"]) == ["Tumor"]
+    assert list(_view(s)["1"]) == ["Tumor"]
+    assert list(s.dict["1"]["entities"]) == ["Tumours"]
 
 
 def test_the_target_half_of_a_triple_moves_with_it():
@@ -52,7 +62,7 @@ def test_the_target_half_of_a_triple_moves_with_it():
     ways in one store — as a subject it reads `Tumor`, as an object `Tumours`."""
     s = _store({"1": {"entities": {"Lesion": {"is_a: Tumours": 1.0}}}})
     s.apply_renames({"Tumours": "Tumor"}, by="pass0")
-    assert list(s.dict["1"]["entities"]["Lesion"]) == ["is_a: Tumor"]
+    assert list(_view(s)["1"]["Lesion"]) == ["is_a: Tumor"]
 
 
 @pytest.mark.parametrize("first,second", [(0.4, 0.9), (0.9, 0.4)])
@@ -62,7 +72,7 @@ def test_two_spellings_landing_on_one_name_keep_the_strongest_evidence(first, se
     s = _store({"1": {"entities": {"Tumours": {"is_a: Neoplasm": first},
                                    "tumour": {"is_a: Neoplasm": second}}}})
     s.apply_renames({"Tumours": "Tumor", "tumour": "Tumor"}, by="pass0")
-    assert s.dict["1"]["entities"] == {"Tumor": {"is_a: Neoplasm": 0.9}}
+    assert _view(s)["1"] == {"Tumor": {"is_a: Neoplasm": 0.9}}
 
 
 def test_a_verdict_follows_the_name_it_was_written_against():
@@ -92,7 +102,7 @@ def test_a_name_pass0_did_not_name_is_not_touched():
     s = _store({"1": {"entities": {"Tumours": {"is_a: Neoplasm": 1.0},
                                    "TUMOURS": {"is_a: Neoplasm": 1.0}}}})
     s.apply_renames({"Tumours": "Tumor"}, by="pass0")
-    assert set(s.dict["1"]["entities"]) == {"Tumor", "TUMOURS"}
+    assert set(_view(s)["1"]) == {"Tumor", "TUMOURS"}
 
 
 # ── the mapping ──────────────────────────────────────────────────────────────

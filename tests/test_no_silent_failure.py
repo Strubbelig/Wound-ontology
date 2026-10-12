@@ -479,10 +479,19 @@ def _skeleton_harness(tmp_path, monkeypatch, gt_mtime, mild_mtime, sk_mtime):
     monkeypatch.setattr(settings, "GROUND_TRUTH_TTL", gt)
     monkeypatch.setattr(settings, "MILD_TTL", mild)
     monkeypatch.setattr(settings, "REASONER_SKELETON", sk)
+    # The skeleton also reads the import modules (BFO's axioms, the relations'
+    # domains and ranges, 2026-10-03), so they count for staleness too: one
+    # module, as old as the oldest source.
+    mods = tmp_path / "modules"
+    mods.mkdir()
+    mod = mods / "obi_module.owl"
+    mod.write_text("# stub\n")
+    os.utime(mod, (min(gt_mtime, mild_mtime),) * 2)
+    monkeypatch.setattr(settings, "MILD_MODULES_DIR", mods)
 
     built: list = []
 
-    def fake_build(ground_truth, mild_, output):
+    def fake_build(ground_truth, mild_, output, modules=None):
         built.append((ground_truth, mild_, output))
         return pathlib.Path(output), 1
     monkeypatch.setattr(skel, "build_skeleton", fake_build)
@@ -515,6 +524,16 @@ def test_a_current_skeleton_is_still_reused(tmp_path, monkeypatch, capsys):
     run(None)
     assert not built, "a current skeleton must not be rebuilt"
     assert "Reusing" in capsys.readouterr().out
+
+
+def test_a_skeleton_older_than_a_module_is_rebuilt(tmp_path, monkeypatch, capsys):
+    import os
+    run, built, (gt, _mild, _sk) = _skeleton_harness(
+        tmp_path, monkeypatch, gt_mtime=1_000, mild_mtime=1_000, sk_mtime=1_500)
+    os.utime(tmp_path / "modules" / "obi_module.owl", (2_000, 2_000))
+    run(None)
+    assert built, "a skeleton older than an import module must be rebuilt"
+    assert "obi_module.owl" in capsys.readouterr().out
 
 
 def test_the_rebuild_names_which_source_moved(tmp_path, monkeypatch, capsys):

@@ -131,10 +131,16 @@ def test_a_demoted_keyword_exempts_itself_and_nothing_else(lists, blocker, word)
     Asserting the exact casing would pin a spelling nothing depends on.
     """
     assert word not in lists["KEYWORD_WHITELIST"]
-    assert word in {t.lower() for t in lists["WHITELIST"]}
     assert not blocker.is_blocked(word)
     assert not blocker.white_kw.match(word)
-    assert blocker.white_terms.match(word)
+    # Rule 70 (2026-10-04): `ulcer` is now written `Wound` -- the term dict keeps
+    # the word as an alias and the exemption follows the name it is written as.
+    from wound_ontology.data_manager.data_manager import DataManager
+    from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
+    g = TermMappingAndGate(DataManager(), file_name="term_mapping")
+    written = g.resolve(word) if g.is_alias(word) else word
+    assert written.lower() in {t.lower() for t in lists["WHITELIST"]}
+    assert blocker.white_terms.match(written)
 
 
 def test_the_broad_keywords_no_longer_wave_methodology_through(blocker):

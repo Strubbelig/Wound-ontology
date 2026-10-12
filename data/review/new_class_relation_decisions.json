@@ -1,0 +1,438 @@
+{
+ "source": "WONT Judgement Queue, https://claude.ai/artifact/V6Ejezr8tobgJeiwHgy8uM, collection judgement (read with ArtifactData 2026-10-07); 3 more read 2026-10-08 after the rebuild",
+ "rule": "INSTRUCTIONS.md rule 72",
+ "decisions": {
+  "complete wound healing|http://purl.obolibrary.org/obo/RO_0000057|wound": {
+   "v": "add",
+   "subject": "Complete Wound Healing",
+   "predicate": "has participant",
+   "value": "Wound",
+   "note": "",
+   "decided": "2026-10-07T23:45:23.592Z",
+   "item_id": "r061018e250"
+  },
+  "surgical site infection event|http://purl.obolibrary.org/obo/RO_0000057|surgical site infection": {
+   "v": "leave out",
+   "subject": "Surgical Site Infection Event",
+   "predicate": "has participant",
+   "value": "Surgical site infection",
+   "note": "",
+   "decided": "2026-10-07T23:48:12.935Z",
+   "item_id": "r0ce27b455a"
+  },
+  "extracellular matrix remodeling|http://purl.obolibrary.org/obo/RO_0000057|extracellular matrix": {
+   "v": "add",
+   "subject": "Extracellular Matrix Remodeling",
+   "predicate": "has participant",
+   "value": "Extracellular Matrix",
+   "note": "",
+   "decided": "2026-10-07T23:45:52.157Z",
+   "item_id": "r14837765b0"
+  },
+  "wound bed preparation|http://purl.obolibrary.org/obo/RO_0000057|wound base": {
+   "v": "add",
+   "subject": "Wound Bed Preparation",
+   "predicate": "has participant",
+   "value": "Wound base",
+   "note": "",
+   "decided": "2026-10-07T23:54:25.774Z",
+   "item_id": "r1510f34924"
+  },
+  "burn wound depth|http://purl.obolibrary.org/obo/BFO_0000197|burn wound": {
+   "v": "add",
+   "subject": "Burn Wound Depth",
+   "predicate": "inheres in",
+   "value": "Burn Wound",
+   "note": "",
+   "decided": "2026-10-07T23:53:56.835Z",
+   "item_id": "r17de30f00c"
+  },
+  "wound deterioration|http://purl.obolibrary.org/obo/RO_0000057|wound": {
+   "v": "add",
+   "subject": "Wound Deterioration",
+   "predicate": "has participant",
+   "value": "Wound",
+   "note": "",
+   "decided": "2026-10-07T23:54:40.715Z",
+   "item_id": "r1f0691d0eb"
+  },
+  "prontosan wound gel x|http://purl.obolibrary.org/obo/BFO_0000051|polihexanide": {
+   "v": "add",
+   "subject": "Prontosan Wound Gel X",
+   "predicate": "has part",
+   "value": "Polihexanide",
+   "note": "",
+   "decided": "2026-10-07T23:47:27.761Z",
+   "item_id": "r2ab9adb7d6"
+  },
+  "burn care|http://purl.obolibrary.org/obo/RO_0000057|thermal wound": {
+   "v": "add",
+   "subject": "Burn Care",
+   "predicate": "has participant",
+   "value": "Thermal wound",
+   "note": "",
+   "decided": "2026-10-07T21:45:59.737Z",
+   "item_id": "r2ac48214da"
+  },
+  "pressure ulcer scale for healing score|http://purl.obolibrary.org/obo/IAO_0000136|wound healing": {
+   "v": "add",
+   "subject": "Pressure Ulcer Scale For Healing Score",
+   "predicate": "is about",
+   "value": "wound healing",
+   "note": "",
+   "decided": "2026-10-07T23:47:18.238Z",
+   "item_id": "r3259f4375e"
+  },
+  "platelet-rich plasma injection|http://purl.obolibrary.org/obo/RO_0000057|platelet rich plasma": {
+   "v": "add",
+   "subject": "Platelet-Rich Plasma Injection",
+   "predicate": "has participant",
+   "value": "Platelet Rich Plasma",
+   "note": "",
+   "decided": "2026-10-07T23:46:34.367Z",
+   "item_id": "r45ab450079"
+  },
+  "platelet rich plasma|http://purl.obolibrary.org/obo/BFO_0000051|growth factor": {
+   "v": "add",
+   "subject": "Platelet Rich Plasma",
+   "predicate": "has part",
+   "value": "Growth Factor",
+   "note": "",
+   "decided": "2026-10-07T23:46:25.156Z",
+   "item_id": "r45f63f87da"
+  },
+  "lower extremity|http://purl.obolibrary.org/obo/BFO_0000051|lower extremity": {
+   "v": "leave out",
+   "subject": "Lower Extremity",
+   "predicate": "has part",
+   "value": "Lower Extremity",
+   "note": "",
+   "decided": "2026-10-07T23:46:08.553Z",
+   "item_id": "r495bc96245"
+  },
+  "burn care|http://purl.obolibrary.org/obo/RO_0002233|thermal wound": {
+   "v": "add",
+   "subject": "Burn Care",
+   "predicate": "has input",
+   "value": "Thermal wound",
+   "note": "",
+   "decided": "2026-10-07T21:46:01.322Z",
+   "item_id": "r4b00e9ec1f"
+  },
+  "pressure ulcer development|http://purl.obolibrary.org/obo/RO_0002234|pressure ulcer": {
+   "v": "add",
+   "subject": "Pressure Ulcer Development",
+   "predicate": "has output",
+   "value": "Pressure ulcer",
+   "note": "",
+   "decided": "2026-10-07T23:46:44.659Z",
+   "item_id": "r53d36702c8"
+  },
+  "chronic wound healing process|http://purl.obolibrary.org/obo/RO_0000057|chronic wound": {
+   "v": "add",
+   "subject": "Chronic Wound Healing Process",
+   "predicate": "has participant",
+   "value": "Chronic wound",
+   "note": "",
+   "decided": "2026-10-07T23:45:17.899Z",
+   "item_id": "r53ddc89e12"
+  },
+  "diabetic foot ulcer management|http://purl.obolibrary.org/obo/RO_0000057|diabetic foot ulcer": {
+   "v": "add",
+   "subject": "Diabetic Foot Ulcer Management",
+   "predicate": "has participant",
+   "value": "Diabetic foot ulcer",
+   "note": "",
+   "decided": "2026-10-07T23:45:30.480Z",
+   "item_id": "r5bd2d110bc"
+  },
+  "chronic wound healing process|http://purl.obolibrary.org/obo/RO_0002233|chronic wound": {
+   "v": "add",
+   "subject": "Chronic Wound Healing Process",
+   "predicate": "has input",
+   "value": "Chronic wound",
+   "note": "",
+   "decided": "2026-10-07T23:45:20.289Z",
+   "item_id": "r617e128491"
+  },
+  "healing process of diabetic foot ulcer|http://purl.obolibrary.org/obo/RO_0000057|diabetic foot ulcer": {
+   "v": "add",
+   "subject": "Healing Process Of Diabetic Foot Ulcer",
+   "predicate": "has participant",
+   "value": "Diabetic foot ulcer",
+   "note": "",
+   "decided": "2026-10-07T23:45:58.592Z",
+   "item_id": "r63a471eeca"
+  },
+  "wound assessment|http://purl.obolibrary.org/obo/RO_0000057|wound": {
+   "v": "add",
+   "subject": "Wound Assessment",
+   "predicate": "has participant",
+   "value": "Wound",
+   "note": "",
+   "decided": "2026-10-07T23:54:06.487Z",
+   "item_id": "r69127ed797"
+  },
+  "platelet-rich plasma therapy|http://purl.obolibrary.org/obo/RO_0000057|platelet rich plasma": {
+   "v": "add",
+   "subject": "Platelet-Rich Plasma Therapy",
+   "predicate": "has participant",
+   "value": "Platelet Rich Plasma",
+   "note": "",
+   "decided": "2026-10-07T23:46:41.110Z",
+   "item_id": "r6ad0747a0e"
+  },
+  "wound monitoring|http://purl.obolibrary.org/obo/RO_0002233|wound": {
+   "v": "add",
+   "subject": "Wound Monitoring",
+   "predicate": "has input",
+   "value": "Wound",
+   "note": "",
+   "decided": "2026-10-07T23:54:57.465Z",
+   "item_id": "r6b53d96c01"
+  },
+  "wound area|http://purl.obolibrary.org/obo/BFO_0000197|wound": {
+   "v": "add",
+   "subject": "Wound Area",
+   "predicate": "inheres in",
+   "value": "Wound",
+   "note": "",
+   "decided": "2026-10-07T23:54:03.293Z",
+   "item_id": "r82920c8f33"
+  },
+  "wound dressing change|http://purl.obolibrary.org/obo/RO_0000057|wound dressing": {
+   "v": "add",
+   "subject": "Wound Dressing Change",
+   "predicate": "has participant",
+   "value": "Wound dressing",
+   "note": "",
+   "decided": "2026-10-07T23:54:43.215Z",
+   "item_id": "r885f0a5664"
+  },
+  "burn wound depth|http://purl.obolibrary.org/obo/BFO_0000197|thermal wound": {
+   "v": "add",
+   "subject": "Burn Wound Depth",
+   "predicate": "inheres in",
+   "value": "Thermal wound",
+   "note": "",
+   "decided": "2026-10-07T23:53:59.963Z",
+   "item_id": "r8bf90644ef"
+  },
+  "wound surface area|http://purl.obolibrary.org/obo/BFO_0000197|wound": {
+   "v": "add",
+   "subject": "Wound Surface Area",
+   "predicate": "inheres in",
+   "value": "Wound",
+   "note": "",
+   "decided": "2026-10-07T23:55:08.941Z",
+   "item_id": "r8c987c175c"
+  },
+  "wound debridement|http://purl.obolibrary.org/obo/RO_0002233|wound": {
+   "v": "add",
+   "subject": "Wound Debridement",
+   "predicate": "has input",
+   "value": "Wound",
+   "note": "",
+   "decided": "2026-10-07T23:54:34.292Z",
+   "item_id": "r8d38455658"
+  },
+  "burn wound healing|http://purl.obolibrary.org/obo/RO_0000057|burn wound": {
+   "v": "add",
+   "subject": "Burn Wound Healing",
+   "predicate": "has participant",
+   "value": "Burn Wound",
+   "note": "",
+   "decided": "2026-10-07T23:45:03.762Z",
+   "item_id": "r95140e7492"
+  },
+  "chronic wound care|http://purl.obolibrary.org/obo/RO_0000057|chronic wound": {
+   "v": "add",
+   "subject": "Chronic Wound Care",
+   "predicate": "has participant",
+   "value": "Chronic wound",
+   "note": "",
+   "decided": "2026-10-07T23:45:13.676Z",
+   "item_id": "r9bc5a26151"
+  },
+  "alginate|http://purl.obolibrary.org/obo/RO_0000086|material biocompatibility": {
+   "v": "add",
+   "subject": "Alginate",
+   "predicate": "has quality",
+   "value": "Material Biocompatibility",
+   "note": "",
+   "decided": "2026-10-07T21:45:58.290Z",
+   "item_id": "r9c2cf70ba8"
+  },
+  "burn surface area|http://purl.obolibrary.org/obo/BFO_0000197|thermal wound": {
+   "v": "add",
+   "subject": "Burn Surface Area",
+   "predicate": "inheres in",
+   "value": "Thermal wound",
+   "note": "",
+   "decided": "2026-10-07T23:53:39.415Z",
+   "item_id": "r9e861b9885"
+  },
+  "bates-jensen wound assessment tool|http://purl.obolibrary.org/obo/IAO_0000136|wound": {
+   "v": "add",
+   "subject": "Bates-Jensen Wound Assessment Tool",
+   "predicate": "is about",
+   "value": "Wound",
+   "note": "",
+   "decided": "2026-10-07T21:45:59.120Z",
+   "item_id": "ra144f33f03"
+  },
+  "laceration repair|http://purl.obolibrary.org/obo/RO_0002233|laceration": {
+   "v": "add",
+   "subject": "Laceration Repair",
+   "predicate": "has input",
+   "value": "Laceration",
+   "note": "",
+   "decided": "2026-10-07T23:46:02.190Z",
+   "item_id": "ra1f66109b6"
+  },
+  "chitosan|http://purl.obolibrary.org/obo/RO_0000086|material biocompatibility": {
+   "v": "add",
+   "subject": "Chitosan",
+   "predicate": "has quality",
+   "value": "Material Biocompatibility",
+   "note": "",
+   "decided": "2026-10-07T23:45:06.559Z",
+   "item_id": "ra428c62331"
+  },
+  "dressing application|http://purl.obolibrary.org/obo/RO_0000057|wound": {
+   "v": "add",
+   "subject": "Dressing Application",
+   "predicate": "has participant",
+   "value": "Wound",
+   "note": "",
+   "decided": "2026-10-07T23:45:33.173Z",
+   "item_id": "ra91307663e"
+  },
+  "major amputation|http://purl.obolibrary.org/obo/RO_0000057|extremity": {
+   "v": "add",
+   "subject": "Major Amputation",
+   "predicate": "has participant",
+   "value": "Extremity",
+   "note": "",
+   "decided": "2026-10-07T23:46:12.221Z",
+   "item_id": "raea183efcc"
+  },
+  "wound depth|http://purl.obolibrary.org/obo/BFO_0000197|wound": {
+   "v": "add",
+   "subject": "Wound Depth",
+   "predicate": "inheres in",
+   "value": "Wound",
+   "note": "",
+   "decided": "2026-10-07T23:54:37.264Z",
+   "item_id": "rb598f3a468"
+  },
+  "platelet rich plasma|http://purl.obolibrary.org/obo/RO_0000086|platelet concentration": {
+   "v": "add",
+   "subject": "Platelet Rich Plasma",
+   "predicate": "has quality",
+   "value": "Platelet Concentration",
+   "note": "",
+   "decided": "2026-10-07T23:46:28.830Z",
+   "item_id": "rce2e1ba9c8"
+  },
+  "chronic wound care|http://purl.obolibrary.org/obo/RO_0002233|chronic wound": {
+   "v": "add",
+   "subject": "Chronic Wound Care",
+   "predicate": "has input",
+   "value": "Chronic wound",
+   "note": "",
+   "decided": "2026-10-07T23:45:11.155Z",
+   "item_id": "rce7a7ce94d"
+  },
+  "platelet-rich plasma injection|http://purl.obolibrary.org/obo/RO_0002233|platelet rich plasma": {
+   "v": "add",
+   "subject": "Platelet-Rich Plasma Injection",
+   "predicate": "has input",
+   "value": "Platelet Rich Plasma",
+   "note": "",
+   "decided": "2026-10-07T23:46:36.755Z",
+   "item_id": "rd1403fa9cf"
+  },
+  "burn size|http://purl.obolibrary.org/obo/BFO_0000197|thermal wound": {
+   "v": "add",
+   "subject": "Burn Size",
+   "predicate": "inheres in",
+   "value": "Thermal wound",
+   "note": "",
+   "decided": "2026-10-07T23:53:51.339Z",
+   "item_id": "rd41bf34a55"
+  },
+  "wound assessment|http://purl.obolibrary.org/obo/RO_0002233|wound": {
+   "v": "add",
+   "subject": "Wound Assessment",
+   "predicate": "has input",
+   "value": "Wound",
+   "note": "",
+   "decided": "2026-10-07T23:54:21.737Z",
+   "item_id": "rda2924983a"
+  },
+  "negative pressure wound therapy dressing|http://purl.obolibrary.org/obo/RO_0000056|negative pressure wound therapy plan specification": {
+   "v": "leave out",
+   "subject": "Negative Pressure Wound Therapy Dressing",
+   "predicate": "participates in",
+   "value": "Negative pressure wound therapy plan specification",
+   "note": "",
+   "decided": "2026-10-07T23:46:20.055Z",
+   "item_id": "rdad7e6d974"
+  },
+  "wound monitoring|http://purl.obolibrary.org/obo/RO_0000057|wound": {
+   "v": "add",
+   "subject": "Wound Monitoring",
+   "predicate": "has participant",
+   "value": "Wound",
+   "note": "",
+   "decided": "2026-10-07T23:54:54.584Z",
+   "item_id": "re9af85173f"
+  },
+  "pus discharge|http://purl.obolibrary.org/obo/RO_0002234|purulent exudate": {
+   "v": "add",
+   "subject": "Pus Discharge",
+   "predicate": "has output",
+   "value": "Purulent exudate",
+   "note": "",
+   "decided": "2026-10-07T23:47:35.378Z",
+   "item_id": "rebaee1bf09"
+  },
+  "early wound healing process|http://purl.obolibrary.org/obo/BFO_0000050|wound healing": {
+   "v": "add",
+   "subject": "Early Wound Healing Process",
+   "predicate": "part of",
+   "value": "wound healing",
+   "note": "",
+   "decided": "2026-10-07T23:45:40.164Z",
+   "item_id": "rffdaf5a62d"
+  },
+  "granulation tissue|http://purl.obolibrary.org/obo/BFO_0000050|wound": {
+   "v": "leave out",
+   "subject": "Granulation Tissue",
+   "predicate": "part of",
+   "value": "Wound",
+   "note": "Not of every wound",
+   "decided": "2026-10-08T11:00:18.773Z",
+   "item_id": "r275593e02d"
+  },
+  "complete wound closure|http://purl.obolibrary.org/obo/RO_0000057|wound": {
+   "v": "add",
+   "subject": "Complete Wound Closure",
+   "predicate": "has participant",
+   "value": "Wound",
+   "note": "",
+   "decided": "2026-10-08T10:59:32.139Z",
+   "item_id": "rb1e6857cda"
+  },
+  "targeted antibiotic therapy|http://purl.obolibrary.org/obo/RO_0002233|antibiotic": {
+   "v": "add",
+   "subject": "Targeted Antibiotic Therapy",
+   "predicate": "has input",
+   "value": "Antibiotic",
+   "note": "",
+   "decided": "2026-10-08T11:00:27.619Z",
+   "item_id": "rdbefc353d2"
+  }
+ }
+}

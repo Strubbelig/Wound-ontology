@@ -108,6 +108,8 @@ class ExtendReport:
     resolved_category: dict[str, str] = field(default_factory=dict)
     resolved_variant: dict[str, str] = field(default_factory=dict)
     ambiguous: dict[str, int] = field(default_factory=dict)
+    #: term -> (the other name it was found under, IRI). See ``import_names``.
+    resolved_other_name: dict[str, tuple[str, str]] = field(default_factory=dict)
     #: IRI -> the distinct pipeline terms that all resolved to it. Matching folds
     #: punctuation and plurals, so two terms the hierarchy kept apart can land on
     #: one class here and their axioms are unioned. That is usually right
@@ -136,6 +138,8 @@ class ExtendReport:
             f"their declared IRI (never label-matched)",
             f"matched on variant {len(self.resolved_variant)} terms (plural, "
             f"punctuation or a stated synonym)",
+            f"other name        {len(self.resolved_other_name)} terms found in an import "
+            f"under their mapped class or a former spelling",
             f"ambiguous         {len(self.ambiguous)} terms matched >1 class and "
             f"were minted rather than guessed",
             f"folded            {len(self.folded)} class(es) claimed by >1 pipeline "
@@ -206,9 +210,17 @@ def next_free_id(graph: rdflib.Graph, namespace: str = WONT_NS,
 
 
 def _iter_store_relations(store):
-    """(subject, predicate, object) for every confidently asserted store edge."""
-    for record in getattr(store, "dict", {}).values():
-        for subject, attrs in record.get("entities", {}).items():
+    """(subject, predicate, object) for every confidently asserted store edge.
+
+    Read through the store's VIEW (rule 51), never `store.dict`: the raw file
+    is what the abstracts wrote -- unmapped spellings and every out-of-scope
+    term included. Reading it raw is how the 2026-09-28 extension minted 65,085
+    classes, 25,931 of them terms the scope review had put OUT.
+    """
+    from wound_ontology.store.concept_store import records_of
+
+    for _, entities in records_of(store):
+        for subject, attrs in entities.items():
             for attr, conf in attrs.items():
                 if conf != 1.0 or ":" not in attr:
                     continue
@@ -240,6 +252,12 @@ def extend_ground_truth(
     touch_existing: bool = False,
     provenance: str = "wound-ontology-pipeline",
     lexicon=None,
+    class_edges=None,
+    relations=None,
+    registry=None,
+    former_names=None,
+    import_names=None,
+    import_skip: tuple[str, ...] = (),
 ) -> ExtendReport:
     """Merge pipeline findings into a copy of the ground truth.
 
@@ -254,7 +272,28 @@ def extend_ground_truth(
     only started to bite once curated seed edges reached ``class_hier``, which
     is where BFO/MILD parents come from. Pass ``lexicon=()`` for the old
     mint-everything behaviour.
+
+    ``class_edges`` -- (child, parent) pairs to assert instead of every edge of
+    ``class_hier``; ``relations`` -- (subject, predicate, target) triples to
+    assert instead of every relation in ``store``. Rule 66 (2026-10-03): the
+    WONT addition carries only relations read as true of EVERY instance
+    (`data/review/relation_universality_2026-10-02/result.json`, 203 of the
+    store's 26,372); the store as a whole is what abstracts reported, and 23,392
+    of its relations rest on one abstract. Passing ``store`` together with
+    ``relations`` is refused, so the two paths cannot mix unnoticed.
+
+    ``import_names`` -- term -> the other names it goes by (the class the term
+    dict maps it onto, else its former spellings), tried in the imports only
+    when the term itself is found nowhere. The naming rules rename inside the
+    pipeline: `specimen from organism` became `sample from organism`, which no
+    import defines, so OBI_0001479 was minted again as a WONT class with no
+    parent and kept its 4 children out (found 2026-10-07, rule 74). A name is
+    used only when every one that answers gives the same class; IRIs starting
+    with an ``import_skip`` prefix are never reached this way.
     """
+    if store is not None and relations is not None:
+        raise ValueError("pass either `store` (every relation in it) or `relations` "
+                         "(the read ones, rule 66), not both")
     ground_truth, output = Path(ground_truth), Path(output)
     if ground_truth.resolve() == output.resolve():
         raise ValueError(
@@ -269,6 +308,7 @@ def extend_ground_truth(
     existing_iris = {str(v) for v in idx.values()}
     taken = existing_ids(g, namespace)
     counter = next_free_id(g, namespace)
+    first_free = counter          # WONT's own series continues here (rule 71)
 
     # Labels the ground truth does not define, but its imports do. These are
     # looked up only on a miss, and an IRI found here is untouchable for the
@@ -320,6 +360,18 @@ def extend_ground_truth(
                 if how == "variant":
                     report.resolved_variant[term] = str(imported)
                 return imported
+            if import_names is not None:
+                found = find_imported(imported_idx, term, import_names, import_skip)
+                if isinstance(found, tuple):
+                    iri_s, other = found
+                    imported = rdflib.URIRef(iri_s)
+                    idx.add(key, imported)
+                    existing_iris.add(iri_s)
+                    report.resolved_imported[term] = iri_s
+                    report.resolved_other_name[term] = (other, iri_s)
+                    return imported
+                if found == "ambiguous":
+                    how = "ambiguous"
         if how == "ambiguous":
             # Several classes answer to this label. Picking one attaches every
             # downstream axiom to a coin flip, so mint instead and say so.
@@ -334,11 +386,28 @@ def extend_ground_truth(
             if how == "variant":
                 report.resolved_variant[term] = str(hit)
             return hit
-        while counter in taken:      # never reuse an id from either series
+        if registry is not None:
+            # Rule 71: the id is the class's for good. Seen before (under this
+            # name or a former spelling) -> its id; new -> the registry issues
+            # the next one in the pipeline's own block.
+            reg = registry.lookup(term, former_names(term) if former_names else ())
+            if reg is None:
+                reg = registry.mint(term, taken, floor=first_free)
+            elif reg in existing_iris:
+                raise RuntimeError(f"registry id {reg} for {term!r} is a curated class in the ground truth")
+            iri = rdflib.URIRef(reg)
+            m = _ID_RE.search(reg)
+            if m:
+                taken.add(int(m.group(1)))
+            if (iri, RDF.type, OWL.Class) in g:      # another spelling of it came first
+                idx.add(key, iri)
+                return iri
+        else:
+            while counter in taken:      # never reuse an id from either series
+                counter += 1
+            iri = rdflib.URIRef(f"{namespace}WONT_{counter:0{id_width}d}")
+            taken.add(counter)
             counter += 1
-        iri = rdflib.URIRef(f"{namespace}WONT_{counter:0{id_width}d}")
-        taken.add(counter)
-        counter += 1
         g.add((iri, RDF.type, OWL.Class))
         g.add((iri, RDFS.label, rdflib.Literal(term, lang="en")))
         g.add((iri, PROVENANCE, rdflib.Literal(provenance)))
@@ -354,7 +423,7 @@ def extend_ground_truth(
         return touch_existing or str(subject_iri) not in existing_iris
 
     # ---- taxonomy -----------------------------------------------------------
-    for child, parent in _hierarchy_edges(class_hier):
+    for child, parent in (class_edges if class_edges is not None else _hierarchy_edges(class_hier)):
         c_iri, p_iri = resolve(child), resolve(parent)
         if not may_assert(c_iri):
             report.withheld_existing.append((child, "is_a", parent))
@@ -388,7 +457,10 @@ def extend_ground_truth(
 
     for branch, root in _hierarchy_edges(mere_hier):
         add_restriction(branch, "part_of", root)
-    if store is not None:
+    if relations is not None:
+        for subject, pred, target in relations:
+            add_restriction(subject, pred, target)
+    elif store is not None:
         for subject, pred, target in _iter_store_relations(store):
             add_restriction(subject, pred, target)
     for child, parent in _hierarchy_edges(fca_hier):
@@ -421,6 +493,48 @@ def _lexicon_index_cached(key: tuple[tuple[str, float, int], ...]) -> LabelIndex
             preferred=False,
         )
     return idx
+
+
+#: Curator, 2026-10-07, on Metabolic Disorder: "Dont reuse doid".
+IMPORT_SKIP = ("http://purl.obolibrary.org/obo/DOID_",)
+
+
+def other_names(tdict):
+    """term -> the other names it goes by, for finding it in an import (rule 74).
+
+    The class the term dict maps the term onto (the term IS that class), else
+    its former spellings: the naming rules renamed `specimen from organism` to
+    `sample from organism`, which no import defines. One function for the export
+    and for the core build, so the two cannot disagree about what a name is.
+    """
+    from wound_ontology.utils.normalise import normalise
+    former: dict[str, list[str]] = {}
+    for old in tdict.aliases():
+        now = tdict.resolve(old)
+        if now != old:
+            former.setdefault(normalise(now).key, []).append(old)
+    mapped: dict[str, str | None] = {}
+    for t, c in tdict.data.items():
+        if c and normalise(t).key != normalise(c).key:
+            k = normalise(t).key
+            if mapped.setdefault(k, c) != c:
+                mapped[k] = None                     # two spellings, two classes: no answer
+    mapped = {k: v for k, v in mapped.items() if v}
+
+    def names(term: str) -> list[str]:
+        k = normalise(term).key
+        return [mapped[k]] if k in mapped else list(former.get(k, ()))
+    return names
+
+
+def find_imported(idx: LabelIndex, term: str, names, skip=IMPORT_SKIP):
+    """The one imported class `term`'s other names lead to, or None (rule 74)."""
+    found = {}
+    for other in names(term):
+        h, _how = idx.get(other.strip().lower())
+        if h is not None and not str(h).startswith(skip):
+            found.setdefault(str(h), other)
+    return next(iter(found.items())) if len(found) == 1 else (None if not found else "ambiguous")
 
 
 def lexicon_index(lexicon) -> LabelIndex:

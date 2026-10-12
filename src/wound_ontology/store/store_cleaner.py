@@ -11,9 +11,15 @@ class StoreCleaner(BaseCleaner):
     """
     Rejects out-of-scope entities and invalid predicates in a ConceptStore.
 
-    Three operations, each written into the store as a verdict (``by`` names
-    the rule, so it can be lifted and re-applied when the lists change):
-      - Entity blocklist  : rejects methodology/study-design entities by name   (by="blocklist")
+    Scope -- is a term, or a relation's target, out of the ontology? -- is not
+    written into the store at all since 2026-09-28: the store's view asks the
+    gate live, through this cleaner's `_is_blocked` (rule 51). `clean_entities`
+    and `clean_targets` REPORT what the gate blocks and write nothing; the
+    verdicts they used to write froze the lists as they stood on the day of the
+    run.
+
+    Two operations are still verdicts (``by`` names the rule, so it can be
+    lifted and re-applied):
       - Predicate filter  : rejects cells whose predicate is not allowed        (by="predicate_filter")
       - Empty-entity prune: rejects entities left with no standing true cell   (by="prune")
 
@@ -33,30 +39,16 @@ class StoreCleaner(BaseCleaner):
     # ── Main entry point ──────────────────────────────────────────────────────
 
     def clean_entities(self, store) -> dict:
-        """
-        Finds all entities blocked by keyword search and removes them from the store.
+        """Count the entities the gate puts out of scope. Writes nothing.
 
-        Returns a report dict with counts of what was removed.
+        The view excludes them live (rule 51), so a report is all that is left
+        to do here: which names, and how many.
         """
         self._reload_lists()
-        stats: dict[str, int] = defaultdict(int)
-        blocked_entity_examples: list[str] = []
-        blocked: set[str] = set()
-
-        for entity in store.entities:
-            if self._is_blocked(entity):
-                blocked.add(entity)
-                stats["blocked_entities"] += 1
-                if len(blocked_entity_examples) < 20:
-                    blocked_entity_examples.append(entity)
-
-        if blocked:
-            store.reject_entities(blocked, by="blocklist", note="blocked by name")
-
-        return {
-            **dict(stats),
-            "blocked_entity_examples": blocked_entity_examples,
-        }
+        names = {e for _, ents in store.view(include_rejected=True) for e in ents}
+        blocked = sorted(e for e in names if self._is_blocked(e))
+        return {"blocked_entities": len(blocked),
+                "blocked_entity_examples": blocked[:20]}
 
     def list_blocked(self, store) -> list[str]:
         """Print and return all entities in the store that are currently blocked."""
@@ -347,19 +339,13 @@ class StoreCleaner(BaseCleaner):
         }
 
     def clean_targets(self, store) -> dict:
-        """
-        Remove attributes whose target is in the blocklist.
-
-        Returns a report dict with counts of what was removed.
-        """
+        """Count the relations whose target the gate puts out of scope. Writes
+        nothing: the view drops them live (rule 51)."""
         self._reload_lists()
-        stats: dict[str, int] = defaultdict(int)
-
-        doomed = {(e, t) for _, e, t, _ in store.assertions()
-                  if ':' in t and self._is_blocked(t.split(':', 1)[1].strip())}
-        stats["blocked_targets_removed"] = store.reject_cells(
-            doomed, by="blocklist", note="target blocked by name")
-        return dict(stats)
+        n = sum(1 for _, ents in store.view(include_rejected=True)
+                for attrs in ents.values() for t in attrs
+                if ':' in t and self._is_blocked(t.split(':', 1)[1].strip()))
+        return {"blocked_targets_removed": n}
 
     def prune_empty_entities(self, store) -> dict:
         """
