@@ -18,8 +18,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "src"))
 
-WONT = ROOT / "data" / "ground truth" / "ground_truth_final.owl"
-MILD = ROOT.parent / "Disease ontologies" / "Disease proposal 2.ttl"
+from config.settings import GROUND_TRUTH_TTL as WONT   # the current WONT file (dated since 2026-10-20)
+from config.settings import MILD_TTL as MILD   # the current MILD file (dated since 2026-10-20)
 WONT_NS = "https://bioportal.bioontology.org/ontologies/WONT/"
 MILD_NS = "https://bioportal.bioontology.org/ontologies/MILD/"
 

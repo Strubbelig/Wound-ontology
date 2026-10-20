@@ -53,7 +53,7 @@ def test_the_curators_preferred_vocabulary(label, expected):
 
 @pytest.mark.parametrize("label,expected", [
     ("dressing technique", "dressing method"),
-    ("cutaneous ulcer", "skin ulcer"),
+    ("cutaneous ulcer", "skin wound"),
     ("follow-up evaluation", "follow-up assessment"),
     ("susceptibility testing", "susceptibility test"),
     ("inflammation biomarker", "inflammatory biomarker"),
@@ -707,11 +707,11 @@ def test_a_proper_name_keeps_its_disease(label):
 # ── 2026-10-04: leg is lower extremity; ulceration is ulcer; ulcer and wound are one term ──
 
 @pytest.mark.parametrize("label,expected", [
-    ("chronic leg ulcer", "chronic lower extremity ulcer"),
+    ("chronic leg ulcer", "chronic lower extremity wound"),
     ("Chronic Lower Leg Wound", "Chronic Lower Extremity Wound"),
-    ("recurrent lower-leg ulcers", "recurrent lower-extremity ulcers"),
+    ("recurrent lower-leg ulcers", "recurrent lower-extremity wounds"),
     ("both legs", "both lower extremities"),
-    ("venous leg ulceration", "venous lower extremity ulcer"),
+    ("venous leg ulceration", "venous lower extremity wound"),
     # fixed names and the thigh stay as written
     ("upper leg", "upper leg"),
     ("single-leg hop", "single-leg hop"),

@@ -121,6 +121,10 @@ class Orchestrator:
         self.lattice       = ConceptLattice(self.dm, self.context_matrix)
         self.lattices: dict[str, ConceptLattice] = {}
         self.fca_hiers: dict[str, FCAHierarchy] = {}
+        # What the last run_fca did with every name it made (rule 79): the
+        # head-word rule's verdicts with reasons, the names withheld before it,
+        # and the report they were written to. Empty until run_fca has named.
+        self.fca_head_rule: dict = {}
         self.term_mapper     = TermMapper(_term_mapping, name="Term mapper")
         self.mapping_cleaner = MappingCleaner(self.term_mapper, allowed_predicates=self.allowed_predicates)
         self._embedder: Embedder | None = None
@@ -1256,6 +1260,112 @@ class Orchestrator:
         report = cleaner.clean(self.store)
         StoreCleaner.print_report(report)
 
+    def _judge_fca_proposals(self, proposals, withheld: dict[str, list[str]] | None = None) -> int:
+        """Rule 79: the head-word rule decides the concept analysis's edges.
+
+        Every edge from a member to its concept's name, and every edge still
+        queued from an earlier run, is judged by the curator's head-word rule
+        (wound_ontology.hierarchies.head_rule). Licensed edges are promoted and
+        recorded on this lattice's accepted slice, so the next build reads them
+        back as the `fca` source and the edge check reasons over them; refused,
+        synonym and open edges leave the queue and are listed in a report under
+        output/, never shown to the curator one by one. `withheld` names the
+        concepts run_fca kept from the rule ({why: [name, ...]}); they go into
+        the same report, so every name the model made is accounted for there
+        (rule 1). The report's content is also kept as self.fca_head_rule.
+        Returns how many were promoted.
+        """
+        import json as _json
+        from datetime import datetime as _dt
+        from wound_ontology.hierarchies import head_rule as HR
+        from config.settings import PROJECT_ROOT as _BP
+        from pathlib import Path
+
+        # Every name under its CURRENT spelling: a rename since the proposal
+        # (2026-10-18: `Venous Ulcer` -> `Venous Wound`, `burn` -> `burn wound`)
+        # must not bring the old spelling back as a class of its own. A store
+        # term goes through the store's resolver; a name only the model gave
+        # goes through the same vocabulary rules pass 0 applies.
+        from wound_ontology.utils.normalise import canonical_vocabulary as _cv
+        _resolve = self.store.resolver(mapped=True)
+
+        def _current(name: str) -> str:
+            now = _resolve(name)[1]
+            if str(now).lower() == str(name).lower():
+                now = _cv(name)
+            return smart_title(now)
+
+        def _cur_pairs(pairs):
+            return [(_current(c), _current(p)) for c, p in pairs]
+
+        proposals = _cur_pairs(proposals)
+        queued = _cur_pairs(self.class_hier.candidates)
+        # The slice accepted so far is judged again: a later ruling (or a
+        # curator's "no" on one edge) withdraws what it no longer licenses;
+        # an edge under an old spelling is withdrawn and comes back renamed.
+        accepted = sorted(self.lattice.accepted)
+        known = [str(x) for x in self.class_hier.df.index] if not self.class_hier.df.empty else []
+        curator = {}
+        for f in sorted((Path(_BP) / "data" / "review").glob("fca_edge_decisions_*.json")):
+            for e in _json.loads(f.read_text(encoding="utf-8"))["edges"]:
+                curator[(e["child"], e["parent"])] = e["verdict"]
+        verdicts = HR.sort_proposals(list(proposals) + queued + _cur_pairs(accepted), known=known, curator=curator)
+        # The model's names among themselves and against the ladder's own
+        # classes: `Burn Injury ⊑ Injury`, `Diabetic Ulcer ⊑ Wound`. Nobody
+        # proposes these, and a new name without a checked parent stays out of
+        # the core with everything under it.
+        names = sorted({r["as"] for r in verdicts[HR.LICENSED]})
+        anchors = sorted(set(names) | {"Wound", "Injury"})
+        between = HR.sort_proposals([(a, b) for a in names for b in anchors if a != b], known=known, curator=curator)
+        verdicts["between_names"] = between[HR.LICENSED]
+        licensed = [(smart_title(r["child"]), smart_title(r["as"]))
+                    for r in verdicts[HR.LICENSED] + between[HR.LICENSED]]
+        withdraw = sorted(set(accepted) - set(licensed))
+        if withdraw:
+            self.lattice.withdraw(withdraw)
+            for child, parent in withdraw:
+                if self.class_hier._prov.get((child, parent)) == _SOURCE_FCA:
+                    if child in self.class_hier.df.index and parent in self.class_hier.df.columns:
+                        self.class_hier.df.at[child, parent] = 0.0
+                    self.class_hier._prov.pop((child, parent), None)
+            print(f"FCA → head-word rule  : {len(withdraw)} edge(s) withdrawn from the accepted slice, "
+                  f"no longer licensed, e.g. {withdraw[:3]}")
+        for child, parent in licensed:
+            self.class_hier.propose_edge(child, parent, _SOURCE_FCA)
+        promoted = self.class_hier.promote_candidates(only=set(licensed), lattice=self.lattice) if licensed else 0
+        dropped = list(self.class_hier.candidates)
+        for key in dropped:
+            self.class_hier._candidates.pop(key, None)
+        self.class_hier.save_candidates()
+        stamp = _dt.now().strftime("%Y-%m-%d_%H-%M")
+        # The project's output/ only for the project's own cache; a test's
+        # DataManager writes beside its own files (2026-10-18: two test runs
+        # wrote reports into output/, and the next --skip-fca read one of them).
+        from config.settings import BASE_PATH as _CACHE
+        real = Path(self.dm.base_path).resolve() == Path(_CACHE).resolve()
+        out = (Path(_BP) / "output" if real else Path(self.dm.base_path)) / f"fca_head_rule_{stamp}.json"
+        withheld = {k: sorted(set(v)) for k, v in (withheld or {}).items() if v}
+        report = {"made": stamp, "proposals": len(proposals), "queued_before": len(queued),
+                  "accepted_before": len(accepted), "withdrawn": withdraw, **verdicts,
+                  "withheld": withheld}
+        out.write_text(_json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
+        _json.loads(out.read_text(encoding="utf-8"))
+        self.fca_head_rule = {**report, "report": str(out)}
+        n = {k: len(v) for k, v in verdicts.items()}
+        print(f"FCA → head-word rule  : {n['between_names']} edge(s) between the model's names "
+              f"(e.g. {[(r['child'], r['as']) for r in verdicts['between_names'][:3]]})")
+        print(f"FCA → head-word rule  : {len(proposals)} new proposal(s) + {len(queued)} queued from earlier runs: "
+              f"{n[HR.LICENSED]} licensed ({promoted} promoted), {n[HR.REFUSED]} refused, "
+              f"{n[HR.SYNONYM]} synonym, {n[HR.OPEN]} open (head word not ruled yet). "
+              f"Nothing is left for review; every edge and its reason -> {out}")
+        for k in (HR.REFUSED, HR.OPEN):
+            for r in verdicts[k][:5]:
+                print(f"    {k}: {r['child']} ⊑ {r['as']} -- {r['reason']}")
+        for why, names_ in withheld.items():
+            print(f"FCA → head-word rule  : {len(names_)} name(s) withheld before the rule ({why}), "
+                  f"listed in the report: {names_[:5]}")
+        return promoted
+
     def accepted_fca_slices(self) -> list[list[tuple[str, str]]]:
         """Every reviewed lattice slice on disk, one list per subtree analysis.
 
@@ -1496,6 +1606,10 @@ class Orchestrator:
                   f"roots={self.fca_hier.roots[:3]}")
 
             added = skipped_uncertain = proposed = 0
+            proposals: list[tuple[str, str]] = []
+            # Names that never reach the head-word rule, kept for its report so
+            # a named concept is never dropped without a trace (rule 1).
+            withheld: dict[str, list[str]] = {"undecided": [], "no members": []}
             for concept in self.lattice.lattice:
                 name = getattr(concept, 'name', None)
                 if not isinstance(name, str) or not name:
@@ -1505,17 +1619,21 @@ class Orchestrator:
                 # superclass. See ConceptLattice.get_data_and_run_fca.
                 if not self.lattice.is_certain(concept):
                     skipped_uncertain += 1
+                    withheld["undecided"].append(smart_title(name))
                     continue
                 if hasattr(concept, 'name'):
                     concept.name = smart_title(name)
                     name = concept.name
+                if not commit_fca and not len(concept.extent):
+                    withheld["no members"].append(name)
                 for entity in concept.extent:
                     if commit_fca:
                         if self.class_hier._set_edge(str(entity), name, source=_SOURCE_FCA):
                             added += 1
                     else:
-                        self.class_hier.propose_edge(str(entity), name, _SOURCE_FCA)
-                        proposed += 1
+                        proposals.append((str(entity), name))
+            if not commit_fca:
+                proposed = self._judge_fca_proposals(proposals, withheld=withheld)
             if added:
                 self.class_hier._df = self.class_hier._df.copy()
                 self.class_hier.save()
@@ -1523,9 +1641,6 @@ class Orchestrator:
                       f"(source='{_SOURCE_FCA}'; curated and text edges were not overwritten).")
             if proposed:
                 self.class_hier.save()
-                print(f"FCA → candidates      : {proposed} edge(s) proposed for review, "
-                      f"NOT committed. Inspect class_hier.candidates, then "
-                      f"class_hier.promote_candidates(lattice=pipeline.lattice).")
             if skipped_uncertain:
                 print(f"FCA → ClassHierarchy  : {skipped_uncertain} concept(s) withheld "
                       f"as undecided-dependent.")

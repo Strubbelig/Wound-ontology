@@ -36,15 +36,96 @@ below were looked up in `../Import ontologies/fma_obo.owl` (FMA 2020-04-13).
 
 ## 0. Your decisions first
 
-| # | decision | recommendation |
+**Decided 2026-10-12** on the Wound Axiom Decisions page: D1–D6 as recommended
+(option a); D7 option a, but with OFL's own relation (see D7 below). The table
+keeps the question and the recommendation; the outcome is in the right column.
+
+| # | decision | recommendation | decided |
+|---|---|---|---|
+| D1 | **How the damaged structure is stated.** (a) `Wound ⊑ has part some (Portion of tissue and part of some X)` — the wound *contains* damaged tissue of X; (b) `Wound ⊑ part of some X` — false for a wound that reaches below X; (c) `Wound ⊑ overlaps some X`. | (a). It matches MILD: a disorder is the abnormally constituted material, so the wound has the damaged tissue as part. | **a**, as recommended |
+| D2 | **"Only down to the dermis"** needs a closure (`has part only …`), which is OWL DL: HermiT classifies it, ELK does not. Alternative: a quality "deepest affected layer" with values, which ELK handles. | Closure axioms; check with HermiT (the final check is HermiT anyway). | **a**, as recommended |
+| D3 | **"At least a skin defect" excludes some things now in WONT.** Tscherne–Oestern grades *closed* fractures with soft-tissue injury under intact skin (C0–C3); pressure injury stage 1 and deep tissue injury are intact skin; first-degree burns damage the epidermis only. | Decide per scheme: intact-skin grades are *soft-tissue injuries*, not wounds (move them under a sibling `Closed soft tissue injury`); first-degree burn stays a wound (the epidermis is damaged). | **a**, as recommended |
+| D4 | **`Skin wound`** becomes equivalent to `Wound` once every wound has a skin part. | Keep the class as an alternative term of `Wound` (merge); repoint its 7 children. | **a**, as recommended |
+| D5 | **Region classes pre-coordinated or not.** Literature names "sacral pressure ulcer", "heel ulcer", "scalp defect". | Only where the region is part of the clinical definition (leg ulcer, diabetic foot ulcer); the rest by query (`located in some X`). | **a**, as recommended |
+| D6 | **Where the WONT–OFL bridge axioms live.** They name classes of both ontologies. | A small bridge file importing WONT and OFL (`wont_ofl_bridge.ttl`), so neither curated file imports the other. | **a**, as recommended |
+| D7 | **FMA's own part relations** (`constitutional_part_of`, `regional_part_of` in fma_obo) are not BFO `part of`, so "Epidermis part of Skin" is invisible to a reasoner using BFO. | Bridge them in the module: `fma:constitutional_part_of ⊑ BFO_0000050`, `fma:regional_part_of ⊑ BFO_0000050` (rule 34: in the module, not in WONT). | **a, reusing OFL's `Ofl part of`** (curator: \"in der OFL habe ich Ofl part of benutzt für die disjunktion bfo part of und fma part of. das würde ich einfach wiederverwenden\") |
+
+**D7 as decided.** OFL has `Ofl part of` (OFLID13297, transitive; inverse `Ofl
+part` OFLID13296), with BFO `part of` (BFO_0000050) and FMA `part_of` as
+sub-relations. Reuse it, with one addition: OFL's FMA `part_of` is BioPortal's
+`http://purl.org/sig/ont/fma/part_of`, but `fma_obo.owl` (where OFL's 437 FMA
+classes and ours come from, OBO IRIs `obo/FMA_…`) states its part axioms with
+three other relations: `obo/fma#regional_part_of` (19,664 axioms),
+`obo/fma#constitutional_part_of` (12,392), `obo/fma#systemic_part_of` (2,658).
+None of them is under `Ofl part of` today, so not even OFL sees "Epidermis part
+of Skin". The bridge file (D6) therefore states:
+
+    fma#regional_part_of       ⊑ Ofl part of (OFLID13297)
+    fma#constitutional_part_of ⊑ Ofl part of
+    fma#systemic_part_of       ⊑ Ofl part of
+
+and WONT keeps BFO `part of` in its own axioms (it is under `Ofl part of` in OFL).
+Consequence: WONT alone does not see FMA's part hierarchy; WONT + OFL through the
+bridge does. Queries that cross FMA parts ("every wound in the skin of the
+foot") use `Ofl part of` and run on the bridge. Worth also adding the three
+lines to OFL itself (its own FMA parts are invisible for the same reason).
+
+**Notes N1–N4 (curator, 2026-10-12), applied to the term dict**
+(`data/review/axiom_note_decisions_2026-10-12.json`, written and read back):
+
+| # | decision | done |
 |---|---|---|
-| D1 | **How the damaged structure is stated.** (a) `Wound ⊑ has part some (Portion of tissue and part of some X)` — the wound *contains* damaged tissue of X; (b) `Wound ⊑ part of some X` — false for a wound that reaches below X; (c) `Wound ⊑ overlaps some X`. | (a). It matches MILD: a disorder is the abnormally constituted material, so the wound has the damaged tissue as part. |
-| D2 | **"Only down to the dermis"** needs a closure (`has part only …`), which is OWL DL: HermiT classifies it, ELK does not. Alternative: a quality "deepest affected layer" with values, which ELK handles. | Closure axioms; check with HermiT (the final check is HermiT anyway). |
-| D3 | **"At least a skin defect" excludes some things now in WONT.** Tscherne–Oestern grades *closed* fractures with soft-tissue injury under intact skin (C0–C3); pressure injury stage 1 and deep tissue injury are intact skin; first-degree burns damage the epidermis only. | Decide per scheme: intact-skin grades are *soft-tissue injuries*, not wounds (move them under a sibling `Closed soft tissue injury`); first-degree burn stays a wound (the epidermis is damaged). |
-| D4 | **`Skin wound`** becomes equivalent to `Wound` once every wound has a skin part. | Keep the class as an alternative term of `Wound` (merge); repoint its 7 children. |
-| D5 | **Region classes pre-coordinated or not.** Literature names "sacral pressure ulcer", "heel ulcer", "scalp defect". | Only where the region is part of the clinical definition (leg ulcer, diabetic foot ulcer); the rest by query (`located in some X`). |
-| D6 | **Where the WONT–OFL bridge axioms live.** They name classes of both ontologies. | A small bridge file importing WONT and OFL (`wont_ofl_bridge.ttl`), so neither curated file imports the other. |
-| D7 | **FMA's own part relations** (`constitutional_part_of`, `regional_part_of` in fma_obo) are not BFO `part of`, so "Epidermis part of Skin" is invisible to a reasoner using BFO. | Bridge them in the module: `fma:constitutional_part_of ⊑ BFO_0000050`, `fma:regional_part_of ⊑ BFO_0000050` (rule 34: in the module, not in WONT). |
+| N1 | a: hold out "skin perfusion pressure inheres in extremity"; no bearer | held out, with "inheres in patient" (same type) |
+| N2 | a, bound 750 nm | "has quality 660 nm" held out. **The axiom waits for your yes on a corrected form**: on the page the bound sat on the quality (`wavelength and has measurement value ≤ 750`), but `has measurement value` (IAO_0000004) has the domain *scalar measurement datum* (IAO_0000032), an information entity, so the class would be empty. Corrected: `red-spectrum laser ⊑ has quality some Red-spectrum wavelength`, `Red-spectrum wavelength ⊑ wavelength (PATO_0001242)`, and the number on a measurement about it: `Red-spectrum wavelength measurement datum ≡ scalar measurement datum and is quality measurement of (IAO_0000221) some Red-spectrum wavelength`, `⊑ has measurement unit label (IAO_0000039) value nanometer (UO_0000018)`, `⊑ has measurement value some xsd:double[<= 750]`. The last line is OWL DL (HermiT, not ELK). red-spectrum laser is a candidate, not in the core, so nothing is lost by waiting. |
+| N3 | c: sister of Wound classification scale | placed under information content entity (IAO_0000030), kind *information entity*; "patient has quality wound pain score" held out (rule 77) |
+| N4 | a: under OGMS symptom | kind set to *process* (OGMS defines symptom as "a process experienced by the patient"); "Wound has quality wound-related symptom" and "wound-related symptom has part exudate" held out (a quality is never a process; exudate takes part in a symptom, it is not a part of it). **The parent itself waits**: OGMS_0000020 is not in the OGMS module; it arrives when the WONT hand edit names it (the module seeds are what MILD and curated WONT mention) and `build_disease_proposal.sh` is run. |
+
+## Patch for the hand edit (written 2026-10-11, after "N2 passt")
+
+Files (the curated WONT is not touched):
+
+* `data/review/wont_axiom_patch_2026-10-12_add.ttl` (additions) and
+  `…_remove.ttl` (removals: Skin wound's subclass edges, label and EquivalentTo).
+* `data/review/wont_ofl_bridge_draft_2026-10-11.ttl`: the bridge (D6, D7, 5.8, 6.6–6.9).
+* `scripts/wont_patch_check.py ADD REMOVE [--hermit]` applies both to a copy
+  (`output/owl/wont_patch_candidate_<date>.ttl`) and checks it. 2026-10-11:
+  36 new classes, 4 keeping their literature id, **ELK: consistent, no
+  unsatisfiable class**. HermiT (closures, 750 nm bound) still to run.
+
+Ids: WONT_0007807–0007838 in WONT, 0007839 in the bridge; Protégé counter
+to 7840. Kept literature ids: 0001864 Full-thickness wound, 0006845 Surgical
+wound, 0005837 Radiation-induced wound, 0006773 Superficial partial-thickness
+burn.
+
+In the patch: 2.1–2.9, 2.13–2.18, D3 (`Closed soft tissue injury`, disjoint
+with Wound), D4 (Skin wound obsolete, `IAO_0100001` → Wound, its children
+re-parented), 3.2–3.5, 4.1, 5.1, 5.2, 5.4–5.7, 5.9, 5.10, 5.12, 6.2–6.5, 6.10,
+N2 (wavelength classes), N4 (OGMS symptom named, so it reaches the module),
+and the FMA seeds of section 1.
+
+**Left out, with reason:**
+
+| item | why |
+|---|---|
+| 3.1 `Wound ⊑ located in some Cardinal body part` | false for a wound that spans two cardinal parts (a large burn over trunk and arm is located in neither) |
+| 5.3 dog / cat / human bite | `has participant some Homo sapiens` is true of every bite on a human patient, so dog bites would classify as human bites; needs a biter role first |
+| 6.9 as written (`realized in some`) | a role need not be realized; the bridge says `realized in only` |
+| 2.11, 2.12, 4.2–4.4, 5.11, 5.13, 5.14 | open decisions or a class still to look up (as listed above) |
+| 6.2 NPWT `has participant some device` | device class not chosen |
+
+Changes against the table above: deep fascia is FMA's `Investing fascia`
+(FMA_27935); the depth closures speak of *tissue* parts only (`has part only
+(not Portion of tissue or part of some …)`), because exudate, biofilm or a
+foreign body are parts of a wound too; Compression therapy process is not a
+Wound treatment process (compression also treats venous disease without a
+wound); 5.10 follows the pressure-ulcer pattern (a development process with
+the radiation process as part).
+
+**After the curator adopts it:** add `red-spectrum laser has quality some
+Red-spectrum wavelength` (WONT_0007837) to `curator_axioms_2026-10-03.json`;
+place `wound-related symptom` under OGMS symptom in the term dict; check that
+the literature term "skin wound" lands on Wound (its label is now an
+alternative term); then section 9.
 
 ---
 
@@ -53,7 +134,7 @@ below were looked up in `../Import ontologies/fma_obo.owl` (FMA 2020-04-13).
 | # | what | detail |
 |---|---|---|
 | 1.1 | **Seed the FMA module** with the classes below and regenerate (`../Disease ontologies/build_disease_proposal.sh`, rule 34). Source: `../Import ontologies/fma_obo.owl` (OBO IRIs `obo/FMA_…`, the same as OFL). | ~70 seeds; with ancestors the module grows to a few hundred classes. |
-| 1.2 | **Bridge FMA's part relations** to BFO `part of` (D7). | Without it no reasoner infers a wound in the skin of the foot is in the foot. |
+| 1.2 | **Bridge FMA's part relations** to `Ofl part of` in the bridge file (D7 as decided). | Without it no reasoner infers a wound in the skin of the foot is in the foot. |
 | 1.3 | **Property chain** `located in ∘ part of → located in` (RO has it) must be in `ro_module.owl`. | ELK supports chains; check after regenerating. |
 | 1.4 | **Reuse OFL's FMA classes** where OFL already uses them (skin paddles, muscles, bones of flaps); list OFL's FMA seeds and take the overlap first. | So a flap's tissue and a defect's tissue are the same classes. |
 

@@ -430,7 +430,7 @@ def main(argv: list[str]) -> int:
              rdflib.URIRef("http://purl.obolibrary.org/obo/IAO_0000118")]
     og = rdflib.Graph()
     og.parse(ROOT / "data" / "ground truth" / "ground_truth_final.owl", format="turtle")
-    og.parse(ROOT.parent / "Disease ontologies" / "Disease proposal 2.ttl", format="turtle")
+    og.parse(ROOT.parent / "Disease ontologies" / "mild.ttl", format="turtle")
     for mfile in sorted((ROOT.parent / "Disease ontologies" / "Disease ontology modules").glob("*_module.owl")):
         og.parse(mfile)
     syn = defaultdict(set)

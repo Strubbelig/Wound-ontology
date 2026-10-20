@@ -130,6 +130,14 @@ def main(argv: list[str]) -> int:
 
     p = Orchestrator(entrez_email=ENTREZ_EMAIL, allowed_predicates=ALLOWED_PREDICATES, base_path=BASE_PATH)
     placed = {(smart_title(c), smart_title(par)) for c, par in p.class_hier.edges_by_source("placed")}
+    # Rule 79 (2026-10-20): an edge from the concept analysis is in the
+    # hierarchy only because the curator's head-word rule licensed it, and the
+    # edge check reasoned over it; it hangs a class into the core like a
+    # checked placement. Without this the 464 licensed edges reached only the
+    # full extension and `Burn Injury` (under `Injury`) never reached the core.
+    ruled = {(smart_title(c), smart_title(par)) for c, par in p.class_hier.edges_by_source("fca")}
+    print(f"[core] {len(placed):,} placed edge(s) + {len(ruled):,} edge(s) licensed by the head-word rule (rule 79)")
+    placed |= ruled
     # labels of imported parents (not in ext): from the lexicon the export used
     from wound_ontology.owl.extend import default_lexicon
     from wound_ontology.utils.rdf_io import parse_graph
@@ -275,6 +283,14 @@ def main(argv: list[str]) -> int:
             if fill in minted and fill not in core:
                 pulled.add(fill)
                 copy_class(fill, g, typing_only=True)
+            if not a.get("property_iri"):
+                # a plain subclass axiom (curator 2026-10-18: "Wound is an injury")
+                if (subj, RDFS.subClassOf, fill) in g:
+                    rep["curator axioms already stated"] += 1
+                else:
+                    g.add((subj, RDFS.subClassOf, fill))
+                    rep["curator axioms"] += 1
+                continue
             prop = rdflib.URIRef(a["property_iri"])
             if any(isinstance(b, rdflib.BNode) and g.value(b, OWL.onProperty) == prop
                    and g.value(b, OWL.someValuesFrom) == fill for b in g.objects(subj, RDFS.subClassOf)):

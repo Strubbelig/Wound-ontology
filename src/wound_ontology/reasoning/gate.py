@@ -126,7 +126,10 @@ def _run_robot(cmd: list[str], timeout: int) -> subprocess.CompletedProcess:
         try:
             os.killpg(proc.pid, signal.SIGKILL)
         except ProcessLookupError:
-            pass                        # already gone: nothing left to end
+            # Already gone: nothing left to end. Said aloud because it means
+            # ROBOT exited in the instant between the timeout and the kill.
+            print(f"[ReasonerGate] ROBOT (process group {proc.pid}) had already "
+                  f"exited when its {timeout} s timeout fired; nothing to kill")
         proc.communicate()
         raise
     return subprocess.CompletedProcess(cmd, proc.returncode, out, err)
@@ -842,10 +845,20 @@ class ReasonerGate:
             hit = idx.get(str(label).strip().lower())
             return str(hit) if hit is not None else BATCH_NS + _slug(str(label))
 
-        def rank(edge) -> int:
+        # Rule 79 (2026-10-18): which edge gives way FIRST in a clash. An FCA
+        # edge reaches the hierarchy only through the accepted slice, and only
+        # when the curator's head-word rule licensed it, so here it gives way
+        # after one abstract's is_a and before a checked placement. At rank 1
+        # all 436 licensed edges of 2026-10-18 were dropped first whenever
+        # their child was unsatisfiable through a text edge elsewhere, and the
+        # cause stayed. SOURCE_RANK itself (which source owns a shared edge) is
+        # unchanged.
+        gate_rank = {**SOURCE_RANK, "fca": 2.5}
+
+        def rank(edge) -> float:
             if not sources:
                 return 0
-            return SOURCE_RANK.get(sources.get(tuple(edge)), 0)
+            return gate_rank.get(sources.get(tuple(edge)), 0)
 
         for _ in range(_MAX_PASSES):
             g = self.build_edge_graph(kept, label_index=idx)

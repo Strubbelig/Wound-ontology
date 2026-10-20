@@ -40,7 +40,7 @@ sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "src"))
 OUT = ROOT / "output" / "owl"
 EXT = OUT / "wont_extended.ttl"
 GT = ROOT / "data" / "ground truth" / "ground_truth_final.owl"
-MILD = ROOT.parent / "Disease ontologies" / "Disease proposal 2.ttl"
+MILD = ROOT.parent / "Disease ontologies" / "mild.ttl"
 NS = "https://bioportal.bioontology.org/ontologies/WONT/"
 PROV = "http://www.geneontology.org/formats/oboInOwl#source"
 

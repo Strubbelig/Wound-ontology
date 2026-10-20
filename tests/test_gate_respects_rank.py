@@ -79,12 +79,16 @@ def test_a_curated_edge_that_is_inconsistent_alone_is_still_quarantined():
     assert ("Necrosis", "Pathological Disorder") in r.quarantined
 
 
-def test_fca_is_dropped_before_text():
+def test_a_ruled_fca_edge_gives_way_after_text_and_still_goes_when_it_is_the_cause():
+    """Rule 79: an FCA edge is in the hierarchy only because the curator's
+    head-word rule licensed it, so in a clash text gives way first; an FCA edge
+    that is itself the cause is still quarantined, and the curated edge stays."""
     edges = EDGES + [("Necrosis", "Skin Wound")]
     sources = {**SOURCES, ("Necrosis", "Skin Wound"): SOURCE_FCA}
     r = _Gate(lambda p: "Skin Wound" in p).check_edges(edges, sources=sources)
-    assert r.quarantined == [("Necrosis", "Skin Wound")]
-    assert len(r.accepted) == 2
+    assert ("Necrosis", "Skin Wound") in r.quarantined
+    assert ("Necrosis", "Pathological Disorder") in r.accepted
+    assert r.quarantined.index(("Necrosis", "Process")) < r.quarantined.index(("Necrosis", "Skin Wound"))
 
 
 def test_an_unstamped_edge_gives_up_first():

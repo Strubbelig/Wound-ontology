@@ -27,7 +27,7 @@ wont:WONT_0000002 a owl:Class ; rdfs:label "Chronic Wound" ;
                   rdfs:subClassOf wont:WONT_0000001 .
 """
 
-# Stands in for bfo_module.owl / Disease proposal 2.ttl: defines the label, and
+# Stands in for bfo_module.owl / mild.ttl: defines the label, and
 # is imported by the ground truth rather than part of it.
 #
 # The lexicon tier is exercised with IAO_0000030, NOT with BFO_0000040. Since
@@ -158,7 +158,7 @@ def test_default_lexicon_points_at_what_the_output_imports():
     names = {p.name for p in default_lexicon()}
     if not names:
         pytest.skip("MILD / modules not present in this checkout")
-    assert "Disease proposal 2.ttl" in names
+    assert "mild.ttl" in names
     assert any(n.endswith("_module.owl") for n in names)
 
 

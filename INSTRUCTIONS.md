@@ -3842,6 +3842,173 @@ biomarker", "Low risk is completely subjective").**
   not use the named concepts and are sound from that run (3,046 new classes,
   0 unsatisfiable; 49/49).
 
+## 79. A superclass from the concept analysis must pass the head-word rule; the curator rules on head words, not on edges
+
+**Decided 2026-10-18 (curator, on the review page of the 17 October run: "Mir
+gefällt diese Auswahl gar nicht. Das hätte vorher gelöst sein sollen. Einiges
+sind Synonyme. Wound is an injury. Burn wound is a burn injury is an injury
+und burn wound is a wound aber nicht wound is a burn injury. Aber auch Blast
+wound is a blast injury is an injury.").**
+
+* A label is read as modifiers + head word (`deep second-degree burn wound` =
+  {deep, second, degree, burn} + wound). An edge child ⊑ parent is licensed
+  only when the parent's head is the child's head or above it on the head
+  ladder (wound ⊑ injury) and the parent carries no modifier the child lacks.
+  So burn wound ⊑ burn injury ⊑ injury and burn wound ⊑ wound, but never
+  wound ⊑ burn injury.
+* The curator's rulings on head words (2026-10-18), in
+  `config/head_word_rules.py`: a bare burn is a burn wound; ulcer and tear are
+  a wound only on skin ("gastric ulcer ... ist keine Wunde im Sinne WONT",
+  "tendon tear nicht"); laceration and abrasion are always skin, so wounds;
+  avulsion is an injury, not a wound per se; lesion, disorder and defect are
+  collective names and never a superclass.
+* Second round, the same day (review page and chat):
+  * A wound is structural damage to the tissue, not only tissue that is
+    missing: "ein blister ist für mich schon eine Wunde, weil die Haut
+    strukturellen Schaden genommen hat, sonst wäre eine drittgradige
+    Verbrennungswunde keine Wunde". So blister, bulla and epidermal
+    detachment are wounds.
+  * A burn is a flame burn and so a thermal wound; a scald is a thermal wound
+    and not a burn ("keine Flamme im Spiel"); a sunburn is a radiation wound,
+    not a thermal and not a burn wound; burn lesion is burn wound; thermal
+    damage names the injuring process, never the wound.
+  * defect is too vague to place anything, as child or parent.
+  * fracture ⊑ injury, an open or compound fracture ⊑ wound; frostbite ⊑
+    injury, not a burn; snakebite is a bite wound; an ulcer without a site is
+    a skin ulcer (the corpus is wound literature); a tear without a site is an
+    injury, a perineal tear a wound; a burn off skin (ocular surface) is an
+    injury, not a wound; ulcus cruris is leg ulcer; the CDC wound classes are
+    surgical wounds; Injury ⊑ pathological disorder (MILD_120022), the
+    curator's axiom.
+  * A curator's verdict on one edge outranks the rule for that edge
+    (`data/review/fca_edge_decisions_*.json`: "Abdominal Injury ⊑ Injury" no).
+  * The accepted slice is judged again every run, so a later ruling withdraws
+    what it no longer licenses. `p4_derive.py --skip-fca` judges the last
+    run's proposals again without naming the concepts anew.
+* `trauma` is not a head-word synonym of `injury`: the curator ruled on
+  2026-10-02 that trauma is `Trauma process`, a process. The first version of
+  this rule assumed the synonym, merged the model's name `Injury` into the
+  existing `Trauma`, and the export made 300 wounds subclasses of a process;
+  the core build stopped on it. The edge check had not seen it, because it
+  reasons over hierarchy names, not over what the term dict maps them to.
+* WONT's own synonyms decided against the rule, and the curator struck them
+  (2026-10-18): `Trauma process` (WONT_0000338) carried the alternative term
+  "injury", `Thermal wound` (WONT_0000310) "Burn injury"; the export matches
+  names by WONT's synonyms, so the model's `Injury` became the process. Injury
+  is the material outcome (Wound ⊑ Injury ⊑ pathological disorder), burn
+  injury its own class (burn wound ⊑ burn injury ⊑ injury; a scald is a
+  thermal wound, not a burn injury). The curator edits WONT; the pipeline does not.
+* The model's names are also judged among themselves and against Wound and
+  Injury (`Burn Injury ⊑ Injury`, `Diabetic Ulcer ⊑ Wound`), so a new name has
+  a checked parent; listed as `between_names` in the report.
+* Two labels with the same reading are one concept, not an edge
+  (`Ischemic Wounds` is `Ischemic Wound`; `Diabetes-Related Ulcer` and
+  `Diabetic Ulcer` are one name).
+* A head word the rulings do not place cannot be judged; its edges are not
+  proposed (rule 66). The curator rules on the head word once; every edge
+  that depends on it then follows.
+* Licensed edges are promoted without a page and recorded on the lattice's
+  accepted slice, which amends rule 72 for this one kind of edge: the
+  curator's decision is the rule, not each edge. They are still reasoned
+  over: `scripts/p4_derive.py` runs the is_a edge check again after the
+  concept analysis.
+* Every proposal and its verdict is written to `output/fca_head_rule_*.json`,
+  and the run prints the counts (rule 1). The WONT addition takes these edges
+  (`run_extend_ground_truth(include_fca=True)` in `p4_derive.py`); before rule
+  79 it left all FCA edges out, because they were unchecked.
+* The report accounts for every name the model made, not only for edges
+  (2026-10-18, curator): a name refused for all its members stays there with
+  its reason, and a name `run_fca` keeps from the rule (undecided-dependent,
+  or without members) is listed under `withheld`. A refusal is not written to
+  the store or the term dict: it is the rule applied to the curator's
+  rulings, a view (rules 33, 51). The run keeps the same content as
+  `Orchestrator.fca_head_rule`, and `test_fca_on_subtree` accepts a name that
+  is committed, queued, or in the report. Failure: on 2026-10-18 the test
+  found `Skin And Soft Tissue Injury` (refused for Acute Wound and Chronic
+  Wound: "says ['and', 'skin', 'soft', 'tissue']") in neither the hierarchy
+  nor the review queue, because the test predated rule 79 and its emptied queue.
+* A licensed edge also hangs a class into the core like a checked placement
+  (`scripts/build_wont_core.py`, 2026-10-20). Before, the core took `placed`
+  edges only, so all licensed edges reached just the full extension and
+  `Burn Injury` (under `Injury`) never reached the core; with them the core
+  has 2,996 new classes (+17), ELK 0 unsatisfiable.
+* In the edge check an FCA edge gives way after a text edge and before a
+  placed one (`ReasonerGate.check_edges`, rank 2.5). At its old rank 1 the
+  check dropped all 436 licensed edges of 2026-10-18 first whenever their
+  child was unsatisfiable through a text edge elsewhere; with 2.5, 6 went.
+* Failure that motivated it: on 2026-10-17 the review page asked the curator
+  to judge 352 proposed edges, all to names the model had given formal
+  concepts (`Injury`, `Secondary Healing Burn Depth`, `Total Body Surface
+  Area Burn`), among them `Burn Wound ⊑ Electrical Burn Wound` and
+  `Wound ⊑ Cutaneous Disorder`. A probe of this rule on them: 193 licensed,
+  54 refused, 39 refused as collective names, 1 synonym, 65 open.
+* Enforced by `wound_ontology/hierarchies/head_rule.py` (`judge`,
+  `sort_proposals`), `Orchestrator._judge_fca_proposals`, and
+  `tests/test_head_rule.py`. `Wound ⊑ Injury` itself is the curator's axiom
+  in `data/review/curator_axioms_2026-10-03.json` (a plain subclass axiom,
+  read by `scripts/build_wont_core.py`), not a change to WONT.
+
+## 80. Complication is an epistemic label, not a class; ulcer is wound inside names; burn is burn wound
+
+**Decided 2026-10-18 (curator, chat).**
+
+* "Was eine Komplikation ist und was nicht, ist ein epistemisches Label, das
+  angehängt wird. Axiomatisch gesehen ist nämlich sonst alles eine
+  Komplikation." WONT keeps no complication classes: the curator's edit
+  removes `Wound complication`, `Wound complication disorder`, `Wound
+  complication process` and `Material used for wound complication
+  prevention`, and re-parents their children (prepared as
+  `data/review/ground_truth_final_proposed_2026-10-18.owl` with its `.diff`;
+  the pipeline does not write WONT). Every store name built on the word (169
+  records) is out of scope (`scripts/apply_complication_out_2026_10_18.py`),
+  so the WONT addition does not mint them. CQ003 ("Is a surgical site
+  infection a type of wound complication?") is out of scope for the same
+  reason; CQ030/032/033 stay -- they test MILD's process pattern, only their
+  relation is named `complication_of`.
+* Rule 70 is completed: "da sollte nicht mehr ulcer überall stehen". Inside
+  every name `ulcer(s)` -> `wound(s)` (`normalise._ulcer_to_wound`, last in
+  `canonical_vocabulary`, then the rules once more: `ulcer management` ->
+  `wound care`), except an ulcer off skin (gastric, oral, corneal ...), a
+  fixed eponym (Marjolin, Martorell, Kennedy, Buruli ...), an instrument,
+  scale or study name, and a name built on WONT's own labels (pressure ulcer,
+  diabetic foot ulcer, arterial leg ulcer, Marjolin ulcer). 549 renames.
+* Like ulcer and wound, `burn`, `burn wound`, `burn lesion` and `thermal
+  burn` are one term in what spellings share (`_burn_is_burn_wound`); pass 0
+  names the thing `... burn wound` and keeps `burn care`, `burn depth`. Not
+  after `non-`. 46 renames. Eight earlier mappings that said burn injury =
+  burn wound, or scald = burn, were refused with the curator's assent
+  (`scripts/apply_burn_synonyms_2026_10_18.py`).
+* Injury is structural damage to a tissue or an organ, whatever its cause
+  (curator, 2026-10-20, choosing the pathology sense over the
+  external-cause sense; a venous leg ulcer is a wound and has no external
+  cause). WONT gains `Injury` (WONT_0007817, under pathological disorder,
+  Wound under it) and `Traumatic injury` (WONT_0007237, EquivalentTo: Injury
+  and ('output of' some 'Trauma process')), keeping the ids the extension's
+  id registry had given them.
+* **WONT is now a dated file** (curator, 2026-10-20: "bitte ersetze nicht,
+  sondern erstelle eine neue Datei mit Datum hinten dran"):
+  `data/ground truth/ground_truth_final_2026-10-20.owl`. The pipeline reads it
+  through `config/settings.GROUND_TRUTH_TTL`, as does `scripts/thesis_figures.py`;
+  `ground_truth_final.owl` is the state of 2026-10-18 and stays as it is.
+  Older one-off scripts still name the old file in their own constants.
+* MILD's complication classes are gone too (curator, 2026-10-20: "die können
+  alle weg"): `material complication disease entity` (MILD_120051),
+  `complication disease process` (MILD_120092), `disease complication
+  diagnostic result` (MILD_120050). MILD is now a dated file as well,
+  `Disease ontologies/mild_2026-10-20.ttl` (`config/settings.MILD_TTL`, the
+  WONT catalog's MILD import, `build_disease_proposal.sh`); `mild.ttl` stays as
+  it was. The 87 placements onto those classes are refused
+  (`scripts/apply_mild_complication_2026_10_20.py`), and `complicated` /
+  `uncomplicated diabetes mellitus` are out of scope. The pattern itself stays:
+  `disorder creating disease course process` (MILD_120053), a disorder that is
+  the output of a process in another disease's course. MILD's header comment
+  (commitment 4 b) still speaks of complications; it is the curator's text.
+* Jargon out of scope: Spearman's rank correlation, skin loss, total skin loss,
+  skin breakdown (`scripts/apply_scope_out_2026_10_18.py`).
+* A review page lists only real questions (memory: check before asking): no
+  BFO category names (disposition, function ...), no WONT/MILD classes, no
+  term already ruled, only terms in scope; `disposition` is never preselected.
+
 ## Adding to this file
 
 When a universal design choice is made:

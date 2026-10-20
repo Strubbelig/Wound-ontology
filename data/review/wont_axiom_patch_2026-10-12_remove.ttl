@@ -1,0 +1,21 @@
+# WONT axiom patch, 2026-10-12 -- REMOVALS (D4: Skin wound retired)
+# Remove these triples from the curated WONT. In Protégé: select the class,
+# delete the named axiom. Also remove on Skin wound (WONT_0000441):
+#   * its EquivalentTo axiom  (Wound and located in some Skin)
+#   * its label "Skin wound"   (the additions give it "obsolete Skin wound")
+# scripts/wont_patch_check.py applies both files to a copy and checks it.
+
+@prefix wont: <https://bioportal.bioontology.org/ontologies/WONT/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+wont:WONT_0000441 rdfs:subClassOf wont:WONT_0000380 ;
+    rdfs:label "Skin wound"@en .
+
+wont:WONT_0000027 rdfs:subClassOf wont:WONT_0000441 .   # Arterial leg ulcer
+wont:WONT_0000046 rdfs:subClassOf wont:WONT_0000441 .   # Blistering skin wound
+wont:WONT_0000186 rdfs:subClassOf wont:WONT_0000441 .   # Marjolin ulcer
+wont:WONT_0000346 rdfs:subClassOf wont:WONT_0000441 .   # Ulcus cruris mixtum
+wont:WONT_0000347 rdfs:subClassOf wont:WONT_0000441 .   # Ulcus cruris venosum
+wont:WONT_0000348 rdfs:subClassOf wont:WONT_0000441 .   # Ulcus hypertonicus Martorell
+wont:WONT_0000429 rdfs:subClassOf wont:WONT_0000441 .   # Wounds classified according to Gustilo and Anderson
+wont:WONT_0000430 rdfs:subClassOf wont:WONT_0000441 .   # Wounds classified according to Tscherne and Oestern

@@ -1,7 +1,7 @@
 # GENERATED FILE - DO NOT EDIT BY HAND.
 # Regenerate with:  python scripts/build_extraction_schema.py
-# Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)
-# Generated:        2026-10-03
+# Source of truth:  mild.ttl (MILD) + ground_truth_final.owl (WONT)
+# Generated:        2026-10-18
 id: https://w3id.org/wont/extraction
 name: wont-extraction
 title: WONT/MILD-derived extraction schema
@@ -174,10 +174,6 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120022
         title: "pathological disorder"
         description: "a disorder is an abnormal presence or organization of material components — including the limiting case where the abnormal organization consists in a normally-present component being absent."
-      COMPOUND_PATHOLOGICAL_DISORDER:
-        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120049
-        title: "compound pathological disorder"
-        description: "A pathological disorder that has as part a pathological disorder."
       MATERIAL_COMPLICATION_DISEASE_ENTITY:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120051
         title: "material complication disease entity"
@@ -947,6 +943,9 @@ enums:
         meaning: http://purl.obolibrary.org/obo/BFO_0000145
         title: "relational quality"
         description: "b is a relational quality = Def. for some independent continuants c, d and for some time t: b quality_of c at t & b quality_of d at t. (axiom label in BFO2 Reference: [057-001])"
+      PATHOLOGICAL:
+        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_000600
+        title: "pathological"
       REDNESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000257
         title: "Redness"
@@ -1563,6 +1562,7 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120021
         title: "disorder development process"
         description: "A process that has as output a pathological disorder and that has as its end boundary a threshold crossing event."
+        aliases: ["disease development process"]
       DISEASE_DIAGNOSIS_PROCESS_BY_MEASUREMENT:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120025
         title: "disease diagnosis process by measurement"
@@ -1589,10 +1589,9 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120048
         title: "Suspected disease diagnosis process"
         description: "A disease diagnostic process that has as specified output a candidate diagnosis."
-      DISEASE_COURSE_PROCESS_PUTTING_OUT_DISORDERS_AS_PART_OF_A_COMPLICATION:
+      DISORDER_CREATING_DISEASE_COURSE_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120053
-        title: "disease course process putting out disorders as part of a complication"
-        description: "This entity models a process in disease A's course that produces a disorder which becomes part of disease B — the complication. The disorder as output is not the disorder of the producing disease but a newly instantiated structural abnormality that grounds a secondary disease."
+        title: "disorder creating disease course process"
       DISEASE_CLASSIFICATION_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120055
         title: "disease classification process"

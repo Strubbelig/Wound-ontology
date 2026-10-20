@@ -45,7 +45,7 @@ load_dotenv(ROOT / ".env")
 OWL_DIR = ROOT / "output" / "owl"
 READ = ROOT / "data" / "review" / "relation_universality_2026-10-02" / "result.json"
 CURATOR = ROOT / "data" / "review" / "curator_axioms_2026-10-03.json"
-MILD = ROOT.parent / "Disease ontologies" / "Disease proposal 2.ttl"
+from config.settings import MILD_TTL as MILD   # the current MILD file (dated since 2026-10-20)
 OBO = "http://purl.obolibrary.org/obo/"
 PLAIN = {OBO + "RO_0000057": "has participant", OBO + "RO_0002233": "has input", OBO + "RO_0002234": "has output",
          OBO + "IAO_0000136": "is about", OBO + "BFO_0000050": "part of", OBO + "BFO_0000051": "has part",

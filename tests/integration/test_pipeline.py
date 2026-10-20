@@ -67,6 +67,18 @@ def test_pubmed_search(pipeline):
 
 @pytest.mark.integration
 def test_extract_to_cache(pipeline):
+    # The abstracts come from test_pubmed_search through the shared module
+    # fixture. Run on its own (a node id, -k, --lf) or after that search came
+    # back empty, this test used to find no abstracts and fail as `assert 0 > 0`,
+    # which said nothing about why. It now runs the search itself, and says so.
+    if pipeline.pubcon.database.empty:
+        print("\n[test_extract_to_cache] the abstract table is empty "
+              "(test_pubmed_search did not run first, or found nothing); "
+              "running the same search here")
+        pipeline.run_pubmed_search("wound healing", max_results_per_query=3)
+    assert not pipeline.pubcon.database.empty, (
+        "PubMed returned no abstracts for 'wound healing', so there is nothing "
+        "to extract; this is a search failure, not an extraction failure")
     pipeline.run_extract_to_store(batch_size=2)
     assert len(pipeline.store.dict) > 0
     # Every entry must have an "entities" key
@@ -159,8 +171,9 @@ def test_fca_on_subtree(pipeline, tmp_data_dir):
     # FCAHierarchy must be a valid DataFrame
     assert isinstance(pipeline.fca_hier.df, pd.DataFrame)
 
-    # Every named FCA superclass must be accounted for in ClassHierarchy —
-    # either committed as an edge or recorded as a review candidate.
+    # Every named FCA superclass must be accounted for: committed as an edge,
+    # recorded as a review candidate, or judged by the head-word rule with a
+    # reason (rule 79) or withheld before it, in the rule's report.
     #
     # This used to assert membership in .concepts outright, which run_fca stopped
     # honouring when commit_fca gained its False default: FCA observes that terms
@@ -168,7 +181,10 @@ def test_fca_on_subtree(pipeline, tmp_data_dir):
     # assertion of one, so suggestions go to .candidates for review. The stale
     # assertion survived only because a three-abstract corpus produced no FCA
     # columns at all, so the loop never had a name to check. Conceptual scaling
-    # gives the context an is_a column, so it does now.
+    # gives the context an is_a column, so it does now. Since rule 79
+    # (2026-10-18) the head-word rule empties the review queue, so a refused
+    # name is in the report, not in .candidates ("Skin And Soft Tissue Injury",
+    # refused for Acute Wound: "says ['and', 'skin', 'soft', 'tissue']").
     lattice = pipeline.lattice.lattice
     if lattice is not None:
         fca_names = [
@@ -179,11 +195,28 @@ def test_fca_on_subtree(pipeline, tmp_data_dir):
         fca_names_title = [n.strip().title() for n in fca_names]
         print(f"\nFCA superclass names: {fca_names_title}")
         proposed_parents = {p for _, p in pipeline.class_hier.candidates}
+        judged = pipeline.fca_head_rule
+        if fca_names:
+            assert judged and Path(judged["report"]).exists(), \
+                "run_fca named concepts but left no head-word rule report"
+        verdict_of: dict[str, list[str]] = {}
+        for verdict in ("licensed", "refused", "synonym", "open"):
+            for r in judged.get(verdict, []):
+                assert r.get("reason"), f"{verdict} edge without a reason: {r}"
+                for n in (r["parent"], r["as"]):
+                    verdict_of.setdefault(n.lower(), []).append(f"{verdict}: {r['reason']}")
+        for why, names in judged.get("withheld", {}).items():
+            for n in names:
+                verdict_of.setdefault(n.lower(), []).append(f"withheld: {why}")
         for name in fca_names_title:
             assert (name in pipeline.class_hier.concepts
-                    or name in proposed_parents), \
-                (f"FCA superclass '{name}' reached neither ClassHierarchy nor its "
-                 f"review candidates — it was named and then dropped")
+                    or name in proposed_parents
+                    or name.lower() in verdict_of), \
+                (f"FCA superclass '{name}' reached neither ClassHierarchy, its "
+                 f"review candidates nor the head-word rule's report — it was "
+                 f"named and then dropped")
+        print(f"FCA names judged by the head-word rule: "
+              f"{ {n: verdict_of[n.lower()][:2] for n in fca_names_title if n.lower() in verdict_of} }")
 
     # Re-export OWL with FCA results merged in and verify FCA names appear
     owl_out = tmp_data_dir / "ontology_with_fca.owl"

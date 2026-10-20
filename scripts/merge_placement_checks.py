@@ -45,7 +45,7 @@ SELF = ROOT / "data" / "review" / "placement_selfcheck_2026-10-01"
 VCHECK = ROOT / "data" / "review" / "placement_verifycheck_2026-10-01"   # Claude over the verify rows
 OUT = ROOT / "data" / "review" / "placement_merged_2026-10-01.json"
 GT = ROOT / "data" / "ground truth" / "ground_truth_final.owl"
-MILD = ROOT.parent / "Disease ontologies" / "Disease proposal 2.ttl"
+MILD = ROOT.parent / "Disease ontologies" / "mild.ttl"
 MODULES = ROOT.parent / "Disease ontologies" / "Disease ontology modules"
 
 

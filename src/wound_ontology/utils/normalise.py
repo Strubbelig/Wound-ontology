@@ -320,6 +320,39 @@ def _ulceration(label: str) -> str:
         m.group("w"), "ulcers" if m.group("w").lower().endswith("s") else "ulcer"), label)
 
 
+#: Curator, 2026-10-18: "ich war eigentlich auch schon vor einiger Zeit klar in
+#: meiner Aussage, dass ulcer eine Wunde ist, da sollte nicht mehr ulcer überall
+#: stehen" (on `Ulcer Diagnosis`, `Ulcer Event`, `Ulcer Prevention`). So inside
+#: every name `ulcer(s)` -> `wound(s)`, except where the word is not the wound:
+#: an ulcer off skin ("gastric ulcer ... ist keine Wunde im Sinne WONT"), a fixed
+#: eponymous name, and the name of an instrument, scale, study or guideline.
+#: A WONT/MILD label is never renamed (pass 0 keeps labels as written).
+ULCER_WORD = re.compile(r"\b(?P<w>ulcers?)\b", re.IGNORECASE)
+ULCER_KEEP = re.compile(
+    r"\b(gastric|gastroduodenal|peptic|duodenal|stomal|esophageal|oesophageal|intestinal|colonic|"
+    r"rectal|anal|oral|mouth|aphthous|corneal|mucosal|genital|vulvar|stress|"
+    r"marjolin|martorell|kennedy|buruli|curling|cushing|meleney|rodent|lipsch\w*|"
+    r"tool|scale|score|series|classification|questionnaire|index|instrument|trial|study|"
+    r"guideline|guidelines|panel|association|registry|self-efficacy)\b",
+    re.IGNORECASE)
+
+
+#: WONT's own labels that use the word (rule 61: pressure injury is pressure
+#: ulcer): a name built on one keeps it, so `Heel pressure ulcer` stays under
+#: `Pressure ulcer` instead of becoming a `pressure wound` beside it.
+ULCER_LABEL_PHRASES = re.compile(
+    r"\b(pressure ulcers?|diabetic foot ulcers?|arterial leg ulcers?|marjolin ulcers?)\b", re.IGNORECASE)
+DOUBLE_WOUND = re.compile(r"\b(wounds?) (?P<w>wounds?)\b", re.IGNORECASE)
+
+
+def _ulcer_to_wound(label: str) -> str:
+    if not ULCER_WORD.search(label) or ULCER_KEEP.search(label) or ULCER_LABEL_PHRASES.search(label):
+        return label
+    out = ULCER_WORD.sub(lambda m: _with_case_of(
+        m.group("w"), "wounds" if m.group("w").lower().endswith("s") else "wound"), label)
+    return DOUBLE_WOUND.sub(lambda m: m.group("w"), out)          # `ulcer wound` -> `wound`
+
+
 #: Curator, 2026-10-04: "we should do something against the ulcer vs. wound
 #: synonym" -- `X ulcer` and `X wound` are one term. Applied to what two
 #: spellings SHARE (`Normalised.key`, `.strict`), never to the name: pass 0
@@ -329,7 +362,22 @@ ULCER_AS_WOUND = re.compile(r"\bulcers?\b")
 
 
 def _ulcer_is_wound(folded: str) -> str:
-    return ULCER_AS_WOUND.sub("wound", folded)
+    return _burn_is_burn_wound(ULCER_AS_WOUND.sub("wound", folded))
+
+
+#: Curator, 2026-10-18: "es braucht nicht burn lesion und burn wound, das ist
+#: dasselbe für mich"; "a burn is a burn wound"; a burn is a thermal wound
+#: (flame), so `thermal burn` is a burn. Like ulcer and wound (rule 70) this
+#: is applied to what two spellings SHARE, never to a name: pass 0 groups
+#: `burn care` with `burn wound care` and elects one name (an ontology label
+#: first, then the spelling more abstracts use). `burn injury` is NOT one of
+#: them: a burn wound is a burn injury, not the other way round (rule 79).
+BURN_AS_BURN = re.compile(r"(?<!non-)(?<!non )\b(?:thermal )?burns? (?:wounds?|lesions?)\b"
+                          r"|(?<!non-)(?<!non )\bthermal burns?\b")   # `non-burn wound` is not `non-thermal burn`
+
+
+def _burn_is_burn_wound(folded: str) -> str:
+    return BURN_AS_BURN.sub("burn", folded)
 
 
 #: Curator, 2026-10-02: "illness, disorder, pathology, disease, condition and
@@ -480,7 +528,13 @@ def canonical_vocabulary(label: str) -> str:
         return _with_case_of(
             match.group(0), CANONICAL_MODIFIERS[match.group(0).lower()])
 
-    return CANONICAL_MODIFIER.sub(modifier, label)
+    label = CANONICAL_MODIFIER.sub(modifier, label)
+    # last, so the label phrases it keeps are seen in their final spelling
+    # (`diabetes foot ulcer` is `diabetic foot ulcer` by now, and stays); a
+    # changed name goes through the rules once more (`ulcer management` ->
+    # `wound management` -> `wound care`), which keeps the function idempotent
+    out = _ulcer_to_wound(label)
+    return canonical_vocabulary(out) if out != label else out
 
 
 class Normalised:

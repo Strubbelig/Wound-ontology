@@ -18,6 +18,10 @@ author and reason, e.g. data/review/relation_clash_decisions_2026-10-10.json:
 * `scope_out`: a term the curator said to delete ("Delete it"): a curator
   verdict `out` on its record (rule 40). The term leaves the view everywhere,
   with every statement on it or pointing at it; the abstracts keep it.
+* `place`: a parent the curator named for a term (rule 72): the pair gets
+  `placement: {verdict: "narrower"}` and a curator mark, as the judgement
+  queue writes it. The parent is given by its label as the class tree spells
+  it, with its IRI beside it for the reader.
 
 Dry by default. With --write: the term dict is backed up, written once per
 author, and every decision is read back from disk.
@@ -81,6 +85,16 @@ def main(argv: list[str]) -> int:
         term = next(iter(hits))
         outs.append((term, o))
         print(f"[clash] scope of {term!r}: now {gt.effective_gate_verdict(term)[0]!r} -> 'out'")
+    places = []
+    for c in dec.get("place", []):
+        hits = {gt.resolve(k) for k in gt.records if k.lower() == c["term"].lower()}
+        if len(hits) != 1:
+            raise RuntimeError(f"[clash] {c['term']!r}: {len(hits)} records, nothing written")
+        term = next(iter(hits))
+        if gt.data.get(term):
+            raise RuntimeError(f"[clash] {term!r} is mapped onto {gt.data[term]!r}; a parent would not count")
+        places.append((term, c))
+        print(f"[clash] parent of {term!r}: {c['parent']!r} ({c['parent_iri']})")
     print(f"[clash] statements to hold out: {dict(Counter({k: len(v) for k, v in cells.items()}))}")
     for by, cs in cells.items():
         for e, t in cs:
@@ -98,6 +112,11 @@ def main(argv: list[str]) -> int:
     when = datetime.now().isoformat(timespec="seconds")
     for term, o in outs:
         gt.gate(term, curator={"verdict": "out", "when": when, "by": by_of["curator"], "reason": o["why"]})
+    for term, c in places:
+        gt.judge(term, c["parent"],
+                 placement={"verdict": "narrower", "when": when, "by": by_of["curator"],
+                            "iri": c["parent_iri"], "why": c["why"]},
+                 curator={"verdict": "narrower", "when": when, "by": by_of["curator"], "reason": c["why"]})
     for by, cs in cells.items():
         n = st.reject_cells(cs, by=by_of[by], note=f"decision and reason: {path.name}")
         if n != len(cs):
@@ -113,10 +132,12 @@ def main(argv: list[str]) -> int:
              if (p2.term_mapper._term_mapping.categories().get(term) or {}).get("verdict") != c["category"]]
     lost += [("scope", term, "out") for term, _ in outs
              if p2.term_mapper._term_mapping.effective_gate_verdict(term)[0] != "out"]
+    placed = set(p2.term_mapper._term_mapping.placements())
+    lost += [("place", term, c["parent"]) for term, c in places if (term, c["parent"]) not in placed]
     if lost:
         raise RuntimeError(f"[clash] {len(lost)} decision(s) did not land: {lost}")
     print(f"[clash] written and read back: {sum(map(len, cells.values()))} statements held out, "
-          f"{len(cats)} category ruling(s), {len(outs)} term(s) out of scope")
+          f"{len(cats)} category ruling(s), {len(outs)} term(s) out of scope, {len(places)} parent(s)")
     return 0
 
 

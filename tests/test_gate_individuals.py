@@ -408,15 +408,26 @@ def test_a_timeout_ends_the_process_the_script_started(tmp_path):
     script.chmod(0o755)
     t0 = time.time()
     with pytest.raises(subprocess.TimeoutExpired):
-        _run_robot([str(script)], timeout=1)
+        # 3 s, not 1: on a loaded machine a 1 s timeout could end the script
+        # before it had even started its child, and then nothing was tested.
+        _run_robot([str(script)], timeout=3)
     assert time.time() - t0 < 10, "the timeout waited for the child to finish by itself"
+    assert pidfile.exists(), ("the stand-in script was killed before it started its "
+                              "child, so this run tested nothing; raise the timeout")
     child = int(pidfile.read_text())
+
+    def exists(pid: int) -> bool:
+        # `ps -p` answers with its exit status, so polling needs no handler that
+        # could swallow the outcome; "gone" is asserted below, not caught.
+        return subprocess.run(["ps", "-p", str(pid)],
+                              capture_output=True).returncode == 0
+
     for _ in range(20):
-        try:
-            os.kill(child, 0)
-        except ProcessLookupError:
+        if not exists(child):
             break
         time.sleep(0.1)
     else:
         os.kill(child, 9)
         pytest.fail("the child of the timed-out script is still running")
+    with pytest.raises(ProcessLookupError):
+        os.kill(child, 0)               # the kernel agrees: no such process

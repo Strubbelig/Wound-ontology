@@ -390,7 +390,7 @@ def emit_linkml(onto: Onto, by_cat, patterns, prop_labels) -> str:
 
     add("# GENERATED FILE - DO NOT EDIT BY HAND.")
     add("# Regenerate with:  python scripts/build_extraction_schema.py")
-    add("# Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)")
+    add("# Source of truth:  mild.ttl (MILD) + ground_truth_final.owl (WONT)")
     add(f"# Generated:        {stamp}")
     add("id: https://w3id.org/wont/extraction")
     add("name: wont-extraction")
@@ -522,7 +522,7 @@ def emit_pydantic(onto: Onto, by_cat, patterns, prop_labels) -> str:
     add('"""GENERATED FILE - DO NOT EDIT BY HAND.')
     add("")
     add("Regenerate with:  python scripts/build_extraction_schema.py")
-    add("Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)")
+    add("Source of truth:  mild.ttl (MILD) + ground_truth_final.owl (WONT)")
     add(f"Generated:        {stamp}")
     add("")
     add("Mirrors config/extraction_schema.yaml. Emitted directly rather than via")

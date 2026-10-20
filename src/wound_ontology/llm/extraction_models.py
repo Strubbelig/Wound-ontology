@@ -2,8 +2,8 @@
 """GENERATED FILE - DO NOT EDIT BY HAND.
 
 Regenerate with:  python scripts/build_extraction_schema.py
-Source of truth:  Disease proposal 2.ttl (MILD) + ground_truth_final.owl (WONT)
-Generated:        2026-10-03
+Source of truth:  mild.ttl (MILD) + ground_truth_final.owl (WONT)
+Generated:        2026-10-18
 
 Mirrors config/extraction_schema.yaml. Emitted directly rather than via
 `gen-pydantic` so the pipeline has no hard dependency on the linkml generator;
@@ -155,7 +155,6 @@ GROUNDING: dict[str, dict[str, str]] = {
         'pathogenic genetic variant': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120013',
         'material disease entity': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120020',
         'pathological disorder': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120022',
-        'compound pathological disorder': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120049',
         'material complication disease entity': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120051',
         'Abdominal drain': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000002',
         'Activated carbon layer wound dressing': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000005',
@@ -387,6 +386,7 @@ GROUNDING: dict[str, dict[str, str]] = {
     },
     'quality': {
         'relational quality': 'http://purl.obolibrary.org/obo/BFO_0000145',
+        'pathological': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_000600',
         'Redness': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000257',
         'Thread size': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000315',
         'Thread size 0': 'https://bioportal.bioontology.org/ontologies/WONT/WONT_0000316',
@@ -568,7 +568,7 @@ GROUNDING: dict[str, dict[str, str]] = {
         'disease diagnosis process by conceptualization': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120046',
         'Disease diagnostic process': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120047',
         'Suspected disease diagnosis process': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120048',
-        'disease course process putting out disorders as part of a complication': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120053',
+        'disorder creating disease course process': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120053',
         'disease classification process': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120055',
         'Disease disorder treatment process': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120086',
         'disorder elimination process': 'https://bioportal.bioontology.org/ontologies/MILD/MILD_120087',
@@ -689,7 +689,6 @@ DEFINITIONS: dict[str, str] = {
     'Developed material disease entity': 'A disease whose disorders had to develop.',
     'material disease entity': 'A material entity that has one or more pathological disorders as parts; which disorders compose one disease is fixed by the diagnostic classification assigned to them, not by an intrinsic unity criterion. Identity is grounded in the continuity of the disorder lineage, not in momentary material composition (cf. a river persisting through complete material replacement).',
     'pathological disorder': 'a disorder is an abnormal presence or organization of material components — including the limiting case where the abnormal organization consists in a normally-present component being absent.',
-    'compound pathological disorder': 'A pathological disorder that has as part a pathological disorder.',
     'material complication disease entity': 'A material disease entity that has as part a pathological disorder that is the output of a course of the disease process.',
     'Angiopathic wound': 'A wound that is the output of a wound development process that has as part a wound causing process of the course of an angiopathy: a complication of that disorder. No claim is made that the disorder caused the wound.',
     'Autoimmune disease related wound': 'A wound that is the output of a wound development process that has as part a wound causing process of the course of an autoimmune tissue disorder: a complication of that disorder. No claim is made that the disorder caused the wound.',
@@ -825,7 +824,6 @@ DEFINITIONS: dict[str, str] = {
     'disease perpetuation process': 'A process that is part of a course of the disease process and that realizes a perpetuation tendency.',
     'Disease diagnostic process': 'A planned process that has as output a disease diagnostic result.',
     'Suspected disease diagnosis process': 'A disease diagnostic process that has as specified output a candidate diagnosis.',
-    'disease course process putting out disorders as part of a complication': "This entity models a process in disease A's course that produces a disorder which becomes part of disease B — the complication. The disorder as output is not the disorder of the producing disease but a newly instantiated structural abnormality that grounds a secondary disease.",
     'disease classification process': 'A planned process that has as specified output a disease stage classification result.',
     'Disease disorder treatment process': 'A planned process that realizes a treatment plan and that has as input a pathological disorder that is part of a material disease entity.',
     'complication disease process': 'A disease process that has as participant a disease that has as part a disorder which is the output of another disease course process.',

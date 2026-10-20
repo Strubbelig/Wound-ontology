@@ -539,6 +539,28 @@
    "from": "w081",
    "note": "",
    "by": "curator, axiom review page 2026-10-03"
+  },
+  {
+   "subject_iri": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380",
+   "subject_label": "Wound",
+   "predicate": "subclass of",
+   "property_iri": null,
+   "filler_iri": null,
+   "filler_label": "Injury",
+   "from": "chat 2026-10-18 (head-word rule, rule 79)",
+   "note": "Wound is an injury. Burn wound is a burn injury is an injury und burn wound is a wound aber nicht wound is a burn injury.",
+   "by": "curator, chat 2026-10-18"
+  },
+  {
+   "subject_iri": null,
+   "subject_label": "Injury",
+   "predicate": "subclass of",
+   "property_iri": null,
+   "filler_iri": "https://bioportal.bioontology.org/ontologies/MILD/MILD_120022",
+   "filler_label": "pathological disorder",
+   "from": "review page 2026-10-18, h-injury-parent: pd",
+   "note": "Injury needs a checked parent; Wound is already under pathological disorder.",
+   "by": "curator, review page 2026-10-18"
   }
  ],
  "undecided": [],

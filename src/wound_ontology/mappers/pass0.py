@@ -167,6 +167,14 @@ def pass0_renames(
                 fewest = min(invented_words(m) for m in tied)
                 tied = [m for m in tied if invented_words(m) == fewest]
             winner = max(tied, key=ranked.__getitem__)
+            # Curator, 2026-10-18 ("a burn is a burn wound"): a group that is
+            # the burn itself is named `... burn wound`, like WONT's own
+            # `Second-degree burn wound`, whatever the corpus counts; `burn
+            # care` or `burn depth` keep the corpus's choice.
+            if winner not in anchors:
+                as_wound = [m for m in tied + list(members) if re.search(r"\bburn wounds?$", m.lower())]
+                if as_wound and re.search(r"\bburns?$", winner.lower()):
+                    winner = max(set(as_wound), key=ranked.__getitem__)
             canonical = winner if winner in anchors else norm[winner].name
 
         wrote = False

@@ -11,7 +11,7 @@ knowledge is not.
 **WONT** — the wound ontology, `data/ground truth/ground_truth_final.owl`. Turtle,
 despite the `.owl` extension. The artefact this whole project exists to build.
 
-**MILD** — the disease ontology it imports, `../Disease ontologies/Disease proposal 2.ttl`.
+**MILD** — the disease ontology it imports, `../Disease ontologies/mild.ttl`.
 Owns the disease-level vocabulary (disease course, complication, plan specification).
 
 **curated** — written by hand, by you. The opposite of *derived*. Nothing in the

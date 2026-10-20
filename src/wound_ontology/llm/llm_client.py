@@ -697,7 +697,11 @@ class LLMClient:
         "Process", "Quality" and the like are the constraint, not an answer.
         Name what these members have in common as medicine would name it.
         """
-        result = await self._execute_with_retry(self._call_json, prompt, SemanticNameResponse, temperature=0.3)
+        # A capped reply: without max_tokens OpenRouter reserves the model's whole
+        # output window (131,072 tokens) against the credit, and on 2026-10-11 every
+        # naming call was refused with 402 although each needed a few thousand.
+        result = await self._execute_with_retry(self._call_json, prompt, SemanticNameResponse, temperature=0.3,
+                                                max_tokens=self.BATCH_MAX_TOKENS)
         return result.superclass_name
 
 

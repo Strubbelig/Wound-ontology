@@ -1,0 +1,81 @@
+850,851c850
+<                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of an angiopathy: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
+<                   ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ;
+---
+>                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of an angiopathy. No claim is made that the disorder caused the wound."@en ;
+958,959c957
+<                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of an autoimmune tissue disorder: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
+<                   ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ;
+---
+>                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of an autoimmune tissue disorder. No claim is made that the disorder caused the wound."@en ;
+1205,1206c1203
+<                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of a diabetic metabolic disorder: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
+<                   ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ;
+---
+>                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of a diabetic metabolic disorder. No claim is made that the disorder caused the wound."@en ;
+1515c1512
+<                   rdfs:subClassOf wont:WONT_0000187 ;
+---
+>                   rdfs:subClassOf ns1:BFO_0000040 ;
+1672,1677d1668
+< 
+< 
+< ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000187
+< wont:WONT_0000187 rdf:type owl:Class ;
+<                   rdfs:subClassOf ns1:BFO_0000040 ;
+<                   rdfs:label "Material used for wound complication prevention" .
+2252d2242
+<                   ns1:IAO_0000118 "Burn injury"@en ;
+2409d2398
+<                   ns1:IAO_0000118 "injury"@en ;
+2630,2632c2619,2620
+<                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of a venous insufficiency disorder: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
+<                   ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ,
+<                                   "RENAMED. The previous label, 'Wound causally related to impaired venous backflow', asserted in its own name a causal relation that this ontology does not hold to be assertable: what a disease causes cannot be reliably separated from what the disease is. Only co-location in space and time is claimed. The old label is deliberately NOT retained as an alternative term, because doing so would keep the rejected causal claim in circulation as a searchable synonym."@en ;
+---
+>                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of a venous insufficiency disorder. No claim is made that the disorder caused the wound."@en ;
+>                   ns1:IAO_0000116 "RENAMED. The previous label, 'Wound causally related to impaired venous backflow', asserted in its own name a causal relation that this ontology does not hold to be assertable: what a disease causes cannot be reliably separated from what the disease is. Only co-location in space and time is claimed. The old label is deliberately NOT retained as an alternative term, because doing so would keep the rejected causal claim in circulation as a searchable synonym."@en ;
+2657,2662d2644
+< ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000390
+< wont:WONT_0000390 rdf:type owl:Class ;
+<                   rdfs:subClassOf mild:MILD_120092 ;
+<                   rdfs:label "Wound complication process"@en .
+< 
+< 
+2671c2653
+<                   rdfs:subClassOf wont:WONT_0000588 ,
+---
+>                   rdfs:subClassOf mild:MILD_120022 ,
+2785c2767
+<                   rdfs:subClassOf wont:WONT_0000390 ;
+---
+>                   rdfs:subClassOf mild:MILD_120028 ;
+3592,3593c3574
+<                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of a peripheral arterial occlusive disease: a complication of that disorder. No claim is made that the disorder caused the wound."@en ;
+<                   ns1:IAO_0000116 "COMPLICATION, NOT CAUSATION, NOT CO-LOCATION (2026-09-17). This class was defined until today as a wound that is part of the same material disease entity as the other disorder. That axiom asserted only that a diagnostic classification files the two under one disease, and its label promised a spatial adjacency the logic never stated. MILD already models a complication: a disorder that is the output of a process in another disease's course (MILD_120053). This class now follows that pattern - the wound is the output of a wound development process that has, as a part, a wound causing process which is itself a process of the other disease's course. No causal relation between the two disorders is asserted, in keeping with MILD model commitment 4; the causal order lives in the processes, where MILD licenses it."@en ;
+---
+>                   ns1:IAO_0000115 "A wound that is the output of a wound development process that has as part a wound causing process of the course of a peripheral arterial occlusive disease. No claim is made that the disorder caused the wound."@en ;
+3903c3884
+<                  rdfs:subClassOf wont:WONT_0000557 ;
+---
+>                  rdfs:subClassOf mild:MILD_120022 ;
+3961,3971d3941
+< 
+< 
+< ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000557
+< wont:WONT_0000557 rdf:type owl:Class ;
+<                  rdfs:subClassOf mild:MILD_120051 ,
+<                                  [ rdf:type owl:Restriction ;
+<                                    owl:onProperty ns1:BFO_0000051 ;
+<                                    owl:someValuesFrom wont:WONT_0000588
+<                                  ] ;
+<                  ns1:IAO_0000115 "A material complication disease entity that has as part a wound complication disorder."@en ;
+<                  rdfs:label "Wound complication"@en .
+4192,4198d4161
+< ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0000588
+< wont:WONT_0000588 rdf:type owl:Class ;
+<                   rdfs:subClassOf mild:MILD_120022 ;
+<                   ns1:IAO_0000115 "A pathological disorder that is the output of a process in the course of a wound: the disorder-level counterpart of a wound complication (MILD_120053's pattern). Wound dehiscence is one; the disorders of a surgical site infection are others."@en ;
+<                   rdfs:label "Wound complication disorder"@en .
+< 
+< 

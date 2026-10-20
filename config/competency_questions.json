@@ -28,19 +28,6 @@
           "rewrite": "Rewritten 2026-09-16: was 'is_a Chronic Wound' -- same reason as CQ001. Expected to FAIL until WONT mints its own pressure ulcer class (the label currently resolves to HP_0012399, a phenotype); see WONT_TODO."
         },
         {
-          "id": "CQ003",
-          "question": "Is a surgical site infection a type of wound complication?",
-          "example_triple": [
-            "Surgical Site Infection",
-            "is_a",
-            "Wound complication"
-          ],
-          "label_fix": {
-            "Wound Complication": "Wound complication"
-          },
-          "rewrite": "Rewritten 2026-09-17: a surgical site infection is a disease, not a process, so it cannot be a subclass of 'wound complication process'. WONT now has the material class 'Wound complication' (MILD_120051 branch) and files SSI under it."
-        },
-        {
           "id": "CQ004",
           "question": "Is a burn injury a type of traumatic wound?",
           "example_triple": [
@@ -109,6 +96,17 @@
             "Acute Wound"
           ],
           "retired": "2026-09-17"
+        },
+        {
+          "id": "CQ003",
+          "question": "Is a surgical site infection a type of wound complication?",
+          "reason": "Premise rejected 2026-10-18 (curator): what is a complication and what is not is an epistemic label attached afterwards; axiomatically everything would be a complication. WONT keeps no complication classes.",
+          "retired_triple": [
+            "Surgical Site Infection",
+            "is_a",
+            "Wound complication"
+          ],
+          "retired": "2026-10-18"
         }
       ]
     },
@@ -612,33 +610,6 @@
       "theme": "What complications can follow a wound?",
       "in_scope": [
         {
-          "id": "CQ070",
-          "question": "Is wound infection a type of wound complication?",
-          "example_triple": [
-            "wound infection process",
-            "is_a",
-            "wound complication process"
-          ],
-          "label_fix": {
-            "Wound Infection": "wound infection process",
-            "Wound Complication": "wound complication process"
-          }
-        },
-        {
-          "id": "CQ072",
-          "question": "Is wound dehiscence a type of wound complication?",
-          "example_triple": [
-            "Wound Dehiscence",
-            "is_a",
-            "Wound complication disorder"
-          ],
-          "note": "REVERTED a label fix. Mapping 'Wound Complication' to 'wound complication process' made this triple a category error: Wound dehiscence is a MILD_120022 pathological disorder, not a process, so it can never be a subclass of a process. The ontology's material counterpart is 'material complication disease entity' - but choosing it is a modelling decision, not a label fix, so it is left for review.",
-          "label_fix": {
-            "Wound Complication": "Wound complication disorder"
-          },
-          "rewrite": "Rewritten 2026-09-17: 'Wound complication' (WONT_0000557) is a material complication disease entity (MILD_120051) and wound dehiscence is a pathological disorder; a disorder is not a disease. The disorder-level class 'Wound complication disorder' (WONT_0000588, ⊑ MILD_120022) is what dehiscence is a kind of; the disease-level class has it as part."
-        },
-        {
           "id": "CQ075",
           "question": "What causes hypertrophic scar formation?",
           "example_triple": [
@@ -685,6 +656,28 @@
             "wound complication process"
           ],
           "retired": "2026-09-17"
+        },
+        {
+          "id": "CQ070",
+          "question": "Is wound infection a type of wound complication?",
+          "reason": "Premise rejected 2026-10-18 (curator): what is a complication and what is not is an epistemic label attached afterwards; axiomatically everything would be a complication. WONT keeps no complication classes.",
+          "retired_triple": [
+            "wound infection process",
+            "is_a",
+            "wound complication process"
+          ],
+          "retired": "2026-10-18"
+        },
+        {
+          "id": "CQ072",
+          "question": "Is wound dehiscence a type of wound complication?",
+          "reason": "Premise rejected 2026-10-18 (curator): what is a complication and what is not is an epistemic label attached afterwards; axiomatically everything would be a complication. WONT keeps no complication classes.",
+          "retired_triple": [
+            "Wound Dehiscence",
+            "is_a",
+            "Wound complication disorder"
+          ],
+          "retired": "2026-10-18"
         }
       ]
     },

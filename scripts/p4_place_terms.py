@@ -39,7 +39,7 @@ load_dotenv(ROOT / ".env")
 
 OUT = ROOT / "data" / "review" / "placement_2026-09-29.json"   # the sandbox the page reads; resumable across days
 GT = ROOT / "data" / "ground truth" / "ground_truth_final.owl"
-MILD = ROOT.parent / "Disease ontologies" / "Disease proposal 2.ttl"
+MILD = ROOT.parent / "Disease ontologies" / "mild.ttl"
 MODULES = ROOT.parent / "Disease ontologies" / "Disease ontology modules"
 TOP_K, BATCH, CONCURRENCY = 10, 20, 8
 

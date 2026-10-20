@@ -6,7 +6,7 @@ write to a curated file (INSTRUCTIONS, standing rule). Two files are involved:
 | file | path | note |
 |---|---|---|
 | **WONT** | `data/ground truth/ground_truth_final.owl` | Turtle, despite the `.owl` extension — parse with `parse_graph`, not the XML reader |
-| **MILD** | `../Disease ontologies/Disease proposal 2.ttl` | imported by WONT via `owl:imports` |
+| **MILD** | `../Disease ontologies/mild.ttl` | imported by WONT via `owl:imports` |
 
 After an edit nothing needs running by hand: the skeleton rebuilds when a gate
 next reads it and the extraction schema regenerates when extraction next starts
