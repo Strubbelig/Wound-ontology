@@ -251,8 +251,8 @@ class ConceptStore:
     def clean_entity_str(term: str) -> str:
         """The spelling the store keeps for a term the moment it arrives.
 
-        'Systemic Sclerosis (SSc)' -> 'Systemic Sclerosis'
-        'Diabetic Foot Ulcers'     -> 'Diabetic Foot Ulcer'
+        'Systemic Sclerosis (SSc)' -> 'Systemic sclerosis'
+        'Diabetic Foot Ulcers'     -> 'Diabetic foot ulcer'
         'Necrotising fasciitis'    -> 'Necrotizing fasciitis'
 
         The parenthetical is stripped, and then pass 0's per-label rules run
@@ -263,8 +263,10 @@ class ConceptStore:
         maintenance pass. The other half of pass 0, which elects one spelling
         per group, needs the whole store and still runs as that pass.
 
-        Casing is untouched, as it always was: this is the extraction's own
-        spelling with the rules applied, not a house style.
+        Since 2026-10-24 the name is also in sentence case (`sentence_case`:
+        lowercase with a capital first letter, abbreviations and names kept),
+        the way WONT writes its labels. The raw string is still what the store
+        holds (rule 51); the cleaned name is only recorded as its spelling.
         """
         return normalise(re.sub(r'\s*\([^)]*\)', '', term).strip()).name
 

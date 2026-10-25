@@ -28,7 +28,7 @@ def main(argv):
     refuse = []
     for k, rec in gt.records.items():
         for c, j in (rec.get("pairs") or {}).items():
-            if c.lower() in GONE and (j.get("placement") or {}).get("verdict") and not j.get("refused"):
+            if c.lower() in GONE and (j.get("curator") or {}).get("iri") and not j.get("refused"):
                 refuse.append((k, c))
     out = [k for k in gt.records if k.lower() in OUT]
     print(f"[mild] refuse {len(refuse)} placement(s): {sorted(refuse)}")
@@ -39,7 +39,10 @@ def main(argv):
     shutil.copy2(latest, ROOT / "data" / "backup" / f"term_mapping_before_mild_complication_{datetime.now():%Y-%m-%d_%H-%M-%S}.json")
     when = datetime.now().isoformat(timespec="seconds")
     for k, c in refuse:
-        gt.refuse(k, c, reason="the MILD class is gone: complication is an epistemic label (curator 2026-10-20)", by=BY)
+        # curator 2026-10-25: a pair onto a class MILD no longer has is deleted, not refused
+        gt.records[k].get("pairs", {}).pop(c, None)
+        if gt.records[k].get("to") == c:
+            gt.records[k]["to"] = None
     for k in out:
         gt.gate(k, curator={"verdict": "out", "when": when, "by": BY, "reason": "complication is an epistemic label"})
     gt._dirty(); gt.save()

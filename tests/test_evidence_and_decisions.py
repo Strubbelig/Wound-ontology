@@ -48,8 +48,8 @@ def test_ingestion_stores_the_literal_string_and_records_its_spelling(monkeypatc
         "is_a: material entity": 1.0, "has_quality: Necrotising Edges": 1.0}}
     st = _store({"1": payload})
     st._spell_ingested(payload, set())
-    assert _view(st)["1"] == {"Diabetic Foot Ulcer": {
-        "is_a: material entity": 1.0, "has_quality: Necrotizing Edge": 1.0}}
+    assert _view(st)["1"] == {"Diabetic foot ulcer": {      # sentence case, rule 81
+        "is_a: material entity": 1.0, "has_quality: Necrotizing edge": 1.0}}
     assert st.terms.aliases()["Diabetic Foot Ulcers (DFUs)"]["by"] == "ingestion"
     assert st.dict["1"] == payload, "the evidence is as written"
 

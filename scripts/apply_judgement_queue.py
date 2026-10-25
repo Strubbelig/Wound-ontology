@@ -146,14 +146,13 @@ def main(argv: list[str]) -> int:
     print(f"[judgement] backed up {latest.name} -> {backup.relative_to(ROOT)}")
     for action, term, cls, info in plan:
         if action == "narrower":
-            gt.judge(term, cls, placement={"verdict": "narrower", "when": when, **info},
-                     curator={"verdict": "narrower", "when": when, "by": BY, "reason": info["why"]})
+            gt.judge(term, cls, curator={"verdict": "narrower", "when": when, **info,
+                                         "by": BY, "reason": info["why"]})
         elif action == "same":
             rec = gt.record(term)
             rec.update({"to": cls, "confidence": 1.0, "method": "curator"})
             rec.pop("retired", None)
-            gt.judge(term, cls, placement={"verdict": "same_class", "when": when, **info},
-                     curator={"verdict": "same_class", "when": when, "by": BY,
+            gt.judge(term, cls, curator={"verdict": "same_class", "when": when, **info, "by": BY,
                               "reason": "same thing as the existing class (judgement queue)"})
         elif action == "refuse":
             gt.refuse(term, cls, reason=info["why"], by=BY)
@@ -161,7 +160,7 @@ def main(argv: list[str]) -> int:
             pairs = gt.records[term]["pairs"]
             for k in [k for k in pairs if k != cls and k.lower() == cls.lower()]:
                 j = pairs[k]
-                if set(j) <= {"refused", "curator"} and (j.get("refused") or {}).get("by") == BY:
+                if set(j) <= {"curator", "curator_history"} and (j.get("curator") or {}).get("by") == BY:
                     del pairs[k]
                     print(f"[judgement] removed the refusal written under the wrong spelling: {term!r} / {k!r}")
         elif action == "in":
@@ -177,7 +176,7 @@ def main(argv: list[str]) -> int:
     lost = []
     for action, term, cls, _ in plan:
         j = g2.peek(g2.resolve(term), cls)
-        if action == "narrower" and ((j.get("placement") or {}).get("verdict") != "narrower" or j.get("refused")):
+        if action == "narrower" and ((j.get("curator") or {}).get("verdict") != "narrower" or j.get("refused")):
             lost.append((action, term, cls))
         elif action == "same" and g2.data.get(g2.resolve(term)) != cls:
             lost.append((action, term, cls))

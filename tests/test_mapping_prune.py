@@ -96,6 +96,7 @@ def test_the_build_no_longer_writes_identity_entries():
         def __init__(self): self.data = {}
         def add_batch(self, entries, metadata=None): self.data.update(entries)
         def is_refused(self, term, canonical): return None
+        def named(self): return set()
         def remove(self, *t):
             n = sum(1 for x in t if self.data.pop(x, None) is not None)
             return n

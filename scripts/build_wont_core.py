@@ -19,7 +19,8 @@ placement is read twice and enters the hierarchy as source `placed`. So:
   for later review, importing the core.
 
 Reads output/owl/wont_extended.ttl (run_extend_ground_truth) and the class
-hierarchy's provenance. Writes output/owl/wont_extended_core.ttl,
+hierarchy VIEW's provenance (derived on the spot, with the edge gate's verdicts
+taken off -- the same view the extension was built from). Writes output/owl/wont_extended_core.ttl,
 output/owl/wont_candidates.ttl and output/owl/core_build_report.json; each is
 read back.
 """

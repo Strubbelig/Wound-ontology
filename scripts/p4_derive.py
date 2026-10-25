@@ -1,4 +1,4 @@
-"""P4 steps 3-7: reasoner checks, hierarchies, FCA, extension of WONT, competency questions.
+"""P4 steps 3-7: reasoner checks, FCA, extension of WONT, competency questions.
 
     python -u scripts/p4_derive.py > output/p4_derive_<date>.log 2>&1
     python -u scripts/p4_derive.py --skip-fca ...   # no concept naming: the last run's
@@ -70,8 +70,10 @@ def main() -> int:
     step("reasoner check of store relations (ELK)", lambda: p.run_gate_store_relations(apply=True))
     if skip_fca:
         step("head-word rule on the last run's proposals (no concept naming)", lambda: rejudge_last_proposals(p))
-    step("build hierarchies", p.run_build_hierarchies)
-    step("reasoner check of is_a edges (ELK)", p.run_gate_hierarchy_edges)
+    # 2026-10-21: no hierarchy build step any more. The class hierarchy is a view of
+    # WONT + MILD, the store read through the register, the placements and the
+    # accepted FCA slices; the edge gate derives it fresh and hears every edge.
+    step("reasoner check of is_a edges on the class hierarchy view (ELK)", p.run_gate_hierarchy_edges)
     if not skip_fca:
         step("formal concept analysis (wound subtree)", lambda: p.run_fca(
             subtree_root="Wound",

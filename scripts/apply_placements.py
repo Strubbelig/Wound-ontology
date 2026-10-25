@@ -108,16 +108,19 @@ def main(argv: list[str]) -> int:
         elif action == "refuse":
             gt.refuse(term, r["parent"], reason="refused on the review page", by=BY)
         elif action == "narrower":
-            gt.judge(term, r["parent"], placement={"verdict": "narrower", **info})
+            gt.judge(term, r["parent"], curator={"verdict": "narrower", **info})
         elif action == "same":
             rec = gt.record(term)
             rec.update({"to": r["parent"], "confidence": 1.0, "method": "curator"})
             rec.pop("retired", None)
-            gt.judge(term, r["parent"], placement={"verdict": "same_class", **info},
-                     curator={"verdict": "same_class", "when": when, "by": BY,
-                              "reason": "synonym accepted on the review page"})
+            gt.judge(term, r["parent"], curator={"verdict": "same_class", **info,
+                                                 "reason": "synonym accepted on the review page"})
         else:
-            gt.judge(term, r["parent"], placement={"verdict": "same_class", **info})
+            # An undecided synonym. Until 2026-10-24 it was kept as a
+            # `placement` proposal; that source is now the curator's, and the
+            # curator did not accept this one, so nothing is written. (The
+            # 2026-10-02 run left no such pair behind.)
+            print(f"[apply] undecided synonym, not written: {term!r} = {r['parent']!r}")
     gt._dirty()
     gt.save()
     print(f"[apply] gate lists re-exported: {p.export_gate_lists()}")
@@ -132,7 +135,7 @@ def main(argv: list[str]) -> int:
         if action == "narrower" and gt.resolve(term) in mapped_now:
             continue
         j = g2.peek(g2.resolve(term), r["parent"])
-        if action == "narrower" and (j.get("placement") or {}).get("verdict") != "narrower":
+        if action == "narrower" and (j.get("curator") or {}).get("verdict") != "narrower":
             lost.append(term)
         elif action == "same" and g2.data.get(g2.resolve(term)) != r["parent"]:
             lost.append(term)

@@ -76,7 +76,8 @@ def decisions(df: "pd.DataFrame") -> Decisions:
     already stands — but a review that leaves no trace of what it approved is a
     review that has to be redone: the 2026-09-24 sheet approved 164 rows and the
     mapping could not tell them from the 4,486 nobody had looked at. `kept`
-    carries them so `main` can put `curator: {"verdict": "kept"}` on each.
+    carries them so `main` can put `curator: {"verdict": "same_class"}` on each
+    (`kept` until 2026-10-24, when the curator's words became the passes' four).
 
     `corrected canonical` outranks `keep(y/n)`: saying where a term belongs is a
     stronger statement than saying it does not belong here. Anything else —
@@ -262,19 +263,17 @@ def main(argv: list[str]) -> int:
     for term, canonical in repoint.items():
         p.term_mapper._term_mapping.add(term, canonical, confidence=1.0, method="manual")
         p.term_mapper.judge(term, canonical,
-                            curator={"verdict": "repointed",
+                            curator={"verdict": "same_class",
                                      "reason": reasons.get(term, "")[:200]})
-    # A reversal is two writes and they belong together: the pair the curator
-    # rejected is refused so no rebuild proposes it again, and the merge they DO
-    # want is written in the direction they want it.
+    # A reversal says "one class, and THIS term is its name" (2026-10-24: first
+    # the cluster, then the name). Until then it was a lock on the old
+    # direction, which a rebuild naming the cluster any other way walked past.
     for term, canonical in reverse.items():
         why = reasons.get(term, "")[:200]
-        p.term_mapper.refuse(term, canonical,
-                             reason=f"reversed by the curator: {why}"[:200], by="curator")
-        refused_pairs[term] = canonical
         p.term_mapper._term_mapping.add(canonical, term, confidence=1.0, method="manual")
-        p.term_mapper.judge(canonical, term,
-                            curator={"verdict": "reversed", "reason": why})
+        p.term_mapper.judge(canonical, term, curator={"verdict": "same_class", "reason": why})
+        p.term_mapper._term_mapping.decide_name(term, [canonical], by="curator",
+                                                reason=f"reversed by the curator: {why}"[:200])
 
     # An approval changes no mapping and is still a decision. Without it the next
     # sheet cannot tell a row the curator waved through from one nobody opened.
@@ -282,7 +281,7 @@ def main(argv: list[str]) -> int:
         canonical = mapping.get(term)
         if canonical:
             p.term_mapper.judge(term, canonical,
-                                curator={"verdict": "kept",
+                                curator={"verdict": "same_class",
                                          "reason": reasons.get(term, "")[:200]})
     p.term_mapper.save()
 
@@ -305,7 +304,7 @@ def main(argv: list[str]) -> int:
     unapproved = [t for t in kept
                   if (c := mapping.get(t))
                   and (reloaded_mapper._term_mapping.peek(t, c).get("curator") or {})
-                  .get("verdict") != "kept"]
+                  .get("verdict") != "same_class"]
     if unapproved:
         raise RuntimeError(
             f"[review] {len(unapproved)} approval(s) were applied but not "

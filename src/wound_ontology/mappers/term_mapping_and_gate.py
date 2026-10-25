@@ -59,10 +59,18 @@ The record
      "pairs": {
         "Wound": {"pass1":   {"verdict": "same_class", "reason": "..."},
                   "pass2":   {"verdict": "different",  "reason": "..."},
-                  "curator": {"verdict": "refused", "reason": "...", "when": "..."},
-                  "refused": {"reason": "...", "by": "curator", "when": "..."}},
+                  "curator": {"verdict": "different", "reason": "...", "when": "..."}},
         "Wound care process": {"pass1": {"verdict": "different", "reason": "..."}},
      }}
+
+Since 2026-10-24 every pair verdict -- `pass1`, `pass2`, `check`, `curator` --
+is one of `PAIR_VERDICTS`, and the term a person chose as the name of its
+cluster says so. Since 2026-10-25 there is no lock beside the verdicts: a
+curator verdict other than `same_class` IS the "not this cluster" a rebuild
+reads (`is_refused`), and the old `refused` entries are `lock_history`::
+
+    {"name": {"by": "curator", "instead_of": ["Snake Envenomation"],
+              "reason": "...", "when": "..."}}
 
 Since 2026-09-27 (rule 51) the record also holds what used to be rewritten
 into the concept store, which now keeps only what each abstract said::
@@ -137,12 +145,40 @@ GATE_VERDICTS = ("in", "out")
 #: decision outranks a heuristic, and a model is a heuristic.
 GATE_SOURCES = ("curator", "pass2", "pass1", "rule")
 
+#: A pair verdict answers ONE question -- how does the term stand to the
+#: class? -- in the same four words for every source. Until 2026-10-24 the
+#: curator's entry also said `kept`, `reverse`, `reversed`, `repointed` and
+#: `refused`, which mixed the answer with what was done about it. The curator,
+#: that day: first the cluster, then which of its terms is the name. So the
+#: answer is here and the name is `NAME` on the chosen term.
+PAIR_VERDICTS = ("same_class", "narrower", "broader", "different")
+
+#: The curator verdicts that keep a pair out of one cluster. Until 2026-10-25 a
+#: lock `refused` stood beside the verdict, with a `cause`; 271 of its 308
+#: entries carried no verdict at all. The curator that day: "'gehört nicht in
+#: diesen cluster' und 'nicht unter dieser Klasse' sind für mich 'different'",
+#: the pairs onto removed MILD classes were deleted, the rule-58 locks ruled one
+#: by one -- after which every lock said what the verdict said, and the lock
+#: went. A curator `narrower` keeps a placed term from ever merging into its
+#: parent, which is what a placement means.
+APART = ("narrower", "broader", "different")
+
+#: Who answers about a pair. `check` is the restatement check of 2026-10-02 (a
+#: model, read by Claude), which wrote under `curator` until 2026-10-24. The
+#: placement step's verdicts came off the curator's own review pages, so since
+#: that day they ARE `curator` entries -- with the class `iri` the placement
+#: carried (curator: "die beiden kann man wunderbar zu curator mergen").
+PAIR_SOURCES = ("pass1", "pass2", "check", "curator")
+
+#: The name section: a person chose which term of a cluster is its name.
+NAME = "name"
+
 #: The alias section: this string now reads as another (rule 51).
 SPELLING = "spelling"
 
 #: Sections that are decisions about a term. An alias carries none of them.
 DECISION_SECTIONS = ("to", "pairs", "gate", "gate_contested", "rejected",
-                     "relations", "senses", "category", "retired")
+                     "relations", "senses", "category", "retired", NAME)
 
 #: The category section (rule 57), and what outranks what inside it.
 CATEGORY = "category"
@@ -220,11 +256,12 @@ class TermMappingAndGate:
 
     @staticmethod
     def _load(raw: dict) -> dict[str, dict]:
-        """Read any of the three formats this file has had.
+        """Read any of the four formats this file has had.
 
-        A flat `term -> canonical` file, or a record with `pass1`/`pass2`/
-        `refused` at the TERM level, is migrated in memory and written in the
-        current shape the next time anything saves. No separate migration step
+        A flat `term -> canonical` file, a record with `pass1`/`pass2`/
+        `refused` at the TERM level, or a pair with a lock `refused` beside its
+        verdicts is migrated in memory and written in the current shape the
+        next time anything saves. No separate migration step
         exists to be forgotten -- which is the same reason the caches are now
         read through `pass_cache` rather than off disk.
         """
@@ -256,6 +293,17 @@ class TermMappingAndGate:
                 rec.pop("refused", None)
             for canonical, refusal in (rec.pop("refused", None) or {}).items():
                 pairs.setdefault(canonical, {}).setdefault("refused", refusal)
+            # v3 (until 2026-10-25): a lock `refused` beside the verdicts. The
+            # verdict says it now; a lock that somehow still has none reads as
+            # the curator's `different`, which is what every such lock meant.
+            for j in pairs.values():
+                lock = j.pop("refused", None)
+                if not lock:
+                    continue
+                if (j.get("curator") or {}).get("verdict") not in PAIR_VERDICTS:
+                    j["curator"] = {"verdict": "different", "reason": lock.get("reason", ""),
+                                    "by": lock.get("by", "curator"), "when": lock.get("when")}
+                j["lock_history"] = j.get("lock_history", []) + [lock]
             rec["pairs"] = pairs
             records[term] = rec
         return records
@@ -288,8 +336,13 @@ class TermMappingAndGate:
         return self._records.get(term, {}).get("pairs", {}).get(canonical, {})
 
     def is_refused(self, term: str, canonical: str) -> dict | None:
-        """The refusal standing against this exact pair, if there is one."""
-        return self.peek(term, canonical).get("refused")
+        """The curator verdict that keeps this exact pair apart, if there is one.
+
+        Any curator answer but `same_class` (`APART`): the term is not the class,
+        so no build may merge them. Returns that verdict entry, for its reason.
+        """
+        cur = self.peek(term, canonical).get("curator") or {}
+        return cur if cur.get("verdict") in APART else None
 
     # ── Spelling: how a string is written now (rule 51) ──────────────────────
 
@@ -451,18 +504,23 @@ class TermMappingAndGate:
     def placements(self) -> list[tuple[str, str]]:
         """`(term, class label)`: every term placed under an existing class.
 
-        The placement step (rule 59) records its kept superclasses on the pair
-        as `placement: {verdict: "narrower", ...}`. A pair counts unless it is
-        refused, and only while the term is in scope and still its own name (a
-        term mapped onto a class is that class, not beneath it). This is the
-        `placed` source of the class hierarchy (`BaseHierarchy.get_data`).
+        A placement (rule 59) is the curator's `narrower` on the pair WITH the
+        class `iri` -- the IRI is what only a placement wrote. A `narrower`
+        without one is a subtype noted in passing (the naming review of
+        2026-09-28: `reducing Pressure ulcer` under `Pressure ulcer`), not a
+        place in the hierarchy. A refused placement is the curator's
+        `different`, so it never counts. A pair counts only while the term is in
+        scope and still its own name (a term mapped onto a class is that class,
+        not beneath it). This is the `placed` source of the class hierarchy
+        (`BaseHierarchy.get_data`).
         """
         out = []
         for term, rec in self._records.items():
             if SPELLING in rec or rec.get("to"):
                 continue
             for canonical, j in rec.get("pairs", {}).items():
-                if (j.get("placement") or {}).get("verdict") != "narrower" or j.get("refused"):
+                cur = j.get("curator") or {}
+                if cur.get("verdict") != "narrower" or not cur.get("iri"):
                     continue
                 if self.effective_gate_verdict(term)[0] == "out":
                     continue
@@ -782,19 +840,21 @@ class TermMappingAndGate:
     ) -> None:
         """Add or update one entry and save.
 
-        Writing a pair that stands REFUSED raises. A refusal is a decision, and
-        an `add` that quietly overwrote it would be the deletion this class
-        exists to stop, wearing a different hat. `override=True` is the
-        deliberate reversal, and it clears the refusal rather than hiding it.
+        Writing a pair the curator keeps apart (`is_refused`) raises. That is a
+        decision, and an `add` that quietly overwrote it would be the deletion
+        this class exists to stop, wearing a different hat. `override=True` is
+        the deliberate reversal: the standing verdict moves to
+        `curator_history`, rather than being hidden.
         """
         refusal = self.is_refused(term, standard)
         if refusal and not override:
             raise ValueError(
-                f"{term!r} -> {standard!r} stands refused "
-                f"({refusal.get('by', '?')}, {refusal.get('when', '?')}: "
+                f"{term!r} -> {standard!r} stands refused: the curator said "
+                f"{refusal.get('verdict')!r} ({refusal.get('by', '?')}, {refusal.get('when', '?')}: "
                 f"{refusal.get('reason', '')!r}). Pass override=True to reverse it.")
         if refusal:
-            self.judgement(term, standard).pop("refused", None)
+            j = self.judgement(term, standard)
+            j.setdefault("curator_history", []).append(j.pop("curator"))
         rec = self.record(term)
         rec.update({"to": standard, "confidence": confidence, "method": method})
         rec.pop("retired", None)
@@ -842,7 +902,20 @@ class TermMappingAndGate:
         provenance instead of pointing at a side file the next build will not
         consult. It does not save -- a pass writes thousands of these; the
         caller saves once.
+
+        A verdict outside `PAIR_VERDICTS` raises, and so does a `placement` or a
+        `refused`: the old curator words came back in through exactly this door
+        once already, from a page script nobody had updated.
         """
+        if "placement" in fields:
+            raise ValueError("`placement` is a `curator` entry with an `iri` since 2026-10-24")
+        if "refused" in fields:
+            raise ValueError("there is no lock `refused` since 2026-10-25: the curator's "
+                             f"verdict ({APART}) keeps a pair apart; use `refuse`")
+        for k, v in fields.items():
+            if k in PAIR_SOURCES and isinstance(v, dict) and v.get("verdict") not in PAIR_VERDICTS:
+                raise ValueError(f"{term!r} -> {canonical!r} {k}: verdict "
+                                 f"{v.get('verdict')!r} is not one of {PAIR_VERDICTS}")
         self.judgement(term, canonical).update(fields)
 
     def gate(self, term: str, **fields) -> None:
@@ -867,23 +940,83 @@ class TermMappingAndGate:
         self.gate_record(term).update(fields)
         self._gate_idx = None
 
-    def refuse(self, term: str, canonical: str, reason: str = "", by: str = "curator") -> None:
+    def refuse(self, term: str, canonical: str, reason: str = "", by: str = "curator",
+               *, verdict: str = "different") -> None:
         """Record that `term` must NOT map onto `canonical`, and unmap it.
 
         The pair is remembered, not the term: `materials` refused onto
         `material entity` is still free to map onto something else. A build that
         re-proposes the refused pair has to skip it -- that is the whole point,
         and `TermMapper.build_from_embeddings` enforces it.
+
+        A refusal is the curator's verdict on the pair, one of `APART`:
+        `different` unless someone said the two are narrower or broader (the
+        curator, 2026-10-25: "not this cluster" is `different`). A standing
+        curator verdict moves to `curator_history`.
         """
+        if verdict not in APART:
+            raise ValueError(f"a refusal is one of {APART}, not {verdict!r}")
         when = _now()
-        self.judge(term, canonical,
-                   refused={"reason": reason, "by": by, "when": when},
-                   curator={"verdict": "refused", "reason": reason, "when": when})
+        standing = self.peek(term, canonical).get("curator")
+        if standing:
+            self.judgement(term, canonical).setdefault("curator_history", []).append(standing)
+        self.judge(term, canonical, curator={"verdict": verdict, "reason": reason,
+                                             "by": by, "when": when})
         rec = self.record(term)
         if rec.get("to") == canonical:
             rec["to"] = None
         self._dirty()
         self.save()
+
+    # ── The name of a cluster ────────────────────────────────────────────────
+
+    def decide_name(self, chosen: str, instead_of, *, by: str = "curator",
+                    reason: str = "", when: str | None = None) -> None:
+        """Record that a person chose `chosen` as the name of its cluster. Does not save.
+
+        First the cluster, then its name (curator, 2026-10-24). Until then a
+        name choice was a `reverse` verdict on one pair and a lock on the other
+        direction, and a rebuild that named the cluster through a THIRD member
+        or another spelling walked straight past it: on 2026-10-20, 41 of the
+        336 names the curator had chosen were no longer the name. A name
+        decision belongs to the cluster,
+        so it sits on the chosen term and every election reads it
+        (`canonical_rank`, `named=`).
+
+        A later choice for the same cluster supersedes an earlier one: the
+        earlier entry moves into the new one's `history`.
+        """
+        instead = sorted({self.resolve(t) for t in ([instead_of] if isinstance(instead_of, str)
+                                                    else instead_of)} - {chosen})
+        rec = self.record(chosen)
+        entry = {"by": by, "instead_of": instead, "reason": reason, "when": when or _now()}
+        history = []
+        if rec.get(NAME):
+            prior = dict(rec[NAME])
+            entry["instead_of"] = sorted(set(entry["instead_of"]) | set(prior.get("instead_of", [])))
+            history = prior.pop("history", []) + [prior]
+        for loser in instead:
+            lost = self._records.get(loser, {}).pop(NAME, None)
+            if lost:
+                history = history + lost.pop("history", []) + [{**lost, "was": loser}]
+        if history:
+            entry["history"] = history
+        rec[NAME] = entry
+        self._dirty()
+
+    def named(self) -> set[str]:
+        """Every term a person chose as the name of its cluster."""
+        return {t for t, r in self._records.items() if r.get(NAME) and SPELLING not in r}
+
+    def locked_mappings(self) -> list[tuple[str, str]]:
+        """Live mappings onto a target the curator keeps apart. Must be empty.
+
+        On 2026-10-20 there were four, `Antiseptic agent -> antiseptic drug`
+        among them: a rename merged a spelling that carried the mapping into
+        one that carried the curator's refusal, and the merge kept both.
+        """
+        return sorted((t, r["to"]) for t, r in self._records.items()
+                      if r.get("to") and self.is_refused(t, r["to"]))
 
     @staticmethod
     def _absorb(keep: dict, other: dict, term: str, report: dict) -> None:
@@ -942,6 +1075,17 @@ class TermMappingAndGate:
             report["target conflicts"].append((term, keep["to"], other["to"]))
         elif other.get("to") and not keep.get("to"):
             keep["to"] = other["to"]
+        # A name decision travels with its term; two spellings that each
+        # carried one keep the later, the other as history.
+        if other.get(NAME):
+            mine_n, theirs_n = keep.get(NAME), other[NAME]
+            if not mine_n:
+                keep[NAME] = theirs_n
+            else:
+                first, last = sorted([mine_n, theirs_n], key=lambda e: e.get("when") or "")
+                keep[NAME] = {**last, "instead_of": sorted(set(first.get("instead_of", []))
+                                                           | set(last.get("instead_of", []))),
+                              "history": last.get("history", []) + first.pop("history", []) + [first]}
         for field in ("confidence", "method", "retired"):
             if field in other and field not in keep:
                 keep[field] = other[field]
@@ -1021,6 +1165,9 @@ class TermMappingAndGate:
                 if new_target != target:
                     rec["to"] = new_target
                     report["targets renamed"] += 1
+            if rec.get(NAME):
+                rec[NAME]["instead_of"] = sorted({look(t) for t in rec[NAME].get("instead_of", [])}
+                                                 - {new_term})
             pairs = rec.get("pairs") or {}
             new_pairs: dict[str, dict] = {}
             for canonical, judgement in pairs.items():
@@ -1075,11 +1222,23 @@ class TermMappingAndGate:
             if not rec["pairs"] and not any(rec.get(s) for s in
                                             ("gate", "rejected", "relations", "senses",
                                              CATEGORY, "gate_withdrawn",
-                                             "spelling_reversed")):
+                                             "spelling_reversed", NAME)):
                 empty.append(term)
         for term in empty:
             del merged[term]
         report["records deleted"] = len(empty)
+
+        # A merge can join a spelling that carries a mapping to one whose pair
+        # carries the lock against that very target (`Antiseptic agent ->
+        # antiseptic drug`, 2026-10-20). The curator's verdict is a decision and
+        # the mapping is not, so the mapping goes -- and is reported.
+        report["locked targets"] = []
+        for term, rec in merged.items():
+            target = rec.get("to")
+            cur = ((rec.get("pairs") or {}).get(target, {}).get("curator") or {}) if target else {}
+            if target and cur.get("verdict") in APART:
+                report["locked targets"].append((term, target))
+                rec["to"] = None
 
         for term, entry in reversed_.items():
             rec = merged.setdefault(term, {})

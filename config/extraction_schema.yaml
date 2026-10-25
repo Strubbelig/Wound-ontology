@@ -1,7 +1,7 @@
 # GENERATED FILE - DO NOT EDIT BY HAND.
 # Regenerate with:  python scripts/build_extraction_schema.py
 # Source of truth:  mild.ttl (MILD) + ground_truth_final.owl (WONT)
-# Generated:        2026-10-18
+# Generated:        2026-10-24
 id: https://w3id.org/wont/extraction
 name: wont-extraction
 title: WONT/MILD-derived extraction schema
@@ -174,10 +174,6 @@ enums:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120022
         title: "pathological disorder"
         description: "a disorder is an abnormal presence or organization of material components — including the limiting case where the abnormal organization consists in a normally-present component being absent."
-      MATERIAL_COMPLICATION_DISEASE_ENTITY:
-        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120051
-        title: "material complication disease entity"
-        description: "A material disease entity that has as part a pathological disorder that is the output of a course of the disease process."
       ABDOMINAL_DRAIN:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000002
         title: "Abdominal drain"
@@ -202,7 +198,7 @@ enums:
       ANGIOPATHIC_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000015
         title: "Angiopathic wound"
-        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of an angiopathy: a complication of that disorder. No claim is made that the disorder caused the wound."
+        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of an angiopathy. No claim is made that the disorder caused the wound."
       ANTISEPTIC_DYE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000020
         title: "Antiseptic dye"
@@ -224,7 +220,7 @@ enums:
       AUTOIMMUNE_DISEASE_RELATED_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000033
         title: "Autoimmune disease related wound"
-        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of an autoimmune tissue disorder: a complication of that disorder. No claim is made that the disorder caused the wound."
+        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of an autoimmune tissue disorder. No claim is made that the disorder caused the wound."
       BEPANTHEN_OINTMENT:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000037
         title: "Bepanthen ointment"
@@ -288,7 +284,7 @@ enums:
       DIABETIC_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000088
         title: "Diabetic wound"
-        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of a diabetic metabolic disorder: a complication of that disorder. No claim is made that the disorder caused the wound."
+        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of a diabetic metabolic disorder. No claim is made that the disorder caused the wound."
       DOG_BITE_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000091
         title: "Dog bite wound"
@@ -425,9 +421,6 @@ enums:
       MARJOLIN_ULCER:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000186
         title: "Marjolin ulcer"
-      MATERIAL_USED_FOR_WOUND_COMPLICATION_PREVENTION:
-        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000187
-        title: "Material used for wound complication prevention"
       MATERIAL_USED_FOR_WOUND_TREATMENT:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000188
         title: "Material used for wound treatment"
@@ -585,7 +578,6 @@ enums:
       THERMAL_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310
         title: "Thermal wound"
-        aliases: ["Burn injury"]
       THORACIC_DRAIN:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000311
         title: "Thoracic drain"
@@ -645,7 +637,7 @@ enums:
       VENOUS_INSUFFICIENCY_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000384
         title: "Venous insufficiency wound"
-        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of a venous insufficiency disorder: a complication of that disorder. No claim is made that the disorder caused the wound."
+        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of a venous insufficiency disorder. No claim is made that the disorder caused the wound."
         aliases: ["venous insufficiency ulcer"]
       WOUND_DEHISCENCE:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000392
@@ -811,7 +803,7 @@ enums:
       ARTERIAL_INSUFFICIENCY_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000510
         title: "Arterial insufficiency wound"
-        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of a peripheral arterial occlusive disease: a complication of that disorder. No claim is made that the disorder caused the wound."
+        description: "A wound that is the output of a wound development process that has as part a wound causing process of the course of a peripheral arterial occlusive disease. No claim is made that the disorder caused the wound."
         aliases: ["arterial insufficiency ulcer"]
       COLONIZED_WOUND:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000511
@@ -871,10 +863,6 @@ enums:
       HYPERTROPHIC_SCAR:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000556
         title: "Hypertrophic scar"
-      WOUND_COMPLICATION:
-        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000557
-        title: "Wound complication"
-        description: "A material complication disease entity that has as part a wound complication disorder."
       SEPSIS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000558
         title: "Sepsis"
@@ -887,10 +875,14 @@ enums:
       THERAPEUTIC_FOOTWEAR:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000571
         title: "Therapeutic footwear"
-      WOUND_COMPLICATION_DISORDER:
-        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000588
-        title: "Wound complication disorder"
-        description: "A pathological disorder that is the output of a process in the course of a wound: the disorder-level counterpart of a wound complication (MILD_120053's pattern). Wound dehiscence is one; the disorders of a surgical site infection are others."
+      TRAUMATIC_INJURY:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0007237
+        title: "Traumatic injury"
+        description: "An injury that is the output of a trauma process."
+      INJURY:
+        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817
+        title: "Injury"
+        description: "A pathological disorder that is structural damage to a tissue or an organ, whatever its cause."
       PATHOGEN_WITH_WOUND_INFECTING_TENDENCY:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_120019
         title: "pathogen with wound infecting tendency"
@@ -1298,9 +1290,6 @@ enums:
       LESS_THAN_OR_EQUAL_OPERATOR:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120044
         title: "less_than_or_equal_operator"
-      DISEASE_COMPLICATION_DIAGNOSTIC_RESULT:
-        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120050
-        title: "disease complication diagnostic result"
       DISEASE_STAGE_CLASSIFICATION_RESULT:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120054
         title: "disease stage classification result"
@@ -1609,10 +1598,6 @@ enums:
       DISORDER_ADDITION_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120091
         title: "disorder addition process"
-      COMPLICATION_DISEASE_PROCESS:
-        meaning: https://bioportal.bioontology.org/ontologies/MILD/MILD_120092
-        title: "complication disease process"
-        description: "A disease process that has as participant a disease that has as part a disorder which is the output of another disease course process."
       WOUND_CAUSING_ACIDITY_IMPACT_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000004
         title: "Wound causing acidity impact process"
@@ -1743,7 +1728,6 @@ enums:
       TRAUMA_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338
         title: "Trauma process"
-        aliases: ["injury"]
       ULTRASOUND_ASSISTED_WOUND_DEBRIDEMENT_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000350
         title: "Ultrasound-assisted wound debridement process"
@@ -1756,9 +1740,6 @@ enums:
       WOUND_CLOSURE_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000388
         title: "Wound closure process"
-      WOUND_COMPLICATION_PROCESS:
-        meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000390
-        title: "Wound complication process"
       WOUND_CONTRACTION_PROCESS:
         meaning: https://bioportal.bioontology.org/ontologies/WONT/WONT_0000391
         title: "Wound contraction process"

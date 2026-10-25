@@ -131,11 +131,11 @@ def test_a_verdict_stays_attached_to_the_pair_it_was_about():
     and the next build pays to ask again — or worse, re-proposes something a
     curator refused."""
     m = _mapping({"lesion": {"to": "Tumours",
-                             "pairs": {"Tumours": {"curator": {"verdict": "y"},
-                                                   "refused": {"by": "moritz"}}}}})
+                             "pairs": {"Tumours": {"pass1": {"verdict": "same_class"},
+                                                   "curator": {"verdict": "different", "by": "moritz"}}}}})
     m.apply_renames({"Tumours": "Tumor"}, by="pass0")
-    assert m.peek("lesion", "Tumor")["curator"] == {"verdict": "y"}
-    assert m.is_refused("lesion", "Tumor") == {"by": "moritz"}
+    assert m.peek("lesion", "Tumor")["pass1"] == {"verdict": "same_class"}
+    assert m.is_refused("lesion", "Tumor")["by"] == "moritz"
 
 
 def test_two_records_landing_on_one_key_merge_and_keep_both_verdicts():
@@ -185,10 +185,10 @@ def test_a_record_that_also_carries_a_gate_survives_the_deletion():
 def test_a_judgement_about_another_canonical_survives_the_deletion():
     m = _mapping({"Tumours": {"to": "Tumor",
                               "pairs": {"Tumor": {"pass1": {"v": 1}},
-                                        "Growth": {"refused": {"by": "moritz"}}}}})
+                                        "Growth": {"curator": {"verdict": "different", "by": "moritz"}}}}})
     report = m.apply_renames({"Tumours": "Tumor"}, by="pass0")
     assert report["records deleted"] == 0
-    assert m.is_refused("Tumor", "Growth") == {"by": "moritz"}
+    assert m.is_refused("Tumor", "Growth")["by"] == "moritz"
     assert m.peek("Tumor", "Tumor") == {}, "the self-pair decides nothing"
 
 

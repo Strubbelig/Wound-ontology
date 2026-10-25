@@ -189,14 +189,14 @@ def main(argv: list[str]) -> int:
             if parent is not None and parent != c:
                 edges[c].append((parent, "head noun"))
                 break
-    refused = {"refused", "different", "same_class", "kept"}
+    refused = {"different", "same_class"}     # a lock is read on the pair itself
     sc_stats = Counter()
     for row in gt.subsumption_candidates():
         term, canon = row["store term"], row["ontology class"]
         j = gt.peek(term, canon)
         cv = (j.get("curator") or {}).get("verdict")
         v1, v2 = row["pass 1"], row["pass 2"]
-        if cv in refused or "different" in (v1, v2):
+        if cv in refused or j.get("refused") or "different" in (v1, v2):
             continue
         child_n, parent_n = N(row["Class"]), N(row["Parent class"])
         child = kept.get(child_n)

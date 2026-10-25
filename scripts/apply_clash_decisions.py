@@ -114,9 +114,8 @@ def main(argv: list[str]) -> int:
         gt.gate(term, curator={"verdict": "out", "when": when, "by": by_of["curator"], "reason": o["why"]})
     for term, c in places:
         gt.judge(term, c["parent"],
-                 placement={"verdict": "narrower", "when": when, "by": by_of["curator"],
-                            "iri": c["parent_iri"], "why": c["why"]},
-                 curator={"verdict": "narrower", "when": when, "by": by_of["curator"], "reason": c["why"]})
+                 curator={"verdict": "narrower", "when": when, "by": by_of["curator"],
+                          "iri": c["parent_iri"], "reason": c["why"]})
     for by, cs in cells.items():
         n = st.reject_cells(cs, by=by_of[by], note=f"decision and reason: {path.name}")
         if n != len(cs):

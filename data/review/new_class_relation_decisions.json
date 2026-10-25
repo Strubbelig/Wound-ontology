@@ -1,5 +1,5 @@
 {
- "source": "WONT Judgement Queue, https://claude.ai/artifact/V6Ejezr8tobgJeiwHgy8uM, collection judgement (read with ArtifactData 2026-10-07); 3 more read 2026-10-08 after the rebuild",
+ "source": "WONT Judgement Queue, https://claude.ai/artifact/V6Ejezr8tobgJeiwHgy8uM, collection judgement (read with ArtifactData 2026-10-07); 3 more read 2026-10-08 after the rebuild; 11 relations on Burn Injury decided in chat 2026-10-20 (review page https://claude.ai/artifact/17qogz8rnhq7XuWL6uA7Q9)",
  "rule": "INSTRUCTIONS.md rule 72",
  "decisions": {
   "complete wound healing|http://purl.obolibrary.org/obo/RO_0000057|wound": {
@@ -433,6 +433,116 @@
    "note": "",
    "decided": "2026-10-08T11:00:27.619Z",
    "item_id": "rdbefc353d2"
+  },
+  "burn care|http://purl.obolibrary.org/obo/RO_0000057|burn injury": {
+   "v": "add",
+   "subject": "Burn Care",
+   "predicate": "has participant",
+   "value": "Burn Injury",
+   "note": "",
+   "decided": "2026-10-20T22:04:43+00:00",
+   "item_id": "re7e3e4147c",
+   "by": "curator, chat 2026-10-20"
+  },
+  "burn care|http://purl.obolibrary.org/obo/RO_0002233|burn injury": {
+   "v": "add",
+   "subject": "Burn Care",
+   "predicate": "has input",
+   "value": "Burn Injury",
+   "note": "",
+   "decided": "2026-10-20T22:04:43+00:00",
+   "item_id": "r692cde0521",
+   "by": "curator, chat 2026-10-20"
+  },
+  "burn depth|http://purl.obolibrary.org/obo/BFO_0000197|burn wound": {
+   "v": "add",
+   "subject": "Burn Depth",
+   "predicate": "inheres in",
+   "value": "Burn Wound",
+   "note": "",
+   "decided": "2026-10-20T22:04:43+00:00",
+   "item_id": "r68fdf4457d",
+   "by": "curator, chat 2026-10-20"
+  },
+  "burn depth|http://purl.obolibrary.org/obo/BFO_0000197|burn injury": {
+   "v": "add",
+   "subject": "Burn Depth",
+   "predicate": "inheres in",
+   "value": "Burn Injury",
+   "note": "",
+   "decided": "2026-10-20T22:04:43+00:00",
+   "item_id": "rc355f3d526",
+   "by": "curator, chat 2026-10-20"
+  },
+  "burn injury|http://purl.obolibrary.org/obo/RO_0000086|total burn area": {
+   "v": "leave out",
+   "subject": "Burn Injury",
+   "predicate": "has quality",
+   "value": "Total Burn Area",
+   "note": "moved by the curator: Burn Wound has quality Total Burn Area",
+   "decided": "2026-10-20T22:04:43+00:00",
+   "item_id": "r5fbb5bd5ce",
+   "by": "curator, chat 2026-10-20"
+  },
+  "burn injury|http://purl.obolibrary.org/obo/RO_0000086|burn size": {
+   "v": "add",
+   "subject": "Burn Injury",
+   "predicate": "has quality",
+   "value": "Burn Size",
+   "note": "",
+   "decided": "2026-10-20T22:04:43+00:00",
+   "item_id": "rc6dabde59f",
+   "by": "curator, chat 2026-10-20"
+  },
+  "burn injury|http://purl.obolibrary.org/obo/RO_0000086|burn surface area": {
+   "v": "add",
+   "subject": "Burn Injury",
+   "predicate": "has quality",
+   "value": "Burn Surface Area",
+   "note": "",
+   "decided": "2026-10-20T22:04:43+00:00",
+   "item_id": "r9e9e961e95",
+   "by": "curator, chat 2026-10-20"
+  },
+  "burn injury|http://purl.obolibrary.org/obo/RO_0000086|depth": {
+   "v": "leave out",
+   "subject": "Burn Injury",
+   "predicate": "has quality",
+   "value": "depth",
+   "note": "curator: leave out (duplicate of Burn Depth)",
+   "decided": "2026-10-20T22:04:43+00:00",
+   "item_id": "r696f7eb41e",
+   "by": "curator, chat 2026-10-20"
+  },
+  "burn injury|http://purl.obolibrary.org/obo/RO_0000086|burn depth": {
+   "v": "add",
+   "subject": "Burn Injury",
+   "predicate": "has quality",
+   "value": "Burn Depth",
+   "note": "",
+   "decided": "2026-10-20T22:04:43+00:00",
+   "item_id": "rc31026f087",
+   "by": "curator, chat 2026-10-20"
+  },
+  "burn size|http://purl.obolibrary.org/obo/BFO_0000197|burn injury": {
+   "v": "add",
+   "subject": "Burn Size",
+   "predicate": "inheres in",
+   "value": "Burn Injury",
+   "note": "",
+   "decided": "2026-10-20T22:04:43+00:00",
+   "item_id": "r5a46746d78",
+   "by": "curator, chat 2026-10-20"
+  },
+  "burn surface area|http://purl.obolibrary.org/obo/BFO_0000197|burn injury": {
+   "v": "add",
+   "subject": "Burn Surface Area",
+   "predicate": "inheres in",
+   "value": "Burn Injury",
+   "note": "",
+   "decided": "2026-10-20T22:04:43+00:00",
+   "item_id": "rda7f6eaac0",
+   "by": "curator, chat 2026-10-20"
   }
  }
 }

@@ -251,9 +251,12 @@ def singular_spelling(label: str) -> str:
     head = words[-1]
     core = head.rstrip(".,;:)")
     trailing = head[len(core):]
-    if len(core) > 1 and core[:-1].isupper() and core.endswith("s") and core[:-1].isalpha():
+    if len(core) > 2 and core[:-1].isupper() and core.endswith("s") and core[:-1].isalpha():
         # SSIs, DFUs, PJIs -- an acronym with a plural s, which no suffix rule
-        # recognises because the stem is not a word.
+        # recognises because the stem is not a word. Two capitals at least:
+        # one capital and an s is a capitalised WORD (`Is`, `As`, `Vs`), and
+        # since names are in sentence case (2026-10-24) `is` arrives as `Is`
+        # and was cut to `I`.
         return " ".join(words[:-1] + [core[:-1] + trailing])
     if len(core) > 1 and core.isupper() and core.isalpha():
         # An ALL-CAPS token is an acronym, not an English word, and its final S

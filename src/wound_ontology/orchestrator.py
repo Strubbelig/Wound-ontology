@@ -7,13 +7,14 @@ from collections import Counter
 import pandas as pd
 from wound_ontology.utils.string_utils import smart_title
 from wound_ontology.hierarchies.base_hierarchy import SOURCE_FCA as _SOURCE_FCA
+from wound_ontology.hierarchies.base_hierarchy import SOURCE_CURATED as _SOURCE_CURATED
 from dotenv import load_dotenv
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.llm.llm_client import LLMClient
 from wound_ontology.connectors.pubmed_connector import PubmedConnector
 from wound_ontology.store.concept_store import ConceptStore
 from wound_ontology.store.store_cleaner import StoreCleaner
-from wound_ontology.hierarchies.class_hierarchy import ClassHierarchy
+from wound_ontology.hierarchies.class_hierarchy import ClassHierarchy, ClassHierarchyView
 from wound_ontology.hierarchies.mereological_hierarchy import MereologicalHierarchy
 from wound_ontology.hierarchies.fca_hierarchy import FCAHierarchy
 from wound_ontology.fca.context_matrix import ContextMatrix
@@ -111,8 +112,13 @@ class Orchestrator:
         # Scope is read live from the gate, through the same Blocker the
         # cleaner and the lists use (rule 51; merged 2026-09-28).
         self.store.scope   = self.cleaner._is_blocked
-        self.class_hier    = ClassHierarchy(self.dm)
-        self.mere_hier     = MereologicalHierarchy(self.dm)
+        # The class hierarchy is a VIEW (2026-10-21): derived from its sources on
+        # first use, never read from or written to a matrix CSV. See
+        # ClassHierarchyView and refresh_class_hierarchy().
+        self._class_hier: ClassHierarchyView | None = None
+        # The mereological hierarchy left the pipeline the same day: its text
+        # part_of edges were never exported (rule 66). Built on demand only.
+        self._mere_hier: MereologicalHierarchy | None = None
         self.context_matrix = ContextMatrix(self.dm, "context_matrix")
         # Replaced per analysis by run_fca; these are the "no analysis yet" ones.
         # `lattices` / `fca_hiers` keep every analysis of this session by subtree,
@@ -132,6 +138,45 @@ class Orchestrator:
         self.graph_exporter = GraphVisualizer()
 
     # ── Internal helpers ───────────────────────────────────────────────────────
+
+    # ── The class hierarchy as a view (2026-10-21) ─────────────────────────────
+
+    @property
+    def class_hier(self) -> ClassHierarchyView:
+        """The class hierarchy VIEW, derived from its sources on first use.
+
+        Curator, 2026-10-21: the hierarchies are not needed as a pipeline stage;
+        the concept store read through the mapping-and-gate register is what the
+        FCA works on. The is_a structure the FCA needs (wound subtree, conceptual
+        scaling) and the extension needs (subclass edges) is therefore a view of
+        WONT + MILD, the store, the register's placements and the accepted FCA
+        slices -- built here when first asked for, rebuilt by
+        refresh_class_hierarchy() or the edge gate, never loaded from disk.
+        """
+        if self._class_hier is None:
+            self.refresh_class_hierarchy()
+        return self._class_hier
+
+    @class_hier.setter
+    def class_hier(self, value) -> None:
+        self._class_hier = value
+
+    @property
+    def mere_hier(self) -> MereologicalHierarchy:
+        """The mereological hierarchy, built in memory on demand.
+
+        Not a pipeline stage any more (2026-10-21): its text part_of edges were
+        never exported (rule 66), and the FCA reads part_of from the store. Kept
+        for review_mere_relations and the inspection scripts.
+        """
+        if self._mere_hier is None:
+            self._mere_hier = MereologicalHierarchy(self.dm)
+            self._mere_hier.get_data(self.store)
+        return self._mere_hier
+
+    @mere_hier.setter
+    def mere_hier(self, value) -> None:
+        self._mere_hier = value
 
     def _run_sync(self, coroutine):
         """Run a coroutine from sync code, in a notebook or under pytest.
@@ -590,7 +635,8 @@ class Orchestrator:
 
         renames, report = pass0_renames(
             freq, {str(a) for a in self.ontology_labels()}, others,
-            declares=declared_category)
+            declares=declared_category,
+            named=self.term_mapper._term_mapping.named())
         if not quiet:
             print(f"[pass0] {report['groups']:,} group(s) with more than one "
                   f"spelling, {report['respelled']:,} lone spelling(s) respelled; "
@@ -634,6 +680,12 @@ class Orchestrator:
                   f"decides nothing and both sides are kept in `gate_contested`:")
             for term, source, kept, dropped in clashes[:10]:
                 print(f"[pass0]     {term!r}: {source} said both {kept!r} and {dropped!r}")
+        if report["mapping"].get("locked targets"):
+            locked = report["mapping"]["locked targets"]
+            print(f"[pass0] {len(locked)} merged record(s) mapped onto a target their "
+                  f"own pair locks; the mapping is withdrawn, the lock stands:")
+            for term, target in locked[:10]:
+                print(f"[pass0]     {term!r} -/-> {target!r}")
         if report["mapping"]["target conflicts"]:
             conflicts = report["mapping"]["target conflicts"]
             print(f"[pass0] {len(conflicts)} merged record(s) pointed at DIFFERENT "
@@ -1106,11 +1158,14 @@ class Orchestrator:
             # the LIVE pair is asked too (2026-09-28: `bone infection ->
             # Osteomyelitis` and `formation of blood vessel` were withdrawn
             # over the curator's same_class that way).
+            # `check` wrote under `curator` until 2026-10-24 and counted here.
             live = gt.data.get(t)
-            if gt.peek(t, c).get("curator") or (live and gt.peek(t, live).get("curator")):
+            def said(j: dict) -> bool:
+                return bool(j.get("curator") or j.get("check"))
+            if said(gt.peek(t, c)) or (live and said(gt.peek(t, live))):
                 return True
             keys = {_norm(c)} | ({_norm(live)} if live else set())
-            return any(_norm(k) in keys and (j.get("curator") or {}).get("verdict")
+            return any(_norm(k) in keys and said(j)
                        for k, j in (gt.record(t).get("pairs") or {}).items())
 
         def is_live(t: str, c: str) -> bool:
@@ -1386,14 +1441,21 @@ class Orchestrator:
                   f"{len(slices)} reviewed lattice slice(s).")
         return slices
 
-    def run_build_hierarchies(
+    def refresh_class_hierarchy(
         self,
         predefined_df: pd.DataFrame | None = None,
         curated_sources=None,
         curated_label_sources=None,
-    ) -> None:
+        include_rejected: bool = False,
+    ) -> ClassHierarchyView:
         """
-        Build ClassHierarchy and MereologicalHierarchy from the ConceptStore.
+        Derive the class hierarchy VIEW from its sources and return it.
+
+        Replaces run_build_hierarchies (2026-10-21). Nothing is saved but a
+        provenance snapshot for the inspection pages; the mereological hierarchy
+        is no longer built. The edge gate's standing verdicts are taken off the
+        result unless `include_rejected` -- which the gate itself asks for, so
+        that every edge is heard again.
 
         predefined_df – DataFrame with 'Class' and 'Parent class' columns. When
                         None (the default) the curated seed edges are read from
@@ -1460,7 +1522,7 @@ class Orchestrator:
         if curated_label_sources:
             from wound_ontology.hierarchies.curated_seed import module_ancestry
             gtm = self.term_mapper._term_mapping
-            used = {((gtm.peek(t, c).get("placement") or {}).get("iri")) for t, c in placed} - {None}
+            used = {((gtm.peek(t, c).get("curator") or {}).get("iri")) for t, c in placed} - {None}
             chains = module_ancestry(used, curated_label_sources)
             if len(chains):
                 predefined_df = pd.concat([predefined_df, chains], ignore_index=True).drop_duplicates()
@@ -1474,21 +1536,36 @@ class Orchestrator:
             predefined_df = pd.concat([predefined_df, bfo], ignore_index=True).drop_duplicates()
             print(f"[Orchestrator] BFO: {len(bfo):,} edge(s) of BFO's own tree (and the two "
                   f"non-BFO extraction categories) added to the curated tier.")
-        self.class_hier.get_data(
+        view = self._view_factory(self.dm)
+        view.get_data(
             self.store, curated=predefined_df, fca=fca_slices,
             reconcile_categories=self.reasoner_gate.least_common_category,
             placed=placed,
         )
-        self.mere_hier.get_data(self.store)
+        view.built = True
+        view.verdicts_applied = False
+        if not include_rejected:
+            self._apply_edge_verdicts(view)
+            view.verdicts_applied = True
+        view.save_snapshot()
+        self._class_hier = view
 
-        self.class_hier.save()
-        self.mere_hier.save()
+        print(f"ClassHierarchy (view) : {len(view.concepts)} concepts, "
+              f"roots={view.roots[:3]}")
+        print(f"ClassHierarchy sources: {view.provenance_summary()}"
+              + ("" if view.verdicts_applied else "  (edge-gate verdicts NOT applied: re-hearing)"))
+        return view
 
-        print(f"ClassHierarchy        : {len(self.class_hier.concepts)} concepts, "
-              f"roots={self.class_hier.roots[:3]}")
-        print(f"MereologicalHierarchy : {len(self.mere_hier.concepts)} concepts, "
-              f"roots={self.mere_hier.roots[:3]}")
-        print(f"ClassHierarchy sources: {self.class_hier.provenance_summary()}")
+    def run_build_hierarchies(self, *args, **kwargs) -> ClassHierarchyView:
+        """Deprecated (2026-10-21): the hierarchies are no longer a pipeline stage.
+
+        Kept so old notebooks and scripts still run. It derives the class
+        hierarchy VIEW (refresh_class_hierarchy) and builds no mereological
+        hierarchy; nothing is written but the provenance snapshot.
+        """
+        print("[Orchestrator] run_build_hierarchies() is deprecated: the class hierarchy "
+              "is a view now. Deriving it with refresh_class_hierarchy().")
+        return self.refresh_class_hierarchy(*args, **kwargs)
 
     # ── Enrichment ─────────────────────────────────────────────────────────────
 
@@ -2334,7 +2411,74 @@ class Orchestrator:
                 print(f"[Orchestrator] Quarantined relations → {path}")
         return result
 
-    def run_gate_hierarchy_edges(self, hierarchy=None, quarantine: bool = True):
+    #: What a fresh view is built as. A class attribute so a test can hand in a
+    #: stand-in without touching the derivation itself.
+    _view_factory = ClassHierarchyView
+
+    #: Where the edge gate's verdicts live: one record per gate run, replaced in
+    #: full each time (every edge is re-heard), read by every freshly built view.
+    EDGE_VERDICTS = "class_hierarchy_edge_verdicts"
+    EDGE_GATE_AUTHOR = "reasoner_gate_edges"
+
+    def _edge_verdicts(self) -> list[dict]:
+        """The edge gate's standing rejections, as the last gate run wrote them."""
+        raw = self.dm.load_latest_json(self.EDGE_VERDICTS)
+        if raw is None:
+            return []
+        if not isinstance(raw, dict) or not isinstance(raw.get("rejected", []), list):
+            raise ValueError(
+                f"[Orchestrator] {self.EDGE_VERDICTS} is not an edge-verdict record "
+                f"(expected {{'when': ..., 'rejected': [...]}}, got {type(raw).__name__}). "
+                f"Building the view without it would bring rejected edges back unseen.")
+        return list(raw.get("rejected", []))
+
+    def _apply_edge_verdicts(self, view) -> int:
+        """Take the edge gate's standing verdicts off a freshly built view.
+
+        A curated edge is never taken off: it is the curator's to remove, and the
+        gate's rank-aware check drops weaker evidence first anyway. One that
+        carries a verdict is kept and named, so the conflict cannot go unseen.
+        """
+        n, gone, spared = 0, 0, []
+        for v in self._edge_verdicts():
+            c, p = smart_title(str(v["child"])), smart_title(str(v["parent"]))
+            present = (c in view.df.index and p in view.df.columns
+                       and view.df.at[c, p] == 1.0)
+            if not present:
+                gone += 1
+                continue
+            if view._prov.get((c, p)) == _SOURCE_CURATED:
+                spared.append((c, p))
+                continue
+            view.df.at[c, p] = 0.0
+            view._prov.pop((c, p), None)
+            n += 1
+        print(f"[Orchestrator] class hierarchy view: {n} edge(s) taken off by the edge "
+              f"gate's standing verdicts"
+              + (f"; {gone} verdict(s) name an edge no source asserts any more" if gone else "")
+              + ".")
+        if spared:
+            print(f"[Orchestrator] *** {len(spared)} curated edge(s) carry an edge-gate "
+                  f"verdict and were KEPT -- removing a curated edge is a curation "
+                  f"decision, not a reasoning one: ***")
+            for c, p in spared[:10]:
+                print(f"[Orchestrator]     {c} is_a {p}")
+        return n
+
+    def _write_edge_verdicts(self, result, sources: dict) -> None:
+        """Replace the edge gate's verdict record with this run's rejections."""
+        from datetime import datetime as _dt
+        note = (result.explanation or "unsatisfiable under the skeleton")[:200]
+        rows = [{"child": c, "parent": p, "source": sources.get((c, p)) or "unstamped",
+                 "by": self.EDGE_GATE_AUTHOR, "note": note}
+                for c, p in result.quarantined]
+        self.dm.save_as_json({"when": _dt.now().isoformat(timespec="seconds"),
+                              "rejected": rows}, self.EDGE_VERDICTS)
+        print(f"[Orchestrator] edge-gate verdicts replaced: {len(rows)} rejected edge(s) "
+              f"on record ({self.EDGE_VERDICTS}).")
+
+    def run_gate_hierarchy_edges(self, hierarchy=None, quarantine: bool = True,
+                                 apply: bool = True):
         """Reason over the committed is_a edges and quarantine the inconsistent ones.
 
         This is where the gate matters most. Extracted relations are already
@@ -2346,7 +2490,12 @@ class Orchestrator:
         from wound_ontology.reasoning.gate import ReasonerGate
         from config.settings import QUARANTINE_DIR as _Q
 
-        hier = hierarchy or self.class_hier
+        # The view is rebuilt WITH the edges an earlier run rejected, so every edge
+        # gets its hearing again against the skeleton as it is now -- the rule the
+        # store gate follows with lift_decisions: a verdict reached against last
+        # month's WONT is not a verdict about today's.
+        own_view = hierarchy is None
+        hier = self.refresh_class_hierarchy(include_rejected=True) if own_view else hierarchy
 
         # Edges come from the dataframe, which is what is actually committed.
         # This used to read hier._prov, i.e. only edges carrying provenance --
@@ -2391,14 +2540,23 @@ class Orchestrator:
             print(f"[Orchestrator] *** GATE DID NOT RUN: {result.skipped} ***\n"
                   f"[Orchestrator] *** All {len(edges)} edge(s) were accepted WITHOUT "
                   f"being checked. This is not a clean result. ***")
+            if own_view:
+                n = self._apply_edge_verdicts(hier)
+                hier.verdicts_applied = True
+                print(f"[Orchestrator] the earlier edge verdicts stay in force ({n} applied).")
             return result
 
+        sources_before = dict(hier._prov)
         for child, parent in result.quarantined:
             if child in hier.df.index and parent in hier.df.columns:
                 hier.df.at[child, parent] = 0.0
             hier._prov.pop((child, parent), None)
+        if own_view:
+            hier.verdicts_applied = True
+            if apply:
+                self._write_edge_verdicts(result, sources_before)
+            hier.save_snapshot()
         if result.quarantined:
-            hier.save()
             if quarantine:
                 d = _Q
                 d.mkdir(parents=True, exist_ok=True)

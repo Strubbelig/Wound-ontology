@@ -537,6 +537,67 @@ def canonical_vocabulary(label: str) -> str:
     return canonical_vocabulary(out) if out != label else out
 
 
+#: Chemical element symbols keep their capital (`Zn`, `Ag`). Left out are the
+#: symbols that are also English words a Title Case string capitalises (`In`,
+#: `As`, `At`, `Be`, `No`, `He`, `Co`): there the capital says nothing.
+ELEMENT_SYMBOLS = frozenset("""
+    Ac Ag Al Ar Au Ba Bi Bk Br Ca Cd Ce Cf Cl Cm Cn Cr Cs Cu Db Ds Dy Er Es Eu Fe Fl Fm Fr Ga Gd
+    Ge Hf Hg Ho Hs Ir Kr La Li Lr Lu Lv Mc Md Mg Mn Mo Mt Na Nb Nd Ne Nh Ni Np Og Os Pa Pb Pd Pm
+    Po Pr Pt Pu Ra Rb Re Rf Rg Rh Rn Ru Sb Sc Se Sg Si Sm Sn Sr Ta Tb Tc Te Th Ti Tl Tm Ts Xe Yb Zn Zr
+""".split())
+
+_CASE_WORD = re.compile(r"[A-Za-z][A-Za-z']*")
+
+
+def sentence_case(label: str) -> str:
+    """`label` in lowercase with a capital first letter, abbreviations and names kept.
+
+    Curator, 2026-10-24: names are written the way WONT writes its labels --
+    `Surgical debridement`, `Methicillin-resistant Staphylococcus aureus
+    infection`. Before this, the writer's own case was kept, which left 1,101
+    Title Case names (`3S Intraoperative Pressure Ulcer Risk Assessment Scale`)
+    beside 38,888 lowercase ones.
+
+    Only a word written with ONE capital, at its start, is ever lowercased. A
+    word with a capital anywhere else (`MRSA`, `pH`, `mRNA`, `NaCl`, `IL-6`'s
+    `IL`), a digit (`Ki67`, `3D`) or a single letter (`T cell`, `vitamin C`) is
+    an abbreviation or a symbol and is left exactly as written. A capitalised
+    word after the first keeps its capital when it is a name: it is in
+    `PROPER_NOUNS`, read off the corpus by `scripts/build_proper_nouns.py`
+    (`Staphylococcus`, `Doppler`, `Braden`), or it is a chemical element symbol
+    (`Zn`). A name the corpus has seen too rarely for the list loses its capital
+    mid-name (`Family aerococcaceae`). "The language does not know the word"
+    was tried as a third test and dropped: on the 2026-10-20 term dict half the
+    capitalised words `wordfreq` has never seen are names (`Rammelt`, `Judet`)
+    and half are jargon (`Photobiomodulation`, `Neuraxial`), and a capital a
+    Title Case string gave every word could not be told from a chosen one, so
+    the function was not idempotent with it (`dermal Micrograft`).
+
+    The first letter is raised only when the first word is plain lowercase
+    ASCII, so `pH value`, `mRNA` and `β-lactam` keep their first letter.
+    Idempotent: a second pass finds nothing left to lower.
+    """
+    from wound_ontology.utils.proper_nouns import PROPER_NOUNS
+
+    def word(match: re.Match) -> str:
+        w = match.group(0)
+        core = re.sub(r"'s?$", "", w)
+        if match.start() == 0 or len(core) < 2 or not core[0].isupper() \
+                or any(c.isupper() for c in core[1:]) or re.fullmatch(r"[A-Z]s", core):
+            return w                    # `[A-Z]s`: a letter's plural, `the 5 Ps`
+        if core.lower() in PROPER_NOUNS or core in ELEMENT_SYMBOLS:
+            return w
+        if len(core) <= 3 and re.match(r"-?\d", label[match.end():]):
+            return w                    # a gene or protein symbol: `Bcl-2`, `Ki-67`
+        return w.lower()
+
+    out = _CASE_WORD.sub(word, label)
+    first = _CASE_WORD.match(out)
+    if first and first.group(0).isascii() and first.group(0).islower():
+        out = out[0].upper() + out[1:]
+    return out
+
+
 class Normalised:
     """What one label is called, what it shares, and what it keeps.
 
@@ -556,17 +617,23 @@ class Normalised:
     def name(self) -> str:
         """What the term should be CALLED.
 
-        Singular head noun (rule 23a), British to American (rule 41), then the
-        curator's preferred vocabulary (rules 48–49), in that order. `Statistical
-        Analyses` becomes `Statistical Analysis` and the noun never reaches the
-        British-verb reading of `analyses` that `breame` answers with
-        `analyzes`. The writer's own case is kept -- this is a name, not a key
-        -- and so is any parenthetical, because on an ontology label it is part
-        of the official name (`vitamin (role)`).
+        Singular head noun (rule 23a), British to American (rule 41), the
+        curator's preferred vocabulary (rules 48–49), then the case
+        (`sentence_case`), in that order. `Statistical Analyses` becomes
+        `Statistical analysis` and the noun never reaches the British-verb
+        reading of `analyses` that `breame` answers with `analyzes`. Case
+        comes last because the singular rule reads it (`DFUs` is an acronym
+        plural only while it has its capitals). Any parenthetical is kept,
+        because on an ontology label it is part of the official name (`vitamin
+        (role)`). A BFO category is spelled the way BFO spells it (rule 22).
         """
         if self._name is None:
-            self._name = canonical_vocabulary(
-                american_spelling(singular_spelling(self.label)))
+            from wound_ontology.llm.category_vocab import declared_category
+            # Asked twice, because the singular rule can make a category of a
+            # plural (`processes`, `multiple roles`) that only then is one.
+            named = sentence_case(canonical_vocabulary(
+                american_spelling(singular_spelling(self.label))))
+            self._name = declared_category(self.label) or declared_category(named) or named
         return self._name
 
     @property

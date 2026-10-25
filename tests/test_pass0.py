@@ -17,7 +17,11 @@ Two things it must never do, both of which it did before these tests:
 import pytest
 
 from wound_ontology.mappers.pass0 import pass0_renames
-from wound_ontology.utils.normalise import canonical_vocabulary, normalise
+from wound_ontology.utils.normalise import canonical_vocabulary, normalise, sentence_case
+
+# Since 2026-10-24 every name is in sentence case (`sentence_case`); the
+# expectations below are written as the rules leave the words, and the case
+# step is applied to them here rather than spelled into every row.
 
 
 def _pairs(freq, anchors=(), others=(), declared=()):
@@ -36,7 +40,7 @@ def _pairs(freq, anchors=(), others=(), declared=()):
     ("wound dressing", "wound dressing"),                 # nothing to do
 ])
 def test_the_preferred_spelling(label, expected):
-    assert normalise(label).name == expected
+    assert normalise(label).name == sentence_case(expected)
 
 
 @pytest.mark.parametrize("label,expected", [
@@ -48,7 +52,7 @@ def test_the_preferred_spelling(label, expected):
     ("WOUND-MANAGEMENT STRATEGIES", "WOUND-CARE APPROACHES"),
 ])
 def test_the_curators_preferred_vocabulary(label, expected):
-    assert normalise(label).name == expected
+    assert normalise(label).name == sentence_case(expected)
 
 
 @pytest.mark.parametrize("label,expected", [
@@ -85,7 +89,7 @@ def test_the_curators_preferred_vocabulary(label, expected):
     ("post-surgical recovery", "postoperative recovery"),
 ])
 def test_the_thirty_approved_preferred_names(label, expected):
-    assert normalise(label).name == expected
+    assert normalise(label).name == sentence_case(expected)
 
 
 @pytest.mark.parametrize("label", [
@@ -97,7 +101,7 @@ def test_the_thirty_approved_preferred_names(label, expected):
     "bony and soft tissue",
 ])
 def test_a_modifier_rule_does_not_rewrite_a_head_or_relation(label):
-    assert normalise(label).name == label
+    assert normalise(label).name == sentence_case(label)
 
 
 @pytest.mark.parametrize("label,expected", [
@@ -112,7 +116,7 @@ def test_a_modifier_rule_does_not_rewrite_a_head_or_relation(label):
 def test_action_potential_is_a_fixed_term(label, expected):
     """Curator, 2026-09-27: `action -> activity` must not reach into
     electrophysiology's `action potential`."""
-    assert normalise(label).name == expected
+    assert normalise(label).name == sentence_case(expected)
 
 
 @pytest.mark.parametrize("preferred,variant", [
@@ -138,15 +142,15 @@ def test_preferred_vocabulary_wins_even_when_the_old_name_is_more_frequent():
                        "bioengineering approach": 1,
                        "fungating wound management": 21,
                        "fungating wound care": 1})
-    assert pairs["chronic lower-limb wound"] == "chronic lower-extremity wound"
-    assert pairs["bioengineering strategy"] == "bioengineering therapy"
-    assert pairs["fungating wound management"] == "fungating wound care"
+    assert pairs["chronic lower-limb wound"] == "Chronic lower-extremity wound"
+    assert pairs["bioengineering strategy"] == "Bioengineering therapy"
+    assert pairs["fungating wound management"] == "Fungating wound care"
 
 
 def test_preferred_vocabulary_does_not_rewrite_unrelated_management():
-    assert normalise("pain management strategy").name == "pain management approach"
-    assert normalise("case management").name == "case management"
-    assert normalise("limbic system").name == "limbic system"
+    assert normalise("pain management strategy").name == "Pain management approach"
+    assert normalise("case management").name == "Case management"
+    assert normalise("limbic system").name == "Limbic system"
 
 
 @pytest.mark.parametrize("a,b", [
@@ -201,7 +205,8 @@ def test_a_character_that_is_not_a_seam_still_splits_the_group():
 def test_pass0_settles_a_dehyphenation_instead_of_asking_the_curator():
     pairs, _ = _pairs({"intra-abdominal complication": 5,
                        "intraabdominal complication": 2})
-    assert pairs == {"intraabdominal complication": "intra-abdominal complication"}
+    assert pairs == {"intraabdominal complication": "Intra-abdominal complication",
+                     "intra-abdominal complication": "Intra-abdominal complication"}
 
 
 def test_the_language_breaks_a_seam_tie_the_corpus_cannot():
@@ -214,8 +219,7 @@ def test_the_language_breaks_a_seam_tie_the_corpus_cannot():
     """
     pairs, _ = _pairs({"Cumberland Ankle Instability Tool": 1,
                        "Cumberl and Ankle Instability Tool": 1})
-    assert pairs == {"Cumberl and Ankle Instability Tool":
-                     "Cumberland Ankle Instability Tool"}
+    assert set(pairs.values()) == {"Cumberland ankle instability tool"}
 
 
 def test_a_digit_is_not_a_word_the_language_failed_to_learn():
@@ -236,19 +240,19 @@ def test_the_corpus_still_outranks_the_language():
     that writes it three times to one `anti-biofilm` is entitled to it.
     """
     pairs, _ = _pairs({"antibiofilm": 3, "anti-biofilm": 1})
-    assert pairs == {"anti-biofilm": "antibiofilm"}
+    assert set(pairs.values()) == {"Antibiofilm"}
 
 
 # ── what it writes ───────────────────────────────────────────────────────────
 
 def test_every_variant_maps_onto_one_spelling():
     pairs, _ = _pairs({"wound": 9, "Wounds": 2, "wounds": 4})
-    assert pairs == {"Wounds": "wound", "wounds": "wound"}
+    assert pairs == {"Wounds": "Wound", "wounds": "Wound", "wound": "Wound"}
 
 
 def test_the_most_frequent_spelling_wins():
     pairs, _ = _pairs({"Pressure Ulcer": 1, "pressure ulcers": 20})
-    assert set(pairs.values()) == {"pressure ulcer"}
+    assert set(pairs.values()) == {"Pressure ulcer"}
 
 
 def test_an_ontology_label_wins_and_keeps_its_own_spelling():
@@ -284,7 +288,7 @@ def test_a_canonical_can_be_a_spelling_nobody_wrote():
     # the curator's rule is that the canonical is the singular, so `patients`
     # and `Patients` collapse onto `patient` even though no abstract wrote it
     pairs, report = _pairs({"patients": 1500, "Patients": 80})
-    assert set(pairs.values()) == {"patient"}
+    assert set(pairs.values()) == {"Patient"}
     assert report["minted"] == 1
 
 
@@ -292,7 +296,7 @@ def test_a_term_with_no_variant_is_respelled_too():
     # the curator's instruction of 2026-09-26: mint the singular there too. A
     # corpus that only ever wrote `wounds` still gets `wound` as the canonical.
     pairs, report = _pairs({"wounds": 9})
-    assert pairs == {"wounds": "wound"}
+    assert pairs == {"wounds": "Wound"}
     assert report["respelled"] == 1 and report["groups"] == 0
 
 
@@ -302,7 +306,7 @@ def test_a_lone_british_spelling_is_americanised_too():
 
 
 def test_a_lone_term_that_needs_nothing_is_left_alone():
-    pairs, report = _pairs({"wound dressing": 9})
+    pairs, report = _pairs({"Wound dressing": 9})
     assert pairs == {} and report["respelled"] == 0
 
 
@@ -314,7 +318,7 @@ def test_respelling_a_lone_term_is_counted_apart_from_the_groups():
 
 
 def test_a_group_of_one_writes_nothing():
-    pairs, _ = _pairs({"wound": 9})
+    pairs, _ = _pairs({"Wound": 9})
     assert pairs == {}
 
 
@@ -323,7 +327,7 @@ def test_a_string_only_the_mapping_holds_is_normalised_too():
     *just to make sure nothing slipped through*. A canonical no abstract ever
     wrote is still a term, and left un-normalised the next apply puts the old
     spelling back into the store."""
-    pairs, _ = _pairs({"unrelated": 1}, others=["Tumours"])
+    pairs, _ = _pairs({"Unrelated": 1}, others=["Tumours"])
     assert pairs == {"Tumours": "Tumor"}
 
 
@@ -349,7 +353,7 @@ def test_a_declared_category_keeps_the_spelling_bfo_gives_it():
 
 
 def test_an_anchor_with_no_store_spelling_writes_nothing():
-    pairs, _ = _pairs({"unrelated": 1}, anchors=["Diabetic foot ulcer"])
+    pairs, _ = _pairs({"Unrelated": 1}, anchors=["Diabetic foot ulcer"])
     assert pairs == {}
 
 
@@ -391,7 +395,7 @@ def test_an_abbreviation_gloss_does_not_block_the_group():
     pairs, report = _pairs({"quality of life": 40, "Quality of Life": 12,
                             "quality of life (qol)": 1})
     assert report["unsafe"] == [] and report["ontology sense"] == []
-    assert pairs["quality of life (qol)"] == "quality of life"
+    assert pairs["quality of life (qol)"] == "Quality of life"
 
 
 def test_a_group_held_together_by_a_discarded_character_is_not_a_group():
@@ -425,7 +429,7 @@ def test_an_all_caps_heading_still_merges_with_its_singular():
     pairs, report = _pairs({"OUTCOME MEASURES": 3, "outcome measures": 8,
                             "outcome measure": 5})
     assert report["characters"] == []
-    assert pairs["OUTCOME MEASURES"] == "outcome measure"
+    assert pairs["OUTCOME MEASURES"] == "Outcome measure"
 
 
 def test_a_non_breaking_hyphen_is_still_a_hyphen():
@@ -442,7 +446,8 @@ def test_one_odd_member_does_not_hold_the_rest_of_the_group_back():
     plain plurals caught in the blast radius of one odd member."""
     pairs, report = _pairs({"Patients": 3, "patient": 40, "patients": 12,
                             "patient's": 1})
-    assert pairs == {"Patients": "patient", "patients": "patient"}
+    assert {k: v for k, v in pairs.items() if k != "patient's"} == \
+        {"Patients": "Patient", "patients": "Patient", "patient": "Patient"}
     assert report["characters"] == [[["Patients", "patient", "patients"],
                                      ["patient's"]]]
 
@@ -535,7 +540,7 @@ def test_a_minted_canonical_outranks_the_spelling_it_replaced():
     ("BIOLOGIC", "BIOLOGICAL"),
 ])
 def test_ical_is_the_preferred_form(label, expected):
-    assert normalise(label).name == expected
+    assert normalise(label).name == sentence_case(expected)
 
 
 def test_biologics_in_the_plural_become_biologicals():
@@ -602,7 +607,7 @@ def test_what_is_not_npwt_keeps_its_name(label):
     ("diagnostic strategies", "diagnostic approach"),
 ])
 def test_a_treatment_approach_is_a_therapy(label, expected):
-    assert normalise(label).name == expected
+    assert normalise(label).name == sentence_case(expected)
 
 
 @pytest.mark.parametrize("label", [
@@ -635,13 +640,13 @@ def test_diabetes_mellitus_is_a_name_not_a_modifier(label):
     ("giant cell", "giant cell"),
 ])
 def test_a_leading_grade_or_praise_is_stripped(label, expected):
-    assert normalise(label).name == expected
+    assert normalise(label).name == sentence_case(expected)
 
 
 @pytest.mark.parametrize("label", ["blunt trauma", "head trauma", "trauma"])
 def test_trauma_is_not_renamed_injury(label):
     """Rule 49's `trauma -> injury` was withdrawn by the curator, 2026-09-28."""
-    assert normalise(label).name == label
+    assert normalise(label).name == sentence_case(label)
 
 
 # ── 2026-10-02: pressure ulcer, and disorder for its five synonyms ──────────

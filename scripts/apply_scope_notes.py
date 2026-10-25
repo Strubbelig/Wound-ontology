@@ -82,11 +82,11 @@ def main(argv: list[str]) -> int:
     if respell:
         gt.apply_renames(respell, by=reason)
     for cur, note in reverse:
-        # Two writes, not one: without refusing the backward pair the next
-        # rebuild re-proposes `microRNA -> miRNA` and wins the frequency vote
-        # (it did, 2026-09-28).
-        gt.judge(note, cur, refused={"reason": reason, "by": "curator", "when": when},
-                 curator={"verdict": "refused", "reason": reason, "when": when})
+        # The typed spelling is the cluster's name. Without saying so, the
+        # next rebuild re-proposes `microRNA -> miRNA` and wins the frequency
+        # vote (it did, 2026-09-28); until 2026-10-24 a lock on the backward
+        # pair said it, now the name decision does.
+        gt.decide_name(note, [cur], by="curator", reason=reason, when=when)
         gt.records[note]["to"] = None
         plan.append((cur, note, None))
     for cur, target, old in plan:
