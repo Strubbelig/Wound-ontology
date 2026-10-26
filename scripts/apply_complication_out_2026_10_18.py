@@ -42,7 +42,6 @@ def main(argv):
     for k in recs:
         gt.gate(k, curator={"verdict": "out", "when": when, "by": BY, "reason": WHY})
     gt._dirty(); gt.save()
-    print(f"[complication] gate lists re-exported: {p.export_gate_lists()}")
     p2 = Orchestrator(); g2 = p2.term_mapper._term_mapping
     lost = [k for k in recs if g2.effective_gate_verdict(k)[0] != "out"]
     left = sorted({n for _, ents in p2.store.view() for n in ents if WORD.search(n)})

@@ -51,7 +51,6 @@ def main(argv):
         gt.judge(t, c, curator={"verdict": "same_class", "when": when, "by": BY,
                                 "reason": "WONT's label is the name (rule 36)"})
     gt._dirty(); gt.save()
-    print(f"[burn] gate lists re-exported: {p.export_gate_lists()}")
     g2 = Orchestrator().term_mapper._term_mapping
     lost = [(t, c) for t, c, _ in REFUSE if not (g2.peek(t, c).get("refused")) or g2.records[t].get("to") == c]
     lost += [(t, c) for t, c in SAME if g2.records[t].get("to") != c]

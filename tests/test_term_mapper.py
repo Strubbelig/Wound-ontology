@@ -243,59 +243,6 @@ def test_build_from_embeddings_single_linkage_would_merge_complete_linkage_does_
         "Complete-linkage must not merge term_a and term_c via term_b as bridge"
 
 
-# ── CSV review workflow (MappingCleaner) ──────────────────────────────────────
-
-def test_export_review_csv_writes_low_confidence_metadata(mapper, tmp_path):
-    from wound_ontology.mappers.mapping_cleaner import MappingCleaner
-    # Confidence and method live ON the record now (rule 37); `metadata` is a
-    # view over them rather than a dict of its own that vanished with the run.
-    mapper._term_mapping._records = {
-        "needs review": {"to": "candidate", "confidence": 0.6, "method": "llm",
-                         "refused": {}},
-        "accepted":     {"to": "wound", "confidence": 0.95, "method": "similarity",
-                         "refused": {}},
-    }
-    mapper._term_mapping._dirty()
-    cleaner = MappingCleaner(mapper)
-    path = tmp_path / "review.csv"
-
-    cleaner.export_review_csv(str(path))
-
-    df = pd.read_csv(path)
-    assert len(df) == 1
-    row = df.iloc[0]
-    assert row["term"] == "needs review"
-    assert row["suggested_standard"] == "candidate"
-    assert row["confidence"] == 0.6
-    assert row["method"] == "llm"
-    assert pd.isna(row["reviewed_standard"])
-    assert pd.isna(row["notes"])
-
-
-def test_import_review_csv_overrides_mapping_and_marks_manual(mapper, dm, tmp_path):
-    from wound_ontology.mappers.mapping_cleaner import MappingCleaner
-    cleaner = MappingCleaner(mapper)
-    path = tmp_path / "review.csv"
-    pd.DataFrame([{
-        "term":               "needs review",
-        "suggested_standard": "candidate",
-        "confidence":         0.6,
-        "method":             "llm",
-        "reviewed_standard":  "manual standard",
-        "notes":              "reviewed",
-    }]).to_csv(path, index=False)
-
-    cleaner.import_review_csv(str(path))
-
-    assert mapper.mapping["needs review"] == "manual standard"
-    assert mapper._term_mapping.metadata["needs review"] == {
-        "standard":   "manual standard",
-        "confidence": 1.0,
-        "method":     "manual",
-    }
-    assert dm.saved[-1][1] == "term_mapping"
-
-
 # ── the similarity matrix is computed in blocks ──────────────────────────────
 
 class _TinyEmbedder:

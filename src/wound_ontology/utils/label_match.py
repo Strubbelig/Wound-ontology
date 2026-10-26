@@ -101,6 +101,18 @@ _INVARIANT: frozenset[str] = frozenset({
     "xylosoxidans", "ulcerans", "protuberans", "elegans", "necessitans",
     "dissecans", "simulans", "adiacens", "sapiens",
     "glans", "dens", "pseudomonas", "erysipelas",
+    # More of the same, found 2026-10-25 behind `Streptococcus pyogene`: Latin
+    # epithets in -es/-ans/-ens, genera in -monas/-myces/-oides, and anatomy
+    # and conditions whose singular ends in -s. Each was in the store, cut.
+    "pyogenes", "aerogenes", "sporogenes", "acnes", "putrefaciens", "mutans",
+    "viridans", "fluorescens", "neoformans", "denitrificans", "tonsurans",
+    "mentagrophytes", "fungoides", "ossificans",
+    "aeromonas", "brevundimonas", "stenotrophomonas", "xanthomonas",
+    "actinomyces", "apophysomyces", "streptomyces", "saccharomyces",
+    "bacteroides", "parabacteroides",
+    "pancreas", "iliopsoas", "psoas", "atlas", "hypospadias", "epispadias",
+    # place and person names a capital does not protect
+    "texas", "americas", "vegas", "evans",
 })
 
 #: Endings that look plural but are not. "sepsis", "dermis", "abscess",
@@ -155,8 +167,9 @@ def singular_candidates(word: str) -> list[str]:
     w = word.lower()
     if w in _IRREGULAR:
         return [_IRREGULAR[w]]
-    if w in _INVARIANT:
-        return [w]
+    tail = w.rsplit("-", 1)[-1]
+    if w in _INVARIANT or (tail in _INVARIANT and not tail.endswith("ics")):
+        return [w]                               # also `risk-of-bias`; `C-statistics` is a plural
     for tail in _SIS_TAILS:                      # osteo|syntheses, sub-|analyses
         if len(w) > len(tail) and w.endswith(tail):
             return [w[:-len(tail)] + _IRREGULAR[tail]]

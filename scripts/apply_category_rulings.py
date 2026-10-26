@@ -260,7 +260,6 @@ def main(argv: list[str]) -> int:
     gt.save()
     print(f"[rulings] written: {dict(outcome)}")
     # the blocklist/whitelist files are views of the gate and must not drift
-    print(f"[rulings] gate lists re-exported: {p.export_gate_lists()}")
 
     # ── read back: the file, then the view ──────────────────────────────────
     p2 = Orchestrator()

@@ -13,7 +13,6 @@ from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.llm.llm_client import LLMClient
 from wound_ontology.connectors.pubmed_connector import PubmedConnector
 from wound_ontology.store.concept_store import ConceptStore
-from wound_ontology.store.store_cleaner import StoreCleaner
 from wound_ontology.hierarchies.class_hierarchy import ClassHierarchy, ClassHierarchyView
 from wound_ontology.hierarchies.mereological_hierarchy import MereologicalHierarchy
 from wound_ontology.hierarchies.fca_hierarchy import FCAHierarchy
@@ -22,7 +21,6 @@ from wound_ontology.fca.concept_lattice import ConceptLattice
 from wound_ontology.embedding.embedder import Embedder
 from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
 from wound_ontology.mappers.term_mapper import TermMapper, canonical_rank
-from wound_ontology.mappers.mapping_cleaner import MappingCleaner
 from wound_ontology.owl import OWLOntology, OntologyCurator
 from wound_ontology.reasoning import OWLReasoner
 from wound_ontology.graph_visualizer import GraphVisualizer
@@ -56,8 +54,8 @@ except ImportError as _exc:
 
 # NOTE: _DEFAULT_ALLOWED_PREDICATES now comes from config.settings above. It used
 # to be a five-entry literal defined right here, whose own comment pointed at
-# config/settings.py without importing it. StoreCleaner DELETES any attribute
-# whose predicate is not on this list, so that literal silently deleted 19 of the
+# config/settings.py without importing it. The cleaner then DELETED any attribute
+# whose predicate was not on this list (the store's view drops it now, rule 86), so that literal silently deleted 19 of the
 # 26 relation types two-stage extraction emits -- has_part, participates_in,
 # inheres_in, has_disposition, the BFO backbone MILD is built on -- leaving only
 # is_a, part_of and has_quality. Measured on a 142-abstract pilot: 316 relation
@@ -102,16 +100,13 @@ class Orchestrator:
 
         self.allowed_predicates = allowed_predicates
         self.pubcon        = PubmedConnector(self.dm, entrez_email)
-        # The gate is built before the cleaner because the cleaner's Blocker
-        # consults it: a curator's scope verdict outranks the lists it was
-        # imported from. And before the store, because every decision about a
-        # term lives in it and the store is read THROUGH it (rule 51).
+        # The term dict is built before the store, because every decision about
+        # a term lives in it and the store is read THROUGH it (rule 51). Scope
+        # comes from it alone: no list, no Blocker (rule 86). The cleaned store
+        # is the view, `store.cleaned`, recomputed on every read.
         _term_mapping      = TermMappingAndGate(self.dm, file_name="term_mapping")
         self.store         = ConceptStore(self.dm, "concept_store", terms=_term_mapping)
-        self.cleaner       = StoreCleaner(self.allowed_predicates, gate=_term_mapping)
-        # Scope is read live from the gate, through the same Blocker the
-        # cleaner and the lists use (rule 51; merged 2026-09-28).
-        self.store.scope   = self.cleaner._is_blocked
+        self.store.allowed_predicates = self.allowed_predicates
         # The class hierarchy is a VIEW (2026-10-21): derived from its sources on
         # first use, never read from or written to a matrix CSV. See
         # ClassHierarchyView and refresh_class_hierarchy().
@@ -132,7 +127,6 @@ class Orchestrator:
         # and the report they were written to. Empty until run_fca has named.
         self.fca_head_rule: dict = {}
         self.term_mapper     = TermMapper(_term_mapping, name="Term mapper")
-        self.mapping_cleaner = MappingCleaner(self.term_mapper, allowed_predicates=self.allowed_predicates)
         self._embedder: Embedder | None = None
         self.reasoner      = OWLReasoner()
         self.graph_exporter = GraphVisualizer()
@@ -234,12 +228,8 @@ class Orchestrator:
         return freq
 
     async def _mapping_milestone(self, store) -> None:
-        """Periodic callback during extraction: clean store and rebuild term mapping."""
-        cleaner = StoreCleaner(self.allowed_predicates,
-                               gate=self.term_mapper._term_mapping)
-        report  = cleaner.clean(store)
-        StoreCleaner.print_report(report)
-
+        """Periodic callback during extraction: rebuild the term mapping. Nothing
+        is cleaned: the view reads scope from the term dict (rule 86)."""
         freq = self._collect_store_terms_with_freq(store)
         self.term_mapper.build_from_embeddings(
             list(freq.keys()),
@@ -250,8 +240,9 @@ class Orchestrator:
         print("\n[Orchestrator] Mapping milestone complete.")
 
     # ── Phase 1: Extraction ────────────────────────────────────────────────────
-    # Noise filtering (units, pure symbols) is applied automatically during
-    # the milestone callback and again in run_clean_store().
+    # Nothing is filtered at extraction (rule 86): every string is stored as
+    # extracted, and a number with a unit gets `out` from the term dict's
+    # `noise_rule`, as a verdict.
 
     def run_pubmed_search(self, queries: str | list[str], max_results_per_query: int = 200):
         """Fetch abstracts for one or more PubMed queries, merging into one database."""
@@ -542,16 +533,10 @@ class Orchestrator:
     def blocked_names(self) -> set[str]:
         """Names the GATE condemns, lowercased.
 
-        The blocklist is applied at extraction and never again, so the mapping
-        could rename a surviving variant back onto a blocked name. Held here so
-        the mapping can refuse to do that.
-
-        Read off the gate rather than `METHODOLOGY_BLOCKLIST`, which is where
-        the list's entries now live: a curator who lets `silver sulfadiazine`
-        back in has to see that reflected here, or the review sheet goes on
-        calling it blocked. Keyword blocks are deliberately absent, as they
-        always were -- this answers "is this name condemned by an entry", not
-        "would the blocker drop this string".
+        The mapping must not rename a surviving variant onto a name the gate
+        puts out, so it is held here and the mapping refuses to. Read off the
+        gate, the only place scope is decided since the lists went (rule 86): a
+        curator who lets `silver sulfadiazine` back in sees it here at once.
         """
         return {t.strip().lower() for t in self.term_mapper.gated("out")}
 
@@ -713,111 +698,6 @@ class Orchestrator:
         print(f"[pass0] {len(renames):,} rename(s) applied and verified against "
               f"both files on disk.")
         return report
-
-    def export_gate_lists(self, *, quiet: bool = False) -> dict[str, int]:
-        """Rewrite the two exact curation lists from the gate. The lists are a VIEW.
-
-        `METHODOLOGY_BLOCKLIST` and `WHITELIST` were the authoring surface until
-        2026-09-25, written by a cosine threshold and an LLM batch straight into
-        source files with no verdict, reason, date or author. They are now what
-        the gate says, printed: one writer, and an entry that cannot exist
-        without saying who put it there.
-        """
-        from wound_ontology.store.term_lists import export_gate_lists
-        return export_gate_lists(self.term_mapper._term_mapping, quiet=quiet)
-
-    def gate_lists_drift(self) -> dict[str, set[str]]:
-        """What the two literals hold that the gate does not, and the reverse.
-
-        Empty on both sides is the invariant. Anything in it means someone edited
-        a generated file, or an export is owed — and either way one of the two is
-        deciding things the other does not know about.
-        """
-        # Re-read the files, never `from config... import`: the modules are in
-        # `sys.modules` from before an export in the same process, and a drift
-        # check that answers from a stale import reports drift that is not there
-        # -- or misses drift that is.
-        import ast
-        from pathlib import Path
-
-        def _literal(filename: str, var: str) -> set[str]:
-            src = (Path(__file__).resolve().parents[2] / "config" / filename).read_text()
-            for node in ast.parse(src).body:
-                target = getattr(node, "target", None) or (getattr(node, "targets", [None]) or [None])[0]
-                if getattr(target, "id", "") != var:
-                    continue
-                value = node.value
-                if isinstance(value, ast.Call):        # frozenset({...})
-                    value = value.args[0]
-                return set(ast.literal_eval(value))
-            raise RuntimeError(f"config/{filename} does not declare {var}")
-
-        METHODOLOGY_BLOCKLIST = _literal("blocklist.py", "METHODOLOGY_BLOCKLIST")
-        WHITELIST = _literal("whitelist.py", "WHITELIST")
-        out = {t.strip().lower() for t in self.term_mapper.gated("out")}
-        keep = {t.strip().lower() for t in self.term_mapper.gated("in")}
-        file_out = {t.strip().lower() for t in METHODOLOGY_BLOCKLIST}
-        file_in = {t.strip().lower() for t in WHITELIST}
-        return {"blocklist only in file": file_out - out,
-                "blocklist only in gate": out - file_out,
-                "whitelist only in file": file_in - keep,
-                "whitelist only in gate": keep - file_in}
-
-    def gate_overrides(self) -> list[dict]:
-        """Every term the gate decides DIFFERENTLY from the lists alone.
-
-        `gate_disagreements()` compares the record's own sources and cannot see
-        this one: only 150 of the 4,138 blocked store names are blocked by the
-        exact list, and 3,988 by one of the 69 KEYWORDS, which are rules and are
-        not on the record. A pass saying `in` about a keyword-blocked term
-        therefore contradicts nothing the record holds — and is exactly the
-        finding worth reading, because the `pain` keyword alone takes 429 names,
-        `wound pain` and `Severe distal pain` among them, while WONT defines
-        `painful` as "a degree of wound pain that qualifies its bearer as
-        painful".
-
-        Compared against the files AS THEY ARE. Before an export that is "what
-        the passes changed" -- 581 terms on 2026-09-25. After one it is only what
-        the files CANNOT express, because membership has caught up and precedence
-        has not: an exact-list entry is read behind the whitelist keywords, while
-        a `curator` or `pass` verdict is read ahead of them, so a pass saying
-        `out` about a keyword-whitelisted term blocks it and the exported list
-        alone does not. Four terms on 2026-09-25 (`pain assessment`,
-        `pain-management techniques`, `predictive factors`,
-        `wound healing models`). Anything reading the literal without a gate
-        differs from `Blocker(gate=...)` on exactly those.
-
-        Rows are `{term, was, now, verdict, source, reason, mentions}`, sorted
-        by mentions, so the review starts where the store has most to lose.
-        """
-        from collections import Counter
-
-        from wound_ontology.store.blocker import Blocker
-
-        gate = self.term_mapper._term_mapping
-        plain = Blocker()                       # the lists, with no gate
-        gated = self.cleaner.blocker
-
-        freq: Counter = Counter()
-        for _, ents in self.store.view(mapped=False, include_rejected=True):
-            for name in ents:
-                freq[name] += 1
-
-        rows = []
-        for term in freq:
-            before, after = plain.is_blocked(term), gated.is_blocked(term)
-            if before == after:
-                continue
-            verdict, source = gate.gate_verdict(term)
-            evidence = gate.peek_gate(term).get(source.split("+")[0]) or {}
-            rows.append({"term": term,
-                         "was": "blocked" if before else "kept",
-                         "now": "blocked" if after else "kept",
-                         "verdict": verdict, "source": source,
-                         "reason": evidence.get("reason", ""),
-                         "mentions": freq[term]})
-        rows.sort(key=lambda r: (-r["mentions"], r["term"].lower()))
-        return rows
 
     def gate_sources(self) -> dict[str, str]:
         """`lowercased name -> which source condemned it`, for the review sheets."""
@@ -1203,21 +1083,6 @@ class Orchestrator:
                   f"but they are not nothing; review before minting.")
         return self.term_mapper.mapping
 
-    def review_mapping(self) -> None:
-        """
-        Inspect and curate the term mapping before applying it to the store.
-
-        Runs sequentially:
-          1. List all mappings (informational).
-          2. Interactive review of auto-merged clusters.
-          3. List suspicious mappings (informational).
-          4. Interactive review of remaining mappings.
-        """
-        self.mapping_cleaner.list_mappings()
-        self.mapping_cleaner.review_merged_mappings()
-        self.mapping_cleaner.list_suspicious_mappings()
-        self.mapping_cleaner.review_mappings()
-
     def check_term_mapping(self, threshold: float = 0.95) -> list[dict]:
         """Re-evaluate term mappings with SapBERT and flag potential false merges.
 
@@ -1238,82 +1103,10 @@ class Orchestrator:
         return flagged
 
     def run_apply_mapping(self) -> None:
-        """Apply the reviewed term mapping to the store (normalise all entity and target names)."""
-        self.mapping_cleaner.apply(self.store)
+        """Read the store through the term mapping. Nothing is rewritten (rule 51)."""
+        self.store.normalize(mapper=self.term_mapper)
 
-    # ── Phase 3: Curation ─────────────────────────────────────────────────────
-
-    def review_lists(
-        self,
-        high_threshold: float = 0.92,
-        low_threshold: float = 0.40,
-        save_skipped: bool = False,
-        llm_batch_size: int = 50,
-        recluster: bool = False,
-        bl_clusters: int = 40,
-        wl_clusters: int = 25,
-    ) -> None:
-        """
-        Interactively review and curate entities in the store.
-
-        Targets are intentionally not cleaned here — they are normalised and
-        clustered to canonical forms by run_build_term_mapping() + run_apply_mapping().
-
-        Runs sequentially:
-          1. Validate blocklist/whitelist exclusivity.
-          2. Entities: score ≥ high_threshold → auto-block; score < low_threshold → skip;
-             in between → manual review.
-          3. Auto-blocked entities in store — allow to whitelist exceptions.
-          4. Whitelisted entities — allow to move to blocklist.
-          5. Recluster both lists with SapBERT K-means (only if recluster=True).
-
-        Call run_clean_store() afterwards to apply changes.
-        """
-        self.cleaner._abort_review = False
-        self.cleaner._reload_lists()
-        embedder = self._ensure_embedder()
-
-        self.cleaner._check_list_exclusivity(embedder, threshold=0.92)
-        self.cleaner.review_susp_entities(self.store, embedder=embedder,
-                                          high_threshold=high_threshold,
-                                          low_threshold=low_threshold,
-                                          save_skipped=save_skipped,
-                                          llm=self.llm,
-                                          llm_batch_size=llm_batch_size,
-                                          run_sync=self._run_sync)
-        self.cleaner.review_blocked_entities(self.store)
-        self.cleaner.review_good_entities(self.store)
-
-        if recluster:
-            self.recluster_lists(bl_clusters=bl_clusters, wl_clusters=wl_clusters)
-
-    def cluster_blocklist(self, dry_run: bool = False) -> None:
-        """Print a cluster summary of METHODOLOGY_BLOCKLIST and optionally rewrite
-        blocklist.py with cluster-headed sections.
-
-        dry_run=True  → print summary only, no file written.
-        dry_run=False → rewrite METHODOLOGY_BLOCKLIST in config/blocklist.py.
-        """
-        self.cleaner.blocker.recluster(dry_run=dry_run)
-
-    def recluster_lists(self, bl_clusters: int = 40, wl_clusters: int = 25) -> None:
-        """Recluster blocklist and whitelist with SapBERT K-means."""
-        embedder = self._ensure_embedder()
-
-        print("\n[recluster] Blocklist...")
-        self.cleaner.blocker.recluster_sapbert(embedder, n_clusters=bl_clusters)
-
-        print("\n[recluster] Whitelist...")
-        self.cleaner.blocker.recluster_whitelist_sapbert(embedder, n_clusters=wl_clusters)
-
-    # ── Phase 4: Filtering ─────────────────────────────────────────────────────
-
-    def run_clean_store(self, extra_blocked_entities: set[str] | None = None) -> None:
-        """Remove out-of-scope entities, invalid predicates, and empty entities from the store."""
-        cleaner = StoreCleaner(self.allowed_predicates, extra_blocked_entities,
-                               gate=self.term_mapper._term_mapping)
-        report = cleaner.clean(self.store)
-        StoreCleaner.print_report(report)
+    # ── Phase 3: Concept analysis ─────────────────────────────────────────────
 
     def _judge_fca_proposals(self, proposals, withheld: dict[str, list[str]] | None = None) -> int:
         """Rule 79: the head-word rule decides the concept analysis's edges.
@@ -2705,71 +2498,6 @@ class Orchestrator:
             top_k=top_k,
             dry_run=dry_run,
         )
-
-    # ── Store / list management ────────────────────────────────────────────────
-
-    def run_promote_clusters(
-        self,
-        target_labels: list[str] | None = None,
-        dry_run: bool = False,
-    ) -> None:
-        """Move named SapBERT clusters from METHODOLOGY_BLOCKLIST to WHITELIST.
-
-        Clusters are identified by partial matching of their comment-header
-        label in config/blocklist.py.  Matched terms are moved to
-        config/whitelist.py and removed from the blocklist.
-
-        target_labels: list of partial cluster-header strings to match.
-                       Defaults to the five clusters identified during
-                       initial review.
-        """
-        from wound_ontology.store.cluster_promoter import (
-            extract_and_strip_clusters,
-            append_to_whitelist,
-        )
-        from pathlib import Path as _Path
-        import re as _re
-
-        _DEFAULT_TARGET_LABELS = [
-            "bilayer hydrogel dressing · superabsorbent dressing · polymeric membrane dressing",
-            "diabetes-related foot ulcer · diabetes foot ulcer · complex diabetic foot ulcer",
-            "wound surface reduction · wound area reduction · wound retraction",
-            "scarring wound · incomplete healing · scar healing",
-            "wound stratification system · sinbad grading system · wound severity score",
-        ]
-        labels = target_labels or _DEFAULT_TARGET_LABELS
-
-        try:
-            from config.settings import PROJECT_ROOT as _root
-        except ImportError:
-            _root = _Path(__file__).resolve().parents[3]
-
-        bl_path = _Path(_root) / "config" / "blocklist.py"
-        wl_path = _Path(_root) / "config" / "whitelist.py"
-
-        src = bl_path.read_text()
-        promoted, new_src = extract_and_strip_clusters(src, labels)
-
-        print(f"\nPromoting {len(promoted)} terms from {len(labels)} clusters:")
-        for label in labels:
-            print(f"  • {label}")
-
-        if dry_run:
-            print(f"\n[dry-run] Terms that would be promoted (first 30):")
-            for t in sorted(promoted)[:30]:
-                print(f"    {t}")
-            if len(promoted) > 30:
-                print(f"    ... and {len(promoted) - 30} more")
-            print("\n[dry-run] No files written.")
-            return
-
-        remaining = len(_re.findall(r"""^\s*['"]""", new_src, _re.MULTILINE))
-        print(f"\nRemoving from blocklist: {len(promoted)} terms  ({remaining} remain)")
-        bl_path.write_text(new_src)
-        print("  ✓ blocklist.py updated")
-
-        added = append_to_whitelist(promoted, wl_path)
-        print(f"  ✓ whitelist.py: {added} new terms added")
 
     # ── PubMed query validation ────────────────────────────────────────────────
 

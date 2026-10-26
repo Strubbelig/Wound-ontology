@@ -190,113 +190,27 @@ def test_the_sources_are_ordered_strongest_first():
     assert GATE_SOURCES == ("curator", "pass2", "pass1", "rule")
 
 
-# ── what the gate does to the Blocker ────────────────────────────────────────
+# ── the one rule over strings (rule 86) ───────────────────────────────────────
 
-def _blocker(gate=None):
-    from wound_ontology.store.blocker import Blocker
-    return Blocker(gate=gate)
-
-
-def _a_blocked_term():
-    from config.blocklist import METHODOLOGY_BLOCKLIST
-    return sorted(METHODOLOGY_BLOCKLIST)[0]
+@pytest.mark.parametrize("term", ["12.5 mg/kg", "3 days", "44.8%", "7 d", "---"])
+def test_the_noise_rule_takes_a_number_with_a_unit(term):
+    from wound_ontology.mappers.term_mapping_and_gate import noise_rule
+    assert noise_rule(term)
 
 
-def _a_whitelisted_term():
-    from config.whitelist import WHITELIST
-    return sorted(WHITELIST)[0]
+@pytest.mark.parametrize("term", ["Wagner grade 1D", "venous leg ulcer", "2D imaging"])
+def test_the_noise_rule_leaves_a_name_alone(term):
+    from wound_ontology.mappers.term_mapping_and_gate import noise_rule
+    assert not noise_rule(term)
 
 
-def test_without_a_gate_the_lists_decide_exactly_as_before():
-    b = _blocker()
-    assert b.gate is None
-    assert b.gate_verdict("anything") == ("", "")
-    assert b.is_blocked(_a_blocked_term())
-    assert not b.is_blocked(_a_whitelisted_term())
-
-
-def test_the_gate_can_let_a_blocklisted_term_through():
-    t = _a_blocked_term()
+def test_a_verdict_beats_the_noise_rule():
+    """The rule only ever writes a `rule` verdict where there is none; a
+    curator's `in` on `NaCl 0.9%` (a WONT class) stands."""
     g = memory_mapping()
-    g.gate(t, rule={"verdict": "out", "by": "list"},
-           curator={"verdict": "in", "reason": "a real wound concept"})
-    assert _blocker().is_blocked(t)
-    assert not _blocker(g).is_blocked(t)
-
-
-def test_a_rule_verdict_keeps_the_position_the_list_it_came_from_had():
-    # A whitelist KEYWORD used to rescue a term on the exact blocklist, and the
-    # fold must not change that: `rule` IS that list, moved, not re-decided.
-    # Only a curator or a pass -- new evidence -- goes ahead of the keywords.
-    from config.whitelist import KEYWORD_WHITELIST
-    kw = sorted(KEYWORD_WHITELIST)[0]
-    t = kw + " in a methodology phrase"
-    g = memory_mapping()
-    g.gate(t, rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
-    assert _blocker(g).white_kw.match(t)
-    assert not _blocker(g).is_blocked(t)          # the keyword still rescues it
-    g.gate(t, pass2={"verdict": "out", "reason": "a study-design phrase"})
-    assert _blocker(g).is_blocked(t)              # new evidence does not
-
-
-def test_the_gate_can_block_a_whitelisted_term():
-    t = _a_whitelisted_term()
-    g = memory_mapping()
-    g.gate(t, curator={"verdict": "out", "reason": "methodology after all"})
-    assert not _blocker().is_blocked(t)
-    assert _blocker(g).is_blocked(t)
-
-
-def test_a_gate_verdict_beats_the_noise_regex():
-    from config.blocklist import is_noise_term
-    noise = "12.5 mg/kg"
-    assert is_noise_term(noise)
-    g = memory_mapping()
-    g.gate(noise, curator={"verdict": "in", "reason": "a dosage that names a class"})
-    assert _blocker().is_blocked(noise)
-    assert not _blocker(g).is_blocked(noise)
-
-
-def test_a_keyword_still_decides_a_term_the_gate_says_nothing_about():
-    b = _blocker(memory_mapping())
-    assert b.is_blocked("multivariable Cox regression")      # KEYWORD_BLOCKLIST
-    assert not b.is_blocked("venous leg ulcer")
-
-
-def test_score_follows_is_blocked_through_the_gate():
-    t = _a_blocked_term()
-    g = memory_mapping()
-    g.gate(t, curator={"verdict": "in"})
-    assert _blocker().score(t) == 100.0
-    assert _blocker(g).score(t) == 0.0
-
-
-def test_a_gate_that_only_holds_the_imported_rule_changes_nothing():
-    # what the one-time fold produces: every list entry as `rule`, nothing else.
-    # The two must then agree by construction, or the fold moved a decision.
-    from config.blocklist import METHODOLOGY_BLOCKLIST
-    from config.whitelist import WHITELIST
-    g = memory_mapping()
-    sample = sorted(METHODOLOGY_BLOCKLIST)[:40] + sorted(WHITELIST)[:40]
-    for t in sorted(METHODOLOGY_BLOCKLIST)[:40]:
-        g.gate(t, rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
-    for t in sorted(WHITELIST)[:40]:
-        g.gate(t, rule={"verdict": "in", "by": "WHITELIST"})
-    plain, gated = _blocker(), _blocker(g)
-    assert [plain.is_blocked(t) for t in sample] == [gated.is_blocked(t) for t in sample]
-
-
-def test_a_gate_with_an_empty_mapping_is_still_a_gate():
-    # `TermMappingAndGate.__len__` counts the live MAPPING, so a gate carrying
-    # ten thousand scope verdicts and no mappings is falsy. `if self.gate` turned
-    # the gate off and left the lists deciding, silently -- found by this test
-    # failing on a term the curator had explicitly let through.
-    t = _a_blocked_term()
-    g = memory_mapping()
-    g.gate(t, curator={"verdict": "in"})
-    assert len(g) == 0 and not bool(g)
-    assert _blocker(g).gate_verdict(t) == ("in", "curator")
-    assert not _blocker(g).is_blocked(t)
+    g.gate("NaCl 0.9%", rule={"verdict": "out", "by": "noise rule: a number with a unit"},
+           curator={"verdict": "in", "reason": "a curated class"})
+    assert g.effective_gate_verdict("NaCl 0.9%") == ("in", "curator")
 
 
 # ── the gate matches the way the lists always have ───────────────────────────

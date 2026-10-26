@@ -22,7 +22,6 @@ from wound_ontology.store.concept_store import (
     effective_records,
     records_of,
 )
-from wound_ontology.store.store_cleaner import StoreCleaner
 
 
 class MockDM:
@@ -156,28 +155,37 @@ def test_the_hierarchy_does_not_see_a_rejected_entity():
     assert "Wound" in names
 
 
-# ── the cleaner ──────────────────────────────────────────────────────────────
+# ── the cleaned store is a view (rule 86) ───────────────────────────────────
 
-def test_scope_is_read_live_so_withdrawing_a_list_entry_needs_no_lifting():
-    """The capability the delete never had -- withdraw the list entry and the
-    term stands again -- now needs no second clean: the view asks the gate
-    each time, and the store holds no copy of the answer (rule 51, merged
-    2026-09-28)."""
+def test_scope_is_read_live_so_withdrawing_a_verdict_needs_no_lifting():
+    """Withdraw the verdict and the term stands again: the view asks the term
+    dict each time, and the store holds no copy of the answer (rules 51, 86)."""
     st = _store(_two_abstracts())
-    c = StoreCleaner(["is_a", "has_quality", "part_of"], extra_blocked_entities={"skin"})
-    st.scope = c._is_blocked
-    report = c.clean(st)
-    # `Randomized Controlled Trial` is on the real methodology blocklist, so two.
-    assert report["blocked_entities"] == 2
-    assert "Skin" not in st.entities and "Randomized Controlled Trial" not in st.entities
+    st.terms.gate("Skin", rule={"verdict": "out", "by": "test"})
+    assert "Skin" not in st.entities
     assert ("Wound", "part_of: Skin") not in {(e, t) for _, e, t, _ in st.assertions()}
-    assert st.verdict("Skin") is None, "scope is not written into the store"
-    assert "Skin" in st.dict["2"]["entities"]
-
-    st.scope = StoreCleaner(["is_a", "has_quality", "part_of"])._is_blocked  # entry withdrawn
+    assert "Skin" in st.dict["2"]["entities"], "the evidence is untouched"
+    del st.terms.gate_record("Skin")["rule"]
+    st.terms._gate_idx = None
     assert "Skin" in st.entities
     assert ("Wound", "part_of: Skin") in {(e, t) for _, e, t, _ in st.assertions()}
-    assert "Randomized Controlled Trial" not in st.entities, "still on the list"
+
+
+def test_the_cleaned_store_is_a_property_computed_on_every_read():
+    st = _store(_two_abstracts())
+    assert "Skin" in st.cleaned["2"]
+    st.terms.gate("Skin", curator={"verdict": "out"})
+    assert "Skin" not in st.cleaned["2"]
+    assert "Skin" in st.dict["2"]["entities"]
+
+
+def test_no_list_decides_anything():
+    """`Randomized Controlled Trial` was on the methodology blocklist; with the
+    lists gone (2026-10-25) only a verdict keeps it out."""
+    st = _store(_two_abstracts())
+    assert "Randomized Controlled Trial" in st.entities
+    st.terms.gate("Randomized Controlled Trial", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
+    assert "Randomized Controlled Trial" not in st.entities
 
 
 def test_a_curator_scope_ruling_reaches_the_store_at_once():
@@ -207,25 +215,25 @@ def test_a_bfo_category_is_never_out_of_scope(category):
     assert not st.out_of_scope({category})
 
 
-def test_a_rogue_predicate_is_a_cell_verdict():
+def test_a_relation_the_schema_does_not_allow_is_left_out_of_the_view():
     st = _store(_two_abstracts())
-    StoreCleaner(["is_a", "has_quality"]).clean(st)
-    v = st.verdict("Wound", "part_of: Skin")
-    assert v and v["by"] == "predicate_filter"
-    assert st.dict["2"]["entities"]["Wound"]["part_of: Skin"] == 1.0
+    st.allowed_predicates = ["is_a", "has_quality"]
+    assert ("Wound", "part_of: Skin") not in {(e, t) for _, e, t, _ in st.assertions()}
+    assert st.dict["2"]["entities"]["Wound"]["part_of: Skin"] == 1.0, "nothing is written"
+    st.allowed_predicates = None
+    assert ("Wound", "part_of: Skin") in {(e, t) for _, e, t, _ in st.assertions()}
 
 
-def test_the_prune_reads_the_whole_store_not_one_abstract():
-    """Denied in one abstract, asserted in another, is a standing term."""
+def test_an_entity_nothing_affirms_is_left_out_but_the_whole_store_counts():
+    """Denied in one abstract, asserted in another, is a standing term; an
+    entity only ever denied is not in the cleaned store."""
     raw = _two_abstracts()
-    raw["3"] = {"entities": {"Skin": {"is_a: material entity": 0.0}}, "meta_stamp": "c"}
+    raw["3"] = {"entities": {"Skin": {"is_a: material entity": 0.0},
+                             "Only Denied": {"is_a: process": 0.0}}, "meta_stamp": "c"}
     st = _store(raw)
-    StoreCleaner(["is_a", "has_quality", "part_of"]).clean(st)
-    assert st.verdict("Skin") is None
-    raw2 = {"3": {"entities": {"Only Denied": {"is_a: process": 0.0}}, "meta_stamp": "c"}}
-    st2 = _store(raw2)
-    StoreCleaner(["is_a"]).clean(st2)
-    assert st2.verdict("Only Denied")["by"] == "prune"
+    assert "Skin" in st.cleaned["3"], "denied here, asserted in abstract 2"
+    assert "Only Denied" not in st.entities
+    assert "Only Denied" in st.dict["3"]["entities"]
 
 
 def test_lifting_is_by_author_only():

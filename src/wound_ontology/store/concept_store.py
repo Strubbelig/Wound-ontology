@@ -7,7 +7,6 @@ from typing import Iterable, Iterator
 import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.utils.string_utils import normalize_term, smart_title
-from config.blocklist import METHODOLOGY_BLOCKLIST as _METHODOLOGY_BLOCKLIST, is_noise_term as _is_noise_term
 from wound_ontology.llm.category_vocab import declared_category
 from wound_ontology.utils.normalise import normalise
 from wound_ontology.utils.label_match import singular_spelling as _singular_spelling
@@ -299,10 +298,9 @@ class ConceptStore:
         self._terms = terms
         self._live_mapping = terms is not None
         self._mapper = None
-        #: `name -> True` when the gate puts the term out of scope. The
-        #: orchestrator hands in its Blocker, which is the gate plus the keyword
-        #: lists; without one, the gate's own effective verdict decides.
-        self.scope = None
+        #: The predicates the view keeps (rule 86); None keeps every one. The
+        #: orchestrator hands in its allowed predicates.
+        self.allowed_predicates: list[str] | None = None
 
     @property
     def terms(self):
@@ -382,10 +380,8 @@ class ConceptStore:
         rejections -- 2,330 terms and 6,436 relations, frozen as of 2026-09-20
         and deciding the same question as the gate's 10,531 `out` verdicts.
         """
-        test = getattr(self, "scope", None)
-        if test is None:
-            terms = self.terms
-            test = lambda n: terms.effective_gate_verdict(n)[0] == "out"   # noqa: E731
+        terms = self.terms
+        test = lambda n: terms.effective_gate_verdict(n)[0] == "out"   # noqa: E731
         cache: dict[str, bool] = {}
 
         def out_of_scope(n: str) -> bool:
@@ -467,6 +463,13 @@ class ConceptStore:
                 c = cats.get(via_map(raw)[1].lower())
             return c
         out_of_scope = self._scope_test()
+        keep = getattr(self, "allowed_predicates", None)
+        allowed = set(keep) if keep else None
+        # An entity nothing affirms anywhere is not in the cleaned store -- the
+        # whole store counts, so a denial in one abstract stays where the term
+        # is asserted in another. Two passes, so the records are held.
+        pending: list[tuple[str, dict, dict]] = []
+        affirmed: set[str] = set()
         for key, rec in self.dict.items():
             if key == self.DECISIONS or not isinstance(rec, dict):
                 continue
@@ -497,11 +500,32 @@ class ConceptStore:
                                 or self._cell_verdict(owners, pred, targets)):
                             continue
                         pred = self._cell_predicate(owners, pred, targets) or pred
+                        if not include_rejected and allowed is not None and pred not in allowed:
+                            continue             # a relation the schema does not allow
                         triple = f"{pred}: {t_final}"
                     dest[triple] = max(dest.get(triple, 0.0), float(value))
+            affirmed.update(e for e, a in out.items() if any(v > 0.0 for v in a.values()))
+            pending.append((key, out, decided))
+        for key, out, decided in pending:
+            if not include_rejected:
+                out = {e: a for e, a in out.items() if e in affirmed}
             if decided:
                 out = _apply_categories(out, decided)
             yield key, (_apply_senses(out, senses) if senses else out)
+
+    @property
+    def cleaned(self) -> dict[str, dict[str, dict[str, float]]]:
+        """The cleaned store: `{key: {name: {triple: value}}}`, recomputed on
+        every read (curator, 2026-10-25: "ein view des concept store, der sich
+        bei jedem nutzen neu berechnet. eine property eben").
+
+        The evidence as extracted, read through TermMappingAndGate: names
+        resolved by the mapping, terms and relation targets the gate puts out
+        left out, rejected cells left out, relations the schema does not allow
+        left out, and an entity nothing affirms left out. Nothing here is
+        stored; to change it, write a decision to the term dict (rules 51, 86).
+        """
+        return dict(self.view())
 
     def records(self) -> Iterator[tuple[str, dict[str, dict[str, float]]]]:
         """(key, {entity: {triple: value}}) for every assertion record: the
@@ -1009,38 +1033,28 @@ class ConceptStore:
                         predicate_definitions=predicate_definitions,
                     )
 
-                    allowed_set = set(allowed_predicates)
                     entities_map: dict[str, dict] = {}
                     for ent in extracted:
                         # The string as the extractor wrote it is what is
-                        # stored (rule 51); the cleaned name decides only
-                        # whether it is kept, and is recorded as its spelling.
+                        # stored (rule 51), every one: whether it belongs is a
+                        # verdict in the term dict, never a filter here (rule 86).
                         raw_entity = ent.object.strip()
                         entity_name = ConceptStore.clean_entity_str(raw_entity)
-                        if entity_name.lower() in _METHODOLOGY_BLOCKLIST or _is_noise_term(entity_name):
+                        if not entity_name:
                             continue
+                        # Every relation as the model gave it (rule 86): a
+                        # predicate the schema does not allow is left out by
+                        # the view, never here. Until 2026-10-25 this path
+                        # dropped such predicates and turned `part_of: X` to
+                        # 0.0 wherever `is_a: X` stood too -- a rewrite of what
+                        # the abstract said. A triple both affirmed and denied
+                        # keeps the affirmation, as the view does (strongest
+                        # evidence wins).
                         attr_logic: dict[str, float] = {}
                         for a in ent.true_attributes:
-                            if a.predicate in allowed_set:
-                                attr_logic[f"{a.predicate}: {a.target.strip()}"] = 1.0
+                            attr_logic[f"{a.predicate}: {a.target.strip()}"] = 1.0
                         for a in ent.false_attributes:
-                            if a.predicate in allowed_set:
-                                triple = f"{a.predicate}: {a.target.strip()}"
-                                if triple not in attr_logic:
-                                    attr_logic[triple] = 0.0
-
-                        # Semantic guard: is_a and part_of are mutually exclusive for the same target.
-                        # If the model asserted both relations for the same target, keep is_a and
-                        # mark part_of as false so the store remains logically coherent.
-                        is_a_targets = {
-                            k.split(": ", 1)[1]
-                            for k, v in attr_logic.items()
-                            if k.startswith("is_a: ") and v == 1.0
-                        }
-                        for target in is_a_targets:
-                            mereological = f"part_of: {target}"
-                            if attr_logic.get(mereological) == 1.0:
-                                attr_logic[mereological] = 0.0
+                            attr_logic.setdefault(f"{a.predicate}: {a.target.strip()}", 0.0)
 
                         entities_map[raw_entity] = attr_logic
 
@@ -1391,8 +1405,8 @@ async def _extract_schema_constrained(llm, text, meta_id):
     entities_map = {}
     for label, attrs in _ad.result_to_store_entities(result).items():
         name = ConceptStore.clean_entity_str(label.strip())
-        if not name or name.lower() in _METHODOLOGY_BLOCKLIST or _is_noise_term(name):
-            continue
+        if not name:
+            continue                 # every string is stored; scope is a verdict (rule 86)
         # As extracted (rule 51): the cleaned name is recorded as the string's
         # spelling by `_spell_ingested`, never written over it.
         cleaned = {}

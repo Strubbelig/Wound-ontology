@@ -163,13 +163,43 @@ LEADING_ADJECTIVES = frozenset(['adequate', 'advanced', 'appropriate', 'better',
 LEADING_ADJECTIVE_EXCEPTIONS = (
     ['current or past', 'current smoker', 'large bowel', 'large intestine', 'large wound', 'major amputation', 'major lower extremity', 'marked improvement', 'mild cognitive impairment', 'minor amputation', 'moderate and severe', 'moderate to severe', 'multiple organ dysfunction syndrome', 'multiple organ failure', 'new zealand']
     + ['multiple sclerosis', 'multiple myeloma', 'standard deviation', 'standard error', 'severe acute respiratory syndrome', 'large language model', 'major adverse', 'key opinion leader', 'traditional chinese medicine', 'advanced glycation end', 'advanced practice', 'new onset', 'new-onset'])
+#: The same words compared, superlative or as an adverb (curator, 2026-10-25:
+#: "diese ganzen adjektive wie poorer oder severly sollten eigentlich schon
+#: lange gelöscht sein"). `Poorer outcome` is an outcome, `Severely burned
+#: patient` a burned patient. Not `poorly`: `poorly controlled diabetes` and
+#: `poorly vascularized tissue` would turn into their opposite. Not `newly`,
+#: `currently`, `conventionally`: they do not grade. The exceptions are fixed
+#: names: scales, tumour grades, a resistance category, a trial.
+_GRADED_FORMS = frozenset([
+    'poorer', 'poorest', 'worse', 'worst', 'best', 'larger', 'largest',
+    'milder', 'mildest', 'severer', 'severest',
+    'severely', 'mildly', 'moderately', 'markedly', 'extensively',
+    'potentially', 'appropriately', 'excess'])
+LEADING_ADJECTIVES = LEADING_ADJECTIVES | _GRADED_FORMS
+LEADING_ADJECTIVE_EXCEPTIONS = LEADING_ADJECTIVE_EXCEPTIONS + [
+    'worst itch', 'worst imaginable', 'worst possible', 'best corrected',
+    'best spectacle corrected', 'best practice', 'best endovascular', 'best nas',
+    'largest lyapunov', 'moderately differentiated', 'moderately hypofractionated',
+    'extensively drug resistant', 'larger wound', 'best cli']
 _FUNCTION_WORDS = frozenset({"of", "to", "and", "or", "with", "for", "in", "on",
                              "at", "by", "vs", "versus", "than"})
 _LEAD = re.compile(r"^([A-Za-z]+)[\s,-]+(?=\S)")
 
 
+#: Hyphenated grades stripped whole (curator, 2026-10-25: "dann lösch neben
+#: large auch large-scale"). Any other hyphenated modifier stays.
+LEADING_COMPOUNDS = ("large-scale",)
+_LEAD_COMPOUND = re.compile(
+    r"^(?:" + "|".join(c.replace("-", r"[-\u2010\u2011]") for c in LEADING_COMPOUNDS)
+    + r")[\s,]+(?=\S)", re.IGNORECASE)
+
+
 def _strip_leading_adjectives(label: str) -> str:
     while True:
+        mc = _LEAD_COMPOUND.match(label)
+        if mc and label[mc.end():].split()[0].lower().strip(",") not in _FUNCTION_WORDS:
+            label = label[mc.end():]
+            continue
         m = _LEAD.match(label)
         if not m or m.group(1).lower() not in LEADING_ADJECTIVES:
             return label
@@ -177,6 +207,13 @@ def _strip_leading_adjectives(label: str) -> str:
         if any(low.startswith(e.replace("-", " ")) for e in LEADING_ADJECTIVE_EXCEPTIONS):
             return label
         rest = label[m.end():]
+        if "-" in m.group(0):
+            # A hyphen makes one compound modifier, not a grade and its noun:
+            # `large-vessel vasculitis`, `advanced-stage pressure ulcer`,
+            # `standard-of-care dressing`. Cut there, 81 spellings had become
+            # `Vessel vasculitis`, `Stage pressure ulcer`, `Of-care dressing`
+            # (found 2026-10-25).
+            return label
         if not rest or rest.split()[0].lower().strip(",") in _FUNCTION_WORDS:
             return label
         label = rest

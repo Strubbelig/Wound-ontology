@@ -79,22 +79,44 @@ def test_a_refusal_moves_a_standing_same_class_to_history():
     assert gt.data.get("a") is None
 
 
-# ── the name is a decision of its own ────────────────────────────────────────
+# ── the name is `to`; that a person chose it is their same_class (rule 85) ──
 
-def test_a_name_decision_is_on_the_chosen_term():
+def test_a_name_choice_is_to_and_the_curators_same_class():
     gt = memory_mapping({})
     gt.decide_name("snakebite envenomation", ["Snake Envenomation"], reason="review")
+    assert gt.data == {"Snake Envenomation": "snakebite envenomation"}
+    cur = gt.peek("Snake Envenomation", "snakebite envenomation")["curator"]
+    assert cur["verdict"] == "same_class" and cur["reason"] == "review"
     assert gt.named() == {"snakebite envenomation"}
-    assert gt.records["snakebite envenomation"]["name"]["instead_of"] == ["Snake Envenomation"]
+    assert "name" not in gt.records.get("snakebite envenomation", {})
 
 
-def test_a_later_name_decision_supersedes_and_keeps_the_earlier():
+def test_a_later_choice_turns_the_cluster_round():
     gt = memory_mapping({})
     gt.decide_name("therapy", ["treatment"], when="2026-09-25T18:00:00")
     gt.decide_name("treatment", ["therapy"], when="2026-09-27T15:05:12")
+    assert gt.data == {"therapy": "treatment"}
     assert gt.named() == {"treatment"}
-    history = gt.records["treatment"]["name"]["history"]
-    assert history[-1]["was"] == "therapy"
+
+
+def test_members_of_a_loser_follow_the_name():
+    gt = memory_mapping({"wound areas": {"to": "wound area", "pairs": {}}})
+    gt.decide_name("area of wound", ["wound area"])
+    assert gt.data == {"wound areas": "area of wound", "wound area": "area of wound"}
+
+
+def test_an_ontology_label_stays_the_name():
+    """Rule 36: the person's choice lands under the label, not over it."""
+    gt = memory_mapping({"wound healing": {"to": "Wound healing process", "pairs": {}}})
+    gt.decide_name("wound healing", ["wound repair"])
+    assert gt.data["wound repair"] == "Wound healing process"
+    assert gt.data["wound healing"] == "Wound healing process"
+
+
+def test_a_choice_against_the_curators_apart_is_refused():
+    gt = memory_mapping({"a": {"to": None, "pairs": {"b": {"curator": {"verdict": "different"}}}}})
+    with pytest.raises(ValueError, match="apart"):
+        gt.decide_name("b", ["a"])
 
 
 def test_a_name_outranks_the_corpus_and_an_anchor_outranks_a_name():
@@ -105,22 +127,57 @@ def test_a_name_outranks_the_corpus_and_an_anchor_outranks_a_name():
         == "wound area"
 
 
-def test_resolve_chains_gives_a_cluster_the_name_a_person_chose():
-    """A finished star is left alone -- unless a person chose another member
-    as its name. That is how 41 chosen names were lost: nothing re-elected."""
+def test_a_cluster_keeps_its_name_when_the_counts_shift():
+    """Rule 85: only a label or a person moves a name, never the corpus."""
+    freq = {"wound area": 40, "area of wound": 2}
+    assert max(freq, key=lambda t: canonical_rank(t, frozenset(), freq, frozenset(),
+                                                  {"area of wound"})) == "area of wound"
+
+
+def test_resolve_chains_keeps_the_name_a_person_chose():
     m = memory_mapper({"wound areas": "wound area", "area of wound": "wound area"})
     m._term_mapping.decide_name("area of wound", ["wound area"])
     m.resolve_chains(frequencies={"wound area": 40, "area of wound": 2})
     assert m.mapping == {"wound areas": "area of wound", "wound area": "area of wound"}
 
 
-def test_a_name_decision_follows_a_rename():
+def test_a_name_choice_follows_a_rename():
     gt = memory_mapping({"Snake Envenomation": {"to": "snakebite envenomation", "pairs": {}}})
     gt.decide_name("snakebite envenomation", ["Snake Envenomation"])
     gt.apply_renames({"snakebite envenomation": "Snakebite envenomation",
                       "Snake Envenomation": "Snake envenomation"}, by="pass0")
     assert gt.named() == {"Snakebite envenomation"}
-    assert gt.records["Snakebite envenomation"]["name"]["instead_of"] == ["Snake envenomation"]
+    assert gt.data == {"Snake envenomation": "Snakebite envenomation"}
+
+
+def test_an_old_name_section_loads_as_the_curators_same_class():
+    gt = memory_mapping({
+        "Snake Envenomation": {"to": "snakebite envenomation", "pairs": {}},
+        "snakebite envenomation": {"to": None, "pairs": {}, "name": {
+            "by": "curator", "instead_of": ["Snake Envenomation"], "reason": "review",
+            "when": "2026-09-25", "history": [{"by": "curator", "instead_of": ["x"]}]}}})
+    assert "name" not in gt.records.get("snakebite envenomation", {})
+    assert gt.peek("Snake Envenomation", "snakebite envenomation")["curator"]["reason"] == "review"
+    assert gt.records["snakebite envenomation"]["name_history"][0]["instead_of"] == ["x"]
+    assert gt.named() == {"snakebite envenomation"}
+
+
+# ── a confirmed synonym stays in one cluster ─────────────────────────────────
+
+def test_a_step_never_retires_what_the_curator_confirmed():
+    """237 confirmed pairs were split by pass 1 dissent and dead-target prunes."""
+    gt = memory_mapping({"Klebsiella": {"to": "Klebsiella spp.", "pairs": {
+        "Klebsiella spp.": {"curator": {"verdict": "same_class"}}}}})
+    assert gt.retire("Klebsiella", reason="pass 1 did not confirm") == 0
+    assert gt.data == {"Klebsiella": "Klebsiella spp."}
+
+
+def test_split_synonyms_names_a_confirmed_pair_in_two_clusters():
+    gt = memory_mapping({"Klebsiella": {"to": None, "pairs": {
+        "Klebsiella spp.": {"curator": {"verdict": "same_class"}}}}})
+    assert gt.split_synonyms() == [("Klebsiella", "Klebsiella spp.")]
+    gt.decide_name("Klebsiella spp.", ["Klebsiella"])
+    assert gt.split_synonyms() == []
 
 
 # ── a merge never maps onto a target its own pair locks ──────────────────────

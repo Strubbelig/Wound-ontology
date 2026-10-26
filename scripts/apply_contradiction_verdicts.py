@@ -439,12 +439,7 @@ def main() -> None:
                 f"did not read back from disk: "
                 f"{missing[:3]} {lost[:3]} {unflipped[:3]} {unmapped[:3]}")
         print(f"[verdicts] written and verified against the file on disk.")
-        if scope:
-            # The two exact lists are a VIEW of the gate (rule 40.7). A scope
-            # verdict written here without re-exporting left `whitelist.py`
-            # one term behind the record on 2026-09-27, and only
-            # test_the_live_files_and_the_live_gate_agree noticed.
-            Orchestrator().export_gate_lists()
+        # (the gate lists this re-exported were deleted on 2026-10-25, rule 86)
     else:
         print("[verdicts] dry run — nothing written. Pass --write to apply.")
 

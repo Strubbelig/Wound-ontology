@@ -51,7 +51,6 @@ def main(argv):
     for t, cls, why in plan:
         gt.judge(t, cls, curator={"verdict": "narrower", "when": when, "by": BY, "reason": why})
     gt._dirty(); gt.save()
-    print(f"[page] gate lists re-exported: {Orchestrator().export_gate_lists()}")
     g2 = Orchestrator().term_mapper._term_mapping
     lost = [(t, c) for t, c, _ in plan
             if (g2.peek(g2.resolve(t), c).get("curator") or {}).get("verdict") != "narrower"]

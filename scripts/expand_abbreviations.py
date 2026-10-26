@@ -305,7 +305,6 @@ def main(argv: list[str]) -> int:
                             "reason": "abbreviation only; no abstract that uses it defines it"})
     gt._dirty()
     gt.save()
-    print(f"[abbr] gate lists re-exported: {p.export_gate_lists()}")
     gt2 = Orchestrator().term_mapper._term_mapping
     lost = [r["term"] for r in rows["expand"] if r["term"] not in skipped and gt2.data.get(r["term"]) != r["to"]]
     lost += [t for t in out if gt2.peek_gate(gt2.resolve(t)).get("curator", {}).get("verdict") != "out"]

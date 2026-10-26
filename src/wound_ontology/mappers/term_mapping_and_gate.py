@@ -64,13 +64,15 @@ The record
      }}
 
 Since 2026-10-24 every pair verdict -- `pass1`, `pass2`, `check`, `curator` --
-is one of `PAIR_VERDICTS`, and the term a person chose as the name of its
-cluster says so. Since 2026-10-25 there is no lock beside the verdicts: a
-curator verdict other than `same_class` IS the "not this cluster" a rebuild
-reads (`is_refused`), and the old `refused` entries are `lock_history`::
+is one of `PAIR_VERDICTS`. Since 2026-10-25 there is no lock beside the
+verdicts: a curator verdict other than `same_class` IS the "not this cluster" a
+rebuild reads (`is_refused`), and the old `refused` entries are `lock_history`.
+Nor is there a name section (rule 85): which term names a cluster is `to`, and
+that a person chose it is their `same_class` on the pair `to` points at::
 
-    {"name": {"by": "curator", "instead_of": ["Snake Envenomation"],
-              "reason": "...", "when": "..."}}
+    "Snake Envenomation": {"to": "snakebite envenomation", "method": "curator",
+        "pairs": {"snakebite envenomation": {"curator": {"verdict": "same_class",
+                                             "by": "curator", "reason": "...", "when": "..."}}}}
 
 Since 2026-09-27 (rule 51) the record also holds what used to be rewritten
 into the concept store, which now keeps only what each abstract said::
@@ -112,8 +114,9 @@ The views
 * `subsumption_candidates()` -- the pairs a pass called `narrower`/`broader`:
                              not synonyms, not nothing.
 * `gated("out")` / `gated("in")` -- what `METHODOLOGY_BLOCKLIST` and `WHITELIST`
-                             used to BE. Both are now views, so an entry cannot
-                             exist without saying who put it there.
+                             used to BE. The lists were absorbed and deleted on
+                             2026-10-25 (rule 86); an entry cannot exist without
+                             saying who put it there.
 * `gate_disagreements()`  -- the terms whose gate sources contradict each other.
 * `metadata`, `standards`, `originals` -- as before.
 
@@ -150,7 +153,7 @@ GATE_SOURCES = ("curator", "pass2", "pass1", "rule")
 #: curator's entry also said `kept`, `reverse`, `reversed`, `repointed` and
 #: `refused`, which mixed the answer with what was done about it. The curator,
 #: that day: first the cluster, then which of its terms is the name. So the
-#: answer is here and the name is `NAME` on the chosen term.
+#: answer is here, and the name is the term `to` points at.
 PAIR_VERDICTS = ("same_class", "narrower", "broader", "different")
 
 #: The curator verdicts that keep a pair out of one cluster. Until 2026-10-25 a
@@ -170,19 +173,68 @@ APART = ("narrower", "broader", "different")
 #: carried (curator: "die beiden kann man wunderbar zu curator mergen").
 PAIR_SOURCES = ("pass1", "pass2", "check", "curator")
 
-#: The name section: a person chose which term of a cluster is its name.
-NAME = "name"
-
 #: The alias section: this string now reads as another (rule 51).
 SPELLING = "spelling"
 
 #: Sections that are decisions about a term. An alias carries none of them.
 DECISION_SECTIONS = ("to", "pairs", "gate", "gate_contested", "rejected",
-                     "relations", "senses", "category", "retired", NAME)
+                     "relations", "senses", "category", "retired")
 
 #: The category section (rule 57), and what outranks what inside it.
 CATEGORY = "category"
 TERM_RULING = "term ruling"
+
+
+# ── The one rule over strings nobody has judged (rule 86) ───────────────────
+#
+# A number with a unit is a dosage or a measurement, not a concept, and numbers
+# cannot be listed. Moved here from `config/blocklist.py` on 2026-10-25 when the
+# lists were deleted (curator: "(a)"): a term with no verdict that matches gets
+# `out` from the `rule` source, saying so, before SapBERT and the scope passes.
+# The view never applies it on its own; only a verdict decides.
+# Matches a number followed by a unit of measure (time, mass, volume, etc.).
+# Presence of such a pattern means the entity is a dosage/measurement, not a concept.
+_UNIT_RE = _re.compile(
+    r'(?:'
+    # number + optional hyphen/space + unit word
+    r'\b\d+(?:[.,]\d+)?[-\s]*'
+    r'(?:h|hr|hrs|hour|hours'
+    r'|min|mins|minute|minutes'
+    r'|sec|secs|second|seconds'
+    r'|day|days'
+    r'|wk|wks|week|weeks'
+    r'|mo|mos|month|months'
+    r'|yr|yrs|year|years'
+    r'|kg|g|mg|mcg|µg|ug'
+    r'|l|dl|ml|cc|cl|µl|ul'
+    r'|mmhg|cmh2o'
+    r'|mmol|mol|meq|iu|miu'
+    r'|item|items|session|sessions'
+    r')\b'
+    r'|'
+    # A bare single-letter `d` must be SEPARATED from its number. Closed up,
+    # `\d+d` reads a grade code as a duration: "Wagner and Anderson grade 1D"
+    # (WONT_120068) was rejected as "1 day", and 2D, 3D and 4D with it -- four
+    # curated class labels deleted by a heuristic. Measured over the 4104 store
+    # terms and curated labels, the bare `d` alternative matched those four and
+    # not one genuine day expression. "7 d" and "7-d" still match; "7d" written
+    # closed up no longer does, and that is the price of the four. The asymmetry
+    # settles it: a term wrongly let through can still be ruled out, while one
+    # this matches was, until 2026-10-25, dropped at extraction and never stored.
+    r'\b\d+(?:[.,]\d+)?[-\s]+d\b'
+    r'|'
+    # percentage: 0.12%, 44.8%, 100%
+    r'\b\d+(?:[.,]\d+)?\s*%'
+    r')',
+    _re.IGNORECASE,
+)
+
+
+def noise_rule(term: str) -> bool:
+    """True if `term` has no letter at all or contains a number with a unit."""
+    if not bool(_re.search(r'[a-zA-Z]', term)):
+        return True
+    return bool(_UNIT_RE.search(term))
 
 
 def _now() -> str:
@@ -241,7 +293,7 @@ class TermMappingAndGate:
     """Persistence data class for the term mapping, the gate, and their evidence.
 
     Layer 2 in the mapper stack:
-      DataManager (repo) → TermMappingAndGate (persistence) → TermMapper (action) → MappingCleaner (curator)
+      DataManager (repo) → TermMappingAndGate (persistence) → TermMapper (action)
     """
 
     def __init__(self, dm: DataManager, file_name: str = "term_mapping") -> None:
@@ -306,6 +358,27 @@ class TermMappingAndGate:
                 j["lock_history"] = j.get("lock_history", []) + [lock]
             rec["pairs"] = pairs
             records[term] = rec
+        # v4 (until 2026-10-25): a name section on the chosen term. What it said
+        # is the curator's `same_class` on each loser's pair onto the name, with
+        # the name's reason; earlier choices it had superseded stay as history.
+        for term, rec in list(records.items()):
+            name = rec.pop("name", None)
+            if not name:
+                continue
+            for loser in name.get("instead_of", []):
+                lr = records.get(loser)
+                if lr is None or SPELLING in lr or loser == term:
+                    continue
+                j = lr.setdefault("pairs", {}).setdefault(term, {})
+                cur = j.get("curator") or {}
+                if cur.get("verdict") != "same_class":
+                    if cur:
+                        j["curator_history"] = j.get("curator_history", []) + [cur]
+                    j["curator"] = {"verdict": "same_class", "by": name.get("by", "curator"),
+                                    "reason": name.get("reason", "") or "chose this name",
+                                    "when": name.get("when")}
+            if name.get("history"):
+                rec["name_history"] = rec.get("name_history", []) + name["history"]
         return records
 
     # ── Read access: the records themselves ──────────────────────────────────
@@ -648,10 +721,10 @@ class TermMappingAndGate:
         away the only signal that says a term needs looking at. `gate_disagreements`
         is where they surface.
 
-        The keyword lists are not consulted here and never will be. A keyword is
-        a RULE over strings nobody has seen yet -- `Blocker` applies it to any
-        term, including the 77,317 this record says nothing about -- and rule 29
-        is that an entry belongs in the list whose matching rule it can carry.
+        No list is consulted: there are none since 2026-10-25 (rule 86). What
+        the keyword lists decided about a term then is a `rule` verdict on it
+        naming the keyword; a term arriving later gets `noise_rule`, SapBERT's
+        nearest neighbour (`pass1`) and the model (`pass2`).
         """
         g = self.peek_gate(term)
         if not g and (alias := self._gate_alias(term)):
@@ -769,9 +842,8 @@ class TermMappingAndGate:
     def gated(self, verdict: str) -> dict[str, str]:
         """`term -> source` for every term the gate answers `verdict`.
 
-        This is what replaces reading `METHODOLOGY_BLOCKLIST` (`"out"`) and
-        `WHITELIST` (`"in"`) as authoring surfaces: both are now a view over the
-        records, so an entry cannot exist without saying who put it there.
+        This replaced `METHODOLOGY_BLOCKLIST` (`"out"`) and `WHITELIST`
+        (`"in"`), which were deleted on 2026-10-25 (rule 86).
         """
         if verdict not in GATE_VERDICTS:
             raise ValueError(f"{verdict!r} is not one of {GATE_VERDICTS}")
@@ -972,41 +1044,98 @@ class TermMappingAndGate:
 
     def decide_name(self, chosen: str, instead_of, *, by: str = "curator",
                     reason: str = "", when: str | None = None) -> None:
-        """Record that a person chose `chosen` as the name of its cluster. Does not save.
+        """Make `chosen` the name of its cluster, over `instead_of`. Does not save.
 
-        First the cluster, then its name (curator, 2026-10-24). Until then a
-        name choice was a `reverse` verdict on one pair and a lock on the other
-        direction, and a rebuild that named the cluster through a THIRD member
-        or another spelling walked straight past it: on 2026-10-20, 41 of the
-        336 names the curator had chosen were no longer the name. A name
-        decision belongs to the cluster,
-        so it sits on the chosen term and every election reads it
-        (`canonical_rank`, `named=`).
+        First the cluster, then its name (curator, 2026-10-24). The name is the
+        term `to` points at, and that a person chose it is their `same_class`
+        on each loser's pair onto it (rule 85, 2026-10-25: "das ist schon
+        to"). So the choice is written where every view already looks: each
+        loser and everything mapped onto it now maps onto `chosen`, with the
+        curator's verdict and reason on the loser's pair. A loser the curator
+        keeps apart from `chosen` raises -- that is a different decision.
 
-        A later choice for the same cluster supersedes an earlier one: the
-        earlier entry moves into the new one's `history`.
+        Where `chosen` is itself mapped (an ontology label outranks a person's
+        choice, rule 36), the losers go to the cluster's name instead.
         """
+        when = when or _now()
+        chosen = self.resolve(chosen)
         instead = sorted({self.resolve(t) for t in ([instead_of] if isinstance(instead_of, str)
                                                     else instead_of)} - {chosen})
-        rec = self.record(chosen)
-        entry = {"by": by, "instead_of": instead, "reason": reason, "when": when or _now()}
-        history = []
-        if rec.get(NAME):
-            prior = dict(rec[NAME])
-            entry["instead_of"] = sorted(set(entry["instead_of"]) | set(prior.get("instead_of", [])))
-            history = prior.pop("history", []) + [prior]
+        head = self._head(chosen)
+        if head in instead:
+            # `chosen` now sits under a loser's name: it becomes the name itself
+            self.record(chosen)["to"] = None
+            name = chosen
+        else:
+            name = head                  # chosen, or the label it stands under
+            instead = [l for l in instead if l != name]
         for loser in instead:
-            lost = self._records.get(loser, {}).pop(NAME, None)
-            if lost:
-                history = history + lost.pop("history", []) + [{**lost, "was": loser}]
-        if history:
-            entry["history"] = history
-        rec[NAME] = entry
+            if self.is_refused(loser, chosen):
+                raise ValueError(f"{loser!r} -> {chosen!r}: the curator keeps the two apart")
+        for loser in instead:
+            for t, r in self._records.items():
+                if r.get("to") == loser and SPELLING not in r:
+                    r["to"] = name
+            rec = self.record(loser)
+            rec.update({"to": name, "method": "curator", "confidence": 1.0})
+            rec.pop("retired", None)
+            j = self.judgement(loser, chosen)
+            cur = j.get("curator") or {}
+            if cur.get("verdict") == "same_class" and cur.get("by") == by:
+                continue                 # this choice is on record already
+            if j.get("curator"):
+                j.setdefault("curator_history", []).append(j["curator"])
+            j["curator"] = {"verdict": "same_class", "by": by, "when": when,
+                            "reason": reason or f"chose {chosen!r} as the name"}
         self._dirty()
 
+    def _head(self, term: str) -> str:
+        """The name of `term`'s cluster: follow `to` to its end."""
+        seen = set()
+        while (self._records.get(term) or {}).get("to") and term not in seen:
+            seen.add(term)
+            term = self._records[term]["to"]
+        return term
+
+    def heads(self) -> set[str]:
+        """Every term that is the name of a cluster with at least one member."""
+        return {r["to"] for r in self._records.values() if r.get("to") and SPELLING not in r}
+
     def named(self) -> set[str]:
-        """Every term a person chose as the name of its cluster."""
-        return {t for t, r in self._records.items() if r.get(NAME) and SPELLING not in r}
+        """Every cluster name a person chose (rule 85).
+
+        A name a member points at with the curator's `same_class` on that pair:
+        the curator saw `member -> name` and kept it, or put it there. Derived,
+        never stored -- a stored name section and `to` could, and on 2026-10-24
+        did, say different things.
+        """
+        out = set()
+        for r in self._records.values():
+            to = r.get("to")
+            if to and SPELLING not in r and \
+                    ((r.get("pairs") or {}).get(to, {}).get("curator") or {}).get("verdict") == "same_class":
+                out.add(to)
+        return out
+
+    def split_synonyms(self) -> list[tuple[str, str]]:
+        """Pairs the curator called `same_class` that sit in two clusters. Must be empty.
+
+        On 2026-10-25 there were 237: mappings the curator had confirmed,
+        withdrawn later by a step that did not ask -- pass 1 dissent, a target
+        respelled away, a spelling rule -- so `Klebsiella` and `Klebsiella
+        spp.` were two classes.
+        """
+        out = set()
+        for t, r in self._records.items():
+            if SPELLING in r:
+                continue
+            for c, j in (r.get("pairs") or {}).items():
+                if (j.get("curator") or {}).get("verdict") != "same_class":
+                    continue
+                a, b = self._head(t), self._head(self.resolve(c))
+                if a != b:
+                    out.add(tuple(sorted((a, b))))
+        return sorted(out)
 
     def locked_mappings(self) -> list[tuple[str, str]]:
         """Live mappings onto a target the curator keeps apart. Must be empty.
@@ -1075,17 +1204,9 @@ class TermMappingAndGate:
             report["target conflicts"].append((term, keep["to"], other["to"]))
         elif other.get("to") and not keep.get("to"):
             keep["to"] = other["to"]
-        # A name decision travels with its term; two spellings that each
-        # carried one keep the later, the other as history.
-        if other.get(NAME):
-            mine_n, theirs_n = keep.get(NAME), other[NAME]
-            if not mine_n:
-                keep[NAME] = theirs_n
-            else:
-                first, last = sorted([mine_n, theirs_n], key=lambda e: e.get("when") or "")
-                keep[NAME] = {**last, "instead_of": sorted(set(first.get("instead_of", []))
-                                                           | set(last.get("instead_of", []))),
-                              "history": last.get("history", []) + first.pop("history", []) + [first]}
+        # Superseded name choices are history (rule 85): a merge keeps both sides'.
+        if other.get("name_history"):
+            keep["name_history"] = keep.get("name_history", []) + other["name_history"]
         for field in ("confidence", "method", "retired"):
             if field in other and field not in keep:
                 keep[field] = other[field]
@@ -1165,9 +1286,6 @@ class TermMappingAndGate:
                 if new_target != target:
                     rec["to"] = new_target
                     report["targets renamed"] += 1
-            if rec.get(NAME):
-                rec[NAME]["instead_of"] = sorted({look(t) for t in rec[NAME].get("instead_of", [])}
-                                                 - {new_term})
             pairs = rec.get("pairs") or {}
             new_pairs: dict[str, dict] = {}
             for canonical, judgement in pairs.items():
@@ -1222,7 +1340,7 @@ class TermMappingAndGate:
             if not rec["pairs"] and not any(rec.get(s) for s in
                                             ("gate", "rejected", "relations", "senses",
                                              CATEGORY, "gate_withdrawn",
-                                             "spelling_reversed", NAME)):
+                                             "spelling_reversed", "name_history")):
                 empty.append(term)
         for term in empty:
             del merged[term]
@@ -1286,15 +1404,28 @@ class TermMappingAndGate:
         verdicts the pair had cost credits to obtain and let the next build ask
         for them again. Retiring keeps the record and empties the mapping, so
         the prune is itself on the record.
+
+        A mapping that carries the curator's `same_class` is never retired by
+        a step (rule 85): on 2026-10-25, 237 confirmed pairs had been split
+        this way -- 111 by pass 1 dissent, 73 by a target respelled away. Such
+        terms are skipped and named on stdout; only the curator undoes them
+        (`refuse`).
         """
         retired = 0
+        kept = []
         for t in terms:
             rec = self._records.get(t)
             if rec is None or not rec.get("to"):
                 continue
+            if ((rec.get("pairs") or {}).get(rec["to"], {}).get("curator") or {}).get("verdict") == "same_class":
+                kept.append((t, rec["to"]))
+                continue
             rec["to"] = None
             rec["retired"] = {"reason": reason, "when": _now()}
             retired += 1
+        if kept:
+            print(f"[mapping] {len(kept)} mapping(s) NOT retired ({reason!r}): the curator "
+                  f"called each pair same_class -- " + ", ".join(f"{t!r} -> {c!r}" for t, c in kept[:5]))
         if retired:
             self._dirty()
             self.save()

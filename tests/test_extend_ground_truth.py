@@ -269,15 +269,15 @@ def test_export_vocabulary_covers_the_extractor():
 
 
 def test_predicate_vocabularies_agree():
-    """StoreCleaner deletes any predicate not in ALLOWED_PREDICATES, so a
-    predicate missing there never even reaches the exporter."""
+    """The store's view leaves out any predicate not in ALLOWED_PREDICATES, so
+    a predicate missing there never even reaches the exporter."""
     from config.settings import ALLOWED_PREDICATES
 
     allowed = set(ALLOWED_PREDICATES) - {"is_a"}
     assert allowed - set(RELATION_IRIS) == set(), (
         "ALLOWED_PREDICATES permits a predicate the exporter has no IRI for")
     assert set(RELATION_IRIS) - allowed == set(), (
-        "the exporter knows a predicate StoreCleaner would strip from the store")
+        "the exporter knows a predicate the view would leave out")
 
 
 def test_every_export_iri_is_a_real_ontology_iri():

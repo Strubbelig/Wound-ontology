@@ -123,7 +123,6 @@ def main(argv: list[str]) -> int:
             print(f"[apply] undecided synonym, not written: {term!r} = {r['parent']!r}")
     gt._dirty()
     gt.save()
-    print(f"[apply] gate lists re-exported: {p.export_gate_lists()}")
 
     g2 = Orchestrator().term_mapper._term_mapping
     lost = []

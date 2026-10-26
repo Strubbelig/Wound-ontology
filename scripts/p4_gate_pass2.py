@@ -89,17 +89,15 @@ def main(argv: list[str]) -> int:
             return False                      # already answered; --readjudicate is not this
         verdict, source = gt.gate_verdict(term)
         if only == "blocked":
-            # what the BLOCKER currently drops, not what the gate says `out`.
-            # Only 150 of the 4,138 blocked store names are blocked by the exact
-            # list; 3,988 are blocked by one of the 69 KEYWORDS, and that is
-            # where the damage is -- the `pain` keyword alone takes 429 names,
-            # `wound pain` and `Severe distal pain` among them, while WONT
-            # defines `painful` as a degree of wound pain. A keyword is a rule,
-            # so it is not in the gate and cannot be argued with there; a pass2
-            # verdict of `in` is how a term gets out from under one.
-            return p.cleaner.blocker.is_blocked(term)
+            # what the gate puts out on a RULE alone (an imported list entry, a
+            # keyword, the noise rule): no author read it, so a pass2 verdict is
+            # how such a term gets a reason. Until 2026-10-25 this asked the
+            # Blocker, where 3,988 of 4,138 blocked names came from a keyword;
+            # those keyword decisions are rule verdicts on the term now (rule 86).
+            eff, src = gt.effective_gate_verdict(term)
+            return eff == "out" and src == "rule"
         if only == "undecided":
-            return not verdict and not p.cleaner.blocker.is_blocked(term)
+            return not gt.effective_gate_verdict(term)[0]
         return True
 
     if only == "unaudited":

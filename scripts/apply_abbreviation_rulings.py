@@ -146,7 +146,6 @@ def main(argv: list[str]) -> int:
         gt.gate(t, curator={"verdict": "out", "when": when, "by": BY, "reason": why})
     gt._dirty()
     gt.save()                                   # once: see expand_abbreviations.py
-    print(f"[abbr2] gate lists re-exported: {p.export_gate_lists()}")
 
     from wound_ontology.data_manager.data_manager import DataManager
     from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate

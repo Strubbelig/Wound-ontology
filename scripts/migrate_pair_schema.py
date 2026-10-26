@@ -343,7 +343,7 @@ def plan(records: dict, anchors: set[str]) -> dict:
 
 def apply(gt, p: dict) -> dict:
     """Write the plan into the records. Returns what was done."""
-    from wound_ontology.mappers.term_mapping_and_gate import NAME
+    # (NAME is gone since 2026-10-25, rule 85; this script ran once on 2026-10-24)
     recs = gt.records
     done = Counter()
     for term, canonical in p["checks"]:

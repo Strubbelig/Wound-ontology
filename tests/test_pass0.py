@@ -638,6 +638,25 @@ def test_diabetes_mellitus_is_a_name_not_a_modifier(label):
     # and never a word the curator left alone.
     ("small wounds", "small wound"),
     ("giant cell", "giant cell"),
+    # 2026-10-25: the same words compared, superlative, as an adverb,
+    ("Poorer outcomes", "outcome"),
+    ("worst prognosis", "prognosis"),
+    ("Severely burned patients", "burned patient"),
+    ("excess exudate", "exudate"),
+    # and `large-scale` whole,
+    ("large-scale studies", "study"),
+    ("Large-scale, randomized trial", "randomized trial"),
+    # but not `poorly` (it would turn the name into its opposite), not a
+    # fixed name, and never at a hyphen: that is one compound modifier.
+    ("poorly controlled diabetes", "poorly controlled diabetes"),
+    ("best practice", "best practice"),
+    ("moderately differentiated squamous cell carcinoma",
+     "moderately differentiated squamous cell carcinoma"),
+    ("extensively drug-resistant isolate", "extensively drug-resistant isolate"),
+    ("large-vessel vasculitis", "large-vessel vasculitis"),
+    ("advanced-stage pressure ulcer", "advanced-stage pressure ulcer"),
+    ("standard-of-care dressing", "standard-of-care dressing"),
+    ("Larger-scale validation", "larger-scale validation"),
 ])
 def test_a_leading_grade_or_praise_is_stripped(label, expected):
     assert normalise(label).name == sentence_case(expected)

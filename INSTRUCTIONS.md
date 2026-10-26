@@ -989,6 +989,8 @@ rename rests on — plus
 `test_a_cache_written_under_the_old_spelling_still_reads`.
 
 ## 26. A term the ontology has a class for is not methodology
+*Superseded 2026-10-25 by rule 86: the lists and the Blocker are deleted; what they decided is a verdict in TermMappingAndGate.*
+
 
 *Decided 2026-09-08.*
 
@@ -1046,6 +1048,8 @@ Enforced by: `tests/test_blocklist_respects_the_ontology.py`, in particular
 `test_no_curated_class_label_is_blocked_in_effect`.
 
 ## 27. A name is matched whole, never as a substring
+*Superseded 2026-10-25 by rule 86: the lists and the Blocker are deleted; what they decided is a verdict in TermMappingAndGate.*
+
 
 *Decided 2026-09-08.*
 
@@ -1116,6 +1120,8 @@ ladder and must move in step (`test_score_and_is_blocked_agree_about_precedence`
 `test_a_grade_code_is_not_a_duration`.
 
 ## 29. An entry belongs in the list whose matching rule it can carry
+*Superseded 2026-10-25 by rule 86: the lists and the Blocker are deleted; what they decided is a verdict in TermMappingAndGate.*
+
 
 *Decided 2026-09-09.*
 
@@ -1158,6 +1164,8 @@ claim from a target that is gone. Judge shape, never count.
 Enforced by: `tests/test_curation_list_shape.py`.
 
 ## 30. A write to a config file is verified, never assumed
+*Superseded 2026-10-25 by rule 86: the lists and the Blocker are deleted; what they decided is a verdict in TermMappingAndGate.*
+
 
 *Decided 2026-09-09.*
 
@@ -1742,6 +1750,9 @@ matching scoped to the whole sheet, and an exact term that stops winning.
 of the three readers dropping `keep_default_na=False`.
 
 ## 40. Whether a term belongs is a verdict on its record, beside where it belongs
+
+*Since 2026-10-25 (rule 86) the record is the only place: the two exact lists it was exported to, the keyword lists and the Blocker are deleted.*
+
 
 *Decided 2026-09-25. Extends rule 38 to the second question asked about a term.*
 
@@ -2811,6 +2822,30 @@ Enforced by: `utils.normalise._strip_leading_adjectives`, `LEADING_ADJECTIVES`,
 `LEADING_ADJECTIVE_EXCEPTIONS`; `test_a_leading_grade_or_praise_is_stripped`
 (14), mutation-checked against 3 breakages (the whole rule, the exceptions, the
 function-word guard).
+
+**Extended 2026-10-25 (curator: "diese ganzen adjektive wie poorer oder severly
+sollten eigentlich schon lange gelöscht sein"; "dann lösch neben large auch
+large-scale").** The same words compared, superlative or as an adverb are
+stripped too (`_GRADED_FORMS`: `poorer`, `worse`, `worst`, `best`, `larger`,
+`milder`, `severely`, `mildly`, `moderately`, `markedly`, `extensively`,
+`potentially`, `appropriately`, `excess`), and `large-scale` whole
+(`LEADING_COMPOUNDS`). Not `poorly`: `poorly controlled diabetes` and `poorly
+vascularized tissue` would become their opposite. Not `newly`, `currently`,
+`conventionally`: they do not grade. New exceptions are fixed names: `worst
+itch` (a scale), `best corrected visual acuity`, `best practice`, `BEST-CLI`,
+`moderately differentiated` (a tumour grade), `extensively drug-resistant`,
+`largest Lyapunov exponent`, `larger wound` (as `large wound`).
+
+**Never at a hyphen.** A hyphen makes one compound modifier, not a grade and
+its noun. The rule cut there from 2026-09-28 to 2026-10-25, and 81 spellings
+had become names nobody wrote: `Vessel vasculitis` for `large-vessel
+vasculitis`, `Stage pressure ulcer`, `Of-care dressing`, `To-moderate
+sarcopenia`. Repaired by `scripts/apply_adjective_forms_2026_10_25.py`: 50 cut
+names renamed back, 7 kept where the abstracts wrote the short form too (`Risk`,
+`Stage`) with only the hyphenated spellings freed. Two curator verdicts of the
+same morning that kept a graded term apart from its base (`Burn patient` broader
+than `Severely burned patient`) moved to `curator_history`: the rule makes them
+one class. Tested in `test_a_leading_grade_or_praise_is_stripped`.
 
 
 ## 55. A rebuild never undoes a curator's mapping, under any spelling
@@ -4052,6 +4087,8 @@ formierung gehen. danach sollte ein term aus dem cluster herausgepickt werden."*
   a person's choice, then the corpus count (`build_from_embeddings`,
   `resolve_chains`, pass 0). A later choice for the same cluster supersedes the
   earlier, which stays as history.
+  *Superseded 2026-10-25 by rule 85: there is no `name` section; the name is
+  `to`, and that a person chose it is their `same_class` on the pair.*
 * **A lock (`refused`) says "not this cluster" and why**, in `cause` from
   `LOCK_CAUSES`: curator, rule 58, target removed, placement refused. A
   refusal writes a relation only when one was said (`refuse(verdict=)`).
@@ -4125,6 +4162,103 @@ mapped onto the full form, the rule-58 `out` withdrawn: `BMP-2`, `FGF-23`,
 `MAPK-signaling`, `PANoptosome`, `miRNA-194`). Backups
 `data/backup/term_mapping_before_locks_to_verdicts_2026-10-25_08-06.json` and
 `..._before_rule58_locks_2026-10-25_08-11.json`.
+
+## 85. The name of a cluster is `to`; a person's choice is their `same_class` on the pair
+
+*Decided 2026-10-25, by the curator: "ich finde den key name für vom Autor
+gewählte Begriffe sinnlos. das ist schon to" and "nachvollziehbar bleibt es auch
+wenn du an to die entscheidungsmetadaten knüpfst".*
+
+* **No `name` section.** The name of a cluster is the term its members' `to`
+  points at. That a person chose it is the curator's `same_class`, with `by`,
+  `when` and `reason`, on each loser's pair onto it (`decide_name`). `named()`
+  is derived from those pairs and never stored. On load, an old `name` section
+  becomes that pair verdict; a choice it had replaced stays in `name_history`.
+* **A name stays the name.** `canonical_rank(term, anchors, freq, named,
+  heads)` ranks ontology label, a person's choice, the current name
+  (`heads()`), then the corpus count. A rebuild does not rename a cluster
+  because a member grew more frequent; only an ontology label or a person does.
+* **No automatic step withdraws a mapping the curator confirmed.** `retire`
+  skips a mapping that carries the curator's `same_class` and prints it.
+* **`split_synonyms()` must be empty**: no pair the curator called
+  `same_class` may sit in two clusters. The one standing exception is two
+  ontology labels naming the same thing (`Ulcus cruris venosum` / `Venous leg
+  ulcer`, both WONT labels): the term dict cannot map a label away (rule 36),
+  so that is a finding for whoever edits WONT.
+
+The failure: on 2026-10-25, 237 pairs the curator had called `same_class` sat
+in two clusters -- withdrawn later by pass 1 dissent, by a prune that did not
+follow a respelling, by spelling and category sweeps -- so `Klebsiella` and
+`Klebsiella spp.` would have been two classes. And a stored `name` and `to`
+could say different things. Repaired by `scripts/rejoin_confirmed_synonyms.py`
+after Claude read every planned merge: 17 were wrong, and the wrong link was
+mostly not the confirmed pair but a mapping beside it (`Gram-negative bacilli`
+= `Gram-negative bacillus` is right; `Gram-negative bacillus` -> `Bacillus
+species` was not). The curator's answers to those and to 9 held cases are in
+`scripts/apply_rejoin_decisions_2026_10_25.py`; then 205 merges. Backups
+`data/backup/term_mapping_before_rejoin_decisions_2026-10-25_18-29.json` and
+`..._before_rejoin_2026-10-25_18-33.json`. Tested in `tests/test_pair_schema.py`.
+
+## 86. The concept store is never changed; TermMappingAndGate holds every decision, and there are no lists
+
+*Decided 2026-10-25, by the curator: "Conceptstore ist der concept store und
+wird nie verändert, kein blocking, gating oder irgendwas und auch keine liste.
+blocker wird gelöscht termmappingandgate hält alle entscheidungen und schluckt
+die listen wenn listeneinträge im termmapping fehlen. alle listen werden
+gelöscht. die statistikbegriffe sind teil des mapping. weiterhin versucht
+SapBERT, vorauszuwählen, was passt und was nicht." -- "pass1, pass2 etc. des
+gating bleiben erhalten." -- "(a)" -- "der bereinigte store soll termmapping
+nutzen und ein view des concept store sein, der sich bei jedem nutzen neu
+berechnet. eine property eben." -- "store cleaner und mapping cleaner kannst
+du glaube ich auch löschen".*
+
+* **The concept store stores every extracted string.** No list and no rule
+  filters at extraction (`add_llm_extracts`, `_extract_schema_constrained`): whether a
+  string belongs is a verdict, never a gap in the evidence.
+* **The cleaned store is a view**: `ConceptStore.cleaned`, recomputed on every
+  read. It is the evidence read through TermMappingAndGate -- names resolved
+  by the mapping, terms and relation targets the gate puts out left out,
+  rejected cells left out -- plus two rules applied live, never written: a
+  relation whose predicate the schema does not allow (`allowed_predicates`)
+  is left out, and an entity nothing affirms anywhere in the store is left
+  out (a denial stays where the term is asserted elsewhere).
+* **Scope is the gate's effective verdict and nothing else**: `curator`, then
+  `pass2` (the model), `pass1` (SapBERT's nearest neighbour at 0.95), `rule`.
+  Pooled over the cluster, so one spelling of an in-scope concept is not
+  dropped on its own (it was: `Plain radiograph`, a spelling of `Plain
+  X-ray`, in one abstract).
+* **One rule over strings stays, in code**: `noise_rule` (a number with a
+  unit, or no letter at all). A new term that matches gets `out` from the
+  `rule` source in `scripts/p4_gate_pass1.py`, before SapBERT; a curator's
+  `in` beats it (`NaCl 0.9%`).
+* **Deleted** (to `data/removed_code/*_removed_2026-10-25.py`):
+  `config/blocklist.py`, `config/whitelist.py`, `config/suspicious_list.py`,
+  `store/blocker.py`, `store/term_lists.py`, `store/store_cleaner.py`,
+  `store/base_cleaner.py`, `store/cluster_promoter.py`,
+  `mappers/mapping_cleaner.py`; the orchestrator's `export_gate_lists`,
+  `gate_lists_drift`, `gate_overrides`, `review_mapping`, `review_lists`,
+  `cluster_blocklist`, `recluster_lists`, `run_promote_clusters`,
+  `run_clean_store`. `run_apply_mapping` only sets the mapping the view reads.
+
+How the lists were swallowed (`data/removed_code/absorb_lists_2026_10_25_spent_2026-10-25.py`,
+backup `data/backup/term_mapping_before_absorb_lists_2026-10-25_19-23.json`):
+every entry of the two exact lists already had a verdict of its own; 238
+keyword and suspicious entries without a record got one (the statistics
+words `out`, the whitelist keywords `in`, the suspicious ones none); what the
+keywords decided about store terms became a `rule` verdict naming the keyword
+(51 kept out, e.g. `Standardized form` by `standardized`; 41 let in over the
+old list entry, e.g. `Maggot debridement therapy`, the old verdict in
+`rule_history`); 184 measurements got the noise rule. The view through
+TermMappingAndGate alone then equalled the Blocker's term for term, checked
+before the save and after the read-back.
+
+The failure that made it necessary: the lists were a view of the gate since
+2026-09-25 and still decided things. The Blocker read a whitelist keyword
+ahead of the gate's own `rule` verdict, so `Abusive head injury` was `out` on
+its record and `in` in every view, and nothing on the record said why; the
+store dropped blocklisted strings at extraction, so an `out` withdrawn later
+had nothing to bring back; and a new domain would have needed lists of its
+own, where the scope passes need only its description.
 
 ## Adding to this file
 

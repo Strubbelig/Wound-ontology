@@ -170,7 +170,6 @@ def main(argv: list[str]) -> int:
             print(f"[judgement] category of {term!r}: {gt.set_category(term, cls, source=TERM_RULING, note=info['why'])}")
     gt._dirty()
     gt.save()
-    print(f"[judgement] gate lists re-exported: {p.export_gate_lists()}")
 
     g2 = Orchestrator().term_mapper._term_mapping
     lost = []

@@ -166,8 +166,9 @@ def pass0_renames(
             # `antibiofilm` are not in a general-English list either, and the
             # corpus is entitled to prefer them.
             top = max(ranked.values())
-            # anchor, name decision, frequency: the first three of the rank
-            tied = [m for m, r in ranked.items() if r[:3] == top[:3]]
+            # anchor, name decision, cluster name, frequency: the first four of
+            # the rank (`heads` joined it 2026-10-25; pass 0 passes none)
+            tied = [m for m, r in ranked.items() if r[:4] == top[:4]]
             if len(tied) > 1:
                 fewest = min(invented_words(m) for m in tied)
                 tied = [m for m in tied if invented_words(m) == fewest]

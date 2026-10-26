@@ -46,7 +46,6 @@ def main(argv):
     for k in out:
         gt.gate(k, curator={"verdict": "out", "when": when, "by": BY, "reason": "complication is an epistemic label"})
     gt._dirty(); gt.save()
-    print(f"[mild] gate lists re-exported: {p.export_gate_lists()}")
     g2 = Orchestrator().term_mapper._term_mapping
     lost = [(k, c) for k, c in refuse if not g2.peek(k, c).get("refused")] + \
            [k for k in out if g2.effective_gate_verdict(k)[0] != "out"]
