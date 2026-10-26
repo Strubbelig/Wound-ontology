@@ -69,37 +69,23 @@ def _sense_key(name: str) -> str:
     return smart_title(name.strip())
 
 
-def _apply_senses(entities: dict, senses: dict) -> dict:
-    """Rename each split term, in ONE abstract, to the sense that abstract typed
-    it as; its appearances as a target in the same abstract follow. A mention
-    typed with no category, or with two, keeps the unsplit name."""
-    chosen = {}
-    for entity, attrs in entities.items():
-        split = senses.get(_sense_key(entity))
-        if split:
-            label = split.get(_sense_of(attrs))
-            if label:
-                chosen[entity] = label
-    if chosen:
-        # a target is the same term seen from the other side (rule 13 again)
-        by_key = {_sense_key(e): label for e, label in chosen.items()}
-        for attrs in entities.values():
-            for triple in attrs:
-                if ":" in triple:
-                    tgt = triple.split(":", 1)[1].strip()
-                    if tgt not in chosen and _sense_key(tgt) in by_key:
-                        chosen[tgt] = by_key[_sense_key(tgt)]
-    if not chosen:
-        return entities
-    out: dict[str, dict[str, float]] = {}
-    for entity, attrs in entities.items():
-        dest = out.setdefault(chosen.get(entity, entity), {})
-        for triple, value in attrs.items():
-            if ":" in triple:
-                pred, tgt = triple.split(":", 1)
-                triple = f"{pred.strip()}: {chosen.get(tgt.strip(), tgt.strip())}"
-            dest[triple] = max(dest.get(triple, 0.0), value)
-    return out
+def _senses_here(entities: dict, name, splits: dict) -> tuple[dict[str, str], dict[str, str]]:
+    """Which name each split term (rule 87) takes in ONE abstract: the one for
+    the category this abstract typed it as. Returns `(by raw entity, by term
+    key)`; the second is for targets, since a target is the same term seen
+    from the other side (rule 13). A mention typed with no category, or with
+    two, keeps the unsplit name."""
+    own: dict[str, str] = {}
+    by_key: dict[str, str] = {}
+    for raw, attrs in entities.items():
+        if not isinstance(attrs, dict):
+            continue
+        key = _sense_key(name(raw)[1])
+        label = (splits.get(key) or {}).get(_sense_of(attrs))
+        if label:
+            own[raw] = label
+            by_key[key] = label
+    return own, by_key
 
 def _category_chain(cat: str) -> set[str]:
     from wound_ontology.llm.extraction_models import CATEGORY_PARENT
@@ -222,7 +208,8 @@ class ConceptStore:
 
     Nothing in it is rewritten after it arrives. Every decision about a TERM --
     how it is spelled now, what it maps onto, whether it is rejected, which of
-    its relations are rejected, how it splits into senses -- lives on that
+    its relations are rejected, which category it names, how it splits by
+    category -- lives on that
     term's record in the term mapping and gate dict (`self.terms`). `records()`
     is the evidence resolved through those records: raw string -> spelling ->
     mapping -> verdicts. A rename is therefore a line in the term dict, not an
@@ -449,8 +436,10 @@ class ConceptStore:
         one name in one abstract merge, the strongest evidence winning.
         """
         name = self.resolver(mapped=mapped)
-        senses = {_sense_key(t): r["senses"] for t, r in self.terms.records.items()
-                  if r.get("senses")}
+        # Terms split by category (rule 87): each mention takes the name for
+        # the category its own abstract gave it, BEFORE the verdicts are read,
+        # so the scope of `Biopsy material` decides about its mentions.
+        splits = {_sense_key(t): s for t, s in self.terms.splits().items()}
         # Decided categories (rule 57), by the name the view shows and, when the
         # view stops at the spelling, by the name the term maps to as well: a
         # synonym names what its canonical names.
@@ -475,11 +464,16 @@ class ConceptStore:
                 continue
             out: dict[str, dict[str, float]] = {}
             decided: dict[str, str] = {}
-            for raw, attrs in rec.get("entities", {}).items():
+            ents = rec.get("entities", {})
+            own, by_key = _senses_here(ents, name, splits) if splits else ({}, {})
+            for raw, attrs in ents.items():
                 if not isinstance(attrs, dict):
                     continue
                 spelled, final = name(raw)
                 owners = (spelled, final) if spelled != final else (final,)
+                if raw in own:
+                    final = name(own[raw])[1]
+                    owners = tuple(dict.fromkeys(owners + (final,)))
                 if not include_rejected and (self._verdict_on(*owners)
                                              or any(map(out_of_scope, owners))):
                     continue
@@ -495,6 +489,10 @@ class ConceptStore:
                         t_spelled, t_final = name(tgt.strip())
                         targets = ((t_spelled, t_final) if t_spelled != t_final
                                    else (t_final,))
+                        sense = by_key.get(_sense_key(t_final)) if by_key else None
+                        if sense:
+                            t_final = name(sense)[1]
+                            targets = tuple(dict.fromkeys(targets + (t_final,)))
                         if not include_rejected and (
                                 any(map(out_of_scope, targets))
                                 or self._cell_verdict(owners, pred, targets)):
@@ -511,7 +509,7 @@ class ConceptStore:
                 out = {e: a for e, a in out.items() if e in affirmed}
             if decided:
                 out = _apply_categories(out, decided)
-            yield key, (_apply_senses(out, senses) if senses else out)
+            yield key, out
 
     @property
     def cleaned(self) -> dict[str, dict[str, dict[str, float]]]:
@@ -550,16 +548,29 @@ class ConceptStore:
         """Where a name in the view comes from: the strings the abstracts wrote
         that resolve to it, each with its PMIDs and its spelling steps, and the
         mapping entry that sent it there if one did."""
+        from wound_ontology.mappers.term_mapping_and_gate import target_of
         resolve = self.resolver(mapped=True)
         aliases = self.terms.aliases()
+        splits = {_sense_key(t): s for t, s in self.terms.splits().items()}
         found: dict[str, set[str]] = {}
         for key, rec in self.dict.items():
             if key == self.DECISIONS or not isinstance(rec, dict):
                 continue
-            for raw, attrs in rec.get("entities", {}).items():
-                strings = [raw] + [t.split(":", 1)[1].strip() for t in attrs if ":" in t]
-                for s in strings:
-                    if resolve(s)[1] == name:
+            ents = rec.get("entities", {})
+            own, by_key = _senses_here(ents, resolve, splits) if splits else ({}, {})
+            for raw, attrs in ents.items():
+                if not isinstance(attrs, dict):
+                    continue
+                final = resolve(own[raw])[1] if raw in own else resolve(raw)[1]
+                if final == name:
+                    found.setdefault(raw, set()).add(key)
+                for t in attrs:
+                    if ":" not in t:
+                        continue
+                    s = t.split(":", 1)[1].strip()
+                    t_final = resolve(s)[1]
+                    sense = by_key.get(_sense_key(t_final))
+                    if (resolve(sense)[1] if sense else t_final) == name:
                         found.setdefault(s, set()).add(key)
         out = {}
         for raw, keys in sorted(found.items()):
@@ -570,10 +581,11 @@ class ConceptStore:
                 s = aliases[s]["to"]
             spelled = resolve(raw)[0]
             entry = self.terms.records.get(spelled) or {}
+            to = target_of(entry)
             out[raw] = {"documents": sorted(keys), "spelling": steps,
                         "mapped_by": ({"entry": spelled, "to": entry.get("to"),
                                        "method": entry.get("method"),
-                                       "pair": (entry.get("pairs") or {}).get(entry.get("to"))}
+                                       "pair": (entry.get("pairs") or {}).get(to) if to else None}
                                       if spelled != name and entry.get("to") else None)}
         return out
 
@@ -644,6 +656,7 @@ class ConceptStore:
         if missing:
             print(f"[ConceptStore] {len(missing)} cell(s) rejected by {by!r} are not "
                   f"in the store and were skipped: {missing[:5]}")
+        present = self._not_decided(present, by)
         for entity, triple in sorted(present):
             self.terms.record(entity).setdefault("relations", {})[triple] = \
                 self._stamp(by, note)
@@ -651,6 +664,19 @@ class ConceptStore:
             self.terms._dirty()
             self.terms.save()
         return len(present)
+
+    def _not_decided(self, cells: set[tuple[str, str]], by: str) -> set[tuple[str, str]]:
+        """`cells` without the ones a person decided (a decided `is_a`, rule 87):
+        a verdict by `by` does not overwrite that decision, and is reported."""
+        from wound_ontology.mappers.term_mapping_and_gate import DECIDED
+        records = self.terms.records
+        held = {(e, t) for e, t in cells
+                if ((records.get(self.terms.resolve(e)) or {}).get("relations") or {})
+                .get(t, {}).get("status") == DECIDED}
+        if held:
+            print(f"[ConceptStore] {len(held)} cell(s) NOT marked by {by!r}: a person "
+                  f"decided each as the term's category -- {sorted(held)[:5]}")
+        return cells - held
 
     def repredicate_cells(self, cells: dict, *, by: str, note: str = "") -> int:
         """Read single (entity, triple) cells under another predicate:
@@ -663,6 +689,7 @@ class ConceptStore:
         if missing:
             print(f"[ConceptStore] {len(missing)} cell(s) repredicated by {by!r} are not "
                   f"in the store and were skipped: {missing[:5]}")
+        present = self._not_decided(present, by)
         for entity, triple in sorted(present):
             stamp = self._stamp(by, note)
             stamp.update({"status": self.REPREDICATED, "to": cells[(entity, triple)]})
@@ -683,7 +710,9 @@ class ConceptStore:
             if (r.get("rejected") or {}).get("by") == by:
                 lifted["entity_verdicts"][t] = r.pop("rejected")
             rel = r.get("relations") or {}
-            for tr in [tr for tr, v in rel.items() if v.get("by") == by]:
+            # a decided category is not a verdict on a cell (rule 87)
+            for tr in [tr for tr, v in rel.items()
+                       if v.get("by") == by and v.get("status") != "decided"]:
                 lifted["cell_verdicts"].setdefault(t, {})[tr] = rel.pop(tr)
             if "relations" in r and not r["relations"]:
                 r.pop("relations")
@@ -1146,8 +1175,13 @@ class ConceptStore:
         reconciled instead — there is one concept there, described at two
         granularities.
 
+        The split is written as the term's `to`, one name per category, and
+        each name gets a record of its own (rule 87). A person names the senses
+        instead where the generated label reads badly (`Biopsy procedure`,
+        `Biopsy material`). A term that maps onto another name is not split.
+
         Returns a report: {split: {term: {category: new_label}}, mentions: n,
-        unsensed: {term: count}}.
+        unsensed: {term: count}, mapped: {term: its name}}.
         """
         from wound_ontology.llm.extraction_models import COARSE_CATEGORIES
         from wound_ontology.utils.string_utils import smart_title
@@ -1186,12 +1220,23 @@ class ConceptStore:
                 else:
                     report["unsensed"][key] = report["unsensed"].get(key, 0) + 1
 
-        # The senses are a decision about the TERM, so they go on its record;
-        # the view renames each mention by the category its own abstract gave
-        # it (rule 51). Nothing in the evidence is rewritten.
-        for term, senses in report["split"].items():
-            self.terms.record(term)["senses"] = senses
-        self.terms._dirty()
+        # The split is a decision about the TERM, so it goes on its record as
+        # where the term points, one name per category (rule 87); the view
+        # renames each mention by the category its own abstract gave it
+        # (rule 51). Nothing in the evidence is rewritten.
+        from wound_ontology.mappers.term_mapping_and_gate import target_of
+        for term, senses in list(report["split"].items()):
+            standing = target_of(self.terms.records.get(self.terms.resolve(term)) or {})
+            if standing:
+                # mapped onto another name: that name is what the view shows
+                report.setdefault("mapped", {})[term] = standing
+                del report["split"][term]
+                continue
+            self.terms.split_by_category(term, senses, method="category split")
+        if report.get("mapped"):
+            print(f"[ConceptStore] {len(report['mapped'])} irreconcilable term(s) NOT "
+                  f"split: each maps onto another name -- "
+                  f"{dict(sorted(report['mapped'].items())[:8])}")
         self.terms.save()
         print(f"[ConceptStore] split {len(report['split'])} irreconcilable term(s) "
               f"into {sum(len(v) for v in report['split'].values())} sense(s) "

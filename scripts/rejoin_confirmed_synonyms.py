@@ -39,6 +39,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "src"))
 from dotenv import load_dotenv  # noqa: E402
 load_dotenv(ROOT / ".env")
+from wound_ontology.mappers.term_mapping_and_gate import split_of  # noqa: E402
 
 
 def chosen_names(live: Path, gt) -> set[str]:
@@ -80,14 +81,15 @@ def plan(gt, anchors: set[str], freq: dict[str, int], chosen: set[str] = frozens
     # a name a person chose explicitly outranks one only derived from a kept
     # mapping (which includes the bulk approval of 2026-09-25)
     named, heads = set(chosen), gt.heads() | gt.named()
+    decided = gt.categories()
     merges, held = [], []
     for comp in comps.values():
         members = sorted(comp)
         labels = [m for m in members if m.lower() in anchors]
-        cats = {(gt.records.get(m) or {}).get("category", {}).get("verdict") for m in members} - {None}
+        cats = {(decided.get(m) or {}).get("verdict") for m in members} - {None}
         apart = [(x, y) for x in members for y in members
                  if x < y and (gt.is_refused(x, y) or gt.is_refused(y, x))]
-        senses = [m for m in members if (gt.records.get(m) or {}).get("senses")
+        senses = [m for m in members if split_of(gt.records.get(m) or {})
                   or m.endswith(" (role)")]
         why = []
         if len(labels) > 1:

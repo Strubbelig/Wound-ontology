@@ -67,7 +67,8 @@ TERM_NOTES: dict[str, dict] = {
     "hospital stay": {"category": "temporal region"},
     "recurrence": {"category": "process boundary",
                    "note": "event rather than a process (read as an instantaneous occurrent)"},
-    "biopsy": {"senses": {"process": "biopsy", "material entity": "biopsy specimen"}},
+    # renamed 2026-10-26 (rule 87): each sense has a name of its own
+    "biopsy": {"senses": {"process": "Biopsy procedure", "material entity": "Biopsy material"}},
     "operative time": {"category": "temporal region"},
     "therapy": {"category": "information entity", "note": "plan specification"},
     "loss of tissue": {"category": "immaterial entity"},
@@ -246,7 +247,7 @@ def main(argv: list[str]) -> int:
         gt.gate(name, curator={"verdict": "out", "reason": f"head word '{h}'", "when": when,
                                "by": "signature words page, 2026-09-29"})
     for term, senses in plan["term senses"]:
-        gt.record(term)["senses"] = senses
+        gt.split_by_category(term, senses)          # where the term points (rule 87)
     for term, target, note in plan["maps"]:
         # the mentions now read as the target: it carries the decision too, or
         # the abstracts' disagreement reappears under its name

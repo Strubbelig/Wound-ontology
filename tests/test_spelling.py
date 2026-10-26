@@ -182,9 +182,9 @@ def test_a_rename_reaches_the_sense_labels_of_a_two_senses_ruling():
     rename `biopsy specimen -> biopsy sample` (specimen -> sample) left the
     sense label in the old spelling, and the view kept writing it."""
     from conftest import memory_mapping
-    gt = memory_mapping({"biopsy": {"to": None, "pairs": {},
-                                    "senses": {"process": "biopsy",
-                                               "material entity": "biopsy specimen"}}})
+    gt = memory_mapping({"biopsy": {"to": {"process": "biopsy procedure",
+                                           "material entity": "biopsy specimen"},
+                                    "pairs": {}}})
     rep = gt.apply_renames({"biopsy specimen": "biopsy sample"}, by="test")
-    assert gt.records["biopsy"]["senses"]["material entity"] == "biopsy sample"
+    assert gt.records["biopsy"]["to"]["material entity"] == "biopsy sample"
     assert rep["sense labels renamed"] == 1

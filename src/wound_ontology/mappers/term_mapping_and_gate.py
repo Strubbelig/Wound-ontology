@@ -79,18 +79,29 @@ into the concept store, which now keeps only what each abstract said::
 
     {"spelling":  {"to": "cut", "by": "pass0", "when": "..."},   # an ALIAS record
      "rejected":  {"status": "rejected", "by": "blocklist", "note": "...", "when": "..."},
-     "relations": {"is_a: Neoplasm": {"status": "rejected", "by": "...", ...}},
-     "senses":    {"process": "Necrosis Process", "material entity": "Necrosis Material Entity"}}
+     "relations": {"is_a: Neoplasm": {"status": "rejected", "by": "...", ...}}}
 
 Since 2026-09-29 (rule 57) it also holds the BFO category a person decided the
-term names, when the abstracts disagree about it::
+term names, when the abstracts disagree about it. Since 2026-10-26 (rule 87)
+that decision is a relation like any other, the `is_a` cell it settles with
+the metadata behind it (curator: "in pairs gibt es is_a: target. dahinter
+kann man metadaten einreihen")::
 
-    {"category":  {"verdict": "material entity", "source": "head rule: injury",
-                   "by": "curator", "note": "...", "when": "..."}}
+    {"relations": {"is_a: material entity": {"status": "decided",
+                   "source": "head rule: injury", "by": "curator", "note": "...", "when": "..."}}}
 
 `source` is `term ruling` (the term itself was judged) or `head rule: <word>`
 (its head word was); a term ruling outranks a head rule and is never
-overwritten by one.
+overwritten by one. A term holds at most one decided `is_a`.
+
+A term the abstracts use for two things (rule 87) points at one name per
+category, and the view renames each mention by the category its own abstract
+gave it::
+
+    "Biopsy": {"to": {"process": "Biopsy procedure", "material entity": "Biopsy material"}}
+
+Until 2026-10-26 that was a `senses` section beside `to`; a `to` that names
+one term and a section that names two said the same thing in two places.
 
 A record with `spelling` is an ALIAS: the string is written differently now,
 and the record says to what, by whom and when. It carries nothing else --
@@ -178,11 +189,45 @@ SPELLING = "spelling"
 
 #: Sections that are decisions about a term. An alias carries none of them.
 DECISION_SECTIONS = ("to", "pairs", "gate", "gate_contested", "rejected",
-                     "relations", "senses", "category", "retired")
+                     "relations", "retired")
 
-#: The category section (rule 57), and what outranks what inside it.
-CATEGORY = "category"
+#: A decided category is the `is_a` relation it settles (rules 57, 87), and a
+#: term ruling outranks a head rule inside it.
+IS_A = "is_a"
+DECIDED = "decided"
 TERM_RULING = "term ruling"
+
+
+def target_of(rec: dict) -> str | None:
+    """The one term `to` names, or None -- also for a term split by category,
+    whose `to` names one term per category (rule 87)."""
+    to = rec.get("to")
+    return to if isinstance(to, str) else None
+
+
+def split_of(rec: dict) -> dict[str, str]:
+    """`{category: name}` for a term split by category, else empty (rule 87)."""
+    to = rec.get("to")
+    return dict(to) if isinstance(to, dict) else {}
+
+
+def decided_is_a(rec: dict) -> tuple[str, dict] | None:
+    """`(category, entry)` of the record's decided `is_a` cell, or None."""
+    for triple, entry in (rec.get("relations") or {}).items():
+        pred, _, tgt = triple.partition(":")
+        if pred.strip() == IS_A and isinstance(entry, dict) and entry.get("status") == DECIDED:
+            return tgt.strip(), entry
+    return None
+
+
+def _set_decided_is_a(rec: dict, category: str, entry: dict) -> None:
+    """Put `entry` on `is_a: <category>`, removing any other decided `is_a`."""
+    rel = rec.setdefault("relations", {})
+    for triple in [t for t, e in rel.items()
+                   if t.partition(":")[0].strip() == IS_A and isinstance(e, dict)
+                   and e.get("status") == DECIDED]:
+        del rel[triple]
+    rel[f"{IS_A}: {category}"] = {"status": DECIDED, **entry}
 
 
 # ── The one rule over strings nobody has judged (rule 86) ───────────────────
@@ -379,6 +424,31 @@ class TermMappingAndGate:
                                     "when": name.get("when")}
             if name.get("history"):
                 rec["name_history"] = rec.get("name_history", []) + name["history"]
+        # v5 (until 2026-10-26, rule 87): a `category` section beside the
+        # relations, and a `senses` section beside `to`. The category IS the
+        # `is_a` cell it settles; the senses ARE where the term points, one
+        # name per category. A term that pointed at one name AND had senses
+        # would lose a decision either way, so it stops the load.
+        moved = {"category": 0, "senses": 0}
+        for term, rec in records.items():
+            cat = rec.pop("category", None)
+            if isinstance(cat, dict) and cat.get("verdict"):
+                entry = {k: v for k, v in cat.items() if k != "verdict"}
+                if entry.get("history"):
+                    entry["history"] = [dict(h) for h in entry["history"]]
+                _set_decided_is_a(rec, cat["verdict"], entry)
+                moved["category"] += 1
+            senses = rec.pop("senses", None)
+            if senses:
+                if isinstance(rec.get("to"), str):
+                    raise ValueError(f"[mapping] {term!r} maps onto {rec['to']!r} and also "
+                                     f"splits into {senses}; one of the two has to go")
+                rec["to"] = dict(senses)
+                moved["senses"] += 1
+        if any(moved.values()):
+            print(f"[mapping] rule 87: {moved['category']:,} category section(s) moved "
+                  f"into relations as a decided is_a, {moved['senses']:,} senses "
+                  f"section(s) into `to`")
         return records
 
     # ── Read access: the records themselves ──────────────────────────────────
@@ -488,16 +558,54 @@ class TermMappingAndGate:
         downstream can act on a decision by accident.
         """
         if self._flat is None:
-            self._flat = {t: r["to"] for t, r in self._records.items() if r.get("to")}
+            self._flat = {t: target_of(r) for t, r in self._records.items() if target_of(r)}
         return self._flat
 
     @property
     def metadata(self) -> dict[str, dict]:
         """Per-term confidence and method, as the old in-memory dict presented it."""
-        return {t: {"standard": r.get("to"),
+        return {t: {"standard": target_of(r),
                     "confidence": r.get("confidence", 1.0),
                     "method": r.get("method", "manual")}
-                for t, r in self._records.items() if r.get("to")}
+                for t, r in self._records.items() if target_of(r)}
+
+    def splits(self) -> dict[str, dict[str, str]]:
+        """`{term: {category: name}}` for every term split by category (rule 87).
+
+        Absent from `data`: a split term maps onto no ONE name, and every
+        consumer of `data` expects one. The view renames each mention by the
+        category its own abstract gave it."""
+        return {t: split_of(r) for t, r in self._records.items()
+                if split_of(r) and SPELLING not in r}
+
+    def split_by_category(self, term: str, names: dict[str, str], *,
+                          method: str = "curator") -> None:
+        """Point `term` at one name per category (rule 87). Does not save.
+
+        Every category must be declared (rules 20, 25) and every name must be
+        another term: a sense named like the term itself would map the term
+        onto itself for one category, which is no decision at all."""
+        from wound_ontology.llm.category_vocab import declared_category
+        term = self.resolve(term)
+        clean: dict[str, str] = {}
+        for cat, name in names.items():
+            c = declared_category(cat)
+            if c is None:
+                raise ValueError(f"{term!r}: {cat!r} is not a BFO category")
+            name = self.resolve(name)
+            if name == term:
+                raise ValueError(f"{term!r}: the {c} sense needs a name of its own")
+            clean[c] = name
+        if len(clean) < 2:
+            raise ValueError(f"{term!r}: a split names at least two categories, got {clean}")
+        rec = self.record(term)
+        if target_of(rec):
+            raise ValueError(f"{term!r} maps onto {target_of(rec)!r}; refuse that first")
+        rec.update({"to": clean, "method": method, "confidence": 1.0})
+        rec.pop("retired", None)
+        for name in clean.values():
+            self.record(name)            # each sense is a term of its own, with a record
+        self._dirty()
 
     @property
     def standards(self) -> list[str]:
@@ -623,9 +731,17 @@ class TermMappingAndGate:
     # ── Read access: the category (rule 57) ──────────────────────────────────
 
     def categories(self) -> dict[str, dict]:
-        """`{term: category section}` for every term whose category was decided."""
-        return {t: r[CATEGORY] for t, r in self._records.items()
-                if isinstance(r.get(CATEGORY), dict) and SPELLING not in r}
+        """`{term: {"verdict": category, **metadata}}` for every term whose
+        category was decided -- read off its decided `is_a` cell (rule 87)."""
+        out = {}
+        for t, r in self._records.items():
+            if SPELLING in r:
+                continue
+            hit = decided_is_a(r)
+            if hit:
+                cat, entry = hit
+                out[t] = {"verdict": cat, **{k: v for k, v in entry.items() if k != "status"}}
+        return out
 
     def set_category(self, term: str, verdict: str, *, source: str,
                      by: str = "curator", note: str = "") -> str:
@@ -641,15 +757,17 @@ class TermMappingAndGate:
         if cat is None:
             raise ValueError(f"{term!r}: {verdict!r} is not a BFO category")
         rec = self.record(term)
-        standing = rec.get(CATEGORY)
+        hit = decided_is_a(rec)
+        standing = ({"verdict": hit[0], **{k: v for k, v in hit[1].items() if k != "status"}}
+                    if hit else None)
         if standing and standing.get("verdict") == cat and standing.get("source") == source:
             return "same"
         if standing and standing.get("source") == TERM_RULING and source != TERM_RULING:
             return "kept"
-        entry = {"verdict": cat, "source": source, "by": by, "note": note, "when": _now()}
+        entry = {"source": source, "by": by, "note": note, "when": _now()}
         if standing:
             entry["history"] = standing.pop("history", []) + [standing]
-        rec[CATEGORY] = entry
+        _set_decided_is_a(rec, cat, entry)
         self._dirty()
         return "set"
 
@@ -808,11 +926,16 @@ class TermMappingAndGate:
         return pooled
 
     def _members(self, canonical: str) -> list[str]:
-        """`canonical` first, then every term mapped onto it, sorted."""
+        """`canonical` first, then every term mapped onto it, sorted. A term
+        split by category (rule 87) is a member of each of its names: the
+        scope of `Biopsy material` pools what was said about `Biopsy`."""
         if self._members_idx is None:
             idx: dict[str, list[str]] = {}
             for term, target in self.data.items():
                 idx.setdefault(target, []).append(term)
+            for term, names in self.splits().items():
+                for name in set(names.values()):
+                    idx.setdefault(name, []).append(term)
             for v in idx.values():
                 v.sort(key=str.lower)
             self._members_idx = idx
@@ -918,6 +1041,10 @@ class TermMappingAndGate:
         the deliberate reversal: the standing verdict moves to
         `curator_history`, rather than being hidden.
         """
+        split = split_of(self._records.get(self.resolve(term)) or {})
+        if split and not override:
+            raise ValueError(f"{term!r} is split by category into {split} (rule 87); "
+                             f"pass override=True to map it onto {standard!r} instead")
         refusal = self.is_refused(term, standard)
         if refusal and not override:
             raise ValueError(
@@ -940,15 +1067,16 @@ class TermMappingAndGate:
     ) -> list[tuple[str, str]]:
         """Add multiple entries at once; saves once at the end.
 
-        Returns the pairs it SKIPPED because they stand refused. A batch is a
+        Returns the pairs it SKIPPED because they stand refused or the term is
+        split by category. A batch is a
         machine proposal, so one refused pair in it is not an error -- but it is
         never silently applied either, and every caller reports the list.
         """
         meta = metadata_batch or {}
         skipped: list[tuple[str, str]] = []
         for term, standard in entries.items():
-            if self.is_refused(term, standard):
-                skipped.append((term, standard))
+            if self.is_refused(term, standard) or split_of(self._records.get(term) or {}):
+                skipped.append((term, standard))     # a split is a decision too (rule 87)
                 continue
             rec = self.record(term)
             rec["to"] = standard
@@ -1074,8 +1202,12 @@ class TermMappingAndGate:
                 raise ValueError(f"{loser!r} -> {chosen!r}: the curator keeps the two apart")
         for loser in instead:
             for t, r in self._records.items():
-                if r.get("to") == loser and SPELLING not in r:
+                if SPELLING in r:
+                    continue
+                if r.get("to") == loser:
                     r["to"] = name
+                elif loser in split_of(r).values():     # a sense named by the loser
+                    r["to"] = {c: (name if n == loser else n) for c, n in r["to"].items()}
             rec = self.record(loser)
             rec.update({"to": name, "method": "curator", "confidence": 1.0})
             rec.pop("retired", None)
@@ -1090,16 +1222,25 @@ class TermMappingAndGate:
         self._dirty()
 
     def _head(self, term: str) -> str:
-        """The name of `term`'s cluster: follow `to` to its end."""
+        """The name of `term`'s cluster: follow `to` to its end. A term split
+        by category (rule 87) has no one name and is its own end."""
         seen = set()
-        while (self._records.get(term) or {}).get("to") and term not in seen:
+        while target_of(self._records.get(term) or {}) and term not in seen:
             seen.add(term)
             term = self._records[term]["to"]
         return term
 
     def heads(self) -> set[str]:
-        """Every term that is the name of a cluster with at least one member."""
-        return {r["to"] for r in self._records.values() if r.get("to") and SPELLING not in r}
+        """Every term that is the name of a cluster with at least one member,
+        a sense of a split term (rule 87) included."""
+        out = set()
+        for r in self._records.values():
+            if SPELLING in r:
+                continue
+            if target_of(r):
+                out.add(r["to"])
+            out.update(split_of(r).values())
+        return out
 
     def named(self) -> set[str]:
         """Every cluster name a person chose (rule 85).
@@ -1111,7 +1252,7 @@ class TermMappingAndGate:
         """
         out = set()
         for r in self._records.values():
-            to = r.get("to")
+            to = target_of(r)
             if to and SPELLING not in r and \
                     ((r.get("pairs") or {}).get(to, {}).get("curator") or {}).get("verdict") == "same_class":
                 out.add(to)
@@ -1145,7 +1286,7 @@ class TermMappingAndGate:
         one that carried the curator's refusal, and the merge kept both.
         """
         return sorted((t, r["to"]) for t, r in self._records.items()
-                      if r.get("to") and self.is_refused(t, r["to"]))
+                      if target_of(r) and self.is_refused(t, r["to"]))
 
     @staticmethod
     def _absorb(keep: dict, other: dict, term: str, report: dict) -> None:
@@ -1175,25 +1316,26 @@ class TermMappingAndGate:
             gate.pop(source, None)
             report["gate conflicts"].append(
                 (term, source, standing.get("verdict"), verdict.get("verdict")))
-        # Rule 51's sections: a store rejection, relation verdicts and senses
-        # travel with the record like everything else, first-come on a tie.
+        # Rule 51's sections: a store rejection and relation verdicts travel
+        # with the record like everything else, first-come on a tie.
         if other.get("rejected") and not keep.get("rejected"):
             keep["rejected"] = other["rejected"]
-        for triple, verdict in (other.get("relations") or {}).items():
-            keep.setdefault("relations", {}).setdefault(triple, verdict)
-        for category, label in (other.get("senses") or {}).items():
-            keep.setdefault("senses", {}).setdefault(category, label)
-        # A decided category travels too (rule 57). Two spellings decided
+        # A decided category travels too (rules 57, 87). Two spellings decided
         # differently is a disagreement: a term ruling beats a head rule, and
         # two of a kind keep the first and are reported, never chosen quietly.
-        mine, theirs = keep.get(CATEGORY), other.get(CATEGORY)
+        mine, theirs = decided_is_a(keep), decided_is_a(other)
+        for triple, verdict in (other.get("relations") or {}).items():
+            if theirs and verdict is theirs[1]:
+                continue                     # settled below, against `mine`
+            keep.setdefault("relations", {}).setdefault(triple, verdict)
         if theirs and not mine:
-            keep[CATEGORY] = theirs
-        elif mine and theirs and mine.get("verdict") != theirs.get("verdict"):
-            if theirs.get("source") == TERM_RULING and mine.get("source") != TERM_RULING:
-                keep[CATEGORY] = theirs
-            report.setdefault("category conflicts", []).append(
-                (term, mine.get("verdict"), theirs.get("verdict")))
+            _set_decided_is_a(keep, theirs[0], {k: v for k, v in theirs[1].items()
+                                                if k != "status"})
+        elif mine and theirs and mine[0] != theirs[0]:
+            if theirs[1].get("source") == TERM_RULING and mine[1].get("source") != TERM_RULING:
+                _set_decided_is_a(keep, theirs[0], {k: v for k, v in theirs[1].items()
+                                                    if k != "status"})
+            report.setdefault("category conflicts", []).append((term, mine[0], theirs[0]))
         # Withdrawn verdicts are history (2026-09-28): a merge keeps both sides'.
         if other.get("gate_withdrawn"):
             keep["gate_withdrawn"] = keep.get("gate_withdrawn", []) + other["gate_withdrawn"]
@@ -1280,12 +1422,21 @@ class TermMappingAndGate:
                         triple = f"{pred.strip()}: {look(tgt.strip())}"
                     renamed_rel.setdefault(triple, verdict)
                 rec["relations"] = renamed_rel
-            target = rec.get("to")
+            target = target_of(rec)
             if target:
                 new_target = look(target)
                 if new_target != target:
                     rec["to"] = new_target
                     report["targets renamed"] += 1
+            elif split_of(rec):
+                # A sense's name is a term string too: left in the old
+                # spelling, the view goes on writing it after the rename
+                # (`biopsy` -> `biopsy specimen`, found 2026-10-02 when pass 0
+                # read back a name it had renamed on 09-27).
+                for category, label in rec["to"].items():
+                    if look(label) != label:
+                        rec["to"][category] = look(label)
+                        report["sense labels renamed"] = report.get("sense labels renamed", 0) + 1
             pairs = rec.get("pairs") or {}
             new_pairs: dict[str, dict] = {}
             for canonical, judgement in pairs.items():
@@ -1338,8 +1489,7 @@ class TermMappingAndGate:
                             if c != term}
             report["identities dropped"] += 1
             if not rec["pairs"] and not any(rec.get(s) for s in
-                                            ("gate", "rejected", "relations", "senses",
-                                             CATEGORY, "gate_withdrawn",
+                                            ("gate", "rejected", "relations", "gate_withdrawn",
                                              "spelling_reversed", "name_history")):
                 empty.append(term)
         for term in empty:
@@ -1352,7 +1502,7 @@ class TermMappingAndGate:
         # the mapping is not, so the mapping goes -- and is reported.
         report["locked targets"] = []
         for term, rec in merged.items():
-            target = rec.get("to")
+            target = target_of(rec)
             cur = ((rec.get("pairs") or {}).get(target, {}).get("curator") or {}) if target else {}
             if target and cur.get("verdict") in APART:
                 report["locked targets"].append((term, target))
@@ -1368,19 +1518,7 @@ class TermMappingAndGate:
             # would hide the decisions now filed under it.
             raise RuntimeError(f"[mapping] {len(clash)} string(s) are renamed away "
                                f"and onto at once: {clash[:5]}")
-        # A sense label (a curator's two-senses ruling names the sense terms)
-        # is a term string too: left in the old spelling, the view goes on
-        # writing it after the rename (`biopsy` -> `biopsy specimen`, found
-        # 2026-10-02 when pass 0 read back a name it had renamed on 09-27).
-        report["sense labels renamed"] = 0
-        for rec in merged.values():
-            senses = rec.get("senses")
-            if not senses:
-                continue
-            for category, label in list(senses.items()):
-                if look(label) != label:
-                    senses[category] = look(label)
-                    report["sense labels renamed"] += 1
+        report.setdefault("sense labels renamed", 0)
         merged.update(aliases)
         report["aliases"] = len(aliases)
         self._records = merged
@@ -1417,6 +1555,9 @@ class TermMappingAndGate:
             rec = self._records.get(t)
             if rec is None or not rec.get("to"):
                 continue
+            if split_of(rec):
+                kept.append((t, rec["to"]))      # a split by category is a decision (rule 87)
+                continue
             if ((rec.get("pairs") or {}).get(rec["to"], {}).get("curator") or {}).get("verdict") == "same_class":
                 kept.append((t, rec["to"]))
                 continue
@@ -1425,7 +1566,8 @@ class TermMappingAndGate:
             retired += 1
         if kept:
             print(f"[mapping] {len(kept)} mapping(s) NOT retired ({reason!r}): the curator "
-                  f"called each pair same_class -- " + ", ".join(f"{t!r} -> {c!r}" for t, c in kept[:5]))
+                  f"called each pair same_class, or split the term by category -- "
+                  + ", ".join(f"{t!r} -> {c!r}" for t, c in kept[:5]))
         if retired:
             self._dirty()
             self.save()

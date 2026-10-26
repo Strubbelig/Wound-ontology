@@ -614,8 +614,11 @@ class Orchestrator:
             if gt.is_alias(term):
                 continue                    # a spelling already decided (rule 51)
             others.add(term)
-            if rec.get("to"):
-                others.add(rec["to"])
+            to = rec.get("to")
+            if isinstance(to, dict):            # split by category (rule 87)
+                others.update(to.values())
+            elif to:
+                others.add(to)
             others.update(rec.get("pairs") or {})
 
         renames, report = pass0_renames(

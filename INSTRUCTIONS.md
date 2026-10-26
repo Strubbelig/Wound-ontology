@@ -2601,7 +2601,9 @@ mapper dict overlap weirdly? … as it is right now is not to my liking.*
   that term's record: `spelling` (an ALIAS -- this string is now written
   differently, by whom, when), the mapping (`to`, `pairs`), the gate,
   `rejected` (the store rejection of the whole term), `relations` (rejected
-  relations of it), `senses` (the per-category split). An alias carries
+  relations of it), `senses` (the per-category split).
+  *(Since 2026-10-26, rule 87: the per-category split is `to` itself, one
+  name per category, and `relations` also holds the decided `is_a`.)* An alias carries
   nothing but its spelling; `apply_renames` moves every decision to the new
   spelling and leaves the alias. A write addressed to an alias lands on its
   current spelling.
@@ -2899,6 +2901,8 @@ scope (a `curator` verdict), reversing the merged-scope ruling that had put
 them out; names containing either word keep their own decisions.
 
 ## 57. A decided category is a term decision; a head rule settles only a dispute
+
+*Storage superseded 2026-10-26 by rule 87: the decision is the decided `is_a` cell in `relations`, no longer a `category` section. What it decides and how the view applies it are unchanged.*
 
 **Decided 2026-09-29.** When the abstracts type a term irreconcilably (a
 process in one, a material entity in another) the term has no category and
@@ -4259,6 +4263,58 @@ its record and `in` in every view, and nothing on the record said why; the
 store dropped blocklisted strings at extraction, so an `out` withdrawn later
 had nothing to bring back; and a new domain would have needed lists of its
 own, where the scope passes need only its description.
+
+## 87. A decided category is the is_a it settles; a term used for two things points at one name per category
+
+*Decided 2026-10-26, by the curator: "category macht keinen sinn wenn es is_a
+gibt, senses auch nicht gut. to: sollte dann zwei begriffe enthalten je
+nachdem. und es sollte zwei neue einträge für biopsy sample und biopsy
+material geben." -- on where the category goes: "in pairs gibt es is_a:
+target. dahinter kann man metadaten einreihen." -- names: "Biopsy procedure +
+Biopsy material"; the material sense: "In aufnehmen".*
+
+* **The category is a relation.** A person's decision about the BFO category
+  a term names (rule 57) is written as the `is_a` cell it settles, in the
+  term's `relations`, with the metadata behind it:
+  `"is_a: material entity": {"status": "decided", "source", "by", "note", "when", "history"}`.
+  The abstracts' `is_a` cells in the concept store are what each abstract
+  said; the decided cell is the one answer where they disagree. At most one
+  decided `is_a` per term. `set_category` / `categories()` read and write it;
+  the view applies it exactly as before (rule 57).
+* **A decided `is_a` is not a verdict on a cell.** `reject_cells` and
+  `repredicate_cells` do not overwrite it (reported), and `lift_decisions`
+  leaves it.
+* **A split is where the term points.** A term the abstracts use for two
+  things has `to: {"<category>": "<name>", ...}` instead of a `senses`
+  section: `Biopsy -> {process: Biopsy procedure, material entity: Biopsy
+  material}`. Each name is a term with a record of its own, and no name is
+  the split term itself. The view gives each mention the name for the
+  category its own abstract typed it as, BEFORE it reads the verdicts, so the
+  scope of `Biopsy material` decides about its mentions; a mention typed with
+  no category, or with two, keeps the unsplit name. A split term is absent
+  from `data` (no ONE name), is a member of each of its names' clusters (their
+  scope pools what was said about it), and is never overwritten by a machine
+  mapping (`add_batch` skips it, `add` raises, `retire` keeps it).
+* **Old files load**: `_load` moves a `category` section into `relations` and
+  a `senses` section into `to`, and says how many; a term that had both a
+  one-name `to` and senses stops the load.
+
+Applied by `scripts/apply_rule87_biopsy_2026_10_26.py` (1,090 categories moved;
+the Biopsy split renamed from `Biopsy` / `Biopsy sample`; the curator's
+placement under OBI's sample collection process moved onto `Biopsy
+procedure`; `Biopsy material` in). Tests: `tests/test_rule87_is_a_and_split_to.py`.
+Then, the same day (curator: "ja, beides so machen"), by
+`scripts/apply_biopsy_rulings_2026_10_26.py`: `Biopsy sample` (and its
+spellings `biopsy specimen(s)`) maps onto `Biopsy material` with the curator's
+`same_class` (21 mentions of the material sense now, 16 + 5); and the head
+rule `biopsy` is `process`, no longer `material entity`, so `Wound biopsy`
+(placed under WONT's wound specimen procurement by biopsy process) and `Skin
+biopsy` are procedures.
+
+Why: a `category` section beside `relations` decided an `is_a` under another
+name, and a `senses` section beside `to` said where the term points in a
+second place. Two places for one decision is how the term dict and the store
+drifted before rule 51.
 
 ## Adding to this file
 

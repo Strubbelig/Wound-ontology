@@ -37,7 +37,7 @@ HEAD_CATEGORY: dict[str, str] = {
     "application": "process",
     "assessment": "process",
     "avulsion": "material entity",
-    "biopsy": "material entity",
+    "biopsy": "process",          # material entity until 2026-10-26; the curator: the procedure
     "bite": "process",
     "burn": "material entity",
     "care": "process",
