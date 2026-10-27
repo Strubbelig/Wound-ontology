@@ -41,7 +41,6 @@ def _build_cq_block() -> str:
 from wound_ontology.llm.schemas import (
     ExtractResponse, NormalizationResponse, FillNanResponse,
     FillNanBatchResponse, SemanticNameResponse, ScopeCheckResponse,
-    MereRelationResult, MereRelationBatchResponse,
     OccursInTargetBatch,
     TypingResponse, RelationResponse,
     MappingVerdict, MappingVerdictBatch,
@@ -591,44 +590,6 @@ class LLMClient:
                 continue
             out[term] = (verdict, v.reason)
         return out, unmatched
-
-    async def validate_mere_batch(
-        self, triples: list[tuple[str, str]]
-    ) -> list[MereRelationResult]:
-        """
-        Classify (child, part_of, parent) triples for a wound ontology.
-
-        Returns list of MereRelationResult with verdict:
-          keep  – valid anatomical/physical part_of
-          is_a  – child is a subtype of parent, not a part
-          drop  – relation is wrong in both directions
-        """
-        lines = [f'- ("{c}", part_of, "{p}")' for c, p in triples]
-        prompt = f"""
-        You are a biomedical ontologist curating a wound care ontology (BFO/RO).
-
-        BFO rule: part_of connects CONTINUANTS (material entities, anatomical structures).
-        A PROCESS or PROCEDURE cannot be part_of a material entity.
-
-        Classify each triple with one of three verdicts:
-          keep  – the child is physically/anatomically a PART of the parent
-                  (e.g. "Wound Bed part_of Wound", "Dermis part_of Skin")
-          is_a  – the child is a SUBTYPE/KIND of the parent, not a part
-                  (e.g. "Pressure Injury is_a Wound", "Alveolar Bone Plate Avulsion is_a Alveolar Bone Injury")
-          drop  – the relation is wrong in both directions; remove it
-                  (e.g. "Alginate Hydrogel part_of Wound Management" — a dressing is not a part of a management concept)
-
-        TRIPLES:
-        {chr(10).join(lines)}
-
-        Return JSON with "results": list of {{child, parent, verdict}}.
-        Use the EXACT child and parent strings from the input — do not paraphrase.
-        """
-        result = await self._execute_with_retry(
-            self._call_json, prompt, MereRelationBatchResponse,
-            temperature=0.0, timeout=360,
-        )
-        return result.results
 
     async def generate_semantic_name(self, intent_attributes, superclass_names,
                                      extent_categories=(), parent_names=(),

@@ -8,7 +8,6 @@ from owlready2 import get_ontology, Thing
 
 from wound_ontology.owl import OWLOntology, OntologyCurator
 from wound_ontology.hierarchies.class_hierarchy import ClassHierarchy
-from wound_ontology.hierarchies.mereological_hierarchy import MereologicalHierarchy
 
 
 class MockDM:
@@ -30,14 +29,6 @@ def class_hier():
     h._set_edge("Chronic Wound", "Wound")
     h._set_edge("Acute Wound",   "Wound")
     h._set_edge("Venous Ulcer",  "Chronic Wound")
-    return h
-
-
-@pytest.fixture
-def mere_hier():
-    h = MereologicalHierarchy(MockDM())
-    h._set_edge("Wound Bed",   "Wound")
-    h._set_edge("Wound Fluid", "Wound")
     return h
 
 
@@ -110,47 +101,6 @@ def test_transitive_concept_exported(class_hier, dm, tmp_path):
     out = tmp_path / "test.owl"
     onto.save(dm, str(out))
     assert "Venous_Ulcer" in _owl_text(out)
-
-
-# ── from_hierarchies: mereological hierarchy ──────────────────────────────────
-
-def test_mere_concepts_appear_in_owl(mere_hier, dm, tmp_path):
-    onto = _onto("mere_concepts")
-    OntologyCurator(onto).from_hierarchies(mereological_hierarchy=mere_hier)
-    out = tmp_path / "test.owl"
-    onto.save(dm, str(out))
-    content = _owl_text(out)
-    assert "Wound_Bed"   in content
-    assert "Wound_Fluid" in content
-
-
-def test_part_of_property_declared(mere_hier, dm, tmp_path):
-    onto = _onto("part_of_decl")
-    OntologyCurator(onto).from_hierarchies(mereological_hierarchy=mere_hier)
-    out = tmp_path / "test.owl"
-    onto.save(dm, str(out))
-    assert "part_of" in _owl_text(out)
-
-
-def test_part_of_restriction_on_branch(mere_hier, dm, tmp_path):
-    onto = _onto("part_of_restr")
-    OntologyCurator(onto).from_hierarchies(mereological_hierarchy=mere_hier)
-    out = tmp_path / "test.owl"
-    onto.save(dm, str(out))
-    content = _owl_text(out)
-    assert "someValuesFrom" in content or "subClassOf" in content
-
-
-# ── from_hierarchies: combined ─────────────────────────────────────────────────
-
-def test_combined_export(class_hier, mere_hier, dm, tmp_path):
-    onto = _onto("combined")
-    OntologyCurator(onto).from_hierarchies(class_hier, mere_hier)
-    out = tmp_path / "test.owl"
-    onto.save(dm, str(out))
-    content = _owl_text(out)
-    assert "Chronic_Wound" in content
-    assert "Wound_Bed"     in content
 
 
 def test_no_hierarchy_produces_minimal_owl(dm, tmp_path):

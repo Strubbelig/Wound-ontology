@@ -106,16 +106,6 @@ def test_build_hierarchies(pipeline, predefined_df):
     ).all(), "ClassHierarchy df must be numeric"
 
 
-@pytest.mark.integration
-def test_mereological_hierarchy_populated(pipeline):
-    # Only meaningful if cache contained part_of / has_part triples
-    # — check structure is valid regardless of content
-    assert isinstance(pipeline.mere_hier.df, pd.DataFrame)
-    assert pipeline.mere_hier.df.dtypes.apply(
-        lambda d: d.kind in ("f", "i")
-    ).all(), "MereologicalHierarchy df must be numeric"
-
-
 # ── Step 4: Store attribute fill ─────────────────────────────────────────────
 
 @pytest.mark.integration

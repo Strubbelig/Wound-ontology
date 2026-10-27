@@ -244,7 +244,6 @@ def extend_ground_truth(
     ground_truth: str | Path,
     output: str | Path,
     class_hier=None,
-    mere_hier=None,
     store=None,
     fca_hier=None,
     namespace: str = WONT_NS,
@@ -432,7 +431,7 @@ def extend_ground_truth(
             g.add((c_iri, RDFS.subClassOf, p_iri))
             report.subclass_added += 1
 
-    # ---- mereology and the remaining relations ------------------------------
+    # ---- relations ----------------------------------------------------------
     def add_restriction(subject: str, pred: str, target: str) -> None:
         iri = RELATION_IRIS.get(pred)
         if iri is None:
@@ -455,8 +454,6 @@ def extend_ground_truth(
         g.add((s_iri, RDFS.subClassOf, node))
         report.restrictions_added[pred] = report.restrictions_added.get(pred, 0) + 1
 
-    for branch, root in _hierarchy_edges(mere_hier):
-        add_restriction(branch, "part_of", root)
     if relations is not None:
         for subject, pred, target in relations:
             add_restriction(subject, pred, target)

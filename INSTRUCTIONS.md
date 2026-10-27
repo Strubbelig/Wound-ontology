@@ -3393,7 +3393,11 @@ hierarchy"; on the export and the domain/range axioms: "do it").**
   only the 203 read as true of every instance (rule 66), never the store and
   never the mereological hierarchy's unread part_of edges; `store` and
   `relations` together are refused. Subclass edges: curated and placed whole, a
-  text edge only when its child is named in >= 2 abstracts.
+  text edge only when its child is named in >= 2 abstracts. (2026-10-27: the
+  mereological hierarchy is gone, with its LLM review and its export branches,
+  to `data/removed_code/*_removed_2026-10-27.py`: part_of reaches the FCA as an
+  attribute read from the cleaned store, and WONT only as a read relation --
+  15 of the 266 part_of statements read.)
 * **The core** (`scripts/build_wont_core.py`, replacing `split_extension.py`,
   whose head-noun and unreviewed-candidate placements were not checked): a new
   class enters only through a `placed` edge to a curated class or to another

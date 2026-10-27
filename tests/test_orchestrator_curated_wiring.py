@@ -113,7 +113,6 @@ def pipeline():
     p.dm = _FakeDM()
     fake = _FakeHier()
     p._class_hier = None
-    p._mere_hier = None
     p._view_factory = lambda dm: fake
     p._gate = _FakeGate()
     p.term_mapper = _FakeTermMapper()
@@ -185,21 +184,21 @@ def test_a_missing_source_stops_the_build(pipeline, tmp_path):
     assert pipeline._class_hier is None, "a failed derivation must not leave a view behind"
 
 
-def test_the_view_is_not_stored_and_no_mereological_hierarchy_is_built(pipeline, onto):
+def test_the_view_is_not_stored_and_there_is_no_mereological_hierarchy(pipeline, onto):
     """The class hierarchy is a view (2026-10-21): no matrix is written, only the
-    provenance snapshot for the inspection pages, and the mereological hierarchy
-    is no pipeline stage any more."""
+    provenance snapshot for the inspection pages. The mereological hierarchy is
+    gone (2026-10-27): part_of reaches the FCA from the cleaned store, and WONT
+    only as a read relation."""
     view = pipeline.refresh_class_hierarchy(curated_sources=[onto])
     assert view is pipeline.fake_view and pipeline.class_hier is view
     assert not view.saved, "the view itself must never be written"
     assert view.snapshot, "the inspection pages read the provenance snapshot"
-    assert pipeline._mere_hier is None
+    assert not hasattr(orch.Orchestrator, "mere_hier")
 
 
 def test_run_build_hierarchies_is_an_alias_for_the_view(pipeline, onto):
     view = pipeline.run_build_hierarchies(curated_sources=[onto])
     assert view is pipeline.fake_view
-    assert pipeline._mere_hier is None
 
 
 def test_the_edge_gate_verdicts_are_taken_off_the_view(pipeline, onto):

@@ -80,15 +80,6 @@ class GateBatchResponse(BaseModel):
     verdicts: list[GateVerdict]
 
 
-class MereRelationResult(BaseModel):
-    child: str
-    parent: str
-    verdict: str  # "keep" | "is_a" | "drop"
-
-class MereRelationBatchResponse(BaseModel):
-    results: list[MereRelationResult]
-
-
 class OccursInTargetResult(BaseModel):
     term: str
     anatomical: bool

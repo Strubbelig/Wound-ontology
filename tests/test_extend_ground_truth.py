@@ -175,7 +175,7 @@ def test_part_of_is_bfo_not_a_minted_local_property(gt, tmp_path):
     property when it found none, so exported mereology pointed at an invented
     IRI no reasoner would recognise."""
     extend_ground_truth(
-        gt, tmp_path / "out.ttl", mere_hier=_hier([("New Part", "Wound")]))
+        gt, tmp_path / "out.ttl", relations=[("New Part", "part_of", "Wound")])
     g = rdflib.Graph(); g.parse(str(tmp_path / "out.ttl"), format="turtle")
     props = {str(o) for o in g.objects(None, OWL.onProperty)}
     assert props == {OBO + "BFO_0000050"}
