@@ -5,10 +5,6 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 >
-  <rdf:Description rdf:about="https://purl.bioontology.org/ontology/OFL/OFLID13296">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
-    <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000051"/>
-  </rdf:Description>
   <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000051">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
   </rdf:Description>
@@ -19,15 +15,22 @@
     <dcterms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-10-31</dcterms:created>
     <rdfs:comment xml:lang="en">Binds the part relations of the OBO FMA release 2020-04-13 to OFL's and OFL's to BFO's, so that WONT's wound depth classes, OFL's flaps and FMA's partonomy speak through one relation: fma#part_of (and with it constitutional_, regional_ and systemic_part_of) is a subproperty of OFL 'Ofl part of', which is a subproperty of BFO 'part of'; OFL 'Ofl part' is a subproperty of BFO 'has part'. OFL itself binds the BioPortal FMA's part_of (purl.org/sig/ont/fma/part_of) but imports the OBO FMA, whose relation is obo/fma#part_of; this file states the binding for the FMA OFL actually loads. OFL is not changed (curator, 2026-10-31: bridge 'FMA -&gt; OFL -&gt; BFO').</rdfs:comment>
   </rdf:Description>
+  <rdf:Description rdf:about="https://purl.bioontology.org/ontology/OFL/OFLID13296">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+    <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000051"/>
+  </rdf:Description>
   <rdf:Description rdf:about="http://purl.obolibrary.org/obo/fma#part_of">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:subPropertyOf rdf:resource="https://purl.bioontology.org/ontology/OFL/OFLID13297"/>
   </rdf:Description>
-  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000050">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
-  </rdf:Description>
   <rdf:Description rdf:about="https://purl.bioontology.org/ontology/OFL/OFLID13297">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000050"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000050">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/dc/terms/created">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AnnotationProperty"/>
   </rdf:Description>
 </rdf:RDF>

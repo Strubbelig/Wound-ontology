@@ -93,6 +93,10 @@ def main(argv) -> int:
     b.add((o, OWL.versionIRI, URIRef(BRIDGE_VERSION)))
     b.add((o, RDFS.label, Literal("FMA, OFL and BFO part relations bridge", lang="en")))
     b.add((o, DCTERMS.created, Literal("2026-10-31", datatype=rdflib.XSD.date)))
+    # OWL 2 DL wants every annotation property declared; rdfs:label and rdfs:comment are
+    # built in, dcterms:created is not (2026-11-01: the thesis session's DL profile check of
+    # WONT's import closure found it undeclared here, the closure's only violation)
+    b.add((DCTERMS.created, RDF.type, OWL.AnnotationProperty))
     b.add((o, RDFS.comment, Literal(
         "Binds the part relations of the OBO FMA release 2020-04-13 to OFL's and OFL's to BFO's, so that WONT's "
         "wound depth classes, OFL's flaps and FMA's partonomy speak through one relation: fma#part_of (and with it "
