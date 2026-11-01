@@ -1,0 +1,27 @@
+2533c2533
+<                   rdfs:subClassOf mild:MILD_120022 ,
+---
+>                   rdfs:subClassOf wont:WONT_0007817 ,
+2559a2560,2581
+> 
+> 
+> ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817
+> wont:WONT_0007817 rdf:type owl:Class ;
+>                   rdfs:subClassOf mild:MILD_120022 ;
+>                   ns1:IAO_0000115 "A pathological disorder that is structural damage to a tissue or an organ, whatever its cause."@en ;
+>                   rdfs:label "Injury"@en .
+> 
+> 
+> ###  https://bioportal.bioontology.org/ontologies/WONT/WONT_0007237
+> wont:WONT_0007237 rdf:type owl:Class ;
+>                   owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0007817
+>                                                              [ rdf:type owl:Restriction ;
+>                                                                owl:onProperty ns1:RO_0002353 ;
+>                                                                owl:someValuesFrom wont:WONT_0000338
+>                                                              ]
+>                                                            ) ;
+>                                         rdf:type owl:Class
+>                                       ] ;
+>                   rdfs:subClassOf wont:WONT_0007817 ;
+>                   ns1:IAO_0000115 "An injury that is the output of a trauma process."@en ;
+>                   rdfs:label "Traumatic injury"@en .

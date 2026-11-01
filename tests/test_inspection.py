@@ -12,7 +12,6 @@ Output files:
   tests/test_output/cache.json            — raw extraction cache
   tests/test_output/matrix.csv           — FCA context matrix
   tests/test_output/class_hierarchy.csv  — ClassHierarchy DataFrame
-  tests/test_output/mere_hierarchy.csv   — MereologicalHierarchy DataFrame
   tests/test_output/fca_hierarchy.csv    — FCAHierarchy DataFrame
 """
 import json
@@ -86,9 +85,7 @@ def test_build_hierarchies_and_dump(pipeline):
     pipeline.run_build_hierarchies(predefined_df=predefined)
 
     pipeline.class_hier.df.to_csv(OUTPUT_DIR / "class_hierarchy.csv")
-    pipeline.mere_hier.df.to_csv(OUTPUT_DIR / "mere_hierarchy.csv")
     print(f"\nClassHierarchy    → {OUTPUT_DIR / 'class_hierarchy.csv'}")
-    print(f"MereHierarchy     → {OUTPUT_DIR / 'mere_hierarchy.csv'}")
 
 
 @pytest.mark.integration

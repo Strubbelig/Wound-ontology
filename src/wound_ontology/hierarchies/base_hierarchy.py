@@ -5,6 +5,7 @@ import warnings
 import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.utils.string_utils import smart_title
+from wound_ontology.store.concept_store import records_of
 
 
 # ── Edge provenance (C4) ───────────────────────────────────────────────────
@@ -24,11 +25,17 @@ from wound_ontology.utils.string_utils import smart_title
 # from co-occurrence, not from anyone asserting the subsumption.
 
 SOURCE_CURATED = "curated"
+SOURCE_PLACED = "placed"
 SOURCE_TEXT = "text"
 SOURCE_FCA = "fca"
 
+# `placed` (2026-10-02): an extracted term put under an existing WONT/MILD
+# class by the placement step, read by Claude and kept by the curator's review
+# (rule 59). Checked twice, so above what one abstract implied; not authored,
+# so below the curated ontology itself.
 SOURCE_RANK: dict[str, int] = {
-    SOURCE_CURATED: 3,
+    SOURCE_CURATED: 4,
+    SOURCE_PLACED: 3,
     SOURCE_TEXT: 2,
     SOURCE_FCA: 1,
 }
@@ -89,6 +96,8 @@ class BaseHierarchy(ABC):
             self._df = pd.DataFrame(dtype=float)
         # (child, parent) -> source. Persisted next to the matrix.
         self._prov: dict[tuple[str, str], str] = {}
+        #: node -> the string a source wrote for it (set by get_data).
+        self.names: dict[str, str] = {}
         #: False until provenance is actually loaded. Consulted by
         #: provenance_summary() so "no conflicts" can never be confused
         #: with "precedence was never in force".
@@ -96,6 +105,7 @@ class BaseHierarchy(ABC):
         # Edges proposed but not committed, e.g. FCA suggestions awaiting review.
         self._candidates: dict[tuple[str, str], str] = {}
         self._load_provenance()
+        self._load_candidates()
 
     # ── Provenance ─────────────────────────────────────────────────────────────
 
@@ -163,6 +173,75 @@ class BaseHierarchy(ABC):
             [{"child": c, "parent": p, "source": s} for (c, p), s in sorted(self._prov.items())]
         )
         self.dm.save_as_csv(out, self._prov_file)
+
+    # ── Candidates ─────────────────────────────────────────────────────────────
+    #
+    # Proposed-but-uncommitted edges used to live only in this dict, and the
+    # dict died with the Python session. `run_build_hierarchies(commit_fca=False)`
+    # printed "Inspect class_hier.candidates, then promote_candidates(...)" --
+    # an instruction that silently expired when the notebook closed, so the
+    # propose/review/promote path could not actually be completed and 12 of them
+    # were lost without a word. They are persisted next to the matrix now.
+
+    @property
+    def _cand_file(self) -> str:
+        return f"{self.file_name}_candidates"
+
+    def _load_candidates(self) -> None:
+        """Load the review queue. Missing is fine; unreadable is not.
+
+        Same discipline as `_load_provenance`: an empty queue and a queue that
+        could not be read must never look alike.
+        """
+        try:
+            raw = self.dm.load_latest_csv(self._cand_file)
+        except FileNotFoundError:
+            raw = None
+        except Exception as exc:
+            raise RuntimeError(
+                f"[{type(self).__name__}] candidate file for {self._cand_file!r} "
+                f"exists but could not be read: {exc}. Refusing to continue with "
+                "an empty review queue, which would look exactly like having "
+                "nothing left to review."
+            ) from exc
+
+        if raw is None or raw.empty:
+            return
+
+        cols = {c.lower(): c for c in raw.columns}
+        missing = [k for k in ("child", "parent", "source") if k not in cols]
+        if missing:
+            raise ValueError(
+                f"[{type(self).__name__}] candidate CSV for {self._cand_file!r} is "
+                f"missing column(s) {missing}; found {sorted(cols)}."
+            )
+
+        committed = 0
+        for _, r in raw.iterrows():
+            key = (str(r[cols["child"]]), str(r[cols["parent"]]))
+            if key in self._prov:
+                committed += 1          # promoted since it was proposed
+                continue
+            self._candidates[key] = str(r[cols["source"]])
+        print(f"[{type(self).__name__}] {len(self._candidates)} candidate edge(s) "
+              f"awaiting review"
+              + (f"; {committed} already committed since." if committed else "."))
+
+    def save_candidates(self) -> None:
+        """Write the review queue, INCLUDING when it is empty.
+
+        `save_provenance` returns early on an empty dict, which is safe there --
+        provenance only grows. A queue shrinks: promoting the last candidate
+        empties it, and skipping the write would leave the previous file as the
+        newest on disk, so the next session would load the promoted edges back
+        as though they were still awaiting review.
+        """
+        out = pd.DataFrame(
+            [{"child": c, "parent": p, "source": s}
+             for (c, p), s in sorted(self._candidates.items())],
+            columns=["child", "parent", "source"],
+        )
+        self.dm.save_as_csv(out, self._cand_file)
 
     def source_of(self, specific: str, general: str) -> str | None:
         """Which source produced this edge, if any."""
@@ -242,6 +321,13 @@ class BaseHierarchy(ABC):
                     f"run_build_hierarchies(). Pass lattice=... to keep them.",
                     RuntimeWarning, stacklevel=2,
                 )
+        # The queue shrank, so make that durable -- otherwise the previous
+        # file stays newest on disk and the next session reloads the promoted
+        # edges as pending. A hierarchy built detached (`__new__`, no
+        # DataManager) has no file to keep in step, so there is nothing to
+        # write and nothing lost; that is the only case this skips.
+        if n and getattr(self, "dm", None) is not None:
+            self.save_candidates()
         return n
 
     def provenance_axioms(self) -> list[tuple[str, str, str, str]]:
@@ -258,6 +344,7 @@ class BaseHierarchy(ABC):
             out = self._df.copy().reset_index().rename(columns={"index": "concept"})
             self.dm.save_as_csv(out, self.file_name)
         self.save_provenance()
+        self.save_candidates()
 
     # ── Properties ─────────────────────────────────────────────────────────────
 
@@ -287,7 +374,8 @@ class BaseHierarchy(ABC):
 
     # ── Public methods ─────────────────────────────────────────────────────────
 
-    def get_data(self, store, curated=None, fca=()) -> None:
+    def get_data(self, store, curated=None, fca=(), reconcile_categories=None,
+                 placed=()) -> None:
         """Populate the hierarchy by reading its sources. Rebuilds from scratch.
 
         This is a *reader*, not a merge point. Each source keeps its own identity
@@ -300,6 +388,35 @@ class BaseHierarchy(ABC):
                   from WONT and MILD. Stamped `curated`.
         fca     – iterable of accepted lattice slices, each a sequence of
                   (child, parent) pairs. Stamped `fca`.
+        placed  – (term, class label) pairs the placement step put under an
+                  existing WONT/MILD class and the review kept
+                  (`TermMappingAndGate.placements()`), and (term, term)
+                  pairs the author put one under the other
+                  (`term_links()`, rule 89). Stamped `placed`.
+        reconcile_categories
+                – callable(categories) -> category | None, deciding which single
+                  BFO category a term typed several ways actually gets. Pass
+                  `ReasonerGate.least_common_category` to retreat to the most
+                  specific category MILD says subsumes them all.
+
+                  Stage-1 typing runs per abstract, so nothing stops two
+                  abstracts typing one term differently: `Necrosis` arrived as
+                  `material entity` from one and `process` from two others. Both
+                  became edges, BFO makes continuant and occurrent disjoint, and
+                  the reasoner had to clean up afterwards -- 42 of 48 quarantined
+                  edges were this, across 16 terms. Reconciling here builds a
+                  hierarchy that is coherent by construction instead.
+
+                  A term whose typings share no common ancestor gets NO category
+                  edge and is recorded in `self.irreconcilable`: `Mortality` as
+                  both `Process` and `Tendency` spans continuant and occurrent,
+                  and there is no honest category for it. That list is a review
+                  queue, not a failure -- usually one label covering several
+                  things.
+
+                  The store keeps every abstract's opinion either way. The
+                  disagreement is data; what may not survive is an incoherent
+                  hierarchy built from it.
 
         Curated edges used to be pushed *through* the store first, which made the
         store assert 459 edges it had never extracted and required a second pass
@@ -310,6 +427,15 @@ class BaseHierarchy(ABC):
         """
         edges: list[tuple[str, str]] = []
         edge_source: dict[tuple[str, str], str] = {}
+        # node -> the string a source wrote for it, first source first (the
+        # store's own names before the ontologies' labels): what a verdict on
+        # an edge is written against in the term dict (rule 89).
+        names: dict[str, str] = {}
+
+        def _t(name) -> str:
+            node = smart_title(str(name))
+            names.setdefault(node, str(name))
+            return node
 
         def _note(pair, source):
             specific, general = pair
@@ -320,9 +446,44 @@ class BaseHierarchy(ABC):
             if prev is None or SOURCE_RANK[source] > SOURCE_RANK[prev]:
                 edge_source[pair] = source
 
+        # Which BFO categories each term was given, across the whole corpus.
+        # Collected first so a term's category edge can be decided once, rather
+        # than one edge per abstract that happened to mention it.
+        from wound_ontology.llm.category_vocab import declared_category
+        typings: dict[str, set[str]] = {}
+        if reconcile_categories is not None:
+            for _, ents in records_of(store):
+                for entity, attrs in ents.items():
+                    for triple, value in attrs.items():
+                        if value != 1.0 or ":" not in triple:
+                            continue
+                        pred, target = triple.split(":", 1)
+                        if pred.strip().lower().replace(" ", "_") not in self._direct_predicates:
+                            continue
+                        # A category read out of the store is converted to its
+                        # declared spelling here, so everything downstream --
+                        # reconciliation, the coarse-set subtraction, the gate --
+                        # compares declared names only. A cache written under the
+                        # old CamelCase spelling reads correctly through this.
+                        declared = declared_category(target.strip())
+                        if declared is not None:
+                            typings.setdefault(_t(entity), set()).add(declared)
+
+        self.irreconcilable: dict[str, set[str]] = {}
+        agreed: dict[str, str] = {}
+        for term, cats in typings.items():
+            if len(cats) == 1:
+                agreed[term] = next(iter(cats))
+                continue
+            winner = reconcile_categories(cats)
+            if winner is None:
+                self.irreconcilable[term] = cats
+            else:
+                agreed[term] = winner
+
         source = SOURCE_TEXT
-        for pmid_data in store.dict.values():
-            for entity, attrs in pmid_data.get("entities", {}).items():
+        for _, ents in records_of(store):
+            for entity, attrs in ents.items():
                 for triple, value in attrs.items():
                     if value != 1.0 or ":" not in triple:
                         continue
@@ -330,10 +491,36 @@ class BaseHierarchy(ABC):
                     pred = pred.strip().lower().replace(" ", "_")
                     target = target.strip()
                     if pred in self._direct_predicates:
-                        _note((smart_title(entity), smart_title(target)), source)
+                        # Category edges for a reconciled term are emitted once,
+                        # below. Skipping them here rather than filtering for the
+                        # agreed one matters: the agreed category is often one no
+                        # abstract proposed -- process and process boundary agree
+                        # on Occurrent, which neither of them said.
+                        if declared_category(target) and smart_title(entity) in typings:
+                            continue
+                        _note((_t(entity), _t(target)), source)
                     elif pred in self._inverse_predicates:
-                        _note((smart_title(target), smart_title(entity)), source)
+                        _note((_t(target), _t(entity)), source)
+
+        for term, category in agreed.items():
+            _note((term, _t(category)), source)
         from_store = len(edges)
+
+        if reconcile_categories is not None:
+            merged = sum(len(c) - 1 for c in typings.values() if len(c) > 1)
+            if merged or self.irreconcilable:
+                print(f"[{self.__class__.__name__}] category reconciliation: "
+                      f"{len(typings)} typed term(s); "
+                      f"{merged} conflicting category edge(s) collapsed to the "
+                      f"category MILD says subsumes them.")
+            if self.irreconcilable:
+                print(f"[{self.__class__.__name__}] *** {len(self.irreconcilable)} "
+                      f"term(s) were typed in ways with NO common ancestor. They get "
+                      f"no category edge — there is no honest one — and are listed "
+                      f"in .irreconcilable: ***")
+                for term, cats in sorted(self.irreconcilable.items())[:15]:
+                    print(f"[{self.__class__.__name__}]     {term}: "
+                          f"{', '.join(sorted(cats))}")
 
         if curated is not None and not getattr(curated, "empty", True):
             cols = {c.lower().strip(): c for c in curated.columns}
@@ -349,15 +536,19 @@ class BaseHierarchy(ABC):
                 child, parent = row[child_col], row[parent_col]
                 if pd.isna(child) or pd.isna(parent):
                     continue
-                _note((smart_title(str(child)), smart_title(str(parent))),
-                      SOURCE_CURATED)
+                _note((_t(child), _t(parent)), SOURCE_CURATED)
         from_curated = len(edges) - from_store
+
+        for child, parent in placed or ():
+            _note((_t(child), _t(parent)), SOURCE_PLACED)
+        from_placed = len(edges) - from_store - from_curated
 
         for accepted in fca or ():
             for child, parent in accepted:
-                _note((smart_title(str(child)), smart_title(str(parent))), SOURCE_FCA)
-        from_fca = len(edges) - from_store - from_curated
+                _note((_t(child), _t(parent)), SOURCE_FCA)
+        from_fca = len(edges) - from_store - from_curated - from_placed
 
+        self.names = names
         if not edges:
             self._df = pd.DataFrame(dtype=float)
             self._prov = {}
@@ -381,9 +572,10 @@ class BaseHierarchy(ABC):
         # which is the point of rebuilding rather than merging.
         self._prov = dict(edge_source)
         counts = {src: sum(1 for v in self._prov.values() if v == src)
-                  for src in (SOURCE_CURATED, SOURCE_TEXT, SOURCE_FCA)}
+                  for src in (SOURCE_CURATED, SOURCE_PLACED, SOURCE_TEXT, SOURCE_FCA)}
         print(f"[{self.__class__.__name__}] {len(self._prov)} edges from "
-              f"{from_store} store + {from_curated} curated + {from_fca} accepted-FCA "
+              f"{from_store} store + {from_curated} curated + {from_placed} placed + "
+              f"{from_fca} accepted-FCA "
               f"assertions — after rank: "
               + ", ".join(f"{n} {src}" for src, n in counts.items() if n))
 

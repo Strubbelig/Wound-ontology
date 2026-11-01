@@ -33,6 +33,7 @@ BFO_SKELETON: dict[str, str] = {
     "BFO_0000017": "BFO_0000020", "BFO_0000019": "BFO_0000020",
     "BFO_0000016": "BFO_0000017", "BFO_0000023": "BFO_0000017",
     "BFO_0000034": "BFO_0000016", "BFO_0000035": "BFO_0000003",
+    "BFO_0000008": "BFO_0000003",
     "OGMS_0000045": "BFO_0000040", "IAO_0000030": "BFO_0000031",
 }
 
@@ -43,6 +44,7 @@ BFO_LABELS: dict[str, str] = {
     "BFO_0000019": "quality", "BFO_0000020": "specifically dependent continuant",
     "BFO_0000023": "role", "BFO_0000031": "generically dependent continuant",
     "BFO_0000034": "function", "BFO_0000035": "process boundary",
+    "BFO_0000008": "temporal region",
     "BFO_0000040": "material entity", "BFO_0000141": "immaterial entity",
     "OGMS_0000045": "disorder", "IAO_0000030": "information content entity",
 }
@@ -55,15 +57,86 @@ BFO_DISJOINT: list[tuple[str, str]] = [
     ("BFO_0000004", "BFO_0000031"),   # independent / generically dependent
     ("BFO_0000020", "BFO_0000031"),
     ("BFO_0000019", "BFO_0000017"),   # quality / realizable
+    ("BFO_0000015", "BFO_0000008"),   # process / temporal region (BFO 2020)
 ]
+
+
+def add_bfo_and_relation_axioms(g: rdflib.Graph, modules) -> dict:
+    """BFO's own axioms and the exported relations' domains and ranges, read from
+    the import modules into `g` (2026-10-03, rule 66).
+
+    The hand tables above held 13 of BFO's 35 subclass edges and 6 disjointness
+    pairs, and no relation had a domain or range, so `Wound has_quality
+    material disease entity` clashed with nothing. Now: every subsumption among
+    BFO classes, every disjointness among them (AllDisjointClasses expanded
+    pairwise), and rdfs:domain / rdfs:range of every property in RELATION_IRI as
+    RO / BFO / IAO / OBI declare them. ELK reasons in OWL 2 EL: a named class is
+    kept, an intersection keeps its named members (a weaker axiom the source
+    entails), a union or complement is left out and counted.
+    """
+    from rdflib.collection import Collection
+    from wound_ontology.llm.extraction_models import RELATION_IRI
+    # Nothing withheld. Until 2026-10-03 RO's range of `has disposition` was:
+    # WONT bore `wound infecting tendency` by it although MILD makes tendency
+    # disjoint from disposition. The curator ruled "separate has tendency
+    # relation": MILD_120101 `has tendency` now carries those three axioms.
+    withheld: set = set()
+    from wound_ontology.utils.rdf_io import parse_graph
+    m = rdflib.Graph()
+    for path in modules:
+        m += parse_graph(Path(path), context="skeleton module")
+    bfo = lambda x: isinstance(x, URIRef) and str(x).startswith(OBO + "BFO_")
+    rep = {"bfo_subclass": 0, "bfo_disjoint": 0, "domain": 0, "range": 0,
+           "weakened_intersection": 0, "skipped_not_EL": [], "no_axiom": []}
+    for c, p in m.subject_objects(RDFS.subClassOf):
+        if bfo(c) and bfo(p):
+            g.add((c, RDF.type, OWL.Class)); g.add((c, RDFS.subClassOf, p)); rep["bfo_subclass"] += 1
+            labs = {str(x): x for x in m.objects(c, RDFS.label)}
+            if labs and not any(True for _ in g.objects(c, RDFS.label)):
+                # one name, the same every run (curated_seed.bfo_label)
+                from wound_ontology.hierarchies.curated_seed import bfo_label
+                g.add((c, RDFS.label, labs[bfo_label(c, set(labs))]))
+    for a, b in m.subject_objects(OWL.disjointWith):
+        if bfo(a) and bfo(b):
+            g.add((a, OWL.disjointWith, b)); rep["bfo_disjoint"] += 1
+    for node in m.subjects(RDF.type, OWL.AllDisjointClasses):
+        members = [x for x in Collection(m, m.value(node, OWL.members)) if bfo(x)]
+        for i, a in enumerate(members):
+            for b in members[i + 1:]:
+                g.add((a, OWL.disjointWith, b)); rep["bfo_disjoint"] += 1
+    for name, iri in sorted(RELATION_IRI.items()):
+        prop = URIRef(iri)
+        g.add((prop, RDF.type, OWL.ObjectProperty))
+        found = False
+        for axis, key in ((RDFS.domain, "domain"), (RDFS.range, "range")):
+            for x in m.objects(prop, axis):
+                found = True
+                if (name, key) in withheld:
+                    rep.setdefault("withheld", []).append(f"{name} {key}")
+                    continue
+                if isinstance(x, URIRef):
+                    g.add((prop, axis, x)); rep[key] += 1
+                elif m.value(x, OWL.intersectionOf) is not None:
+                    for part in Collection(m, m.value(x, OWL.intersectionOf)):
+                        if isinstance(part, URIRef):
+                            g.add((prop, axis, part)); rep[key] += 1; rep["weakened_intersection"] += 1
+                else:
+                    rep["skipped_not_EL"].append(f"{name} {key}")
+        if not found and not any(True for _ in g.objects(prop, RDFS.domain)) \
+                and not any(True for _ in g.objects(prop, RDFS.range)):
+            rep["no_axiom"].append(name)
+    return rep
 
 
 def build_skeleton(
     ground_truth: str | Path,
     mild: str | Path,
     output: str | Path,
+    modules=None,
 ) -> tuple[Path, int]:
-    """Write the skeleton TBox. Returns (path, triple_count)."""
+    """Write the skeleton TBox. Returns (path, triple_count). With `modules`
+    (the import module files), BFO's own axioms and the relations' domains and
+    ranges are added from them (`add_bfo_and_relation_axioms`)."""
     g = rdflib.Graph()
     for src in (ground_truth, mild):
         tmp = rdflib.Graph()
@@ -82,6 +155,9 @@ def build_skeleton(
             g.add((u, RDFS.label, rdflib.Literal(label)))
     for a, b in BFO_DISJOINT:
         g.add((URIRef(OBO + a), OWL.disjointWith, URIRef(OBO + b)))
+    if modules is not None:
+        report = add_bfo_and_relation_axioms(g, modules)
+        print(f"[skeleton] from the import modules: {report}")
 
     # Declare every property used in a restriction, so the reasoner does not
     # treat it as an undeclared entity.

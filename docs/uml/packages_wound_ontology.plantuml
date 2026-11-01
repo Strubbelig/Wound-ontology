@@ -2,19 +2,19 @@
 set namespaceSeparator none
 package "wound_ontology" as wound_ontology #aliceblue {
 }
+package "wound_ontology.alignment" as wound_ontology.alignment #antiquewhite {
+}
+package "wound_ontology.alignment.target_loader" as wound_ontology.alignment.target_loader #antiquewhite {
+}
 package "wound_ontology.connectors" as wound_ontology.connectors #aquamarine {
 }
 package "wound_ontology.connectors.base_connector" as wound_ontology.connectors.base_connector #aquamarine {
 }
-package "wound_ontology.connectors.bfo_connector" as wound_ontology.connectors.bfo_connector #aquamarine {
-}
-package "wound_ontology.connectors.obi_connector" as wound_ontology.connectors.obi_connector #aquamarine {
-}
-package "wound_ontology.connectors.onto_connector" as wound_ontology.connectors.onto_connector #aquamarine {
-}
 package "wound_ontology.connectors.pubmed_connector" as wound_ontology.connectors.pubmed_connector #aquamarine {
 }
-package "wound_ontology.connectors.ro_connector" as wound_ontology.connectors.ro_connector #aquamarine {
+package "wound_ontology.connectors.pubmed_query_validator" as wound_ontology.connectors.pubmed_query_validator #aquamarine {
+}
+package "wound_ontology.connectors.snomed_fetcher" as wound_ontology.connectors.snomed_fetcher #aquamarine {
 }
 package "wound_ontology.connectors.umls_connector" as wound_ontology.connectors.umls_connector #aquamarine {
 }
@@ -22,129 +22,271 @@ package "wound_ontology.data_manager" as wound_ontology.data_manager #burlywood 
 }
 package "wound_ontology.data_manager.data_manager" as wound_ontology.data_manager.data_manager #burlywood {
 }
-package "wound_ontology.export" as wound_ontology.export #cadetblue {
+package "wound_ontology.embedding" as wound_ontology.embedding #cadetblue {
 }
-package "wound_ontology.export.gexf_exporter" as wound_ontology.export.gexf_exporter #cadetblue {
+package "wound_ontology.embedding.embedder" as wound_ontology.embedding.embedder #cadetblue {
 }
-package "wound_ontology.export.owl_ontology" as wound_ontology.export.owl_ontology #cadetblue {
+package "wound_ontology.evaluation" as wound_ontology.evaluation #chartreuse {
 }
-package "wound_ontology.export.owl_reasoner" as wound_ontology.export.owl_reasoner #cadetblue {
+package "wound_ontology.evaluation.competency" as wound_ontology.evaluation.competency #chartreuse {
 }
-package "wound_ontology.fca" as wound_ontology.fca #chartreuse {
+package "wound_ontology.fca" as wound_ontology.fca #chocolate {
 }
-package "wound_ontology.fca.concept_lattice" as wound_ontology.fca.concept_lattice #chartreuse {
+package "wound_ontology.fca.concept_lattice" as wound_ontology.fca.concept_lattice #chocolate {
 }
-package "wound_ontology.fca.context_matrix" as wound_ontology.fca.context_matrix #chartreuse {
+package "wound_ontology.fca.context_matrix" as wound_ontology.fca.context_matrix #chocolate {
 }
-package "wound_ontology.graph" as wound_ontology.graph #lightsteelblue {
+package "wound_ontology.graph_visualizer" as wound_ontology.graph_visualizer #aliceblue {
 }
-package "wound_ontology.graph.knowledge_graph" as wound_ontology.graph.knowledge_graph #lightsteelblue {
+package "wound_ontology.hierarchies" as wound_ontology.hierarchies #coral {
 }
-package "wound_ontology.graph.sparql_helper" as wound_ontology.graph.sparql_helper #lightsteelblue {
+package "wound_ontology.hierarchies.base_hierarchy" as wound_ontology.hierarchies.base_hierarchy #coral {
 }
-package "wound_ontology.hierarchies" as wound_ontology.hierarchies #chocolate {
+package "wound_ontology.hierarchies.class_hierarchy" as wound_ontology.hierarchies.class_hierarchy #coral {
 }
-package "wound_ontology.hierarchies.base_hierarchy" as wound_ontology.hierarchies.base_hierarchy #chocolate {
+package "wound_ontology.hierarchies.curated_seed" as wound_ontology.hierarchies.curated_seed #coral {
 }
-package "wound_ontology.hierarchies.class_hierarchy" as wound_ontology.hierarchies.class_hierarchy #chocolate {
+package "wound_ontology.hierarchies.fca_hierarchy" as wound_ontology.hierarchies.fca_hierarchy #coral {
 }
-package "wound_ontology.hierarchies.fca_hierarchy" as wound_ontology.hierarchies.fca_hierarchy #chocolate {
+package "wound_ontology.hierarchies.mereological_hierarchy" as wound_ontology.hierarchies.mereological_hierarchy #coral {
 }
-package "wound_ontology.hierarchies.mereological_hierarchy" as wound_ontology.hierarchies.mereological_hierarchy #chocolate {
+package "wound_ontology.knowledge_graph" as wound_ontology.knowledge_graph #cornflowerblue {
 }
-package "wound_ontology.llm" as wound_ontology.llm #coral {
+package "wound_ontology.knowledge_graph.model" as wound_ontology.knowledge_graph.model #cornflowerblue {
 }
-package "wound_ontology.llm.llm_client" as wound_ontology.llm.llm_client #coral {
+package "wound_ontology.knowledge_graph.querier" as wound_ontology.knowledge_graph.querier #cornflowerblue {
 }
-package "wound_ontology.llm.schemas" as wound_ontology.llm.schemas #coral {
+package "wound_ontology.knowledge_graph.repository" as wound_ontology.knowledge_graph.repository #cornflowerblue {
 }
-package "wound_ontology.mappers" as wound_ontology.mappers #cornflowerblue {
+package "wound_ontology.knowledge_graph.sparql" as wound_ontology.knowledge_graph.sparql #cornflowerblue {
 }
-package "wound_ontology.mappers.term_mapper" as wound_ontology.mappers.term_mapper #cornflowerblue {
+package "wound_ontology.llm" as wound_ontology.llm #cyan {
+}
+package "wound_ontology.llm.category_vocab" as wound_ontology.llm.category_vocab #cyan {
+}
+package "wound_ontology.llm.extraction_adapter" as wound_ontology.llm.extraction_adapter #cyan {
+}
+package "wound_ontology.llm.extraction_models" as wound_ontology.llm.extraction_models #cyan {
+}
+package "wound_ontology.llm.extraction_prompt" as wound_ontology.llm.extraction_prompt #cyan {
+}
+package "wound_ontology.llm.llm_client" as wound_ontology.llm.llm_client #cyan {
+}
+package "wound_ontology.llm.schema_builder" as wound_ontology.llm.schema_builder #cyan {
+}
+package "wound_ontology.llm.schemas" as wound_ontology.llm.schemas #cyan {
+}
+package "wound_ontology.mappers" as wound_ontology.mappers #darkgoldenrod {
+}
+package "wound_ontology.mappers.mapping_adjudicator" as wound_ontology.mappers.mapping_adjudicator #darkgoldenrod {
+}
+package "wound_ontology.mappers.mapping_checker" as wound_ontology.mappers.mapping_checker #darkgoldenrod {
+}
+package "wound_ontology.mappers.mapping_cleaner" as wound_ontology.mappers.mapping_cleaner #darkgoldenrod {
+}
+package "wound_ontology.mappers.pass0" as wound_ontology.mappers.pass0 #darkgoldenrod {
+}
+package "wound_ontology.mappers.term_mapper" as wound_ontology.mappers.term_mapper #darkgoldenrod {
+}
+package "wound_ontology.mappers.term_mapping_and_gate" as wound_ontology.mappers.term_mapping_and_gate #darkgoldenrod {
 }
 package "wound_ontology.orchestrator" as wound_ontology.orchestrator #aliceblue {
 }
-package "wound_ontology.store" as wound_ontology.store #antiquewhite {
+package "wound_ontology.owl" as wound_ontology.owl #darkseagreen {
 }
-package "wound_ontology.store.concept_store" as wound_ontology.store.concept_store #antiquewhite {
+package "wound_ontology.owl.curator" as wound_ontology.owl.curator #darkseagreen {
 }
-wound_ontology --> wound_ontology.connectors
-wound_ontology --> wound_ontology.data_manager.data_manager
-wound_ontology --> wound_ontology.export.gexf_exporter
-wound_ontology --> wound_ontology.export.owl_ontology
-wound_ontology --> wound_ontology.export.owl_reasoner
-wound_ontology --> wound_ontology.fca
-wound_ontology --> wound_ontology.graph
-wound_ontology --> wound_ontology.hierarchies
-wound_ontology --> wound_ontology.llm
-wound_ontology --> wound_ontology.mappers
-wound_ontology --> wound_ontology.orchestrator
-wound_ontology --> wound_ontology.store
-wound_ontology.connectors --> wound_ontology.connectors.base_connector
-wound_ontology.connectors --> wound_ontology.connectors.bfo_connector
-wound_ontology.connectors --> wound_ontology.connectors.obi_connector
-wound_ontology.connectors --> wound_ontology.connectors.onto_connector
-wound_ontology.connectors --> wound_ontology.connectors.pubmed_connector
-wound_ontology.connectors --> wound_ontology.connectors.ro_connector
-wound_ontology.connectors --> wound_ontology.connectors.umls_connector
+package "wound_ontology.owl.extend" as wound_ontology.owl.extend #darkseagreen {
+}
+package "wound_ontology.owl.model" as wound_ontology.owl.model #darkseagreen {
+}
+package "wound_ontology.owl.ontogpt_extractor" as wound_ontology.owl.ontogpt_extractor #darkseagreen {
+}
+package "wound_ontology.owl.ontology_mapper" as wound_ontology.owl.ontology_mapper #darkseagreen {
+}
+package "wound_ontology.owl.provenance" as wound_ontology.owl.provenance #darkseagreen {
+}
+package "wound_ontology.owl.robot_module_extractor" as wound_ontology.owl.robot_module_extractor #darkseagreen {
+}
+package "wound_ontology.owl.upper_stub_replacer" as wound_ontology.owl.upper_stub_replacer #darkseagreen {
+}
+package "wound_ontology.reasoning" as wound_ontology.reasoning #dodgerblue {
+}
+package "wound_ontology.reasoning.gate" as wound_ontology.reasoning.gate #dodgerblue {
+}
+package "wound_ontology.reasoning.reasoner" as wound_ontology.reasoning.reasoner #dodgerblue {
+}
+package "wound_ontology.reasoning.skeleton" as wound_ontology.reasoning.skeleton #dodgerblue {
+}
+package "wound_ontology.store" as wound_ontology.store #forestgreen {
+}
+package "wound_ontology.store.base_cleaner" as wound_ontology.store.base_cleaner #forestgreen {
+}
+package "wound_ontology.store.blocker" as wound_ontology.store.blocker #forestgreen {
+}
+package "wound_ontology.store.cluster_promoter" as wound_ontology.store.cluster_promoter #forestgreen {
+}
+package "wound_ontology.store.concept_store" as wound_ontology.store.concept_store #forestgreen {
+}
+package "wound_ontology.store.store_cleaner" as wound_ontology.store.store_cleaner #forestgreen {
+}
+package "wound_ontology.store.term_lists" as wound_ontology.store.term_lists #forestgreen {
+}
+package "wound_ontology.utils" as wound_ontology.utils #gold {
+}
+package "wound_ontology.utils.label_match" as wound_ontology.utils.label_match #gold {
+}
+package "wound_ontology.utils.normalise" as wound_ontology.utils.normalise #gold {
+}
+package "wound_ontology.utils.rdf_io" as wound_ontology.utils.rdf_io #gold {
+}
+package "wound_ontology.utils.spelling" as wound_ontology.utils.spelling #gold {
+}
+package "wound_ontology.utils.string_utils" as wound_ontology.utils.string_utils #gold {
+}
 wound_ontology.connectors.base_connector --> wound_ontology.data_manager.data_manager
-wound_ontology.connectors.bfo_connector --> wound_ontology.connectors.onto_connector
-wound_ontology.connectors.bfo_connector --> wound_ontology.data_manager.data_manager
-wound_ontology.connectors.obi_connector --> wound_ontology.connectors.onto_connector
-wound_ontology.connectors.onto_connector --> wound_ontology.connectors.base_connector
-wound_ontology.connectors.onto_connector --> wound_ontology.data_manager.data_manager
 wound_ontology.connectors.pubmed_connector --> wound_ontology.connectors.base_connector
 wound_ontology.connectors.pubmed_connector --> wound_ontology.data_manager.data_manager
-wound_ontology.connectors.ro_connector --> wound_ontology.connectors.onto_connector
-wound_ontology.connectors.ro_connector --> wound_ontology.data_manager.data_manager
 wound_ontology.connectors.umls_connector --> wound_ontology.connectors.base_connector
 wound_ontology.connectors.umls_connector --> wound_ontology.data_manager.data_manager
 wound_ontology.data_manager --> wound_ontology.data_manager.data_manager
-wound_ontology.export --> wound_ontology.export.gexf_exporter
-wound_ontology.export --> wound_ontology.export.owl_ontology
-wound_ontology.export --> wound_ontology.export.owl_reasoner
-wound_ontology.export.gexf_exporter --> wound_ontology.graph.knowledge_graph
-wound_ontology.export.owl_ontology --> wound_ontology.hierarchies.base_hierarchy
-wound_ontology.fca --> wound_ontology.fca.concept_lattice
-wound_ontology.fca --> wound_ontology.fca.context_matrix
+wound_ontology.data_manager.data_manager --> wound_ontology.owl.model
+wound_ontology.evaluation --> wound_ontology.evaluation.competency
+wound_ontology.evaluation.competency --> wound_ontology.utils.label_match
 wound_ontology.fca.concept_lattice --> wound_ontology.data_manager.data_manager
 wound_ontology.fca.concept_lattice --> wound_ontology.fca.context_matrix
+wound_ontology.fca.concept_lattice --> wound_ontology.llm.category_vocab
+wound_ontology.fca.concept_lattice --> wound_ontology.llm.extraction_models
+wound_ontology.fca.concept_lattice --> wound_ontology.utils.string_utils
 wound_ontology.fca.context_matrix --> wound_ontology.data_manager.data_manager
-wound_ontology.graph --> wound_ontology.graph.knowledge_graph
-wound_ontology.graph --> wound_ontology.graph.sparql_helper
-wound_ontology.graph.knowledge_graph --> wound_ontology.graph.sparql_helper
+wound_ontology.fca.context_matrix --> wound_ontology.hierarchies.base_hierarchy
+wound_ontology.fca.context_matrix --> wound_ontology.store.concept_store
+wound_ontology.fca.context_matrix --> wound_ontology.utils.string_utils
+wound_ontology.graph_visualizer --> wound_ontology.knowledge_graph
 wound_ontology.hierarchies --> wound_ontology.hierarchies.base_hierarchy
 wound_ontology.hierarchies --> wound_ontology.hierarchies.class_hierarchy
+wound_ontology.hierarchies --> wound_ontology.hierarchies.curated_seed
 wound_ontology.hierarchies --> wound_ontology.hierarchies.fca_hierarchy
 wound_ontology.hierarchies --> wound_ontology.hierarchies.mereological_hierarchy
 wound_ontology.hierarchies.base_hierarchy --> wound_ontology.data_manager.data_manager
+wound_ontology.hierarchies.base_hierarchy --> wound_ontology.llm.category_vocab
+wound_ontology.hierarchies.base_hierarchy --> wound_ontology.store.concept_store
+wound_ontology.hierarchies.base_hierarchy --> wound_ontology.utils.string_utils
 wound_ontology.hierarchies.class_hierarchy --> wound_ontology.data_manager.data_manager
 wound_ontology.hierarchies.class_hierarchy --> wound_ontology.hierarchies.base_hierarchy
+wound_ontology.hierarchies.curated_seed --> wound_ontology.utils.rdf_io
 wound_ontology.hierarchies.fca_hierarchy --> wound_ontology.hierarchies.base_hierarchy
 wound_ontology.hierarchies.mereological_hierarchy --> wound_ontology.data_manager.data_manager
 wound_ontology.hierarchies.mereological_hierarchy --> wound_ontology.hierarchies.base_hierarchy
-wound_ontology.llm --> wound_ontology.llm.llm_client
-wound_ontology.llm --> wound_ontology.llm.schemas
+wound_ontology.knowledge_graph --> wound_ontology.knowledge_graph.model
+wound_ontology.knowledge_graph --> wound_ontology.knowledge_graph.querier
+wound_ontology.knowledge_graph --> wound_ontology.knowledge_graph.repository
+wound_ontology.knowledge_graph.model --> wound_ontology.knowledge_graph.querier
+wound_ontology.knowledge_graph.querier --> wound_ontology.knowledge_graph.model
+wound_ontology.knowledge_graph.repository --> wound_ontology.knowledge_graph.model
+wound_ontology.llm.category_vocab --> wound_ontology.llm.extraction_models
+wound_ontology.llm.extraction_adapter --> wound_ontology.llm.extraction_models
+wound_ontology.llm.extraction_adapter --> wound_ontology.store.concept_store
+wound_ontology.llm.extraction_prompt --> wound_ontology.llm.extraction_models
+wound_ontology.llm.llm_client --> wound_ontology.llm.extraction_models
+wound_ontology.llm.llm_client --> wound_ontology.llm.extraction_prompt
 wound_ontology.llm.llm_client --> wound_ontology.llm.schemas
+wound_ontology.llm.llm_client --> wound_ontology.utils.string_utils
+wound_ontology.llm.schemas --> wound_ontology.llm.extraction_models
+wound_ontology.llm.schemas --> wound_ontology.mappers.mapping_adjudicator
 wound_ontology.mappers --> wound_ontology.mappers.term_mapper
-wound_ontology.mappers.term_mapper --> wound_ontology.data_manager.data_manager
-wound_ontology.orchestrator --> wound_ontology.connectors.bfo_connector
-wound_ontology.orchestrator --> wound_ontology.connectors.obi_connector
+wound_ontology.mappers.mapping_adjudicator --> wound_ontology.mappers.term_mapping_and_gate
+wound_ontology.mappers.mapping_adjudicator --> wound_ontology.utils.string_utils
+wound_ontology.mappers.mapping_checker --> wound_ontology.embedding.embedder
+wound_ontology.mappers.mapping_checker --> wound_ontology.utils.string_utils
+wound_ontology.mappers.mapping_cleaner --> wound_ontology.store.base_cleaner
+wound_ontology.mappers.pass0 --> wound_ontology.mappers.term_mapper
+wound_ontology.mappers.pass0 --> wound_ontology.utils.label_match
+wound_ontology.mappers.pass0 --> wound_ontology.utils.normalise
+wound_ontology.mappers.pass0 --> wound_ontology.utils.spelling
+wound_ontology.mappers.term_mapper --> wound_ontology.mappers.mapping_adjudicator
+wound_ontology.mappers.term_mapper --> wound_ontology.mappers.term_mapping_and_gate
+wound_ontology.mappers.term_mapper --> wound_ontology.utils.label_match
+wound_ontology.mappers.term_mapper --> wound_ontology.utils.string_utils
+wound_ontology.mappers.term_mapping_and_gate --> wound_ontology.data_manager.data_manager
+wound_ontology.mappers.term_mapping_and_gate --> wound_ontology.utils.string_utils
 wound_ontology.orchestrator --> wound_ontology.connectors.pubmed_connector
-wound_ontology.orchestrator --> wound_ontology.connectors.ro_connector
+wound_ontology.orchestrator --> wound_ontology.connectors.pubmed_query_validator
+wound_ontology.orchestrator --> wound_ontology.connectors.snomed_fetcher
+wound_ontology.orchestrator --> wound_ontology.connectors.umls_connector
 wound_ontology.orchestrator --> wound_ontology.data_manager.data_manager
-wound_ontology.orchestrator --> wound_ontology.export.gexf_exporter
-wound_ontology.orchestrator --> wound_ontology.export.owl_ontology
-wound_ontology.orchestrator --> wound_ontology.export.owl_reasoner
+wound_ontology.orchestrator --> wound_ontology.embedding.embedder
+wound_ontology.orchestrator --> wound_ontology.evaluation
+wound_ontology.orchestrator --> wound_ontology.evaluation.competency
 wound_ontology.orchestrator --> wound_ontology.fca.concept_lattice
 wound_ontology.orchestrator --> wound_ontology.fca.context_matrix
-wound_ontology.orchestrator --> wound_ontology.graph.knowledge_graph
+wound_ontology.orchestrator --> wound_ontology.graph_visualizer
+wound_ontology.orchestrator --> wound_ontology.hierarchies.base_hierarchy
 wound_ontology.orchestrator --> wound_ontology.hierarchies.class_hierarchy
+wound_ontology.orchestrator --> wound_ontology.hierarchies.curated_seed
 wound_ontology.orchestrator --> wound_ontology.hierarchies.fca_hierarchy
 wound_ontology.orchestrator --> wound_ontology.hierarchies.mereological_hierarchy
+wound_ontology.orchestrator --> wound_ontology.knowledge_graph
+wound_ontology.orchestrator --> wound_ontology.llm
+wound_ontology.orchestrator --> wound_ontology.llm.category_vocab
+wound_ontology.orchestrator --> wound_ontology.llm.extraction_adapter
+wound_ontology.orchestrator --> wound_ontology.llm.extraction_models
 wound_ontology.orchestrator --> wound_ontology.llm.llm_client
+wound_ontology.orchestrator --> wound_ontology.llm.schema_builder
+wound_ontology.orchestrator --> wound_ontology.mappers
+wound_ontology.orchestrator --> wound_ontology.mappers.mapping_adjudicator
+wound_ontology.orchestrator --> wound_ontology.mappers.mapping_checker
+wound_ontology.orchestrator --> wound_ontology.mappers.mapping_cleaner
+wound_ontology.orchestrator --> wound_ontology.mappers.pass0
 wound_ontology.orchestrator --> wound_ontology.mappers.term_mapper
+wound_ontology.orchestrator --> wound_ontology.mappers.term_mapping_and_gate
+wound_ontology.orchestrator --> wound_ontology.owl
+wound_ontology.orchestrator --> wound_ontology.owl.extend
+wound_ontology.orchestrator --> wound_ontology.owl.ontology_mapper
+wound_ontology.orchestrator --> wound_ontology.owl.upper_stub_replacer
+wound_ontology.orchestrator --> wound_ontology.reasoning
+wound_ontology.orchestrator --> wound_ontology.reasoning.gate
+wound_ontology.orchestrator --> wound_ontology.reasoning.skeleton
+wound_ontology.orchestrator --> wound_ontology.store.blocker
+wound_ontology.orchestrator --> wound_ontology.store.cluster_promoter
 wound_ontology.orchestrator --> wound_ontology.store.concept_store
+wound_ontology.orchestrator --> wound_ontology.store.store_cleaner
+wound_ontology.orchestrator --> wound_ontology.store.term_lists
+wound_ontology.orchestrator --> wound_ontology.utils.rdf_io
+wound_ontology.orchestrator --> wound_ontology.utils.string_utils
+wound_ontology.owl --> wound_ontology.owl.curator
+wound_ontology.owl --> wound_ontology.owl.extend
+wound_ontology.owl --> wound_ontology.owl.model
+wound_ontology.owl.curator --> wound_ontology.owl.model
+wound_ontology.owl.extend --> wound_ontology.llm.category_vocab
+wound_ontology.owl.extend --> wound_ontology.llm.extraction_adapter
+wound_ontology.owl.extend --> wound_ontology.llm.extraction_models
+wound_ontology.owl.extend --> wound_ontology.utils.label_match
+wound_ontology.owl.extend --> wound_ontology.utils.rdf_io
+wound_ontology.owl.model --> wound_ontology.data_manager.data_manager
+wound_ontology.owl.ontology_mapper --> wound_ontology.alignment.target_loader
+wound_ontology.owl.provenance --> wound_ontology.hierarchies.base_hierarchy
+wound_ontology.reasoning --> wound_ontology.reasoning.reasoner
+wound_ontology.reasoning.gate --> wound_ontology.hierarchies.base_hierarchy
+wound_ontology.reasoning.gate --> wound_ontology.llm.category_vocab
+wound_ontology.reasoning.gate --> wound_ontology.llm.extraction_models
 wound_ontology.store --> wound_ontology.store.concept_store
+wound_ontology.store.base_cleaner --> wound_ontology.store.blocker
+wound_ontology.store.base_cleaner --> wound_ontology.store.term_lists
+wound_ontology.store.blocker --> wound_ontology.store.term_lists
 wound_ontology.store.concept_store --> wound_ontology.data_manager.data_manager
+wound_ontology.store.concept_store --> wound_ontology.llm
+wound_ontology.store.concept_store --> wound_ontology.llm.category_vocab
+wound_ontology.store.concept_store --> wound_ontology.llm.extraction_adapter
+wound_ontology.store.concept_store --> wound_ontology.llm.extraction_models
+wound_ontology.store.concept_store --> wound_ontology.mappers.term_mapping_and_gate
+wound_ontology.store.concept_store --> wound_ontology.utils.label_match
+wound_ontology.store.concept_store --> wound_ontology.utils.normalise
+wound_ontology.store.concept_store --> wound_ontology.utils.string_utils
+wound_ontology.store.store_cleaner --> wound_ontology.store.base_cleaner
+wound_ontology.store.store_cleaner --> wound_ontology.store.concept_store
+wound_ontology.store.term_lists --> wound_ontology.utils.string_utils
+wound_ontology.utils.label_match --> wound_ontology.utils.string_utils
+wound_ontology.utils.normalise --> wound_ontology.utils.label_match
+wound_ontology.utils.normalise --> wound_ontology.utils.spelling
 @enduml

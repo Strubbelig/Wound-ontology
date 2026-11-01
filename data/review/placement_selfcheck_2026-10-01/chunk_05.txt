@@ -1,0 +1,600 @@
+3000|high microbial load|qual|< degree of microbial burden|1:colonized ; 2:infected ; 3:inflamed ; 4:Unusual infection
+3001|infection load|qual|< degree of microbial burden|1:infected ; 2:Unusual infection ; 3:colonized ; 4:inflamed
+3002|infection severity|qual|< degree of microbial burden|1:infected ; 2:Unusual infection ; 3:inflamed ; 4:degree of necrosis
+3003|infection status|qual|< degree of microbial burden|1:infected ; 2:sterile ; 3:inflamed ; 4:Unusual infection
+3004|initial bacterial load|qual|< degree of microbial burden|1:infected ; 2:colonized ; 3:Thread size 11-0 ; 4:Thread size 1-0
+3005|larval burden|qual|< degree of microbial burden|1:protruding ; 2:livid ; 3:base ; 4:size
+3006|load level|qual|< degree of microbial burden|1:size ; 2:Thread size ; 3:time ; 4:depth
+3007|low bacterial load|qual|< degree of microbial burden|1:sterile ; 2:bacterial metabolite ; 3:colonized ; 4:Gangrene
+3008|MDRO status|qual|< degree of microbial burden|1:metabolite ; 2:morphology ; 3:mammalian metabolite ; 4:xenobiotic metabolite
+3009|methicillin-resistant Staphylococcus aureus burden|qual|< degree of microbial burden|1:Methicillin-resistant Staphylococcus aureus infection ; 2:degree of maceration ; 3:macerated ; 4:degree of fibrin coverage
+3010|micro-organism load|qual|= degree of microbial burden|1:bacterial metabolite ; 2:prokaryotic metabolite ; 3:eukaryotic metabolite ; 4:macronutrient
+3011|microbial bioburden|qual|= degree of microbial burden|1:bacterial metabolite ; 2:prokaryotic metabolite ; 3:contaminated ; 4:eukaryotic metabolite
+3012|microbial complexity|qual|< degree of microbial burden|1:composition ; 2:colonized ; 3:bacterial metabolite ; 4:prokaryotic metabolite
+3013|microbial infection status|qual|< degree of microbial burden|1:infected ; 2:sterile ; 3:Unusual infection ; 4:colonized
+3014|mixed wound contamination class|qual|< degree of microbial burden|1:contaminated ; 2:colonized ; 3:Chronic cutaneous wound ; 4:Unusual infection
+3015|MLTC burden|qual|< degree of microbial burden|1:degree of maceration ; 2:swollen ; 3:mouse metabolite ; 4:livid
+3016|monomicrobial|qual|< degree of microbial burden|1:sterile ; 2:bacterial metabolite ; 3:infected ; 4:Unusual infection
+3017|MRSA concentration|qual|< degree of microbial burden|1:Methicillin-resistant Staphylococcus aureus infection ; 2:degree of maceration ; 3:NMR chemical shift reference compound ; 4:bacterial metabolite
+3018|operating room bacterial burden|qual|< degree of microbial burden|1:abscess ; 2:open ; 3:bacterial metabolite ; 4:sterile
+3019|overall bacterial contamination|qual|< degree of microbial burden|1:contaminated ; 2:colonized ; 3:bacterial metabolite ; 4:infected
+3020|pathogen abundance|qual|< degree of microbial burden|1:infected ; 2:Unusual infection ; 3:prokaryotic metabolite ; 4:colonized
+3021|pathogen burden|qual|< degree of microbial burden|1:infected ; 2:swollen ; 3:process quality ; 4:increased process quality
+3022|pathological load|qual|< degree of microbial burden|1:increased size ; 2:swollen ; 3:Thread size ; 4:size
+3023|perineal wound burden|qual|< degree of microbial burden|1:degree of wound pain ; 2:Pressure ulcer ; 3:degree of maceration ; 4:degree of skin adherence to underlying tissue
+3024|polymicrobial|qual|< degree of microbial burden|1:bacterial metabolite ; 2:colonized ; 3:infected ; 4:sterile
+3025|quasi/non-biofilm|qual|< degree of microbial burden|1:closed ; 2:sterile ; 3:colonized ; 4:bacterial metabolite
+3026|quasi/non-biofilm state|qual|< degree of microbial burden|1:closed ; 2:sterile ; 3:bacterial metabolite ; 4:necrotic
+3027|Reduced Bacterial Culture Positivity|qual|= degree of microbial burden|1:bacterial metabolite ; 2:antibacterial agent ; 3:sterile ; 4:colonized
+3028|total bacterial count|qual|< degree of microbial burden|1:bacterial metabolite ; 2:colonized ; 3:composition ; 4:sterile
+3029|total microbial load|qual|< degree of microbial burden|1:bacterial metabolite ; 2:colonized ; 3:macronutrient ; 4:Thread size
+3030|tWBC|qual|< degree of microbial burden|1:Bronsted base ; 2:base ; 3:Bronsted acid ; 4:swollen
+3031|viral load|qual|< degree of microbial burden|1:size ; 2:infected ; 3:degree of necrosis ; 4:Thread size
+3032|wound bacterial load|qual|= degree of microbial burden|1:degree of wound pain ; 2:colonized ; 3:infected ; 4:contaminated
+3033|wound bioburden|qual|= degree of microbial burden|1:Chronic cutaneous wound ; 2:degree of wound pain ; 3:contaminated ; 4:reddened
+3034|graft necrosis rate|qual|< degree of necrosis|1:necrotic ; 2:degree of granulation ; 3:Gangrene ; 4:Thread size 5-0
+3035|nonviable tissue habitat fraction|qual|< degree of necrosis|1:necrotic ; 2:degree of tissue perfusion ; 3:Gangrene ; 4:degree of microbial burden
+3036|partially necrotized|qual|< degree of necrosis|1:necrotic ; 2:Gangrene ; 3:macerated ; 4:reddened
+3037|Slough Level|qual|< degree of necrosis|1:degree of maceration ; 2:Thread size ; 3:macerated ; 4:necrotic
+3038|Stage 1N|qual|< degree of necrosis|1:Thread size 1-0 ; 2:Thread size 1 ; 3:Thread size 0 ; 4:1-D extent
+3039|wound edge viability|qual|< degree of necrosis|1:necrotic ; 2:degree of maceration ; 3:undermined ; 4:closed
+3040|adhesion severity|qual|= degree of skin adherence to underlying tissue|1:degree of fibrin coverage ; 2:degree of tissue firmness ; 3:degree of epithelialization ; 4:degree of maceration
+3041|biological scar property|qual|< degree of skin adherence to underlying tissue|1:Scarring ; 2:Abnormal skin morphology ; 3:Chronic cutaneous wound ; 4:physical object quality
+3042|Impaired Epithelial Adhesion|qual|< degree of skin adherence to underlying tissue|1:epithelialized ; 2:degree of epithelialization ; 3:undermined ; 4:Abnormal skin morphology
+3043|limited regional tissue mobility|qual|< degree of skin adherence to underlying tissue|1:undermined ; 2:degree of tissue firmness ; 3:degree of tissue perfusion ; 4:2-D extent
+3044|lower Braden score|qual|< degree of skin adherence to underlying tissue|1:Lewis base ; 2:Thread size 9-0 ; 3:Bronsted base ; 4:Thread size 7-0
+3045|non-adherent|qual|< degree of skin adherence to underlying tissue|1:closed ; 2:closure ; 3:open ; 4:inhibitor
+3046|ostomy pouch adhesion|qual|< degree of skin adherence to underlying tissue|1:closure ; 2:open ; 3:abscess ; 4:fibrin-covered
+3047|suboptimal compression|qual|< degree of skin adherence to underlying tissue|1:Cyanosis ; 2:Thread size 0 ; 3:Pressure ulcer ; 4:softened
+3048|tightness|qual|< degree of skin adherence to underlying tissue|1:degree of tissue firmness ; 2:softened ; 3:painful ; 4:swollen
+3049|wound accessibility|qual|< degree of skin adherence to underlying tissue|1:Acute cutaneous wound ; 2:degree of wound pain ; 3:Cutaneous wound ; 4:application
+3050|DFU chronicity|qual|= degree of time after disease inception|1:chronic ; 2:chronic ; 3:increased duration ; 4:Chronic cutaneous wound
+3051|DFU duration|qual|< degree of time after disease inception|1:duration ; 2:increased duration ; 3:2-D extent ; 4:degree of necrosis
+3052|Duration of DM|qual|< degree of time after disease inception|1:duration ; 2:increased duration ; 3:2-D extent ; 4:1-D extent
+3053|duration of seroma|qual|< degree of time after disease inception|1:duration ; 2:softened ; 3:increased duration ; 4:degree of fibrin coverage
+3054|Early Fracture Healing Status|qual|< degree of time after disease inception|1:acute ; 2:softened ; 3:open ; 4:Acute cutaneous wound
+3055|injury stage|qual|< degree of time after disease inception|1:poison ; 2:degree of necrosis ; 3:Acute cutaneous wound ; 4:degree of wound pain
+3056|late-onset symptom|qual|< degree of time after disease inception|1:chronic ; 2:chronic ; 3:increased duration ; 4:duration
+3057|late-stage neurovascular change|qual|< degree of time after disease inception|1:degree of necrosis ; 2:Scarring ; 3:softened ; 4:Chronic cutaneous wound
+3058|longer diabetic duration|qual|< degree of time after disease inception|1:increased duration ; 2:duration ; 3:hypoglycemic agent ; 4:increased depth
+3059|period of healing second-degree burn|qual|< degree of time after disease inception|1:Chronic cutaneous wound ; 2:2-D extent ; 3:Scarring ; 4:degree of fibrin coverage
+3060|pretreatment ulcer duration|qual|< degree of time after disease inception|1:duration ; 2:increased duration ; 3:1-D extent ; 4:degree of necrosis
+3061|residual stenosis|qual|< degree of time after disease inception|1:reddened ; 2:Scarring ; 3:softened ; 4:chronic
+3062|time elapsed since the injury|qual|< degree of time after disease inception|1:time ; 2:duration ; 3:Acute cutaneous wound ; 4:2-D extent
+3063|time since injury|qual|< degree of time after disease inception|1:time ; 2:Acute cutaneous wound ; 3:duration ; 4:acute
+3064|total ulcer duration|qual|< degree of time after disease inception|1:duration ; 2:increased duration ; 3:degree of maceration ; 4:degree of epithelialization
+3065|wound stage|qual|< degree of time after disease inception|1:degree of wound pain ; 2:Acute cutaneous wound ; 3:Cutaneous wound ; 4:Chronic cutaneous wound
+3066|wound time|qual|< degree of time after disease inception|1:time ; 2:degree of wound pain ; 3:Acute cutaneous wound ; 4:Chronic cutaneous wound
+3067|altered tissue stiffness|qual|< degree of tissue firmness|1:softened ; 2:degree of skin adherence to underlying tissue ; 3:Abnormal skin morphology ; 4:swollen
+3068|arterial stiffness|qual|< degree of tissue firmness|1:softened ; 2:swollen ; 3:Thread size ; 4:age
+3069|biomechanical pressure characteristic|qual|< degree of tissue firmness|1:softened ; 2:physical object quality ; 3:Pressure ulcer ; 4:depth
+3070|biomechanical rigidity|qual|< degree of tissue firmness|1:softened ; 2:depth ; 3:physical object quality ; 4:swollen
+3071|biomechanical stability|qual|< degree of tissue firmness|1:softened ; 2:closed ; 3:closure ; 4:sterile
+3072|bone strength|qual|< degree of tissue firmness|1:softened ; 2:physical quality ; 3:depth ; 4:quality of a substance
+3073|bone-hard|qual|< degree of tissue firmness|1:softened ; 2:inorganic acid ; 3:depth ; 4:physical object quality
+3074|chest tightness|qual|< degree of tissue firmness|1:Cyanosis ; 2:Redness ; 3:softened ; 4:swollen
+3075|denser and more organized collagen network|qual|< degree of tissue firmness|1:increased area ; 2:fibrin-covered ; 3:degree of granulation ; 4:softened
+3076|denser fibrin clot|qual|< degree of tissue firmness|1:fibrin-covered ; 2:degree of fibrin coverage ; 3:granulating ; 4:degree of granulation
+3077|dermal stiffness|qual|< degree of tissue firmness|1:softened ; 2:degree of skin adherence to underlying tissue ; 3:depth ; 4:degree of fibrin coverage
+3078|direct scar hardness|qual|< degree of tissue firmness|1:softened ; 2:depth ; 3:Scarring ; 4:degree of skin adherence to underlying tissue
+3079|dynamic stiffness|qual|< degree of tissue firmness|1:softened ; 2:depth ; 3:duration ; 4:Thread size
+3080|edge strength|qual|< degree of tissue firmness|1:degree of epithelialization ; 2:degree of fibrin coverage ; 3:degree of maceration ; 4:quality of interaction of a substance with electromagnetic radiation
+3081|flexion contracture|cont|< degree of tissue firmness|1:Fixing bandage ; 2:Elastic bandage ; 3:Fat gauze ; 4:Gauze bandage
+3082|fluctuant sensation|qual|< degree of tissue firmness|1:deviation (from_normal) ; 2:painful ; 3:Pallor ; 4:softened
+3083|fluidity|qual|< degree of tissue firmness|1:softened ; 2:degree of fibrin coverage ; 3:depth ; 4:degree of tissue perfusion
+3084|friable|qual|< degree of tissue firmness|1:Redness ; 2:softened ; 3:reddened ; 4:macerated
+3085|granulation strength|qual|< degree of tissue firmness|1:degree of granulation ; 2:granulating ; 3:softened ; 4:degree of fibrin coverage
+3086|hard consistency|qual|< degree of tissue firmness|1:softened ; 2:degree of granulation ; 3:swollen ; 4:granulating
+3087|hardness|qual|< degree of tissue firmness|1:softened ; 2:physical quality ; 3:quality of a substance ; 4:physical object quality
+3088|HBM stiffness|qual|< degree of tissue firmness|1:softened ; 2:Thread size ; 3:degree of fibrin coverage ; 4:degree of microbial burden
+3089|high Young's modulus|qual|< degree of tissue firmness|1:softened ; 2:increased depth ; 3:increased age ; 4:increased area
+3090|increased local mechanical tension|qual|= degree of tissue firmness|1:increased area ; 2:increased depth ; 3:softened ; 4:Thread size 2
+3091|insufficient tendon quality|qual|< degree of tissue firmness|1:softened ; 2:Scarring ; 3:Thread size 0 ; 4:Malnutrition
+3092|joint stiffness|spec|< degree of tissue firmness|1:softened ; 2:swollen ; 3:depth ; 4:painful
+3093|lesion friability|qual|< degree of tissue firmness|1:degree of maceration ; 2:Pallor ; 3:Scarring ; 4:Cyanosis
+3094|lower extremity strength|qual|< degree of tissue firmness|1:degree of microbial burden ; 2:Malnutrition ; 3:softened ; 4:degree of fibrin coverage
+3095|mechanical resistance|spec|< degree of tissue firmness|1:softened ; 2:pressure redistribution function ; 3:wound desinfecting function ; 4:degree of microbial burden
+3096|mechanical stiffness|qual|< degree of tissue firmness|1:softened ; 2:depth ; 3:swollen ; 4:Thread size
+3097|mechanical toughness|qual|< degree of tissue firmness|1:softened ; 2:degree of maceration ; 3:depth ; 4:Thread size
+3098|mucosal integrity|qual|< degree of tissue firmness|1:epithelialized ; 2:degree of epithelialization ; 3:degree of skin adherence to underlying tissue ; 4:normal
+3099|normal pliability|qual|< degree of tissue firmness|1:normal ; 2:sterile ; 3:Pallor ; 4:degree of skin adherence to underlying tissue
+3100|passive scar hardness|qual|< degree of tissue firmness|1:degree of skin adherence to underlying tissue ; 2:degree of fibrin coverage ; 3:Scarring ; 4:softened
+3101|plantar strain response|qual|< degree of tissue firmness|1:Pressure ulcer ; 2:softened ; 3:degree of granulation ; 4:degree of tissue perfusion
+3102|pliable|qual|< degree of tissue firmness|1:softened ; 2:protruding ; 3:swollen ; 4:Thread size
+3103|progressive right breast firmness|qual|< degree of tissue firmness|1:Bronsted base ; 2:reddened ; 3:degree of granulation ; 4:softened
+3104|regional stiffness|qual|< degree of tissue firmness|1:softened ; 2:swollen ; 3:depth ; 4:degree of granulation
+3105|residual myometrial thickness|qual|< degree of tissue firmness|1:degree of granulation ; 2:degree of microbial burden ; 3:degree of maceration ; 4:softened
+3106|resistance level|qual|< degree of tissue firmness|1:degree of tissue perfusion ; 2:degree of granulation ; 3:degree of time after disease inception ; 4:degree of necrosis
+3107|scar stiffness|qual|< degree of tissue firmness|1:softened ; 2:Scarring ; 3:degree of skin adherence to underlying tissue ; 4:degree of fibrin coverage
+3108|skin biomechanic|qual|< degree of tissue firmness|1:degree of skin adherence to underlying tissue ; 2:Abnormal skin morphology ; 3:physical object quality ; 4:physical quality
+3109|skin induration|qual|< degree of tissue firmness|1:Scarring ; 2:softened ; 3:degree of skin adherence to underlying tissue ; 4:Redness
+3110|skin stiffness|qual|< degree of tissue firmness|1:softened ; 2:degree of skin adherence to underlying tissue ; 3:Abnormal skin morphology ; 4:depth
+3111|static stiffness|qual|< degree of tissue firmness|1:softened ; 2:depth ; 3:Thread size ; 4:swollen
+3112|stiff|qual|< degree of tissue firmness|1:softened ; 2:swollen ; 3:depth ; 4:Thread size
+3113|stiffness condition|qual|< degree of tissue firmness|1:softened ; 2:swollen ; 3:degree of time after disease inception ; 4:increased depth
+3114|surrounding skin tightness|qual|< degree of tissue firmness|1:degree of skin adherence to underlying tissue ; 2:undermined ; 3:degree of fibrin coverage ; 4:softened
+3115|tissue compliance|qual|< degree of tissue firmness|1:softened ; 2:degree of skin adherence to underlying tissue ; 3:degree of tissue perfusion ; 4:degree of fibrin coverage
+3116|tissue consistence|qual|< degree of tissue firmness|1:softened ; 2:composition ; 3:physical quality ; 4:structure
+3117|uniform microfat consistency|qual|< degree of tissue firmness|1:Thread size 0 ; 2:fibrin-covered ; 3:softened ; 4:Thread size 1-0
+3118|uterine scar integrity|qual|< degree of tissue firmness|1:Scarring ; 2:degree of skin adherence to underlying tissue ; 3:degree of fibrin coverage ; 4:Chronic cutaneous wound
+3119|vascular stiffness|qual|< degree of tissue firmness|1:softened ; 2:swollen ; 3:degree of fibrin coverage ; 4:depth
+3120|average transcutaneous partial oxygen pressure|qual|< degree of tissue perfusion|1:Thread size 2-0 ; 2:Thread size 2 ; 3:degree of time after disease inception ; 4:Thread size 11-0
+3121|blood flow intensity|qual|< degree of tissue perfusion|1:degree of fibrin coverage ; 2:degree of microbial burden ; 3:ischemic ; 4:Redness
+3122|blood supply|qual|< degree of tissue perfusion|1:ischemic ; 2:nutrient ; 3:process quality ; 4:donor
+3123|blood supply condition|qual|< degree of tissue perfusion|1:ischemic ; 2:process quality ; 3:biochemical role ; 4:closed
+3124|clinical perfusion|qual|< degree of tissue perfusion|1:ischemic ; 2:physical quality of a process ; 3:process quality ; 4:pharmacological role
+3125|Compromised Vascularization|qual|< degree of tissue perfusion|1:ischemic ; 2:Pallor ; 3:Scarring ; 4:necrotic
+3126|critically compromised perfusion|qual|< degree of tissue perfusion|1:ischemic ; 2:Gangrene ; 3:necrotic ; 4:Pallor
+3127|decreased transcutaneous oxygen pressure|qual|< degree of tissue perfusion|1:ischemic ; 2:Cyanosis ; 3:Gangrene ; 4:Pressure ulcer
+3128|extremity TcpO2|qual|< degree of tissue perfusion|1:closed ; 2:Thread size 2 ; 3:Thread size 2-0 ; 4:EC 2.* (transferase) inhibitor
+3129|flap viability|qual|< degree of tissue perfusion|1:Gangrene ; 2:sterile ; 3:closed ; 4:degree of fibrin coverage
+3130|grade 4 femoropopliteal|qual|< degree of tissue perfusion|1:Thread size 4 ; 2:Thread size 4-0 ; 3:antifolate ; 4:degree of fibrin coverage
+3131|impaired vascularity|spec|< degree of tissue perfusion|1:ischemic ; 2:Pallor ; 3:Cyanosis ; 4:Scarring
+3132|limited vascularity|qual|< degree of tissue perfusion|1:Pallor ; 2:ischemic ; 3:Cyanosis ; 4:Thread size 0
+3133|lower extremity blood supply|qual|< degree of tissue perfusion|1:ischemic ; 2:livid ; 3:acceptor ; 4:2-D extent
+3134|macrovascular perfusion|qual|< degree of tissue perfusion|1:ischemic ; 2:increased process quality ; 3:degree of granulation ; 4:increased area
+3135|microvascular and macrovascular perfusion status|qual|< degree of tissue perfusion|1:ischemic ; 2:degree of fibrin coverage ; 3:physical quality of a process ; 4:process quality
+3136|microvascular flux|qual|< degree of tissue perfusion|1:degree of microbial burden ; 2:degree of fibrin coverage ; 3:fibrin-covered ; 4:acceptor
+3137|microvascular integrity|qual|< degree of tissue perfusion|1:Pallor ; 2:degree of tissue firmness ; 3:degree of fibrin coverage ; 4:degree of skin adherence to underlying tissue
+3138|nonischemic|qual|< degree of tissue perfusion|1:ischemic ; 2:necrotic ; 3:Gangrene ; 4:normal
+3139|normal arterial perfusion|qual|< degree of tissue perfusion|1:normal ; 2:ischemic ; 3:Gangrene ; 4:Pallor
+3140|objective TcPO2 level|qual|< degree of tissue perfusion|1:Thread size 2 ; 2:closed ; 3:Thread size 2-0 ; 4:composition
+3141|perforator integrity|qual|< degree of tissue perfusion|1:closure ; 2:degree of fibrin coverage ; 3:degree of skin adherence to underlying tissue ; 4:closed
+3142|Peripheral Perfusion|qual|< degree of tissue perfusion|1:ischemic ; 2:process quality ; 3:physical quality of a process ; 4:increased process quality
+3143|periwound perfusion|qual|< degree of tissue perfusion|1:Gangrene ; 2:fibrin-covered ; 3:degree of fibrin coverage ; 4:ischemic
+3144|physiological blood flow condition|qual|< degree of tissue perfusion|1:physiological role ; 2:normal ; 3:biochemical role ; 4:physical quality of a process
+3145|Post Ir Oxygenation|qual|< degree of tissue perfusion|1:ischemic ; 2:EC 1.* (oxidoreductase) inhibitor ; 3:Gangrene ; 4:Pallor
+3146|post-EVT TcPO|qual|< degree of tissue perfusion|1:persistent organic pollutant ; 2:degree of time after disease inception ; 3:closed ; 4:closure
+3147|post-revascularization PAT|qual|< degree of tissue perfusion|1:degree of fibrin coverage ; 2:fibrin-covered ; 3:degree of time after disease inception ; 4:ischemic
+3148|quality of perfusion|qual|< degree of tissue perfusion|1:process quality ; 2:physical quality of a process ; 3:physical quality ; 4:quality
+3149|recipient vessel status|qual|< degree of tissue perfusion|1:acceptor ; 2:ischemic ; 3:donor ; 4:degree of fibrin coverage
+3150|robust blood supply|qual|< degree of tissue perfusion|1:ischemic ; 2:Pallor ; 3:Cyanosis ; 4:Redness
+3151|skin blood oxygen saturation|qual|< degree of tissue perfusion|1:Cyanosis ; 2:degree of skin adherence to underlying tissue ; 3:degree of fibrin coverage ; 4:degree of epithelialization
+3152|skin oxygenation|qual|= degree of tissue perfusion|1:degree of skin adherence to underlying tissue ; 2:Pallor ; 3:degree of epithelialization ; 4:epithelialized
+3153|tissue vascularization|qual|< degree of tissue perfusion|1:Scarring ; 2:degree of granulation ; 3:increased area ; 4:neoplastic
+3154|toe oxygen|qual|< degree of tissue perfusion|1:2-D extent ; 2:ischemic ; 3:Thread size 2-0 ; 4:Thread size 2
+3155|TP level|qual|= degree of tissue perfusion|1:Thread size ; 2:EC 2.* (transferase) inhibitor ; 3:livid ; 4:size
+3156|transcutaneous oxygen pressure)|qual|< degree of tissue perfusion|1:Thread size 2-0 ; 2:Thread size 2 ; 3:Pressure ulcer ; 4:Thread size
+3157|vascular status|qual|< degree of tissue perfusion|1:ischemic ; 2:closed ; 3:physiological role ; 4:process quality
+3158|vascularized|qual|= degree of tissue perfusion|1:degree of granulation ; 2:granulating ; 3:ischemic ; 4:increased area
+3159|visualized flow to the wound bed|qual|< degree of tissue perfusion|1:fibrin-covered ; 2:degree of fibrin coverage ; 3:granulating ; 4:Acute cutaneous wound
+3160|wound blood perfusion volume|qual|< degree of tissue perfusion|1:degree of wound pain ; 2:degree of fibrin coverage ; 3:Acute cutaneous wound ; 4:degree of microbial burden
+3161|wound-directed perfusion|qual|< degree of tissue perfusion|1:Acute cutaneous wound ; 2:fibrin-covered ; 3:ischemic ; 4:degree of wound pain
+3162|wound-directed perfusion parameter|qual|< degree of tissue perfusion|1:degree of fibrin coverage ; 2:degree of granulation ; 3:degree of wound pain ; 4:degree of necrosis
+3163|acute wound pain|qual|< degree of wound pain|1:Acute cutaneous wound ; 2:acute ; 3:painful ; 4:Cutaneous wound
+3164|application-associated pain|qual|< degree of wound pain|1:application ; 2:Acute cutaneous wound ; 3:painful ; 4:allergen
+3165|average daily pain level|qual|< degree of wound pain|1:painful ; 2:Thread size 0 ; 3:Thread size 10-0 ; 4:Thread size 3-0
+3166|average pain score|qual|< degree of wound pain|1:painful ; 2:Thread size 0 ; 3:normal ; 4:acute
+3167|baseline pain|qual|< degree of wound pain|1:painful ; 2:inflamed ; 3:base ; 4:Bronsted base
+3168|burn wound pain|qual|< degree of wound pain|1:painful ; 2:Acute cutaneous wound ; 3:Cutaneous wound ; 4:Scarring
+3169|decreased pain level|qual|< degree of wound pain|1:painful ; 2:inflamed ; 3:normal ; 4:Redness
+3170|Dressing Change Pain|qual|< degree of wound pain|1:degree of skin adherence to underlying tissue ; 2:Chronic cutaneous wound ; 3:Scarring ; 4:Pressure ulcer
+3171|dressing-related incident pain|qual|< degree of wound pain|1:Acute cutaneous wound ; 2:degree of skin adherence to underlying tissue ; 3:undermined ; 4:Pressure ulcer
+3172|early postoperative pain|qual|< degree of wound pain|1:painful ; 2:acute ; 3:inflamed ; 4:open
+3173|first-hour pain|qual|< degree of wound pain|1:acute ; 2:painful ; 3:Thread size 1-0 ; 4:inflamed
+3174|heightened pain|qual|< degree of wound pain|1:painful ; 2:inflamed ; 3:Redness ; 4:swollen
+3175|incident pain|qual|< degree of wound pain|1:painful ; 2:inflamed ; 3:acute ; 4:allergen
+3176|injjury severity|qual|< degree of wound pain|1:poison ; 2:Acute cutaneous wound ; 3:degree of maceration ; 4:Cutaneous wound
+3177|intolerable pain|qual|< degree of wound pain|1:painful ; 2:inflamed ; 3:acute ; 4:Redness
+3178|lateral ankle tenderness|qual|< degree of wound pain|1:swollen ; 2:EC 3.5.1.4 (amidase) inhibitor ; 3:Lewis base ; 4:EC 2.5.* (non-methyl-alkyl or aryl transferase) inhibitor
+3179|local wound condition|qual|< degree of wound pain|1:Cutaneous wound ; 2:Acute cutaneous wound ; 3:Chronic cutaneous wound ; 4:Scarring
+3180|local wound pain|qual|< degree of wound pain|1:Acute cutaneous wound ; 2:painful ; 3:Cutaneous wound ; 4:Redness
+3181|lower pain level|qual|< degree of wound pain|1:painful ; 2:inflamed ; 3:Redness ; 4:acute
+3182|maximum pain|qual|< degree of wound pain|1:painful ; 2:acute ; 3:normal ; 4:inflamed
+3183|minimally painful|qual|< degree of wound pain|1:painful ; 2:inflamed ; 3:normal ; 4:Thread size 0
+3184|no/mild pain|qual|< degree of wound pain|1:painful ; 2:normal ; 3:inflamed ; 4:acute
+3185|nociceptive|qual|< degree of wound pain|1:painful ; 2:inflamed ; 3:poison ; 4:agonist
+3186|non-tender|qual|< degree of wound pain|1:painful ; 2:degree of tissue firmness ; 3:swollen ; 4:Redness
+3187|pain absence|qual|< degree of wound pain|1:painful ; 2:Gangrene ; 3:open ; 4:inflamed
+3188|pain at rest|qual|< degree of wound pain|1:painful ; 2:Redness ; 3:reddened ; 4:Pallor
+3189|pain during activity|qual|< degree of wound pain|1:painful ; 2:inflamed ; 3:Redness ; 4:acute
+3190|pain intensity at wound change|qual|< degree of wound pain|1:Acute cutaneous wound ; 2:Chronic cutaneous wound ; 3:degree of skin adherence to underlying tissue ; 4:painful
+3191|pain level|cont|= degree of wound pain|1:painful ; 2:inflamed ; 3:physical quality of a process ; 4:physical quality
+3192|patient pain level|qual|< degree of wound pain|1:painful ; 2:physical quality of a process ; 3:physical quality ; 4:inflamed
+3193|patient pain score|qual|< degree of wound pain|1:painful ; 2:physical quality of a process ; 3:process quality ; 4:physical quality
+3194|patient-reported ulcer pain|qual|< degree of wound pain|1:Pressure ulcer ; 2:painful ; 3:inflamed ; 4:livid
+3195|patient-reported venous ulceration pain|qual|< degree of wound pain|1:Pressure ulcer ; 2:painful ; 3:livid ; 4:Pallor
+3196|post-procedural pain|qual|< degree of wound pain|1:painful ; 2:Scarring ; 3:inflamed ; 4:reddened
+3197|post-RFA pain|qual|< degree of wound pain|1:painful ; 2:reddened ; 3:persistent organic pollutant ; 4:Scarring
+3198|post-TKA ankle pain|qual|< degree of wound pain|1:painful ; 2:persistent organic pollutant ; 3:abscess ; 4:livid
+3199|postoperative average pain|qual|< degree of wound pain|1:painful ; 2:Thread size 7-0 ; 3:Thread size 5-0 ; 4:Thread size 6-0
+3200|postoperative discomfort|qual|< degree of wound pain|1:painful ; 2:Scarring ; 3:inflamed ; 4:reddened
+3201|Preinjury insertional pain|qual|< degree of wound pain|1:painful ; 2:reddened ; 3:degree of time after disease inception ; 4:livid
+3202|PU pain|qual|< degree of wound pain|1:painful ; 2:persistent organic pollutant ; 3:inflamed ; 4:Pressure ulcer
+3203|self-reported wound pain|qual|< degree of wound pain|1:Acute cutaneous wound ; 2:Cutaneous wound ; 3:painful ; 4:Chronic cutaneous wound
+3204|severity of hamstring pain|qual|< degree of wound pain|1:degree of maceration ; 2:painful ; 3:degree of fibrin coverage ; 4:degree of tissue firmness
+3205|severity of itching|qual|< degree of wound pain|1:degree of epithelialization ; 2:painful ; 3:Redness ; 4:degree of maceration
+3206|severity of pain|qual|= degree of wound pain|1:painful ; 2:inflamed ; 3:physical quality of a process ; 4:physical quality
+3207|sharp pain|qual|< degree of wound pain|1:painful ; 2:inflamed ; 3:Redness ; 4:acute
+3208|slight pain|qual|< degree of wound pain|1:painful ; 2:Redness ; 3:inflamed ; 4:normal
+3209|subjective feeling of discomfort|qual|< degree of wound pain|1:painful ; 2:Redness ; 3:inflamed ; 4:degree of tissue firmness
+3210|subjective pain|qual|< degree of wound pain|1:painful ; 2:inflamed ; 3:physical quality ; 4:qualitative
+3211|tenderness|spec|< degree of wound pain|1:painful ; 2:inflamed ; 3:Redness ; 4:degree of tissue firmness
+3212|topical wound pain|qual|< degree of wound pain|1:Cutaneous wound ; 2:Acute cutaneous wound ; 3:painful ; 4:Chronic cutaneous wound
+3213|treatment-related pain|qual|< degree of wound pain|1:painful ; 2:process quality ; 3:increased process quality ; 4:pharmaceutical
+3214|uncontrolled pain|qual|< degree of wound pain|1:painful ; 2:Gangrene ; 3:open ; 4:inflamed
+3215|VLU-associated pain|qual|< degree of wound pain|1:painful ; 2:livid ; 3:inflamed ; 4:Gangrene
+3216|worst possible pain|qual|= degree of wound pain|1:painful ; 2:inflamed ; 3:acute ; 4:normal
+3217|Wound incisional pain|qual|< degree of wound pain|1:painful ; 2:Acute cutaneous wound ; 3:open ; 4:Cutaneous wound
+3218|wound-related discomfort or distress|qual|< degree of wound pain|1:Cutaneous wound ; 2:Acute cutaneous wound ; 3:painful ; 4:Chronic cutaneous wound
+3219|bone defect depth|qual|< depth|1:increased depth ; 2:2-D extent ; 3:1-D extent ; 4:Thread size
+3220|Breslow thickness|qual|< depth|1:degree of fibrin coverage ; 2:degree of microbial burden ; 3:degree of tissue firmness ; 4:degree of epithelialization
+3221|complete-thickness|cont|< depth|1:Partial thickness ; 2:Full-thickness skin graft ; 3:macerated ; 4:Third-degree burn wound
+3222|deep partial|qual|< depth|1:increased depth ; 2:2-D extent ; 3:1-D extent ; 4:Thread size 2
+3223|distance from the entry wound to the diaphragm|qual|< depth|1:2-D extent ; 2:1-D extent ; 3:degree of time after disease inception ; 4:Thread size 0
+3224|donor site thickness|qual|< depth|1:Thread size ; 2:degree of fibrin coverage ; 3:donor ; 4:increased depth
+3225|epidermal thickness|qual|< depth|1:degree of epithelialization ; 2:epithelialized ; 3:degree of tissue firmness ; 4:degree of skin adherence to underlying tissue
+3226|fat pad thickness|qual|< depth|1:degree of fibrin coverage ; 2:degree of tissue firmness ; 3:degree of tissue perfusion ; 4:Thread size
+3227|fat thickness|qual|< depth|1:degree of fibrin coverage ; 2:degree of tissue firmness ; 3:softened ; 4:degree of granulation
+3228|flap thickness|qual|< depth|1:Thread size ; 2:degree of fibrin coverage ; 3:undermined ; 4:degree of tissue perfusion
+3229|footwear depth|qual|< depth|1:increased depth ; 2:1-D extent ; 3:2-D extent ; 4:degree of fibrin coverage
+3230|gingival recession depth|qual|< depth|1:degree of granulation ; 2:increased depth ; 3:granulating ; 4:degree of epithelialization
+3231|gingival thickness|qual|< depth|1:degree of granulation ; 2:granulating ; 3:degree of epithelialization ; 4:degree of fibrin coverage
+3232|hematoma thickness|qual|< depth|1:degree of fibrin coverage ; 2:degree of tissue firmness ; 3:Thread size ; 4:swollen
+3233|infection depth|qual|< depth|1:infected ; 2:increased depth ; 3:degree of time after disease inception ; 4:Unusual infection
+3234|initial wound depth|qual|< depth|1:Acute cutaneous wound ; 2:1-D extent ; 3:degree of wound pain ; 4:increased depth
+3235|local subcutaneous fat thickness|qual|< depth|1:degree of tissue firmness ; 2:degree of fibrin coverage ; 3:degree of skin adherence to underlying tissue ; 4:softened
+3236|maximum depth|qual|< depth|1:increased depth ; 2:1-D extent ; 3:degree of microbial burden ; 4:2-D extent
+3237|peri-implant mucosal thickness|qual|< depth|1:degree of maceration ; 2:degree of microbial burden ; 3:degree of granulation ; 4:Thread size
+3238|pressed skin injury severity|qual|< depth|1:degree of skin adherence to underlying tissue ; 2:degree of maceration ; 3:degree of tissue firmness ; 4:softened
+3239|pressure injury depth|qual|< depth|1:Pressure ulcer ; 2:increased depth ; 3:degree of skin adherence to underlying tissue ; 4:Thread size
+3240|probing pocket depth|qual|< depth|1:increased depth ; 2:Thread size ; 3:protruding ; 4:donor
+3241|recession depth|qual|< depth|1:increased depth ; 2:protruding ; 3:undermined ; 4:softened
+3242|scar height index|qual|< depth|1:Scarring ; 2:degree of fibrin coverage ; 3:size ; 4:degree of granulation
+3243|scar thickness|qual|< depth|1:Scarring ; 2:degree of fibrin coverage ; 3:degree of granulation ; 4:degree of tissue firmness
+3244|shallow probing depth|qual|< depth|1:increased depth ; 2:Thread size 0 ; 3:softened ; 4:undermined
+3245|skin thickness|qual|< depth|1:degree of tissue firmness ; 2:size ; 3:degree of epithelialization ; 4:Thread size
+3246|soft tissue thickness|qual|< depth|1:degree of tissue firmness ; 2:softened ; 3:degree of granulation ; 4:swollen
+3247|stratum corneum thickness|qual|< depth|1:softened ; 2:degree of epithelialization ; 3:degree of tissue firmness ; 4:degree of fibrin coverage
+3248|Subcutaneous fat depth|qual|< depth|1:degree of fibrin coverage ; 2:increased depth ; 3:degree of skin adherence to underlying tissue ; 4:degree of tissue firmness
+3249|subcutaneous-tissue thickness|qual|< depth|1:degree of tissue firmness ; 2:degree of skin adherence to underlying tissue ; 3:softened ; 4:degree of fibrin coverage
+3250|total depth|qual|< depth|1:increased depth ; 2:1-D extent ; 3:2-D extent ; 4:duration
+3251|ultrasound scar thickness|qual|< depth|1:degree of fibrin coverage ; 2:degree of tissue firmness ; 3:Scarring ; 4:degree of necrosis
+3252|wound eversion height|qual|< depth|1:1-D extent ; 2:Acute cutaneous wound ; 3:Thread size ; 4:Thread size 11-0
+3253|wound level|qual|< depth|1:Cutaneous wound ; 2:Acute cutaneous wound ; 3:degree of wound pain ; 4:closure
+3254|wound penetration to bone|qual|< depth|1:Cutaneous wound ; 2:Acute cutaneous wound ; 3:poison ; 4:contaminated
+3255|topical wound healing agent|role|< dermatologic drug|1:Cutaneous wound ; 2:Chronic cutaneous wound ; 3:disinfectant ; 4:oxidising agent
+3256|adult dysraphic defect|mate|< Developed material disease entity|1:anatomical cluster ; 2:Hypertrophic scar ; 3:Dry necrosis ; 4:Active drain
+3257|adult TEF|mate|< Developed material disease entity|1:transition element coordination entity ; 2:experimental_feature ; 3:transition element molecular entity ; 4:onium compound
+3258|amyloidosis|mate|< Developed material disease entity|1:Biosynthetic cellulose ; 2:Linear IgA dermatosis ; 3:scattered molecular aggregate ; 4:material disease entity
+3259|anemia of chronic disease|mate|< Developed material disease entity|1:Microangiopathy ; 2:Diabetic metabolic disorder ; 3:Chronic wound ; 4:Malignancy
+3260|anti-MDA5+ DM|mate|< Developed material disease entity|1:monocarboxylic acid anion ; 2:mixture ; 3:hydracid ; 4:divalent inorganic anion
+3261|bone spur|mate|< Developed material disease entity|1:Hematoma ; 2:mineral ; 3:Resorbable thread material ; 4:Osteomyelitis
+3262|bronchiectasis|mate|< Developed material disease entity|1:baryon ; 2:Elastic bandage ; 3:Bilateria ; 4:Lymphocele
+3263|cardiomyopathy|mate|< Developed material disease entity|1:Hypertrophic scar ; 2:Livedovasculopathy ; 3:Microangiopathy ; 4:erysipeloid
+3264|cell immunodeficiency|mate|< Developed material disease entity|1:Immunosuppression ; 2:Autoimmune tissue disorder ; 3:Venous insufficiency disorder ; 4:Sepsis
+3265|chronic heart failure|mate|< Developed material disease entity|1:Chronic wound ; 2:Hypertrophic scar ; 3:material complication disease entity ; 4:Hydrofiber-containing wound dressing
+3266|chronic joint condition|mate|< Developed material disease entity|1:Chronic wound ; 2:disorder ; 3:unknown-disorder disease ; 4:pathological disorder
+3267|chronic renal impairment|mate|< Developed material disease entity|1:Chronic wound ; 2:Malignancy ; 3:Diabetic metabolic disorder ; 4:material complication disease entity
+3268|chronic respiratory disease|mate|< Developed material disease entity|1:Chronic wound ; 2:unknown-disorder disease ; 3:Malignancy ; 4:Diabetic metabolic disorder
+3269|cirrhosis|mate|< Developed material disease entity|1:Necrosis ; 2:Malignancy ; 3:chalcogen molecular entity ; 4:Sepsis
+3270|clinically significant cardiac dysfunction|mate|< Developed material disease entity|1:Clean-contaminated wound according to CDC ; 2:material complication disease entity ; 3:Sepsis ; 4:Malignancy
+3271|decompensated heart failure|mate|< Developed material disease entity|1:Venous insufficiency disorder ; 2:Venous insufficiency wound ; 3:Fourth-degree burn wound ; 4:Arterial insufficiency wound
+3272|Degenerative Arthritis|mate|< Developed material disease entity|1:pathological disorder ; 2:disorder ; 3:material disease entity ; 4:compound pathological disorder
+3273|degenerative joint disease|mate|< Developed material disease entity|1:pathological disorder ; 2:material disease entity ; 3:disorder ; 4:compound pathological disorder
+3274|dense fibrosis|mate|< Developed material disease entity|1:Hypertrophic scar ; 2:Dry necrosis ; 3:Moist necrosis ; 4:Fibrin coating of the wound
+3275|dense fibrotic architecture|mate|< Developed material disease entity|1:Hypertrophic scar ; 2:Fibrin coating of the wound ; 3:Fibrin-covered wound bed ; 4:Transparent polyurethane film
+3276|dense fibrotic tissue|mate|< Developed material disease entity|1:Hypertrophic scar ; 2:Fibrin coating of the wound ; 3:Fibrin-covered wound bed ; 4:Dry necrosis
+3277|dense periesophageal fibrosis|mate|< Developed material disease entity|1:Hypertrophic scar ; 2:Dry necrosis ; 3:Livedovasculopathy ; 4:Moist necrosis
+3278|descending necrotizing mediastinitis （DNM）|mate|< Developed material disease entity|1:Fournier's gangrene ; 2:Moist necrosis ; 3:Dry necrosis ; 4:Marjolin ulcer
+3279|device-related PI|mate|< Developed material disease entity|1:device ; 2:Wound-integrating wound dressing ; 3:pathogen with wound infecting tendency ; 4:manufacturer
+3280|DF disease|mate|< Developed material disease entity|1:Bullosis diabeticorum ; 2:Fixed drug exanthema ; 3:unknown-disorder disease ; 4:Flaminal
+3281|dissecting aortic aneurysm|mate|< Developed material disease entity|1:Softened wound edge ; 2:Active drain ; 3:Monaldi drain ; 4:alpha-amino-acid zwitterion
+3282|disseminated intravascular coagulation|mate|< Developed material disease entity|1:Fibrin coating of the wound ; 2:Sepsis ; 3:Fibrin-covered wound bed ; 4:Venous insufficiency wound
+3283|End Stage Renal Disease On Hemodialysis|mate|< Developed material disease entity|1:hydridonitrate(2-) ; 2:hadron ; 3:Diabetic foot ulcer ; 4:Dry necrosis
+3284|end-stage kidney failure|mate|< Developed material disease entity|1:Dry necrosis ; 2:Necrosis ; 3:Fournier's gangrene ; 4:Fourth-degree burn wound
+3285|Esrd On Hd|mate|< Developed material disease entity|1:hadron ; 2:hydridonitrate(2-) ; 3:Dry necrosis ; 4:hydracid
+3286|final DTPI|mate|< Developed material disease entity|1:post-transition metal atom ; 2:Wound-integrating wound dressing ; 3:Softened wound edge ; 4:diiodine
+3287|gastric low-grade dysplasia|mate|< Developed material disease entity|1:diiodine ; 2:diatomic iodine ; 3:gas molecular entity ; 4:chalcogen molecular entity
+3288|genetically determined cardiomyopathy|mate|< Developed material disease entity|1:Livedovasculopathy ; 2:main group molecular entity ; 3:Hypertrophic scar ; 4:Microangiopathy
+3289|history of heart failure|mate|< Developed material disease entity|1:Arterial insufficiency wound ; 2:Hydrofiber-containing wound dressing ; 3:baryon ; 4:Venous insufficiency wound
+3290|IgA nephropathy|mate|< Developed material disease entity|1:Linear IgA dermatosis ; 2:ANCA-associated Vasculitis ; 3:Bullosis diabeticorum ; 4:Mucous membrane pemphigoid
+3291|liver cirrhosis|cont|< Developed material disease entity|1:Necrosis ; 2:necrotic ; 3:Gangrene ; 4:chalcogen molecular entity
+3292|long-standing deformity|mate|< Developed material disease entity|1:Hypertrophic scar ; 2:Chronic wound ; 3:unknown-disorder disease ; 4:Secondary dressing
+3293|long-term immune dysfunction|mate|< Developed material disease entity|1:Immunosuppression ; 2:Autoimmune tissue disorder ; 3:Autoimmune disease related wound ; 4:Sepsis
+3294|medical device-related PI|mate|< Developed material disease entity|1:material information bearer ; 2:device ; 3:manufacturer ; 4:processed material entity
+3295|moderate or severe DFI|mate|< Developed material disease entity|1:Deep wound ; 2:Wound with microbial burden assessed according to IWII ; 3:Dirty wound according to CDC ; 4:Fourth-degree burn wound
+3296|moderate-to-severe ARDS|mate|< Developed material disease entity|1:Arterial insufficiency wound ; 2:Sepsis ; 3:Deep wound ; 4:Wound with microbial burden assessed according to IWII
+3297|moderate-to-severe inflammatory bowel disease|mate|< Developed material disease entity|1:Wound with microbial burden assessed according to IWII ; 2:Wound with microbial burden assessed according to CDC ; 3:Sepsis ; 4:Dirty wound according to CDC
+3298|moderate-to-severe obstructive ventilatory dysfunction|mate|< Developed material disease entity|1:Wound with microbial burden assessed according to IWII ; 2:Wound with microbial burden assessed according to CDC ; 3:organic univalent group ; 4:Peripheral arterial occlusive disease
+3299|myelodysplastic syndrome|mate|< Developed material disease entity|1:Malignancy ; 2:Microangiopathy ; 3:d-block molecular entity ; 4:Sepsis
+3300|periodontal disease|mate|< Developed material disease entity|1:Osteomyelitis ; 2:pathological disorder ; 3:pathogen ; 4:Wound healing disorder
+3301|pre-existing cardiovascular disease|mate|< Developed material disease entity|1:Angiopathy ; 2:Microangiopathy ; 3:Peripheral arterial occlusive disease ; 4:material complication disease entity
+3302|pre-existing chronic condition|mate|< Developed material disease entity|1:unknown-disorder disease ; 2:material complication disease entity ; 3:compound pathological disorder ; 4:Malignancy
+3303|pre-existing condition|mate|< Developed material disease entity|1:unknown-disorder disease ; 2:pathological disorder ; 3:disorder ; 4:compound pathological disorder
+3304|prior COVID-19|mate|< Developed material disease entity|1:diiodine ; 2:Clean-contaminated wound according to CDC ; 3:Clean wound according to CDC ; 4:Secondary dressing
+3305|progressive renal impairment|mate|< Developed material disease entity|1:Dry necrosis ; 2:processed material entity ; 3:Microangiopathy ; 4:Malignancy
+3306|secondary neuroinflammatory damage|mate|< Developed material disease entity|1:Secondarily-healing wound ; 2:Autoimmune tissue disorder ; 3:Autoimmune disease related wound ; 4:Secondary dressing
+3307|stage 3-4 PI|mate|< Developed material disease entity|1:post-transition metal atom ; 2:Fournier's gangrene ; 3:fundamental particle ; 4:mononuclear parent hydride
+3308|stage 4 PI|mate|< Developed material disease entity|1:Fournier's gangrene ; 2:Fourth-degree burn wound ; 3:post-transition metal atom ; 4:p-block element atom
+3309|stage 5 chronic kidney disease|mate|< Developed material disease entity|1:Dirty wound according to CDC ; 2:material complication disease entity ; 3:Wound with microbial burden assessed according to CDC ; 4:Chronic wound
+3310|underlying DPN|mate|< Developed material disease entity|1:Dry necrosis ; 2:Moist necrosis ; 3:pnictogen molecular entity ; 4:pnictogen
+3311|undetected underlying heart disease|mate|< Developed material disease entity|1:unknown-disorder disease ; 2:heteroorganic entity ; 3:Microangiopathy ; 4:Diabetic metabolic disorder
+3312|upper urinary tract deterioration|mate|< Developed material disease entity|1:Pressure ulcer ; 2:Marjolin ulcer ; 3:unknown-disorder disease ; 4:Ulcus cruris mixtum
+3313|Vitamin-D deficiency|mate|< Developed material disease entity|1:Sepsis ; 2:Dirty wound according to CDC ; 3:Venous insufficiency disorder ; 4:mineral
+3314|hair follicle growth|proc|< developmental growth|1:growth ; 2:Granulation tissue formation process ; 3:developmental growth involved in morphogenesis ; 4:Keloid development process
+3315|maternal gestational weight gain|proc|< developmental growth|1:growth ; 2:Wound volumetrics ; 3:Wound size measurement process ; 4:Water-jet assisted wound debridement process
+3316|budding|proc|< developmental growth involved in morphogenesis|1:tube morphogenesis ; 2:Exudation process ; 3:regeneration ; 4:collecting specimen from organism
+3317|distraction osteogenesis|proc|< developmental growth involved in morphogenesis|1:class discovery data transformation ; 2:Debridement process ; 3:Autolytic wound debridement process ; 4:decision tree building data transformation
+3318|aging|proc|< developmental process|1:developmental growth ; 2:growth ; 3:system development ; 4:anatomical structure development
+3319|aging effect|proc|< developmental process|1:disease perpetuation process ; 2:growth ; 3:developmental growth ; 4:disease course
+3320|biological aging|proc|< developmental process|1:developmental growth ; 2:multicellular organism development ; 3:growth ; 4:anatomical structure development
+3321|differentiate|proc|< developmental process|1:anatomical structure development ; 2:system development ; 3:developmental growth ; 4:regeneration
+3322|differentiation continuum|proc|< developmental process|1:anatomical structure development ; 2:multicellular organism development ; 3:system development ; 4:disorder development process
+3323|early proliferative phase|proc|< developmental process|1:cell population proliferation ; 2:growth ; 3:developmental growth ; 4:regeneration
+3324|epigenetic aging|proc|< developmental process|1:multicellular organism development ; 2:multicellular organismal process ; 3:disease perpetuation process ; 4:disorder development process
+3325|epithelialization stage|proc|< developmental process|1:Epithelialization process ; 2:Wound development process ; 3:anatomical structure development ; 4:excision
+3326|HAPI development|proc|< developmental process|1:developmental growth involved in morphogenesis ; 2:anatomical structure development ; 3:Keloid development process ; 4:circulatory system development
+3327|immune aging|proc|< developmental process|1:Autoimmune disease process ; 2:multicellular organism development ; 3:inflammatory response ; 4:defense response
+3328|KK development|proc|< developmental process|1:anatomical structure development ; 2:system development ; 3:Keloid development process ; 4:multicellular organism development
+3329|macrophage differentiation|proc|< developmental process|1:multicellular organism development ; 2:Granulation tissue formation process ; 3:vasculature development ; 4:developmental growth involved in morphogenesis
+3330|neuron differentiation|proc|< developmental process|1:anatomical structure development ; 2:system development ; 3:multicellular organism development ; 4:regeneration
+3331|osteogenic differentiation|proc|< developmental process|1:developmental growth involved in morphogenesis ; 2:anatomical structure development ; 3:tissue regeneration ; 4:regeneration
+3332|osteogenic maturation|proc|< developmental process|1:developmental growth involved in morphogenesis ; 2:anatomical structure development ; 3:growth ; 4:developmental growth
+3333|proliferative stage|occu|< developmental process|1:cell population proliferation ; 2:growth ; 3:developmental growth ; 4:regeneration
+3334|stem cell differentiation|proc|< developmental process|1:regeneration ; 2:tissue regeneration ; 3:anatomical structure development ; 4:multicellular organism development
+3335|abnormal ankle-brachial index|qual|< deviation (from_normal)|1:Abnormality of the immune system ; 2:EC 1.3.1.9 [enoyl-[acyl-carrier-protein] reductase (NADH)] inhibitor ; 3:antimetabolite ; 4:Phenotypic abnormality
+3336|abnormal biomechanic|qual|< deviation (from_normal)|1:Phenotypic abnormality ; 2:Abnormal skin morphology ; 3:degree of tissue firmness ; 4:morphology
+3337|abnormal Braden score|qual|< deviation (from_normal)|1:degree of skin adherence to underlying tissue ; 2:Abnormality of the immune system ; 3:degree of wound pain ; 4:Lewis base
+3338|abnormal foot biomechanic|qual|< deviation (from_normal)|1:Phenotypic abnormality ; 2:Abnormal skin morphology ; 3:degree of skin adherence to underlying tissue ; 4:degree of tissue firmness
+3339|abnormal healing timeline|qual|< deviation (from_normal)|1:Chronic cutaneous wound ; 2:Scarring ; 3:degree of time after disease inception ; 4:Abnormal skin morphology
+3340|Abnormal VPT|qual|< deviation (from_normal)|1:Thread size 2 ; 2:increased area ; 3:Thread size 4 ; 4:persistent organic pollutant
+3341|altered HAS1 and HAS2 intracellular localization|qual|< deviation (from_normal)|1:EC 3.5.1.4 (amidase) inhibitor ; 2:EC 2.5.1.* (non-methyl-alkyl or aryl transferase) inhibitor ; 3:EC 2.5.* (non-methyl-alkyl or aryl transferase) inhibitor ; 4:EC 1.5.1.3 (dihydrofolate reductase) inhibitor
+3342|altered mental status|qual|< deviation (from_normal)|1:poison ; 2:Malnutrition ; 3:softened ; 4:morphology
+3343|altered pH|qual|< deviation (from_normal)|1:acid ; 2:inorganic acid ; 3:softened ; 4:base
+3344|altered Zn homeostasis|qual|< deviation (from_normal)|1:Malnutrition ; 2:Abnormality of the immune system ; 3:Phenotypic abnormality ; 4:micronutrient
+3345|angular deformity|qual|< deviation (from_normal)|1:Phenotypic abnormality ; 2:1-D extent ; 3:morphology ; 4:2-D extent
+3346|Atypical Appearance|qual|< deviation (from_normal)|1:Abnormal skin morphology ; 2:Phenotypic abnormality ; 3:morphology ; 4:phenotype
+3347|atypical manifestation|qual|< deviation (from_normal)|1:Phenotypic abnormality ; 2:Unusual infection ; 3:Abnormal skin morphology ; 4:degree of time after disease inception
+3348|between-leg difference|qual|< deviation (from_normal)|1:2-D extent ; 2:degree of microbial burden ; 3:depth ; 4:Thread size 2-0
+3349|decreased peripheral NK cell/lymphocyte ratio|qual|< deviation (from_normal)|1:degree of necrosis ; 2:Pallor ; 3:necrotic ; 4:livid
+3350|decreased quality of life|qual|< deviation (from_normal)|1:increased quality ; 2:chronic ; 3:chronic ; 4:Malnutrition
+3351|defect characteristic|qual|< deviation (from_normal)|1:Phenotypic abnormality ; 2:phenotype ; 3:Abnormal skin morphology ; 4:morphology
+3352|diastasis|qual|< deviation (from_normal)|1:2-D extent ; 2:protruding ; 3:depth ; 4:1-D extent
+3353|diastasis severity|qual|< deviation (from_normal)|1:2-D extent ; 2:1-D extent ; 3:Thread size ; 4:depth
+3354|differential expression|qual|< deviation (from_normal)|1:Phenotypic abnormality ; 2:phenotype ; 3:qualitative ; 4:morphology
+3355|Differential Methylation|qual|< deviation (from_normal)|1:degree of microbial burden ; 2:metabolite ; 3:depth ; 4:Phenotypic abnormality
+3356|difficult to treat|qual|< deviation (from_normal)|1:painful ; 2:poison ; 3:infected ; 4:closed
+3357|difficulty in walking|qual|< deviation (from_normal)|1:Malnutrition ; 2:painful ; 3:increased duration ; 4:ischemic
+3358|disrupted iron homeostasis|qual|< deviation (from_normal)|1:Malnutrition ; 2:reddened ; 3:livid ; 4:Cyanosis
+3359|distal displacement|qual|< deviation (from_normal)|1:protruding ; 2:2-D extent ; 3:depth ; 4:increased depth
+3360|functional deficit|qual|< deviation (from_normal)|1:Malnutrition ; 2:physical quality ; 3:biological role ; 4:physiological role
+3361|glandular architectural irregularity|qual|< deviation (from_normal)|1:increased area ; 2:degree of granulation ; 3:granulating ; 4:degree of epithelialization
+3362|glycemic instability|qual|< deviation (from_normal)|1:hypoglycemic agent ; 2:ischemic ; 3:increased duration ; 4:Pallor
+3363|glycosylation change|qual|< deviation (from_normal)|1:degree of granulation ; 2:EC 2.* (transferase) inhibitor ; 3:color ; 4:softened
+3364|higher order irregularity|qual|< deviation (from_normal)|1:increased duration ; 2:Unusual infection ; 3:Phenotypic abnormality ; 4:increased object quality
+3365|impaired balance|qual|< deviation (from_normal)|1:Malnutrition ; 2:base ; 3:antimetabolite ; 4:closed
+3366|impaired gait|qual|< deviation (from_normal)|1:Malnutrition ; 2:ischemic ; 3:inhibitor ; 4:antagonist
+3367|impaired matrix calcification|qual|< deviation (from_normal)|1:softened ; 2:Malnutrition ; 3:inhibitor ; 4:Scarring
+3368|impaired range of motion|qual|< deviation (from_normal)|1:increased duration ; 2:undermined ; 3:Phenotypic abnormality ; 4:Abnormal skin morphology
+3369|impaired signaling pathway|qual|< deviation (from_normal)|1:Abnormality of the immune system ; 2:inhibitor ; 3:protein kinase agonist ; 4:Unusual infection
+3370|inadequate approximation|qual|< deviation (from_normal)|1:undermined ; 2:Malnutrition ; 3:2-D extent ; 4:1-D extent
+3371|inadequate health literacy|qual|< deviation (from_normal)|1:Malnutrition ; 2:contaminated ; 3:Cyanosis ; 4:increased age
+3372|insufficient ridge volume|qual|< deviation (from_normal)|1:Malnutrition ; 2:reddened ; 3:Thread size 0 ; 4:Pallor
+3373|intra-wound heterogeneity|qual|< deviation (from_normal)|1:Chronic cutaneous wound ; 2:degree of skin adherence to underlying tissue ; 3:degree of wound pain ; 4:Scarring
+3374|intralesional heterogeneity|qual|< deviation (from_normal)|1:degree of tissue perfusion ; 2:degree of tissue firmness ; 3:Unusual infection ; 4:degree of epithelialization
+3375|irregular edge|qual|< deviation (from_normal)|1:undermined ; 2:increased area ; 3:Thread size 0 ; 4:degree of epithelialization
+3376|irregular wound shape|qual|< deviation (from_normal)|1:Chronic cutaneous wound ; 2:Acute cutaneous wound ; 3:undermined ; 4:Cutaneous wound
+3377|limitations in ambulation|qual|< deviation (from_normal)|1:closed ; 2:antagonist ; 3:Malnutrition ; 4:Gangrene
+3378|Limitations in ROM|qual|< deviation (from_normal)|1:1-D extent ; 2:2-D extent ; 3:degree of time after disease inception ; 4:increased duration
+3379|limited mobility|spec|< deviation (from_normal)|1:Malnutrition ; 2:undermined ; 3:closed ; 4:inhibitor
+3380|limited motion|qual|< deviation (from_normal)|1:2-D extent ; 2:undermined ; 3:inhibitor ; 4:Malnutrition
+3381|limited movement|qual|< deviation (from_normal)|1:Malnutrition ; 2:Pallor ; 3:undermined ; 4:inhibitor
+3382|Limited Range Of Motion|qual|< deviation (from_normal)|1:2-D extent ; 2:Malnutrition ; 3:undermined ; 4:antagonist
+3383|low BMD|qual|< deviation (from_normal)|1:Malnutrition ; 2:antimetabolite ; 3:degree of microbial burden ; 4:increased depth
+3384|Low mobility|qual|< deviation (from_normal)|1:undermined ; 2:closed ; 3:softened ; 4:Pallor
+3385|low negative pressure level|qual|< deviation (from_normal)|1:livid ; 2:Pressure ulcer ; 3:closed ; 4:Thread size 0
+3386|low PNI|qual|< deviation (from_normal)|1:Malnutrition ; 2:inhibitor ; 3:normal ; 4:degree of necrosis
+3387|malalignment|qual|< deviation (from_normal)|1:Abnormal skin morphology ; 2:Phenotypic abnormality ; 3:morphology ; 4:undermined
+3388|mechanical axis deviation|qual|< deviation (from_normal)|1:2-D extent ; 2:1-D extent ; 3:depth ; 4:increased depth
+3389|melanin difference|qual|< deviation (from_normal)|1:color ; 2:depth ; 3:degree of microbial burden ; 4:degree of maceration
+3390|microbial dissimilarity|qual|< deviation (from_normal)|1:degree of microbial burden ; 2:Unusual infection ; 3:bacterial metabolite ; 4:metabolite
+3391|microbiota dysbiosis|qual|< deviation (from_normal)|1:colonized ; 2:Unusual infection ; 3:bacterial metabolite ; 4:Abnormality of the immune system
+3392|microenvironmental imbalance|qual|< deviation (from_normal)|1:xenobiotic metabolite ; 2:quality of interaction of a substance with electromagnetic radiation ; 3:environmental contaminant ; 4:metabolite
+3393|mobility limitation|spec|< deviation (from_normal)|1:Malnutrition ; 2:role ; 3:undermined ; 4:closed
+3394|mobility problem|qual|< deviation (from_normal)|1:role ; 2:painful ; 3:swollen ; 4:undermined
+3395|nerve dysfunction|qual|< deviation (from_normal)|1:neurotoxin ; 2:poison ; 3:degree of necrosis ; 4:Abnormality of the immune system
+3396|neural dysfunction|qual|< deviation (from_normal)|1:neurotoxin ; 2:Abnormality of the immune system ; 3:poison ; 4:painful
+3397|neurological disability|qual|< deviation (from_normal)|1:neurotoxin ; 2:poison ; 3:biological role ; 4:Scarring
+3398|neuropathic|qual|< deviation (from_normal)|1:painful ; 2:neurotoxin ; 3:necrotic ; 4:Gangrene
+3399|neurovascular deficit|qual|< deviation (from_normal)|1:ischemic ; 2:degree of tissue perfusion ; 3:Pallor ; 4:Cyanosis
+3400|non-color match|qual|< deviation (from_normal)|1:color ; 2:Cyanosis ; 3:contaminated ; 4:Pallor
+3401|non-responding|qual|< deviation (from_normal)|1:normal ; 2:reddened ; 3:qualitative ; 4:necrotic
+3402|Perfusion Difference|qual|< deviation (from_normal)|1:degree of tissue perfusion ; 2:ischemic ; 3:degree of necrosis ; 4:depth
+3403|pH shift|qual|< deviation (from_normal)|1:acid ; 2:inorganic acid ; 3:softened ; 4:increased depth
+3404|phenotypic change|qual|< deviation (from_normal)|1:Phenotypic abnormality ; 2:phenotype ; 3:morphology ; 4:color
+3405|range of motion deficit|qual|< deviation (from_normal)|1:2-D extent ; 2:undermined ; 3:1-D extent ; 4:increased duration
+3406|range of motion limitation|qual|< deviation (from_normal)|1:2-D extent ; 2:1-D extent ; 3:undermined ; 4:increased duration
+3407|rare presentation|qual|< deviation (from_normal)|1:Unusual infection ; 2:reddened ; 3:closed ; 4:Pallor
+3408|redox imbalance|qual|< deviation (from_normal)|1:oxidising agent ; 2:EC 1.* (oxidoreductase) inhibitor ; 3:xenobiotic metabolite ; 4:inflamed
+3409|reduced mobility|qual|< deviation (from_normal)|1:Pallor ; 2:undermined ; 3:Malnutrition ; 4:reddened
+3410|reduced range of motion|qual|< deviation (from_normal)|1:increased duration ; 2:degree of time after disease inception ; 3:antagonist ; 4:undermined
+3411|reduced ROM|qual|< deviation (from_normal)|1:increased duration ; 2:degree of time after disease inception ; 3:antagonist ; 4:EC 1.* (oxidoreductase) inhibitor
+3412|reduced sensitivity|qual|< deviation (from_normal)|1:poison ; 2:degree of skin adherence to underlying tissue ; 3:degree of tissue firmness ; 4:Pallor
+3413|reduced vitamin B12|qual|< deviation (from_normal)|1:Cyanosis ; 2:Malnutrition ; 3:degree of microbial burden ; 4:reddened
+3414|relative resistance change|qual|< deviation (from_normal)|1:reference compound ; 2:NMR chemical shift reference compound ; 3:degree of tissue perfusion ; 4:degree of time after disease inception
+3415|segmental defect|qual|< deviation (from_normal)|1:increased area ; 2:2-D extent ; 3:Scarring ; 4:area
+3416|skin temperature differential|qual|< deviation (from_normal)|1:depth ; 2:degree of tissue perfusion ; 3:degree of skin adherence to underlying tissue ; 4:degree of maceration
+3417|skin tone variability|qual|< deviation (from_normal)|1:degree of tissue firmness ; 2:degree of skin adherence to underlying tissue ; 3:Abnormal skin morphology ; 4:Phenotypic abnormality
+3418|suboptimal compliance|qual|< deviation (from_normal)|1:inhibitor ; 2:contaminated ; 3:closed ; 4:degree of skin adherence to underlying tissue
+3419|suboptimal dialysis efficiency|qual|< deviation (from_normal)|1:Malnutrition ; 2:reddened ; 3:increased process quality ; 4:EC 1.3.* (oxidoreductase acting on donor CH-CH group) inhibitor
+3420|suboptimal glycemia|qual|< deviation (from_normal)|1:hypoglycemic agent ; 2:Malnutrition ; 3:ischemic ; 4:Cyanosis
+3421|swelling variation|qual|< deviation (from_normal)|1:swollen ; 2:softened ; 3:increased size ; 4:degree of maceration
+3422|systemic instability|qual|< deviation (from_normal)|1:softened ; 2:swollen ; 3:Unusual infection ; 4:inflamed
+3423|tissue dysfunction|qual|< deviation (from_normal)|1:inflamed ; 2:degree of tissue firmness ; 3:Scarring ; 4:necrotic
+3424|transcriptional difference|qual|< deviation (from_normal)|1:Phenotypic abnormality ; 2:phenotype ; 3:qualitative ; 4:structure
+3425|unclear boundary|qual|< deviation (from_normal)|1:undermined ; 2:open ; 3:closed ; 4:Scarring
+3426|underweight BMI|qual|< deviation (from_normal)|1:Malnutrition ; 2:degree of microbial burden ; 3:undermined ; 4:livid
+3427|unpredictability|qual|< deviation (from_normal)|1:Unusual infection ; 2:open ; 3:xenobiotic ; 4:qualitative
+3428|valgus|qual|< deviation (from_normal)|1:closed ; 2:protruding ; 3:1-D extent ; 4:undermined
+3429|varus|qual|< deviation (from_normal)|1:1-D extent ; 2:closed ; 3:2-D extent ; 4:Thread size 12-0
+3430|vascular vulnerability|tend|< deviation (from_normal)|1:perpetuation tendency ; 2:poison ; 3:increased duration ; 4:wound infecting tendency
+3431|venous symptom|qual|< deviation (from_normal)|1:Redness ; 2:swollen ; 3:Pallor ; 4:Cyanosis
+3432|2D device|mate|< device|1:Secondary dressing ; 2:d-block element atom ; 3:d-block molecular entity ; 4:Adhesive silicone grid
+3433|3D device|mate|< device|1:gross anatomical part ; 2:anatomical structure ; 3:Plaster ; 4:anatomical entity
+3434|AI digital tool|mate|< device|1:Adhesive silicone grid ; 2:Silver-containing wound dressing ; 3:Wound-integrating wound dressing ; 4:Therapeutic footwear
+3435|AI medical device|mate|< device|1:information biomacromolecule ; 2:Autoimmune disease related wound ; 3:ion ; 4:Wound-integrating wound dressing
+3436|alloplastic implant|mate|< device|1:Resorbable thread material ; 2:Plaster ; 3:inorganic molecular entity ; 4:Foreign body
+3437|ART device|mate|< device|1:atom ; 2:atom ; 3:Resorbable thread material ; 4:anatomical entity
+3438|artificial intelligence-enabled digital health tool|mate|< device|1:Medicinal honey ; 2:ion ; 3:hydridonitrate(2-) ; 4:Wound-integrating wound dressing
+3439|Augmentation device|mate|< device|1:Active drain ; 2:Hypergranulation ; 3:assembly ; 4:composite particle
+3440|auxiliary fixation device|mate|< device|1:Fixing bandage ; 2:Secondary dressing ; 3:Foreign body ; 4:Non-absorbable thread material
+3441|bariatric equipment|mate|< device|1:Fat gauze ; 2:Elastic bandage ; 3:Therapeutic footwear ; 4:Blake drain
+3442|BC-based medical product|mate|< device|1:information biomacromolecule ; 2:biomacromolecule ; 3:clinical drug product ; 4:Foreign body
+3443|bedside imaging device|mate|< device|1:Wound-integrating wound dressing ; 2:information biomacromolecule ; 3:Silicone spacer grid ; 4:Incision foil
+3444|bioactive biomaterial|mate|< device|1:Foreign body ; 2:inorganic molecular entity ; 3:polymer ; 4:macromolecule
+3445|Biodesign|mate|< device|1:Regeneratively-healing wound ; 2:assembly ; 3:information biomacromolecule ; 4:organization
+3446|bioelectronic device|mate|< device|1:electron ; 2:elemental molecular entity ; 3:information biomacromolecule ; 4:biomacromolecule
+3447|biomaterial-assisted delivery system|mate|< device|1:material information bearer ; 2:d-block molecular entity ; 3:information biomacromolecule ; 4:biomacromolecule
+3448|biomaterial-integrated delivery system|mate|< device|1:Wound-integrating wound dressing ; 2:information biomacromolecule ; 3:material information bearer ; 4:Resorbable thread material
+3449|biomechanical loading device|mate|< device|1:Non-absorbable thread material ; 2:Fixing bandage ; 3:Resorbable thread material ; 4:Elastic bandage
+3450|biophysical modality|mate|< device|1:information biomacromolecule ; 2:mineral ; 3:molecular entity ; 4:molecule
+3451|bone substitute|mate|< device|1:Resorbable thread material ; 2:mineral ; 3:composite particle ; 4:mineral nutrient
+3452|breast implant|mate|< device|1:Foreign body ; 2:Incision foil ; 3:Resorbable thread material ; 4:Pigtail catheter
+3453|bypass|mate|< device|1:fistula ; 2:assembly ; 3:Bilateria ; 4:d-block molecular entity
+3454|cellular and tissue-based product|mate|< device|1:cellular anatomical entity ; 2:cellular_component ; 3:cell ; 4:cell specimen
+3455|clinical bioadhesive|mate|< device|1:Hydrogel containing wound dressing ; 2:Resorbable thread material ; 3:Plaster ; 4:Alginate containing wound dressing
+3456|clinically deployable MN technology|mate|< device|1:manganese coordination entity ; 2:manganese molecular entity ; 3:manganese group molecular entity ; 4:manganese atom
+3457|clinically viable platform|mate|< device|1:composite particle ; 2:processed material entity ; 3:clinical drug product ; 4:processed material
+3458|coaptation device|mate|< device|1:Fixing bandage ; 2:coordination entity ; 3:Elastic bandage ; 4:Non-absorbable thread material
+3459|context-aware platform|mate|< device|1:information biomacromolecule ; 2:anatomical cluster ; 3:composite particle ; 4:material information bearer
+3460|context-specific assessment tool|mate|< device|1:group ; 2:anatomical cluster ; 3:regulatory agency ; 4:chemical entity
+3461|control system|mate|< device|1:coordination entity ; 2:regulatory agency ; 3:organization ; 4:organism
+3462|controlled drug delivery system|mate|< device|1:d-block molecular entity ; 2:clinical drug product ; 3:drug product ; 4:Drain
+3463|Custom Orthosis|mate|< device|1:Therapeutic footwear ; 2:Plaster ; 3:Secondary dressing ; 4:Synthetic wound dressing foam
+3464|Cutometer|mate|< device|1:Plaster ; 2:Incision foil ; 3:anatomical cluster ; 4:manufacturer
+3465|debridement tool|mate|< device|1:Substance used for enzymatic wound debridement ; 2:Drain ; 3:Material used for wound treatment ; 4:Active drain
+3466|delivery architecture|mate|< device|1:assembly ; 2:organization ; 3:Drain ; 4:Wound-integrating wound dressing
+3467|delivery platform|mate|< device|1:Drain ; 2:manufacturer ; 3:processed material entity ; 4:Pressure redistribution mattress
+3468|dental implant|mate|< device|1:ion ; 2:inorganic molecular entity ; 3:inorganic ion ; 4:Foreign body
+3469|diagnosis-therapy-repair platform|mate|< device|1:Pressure redistribution mattress ; 2:Developed material disease entity ; 3:Wound-integrating wound dressing ; 4:Silver-containing wound dressing
+3470|digital assessment tool|mate|< device|1:Therapeutic footwear ; 2:Adhesive silicone grid ; 3:mineral ; 4:diiodine
+3471|digital planimetry mobile application|mate|< device|1:Adhesive silicone grid ; 2:Plaster ; 3:Peripheral arterial occlusive disease ; 4:Silicone spacer grid
+3472|digital technology|mate|< device|1:processed material ; 2:molecule ; 3:molecule ; 4:processed material entity
+3473|distraction device|mate|< device|1:d-block molecular entity ; 2:Non-absorbable thread material ; 3:Drain ; 4:d-block element atom
+3474|Doppler|mate|< device|1:mineral ; 2:Passive drain ; 3:d-block molecular entity ; 4:Gravity drain
+3475|drug delivery platform|mate|< device|1:drug product ; 2:polymer ; 3:composite particle ; 4:complex of molecules
+3476|drug delivery system|mate|< device|1:drug product ; 2:clinical drug product ; 3:Drain ; 4:d-block molecular entity
+3477|drug delivery vehicle|mate|< device|1:drug product ; 2:clinical drug product ; 3:Drain ; 4:manufacturer
+3478|Drug Eluting Stent|mate|< device|1:Resorbable thread material ; 2:d-block molecular entity ; 3:Silicone spacer grid ; 4:Adhesive silicone grid
+3479|drug reservoir|mate|< device|1:Drain ; 2:Active drain ; 3:Passive drain ; 4:drug product
+3480|dual-engine system|mate|< device|1:Easy-Flow drain ; 2:Active drain ; 3:Pressure redistribution mattress ; 4:Monaldi drain
+3481|durometer|mate|< device|1:Silicone spacer grid ; 2:Fat gauze ; 3:Adhesive silicone grid ; 4:Pressure redistribution mattress
+3482|early screening tool|mate|< device|1:chalcogen molecular entity ; 2:chalcogen ; 3:specimen ; 4:Elastic bandage
+3483|early warning tool|mate|< device|1:electron ; 2:chalcogen molecular entity ; 3:material information bearer ; 4:mineral
+3484|electrical device|mate|< device|1:electron ; 2:ion ; 3:enzyme ; 4:elemental molecular entity
+3485|electrical neurostimulation device|mate|< device|1:electron ; 2:ion ; 3:Adhesive silicone grid ; 4:Antiseptic metal ion
+3486|electrode|mate|< device|1:electron ; 2:ion ; 3:elemental molecular entity ; 4:atom
+3487|electronic FTSC harvesting and application device|mate|< device|1:material information bearer ; 2:Wound-integrating wound dressing ; 3:Hydrofiber-containing wound dressing ; 4:Easy-Flow drain
+3488|electrosurgical equipment|mate|< device|1:electron ; 2:enzyme ; 3:Intracutaneous suture ; 4:Substance used for enzymatic wound debridement
+3489|Endovascular Device|mate|< device|1:Angiopathy ; 2:Pigtail catheter ; 3:Angiopathic wound ; 4:ion
+3490|endovenous modality|mate|< device|1:electron ; 2:ion ; 3:Resorbable thread material ; 4:Epithelialized wound
+3491|engineered genetic carrier|mate|< device|1:material information bearer ; 2:genetic variant ; 3:manufacturer ; 4:composite particle
+3492|epidural stimulator implant|mate|< device|1:Silicone spacer grid ; 2:Adhesive silicone grid ; 3:Euteleostomi ; 4:Gravity drain
+3493|ES device|mate|< device|1:electron ; 2:elemental molecular entity ; 3:Euteleostomi ; 4:s-block element atom
+3494|expander|mate|< device|1:Elastic bandage ; 2:Secondary dressing ; 3:Hydrogel containing wound dressing ; 4:Active drain
+3495|external device|mate|< device|1:Foreign body ; 2:electron ; 3:elemental molecular entity ; 4:organism
+3496|External Light Source|mate|< device|1:electron ; 2:fundamental particle ; 3:oxygen molecular entity ; 4:oxygen atom
+3497|external power source|mate|< device|1:electron ; 2:fundamental particle ; 3:fermion ; 4:oxide
+3498|filler|mate|< device|1:composite particle ; 2:Foreign body ; 3:polymer ; 4:Plaster
+3499|flexible electronic|mate|< device|1:Transparent polyurethane film ; 2:Therapeutic footwear ; 3:Elastic bandage ; 4:experimental_feature
+3500|foot care equipment|mate|< device|1:Therapeutic footwear ; 2:Diabetic foot ulcer ; 3:Substance used for enzymatic wound debridement ; 4:Diabetic wound
+3501|functional replacement|mate|< device|1:Regeneratively-healing wound ; 2:Secondary dressing ; 3:Primarily-healing wound ; 4:heteroorganic entity
+3502|gene therapy vector|mate|< device|1:virion component ; 2:Viruses ; 3:reverse transcriptase ; 4:composite particle
+3503|geometric offloading element|mate|< device|1:material information bearer ; 2:Pressure redistribution mattress ; 3:Wound-integrating wound dressing ; 4:Incision foil
+3504|glucose-responsive platform|mate|< device|1:region ; 2:main group molecular entity ; 3:gas molecular entity ; 4:group
+3505|graft construct|mate|< device|1:Regeneratively-healing wound ; 2:gross anatomical part ; 3:assembly ; 4:Skin graft
+3506|grasper|mate|< device|1:material information bearer ; 2:Friction bubble ; 3:Euteleostomi ; 4:manufacturer
+3507|handheld in situ bioprinter|mate|< device|1:High-vacuum drain ; 2:Low-vacuum drain ; 3:Silicone spacer grid ; 4:Transparent polyurethane film
+3508|imaging tool|mate|< device|1:molecule ; 2:molecule ; 3:manufacturer ; 4:experimental_feature
+3509|immobilization device|mate|< device|1:Fixing bandage ; 2:Foreign body ; 3:Gauze bandage ; 4:Wound dressing
+3510|In-shoe device|mate|< device|1:Therapeutic footwear ; 2:s-block element atom ; 3:onium compound ; 4:Wound-integrating wound dressing
+3511|in-shoe measurement device|mate|< device|1:Therapeutic footwear ; 2:experimental_feature ; 3:ion ; 4:Silicone spacer grid
+3512|in-situ forming implant|mate|< device|1:Suture in situ ; 2:Resorbable thread material ; 3:Incision foil ; 4:Intracutaneous suture
+3513|insole design|mate|< device|1:Therapeutic footwear ; 2:Wound-integrating wound dressing ; 3:Plaster ; 4:Incision foil
+3514|integrated sensor|mate|< device|1:ion ; 2:Adhesive silicone grid ; 3:Wound-integrating wound dressing ; 4:Silicone spacer grid
+3515|intelligent delivery platform|mate|< device|1:Wound-integrating wound dressing ; 2:ion ; 3:material information bearer ; 4:Developed material disease entity
+3516|intelligent diagnostic platform|mate|< device|1:information biomacromolecule ; 2:Developed material disease entity ; 3:ion ; 4:Wound-integrating wound dressing
+3517|intelligent diagnostic tool|mate|< device|1:Developed material disease entity ; 2:information biomacromolecule ; 3:material information bearer ; 4:ion
+3518|intelligent measurement device|mate|< device|1:information biomacromolecule ; 2:material information bearer ; 3:ion ; 4:experimental_feature
+3519|intelligent responsive system|mate|< device|1:Sepsis ; 2:Immunosuppression ; 3:Active drain ; 4:organism
+3520|invasive device|mate|< device|1:Incision foil ; 2:infection ; 3:Active drain ; 4:ion
+3521|lifting device|mate|< device|1:Pressure redistribution mattress ; 2:Drain ; 3:Gravity drain ; 4:material information bearer
+3522|Light Source|mate|< device|1:electron ; 2:mixture ; 3:manufacturer ; 4:halogen
+3523|light-emitting diode|mate|< device|1:lepton ; 2:electron ; 3:d-block molecular entity ; 4:d-block element atom
+3524|light-emitting diode device|mate|< device|1:d-block molecular entity ; 2:lepton ; 3:electron ; 4:d-block element atom
+3525|light-responsive therapeutic platform|mate|< device|1:Resorbable thread material ; 2:Plaster ; 3:Wound dressing composed of a polylactide membrane ; 4:pathogen
+3526|loaded textile|mate|< device|1:Non-absorbable thread material ; 2:Plaster ; 3:Resorbable thread material ; 4:Elastic bandage
+3527|local delivery system|mate|< device|1:d-block molecular entity ; 2:Low-vacuum drain ; 3:Drain ; 4:Passive drain
+3528|local drug delivery system|mate|< device|1:d-block molecular entity ; 2:drug product ; 3:Drain ; 4:Passive drain
+3529|mechanical support device|mate|< device|1:Pressure redistribution mattress ; 2:Secondary dressing ; 3:material supplier ; 4:Developed material disease entity
+3530|metal instrumentation|mate|< device|1:metal atom ; 2:metal allergen ; 3:metal cation ; 4:Antiseptic metal ion
+3531|mHealth tool|mate|< device|1:Material used for wound complication prevention ; 2:material information bearer ; 3:Material used for wound treatment ; 4:manufacturer
+3532|multi-dimensional support system|mate|< device|1:Silicone spacer grid ; 2:Wound-integrating wound dressing ; 3:Secondary dressing ; 4:Pressure redistribution mattress
+3533|Muscle Pump Activation device|mate|< device|1:Active drain ; 2:Gravity drain ; 3:High-vacuum drain ; 4:Pressure redistribution mattress
+3534|nanomedicine-based delivery system|mate|< device|1:composite particle ; 2:subatomic particle ; 3:polymer ; 4:nuclear particle
+3535|needle|mate|< device|1:Non-absorbable thread material ; 2:nuclear particle ; 3:Incision foil ; 4:nucleon
+3536|non-contact tool|mate|< device|1:Non-absorbable thread material ; 2:material information bearer ; 3:nonmetal atom ; 4:manufacturer
+3537|non-invasive tool|mate|< device|1:Non-absorbable thread material ; 2:nonmetal atom ; 3:material information bearer ; 4:molecule
+3538|offloading devices used|mate|< device|1:Wound-integrating wound dressing ; 2:Therapeutic footwear ; 3:Wound dressing ; 4:Pressure redistribution mattress
+3539|orthopedic hardware|mate|< device|1:Foreign body ; 2:material anatomical entity ; 3:anatomical entity ; 4:manufacturer
+3540|orthopedic implant|mate|< device|1:Foreign body ; 2:inorganic molecular entity ; 3:inorganic group ; 4:inorganic ion
+3541|orthosis|mate|< device|1:Therapeutic footwear ; 2:coordination entity ; 3:organization ; 4:organic group
+3542|orthotic device|mate|< device|1:Therapeutic footwear ; 2:organic molecule ; 3:organization ; 4:organic molecular entity
+3543|paper-based device|mate|< device|1:Plaster ; 2:Wound dressing ; 3:Wound-integrating wound dressing ; 4:processed material entity
+3544|Paper-based diagnostic device|mate|< device|1:Plaster ; 2:Silver-containing wound dressing ; 3:processed material entity ; 4:Adhesive silicone grid
+3545|percutaneous neurostimulator implant|mate|< device|1:Silicone spacer grid ; 2:Pigtail catheter ; 3:nuclear particle ; 4:ion
+3546|periodontal probe|mate|< device|1:Friction bubble ; 2:fundamental particle ; 3:ion ; 4:Passive drain
+3547|permanent prosthetic implant|mate|< device|1:Secondary dressing ; 2:post-transition metal atom ; 3:inorganic molecular entity ; 4:p-block element atom
+3548|personal protective equipment|mate|< device|1:Elastic bandage ; 2:Material used for wound complication prevention ; 3:Fixing bandage ; 4:Incision foil
+3549|physical modality|mate|< device|1:material anatomical entity ; 2:processed material entity ; 3:processed material ; 4:mineral
+3550|physical restraint|mate|< device|1:Fixing bandage ; 2:Elastic bandage ; 3:Incision foil ; 4:Gauze bandage
+3551|piezoelectric system|mate|< device|1:Adhesive silicone grid ; 2:fundamental particle ; 3:composite particle ; 4:Silicone spacer grid
+3552|platform system|mate|< device|1:material supplier ; 2:Silicone spacer grid ; 3:main group molecular entity ; 4:scattered molecular aggregate
+3553|POC detection device|mate|< device|1:composite particle ; 2:Antiseptic halogen-releasing compound ; 3:Antiseptic dye ; 4:processed material entity
+3554|point-of-care assessment tool|mate|< device|1:processed specimen ; 2:processed material entity ; 3:pathogen ; 4:Peripheral arterial occlusive disease
+3555|point-of-care biosensor|mate|< device|1:information biomacromolecule ; 2:ion ; 3:Blake drain ; 4:biomacromolecule
+3556|portable diagnostic platform|mate|< device|1:subatomic particle ; 2:Peripheral arterial occlusive disease ; 3:fundamental particle ; 4:processed material entity
+3557|posture-improving sensor|mate|< device|1:Therapeutic footwear ; 2:Adhesive silicone grid ; 3:coordination entity ; 4:Silicone spacer grid
+3558|pressure sensor|mate|< device|1:Pressure ulcer ; 2:Pressure redistribution mattress ; 3:Adhesive silicone grid ; 4:Silicone spacer grid
+3559|probe|mate|< device|1:molecule ; 2:molecule ; 3:molecular entity ; 4:peptide
+3560|prosthetic joint|mate|< device|1:Foreign body ; 2:organism ; 3:organism ; 4:coordination entity
+3561|protective equipment|mate|< device|1:Material used for wound complication prevention ; 2:Incision foil ; 3:Fixing bandage ; 4:Elastic bandage
+3562|real-time biofeedback tool|mate|< device|1:Regeneratively-healing wound ; 2:Resorbable thread material ; 3:experimental_feature ; 4:material information bearer
+3563|real-time detection and staging system|mate|< device|1:regulatory agency ; 2:Developed material disease entity ; 3:Sepsis ; 4:Silicone spacer grid
+3564|real-time sensing technology|mate|< device|1:Resorbable thread material ; 2:Regeneratively-healing wound ; 3:information biomacromolecule ; 4:gas molecular entity
+3565|regenerative platform|mate|< device|1:Regeneratively-healing wound ; 2:Resorbable thread material ; 3:regulatory agency ; 4:region
+3566|resection tool|mate|< device|1:processed material ; 2:Resorbable thread material ; 3:Substance used for enzymatic wound debridement ; 4:processed material entity
+3567|responsive biomaterial platform|mate|< device|1:Resorbable thread material ; 2:Hydrogel containing wound dressing ; 3:Regeneratively-healing wound ; 4:regulatory agency
+3568|retractor|mate|< device|1:Drain ; 2:material information bearer ; 3:Friction bubble ; 4:reverse transcriptase
+3569|scalpel|mate|< device|1:Intracutaneous suture ; 2:Epithelialized wound ; 3:Wound spacer grid ; 4:Scratch wound
+3570|seating system|mate|< device|1:Pressure redistribution mattress ; 2:Silicone spacer grid ; 3:Wound spacer grid ; 4:Fixing bandage
+3571|self-delivery system|mate|< device|1:Passive drain ; 2:Easy-Flow drain ; 3:Drain ; 4:High-vacuum drain
+3572|sensor|mate|< device|1:molecule ; 2:molecule ; 3:anatomical cluster ; 4:organism
+3573|skin substitute|mate|< device|1:Skin graft ; 2:Secondary dressing ; 3:Full-thickness skin graft ; 4:Split-thickness skin graft
+3574|smartphone-based coaching system|mate|< device|1:Secondary dressing ; 2:Activated carbon layer wound dressing ; 3:Therapeutic footwear ; 4:Hydrocolloid containing wound dressing
+3575|Specially Designed Application|mate|< device|1:experimental_feature ; 2:Secondary dressing ; 3:Developed material disease entity ; 4:Material used for wound treatment
+3576|specific light source|mate|< device|1:electron ; 2:mixture ; 3:Antiseptic dye ; 4:fundamental particle
+3577|stemed implant|mate|< device|1:Resorbable thread material ; 2:Pigtail catheter ; 3:onium compound ; 4:Redon drain
+3578|sticky-end miR-223-loaded deep-penetrating tetrahedral framework nanodevice|mate|< device|1:Flaminal ; 2:subatomic particle ; 3:Monaldi drain ; 4:fermion
+3579|stimuli-responsive delivery system|mate|< device|1:Resorbable thread material ; 2:Gravity drain ; 3:Silicone spacer grid ; 4:Adhesive silicone grid
+3580|stimuli-responsive drug delivery system|mate|< device|1:Resorbable thread material ; 2:d-block molecular entity ; 3:Silicone spacer grid ; 4:Adhesive silicone grid
+3581|stimuli-responsive system|mate|< device|1:organism ; 2:organism ; 3:anatomical cluster ; 4:organic univalent group
+3582|stoma appliance|mate|< device|1:Drain ; 2:Open drain ; 3:Semi-open drain ; 4:fistula
+3583|substitute|mate|< device|1:Secondary dressing ; 2:material supplier ; 3:specimen ; 4:mixture
+3584|supportive surface|mate|< device|1:Secondary dressing ; 2:scattered molecular aggregate ; 3:material anatomical entity ; 4:s-block element atom
+3585|synthetic "tissue substitutes"|mate|< device|1:Synthetic wound dressing foam ; 2:polymer ; 3:Secondary dressing ; 4:Hydrogel containing wound dressing
+3586|synthetic implant|mate|< device|1:polymer ; 2:Resorbable thread material ; 3:inorganic molecular entity ; 4:Synthetic wound dressing foam
+3587|theragenerative system|mate|< device|1:coordination entity ; 2:Regeneratively-healing wound ; 3:transition element coordination entity ; 4:Wound-integrating wound dressing
+3588|theranostic platform|mate|< device|1:composite particle ; 2:Plaster ; 3:transition element coordination entity ; 4:subatomic particle
+3589|theranostic system|mate|< device|1:transition element coordination entity ; 2:coordination entity ; 3:Tetrapoda ; 4:polyatomic entity
+3590|therapeutic device|mate|< device|1:drug product ; 2:clinical drug product ; 3:material disease entity ; 4:molecule
+3591|Therapeutic Orthosis|mate|< device|1:Therapeutic footwear ; 2:coordination entity ; 3:organization ; 4:organism
+3592|therapeutic platform|cont|< device|1:treatment plan ; 2:pathogen ; 3:composite particle ; 4:Plaster
+3593|three-dimensional device|mate|< device|1:gross anatomical part ; 2:anatomical structure ; 3:anatomical entity ; 4:information biomacromolecule
+3594|three-dimensional documentation technology|mate|< device|1:Developed material disease entity ; 2:transition element coordination entity ; 3:gross anatomical part ; 4:coordination entity
+3595|tissue-engineered application|mate|< device|1:Regeneratively-healing wound ; 2:transition element molecular entity ; 3:transition element coordination entity ; 4:anatomical entity
+3596|Tissue-engineered construct|mate|< device|1:anatomical structure ; 2:transition element coordination entity ; 3:Regeneratively-healing wound ; 4:Hydrogel containing wound dressing
+3597|tissue-engineered implant|mate|< device|1:Resorbable thread material ; 2:transition element coordination entity ; 3:Wound-integrating wound dressing ; 4:Hydrogel containing wound dressing
+3598|tissue-engineered product|mate|< device|1:Regeneratively-healing wound ; 2:Hydrogel containing wound dressing ; 3:transition element molecular entity ; 4:anatomical structure
+3599|tools for electrical stimulation|mate|< device|1:Adhesive silicone grid ; 2:Wound spacer grid ; 3:electron ; 4:Antiseptic metal ion

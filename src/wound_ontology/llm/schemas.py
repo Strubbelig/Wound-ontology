@@ -48,7 +48,7 @@ class SemanticNameResponse(BaseModel):
     superclass_name: str
     # No `category` field. Asking the model to declare the category of the name
     # it had just invented was a claim about a label, unverifiable whenever the
-    # label was new and trivially satisfied by answering "MaterialEntity". Across
+    # label was new and trivially satisfied by answering "material entity". Across
     # five live runs it refused no bad name and lost one good one to a missing
     # field. What the group *is* comes from the concept's intent, which needs no
     # model at all; what remains of the check is grounded in the ontologies.
@@ -58,13 +58,26 @@ class ScopeCheckResponse(BaseModel):
     inappropriate: list[str]  # entity names from the input that are out of scope
 
 
-class MereRelationResult(BaseModel):
-    child: str
-    parent: str
-    verdict: str  # "keep" | "is_a" | "drop"
+class GateVerdict(BaseModel):
+    """One term, judged in or out, with the reason."""
 
-class MereRelationBatchResponse(BaseModel):
-    results: list[MereRelationResult]
+    term: str
+    verdict: str          # "in" | "out"
+    reason: str = ""
+
+
+class GateBatchResponse(BaseModel):
+    """A verdict FOR EVERY TERM in the batch.
+
+    `ScopeCheckResponse` returns only the out-of-scope names, so a term the
+    model omitted is indistinguishable from one it judged in scope -- and
+    `review_susp_entities` whitelisted every omission, which meant a short or
+    truncated answer for a batch of 50 was 50 permanent decisions nobody made.
+    Asking for an explicit verdict per term makes silence visible: a term absent
+    from `verdicts` gets no gate verdict at all, and is asked again.
+    """
+
+    verdicts: list[GateVerdict]
 
 
 class OccursInTargetResult(BaseModel):
@@ -121,3 +134,30 @@ class RelationCandidate(BaseModel):
 
 class RelationResponse(BaseModel):
     relations: list[RelationCandidate] = Field(default_factory=list)
+
+
+# ── Anchor-mapping adjudication ────────────────────────────────────────────
+# `verdict` is a plain string for the same reason `category` above is: the
+# allowed values are advertised through json_schema_extra, but one bad value
+# must not fail a batch of twenty good ones. Unrecognised verdicts are refused
+# locally and reported -- never coerced into the accepting value.
+
+def _verdict_names() -> list[str]:
+    from wound_ontology.mappers.mapping_adjudicator import VERDICTS
+    return list(VERDICTS)
+
+
+class MappingVerdict(BaseModel):
+    """Whether a store term and an existing ontology class name the same class."""
+
+    store_term: str
+    ontology_class: str
+    verdict: str = Field(
+        description="exactly one verdict name from the allowed list",
+        json_schema_extra=lambda s: s.update(enum=_verdict_names()),
+    )
+    reason: str = Field(default="", description="one short clause, for the report")
+
+
+class MappingVerdictBatch(BaseModel):
+    results: list[MappingVerdict] = Field(default_factory=list)

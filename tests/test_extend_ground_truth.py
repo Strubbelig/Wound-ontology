@@ -175,7 +175,7 @@ def test_part_of_is_bfo_not_a_minted_local_property(gt, tmp_path):
     property when it found none, so exported mereology pointed at an invented
     IRI no reasoner would recognise."""
     extend_ground_truth(
-        gt, tmp_path / "out.ttl", mere_hier=_hier([("New Part", "Wound")]))
+        gt, tmp_path / "out.ttl", relations=[("New Part", "part_of", "Wound")])
     g = rdflib.Graph(); g.parse(str(tmp_path / "out.ttl"), format="turtle")
     props = {str(o) for o in g.objects(None, OWL.onProperty)}
     assert props == {OBO + "BFO_0000050"}
@@ -269,18 +269,136 @@ def test_export_vocabulary_covers_the_extractor():
 
 
 def test_predicate_vocabularies_agree():
-    """StoreCleaner deletes any predicate not in ALLOWED_PREDICATES, so a
-    predicate missing there never even reaches the exporter."""
+    """The store's view leaves out any predicate not in ALLOWED_PREDICATES, so
+    a predicate missing there never even reaches the exporter."""
     from config.settings import ALLOWED_PREDICATES
 
     allowed = set(ALLOWED_PREDICATES) - {"is_a"}
     assert allowed - set(RELATION_IRIS) == set(), (
         "ALLOWED_PREDICATES permits a predicate the exporter has no IRI for")
     assert set(RELATION_IRIS) - allowed == set(), (
-        "the exporter knows a predicate StoreCleaner would strip from the store")
+        "the exporter knows a predicate the view would leave out")
 
 
 def test_every_export_iri_is_a_real_ontology_iri():
     assert all(v.startswith(("http://purl.obolibrary.org/obo/",
                              "https://bioportal.bioontology.org/ontologies/MILD/"))
                for v in RELATION_IRIS.values())
+
+
+# ── BFO categories are declared, never label-matched ─────────────────────────
+#
+# Every extracted term is typed with one of the BFO categories, and every
+# category has an IRI declared in CATEGORY_IRI. Resolving those names through
+# the label index half-worked: one-word names matched their BFO label, and the
+# CamelCase multi-word ones could not, because normalization folds punctuation
+# and plurals but does not split words. Five categories were therefore minted as
+# unanchored WONT twins, and on output/owl/wont_extended.ttl 1770 classes hung
+# under roots that subclass nothing.
+
+@pytest.mark.parametrize("category,iri", [
+    ("material entity", OBO + "BFO_0000040"),
+    ("information entity", OBO + "BFO_0000031"),
+    ("immaterial entity", OBO + "BFO_0000141"),
+    ("process boundary", OBO + "BFO_0000035"),
+    ("realizable entity", OBO + "BFO_0000017"),
+    ("process", OBO + "BFO_0000015"),
+])
+def test_category_names_resolve_to_their_declared_iri(gt, tmp_path, category, iri):
+    out = tmp_path / "out.ttl"
+    report = extend_ground_truth(gt, out, class_hier=_hier([("Wound", category)]),
+                                 lexicon=())
+    assert report.resolved_category[category] == iri
+    assert category not in report.minted
+
+    g = rdflib.Graph()
+    g.parse(str(out), format="turtle")
+    # No WONT twin was minted for the category...
+    twins = [s for s, _, o in g.triples((None, RDFS.label, None))
+             if str(o) == category and str(s).startswith(WONT_NS)]
+    assert twins == []
+    # ...and the edge points at the real class.
+    assert (rdflib.URIRef(WONT_NS + "WONT_0000380"),
+            RDFS.subClassOf, rdflib.URIRef(iri)) in g or report.withheld_existing
+
+
+def test_the_category_class_is_never_given_a_parent(gt, tmp_path):
+    """BFO_0000040 belongs to BFO. An extraction run may not add axioms to it."""
+    out = tmp_path / "out.ttl"
+    report = extend_ground_truth(
+        gt, out, class_hier=_hier([("material entity", "Wound")]), lexicon=())
+    assert ("material entity", "is_a", "Wound") in report.withheld_existing
+    g = rdflib.Graph()
+    g.parse(str(out), format="turtle")
+    assert list(g.objects(rdflib.URIRef(OBO + "BFO_0000040"), RDFS.subClassOf)) == []
+
+
+def test_every_category_name_has_a_declared_iri():
+    """A category the exporter cannot place is a term it would mint unanchored."""
+    from wound_ontology.llm.extraction_models import CATEGORY_PARENT
+    from wound_ontology.owl.extend import CATEGORY_IRIS
+
+    from wound_ontology.llm.category_vocab import squash
+
+    missing = sorted(c for c in CATEGORY_PARENT if squash(c) not in CATEGORY_IRIS)
+    assert missing == [], f"categories with no export IRI: {missing}"
+
+
+# ── two terms, one class ─────────────────────────────────────────────────────
+#
+# Matching folds punctuation and plurals, so terms the hierarchy kept apart can
+# arrive at the same IRI, and every axiom on either becomes an axiom on both.
+# Measured on the full run: 11 classes were claimed by two terms, and each of
+# the 10 classes that ended up under two disjoint BFO branches was one of them
+# -- `Bacterial Load` typed Quality meeting `Bacterial Loads` typed
+# MaterialEntity. The merge happens after every upstream review, so the run has
+# to say it happened.
+
+def test_two_terms_landing_on_one_class_are_reported(gt, tmp_path):
+    report = extend_ground_truth(
+        gt, tmp_path / "out.ttl",
+        class_hier=_hier([("Wound", "quality"), ("wounds", "material entity")]),
+        lexicon=())
+    iri = WONT_NS + "WONT_0000380"
+    assert report.folded[iri] == ["wound", "wounds"]
+    assert "folded            1 class" in report.summary()
+
+
+def test_a_term_resolving_to_itself_twice_is_not_a_fold(gt, tmp_path):
+    report = extend_ground_truth(
+        gt, tmp_path / "out.ttl",
+        class_hier=_hier([("Wound", "quality"), ("Wound", "process")]),
+        lexicon=())
+    assert report.folded == {}
+
+
+def test_folding_is_what_puts_one_class_under_two_categories(gt, tmp_path):
+    """The report and the graph have to agree about why the class is incoherent."""
+    out = tmp_path / "out.ttl"
+    report = extend_ground_truth(
+        gt, out,
+        class_hier=_hier([("Bacterial Load", "quality"),
+                          ("Bacterial Loads", "material entity")]),
+        lexicon=())
+    assert len(report.folded) == 1
+    folded_iri = next(iter(report.folded))
+    g = rdflib.Graph()
+    g.parse(str(out), format="turtle")
+    parents = {str(p) for p in g.objects(rdflib.URIRef(folded_iri), RDFS.subClassOf)}
+    assert parents == {OBO + "BFO_0000019", OBO + "BFO_0000040"}
+
+
+def test_the_extension_reads_the_view_not_the_raw_evidence(gt, tmp_path):
+    """2026-09-28: `_iter_store_relations` read `store.dict`, so every term the
+    scope review had put OUT, and every unmapped spelling, was minted --
+    65,085 classes, 25,931 of them out of scope. It reads `records()` now."""
+    class ViewStore(FakeStore):
+        def records(self):
+            yield "1", {"Novel Ulcer": {"has_quality: Chronic": 1.0}}
+    store = ViewStore({"1": {"entities": {
+        "Novel Ulcer": {"has_quality: Chronic": 1.0},
+        "Randomized Controlled Trial": {"has_part: Control Group": 1.0}}}})
+    extend_ground_truth(gt, tmp_path / "out.ttl", store=store)
+    g = rdflib.Graph(); g.parse(str(tmp_path / "out.ttl"), format="turtle")
+    labels = {str(o) for o in g.objects(None, RDFS.label)}
+    assert "Randomized Controlled Trial" not in labels and "Control Group" not in labels

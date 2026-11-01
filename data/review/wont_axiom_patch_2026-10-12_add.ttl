@@ -1,0 +1,494 @@
+# WONT axiom patch, 2026-10-12 -- ADDITIONS
+# For the curated WONT (data/ground truth/ground_truth_final.owl); a hand edit.
+# Source: WONT_AXIOM_TODO.md, decisions D1-D7 and N2/N4 (2026-10-12).
+# The matching removals are in wont_axiom_patch_2026-10-12_remove.ttl.
+#
+# New ids: WONT_0007807 ... WONT_0007838 (NEXT_FREE_WONT_ID.txt said 0007807).
+# Four classes keep the id the pipeline already gave the same class from the
+# literature (rule 71, one class one id): WONT_0001864 Complete-Thickness Wound,
+# WONT_0006845 Surgical Wound, WONT_0005837 Radiation-Induced Ulcer,
+# WONT_0006773 Superficial Partial Thickness Burn.
+# Set Protégé's counter to 7839 afterwards.
+
+@prefix : <https://bioportal.bioontology.org/ontologies/WONT/> .
+@prefix wont: <https://bioportal.bioontology.org/ontologies/WONT/> .
+@prefix mild: <https://bioportal.bioontology.org/ontologies/MILD/> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+#################################################################
+#  External classes WONT now names (they seed the import modules,
+#  rule 34). Labels as in the source ontologies.
+#################################################################
+
+# FMA (fma_obo.owl 2020-04-13, the same OBO IRIs as OFL) -- layers
+obo:FMA_7163 rdf:type owl:Class ; rdfs:label "Skin"@en .
+obo:FMA_70596 rdf:type owl:Class ; rdfs:label "Epidermis"@en .
+obo:FMA_70323 rdf:type owl:Class ; rdfs:label "Dermis"@en .
+obo:FMA_64776 rdf:type owl:Class ; rdfs:label "Papillary layer of dermis"@en .
+obo:FMA_64778 rdf:type owl:Class ; rdfs:label "Reticular layer of dermis"@en .
+obo:FMA_70544 rdf:type owl:Class ; rdfs:label "Hypodermis"@en .
+obo:FMA_74315 rdf:type owl:Class ; rdfs:label "Subcutaneous adipose tissue"@en .
+obo:FMA_9630 rdf:type owl:Class ; rdfs:label "Superficial fascia"@en .
+obo:FMA_27935 rdf:type owl:Class ; rdfs:label "Investing fascia"@en .
+obo:FMA_57813 rdf:type owl:Class ; rdfs:label "Fascia of limb"@en .
+obo:FMA_14069 rdf:type owl:Class ; rdfs:label "Skeletal muscle tissue"@en .
+obo:FMA_5022 rdf:type owl:Class ; rdfs:label "Muscle organ"@en .
+obo:FMA_9721 rdf:type owl:Class ; rdfs:label "Tendon"@en .
+obo:FMA_30319 rdf:type owl:Class ; rdfs:label "Ligament"@en .
+obo:FMA_34836 rdf:type owl:Class ; rdfs:label "Articular capsule"@en .
+obo:FMA_12264 rdf:type owl:Class ; rdfs:label "Articular cartilage"@en .
+obo:FMA_24041 rdf:type owl:Class ; rdfs:label "Periosteum"@en .
+obo:FMA_5018 rdf:type owl:Class ; rdfs:label "Bone organ"@en .
+obo:FMA_224804 rdf:type owl:Class ; rdfs:label "Bone tissue"@en .
+obo:FMA_65132 rdf:type owl:Class ; rdfs:label "Nerve"@en .
+obo:FMA_63183 rdf:type owl:Class ; rdfs:label "Blood vessel"@en .
+obo:FMA_9637 rdf:type owl:Class ; rdfs:label "Portion of tissue"@en .
+obo:FMA_86166 rdf:type owl:Class ; rdfs:label "Zone of skin"@en .
+obo:FMA_67726 rdf:type owl:Class ; rdfs:label "Surface of skin"@en .
+
+# FMA -- regions (for "located in some X", D5: by query, not pre-coordinated)
+obo:FMA_7153 rdf:type owl:Class ; rdfs:label "Cardinal body part"@en .
+obo:FMA_7154 rdf:type owl:Class ; rdfs:label "Head"@en .
+obo:FMA_46494 rdf:type owl:Class ; rdfs:label "Scalp"@en .
+obo:FMA_24728 rdf:type owl:Class ; rdfs:label "Face"@en .
+obo:FMA_7155 rdf:type owl:Class ; rdfs:label "Neck"@en .
+obo:FMA_7181 rdf:type owl:Class ; rdfs:label "Trunk"@en .
+obo:FMA_9576 rdf:type owl:Class ; rdfs:label "Thorax"@en .
+obo:FMA_14181 rdf:type owl:Class ; rdfs:label "Back"@en .
+obo:FMA_9577 rdf:type owl:Class ; rdfs:label "Abdomen"@en .
+obo:FMA_14627 rdf:type owl:Class ; rdfs:label "Anterior abdominal wall"@en .
+obo:FMA_9578 rdf:type owl:Class ; rdfs:label "Pelvis"@en .
+obo:FMA_9579 rdf:type owl:Class ; rdfs:label "Perineum"@en .
+obo:FMA_25245 rdf:type owl:Class ; rdfs:label "Buttock"@en .
+obo:FMA_9601 rdf:type owl:Class ; rdfs:label "Breast"@en .
+obo:FMA_16202 rdf:type owl:Class ; rdfs:label "Sacrum"@en .
+obo:FMA_31692 rdf:type owl:Class ; rdfs:label "Surface of sacrum"@en .
+obo:FMA_32852 rdf:type owl:Class ; rdfs:label "Greater trochanter"@en .
+obo:FMA_17010 rdf:type owl:Class ; rdfs:label "Ischial tuberosity"@en .
+obo:FMA_7183 rdf:type owl:Class ; rdfs:label "Upper limb"@en .
+obo:FMA_24890 rdf:type owl:Class ; rdfs:label "Arm"@en .
+obo:FMA_24901 rdf:type owl:Class ; rdfs:label "Elbow"@en .
+obo:FMA_9663 rdf:type owl:Class ; rdfs:label "Forearm"@en .
+obo:FMA_9712 rdf:type owl:Class ; rdfs:label "Hand"@en .
+obo:FMA_7184 rdf:type owl:Class ; rdfs:label "Lower limb"@en .
+obo:FMA_24879 rdf:type owl:Class ; rdfs:label "Free lower limb"@en .
+obo:FMA_24964 rdf:type owl:Class ; rdfs:label "Hip"@en .
+obo:FMA_24967 rdf:type owl:Class ; rdfs:label "Thigh"@en .
+obo:FMA_24974 rdf:type owl:Class ; rdfs:label "Knee"@en .
+obo:FMA_24979 rdf:type owl:Class ; rdfs:label "Leg"@en .
+obo:FMA_9665 rdf:type owl:Class ; rdfs:label "Ankle"@en .
+obo:FMA_9664 rdf:type owl:Class ; rdfs:label "Foot"@en .
+obo:FMA_24994 rdf:type owl:Class ; rdfs:label "Heel"@en .
+obo:FMA_25452 rdf:type owl:Class ; rdfs:label "Surface of heel"@en .
+obo:FMA_25046 rdf:type owl:Class ; rdfs:label "Toe"@en .
+obo:FMA_35451 rdf:type owl:Class ; rdfs:label "Medial malleolus"@en .
+obo:FMA_35502 rdf:type owl:Class ; rdfs:label "Lateral malleolus"@en .
+
+# FMA -- skin of a region
+obo:FMA_37834 rdf:type owl:Class ; rdfs:label "Skin of foot"@en .
+obo:FMA_37849 rdf:type owl:Class ; rdfs:label "Skin of sole of foot"@en .
+obo:FMA_37846 rdf:type owl:Class ; rdfs:label "Skin of dorsum of foot"@en .
+obo:FMA_37828 rdf:type owl:Class ; rdfs:label "Skin of leg"@en .
+obo:FMA_23102 rdf:type owl:Class ; rdfs:label "Skin of lower limb"@en .
+obo:FMA_45285 rdf:type owl:Class ; rdfs:label "Skin of buttock"@en .
+obo:FMA_10462 rdf:type owl:Class ; rdfs:label "Skin of back"@en .
+obo:FMA_12167 rdf:type owl:Class ; rdfs:label "Skin of trunk"@en .
+obo:FMA_22988 rdf:type owl:Class ; rdfs:label "Skin of abdomen"@en .
+obo:FMA_10464 rdf:type owl:Class ; rdfs:label "Skin of breast"@en .
+obo:FMA_20429 rdf:type owl:Class ; rdfs:label "Skin of perineum"@en .
+obo:FMA_12166 rdf:type owl:Class ; rdfs:label "Skin of head"@en .
+obo:FMA_24757 rdf:type owl:Class ; rdfs:label "Skin of scalp"@en .
+obo:FMA_24758 rdf:type owl:Class ; rdfs:label "Skin of face"@en .
+obo:FMA_38295 rdf:type owl:Class ; rdfs:label "Skin of hand"@en .
+
+# OGMS, PATO, UO, IAO, OBI (N2, N4; plans in section 6)
+obo:OGMS_0000020 rdf:type owl:Class ; rdfs:label "symptom"@en .
+obo:PATO_0001242 rdf:type owl:Class ; rdfs:label "wavelength"@en .
+obo:UO_0000018 rdf:type owl:NamedIndividual , owl:Class ; rdfs:label "nanometer"@en .
+obo:IAO_0000032 rdf:type owl:Class ; rdfs:label "scalar measurement datum"@en .
+obo:IAO_0000221 rdf:type owl:ObjectProperty ; rdfs:label "is quality measurement of"@en .
+obo:IAO_0000039 rdf:type owl:ObjectProperty ; rdfs:label "has measurement unit label"@en .
+obo:IAO_0000004 rdf:type owl:DatatypeProperty ; rdfs:label "has measurement value"@en .
+obo:OBI_0000260 rdf:type owl:Class ; rdfs:label "plan"@en .
+obo:RO_0000059 rdf:type owl:ObjectProperty ; rdfs:label "concretizes"@en .
+obo:RO_0002234 rdf:type owl:ObjectProperty ; rdfs:label "has output"@en .
+
+#################################################################
+#  2. Damaged structure: at least skin, maybe deeper (D1, D2, D3)
+#################################################################
+
+# 2.1 every wound is at least a skin defect (D1 a, D3 a)
+wont:WONT_0000380 rdfs:subClassOf [ rdf:type owl:Restriction ;
+        owl:onProperty obo:BFO_0000051 ;
+        owl:someValuesFrom [ owl:intersectionOf ( obo:FMA_9637
+                [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:FMA_7163 ] ) ;
+            rdf:type owl:Class ] ] ;
+    obo:IAO_0000118 "Skin wound"@en ;
+    obo:IAO_0000116 "2026-10-12 (D1, D3, D4): every wound has damaged skin tissue as a part; it may reach deeper. Damage under intact skin is a Closed soft tissue injury, not a wound. 'Skin wound' is now an alternative term of Wound (D4)."@en .
+
+# 2.2 epidermis only (closure, D2: OWL DL, checked with HermiT).
+# The closure speaks of tissue parts only: exudate, biofilm or a foreign body
+# in the wound are parts too and are not tissue of the epidermis.
+wont:WONT_0007807 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+            [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000051 ;
+              owl:someValuesFrom [ owl:intersectionOf ( obo:FMA_9637
+                    [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:FMA_70596 ] ) ; rdf:type owl:Class ] ]
+            [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000051 ;
+              owl:allValuesFrom [ owl:unionOf ( [ owl:complementOf obo:FMA_9637 ; rdf:type owl:Class ]
+                    [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:FMA_70596 ] ) ; rdf:type owl:Class ] ] ) ;
+        rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0000380 ;
+    obo:IAO_0000115 "A wound whose damaged tissue lies in the epidermis only."@en ;
+    obo:IAO_0000118 "Superficial wound"@en ;
+    rdfs:label "Epidermal wound"@en .
+
+# 2.3 epidermis and dermis, some dermis
+wont:WONT_0007808 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+            [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000051 ;
+              owl:someValuesFrom [ owl:intersectionOf ( obo:FMA_9637
+                    [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:FMA_70323 ] ) ; rdf:type owl:Class ] ]
+            [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000051 ;
+              owl:allValuesFrom [ owl:unionOf ( [ owl:complementOf obo:FMA_9637 ; rdf:type owl:Class ]
+                    [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:FMA_70596 ]
+                    [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:FMA_70323 ] ) ; rdf:type owl:Class ] ] ) ;
+        rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0000380 ;
+    obo:IAO_0000115 "A wound whose damaged tissue reaches into the dermis but not below it."@en ;
+    rdfs:label "Partial-thickness wound"@en .
+
+# 2.4 papillary / reticular layer as the deepest
+wont:WONT_0007809 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+            [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000051 ;
+              owl:someValuesFrom [ owl:intersectionOf ( obo:FMA_9637
+                    [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:FMA_64776 ] ) ; rdf:type owl:Class ] ]
+            [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000051 ;
+              owl:allValuesFrom [ owl:unionOf ( [ owl:complementOf obo:FMA_9637 ; rdf:type owl:Class ]
+                    [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:FMA_70596 ]
+                    [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:FMA_64776 ] ) ; rdf:type owl:Class ] ] ) ;
+        rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0007808 ;
+    obo:IAO_0000115 "A partial-thickness wound whose damaged tissue reaches the papillary layer of the dermis but not the reticular layer."@en ;
+    rdfs:label "Superficial partial-thickness wound"@en .
+
+wont:WONT_0007810 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0007808
+            [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000051 ;
+              owl:someValuesFrom [ owl:intersectionOf ( obo:FMA_9637
+                    [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:FMA_64778 ] ) ; rdf:type owl:Class ] ] ) ;
+        rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0007808 ;
+    obo:IAO_0000115 "A partial-thickness wound whose damaged tissue reaches the reticular layer of the dermis."@en ;
+    rdfs:label "Deep partial-thickness wound"@en .
+
+# 2.5 into the hypodermis (id of the literature class Complete-Thickness Wound)
+wont:WONT_0001864 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+            [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000051 ;
+              owl:someValuesFrom [ owl:intersectionOf ( obo:FMA_9637
+                    [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:FMA_70544 ] ) ; rdf:type owl:Class ] ] ) ;
+        rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0000380 ;
+    obo:IAO_0000115 "A wound whose damaged tissue reaches through the dermis into the hypodermis or deeper."@en ;
+    obo:IAO_0000118 "Complete-thickness wound"@en ;
+    obo:IAO_0000116 "Not the same as Deep wound (WONT_0000508): depth in millimetres is not the layer reached; a full-thickness wound of the eyelid is shallow."@en ;
+    rdfs:label "Full-thickness wound"@en .
+
+# 2.6 - 2.9 reaching a structure (no closure: deeper is allowed)
+wont:WONT_0007811 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+            [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000051 ;
+              owl:someValuesFrom [ owl:intersectionOf ( obo:FMA_9637
+                    [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:FMA_27935 ] ) ; rdf:type owl:Class ] ] ) ;
+        rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0001864 ;
+    obo:IAO_0000115 "A wound whose damaged tissue reaches the deep (investing) fascia."@en ;
+    obo:IAO_0000116 "FMA calls the deep fascia 'Investing fascia' (FMA_27935)."@en ;
+    rdfs:label "Wound reaching deep fascia"@en .
+
+wont:WONT_0007812 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+            [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000051 ;
+              owl:someValuesFrom [ owl:intersectionOf ( obo:FMA_9637
+                    [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:FMA_5022 ] ) ; rdf:type owl:Class ] ] ) ;
+        rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0001864 ;
+    obo:IAO_0000115 "A wound whose damaged tissue reaches a muscle."@en ;
+    rdfs:label "Wound reaching muscle"@en .
+
+wont:WONT_0007813 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+            [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000051 ;
+              owl:someValuesFrom [ owl:intersectionOf ( obo:FMA_9637
+                    [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ;
+                      owl:someValuesFrom [ owl:unionOf ( obo:FMA_9721 obo:FMA_30319 obo:FMA_34836 ) ; rdf:type owl:Class ] ] ) ; rdf:type owl:Class ] ] ) ;
+        rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0001864 ;
+    obo:IAO_0000115 "A wound whose damaged tissue reaches a tendon, a ligament or a joint capsule."@en ;
+    rdfs:label "Wound reaching tendon, ligament or joint"@en .
+
+wont:WONT_0007814 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+            [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000051 ;
+              owl:someValuesFrom [ owl:intersectionOf ( obo:FMA_9637
+                    [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000050 ; owl:someValuesFrom obo:FMA_5018 ] ) ; rdf:type owl:Class ] ] ) ;
+        rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0001864 ;
+    obo:IAO_0000115 "A wound whose damaged tissue reaches a bone."@en ;
+    rdfs:label "Wound reaching bone"@en .
+
+# 2.13 - 2.16 burns by layer
+wont:WONT_0000482 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000310 wont:WONT_0007807 ) ; rdf:type owl:Class ] .
+wont:WONT_0000483 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000310 wont:WONT_0007808 ) ; rdf:type owl:Class ] .
+wont:WONT_0000484 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000310 wont:WONT_0001864 ) ; rdf:type owl:Class ] .
+wont:WONT_0000485 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000310
+        [ owl:unionOf ( wont:WONT_0007812 wont:WONT_0007814 ) ; rdf:type owl:Class ] ) ; rdf:type owl:Class ] .
+
+# 2.14 IIa / IIb (IIa keeps the id of the literature class)
+wont:WONT_0006773 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000310 wont:WONT_0007809 ) ; rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0000483 ;
+    obo:IAO_0000115 "A thermal wound whose damage reaches the papillary layer of the dermis but not the reticular layer."@en ;
+    obo:IAO_0000118 "Superficial second-degree burn wound"@en , "Second-degree burn IIa"@en ;
+    rdfs:label "Superficial partial-thickness burn"@en .
+
+wont:WONT_0007815 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000310 wont:WONT_0007810 ) ; rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0000483 ;
+    obo:IAO_0000115 "A thermal wound whose damage reaches the reticular layer of the dermis but not below it."@en ;
+    obo:IAO_0000118 "Deep second-degree burn wound"@en , "Second-degree burn IIb"@en ;
+    rdfs:label "Deep partial-thickness burn"@en .
+
+# 2.17 pressure ulcer by depth (the stages themselves stay grades, section 7)
+wont:WONT_0007816 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000534 wont:WONT_0007808 ) ; rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0000534 ;
+    obo:IAO_0000115 "A pressure ulcer whose damage reaches into the dermis but not below it (what stage 2 describes)."@en ;
+    rdfs:label "Partial-thickness pressure ulcer"@en .
+
+wont:WONT_0007817 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000534 wont:WONT_0001864 ) ; rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0000534 ;
+    obo:IAO_0000115 "A pressure ulcer whose damage reaches the hypodermis or deeper (what stages 3 and 4 describe)."@en ;
+    rdfs:label "Full-thickness pressure ulcer"@en .
+
+wont:WONT_0007818 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000534
+            [ owl:unionOf ( wont:WONT_0007812 wont:WONT_0007813 wont:WONT_0007814 ) ; rdf:type owl:Class ] ) ; rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0007817 ;
+    obo:IAO_0000115 "A pressure ulcer whose damage reaches muscle, tendon, ligament, joint or bone (what stage 4 describes)."@en ;
+    rdfs:label "Pressure ulcer reaching muscle, tendon, joint or bone"@en .
+
+# 2.18 diabetic foot ulcer by depth (what Wagner 2 and 3 describe)
+wont:WONT_0007819 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000549 wont:WONT_0007813 ) ; rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0000549 ;
+    obo:IAO_0000115 "A diabetic foot ulcer that reaches a tendon, a ligament or a joint capsule."@en ;
+    rdfs:label "Diabetic foot ulcer reaching tendon, ligament or joint"@en .
+
+wont:WONT_0007820 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000549 wont:WONT_0007814 ) ; rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0000549 ;
+    obo:IAO_0000115 "A diabetic foot ulcer that reaches a bone."@en ;
+    rdfs:label "Diabetic foot ulcer reaching bone"@en .
+
+# D3: damage under intact skin is not a wound
+wont:WONT_0007821 rdf:type owl:Class ;
+    rdfs:subClassOf mild:MILD_120022 ;
+    owl:disjointWith wont:WONT_0000380 ;
+    obo:IAO_0000115 "A pathological disorder of soft tissue under skin that is intact."@en ;
+    obo:IAO_0000116 "2026-10-12 (D3): what the closed grades of Tscherne and Oestern (C0-CIII), pressure injury stage 1 (Shea grade I) and deep tissue injury describe. Not a wound: a wound is at least a skin defect."@en ;
+    rdfs:label "Closed soft tissue injury"@en .
+
+# D4: Skin wound is retired (see the removals); its children that have no
+# other wound parent keep one here
+wont:WONT_0000046 rdfs:subClassOf wont:WONT_0000380 .
+wont:WONT_0000441 owl:deprecated "true"^^xsd:boolean ;
+    obo:IAO_0100001 wont:WONT_0000380 ;
+    rdfs:label "obsolete Skin wound"@en ;
+    obo:IAO_0000116 "2026-10-12 (D4): obsolete. Every wound is now at least a skin defect, so this class meant the same as Wound; 'Skin wound' is an alternative term of Wound. Its former definition (located in some Skin) described wounds confined to the skin, which Epidermal wound and Partial-thickness wound now state by layer."@en .
+
+#################################################################
+#  3. Region (3.1 left out, see the to-do)
+#################################################################
+
+wont:WONT_0000027 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000510
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0001025 ; owl:someValuesFrom obo:FMA_24979 ] ) ; rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0000510 .
+
+wont:WONT_0000347 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000384
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0001025 ; owl:someValuesFrom obo:FMA_24979 ] ) ; rdf:type owl:Class ] .
+
+wont:WONT_0000346 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000384 wont:WONT_0000510
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0001025 ; owl:someValuesFrom obo:FMA_24979 ] ) ; rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0000384 , wont:WONT_0000510 .
+
+wont:WONT_0000348 rdfs:subClassOf wont:WONT_0000380 ,
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0001025 ; owl:someValuesFrom obo:FMA_24979 ] .
+
+#################################################################
+#  4. How long
+#################################################################
+
+wont:WONT_0000553 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0000086 ; owl:someValuesFrom wont:WONT_0000476 ] ) ; rdf:type owl:Class ] .
+
+#################################################################
+#  5. Why (cause)
+#################################################################
+
+# 5.1 burns classify by their cause (the subclass axiom stays)
+wont:WONT_0000310 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0002353 ; owl:someValuesFrom wont:WONT_0000140 ] ) ; rdf:type owl:Class ] .
+
+# 5.2 bite
+wont:WONT_0007822 rdf:type owl:Class ; rdfs:subClassOf wont:WONT_0000338 ;
+    obo:IAO_0000115 "A trauma process in which teeth close on the body."@en ;
+    rdfs:label "Bite process"@en .
+wont:WONT_0007823 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418 wont:WONT_0007822 ) ; rdf:type owl:Class ] ;
+    rdfs:label "Wound causing bite process"@en .
+wont:WONT_0000044 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0002353 ; owl:someValuesFrom wont:WONT_0007823 ] ) ; rdf:type owl:Class ] .
+
+# 5.4 laceration
+wont:WONT_0007824 rdf:type owl:Class ; rdfs:subClassOf wont:WONT_0000338 ;
+    obo:IAO_0000115 "A trauma process in which blunt force tears tissue apart."@en ;
+    rdfs:label "Blunt tearing process"@en .
+wont:WONT_0007825 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418 wont:WONT_0007824 ) ; rdf:type owl:Class ] ;
+    rdfs:label "Wound causing blunt tearing process"@en .
+wont:WONT_0000552 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0002353 ; owl:someValuesFrom wont:WONT_0007825 ] ) ; rdf:type owl:Class ] .
+
+# 5.5 scratch
+wont:WONT_0007826 rdf:type owl:Class ; rdfs:subClassOf wont:WONT_0000338 ;
+    obo:IAO_0000115 "A trauma process in which a sharp or rough edge is drawn across the skin."@en ;
+    rdfs:label "Scratching process"@en .
+wont:WONT_0007827 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418 wont:WONT_0007826 ) ; rdf:type owl:Class ] ;
+    rdfs:label "Wound causing scratching process"@en .
+wont:WONT_0000271 owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0002353 ; owl:someValuesFrom wont:WONT_0007827 ] ) ; rdf:type owl:Class ] .
+
+# 5.6 / 5.7 surgical wound (id of the literature class Surgical Wound);
+# CDC classifies surgical wounds only
+wont:WONT_0006845 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0002353 ; owl:someValuesFrom wont:WONT_0000298 ] ) ; rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0000380 ;
+    obo:IAO_0000115 "A wound that is the output of a surgical treatment process."@en ;
+    rdfs:label "Surgical wound"@en .
+wont:WONT_0000524 rdfs:subClassOf wont:WONT_0006845 .
+
+# 5.9 chemical (acidity impact is one kind)
+wont:WONT_0007828 rdf:type owl:Class ; rdfs:subClassOf wont:WONT_0000338 ;
+    obo:IAO_0000115 "A trauma process in which a chemical substance damages tissue."@en ;
+    rdfs:label "Chemical impact process"@en .
+wont:WONT_0000517 rdfs:subClassOf wont:WONT_0007828 .
+wont:WONT_0007829 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418 wont:WONT_0007828 ) ; rdf:type owl:Class ] ;
+    rdfs:label "Wound causing chemical impact process"@en .
+wont:WONT_0007830 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0002353 ; owl:someValuesFrom wont:WONT_0007829 ] ) ; rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0000339 ;
+    obo:IAO_0000115 "A wound that is the output of a chemical impact process."@en ;
+    obo:IAO_0000118 "Chemical burn"@en ;
+    rdfs:label "Chemical wound"@en .
+
+# 5.10 radiation (id of the literature class Radiation-Induced Ulcer); develops
+# over months, so the pressure-ulcer pattern (development process with part)
+wont:WONT_0007831 rdf:type owl:Class ; rdfs:subClassOf obo:BFO_0000015 ;
+    obo:IAO_0000115 "A process in which ionizing radiation damages tissue."@en ;
+    rdfs:label "Ionizing radiation impact process"@en .
+wont:WONT_0007832 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000418 wont:WONT_0007831 ) ; rdf:type owl:Class ] ;
+    rdfs:label "Wound causing ionizing radiation process"@en .
+wont:WONT_0005837 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0000380
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0002353 ;
+          owl:someValuesFrom [ owl:intersectionOf ( wont:WONT_0000414
+                [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000051 ; owl:someValuesFrom wont:WONT_0007832 ] ) ; rdf:type owl:Class ] ] ) ;
+        rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0000380 ;
+    obo:IAO_0000115 "A wound whose development has an ionizing radiation impact process as a part."@en ;
+    obo:IAO_0000118 "Radiation-induced ulcer"@en , "Radiation wound"@en ;
+    rdfs:label "Radiation-induced wound"@en .
+
+# 5.12 Marjolin ulcer is a malignant wound
+wont:WONT_0000186 rdfs:subClassOf wont:WONT_0000182 .
+
+#################################################################
+#  6. How treated (from the treatment's side)
+#################################################################
+
+wont:WONT_0007833 rdf:type owl:Class ;
+    rdfs:subClassOf wont:WONT_0000423 ,
+        [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000055 ;
+          owl:someValuesFrom [ owl:intersectionOf ( obo:OBI_0000260
+                [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0000059 ; owl:someValuesFrom wont:WONT_0000213 ] ) ; rdf:type owl:Class ] ] ;
+    obo:IAO_0000115 "A wound treatment process that applies negative pressure to the wound."@en ;
+    rdfs:label "Negative pressure wound therapy process"@en .
+
+wont:WONT_0007834 rdf:type owl:Class ;
+    rdfs:subClassOf wont:WONT_0000388 ,
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0000057 ; owl:someValuesFrom wont:WONT_0000285 ] ,
+        [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000055 ;
+          owl:someValuesFrom [ owl:intersectionOf ( obo:OBI_0000260
+                [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0000059 ; owl:someValuesFrom wont:WONT_0000286 ] ) ; rdf:type owl:Class ] ] ;
+    obo:IAO_0000115 "A wound closure process that covers the wound with a skin graft."@en ;
+    rdfs:label "Skin grafting process"@en .
+
+wont:WONT_0007835 rdf:type owl:Class ;
+    rdfs:subClassOf wont:WONT_0000388 ,
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0002234 ; owl:someValuesFrom wont:WONT_0000301 ] ,
+        [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000055 ;
+          owl:someValuesFrom [ owl:intersectionOf ( obo:OBI_0000260
+                [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0000059 ; owl:someValuesFrom wont:WONT_0000302 ] ) ; rdf:type owl:Class ] ] ;
+    obo:IAO_0000115 "A wound closure process that brings the wound edges together with sutures."@en ;
+    rdfs:label "Suturing process"@en .
+
+# not a Wound treatment process: compression also treats venous disease without a wound
+wont:WONT_0007836 rdf:type owl:Class ;
+    rdfs:subClassOf mild:MILD_120086 ,
+        [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000055 ;
+          owl:someValuesFrom [ owl:intersectionOf ( obo:OBI_0000260
+                [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0000059 ; owl:someValuesFrom wont:WONT_0000077 ] ) ; rdf:type owl:Class ] ] ;
+    obo:IAO_0000115 "A treatment process that applies external pressure to a limb."@en ;
+    rdfs:label "Compression therapy process"@en .
+
+# 6.10
+wont:WONT_0000200 rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty obo:IAO_0000136 ; owl:someValuesFrom wont:WONT_0000380 ] .
+
+#################################################################
+#  N2: the wavelength bound sits on a measurement about the quality
+#  (red-spectrum laser itself is a literature class: its axiom
+#  'has quality some Red-spectrum wavelength' goes into
+#  data/review/curator_axioms_2026-10-03.json)
+#################################################################
+
+wont:WONT_0007837 rdf:type owl:Class ;
+    rdfs:subClassOf obo:PATO_0001242 ;
+    obo:IAO_0000115 "A wavelength of light in the red part of the visible spectrum."@en ;
+    obo:IAO_0000116 "2026-10-12 (N2): the upper bound of 750 nm is stated on Red-spectrum wavelength measurement datum, because a quality has no number in BFO; a measurement about it has."@en ;
+    rdfs:label "Red-spectrum wavelength"@en .
+
+wont:WONT_0007838 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( obo:IAO_0000032
+        [ rdf:type owl:Restriction ; owl:onProperty obo:IAO_0000221 ; owl:someValuesFrom wont:WONT_0007837 ] ) ; rdf:type owl:Class ] ;
+    rdfs:subClassOf obo:IAO_0000032 ,
+        [ rdf:type owl:Restriction ; owl:onProperty obo:IAO_0000039 ; owl:hasValue obo:UO_0000018 ] ,
+        [ rdf:type owl:Restriction ; owl:onProperty obo:IAO_0000004 ;
+          owl:someValuesFrom [ rdf:type rdfs:Datatype ; owl:onDatatype xsd:double ;
+                               owl:withRestrictions ( [ xsd:maxInclusive "750.0"^^xsd:double ] ) ] ] ;
+    obo:IAO_0000115 "A scalar measurement datum about a red-spectrum wavelength, in nanometres, of at most 750."@en ;
+    obo:IAO_0000116 "OWL DL (a datatype facet): HermiT reasons with it, ELK does not."@en ;
+    rdfs:label "Red-spectrum wavelength measurement datum"@en .

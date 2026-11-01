@@ -49,7 +49,7 @@ def _abstracts():
 def _run(store, llm, monkeypatch, **kw):
     async def _fake_extract(_llm, text, meta_id):
         llm.seen.append(text)
-        return {"entities": {"Chronic Wound": {"is_a: MaterialEntity": 1.0}},
+        return {"entities": {"Chronic Wound": {"is_a: material entity": 1.0}},
                 "meta_stamp": meta_id}
 
     monkeypatch.setattr(

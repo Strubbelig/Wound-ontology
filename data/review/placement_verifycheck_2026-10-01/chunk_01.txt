@@ -1,0 +1,600 @@
+600|compression wrap|mate|< Elastic bandage|N(Some compression wraps are not elastic bandages (e.g., non-elastic wra)|1:Gauze bandage ; 2:Fat gauze ; 3:Fixing bandage ; 4:Pressure redistribution mattress
+601|four-layer compression bandage|mate|< Elastic bandage|Y|1:Fixing bandage ; 2:Gauze bandage ; 3:Fibrin-covered wound bed ; 4:Vertical mattress suture
+602|Two Layer Compression Bandage|mate|< Elastic bandage|Y|1:Gauze bandage ; 2:Fixing bandage ; 3:Vertical mattress suture ; 4:Horizontal mattress suture
+603|iodine|mate|= elemental iodine|Y|1:diiodine ; 2:diatomic iodine ; 3:copper atom ; 4:bismuth atom
+604|environmental contaminant|role|= environmental contaminant|Y|1:xenobiotic ; 2:xenobiotic metabolite ; 3:persistent organic pollutant ; 4:pesticide
+605|bromelain-based enzymatic debridement|proc|< Enzymatic wound debridement process|Y|1:Autolytic wound debridement process ; 2:Biosurgical wound debridement process ; 3:Water-jet assisted wound debridement process ; 4:Ultrasound-assisted wound debridement process
+606|enzymatic debridement|proc|= Enzymatic wound debridement process|Y|1:Debridement process ; 2:Autolytic wound debridement process ; 3:Biosurgical wound debridement process ; 4:Mechanical wound debridement process
+607|enzymatic eschar removal|proc|< Enzymatic wound debridement process|Y|1:Wound cleansing process ; 2:Autolytic wound debridement process ; 3:Debridement process ; 4:Biosurgical wound debridement process
+608|enzyme|mate|= enzyme|Y|1:Substance used for enzymatic wound debridement ; 2:reverse transcriptase ; 3:organism ; 4:organism
+609|natural enzyme|mate|< enzyme|Y|1:Substance used for enzymatic wound debridement ; 2:polypeptide ; 3:macromolecule ; 4:reverse transcriptase
+610|protease|mate|< enzyme|Y|1:polypeptide ; 2:pathogen ; 3:peptide ; 4:protein
+611|proteinase|mate|< enzyme|Y|1:polypeptide ; 2:protein ; 3:protein ; 4:peptide
+612|proteolytic enzyme|mate|< enzyme|Y|1:Substance used for enzymatic wound debridement ; 2:polypeptide ; 3:macromolecule ; 4:protein polypeptide chain
+613|complete epithelialization|proc|< Epithelialization process|Y|1:Granulation tissue formation process ; 2:Wound healing by tertiary intention process ; 3:Wound closure process ; 4:tissue regeneration
+614|complete re-epithelialization|occu|< Epithelialization process|Y|1:Regenerative wound healing process ; 2:Wound healing by tertiary intention process ; 3:tissue regeneration ; 4:regeneration
+615|delayed epithelialization|proc|< Epithelialization process|Y|1:Impaired wound healing process ; 2:Pathological scarring process ; 3:Scarring process ; 4:Wound contraction process
+616|delayed re-epithelialization|proc|< Epithelialization process|Y|1:Impaired wound healing process ; 2:Wound dehiscence process ; 3:Pathological scarring process ; 4:Scarring process
+617|development of epithelial layer|proc|= Epithelialization process|N('Development of epithelial layer' is broader (includes any epithelial )|1:Keloid development process ; 2:anatomical structure development ; 3:multicellular organism development ; 4:anatomical structure formation involved in morphogenesis
+618|epithelial migration|proc|< Epithelialization process|N(Epithelial migration is a specific cellular movement, not equivalent t)|1:Exudation process ; 2:tube morphogenesis ; 3:Wound development process ; 4:Wound contraction process
+619|epithelial reconstitution|proc|= Epithelialization process|N('Epithelial reconstitution' implies restoration after loss, while 'Epi)|1:tissue regeneration ; 2:regeneration ; 3:Regenerative wound healing process ; 4:Wound healing by tertiary intention process
+620|epithelial regeneration|proc|= Epithelialization process|N(Epithelial regeneration is broader than epithelialization process; epi)|1:regeneration ; 2:tissue regeneration ; 3:Regenerative wound healing process ; 4:Granulation tissue formation process
+621|Epithelial renewal|proc|= Epithelialization process|N('Epithelial renewal' refers to replacement of epithelium, whereas 'Epi)|1:regeneration ; 2:tissue regeneration ; 3:Regenerative wound healing process ; 4:cell population proliferation
+622|epithelial repair process|proc|< Epithelialization process|Y|1:Tissue repair process ; 2:Regenerative wound healing process ; 3:wound healing ; 4:Wound healing related physiological process
+623|epithelial restitution|proc|< Epithelialization process|Y|1:tissue regeneration ; 2:regeneration ; 3:Regenerative wound healing process ; 4:Wound contraction process
+624|epithelial restoration|proc|= Epithelialization process|Y|1:tissue regeneration ; 2:Regenerative wound healing process ; 3:Wound healing by tertiary intention process ; 4:regeneration
+625|epithelial wound healing|proc|< Epithelialization process|N(Epithelial wound healing includes more than just epithelialization (e.)|1:wound healing ; 2:Regenerative wound healing process ; 3:Wound development process ; 4:Wound healing related physiological process
+626|epithelization|proc|= Epithelialization process|Y|1:Granulation tissue formation process ; 2:Tissue repair process ; 3:Exudation process ; 4:tissue regeneration
+627|marginal epithelialization|proc|< Epithelialization process|Y|1:Granulation tissue formation process ; 2:Exudation process ; 3:Wound edge protection process ; 4:Scarring process
+628|re-epithelization|proc|= Epithelialization process|N('Re-epithelization' specifically implies the process of covering a wou)|1:Regenerative wound healing process ; 2:Tissue repair process ; 3:tissue regeneration ; 4:Granulation tissue formation process
+629|wound epithelialization|proc|< Epithelialization process|Y|1:wound healing ; 2:Wound contraction process ; 3:Wound development process ; 4:Wound closure process
+630|wound re-epithelialization|proc|< Epithelialization process|Y|1:Regenerative wound healing process ; 2:wound healing ; 3:Wound dehiscence process ; 4:Wound closure process
+631|complete epithelial coverage|qual|= epithelialized|N('Complete epithelial coverage' specifies a fully achieved state, while)|1:degree of epithelialization ; 2:closed ; 3:closure ; 4:degree of skin adherence to underlying tissue
+632|re-epithelialised wound|mate|= Epithelialized wound|Y|1:Secondarily-healing wound ; 2:Wound dehiscence ; 3:Epithelializing wound bed ; 4:Regeneratively-healing wound
+633|ESBL-producing E. coli|mate|< Escherichia coli|Y|1:Clean-contaminated wound according to CDC ; 2:Contaminated wound according to CDC ; 3:Wound biofilm ; 4:Blake drain
+634|extended-spectrum beta-lactamase-producing Escherichia coli|mate|< Escherichia coli|Y|1:Pseudomonas aeruginosa ; 2:Blake drain ; 3:electron ; 4:Wound biofilm
+635|collagen accumulation|proc|< Excessive collagen deposition process|N(Collagen accumulation may be normal; not all is excessive.)|1:Granulation tissue formation process ; 2:Keloid development process ; 3:Pathological scarring process ; 4:Scarring process
+636|collagen secretion|proc|< Excessive collagen deposition process|N(Collagen secretion is a general process, not necessarily excessive; ex)|1:Granulation tissue formation process ; 2:Tissue repair process ; 3:Keloid development process ; 4:tissue remodeling
+637|overgrowth of collagen|proc|= Excessive collagen deposition process|Y|1:Keloid development process ; 2:Pathological scarring process ; 3:Granulation tissue formation process ; 4:Scarring process
+638|amputation|proc|< excision|Y|1:Trauma process ; 2:regeneration ; 3:Debridement process ; 4:Wound causing trauma process
+639|complete excision|proc|< excision|Y|1:Debridement process ; 2:Disease diagnosis process by exclusion ; 3:Malignant process ; 4:Surgical treatment process
+640|enucleation|proc|< excision|Y|1:Debridement process ; 2:material component separation ; 3:Enzymatic wound debridement process ; 4:Mechanical wound debridement process
+641|excisional biopsy|proc|< excision|Y|1:Wound specimen procurement by biopsy process ; 2:Disease diagnosis process by exclusion ; 3:Debridement process ; 4:Histopathological examination process of wound material
+642|explantation|proc|< excision|Y|1:Disease diagnosis process by exclusion ; 2:Wound dehiscence process ; 3:collecting specimen from organism ; 4:Debridement process
+643|extirpative surgery|proc|< excision|Y|1:Surgical treatment process ; 2:Debridement process ; 3:Surgical wound debridement process ; 4:material component separation
+644|oncological resection|proc|< excision|Y|1:Malignant process ; 2:Surgical treatment process ; 3:Wound causing malignant process ; 4:regeneration
+645|scar tissue excision|proc|< excision|Y|1:Scarring process ; 2:Pathological scarring process ; 3:Wound contraction process ; 4:Wound dehiscence process
+646|selective excision|proc|< excision|Y|1:Surgical treatment process ; 2:Debridement process ; 3:material component separation ; 4:Surgical wound debridement process
+647|surgical removal|proc|< excision|Y|1:Surgical treatment process ; 2:Surgical wound debridement process ; 3:Debridement process ; 4:Mechanical wound debridement process
+648|tumor excision|proc|< excision|Y|1:Malignant process ; 2:Debridement process ; 3:Surgical treatment process ; 4:Surgical wound debridement process
+649|wide excision|proc|< excision|Y|1:Debridement process ; 2:Surgical wound debridement process ; 3:Wound size measurement process ; 4:Surgical treatment process
+650|wide local excision|proc|< excision|Y|1:lavage ; 2:Wound size measurement process ; 3:leave one out cross validation method ; 4:Debridement process
+651|extravasation|proc|< Exudation process|N(Extravasation is leakage of fluid, not necessarily exudation; exudatio)|1:angiogenesis ; 2:lavage ; 3:Wound contraction process ; 4:Wound dehiscence process
+652|exudation|proc|= Exudation process|Y|1:Granulation tissue formation process ; 2:Debridement process ; 3:angiogenesis ; 4:lavage
+653|fluid drainage|proc|< Exudation process|N(Fluid drainage includes active removal, not necessarily exudation; not)|1:lavage ; 2:Debridement process ; 3:Wound irrigation process ; 4:regulation of body fluid levels
+654|leakage|proc|< Exudation process|N(Leakage is broader than exudation; not all leakage is exudation.)|1:lavage ; 2:Wound dehiscence process ; 3:Debridement process ; 4:excision
+655|leaking|proc|< Exudation process|N(Leaking is a more general process than exudation; not all leaking is e)|1:lavage ; 2:Wound dehiscence process ; 3:disorder elimination process ; 4:excision
+656|purulent drainage|proc|< Exudation process|Y|1:Debridement process ; 2:lavage ; 3:Wound irrigation process ; 4:Autolytic wound debridement process
+657|fatty gauze|mate|= Fat gauze|Y|1:Gauze bandage ; 2:Elastic bandage ; 3:Wound dressing composed of polyurethane foam ; 4:Hydrofiber-containing wound dressing
+658|petrolatum jelly gauze|mate|< Fat gauze|Y|1:Gauze bandage ; 2:Cellulose acetate mesh impregnated with a petrolatum emulsion ; 3:Horizontal mattress suture ; 4:Hydrofiber-containing wound dressing
+659|fatty acid|mate|= fatty acid|Y|1:fatty acid derivative ; 2:carboxylic acid ; 3:fatty acid anion ; 4:organic acid
+660|monounsaturated fatty acid|mate|< fatty acid|Y|1:monoatomic monocation ; 2:fatty acid anion ; 3:fatty acid derivative ; 4:monocarboxylic acid
+661|omega-3 fatty acid|mate|< fatty acid|Y|1:fatty acid anion ; 2:monocarboxylic acid ; 3:secondary fatty alcohol ; 4:acyl group
+662|short-chain fatty acid|mate|< fatty acid|Y|1:fatty acid derivative ; 2:fatty acid anion ; 3:monocarboxylic acid ; 4:acyl group
+663|Omega-3 polyunsaturated fatty acid|mate|< fatty acid derivative|N(Omega-3 polyunsaturated fatty acids are fatty acids, not derivatives.)|1:fatty acid anion ; 2:secondary fatty alcohol ; 3:onium compound ; 4:pyridines
+664|fibrin coating|mate|= Fibrin coating of the wound|Y|1:Fibrin-covered wound bed ; 2:Fixing bandage ; 3:Polyfilament thread material ; 4:Sanguine exudate
+665|fibrinous tissue|mate|< Fibrin-covered wound bed|N(Fibrinous tissue is not necessarily a wound bed; it can occur elsewher)|1:Fibrin coating of the wound ; 2:Sanguine exudate ; 3:Granulating wound bed ; 4:Hematoma
+666|figure-of-eight|info|< figure|Y|1:image ; 2:diagram ; 3:frequency unit ; 4:portioning objective
+667|superficial burn|mate|< First-degree burn wound|Y|1:Skin wound ; 2:Second-degree burn wound ; 3:Scratch wound ; 4:Third-degree burn wound
+668|anal fistula|mate|< fistula|Y|1:Abscess ; 2:Lymphatic fistula ; 3:Wound pocket ; 4:Diabetic foot ulcer
+669|arteriovenous fistula|mate|< fistula|Y|1:Lymphatic fistula ; 2:Capillary drain ; 3:Microangiopathy ; 4:Ventricular drain
+670|enteroatmospheric fistula|mate|< fistula|Y|1:Jackson-Pratt drain ; 2:Monaldi drain ; 3:Penrose drain ; 4:Lymphatic fistula
+671|enterocutaneous fistula|mate|< fistula|Y|1:Lymphatic fistula ; 2:Colonized wound ; 3:Wound dehiscence causally related to suture insufficiency ; 4:Wound pocket
+672|fistula type|cont|< fistula|N(Fistula type refers to a class, not an individual fistula; not a kind )|1:Lymphatic fistula ; 2:Drain ; 3:volumetric flow rate unit ; 4:open
+673|intersphincteric fistula tract|mate|< fistula|Y|1:Jackson-Pratt drain ; 2:Monaldi drain ; 3:Robinson drain ; 4:Ventricular drain
+674|pharyngocutaneous fistula|mate|< fistula|Y|1:Lymphatic fistula ; 2:Tympanic drain ; 3:Jackson-Pratt drain ; 4:Closed drain
+675|rectovaginal fistula|mate|< fistula|Y|1:Jackson-Pratt drain ; 2:Wound dehiscence causally related to suture insufficiency ; 3:Wound pocket ; 4:Lymphatic fistula
+676|sinus|inde|< fistula|N(A sinus is a blind-ending tract, while a fistula is an abnormal connec)|1:Sepsis ; 2:Lymphatic fistula ; 3:infection ; 4:baryon
+677|sinus tract|inde|< fistula|N(A sinus tract is not necessarily a fistula; they are distinct entities)|1:Lymphatic fistula ; 2:baryon ; 3:Drain ; 4:Lymphocele
+678|flap design|cont|< Flap plasty plan specification|Y|1:diagram ; 2:plan specification ; 3:plan ; 4:Suturing plan specification
+679|flap method|info|< Flap plasty plan specification|N(Flap method is a process or technique, not a plan specification.)|1:diagram ; 2:dot plot ; 3:scatter plot ; 4:algorithm
+680|foreign material|mate|= Foreign body|Y|1:Foreign body wound ; 2:material anatomical entity ; 3:material disease entity ; 4:Material used for wound treatment
+681|retained foreign body|mate|< Foreign body|Y|1:Foreign body wound ; 2:Friction bubble ; 3:composite particle ; 4:Wound pocket
+682|deep-pelvic Fournier's gangrene|mate|= Fournier's gangrene|N('Deep-pelvic Fournier's gangrene' specifies a subtype (deep-pelvic), n)|1:Marjolin ulcer ; 2:Moist necrosis ; 3:Dry necrosis ; 4:Ulcus cruris venosum
+683|fourth-degree burn|mate|= Fourth-degree burn wound|Y|1:Third-degree burn wound ; 2:Second-degree burn wound ; 3:First-degree burn wound ; 4:Deep wound
+684|subcutaneous gas|mate|< gas molecular entity|Y|1:Fat gauze ; 2:Seroma ; 3:Granulating wound bed ; 4:Phlegmon
+685|impregnated gauze|mate|< Gauze bandage|Y|1:Fat gauze ; 2:Wound dressing composed of polyurethane foam ; 3:Hydrofiber-containing wound dressing ; 4:Adhesive silicone grid
+686|paraffin gauze|mate|< Gauze bandage|Y|1:Fat gauze ; 2:Wound dressing composed of polyurethane foam ; 3:Transparent polyurethane film ; 4:Cellulose acetate mesh impregnated with a petrolatum emulsion
+687|saline-moistened gauze|mate|< Gauze bandage|Y|1:Fat gauze ; 2:Hydrofiber-containing wound dressing ; 3:Hydrocolloid containing wound dressing ; 4:Silicone spacer grid
+688|sterile gauze|mate|< Gauze bandage|Y|1:Fat gauze ; 2:Wound spacer grid ; 3:Synthetic wound dressing foam ; 4:Fixing bandage
+689|sterile gauze dressing|mate|< Gauze bandage|Y|1:Fat gauze ; 2:Wound dressing ; 3:Wound spacer grid ; 4:Wound-integrating wound dressing
+690|genetic biomarker|mate|< genetic variant|N(Genetic biomarkers include methylation patterns and expression levels,)|1:molecular entity ; 2:information biomacromolecule ; 3:heteroatomic molecular entity ; 4:main group molecular entity
+691|granulation|proc|= Granulation tissue formation process|Y|1:Exudation process ; 2:angiogenesis ; 3:Scarring process ; 4:tissue regeneration
+692|granulation stage|proc|= Granulation tissue formation process|Y|1:Exudation process ; 2:Scarring process ; 3:Regenerative wound healing process ; 4:growth
+693|growth of granulation tissue|proc|= Granulation tissue formation process|Y|1:angiogenesis involved in wound healing ; 2:Regenerative wound healing process ; 3:angiogenesis ; 4:tissue regeneration
+694|wound granulation|proc|= Granulation tissue formation process|Y|1:Regenerative wound healing process ; 2:angiogenesis involved in wound healing ; 3:Wound contraction process ; 4:wound healing
+695|body part|mate|< gross anatomical part|Y|1:anatomical entity ; 2:anatomical structure ; 3:region ; 4:Foreign body
+696|body region|inde|< gross anatomical part|Y|1:region ; 2:spatial region ; 3:anatomical structure ; 4:anatomical entity
+697|Group A beta-hemolytic streptococcus|mate|= Group A Streptococcus|Y|1:Streptococcus ; 2:Staphylococcus aureus ; 3:Erysipelas ; 4:erysipeloid
+698|group A strep|mate|= Group A Streptococcus|Y|1:Streptococcus ; 2:Staphylococcus aureus ; 3:erysipeloid ; 4:Erysipelas
+699|group A streptococci|mate|< Group A Streptococcus|Y|1:Streptococcus ; 2:Staphylococcus aureus ; 3:erysipeloid ; 4:Erysipelas
+700|group A streptococcus [GAS]|mate|= Group A Streptococcus|Y|1:Streptococcus ; 2:Staphylococcus aureus ; 3:gas molecular entity ; 4:erysipeloid
+701|Group A Streptococcus pyogene|mate|= Group A Streptococcus|N(Group A Streptococcus pyogene is not a standard synonym; the correct s)|1:Streptococcus ; 2:erysipeloid ; 3:Staphylococcus aureus ; 4:Erysipelas
+702|Strep A|mate|= Group A Streptococcus|Y|1:Streptococcus ; 2:Staphylococcus aureus ; 3:erysipeloid ; 4:Erysipelas
+703|axonal growth|proc|< growth|Y|1:developmental growth involved in morphogenesis ; 2:regeneration ; 3:tissue regeneration ; 4:Granulation tissue formation process
+704|biofilm growth|proc|< growth|Y|1:Bacterial colonization process ; 2:Bacterial culture process ; 3:Granulation tissue formation process ; 4:Biosurgical wound debridement process
+705|bone growth|proc|< growth|Y|1:developmental growth ; 2:developmental growth involved in morphogenesis ; 3:anatomical structure development ; 4:developmental process
+706|cell growth|proc|< growth|Y|1:cell population proliferation ; 2:cellular process ; 3:regeneration ; 4:developmental growth
+707|hair growth|proc|< growth|Y|1:developmental growth ; 2:developmental growth involved in morphogenesis ; 3:Granulation tissue formation process ; 4:anatomical structure development
+708|invasive growth|proc|< growth|Y|1:Malignant process ; 2:angiogenesis ; 3:developmental growth involved in morphogenesis ; 4:Granulation tissue formation process
+709|nail growth|proc|< growth|Y|1:developmental growth involved in morphogenesis ; 2:Keloid development process ; 3:developmental growth ; 4:tube development
+710|Gustilo-Anderson classification|info|= Gustilo and Anderson wound classification|Y|1:Gustilo and Anderson wound classification grade ; 2:Wagner and Anderson wound classification ; 3:Wagner and Anderson wound classification grade ; 4:histologic grade according to AJCC 7th edition
+711|Gustilo-Anderson grade|info|= Gustilo and Anderson wound classification grade|Y|1:Gustilo and Anderson wound classification ; 2:Wagner and Anderson wound classification grade ; 3:histologic grade according to AJCC 7th edition ; 4:Tscherne and Oestern wound classification grade
+712|Gustilo-Anderson type II|info|< Gustilo and Anderson wound classification grade|Y|1:Gustilo and Anderson wound classification ; 2:Wagner and Anderson wound classification ; 3:Wagner and Anderson wound classification grade ; 4:Burn wound classification grade according to Hildanus and Derganc
+713|Gustilo-Anderson type IIIB|info|< Gustilo and Anderson wound classification grade|Y|1:Gustilo and Anderson wound classification ; 2:Wagner and Anderson wound classification ; 3:Wagner and Anderson wound classification grade ; 4:Burn wound classification grade according to Hildanus and Derganc
+714|local heating|proc|< Heat impact process|Y|1:Process of administering a local anesthetic agent ; 2:Wound causing heat impact process ; 3:Wound temperature assessment process ; 4:Cold plasma wound treatment process
+715|Acute subdural hematoma|mate|< Hematoma|Y|1:Active drain ; 2:Penrose drain ; 3:Wound and soft tissue drain ; 4:Serous exudate
+716|bruise|cont|< Hematoma|Y|1:Blistering skin wound ; 2:Laceration ; 3:Sanguine exudate ; 4:Redness
+717|epidural hematoma|mate|< Hematoma|Y|1:Serosanguineous exudate ; 2:Lymphocele ; 3:Penrose drain ; 4:Ventricular drain
+718|infected hematoma|mate|< Hematoma|Y|1:Infected wound ; 2:Sanguine exudate ; 3:Purulent exudate ; 4:Colonized wound
+719|subcutaneous hematoma|mate|< Hematoma|Y|1:Seroma ; 2:Sanguine exudate ; 3:Wound and soft tissue drain ; 4:Granulating wound bed
+720|subdural hematoma|mate|< Hematoma|Y|1:Seroma ; 2:Wound and soft tissue drain ; 3:Serous exudate ; 4:Closed drain
+721|bleeding control|proc|= hemostasis|N(Bleeding control and hemostasis are not exact synonyms; hemostasis is )|1:coagulation ; 2:blood vessel diameter maintenance ; 3:Postoperative wound control process ; 4:vasodilation
+722|complete hemostasis|proc|= hemostasis|N('Complete hemostasis' implies full cessation of bleeding, whereas 'hem)|1:coagulation ; 2:Wound closure process ; 3:Wound contraction process ; 4:blood circulation
+723|hemorrhage control|proc|= hemostasis|N(Hemostasis is the physiological process; hemorrhage control is the cli)|1:coagulation ; 2:Postoperative wound control process ; 3:blood vessel diameter maintenance ; 4:vasoconstriction
+724|surgical hemostasis|proc|= hemostasis|N(Surgical hemostasis is a specific method of achieving hemostasis, not )|1:coagulation ; 2:Postoperative wound control process ; 3:Surgical treatment process ; 4:Wound cleansing process
+725|HC dressing|mate|= Hydrocolloid containing wound dressing|Y|1:Hydrofiber-containing wound dressing ; 2:Secondary dressing ; 3:Wound-integrating wound dressing ; 4:Wound dressing
+726|hydrocolloid|mate|< Hydrocolloid containing wound dressing|N(Hydrocolloid is a material ingredient, not necessarily a wound dressin)|1:Polihexanide gel ; 2:Octenidine gel ; 3:polyol ; 4:Polihexanide
+727|hydrocolloid dressing protection|mate|= Hydrocolloid containing wound dressing|N('Hydrocolloid dressing protection' is a function or process, not a mat)|1:Hydrofiber-containing wound dressing ; 2:Hydrogel containing wound dressing ; 3:Secondary dressing ; 4:Wound-integrating wound dressing
+728|Hydrocolloids dressing|mate|= Hydrocolloid containing wound dressing|Y|1:Hydrofiber-containing wound dressing ; 2:Hydrogel containing wound dressing ; 3:Secondary dressing ; 4:Polihexanide gel
+729|ordinary hydrocolloid dressing|mate|< Hydrocolloid containing wound dressing|Y|1:Hydrofiber-containing wound dressing ; 2:Wound dressing composed of polyurethane foam ; 3:Hydrogel containing wound dressing ; 4:Secondary dressing
+730|carboxymethylcellulose dressing|mate|< Hydrofiber-containing wound dressing|Y|1:Hydrogel containing wound dressing ; 2:Hydrocolloid containing wound dressing ; 3:Bovine collagen containing wound dressing ; 4:Alginate containing wound dressing
+731|silver hydrofibre dressing|mate|< Hydrofiber-containing wound dressing|Y|1:Silver-containing wound dressing ; 2:Wound-integrating wound dressing ; 3:Hydrogel containing wound dressing ; 4:Activated carbon layer wound dressing
+732|alginate hydrogel|mate|< Hydrogel containing wound dressing|Y|1:Alginate containing wound dressing ; 2:Polihexanide gel ; 3:Wound dressing composed of a polylactide membrane ; 4:polymer
+733|burn wound hydrogel dressing|mate|< Hydrogel containing wound dressing|Y|1:Wound-integrating wound dressing ; 2:Hydrocolloid containing wound dressing ; 3:Alginate containing wound dressing ; 4:Wound dressing composed of a polylactide membrane
+734|chitosan hydrogel|mate|< Hydrogel containing wound dressing|N(Chitosan hydrogel is a type of hydrogel, but not necessarily a wound d)|1:Hydrocolloid containing wound dressing ; 2:Polihexanide gel ; 3:Bovine collagen containing wound dressing ; 4:Cellulose acetate mesh impregnated with a petrolatum emulsion
+735|electrically conductive hydrogel|mate|< Hydrogel containing wound dressing|N(Not every electrically conductive hydrogel is a wound dressing; they h)|1:Polihexanide gel ; 2:Transparent polyurethane film ; 3:Silver-containing wound dressing ; 4:Octenidine gel
+736|exosome-laden hydrogel|mate|< Hydrogel containing wound dressing|N(Not all exosome-laden hydrogels are specifically wound dressings; they)|1:Polihexanide gel ; 2:composite particle ; 3:scattered molecular aggregate ; 4:subatomic particle
+737|gel sheet|mate|< Hydrogel containing wound dressing|N(Gel sheets can be silicone-based and not necessarily hydrogel-containi)|1:Adhesive silicone grid ; 2:Transparent polyurethane film ; 3:Silicone spacer grid ; 4:Hydrocolloid containing wound dressing
+738|pH-responsive hydrogel wound dressing|mate|< Hydrogel containing wound dressing|Y|1:Hydrofiber-containing wound dressing ; 2:Hydrocolloid containing wound dressing ; 3:Polihexanide gel ; 4:Wound dressing composed of a polylactide membrane
+739|stimuli-responsive hydrogel|mate|< Hydrogel containing wound dressing|N(Not all stimuli-responsive hydrogels are wound dressings; they have ot)|1:Resorbable thread material ; 2:Polihexanide gel ; 3:Transparent polyurethane film ; 4:polymer
+740|collagen scar|mate|< Hypertrophic scar|N(Not all collagen scars are hypertrophic; hypertrophic scars are a spec)|1:Bovine collagen containing wound dressing ; 2:Regeneratively-healing wound ; 3:Hydrogel containing wound dressing ; 4:Wound healing disorder
+741|facial and neck hypertrophic scar|mate|= Hypertrophic scar|N(Facial and neck hypertrophic scar is a subtype of hypertrophic scar, n)|1:Hydrocolloid containing wound dressing ; 2:Full-thickness skin graft ; 3:Fat gauze ; 4:Secondary dressing
+742|hyperplasia of scar|cont|< Hypertrophic scar|Y|1:Scarring ; 2:increased area ; 3:Regeneratively-healing wound ; 4:Wound healing disorder
+743|hyperplastic contracture scar|mate|= Hypertrophic scar|Y|1:Elastic bandage ; 2:Moist necrosis ; 3:Softened wound edge ; 4:Secondary dressing
+744|hyperplastic scar|mate|= Hypertrophic scar|Y|1:Regeneratively-healing wound ; 2:Moist necrosis ; 3:Wound healing disorder ; 4:Dry necrosis
+745|hyperplastic scar tissue|mate|= Hypertrophic scar|Y|1:Regeneratively-healing wound ; 2:Wound healing disorder ; 3:Chronic wound ; 4:Secondary dressing
+746|hypertrophic burn scar|mate|< Hypertrophic scar|Y|1:Second-degree burn wound ; 2:Third-degree burn wound ; 3:Fourth-degree burn wound ; 4:First-degree burn wound
+747|Hypertrophic burn scarring|mate|= Hypertrophic scar|Y|1:Second-degree burn wound ; 2:Third-degree burn wound ; 3:Fourth-degree burn wound ; 4:First-degree burn wound
+748|Keloid scar|mate|< Hypertrophic scar|N(Keloid scar is not a kind of hypertrophic scar; they are distinct enti)|1:Moist necrosis ; 2:Dry necrosis ; 3:Epithelialized wound ; 4:Softened wound edge
+749|post-traumatic hypertrophic scar|mate|= Hypertrophic scar|N(Post-traumatic hypertrophic scar is a subtype of hypertrophic scar; no)|1:Second-degree burn wound ; 2:Wounds classified according to Tscherne and Oestern ; 3:Pressure ulcer ; 4:Secondary dressing
+750|postoperative hypertrophic scar|mate|= Hypertrophic scar|N(Postoperative hypertrophic scar is a subtype of hypertrophic scar; not)|1:Wound dehiscence causally related to suture insufficiency ; 2:Secondary dressing ; 3:Hydrocolloid containing wound dressing ; 4:Chronic wound
+751|postoperative hypertrophic scarring|mate|= Hypertrophic scar|N(Postoperative hypertrophic scarring is a process, while hypertrophic s)|1:Wound dehiscence causally related to suture insufficiency ; 2:Secondary dressing ; 3:Secondarily-healing wound ; 4:Hydrocolloid containing wound dressing
+752|traumatic hypertrophic scar|mate|= Hypertrophic scar|N(Traumatic hypertrophic scar is a subtype of hypertrophic scar; hypertr)|1:Wounds classified according to Tscherne and Oestern ; 2:Second-degree burn wound ; 3:Pressure ulcer ; 4:Thermal wound
+753|hypochlorite|mate|= hypochlorite|Y|1:hypochlorous acid ; 2:chlorine oxide ; 3:chlorine molecular entity ; 4:monoatomic chlorine
+754|NaOCl|mate|= hypochlorite|N(NaOCl is a specific hypochlorite salt, while hypochlorite is a broader)|1:hypochlorous acid ; 2:chlorine oxide ; 3:monoatomic chlorine ; 4:hydrogen chloride
+755|pure hypochlorous acid|mate|= hypochlorous acid|Y|1:hypochlorite ; 2:hydrogen chloride ; 3:chlorine oxide ; 4:chlorine oxoacid
+756|digital image|cont|< image|Y|1:diagram ; 2:graph ; 3:data entity ; 4:histogram
+757|fluorescence image|cont|< image|Y|1:figure ; 2:optical quality ; 3:histogram ; 4:scattered molecular aggregate
+758|anatomical site|imma|< immaterial anatomical entity|Y|1:anatomical entity ; 2:spatial region ; 3:mucosa
+759|high-risk anatomical site|imma|< immaterial anatomical entity|Y|1:spatial region ; 2:anatomical entity ; 3:mucosa
+760|immunocompromised state|cont|= Immunosuppression|N(Immunocompromised state and immunosuppression are not exact synonyms.)|1:Abnormality of the immune system ; 2:Sepsis ; 3:infected ; 4:sterile
+761|systemic immunosuppression|mate|= Immunosuppression|N(Systemic immunosuppression is a subtype of immunosuppression, not exac)|1:Sepsis ; 2:Autoimmune tissue disorder ; 3:s-block molecular entity ; 4:Necrosis
+762|aberrant wound healing response|proc|< Impaired wound healing process|Y|1:response to wounding ; 2:wound healing ; 3:Regenerative wound healing process ; 4:Wound healing related physiological process
+763|aberrant wound-healing process|proc|< Impaired wound healing process|Y|1:wound healing ; 2:Wound development process ; 3:Regenerative wound healing process ; 4:Pathological scarring process
+764|abnormal wound healing process|proc|= Impaired wound healing process|N(Abnormal wound healing is broader than impaired healing (includes e.g.)|1:wound healing ; 2:Wound healing related physiological process ; 3:Wound development process ; 4:Pathological scarring process
+765|chronic wound healing process|proc|< Impaired wound healing process|Y|1:wound healing ; 2:Regenerative wound healing process ; 3:Wound healing related physiological process ; 4:Wound healing by secondary intention process
+766|defective tissue regeneration|proc|< Impaired wound healing process|Y|1:tissue regeneration ; 2:regeneration ; 3:Regenerative wound healing process ; 4:Pathological scarring process
+767|defective tissue remodeling|proc|< Impaired wound healing process|Y|1:tissue remodeling ; 2:Tissue repair process ; 3:Pathological scarring process ; 4:tissue regeneration
+768|delayed fracture healing|proc|< Impaired wound healing process|Y|1:Wound dehiscence process ; 2:Wound complication process ; 3:wound healing ; 4:Wound healing by secondary intention process
+769|delayed wound healing|proc|< Impaired wound healing process|Y|1:wound healing ; 2:Wound dehiscence process ; 3:Wound closure process ; 4:Wound complication process
+770|delayed wound repair|proc|< Impaired wound healing process|Y|1:Wound dehiscence process ; 2:wound healing ; 3:Wound complication process ; 4:Postoperative wound control process
+771|delays in healing|proc|< Impaired wound healing process|N("Delays in healing" is a plural noun phrase and not a well-defined pro)|1:wound healing ; 2:Pathological scarring process ; 3:Wound dehiscence process ; 4:Scarring process
+772|diabetic foot ulcer healing|proc|< Impaired wound healing process|Y|1:Pressure offloading process ; 2:Autolytic wound debridement process ; 3:Wound causing diabetes mellitus disease process ; 4:Wound healing by tertiary intention process
+773|diabetic wound healing impairment|proc|< Impaired wound healing process|Y|1:Wound causing diabetes mellitus disease process ; 2:Diabetes mellitus disease process ; 3:Wound complication process ; 4:Wound causing neuropathic disease process
+774|dysregulated tissue repair|proc|< Impaired wound healing process|Y|1:Tissue repair process ; 2:Pathological scarring process ; 3:Regenerative wound healing process ; 4:tissue regeneration
+775|dysregulated wound healing process|proc|< Impaired wound healing process|Y|1:wound healing ; 2:Wound healing related physiological process ; 3:Wound development process ; 4:Regenerative wound healing process
+776|failure of the wound to heal|proc|< Impaired wound healing process|N(Failure of the wound to heal is a state or outcome, not a process; imp)|1:Wound dehiscence process ; 2:wound healing ; 3:Wound closure process ; 4:Wound complication process
+777|healing stagnation|proc|< Impaired wound healing process|Y|1:Wound dehiscence process ; 2:disease perpetuation process ; 3:wound healing ; 4:disorder elimination process
+778|impaired DFU healing|proc|< Impaired wound healing process|Y|1:Wound causing neuropathic disease process ; 2:Ultrasound-assisted wound debridement process ; 3:Irreversibly diminished microvascular perfusion process ; 4:Postoperative wound control process
+779|impaired fracture healing|proc|< Impaired wound healing process|Y|1:Wound complication process ; 2:wound healing ; 3:Wound dehiscence process ; 4:Trauma process
+780|impaired healing process|proc|= Impaired wound healing process|N(Impaired healing can refer to non-wound contexts (e.g., bone healing).)|1:wound healing ; 2:Pathological scarring process ; 3:Tissue repair process ; 4:Scarring process
+781|impaired tissue healing|proc|< Impaired wound healing process|Y|1:wound healing ; 2:Pathological scarring process ; 3:Tissue repair process ; 4:Scarring process
+782|impaired tissue regeneration|proc|< Impaired wound healing process|N(Impaired tissue regeneration can occur outside wound healing, so not e)|1:tissue regeneration ; 2:Regenerative wound healing process ; 3:regeneration ; 4:Pathological scarring process
+783|incomplete healing|proc|< Impaired wound healing process|Y|1:wound healing ; 2:Pathological scarring process ; 3:Scarring process ; 4:Wound dehiscence process
+784|prolonged healing process|proc|< Impaired wound healing process|N(Prolonged healing is a feature of impaired healing, but not every prol)|1:Regenerative wound healing process ; 2:Pathological scarring process ; 3:Scarring process ; 4:Tissue repair process
+785|prolonged wound healing|proc|< Impaired wound healing process|Y|1:wound healing ; 2:Regenerative wound healing process ; 3:Wound dehiscence process ; 4:Wound healing by secondary intention process
+786|slow healing|proc|< Impaired wound healing process|N(Slow healing is not necessarily impaired; it can be slower but still n)|1:wound healing ; 2:Wound dehiscence process ; 3:Regenerative wound healing process ; 4:Wound contraction process
+787|stalled healing|proc|< Impaired wound healing process|Y|1:Wound dehiscence process ; 2:wound healing ; 3:Wound contraction process ; 4:Wound closure process
+788|wound persistence|proc|< Impaired wound healing process|Y|1:Wound dehiscence process ; 2:Wound contraction process ; 3:Wound closure process ; 4:Wound complication process
+789|wound regression|proc|< Impaired wound healing process|Y|1:Wound closure process ; 2:wound healing ; 3:Wound contraction process ; 4:Wound dehiscence process
+790|aged|qual|< increased age|Y|1:age ; 2:chronic ; 3:chronic ; 4:acute
+791|geriatric|spec|< increased age|N(Geriatric is a term relating to old age or its field, not a kind of in)|1:age ; 2:chronic ; 3:chronic ; 4:acute
+792|old age|qual|= increased age|N(Old age is a specific stage, while increased age is a comparative term)|1:age ; 2:chronic ; 3:chronic ; 4:increased size
+793|deep|cont|< increased depth|N(Deep is a state, not a kind of increased depth which implies a compara)|1:depth ; 2:Deep wound ; 3:softened ; 4:increased duration
+794|prolonged surgical duration|cont|< increased duration|Y|1:duration ; 2:increased process quality ; 3:increased depth ; 4:increased size
+795|hypertrophic|qual|< increased size|Y|1:increased area ; 2:swollen ; 3:increased depth ; 4:softened
+796|clinical signs of infection|cont|< infected|N(Signs are not the same as the condition of being infected.)|1:infection ; 2:Sepsis ; 3:wound infecting tendency ; 4:disease
+797|clinically infected|qual|= infected|N('Clinically infected' is a subset of 'infected' (implying clinical evi)|1:Unusual infection ; 2:inflamed ; 3:colonized ; 4:contaminated
+798|presence of infection|spec|= infected|Y|1:wound infecting tendency ; 2:inflamed ; 3:Unusual infection ; 4:colonized
+799|superinfected|qual|< infected|Y|1:Unusual infection ; 2:inflamed ; 3:increased size ; 4:antiinfective agent
+800|bacteria-infected wound|mate|< Infected wound|Y|1:Colonized wound ; 2:Contaminated wound ; 3:pathogen with wound infecting tendency ; 4:Wound biofilm
+801|clinically infected wound|mate|= Infected wound|Y|1:Colonized wound ; 2:Contaminated wound ; 3:Wound complication ; 4:pathogen with wound infecting tendency
+802|deep wound infection|mate|< Infected wound|Y|1:Deep wound ; 2:Colonized wound ; 3:Secondarily-healing wound ; 4:Surgical site infection
+803|infected burn|mate|< Infected wound|Y|1:Ischemic wound ; 2:Third-degree burn wound ; 3:First-degree burn wound ; 4:Thermal wound
+804|infected burn wound|mate|< Infected wound|Y|1:Colonized wound ; 2:Wound biofilm ; 3:Ischemic wound ; 4:Contaminated wound
+805|infected chronic wound|mate|< Infected wound|Y|1:Chronic wound ; 2:Colonized wound ; 3:Secondarily-healing wound ; 4:Wound biofilm
+806|infected diabetic wound|mate|< Infected wound|Y|1:Diabetic wound ; 2:Diabetic foot ulcer ; 3:Colonized wound ; 4:Wound with microbial burden assessed according to IWII
+807|infected hard-to-heal wound|mate|< Infected wound|Y|1:Colonized wound ; 2:Tertiarily-healing wound ; 3:Deep wound ; 4:Wound with microbial burden assessed according to IWII
+808|infected pressure ulcer|mate|< Infected wound|Y|1:Pressure ulcer ; 2:Marjolin ulcer ; 3:Diabetic foot ulcer ; 4:Colonized wound
+809|infected ulcer|mate|< Infected wound|Y|1:Marjolin ulcer ; 2:Pressure ulcer ; 3:Surgical site infection ; 4:Diabetic foot ulcer
+810|infection of the wound|mate|= Infected wound|N('Infection of the wound' is a process, while 'Infected wound' is a mat)|1:Wound complication disorder ; 2:Contaminated wound ; 3:Wound ; 4:Colonized wound
+811|local wound infection|cont|= Infected wound|N('Local wound infection' refers to an infection process, while 'Infecte)|1:wound infecting tendency ; 2:Surgical site infection ; 3:Colonized wound ; 4:pathogen with wound infecting tendency
+812|methicillin-resistant Staphylococcus aureus-infected wound|inde|< Infected wound|Y|1:MRSA infection ; 2:Colonized wound ; 3:Wound biofilm ; 4:Wound with microbial burden assessed according to IWII
+813|MRSA-infected wound|mate|< Infected wound|Y|1:MRSA infection ; 2:Colonized wound ; 3:Wound biofilm ; 4:Surgical site infection
+814|purulent wound|mate|< Infected wound|Y|1:Purulent exudate ; 2:Wound exudate ; 3:Colonized wound ; 4:Contaminated wound
+815|S. aureus-infected wound|mate|< Infected wound|Y|1:Colonized wound ; 2:MRSA infection ; 3:Staphylococcus aureus ; 4:Surgical site infection
+816|sternal wound infection|mate|< Infected wound|Y|1:Surgical site infection ; 2:Venous insufficiency wound ; 3:Colonized wound ; 4:Contaminated wound
+817|bacterial skin infection|mate|< infection|Y|1:Infected wound ; 2:Colonized wound ; 3:Surgical site infection ; 4:Sepsis
+818|central nervous system infection|cont|< infection|Y|1:central nervous system drug ; 2:infected ; 3:Sepsis ; 4:Unusual infection
+819|difficult-to-treat infection|mate|< infection|Y|1:Infected wound ; 2:Sepsis ; 3:pathogen with wound infecting tendency ; 4:Colonized wound
+820|genital infection|mate|< infection|Y|1:Sepsis ; 2:pathogen ; 3:Infected wound ; 4:pathogen with wound infecting tendency
+821|infection condition|cont|= infection|N(Infection condition is not an exact synonym of infection; infection is)|1:infected ; 2:Sepsis ; 3:Unusual infection ; 4:inflamed
+822|Infection Material Entity|mate|= infection|N(Infection Material Entity is not synonymous with infection; infection )|1:pathogen ; 2:material disease entity ; 3:Infected wound ; 4:pathogen with wound infecting tendency
+823|infections of the lower extremity|mate|< infection|Y|1:Sepsis ; 2:Osteomyelitis ; 3:Infected wound ; 4:pathogen with wound infecting tendency
+824|intra-abdominal infection|cont|< infection|Y|1:Abdominal drain ; 2:Sepsis ; 3:Surgical site infection ; 4:Infected wound
+825|life-threatening infection|cont|< infection|Y|1:Sepsis ; 2:infected ; 3:Unusual infection ; 4:Malignant wound
+826|localized infection|cont|< infection|Y|1:Unusual infection ; 2:infected ; 3:Sepsis ; 4:Abscess
+827|multidrug-resistant infection|cont|< infection|Y|1:Methicillin-resistant Staphylococcus aureus infection ; 2:MRSA infection ; 3:Unusual infection ; 4:wound infecting tendency
+828|musculoskeletal infection|mate|< infection|Y|1:Osteomyelitis ; 2:Infected wound ; 3:Sepsis ; 4:Surgical site infection
+829|odontogenic infection|mate|< infection|Y|1:Osteomyelitis ; 2:pathogen ; 3:Sepsis ; 4:Infected wound
+830|pin tract infection|mate|< infection|Y|1:Sepsis ; 2:pathogen with wound infecting tendency ; 3:Osteomyelitis ; 4:Infected wound
+831|residual infection|cont|< infection|Y|1:infected ; 2:Surgical site infection ; 3:Sepsis ; 4:Secondarily-healing wound
+832|resistant infection|cont|< infection|Y|1:wound infecting tendency ; 2:Unusual infection ; 3:Methicillin-resistant Staphylococcus aureus infection ; 4:infected
+833|spinal infection|cont|< infection|Y|1:Osteomyelitis ; 2:Sepsis ; 3:Unusual infection ; 4:infected
+834|subcutaneous infection|mate|< infection|Y|1:Surgical site infection ; 2:Infected wound ; 3:Colonized wound ; 4:Sepsis
+835|toe infection|mate|< infection|Y|1:Infected wound ; 2:Surgical site infection ; 3:pathogen with wound infecting tendency ; 4:Diabetic foot ulcer
+836|trauma-related infection|cont|< infection|Y|1:Infected wound ; 2:wound infecting tendency ; 3:Unusual infection ; 4:infected
+837|histopathological inflammation|qual|= inflamed|N('Histopathological inflammation' is a specific type of inflammation ob)|1:necrotic ; 2:infected ; 3:Gangrene ; 4:epithelialized
+838|inflammatory|qual|= inflamed|Y|1:infected ; 2:painful ; 3:acute ; 4:granulating
+839|inflammatory level|qual|< inflamed|N(Inflammatory level is a degree or quality, not an instance of inflamed)|1:infected ; 2:acute ; 3:granulating ; 4:painful
+840|inflammatory sign|cont|< inflamed|N(Inflammatory sign is a sign, not the state of being inflamed.)|1:Sepsis ; 2:infection ; 3:Redness ; 4:swollen
+841|inflammatory state|qual|= inflamed|Y|1:infected ; 2:painful ; 3:acute ; 4:Redness
+842|active inflammation|proc|= Inflammation process|N("active inflammation" is a specific phase or type of inflammation, not)|1:inflammatory response ; 2:Autoimmune disease process ; 3:Exudation process ; 4:regeneration
+843|acute inflammation|proc|< Inflammation process|Y|1:inflammatory response ; 2:Autoimmune disease process ; 3:regeneration ; 4:tissue regeneration
+844|chronic inflammation|proc|< Inflammation process|Y|1:inflammatory response ; 2:disease perpetuation process ; 3:Pathological scarring process ; 4:Scarring process
+845|gingival inflammation|proc|< Inflammation process|Y|1:inflammatory response ; 2:Exudation process ; 3:Granulation tissue formation process ; 4:Bacterial colonization process
+846|hyperinflammation|proc|< Inflammation process|Y|1:inflammatory response ; 2:regeneration ; 3:tissue regeneration ; 4:Excessive collagen deposition process
+847|inflammatory cell death|proc|< Inflammation process|N(Inflammatory cell death is a type of cell death, not a type of inflamm)|1:inflammatory response ; 2:Debridement process ; 3:Exudation process ; 4:Autolytic wound debridement process
+848|mucosal inflammation|proc|< Inflammation process|Y|1:inflammatory response ; 2:Epithelialization process ; 3:Exudation process ; 4:Trauma process
+849|necrotizing granulomatous inflammation|proc|< Inflammation process|Y|1:Granulation tissue formation process ; 2:Debridement process ; 3:Autolytic wound debridement process ; 4:Wound causing autoimmune disease process
+850|sustained inflammation|proc|< Inflammation process|Y|1:inflammatory response ; 2:disease perpetuation process ; 3:regeneration ; 4:tissue regeneration
+851|tissue inflammation|proc|< Inflammation process|Y|1:inflammatory response ; 2:Tissue repair process ; 3:tissue regeneration ; 4:Wound infection process
+852|wound inflammation|proc|< Inflammation process|Y|1:Wound infection process ; 2:wound healing ; 3:Impaired wound healing process ; 4:Wound development process
+853|active inflammatory phase|proc|< inflammatory response|N(Active inflammatory phase is a phase of the inflammatory response, not)|1:Inflammation process ; 2:disease perpetuation process ; 3:Exudation process ; 4:defense response
+854|foreign-body response|proc|< inflammatory response|Y|1:Wound causing foreign body process ; 2:defense response ; 3:response to stimulus ; 4:response to wounding
+855|host inflammation|proc|= inflammatory response|N('Host inflammation' refers to inflammation from the host's perspective)|1:Inflammation process ; 2:defense response ; 3:Bacterial colonization process ; 4:Wound infection process
+856|immune change|proc|< inflammatory response|N(Immune change is broader; not all immune changes are inflammatory resp)|1:Autoimmune disease process ; 2:Inflammation process ; 3:Wound causing autoimmune disease process ; 4:defense response
+857|infiltration|proc|< inflammatory response|N(Infiltration is too vague and not necessarily an inflammatory response)|1:Inflammation process ; 2:Exudation process ; 3:Debridement process ; 4:lavage
+858|inflammatory pathway|proc|< inflammatory response|N(Inflammatory pathway is a part of inflammatory response, not a kind of)|1:Inflammation process ; 2:Autoimmune disease process ; 3:Exudation process ; 4:blood circulation
+859|inflammatory phase|occu|< inflammatory response|N(Inflammatory phase is a stage of the inflammatory response, not a type)|1:Inflammation process ; 2:Exudation process ; 3:coagulation ; 4:disease perpetuation process
+860|inflammatory response|proc|= inflammatory response|Y|1:Inflammation process ; 2:defense response ; 3:response to wounding ; 4:Wound healing related physiological process
+861|inflammatory signaling|proc|< inflammatory response|N(Inflammatory signaling is part of inflammatory response, not a kind.)|1:Inflammation process ; 2:Autoimmune disease process ; 3:defense response ; 4:response to wounding
+862|inflammtory response|proc|= inflammatory response|N('Inflammtory response' is a misspelling of 'inflammatory response', no)|1:Inflammation process ; 2:defense response ; 3:Autoimmune disease process ; 4:response to wounding
+863|innate immune activation|proc|< inflammatory response|N(Innate immune activation is not necessarily an inflammatory response.)|1:Inflammation process ; 2:Autoimmune disease process ; 3:defense response ; 4:Bacterial colonization process
+864|local inflammatory response|proc|< inflammatory response|Y|1:Inflammation process ; 2:defense response ; 3:response to wounding ; 4:Tissue repair process
+865|proinflammatory response|proc|= inflammatory response|N(Proinflammatory response specifically promotes inflammation, which is )|1:Inflammation process ; 2:defense response ; 3:response to stress ; 4:response to wounding
+866|systemic inflammatory signaling|proc|< inflammatory response|N(Systemic inflammatory signaling is a part of the inflammatory response)|1:Inflammation process ; 2:defense response ; 3:Autoimmune disease process ; 4:Biosurgical wound debridement process
+867|anticoagulant|cont|< inhibitor|Y|1:antagonist ; 2:antimalarial ; 3:antiinfective agent ; 4:enzyme inhibitor
+868|inhibitor|cont|= inhibitor|Y|1:enzyme inhibitor ; 2:antagonist ; 3:antiinfective agent ; 4:EC 3.* (hydrolase) inhibitor
+869|nitric oxide|cont|< inorganic oxide|Y|1:oxide ; 2:nitrogen hydride ; 3:nitrogen molecular entity ; 4:reactive oxygen species
+870|zinc oxide|mate|< inorganic oxide|Y|1:zinc group element atom ; 2:chlorine oxide ; 3:zinc atom ; 4:oxide
+871|povidone-iodine ointment|mate|< Iodine ointment|Y|1:Povidone-iodine ; 2:Bovine collagen containing wound dressing ; 3:Bepanthen ointment ; 4:Wound-integrating wound dressing
+872|topical iodine-containing ointment|mate|= Iodine ointment|Y|1:elemental iodine ; 2:Wound gel/ointment/cream ; 3:diatomic iodine ; 4:diiodine
+873|ion|mate|= ion|Y|1:inorganic ion ; 2:inorganic cation ; 3:cation ; 4:inorganic salt
+874|tissue hypoperfusion|proc|< Irreversibly diminished microvascular perfusion process|N(Tissue hypoperfusion is not necessarily irreversible; it can be revers)|1:vasoconstriction ; 2:vasodilation ; 3:Venous insufficiency disease process ; 4:Wound causing angiopathic disease process
+875|critical ischemia|cont|< ischemic|N('Ischemic' is an adjective, not a noun class; critical ischemia is a c)|1:Ischemic wound ; 2:Gangrene ; 3:Angiopathic wound ; 4:degree of tissue perfusion
+876|impaired perfusion|spec|< ischemic|N(Impaired perfusion is not a kind of ischemic; ischemia is a consequenc)|1:degree of tissue perfusion ; 2:pressure redistribution function ; 3:Gangrene ; 4:Pallor
+877|ischemic nature|qual|= ischemic|N('Ischemic nature' is a quality describing something, while 'ischemic' )|1:Gangrene ; 2:degree of tissue perfusion ; 3:inflamed ; 4:necrotic
+878|local ischemia|qual|= ischemic|N(Local ischemia is a condition, while ischemic is an adjective; they ar)|1:degree of tissue perfusion ; 2:Gangrene ; 3:Cyanosis ; 4:necrotic
+879|ischemic injury|mate|< Ischemic wound|N(Ischemic injury is not necessarily an ischemic wound.)|1:Angiopathic wound ; 2:Arterial insufficiency wound ; 3:Traumatic wound ; 4:Sepsis
+880|neuro-ischemic ulcer|mate|< Ischemic wound|Y|1:Marjolin ulcer ; 2:Pressure ulcer ; 3:Arterial leg ulcer ; 4:Fournier's gangrene
+881|Class I|info|< IWII wound classification grade|Y|1:class discovery objective ; 2:image ; 3:categorical label ; 4:wound classification grade
+882|keloid formation|proc|= Keloid development process|Y|1:Granulation tissue formation process ; 2:Excessive collagen deposition process ; 3:Epithelialization process ; 4:Pathological scarring process
+883|keloid hyperplasia|proc|< Keloid development process|Y|1:Excessive collagen deposition process ; 2:Pathological scarring process ; 3:Scarring process ; 4:Granulation tissue formation process
+884|keloid pathogenesis|proc|= Keloid development process|Y|1:Excessive collagen deposition process ; 2:Pathological scarring process ; 3:Scarring process ; 4:Granulation tissue formation process
+885|Acute laceration wound|mate|< Laceration|Y|1:Acute wound ; 2:Macerated wound edge ; 3:Large wound ; 4:Softened wound edge
+886|complete tear|mate|< Laceration|Y|1:Wound dehiscence ; 2:Softened wound edge ; 3:Macerated wound edge ; 4:Epithelialized wound
+887|corneal laceration|mate|< Laceration|Y|1:Epithelialized wound ; 2:Mucosal blister ; 3:Scratch wound ; 4:Blistering skin wound
+888|deep laceration|mate|< Laceration|Y|1:Deep wound ; 2:Softened wound edge ; 3:Large wound ; 4:Undermined wound margin
+889|facial laceration|mate|< Laceration|Y|1:Undermined wound margin ; 2:Reddened wound edge ; 3:Macerated wound edge ; 4:First-degree burn wound
+890|hand laceration|mate|< Laceration|Y|1:Macerated wound edge ; 2:Livider wound margin ; 3:Undermined wound margin ; 4:Reddened wound edge
+891|liver laceration|mate|< Laceration|Y|1:Reddened wound edge ; 2:Large wound ; 3:Macerated wound edge ; 4:First-degree burn wound
+892|perineal laceration|mate|< Laceration|Y|1:Undermined wound margin ; 2:Reddened wound edge ; 3:Wound pocket ; 4:Macerated wound edge
+893|pretibial laceration|mate|< Laceration|Y|1:Bullous impetigo ; 2:First-degree burn wound ; 3:Reddened wound edge ; 4:Undermined wound margin
+894|Traumatic Laceration|mate|= Laceration|Y|1:Traumatic wound ; 2:Scratch wound ; 3:Macerated wound edge ; 4:Wound
+895|traumatic tear|mate|= Laceration|N(Traumatic tear is broader than laceration; not all tears are laceratio)|1:Traumatic wound ; 2:Scratch wound ; 3:Macerated wound edge ; 4:Wound dehiscence
+896|linear IgA bullous dermatosis|mate|= Linear IgA dermatosis|Y|1:Bullosis diabeticorum ; 2:Mucous membrane pemphigoid ; 3:ANCA-associated Vasculitis ; 4:Livedovasculopathy
+897|lipid|mate|< lipid|Y|1:fatty acid ; 2:polyol ; 3:fatty alcohol ; 4:polypeptide
+898|livedoid vasculitis|mate|= Livedovasculopathy|Y|1:ANCA-associated Vasculitis ; 2:Linear IgA dermatosis ; 3:Fournier's gangrene ; 4:Moist necrosis
+899|livedoid vasculopathy|mate|= Livedovasculopathy|Y|1:Microangiopathy ; 2:ANCA-associated Vasculitis ; 3:Moist necrosis ; 4:Linear IgA dermatosis
+900|Macerated skin|qual|= macerated|N(Macerated skin is a noun phrase describing a state, while macerated is)|1:degree of maceration ; 2:undermined ; 3:necrotic ; 4:reddened
+901|hematologic malignancy|mate|< Malignancy|Y|1:Neoplasm ; 2:Malignant wound ; 3:Vertebrata <vertebrates> ; 4:cellular_component
+902|malignant disease|mate|< Malignancy|Y|1:Neoplasm ; 2:Malignant wound ; 3:disorder ; 4:infection
+903|Malignant neoplasm|mate|= Malignancy|Y|1:Neoplasm ; 2:Malignant wound ; 3:cellular_component ; 4:Metazoa
+904|malignant tumor|mate|< Malignancy|Y|1:Neoplasm ; 2:Malignant wound ; 3:gross anatomical part ; 4:cellular_component
+905|metastatic cancer|mate|< Malignancy|Y|1:Malignant wound ; 2:Neoplasm ; 3:Deep wound ; 4:Sepsis
+906|metastatic disease|mate|< Malignancy|Y|1:Malignant wound ; 2:Neoplasm ; 3:Developed material disease entity ; 4:Deep wound
+907|metastatic lesion|mate|< Malignancy|Y|1:Neoplasm ; 2:Malignant wound ; 3:material complication disease entity ; 4:Developed material disease entity
+908|sarcoma|cont|< Malignancy|Y|1:neoplastic, malignant ; 2:neoplastic ; 3:Neoplasm ; 4:Malignant wound
+909|skin malignancy|mate|< Malignancy|Y|1:Skin graft ; 2:Neoplasm ; 3:Malignant wound ; 4:Skin wound
+910|tumor metastasis|mate|< Malignancy|Y|1:Neoplasm ; 2:Malignant wound ; 3:Abscess ; 4:Large wound
+911|underlying malignancy|mate|= Malignancy|Y|1:Malignant wound ; 2:Neoplasm ; 3:heteroorganic entity ; 4:cellular_component
+912|cancer progression|proc|< Malignant process|Y|1:course of the disease process ; 2:disease course ; 3:disease perpetuation process ; 4:Wound causing malignant process
+913|malignant change|proc|< Malignant process|Y|1:Wound causing malignant process ; 2:cell population proliferation ; 3:disease course ; 4:regeneration
+914|tumor progression|proc|< Malignant process|N(Tumor progression can occur in benign tumors, not only malignant proce)|1:course of the disease process ; 2:disease perpetuation process ; 3:disease course ; 4:cell population proliferation
+915|cancer wound|mate|< Malignant wound|Y|1:Contaminated wound ; 2:Wound complication ; 3:Wound complication disorder ; 4:Wound
+916|cancerous wound|mate|= Malignant wound|Y|1:Malignancy ; 2:Neoplasm ; 3:Colonized wound ; 4:Epithelialized wound
+917|complex malignant wound|mate|= Malignant wound|N('Complex malignant wound' adds the qualifier 'complex', making it a su)|1:Large wound ; 2:Deep wound ; 3:Tertiarily-healing wound ; 4:Wound with accompanying fracture
+918|fungating wound|mate|< Malignant wound|Y|1:Colonized wound ; 2:Wound biofilm ; 3:Contaminated wound ; 4:Infected wound
+919|malignant breast wound|mate|< Malignant wound|Y|1:Third-degree burn wound ; 2:Fourth-degree burn wound ; 3:Wounds classified according to Gustilo and Anderson ; 4:Deep wound
+920|malignant fungating lesion|mate|< Malignant wound|Y|1:Moist necrosis ; 2:Malignancy ; 3:Colonized wound ; 4:Full-thickness skin graft
+921|malignant fungating wound|mate|< Malignant wound|Y|1:Colonized wound ; 2:Granulating wound bed ; 3:Full-thickness skin graft ; 4:Macerated wound edge
+922|neoplastic wound|mate|= Malignant wound|N(Neoplastic wound may include benign, while Malignant wound specificall)|1:Neoplasm ; 2:Malignancy ; 3:Colonized wound ; 4:Contaminated wound
+923|tumor wound|mate|< Malignant wound|N(Not every tumor wound is malignant; benign tumors can also cause wound)|1:Colonized wound ; 2:Contaminated wound ; 3:Neoplasm ; 4:Large wound
+924|micronutrient deficiency|disp|< Malnutrition|N(Micronutrient deficiency is a specific type of malnutrition, but the s)|1:micronutrient ; 2:nutrient ; 3:macronutrient ; 4:vitamin (role)
+925|nutrition deficit|cont|= Malnutrition|N(Malnutrition includes both undernutrition and overnutrition, while nut)|1:nutrient ; 2:micronutrient ; 3:macronutrient ; 4:mineral nutrient
+926|matrix|mate|< material anatomical entity|Y|1:macromolecule ; 2:scattered molecular aggregate ; 3:cellular_component ; 4:molecule
+927|osteosynthetic material|mate|< material anatomical entity|N(osteosynthetic material is not a material anatomical entity (it is syn)|1:Resorbable thread material ; 2:mineral ; 3:material disease entity ; 4:inorganic molecular entity
+928|chronic complication|cont|< material complication disease entity|Y|1:chronic ; 2:chronic ; 3:Chronic wound ; 4:Chronic cutaneous wound
+929|diabetes-related complication|cont|< material complication disease entity|N(Diabetes-related complications are not necessarily 'material' complica)|1:Diabetic metabolic disorder ; 2:Diabetic wound ; 3:disease complication diagnostic result ; 4:Diabetic foot ulcer
+930|diabetes-related lower extremity complication|mate|< material complication disease entity|Y|1:Diabetic wound ; 2:Diabetic metabolic disorder ; 3:Diabetic foot ulcer ; 4:Bullosis diabeticorum
+931|hospital-acquired complication|mate|< material complication disease entity|Y|1:Wound complication ; 2:Wound complication disorder ; 3:Contaminated wound ; 4:Colonized wound
+932|iatrogenic complication|mate|< material complication disease entity|N(Iatrogenic complication is not necessarily a material complication dis)|1:Wound complication ; 2:Wound complication disorder ; 3:Contaminated wound ; 4:Contaminated wound according to CDC
+933|immobility-related complication|mate|< material complication disease entity|N(Immobility-related complication is a disease entity, not a kind of mat)|1:Wound complication disorder ; 2:MRSA infection ; 3:Venous insufficiency disorder ; 4:Wound healing disorder
+934|implant-related complication|mate|< material complication disease entity|N(Implant-related complication is not clearly a material complication di)|1:Surgical site infection ; 2:Wound complication ; 3:Wound complication disorder ; 4:device
+935|infection complication|mate|< material complication disease entity|Y|1:infection ; 2:Infected wound ; 3:Surgical site infection ; 4:Sepsis
+936|infection-related complication|mate|< material complication disease entity|N(Infection-related complication is a complication, not necessarily a 'm)|1:infection ; 2:Infected wound ; 3:Surgical site infection ; 4:Sepsis
+937|inflammatory complication|mate|< material complication disease entity|Y|1:Sepsis ; 2:infection ; 3:Autoimmune tissue disorder ; 4:Osteomyelitis
+938|intra-abdominal complication|mate|< material complication disease entity|Y|1:Abdominal drain ; 2:Wound complication ; 3:Wound complication disorder ; 4:Autoimmune disease related wound
+939|lower extremity complication|mate|< material complication disease entity|N('Material complication disease entity' is an awkward and non-standard )|1:Wound complication disorder ; 2:Wound complication ; 3:Chronic wound ; 4:Venous insufficiency wound
+940|macrovascular complication|cont|< material complication disease entity|N(Macrovascular complication is a complication involving large blood ves)|1:Microangiopathy ; 2:Angiopathy ; 3:Diabetic metabolic disorder ; 4:Angiopathic wound
+941|medical complication|cont|< material complication disease entity|N('Medical complication' is broader and not necessarily a subtype of 'ma)|1:Wound complication ; 2:disease complication diagnostic result ; 3:Wound complication disorder ; 4:disorder
+942|metabolic complication|cont|< material complication disease entity|N(Metabolic complication is a condition, not a material entity.)|1:Diabetic metabolic disorder ; 2:disease complication diagnostic result ; 3:metabolite ; 4:xenobiotic metabolite
+943|postoperative complication|mate|< material complication disease entity|Y|1:Wound complication disorder ; 2:Wound complication ; 3:Secondarily-healing wound ; 4:Surgical site infection
+944|procedure-related complication|mate|< material complication disease entity|Y|1:Wound complication ; 2:Wound complication disorder ; 3:processed material entity ; 4:processed material
+945|skin complication|mate|< material complication disease entity|Y|1:Wound complication disorder ; 2:Wound complication ; 3:Skin wound ; 4:Wound healing disorder
+946|surgery-related complication|mate|< material complication disease entity|Y|1:Surgical site infection ; 2:Wound complication ; 3:Wound complication disorder ; 4:Wound healing disorder
+947|surgical complication|mate|< material complication disease entity|N(Surgical complications are not necessarily material disease entities.)|1:Wound complication ; 2:Wound complication disorder ; 3:Surgical site infection ; 4:Wound healing disorder
+948|decellularization|proc|< material component separation|Y|1:Enzymatic wound debridement process ; 2:partitioning data transformation ; 3:Debridement process ; 4:Wound contraction process
+949|connective tissue disease|mate|< material disease entity|N(Connective tissue disease is a disease, not a material entity.)|1:Microangiopathy ; 2:disorder ; 3:material complication disease entity ; 4:Angiopathy
+950|corneal disease|mate|< material disease entity|N(Corneal disease is a disease, not a material entity.)|1:disorder ; 2:pathological disorder ; 3:Wound healing disorder ; 4:Angiopathy
+951|fibrotic disease|mate|< material disease entity|Y|1:Developed material disease entity ; 2:Hypertrophic scar ; 3:Regeneratively-healing wound ; 4:Wound healing disorder
+952|metabolic bone disease|mate|< material disease entity|N(Metabolic bone disease is a disease process, not a material entity.)|1:Osteomyelitis ; 2:Diabetic metabolic disorder ; 3:mineral ; 4:mineral nutrient
+953|neuromuscular disease|mate|< material disease entity|Y|1:disorder ; 2:pathological disorder ; 3:unknown-disorder disease ; 4:coordination entity
+954|non-communicable disease|mate|< material disease entity|Y|1:infection ; 2:unknown-disorder disease ; 3:disorder ; 4:Viruses
+955|rheumatologic disease|mate|< material disease entity|Y|1:disorder ; 2:pathological disorder ; 3:unknown-disorder disease ; 4:Wound healing disorder
+956|systemic disease|mate|< material disease entity|N(Systemic disease is a process, not a material entity.)|1:disorder ; 2:Sepsis ; 3:pathological disorder ; 4:unknown-disorder disease
+957|graft material|mate|< Material used for wound treatment|Y|1:material anatomical entity ; 2:Regeneratively-healing wound ; 3:Skin graft ; 4:processed material
+958|reconstructive material|mate|< Material used for wound treatment|N(Reconstructive material is not necessarily used for wound treatment; i)|1:material anatomical entity ; 2:processed material ; 3:Regeneratively-healing wound ; 4:device
+959|tissue engineering material|mate|< Material used for wound treatment|N(Not all tissue engineering materials are used specifically for wound t)|1:material anatomical entity ; 2:Hydrogel containing wound dressing ; 3:Regeneratively-healing wound ; 4:Resorbable thread material
+960|wound biomaterial|mate|< Material used for wound treatment|Y|1:Material used for wound complication prevention ; 2:Wound dressing ; 3:Wound gel/ointment/cream ; 4:Wound
+961|wound care material|mate|< Material used for wound treatment|Y|1:Material used for wound complication prevention ; 2:Wound gel/ointment/cream ; 3:Wound dressing ; 4:Wound
+962|wound care product|mate|< Material used for wound treatment|Y|1:Wound gel/ointment/cream ; 2:Wound ; 3:Wound complication ; 4:Wound dressing
+963|wound dressing material|mate|< Material used for wound treatment|Y|1:Wound dressing ; 2:Wound-integrating wound dressing ; 3:Hydrogel containing wound dressing ; 4:Secondary dressing
+964|wound healing material|mate|< Material used for wound treatment|Y|1:Material used for wound complication prevention ; 2:Wound gel/ointment/cream ; 3:Regeneratively-healing wound ; 4:Wound healing disorder
+965|wound matrix|mate|< Material used for wound treatment|Y|1:Hydrogel containing wound dressing ; 2:Wound dressing ; 3:Wound biofilm ; 4:Fibrin coating of the wound
+966|wound-healing therapeutic|mate|< Material used for wound treatment|Y|1:Regeneratively-healing wound ; 2:Wound healing disorder ; 3:Primarily-healing wound ; 4:Tertiarily-healing wound
+967|medical grade honey|mate|< Medicinal honey|Y|1:Manuka honey ; 2:Phlegmon ; 3:mononuclear parent hydride ; 4:Bepanthen ointment
+968|metallic|mate|< metal atom|N(Metallic is an adjective or property, not a type of atom.)|1:metal cation ; 2:metal allergen ; 3:Antiseptic metal ion ; 4:trace element
+969|metal ion|mate|< metal cation|N(Not all metal ions are cations; some are anions.)|1:metal atom ; 2:metal allergen ; 3:inorganic ion ; 4:inorganic cation
+970|impaired microcirculation|cont|< Microangiopathy|N(Impaired microcirculation is a functional state, not necessarily a dis)|1:Angiopathy ; 2:ischemic ; 3:Venous insufficiency disorder ; 4:Angiopathic wound
+971|microcirculatory impairment|cont|< Microangiopathy|N(Microcirculatory impairment is not necessarily a microangiopathy; it m)|1:Angiopathy ; 2:ischemic ; 3:Venous insufficiency disorder ; 4:degree of tissue perfusion
+972|microvascular complication|cont|< Microangiopathy|Y|1:material complication disease entity ; 2:Angiopathic wound ; 3:Angiopathy ; 4:Diabetic metabolic disorder
+973|Microvascular Impairment|cont|< Microangiopathy|N(Microvascular impairment is functional/broader and not necessarily a m)|1:Angiopathy ; 2:ischemic ; 3:Angiopathic wound ; 4:Venous insufficiency disorder
+974|small-vessel disease|mate|< Microangiopathy|Y|1:Angiopathy ; 2:Livedovasculopathy ; 3:Peripheral arterial occlusive disease ; 4:scattered molecular aggregate
+975|wound-swab culture|proc|< Microbial analysis of the wound swab for wound pathogens|Y|1:Taking a wound swab ; 2:Wound irrigation process ; 3:Biosurgical wound debridement process ; 4:Water-jet assisted wound debridement process
+976|mineral|mate|= mineral|Y|1:mineral nutrient ; 2:inorganic oxide ; 3:metal cation ; 4:inorganic ion
+977|combination of drug|mate|< mixture|Y|1:drug product ; 2:composite particle ; 3:heteromonocyclic compound ; 4:complex of molecules
+978|combined formulation|mate|< mixture|Y|1:composite particle ; 2:polyatomic entity ; 3:polymer ; 4:heteromonocyclic compound
+979|Eutectic Mixture of Local Anesthetics cream|mate|< mixture|Y|1:Octenidine gel ; 2:Ulcus cruris mixtum ; 3:elemental iodine ; 4:diatomic iodine
+980|molecule|mate|= molecule|Y|1:molecular entity ; 2:macromolecule ; 3:elemental molecular entity ; 4:organic molecule
+981|platelet endothelial cell adhesion molecule-1|mate|< molecule|Y|1:Peripheral arterial occlusive disease ; 2:Polihexanide ; 3:Microangiopathy ; 4:Mucous membrane pemphigoid
+982|small molecule|mate|< molecule|Y|1:molecular entity ; 2:organic molecule ; 3:macromolecule ; 4:subatomic particle
+983|small-molecule inhibitor|mate|< molecule|Y|1:s-block molecular entity ; 2:subatomic particle ; 3:Antiseptic biguanide ; 4:biguanides
+984|therapeutic molecule|mate|< molecule|Y|1:macromolecule ; 2:drug product ; 3:molecular entity ; 4:organic molecule
+985|acetic acid|mate|< monocarboxylic acid|Y|1:carboxylic acid ; 2:carbon oxoacid ; 3:carboxylic acid anion ; 4:oxoacid
+986|alpha-Lipoic acid|mate|< monocarboxylic acid|Y|1:oxoacid ; 2:monocarboxylic acid anion ; 3:fatty acid anion ; 4:halogen oxoacid
+987|tranexamic acid|mate|< monocarboxylic acid|Y|1:carbamic acid ; 2:monocarboxylic acid anion ; 3:carbamoyl group ; 4:carboxylic acid
+988|monofilament|mate|< Monofilament thread material|Y|1:Polyfilament thread material ; 2:Non-absorbable thread material ; 3:polyatomic ion ; 4:monoatomic monoanion
+989|clinical appearance|qual|< morphology|Y|1:physical object quality ; 2:phenotype ; 3:color ; 4:Phenotypic abnormality
+990|defect morphology|qual|< morphology|Y|1:Phenotypic abnormality ; 2:Abnormal skin morphology ; 3:structure ; 4:deviation (from_normal)
+991|fiber morphology|qual|< morphology|Y|1:structure ; 2:Thread size ; 3:degree of tissue firmness ; 4:physical object quality
+992|fracture morphology|qual|< morphology|Y|1:Thread size ; 2:physical object quality ; 3:structure ; 4:physical quality of a process
+993|morphological characteristic|qual|< morphology|Y|1:structure ; 2:Phenotypic abnormality ; 3:phenotype ; 4:physical object quality
+994|shape|qual|< morphology|Y|1:structure ; 2:physical object quality ; 3:phenotype ; 4:physical quality
+995|texture|qual|< morphology|N(Texture is a quality, not a kind of morphology; morphology is a field )|1:structure ; 2:physical object quality ; 3:phenotype ; 4:physical quality
+996|vascular morphology|qual|< morphology|Y|1:structure ; 2:phenotype ; 3:color ; 4:Phenotypic abnormality
+997|wound morphology|qual|< morphology|Y|1:Cutaneous wound ; 2:Acute cutaneous wound ; 3:degree of wound pain ; 4:Chronic cutaneous wound
+998|gastric mucosa|mate|< mucosa|Y|1:Mucosal blister ; 2:Intact wound margin ; 3:Mucous membrane pemphigoid ; 4:Epithelialized wound
+999|intestinal mucosal barrier|mate|< mucosa|N(Intestinal mucosal barrier is a functional barrier, not a type of muco)|1:Mucosal blister ; 2:Intact wound margin ; 3:Epithelialized wound ; 4:Undermined wound margin
+1000|mucosa|mate|< mucosa|Y|1:Mucosal blister ; 2:Epithelialized wound ; 3:cellular_component ; 4:cellular anatomical entity
+1001|mucous membrane|mate|= mucosa|Y|1:Mucosal blister ; 2:Mucous membrane pemphigoid ; 3:cell ; 4:specimen from organism
+1002|oral mucosa|mate|< mucosa|Y|1:Mucosal blister ; 2:Epithelialized wound ; 3:anatomical structure ; 4:cellular anatomical entity
+1003|sterile isotonic sodium chloride solution|mate|= NaCl 0.9%|Y|1:NaCl 10% ; 2:Wound irrigation solution ; 3:Ringer solution ; 4:salt
+1004|avascular necrosis|mate|< Necrosis|Y|1:Dry necrosis ; 2:Moist necrosis ; 3:Fournier's gangrene ; 4:oxide
+1005|confirmed necrosis|mate|= Necrosis|N('Confirmed necrosis' indicates a diagnosed state, while 'Necrosis' is )|1:Dry necrosis ; 2:Moist necrosis ; 3:Necrotic wound bed ; 4:Softened wound edge
+1006|fascial necrosis|cont|< Necrosis|Y|1:Dry necrosis ; 2:Moist necrosis ; 3:Gangrene ; 4:necrotic
+1007|flap necrosis|mate|< Necrosis|Y|1:Necrotic wound bed ; 2:Dry necrosis ; 3:Moist necrosis ; 4:Fournier's gangrene
+1008|local skin necrosis|mate|< Necrosis|Y|1:Moist necrosis ; 2:Dry necrosis ; 3:Necrotic wound bed ; 4:Skin wound
+1009|Necrosis Material Entity|mate|= Necrosis|N(Necrosis Material Entity refers to necrotic tissue, while Necrosis is )|1:Dry necrosis ; 2:Moist necrosis ; 3:Necrotic wound bed ; 4:nucleon
+1010|necrotic area|mate|= Necrosis|N(Necrotic area is a material entity (region of necrotic tissue), while )|1:Dry necrosis ; 2:Moist necrosis ; 3:Necrotic wound bed ; 4:Abscess
+1011|necrotic tissue type|mate|= Necrosis|N(Necrotic tissue type is a type of tissue, while Necrosis is a process;)|1:Dry necrosis ; 2:Moist necrosis ; 3:Necrotic wound bed ; 4:Wounds classified according to Tscherne and Oestern
+1012|osteonecrosis|cont|< Necrosis|Y|1:necrotic ; 2:Dry necrosis ; 3:Moist necrosis ; 4:Gangrene
+1013|partial flap necrosis|mate|< Necrosis|Y|1:Necrotic wound bed ; 2:Dry necrosis ; 3:Moist necrosis ; 4:Reddened wound edge
+1014|postradiation nasopharyngeal necrosis|mate|< Necrosis|Y|1:Dry necrosis ; 2:Moist necrosis ; 3:Fournier's gangrene ; 4:Necrotic wound bed
+1015|radiation necrosis|mate|< Necrosis|Y|1:Dry necrosis ; 2:Moist necrosis ; 3:Malignant wound ; 4:Fournier's gangrene
+1016|skin ischemic necrosis|mate|< Necrosis|Y|1:Moist necrosis ; 2:Dry necrosis ; 3:Ischemic wound ; 4:Fournier's gangrene
+1017|skin necrosis|mate|< Necrosis|Y|1:Dry necrosis ; 2:Moist necrosis ; 3:Necrotic wound bed ; 4:Skin wound
+1018|soft-tissue necrosis|mate|< Necrosis|Y|1:Dry necrosis ; 2:Moist necrosis ; 3:Soft tissue wound ; 4:Fournier's gangrene
+1019|necrotic tissue|mate|< Necrotic wound bed|N(Necrotic tissue can occur in locations other than a wound bed (e.g., i)|1:Necrosis ; 2:Dry necrosis ; 3:Moist necrosis ; 4:Sepsis
+1020|necrotic wound|mate|= Necrotic wound bed|N(Necrotic wound refers to the whole wound, while necrotic wound bed ref)|1:Necrosis ; 2:Dry necrosis ; 3:Moist necrosis ; 4:Closed wound
+1021|wound necrosis|mate|< Necrotic wound bed|N(Wound necrosis is necrotic tissue, which is part of a necrotic wound b)|1:Necrosis ; 2:Wound ; 3:Wound dehiscence ; 4:Closed wound
+1022|myeloid neoplasm|mate|< Neoplasm|Y|1:Malignancy ; 2:Osteomyelitis ; 3:Malignant wound ; 4:Metazoa
+1023|neoplastic disease|mate|= Neoplasm|N(Neoplastic disease is a condition, while Neoplasm is the abnormal grow)|1:Malignancy ; 2:disorder ; 3:pathological disorder ; 4:Malignant wound
+1024|neoplastic lesion|mate|< Neoplasm|Y|1:Malignancy ; 2:cellular_component ; 3:Malignant wound ; 4:specimen
+1025|solid tumor|mate|< Neoplasm|Y|1:Malignancy ; 2:cellular_component ; 3:gross anatomical part ; 4:anatomical structure
+1026|tumor|mate|= Neoplasm|N(Not all neoplasms are tumors (e.g., hematologic neoplasms) and 'tumor')|1:Malignancy ; 2:specimen ; 3:anatomical structure ; 4:anatomical entity
+1027|vascular neoplasm|mate|< Neoplasm|Y|1:Angiopathy ; 2:Microangiopathy ; 3:Angiopathic wound ; 4:Malignancy
+1028|malignant|cont|< neoplastic, malignant|N(The term 'malignant' as a continuant is vague; it is an adjective or q)|1:Malignancy ; 2:neoplastic ; 3:Malignant wound ; 4:Neoplasm
+1029|malignant wound characteristic|cont|< neoplastic, malignant|N(A malignant wound characteristic is a quality, not a neoplastic malign)|1:Malignant wound ; 2:Malignancy ; 3:wound classification grade ; 4:Wound complication
+1030|no infection|cont|< normal|N("No infection" is the absence of infection, not a kind of the vague cl)|1:infection ; 2:infected ; 3:sterile ; 4:Sepsis
+1031|nucleic acid|mate|= nucleic acid|Y|1:ribonucleic acid ; 2:molecular entity ; 3:nucleon ; 4:nuclear particle
+1032|early enteral nutrition|proc|< Nutritional status improvement process|Y|1:developmental growth ; 2:growth ; 3:tube development ; 4:developmental process
+1033|enteral nutrition support|proc|< Nutritional status improvement process|Y|1:decision tree building data transformation ; 2:disorder addition process ; 3:Disease diagnosis process by exclusion ; 4:system development
+1034|nutritional care|proc|< Nutritional status improvement process|N(Nutritional care may include maintenance or prevention, not necessaril)|1:growth ; 2:developmental growth ; 3:regulation of biological quality ; 4:regeneration
+1035|nutritional management|proc|< Nutritional status improvement process|N(Nutritional management may aim to maintain status, not only improve.)|1:planned process ; 2:planned process ; 3:regulation of biological quality ; 4:Postoperative wound control process
+1036|nutritional optimization|proc|= Nutritional status improvement process|Y|1:growth ; 2:developmental growth ; 3:dimensionality reduction ; 4:regulation of biological quality
+1037|chronic open wound|mate|< Open wound|Y|1:Chronic wound ; 2:Secondarily-healing wound ; 3:Closed wound ; 4:Wound dehiscence
+1038|excisional wound|mate|< Open wound|Y|1:Wound ; 2:Scratch wound ; 3:Skin wound ; 4:Wound dehiscence
+1039|exposed wound|mate|= Open wound|Y|1:Wound ; 2:Traumatic wound ; 3:Wound edge ; 4:Skin wound
+1040|open abdomen|mate|< Open wound|Y|1:Abdominal drain ; 2:Open drain ; 3:Semi-open drain ; 4:Active drain
+1041|open injury|mate|= Open wound|N(Open injury is broader, including open fractures and other injuries, w)|1:Acute wound ; 2:Traumatic wound ; 3:Closed wound ; 4:Wound
+1042|open skin wound|mate|< Open wound|Y|1:Closed wound ; 2:Skin wound ; 3:Scratch wound ; 4:Infected wound
+1043|open ulcer|mate|< Open wound|Y|1:Pressure ulcer ; 2:Marjolin ulcer ; 3:Diabetic foot ulcer ; 4:Arterial leg ulcer
+1044|open-globe injury|mate|< Open wound|Y|1:Traumatic wound ; 2:Human bite wound ; 3:Ischemic wound ; 4:First-degree burn wound
+1045|puncture wound|mate|< Open wound|Y|1:Scratch wound ; 2:Wound ; 3:Wound pocket ; 4:Bite wound
+1046|aminoglycoside|mate|< organic amino compound|Y|1:polyatomic anion ; 2:amino-acid anion ; 3:biguanides ; 4:polyatomic ion
+1047|metal-organic framework|mate|< organic molecular entity|N(A metal-organic framework is a coordination material/framework, not an)|1:manganese coordination entity ; 2:transition element coordination entity ; 3:manganese group molecular entity ; 4:manganese oxoanion
+1048|anaerobic organism|mate|< organism|Y|1:Archaea ; 2:Bacteria ; 3:Escherichia coli ; 4:organic univalent group
+1049|Gram-positive organism|cont|< organism|Y|1:Bacteria ; 2:Escherichia coli ; 3:pathogen ; 4:prokaryotic metabolite
+1050|microbe|mate|< organism|Y|1:pathogen ; 2:Bacteria ; 3:specimen from organism ; 4:Archaea
+1051|microorganism|mate|< organism|Y|1:pathogen ; 2:Bacteria ; 3:molecule ; 4:molecule
+1052|parasite|mate|< organism|Y|1:pathogen ; 2:infection ; 3:specimen from organism ; 4:Viruses
+1053|resistant organism|mate|< organism|Y|1:pathogen with wound infecting tendency ; 2:pathogen ; 3:organic anion ; 4:Sepsis
+1054|acute osteomyelitis|mate|< Osteomyelitis|Y|1:Abscess ; 2:Acute wound ; 3:Sepsis ; 4:MRSA infection
+1055|calcaneal osteomyelitis|cont|< Osteomyelitis|Y|1:Marjolin ulcer ; 2:Fournier's gangrene ; 3:Arterial leg ulcer ; 4:Ulcus cruris mixtum
+1056|chronic calcaneal osteomyelitis|mate|< Osteomyelitis|Y|1:Marjolin ulcer ; 2:Fournier's gangrene ; 3:Ulcus cruris venosum ; 4:Ulcus cruris mixtum
+1057|chronic tibial osteomyelitis|cont|< Osteomyelitis|Y|1:Marjolin ulcer ; 2:Fournier's gangrene ; 3:MRSA infection ; 4:Moist necrosis
+1058|confirmed osteomyelitis|cont|< Osteomyelitis|Y|1:confirmed disease diagnostic result by not completely objective criterion ; 2:confirmed diseases diagnostic result by objective criterion ; 3:Mechanical debridement plan specification ; 4:Wound with microbial burden assessed according to IWII
+1059|diabetes-related foot osteomyelitis|mate|< Osteomyelitis|Y|1:Diabetic foot ulcer ; 2:Diabetic wound ; 3:Bullosis diabeticorum ; 4:Marjolin ulcer
+1060|diabetes-related forefoot osteomyelitis|mate|< Osteomyelitis|Y|1:Bullosis diabeticorum ; 2:Diabetic foot ulcer ; 3:Diabetic wound ; 4:Marjolin ulcer
+1061|diabetic foot osteomyelitis|cont|< Osteomyelitis|Y|1:Diabetic foot ulcer ; 2:Diabetic wound ; 3:Bullosis diabeticorum ; 4:Marjolin ulcer
+1062|foot osteomyelitis|mate|< Osteomyelitis|Y|1:Diabetic foot ulcer ; 2:Marjolin ulcer ; 3:MRSA infection ; 4:Arterial leg ulcer
+1063|fungal osteomyelitis|mate|< Osteomyelitis|Y|1:Abscess ; 2:MRSA infection ; 3:Colonized wound ; 4:Fournier's gangrene
+1064|infected osteomyelitis|mate|= Osteomyelitis|N('Infected osteomyelitis' is a subtype of osteomyelitis, not an exact s)|1:Infected wound ; 2:Sepsis ; 3:infection ; 4:Surgical site infection
+1065|osteomyelitis of mandible|cont|< Osteomyelitis|Y|1:Marjolin ulcer ; 2:Fournier's gangrene ; 3:manganese oxoacid ; 4:Abscess
+1066|pedal osteomyelitis|mate|< Osteomyelitis|Y|1:Marjolin ulcer ; 2:Peripheral arterial occlusive disease ; 3:Diabetic foot ulcer ; 4:Fournier's gangrene
+1067|pelvic osteomyelitis|mate|< Osteomyelitis|Y|1:Peripheral arterial occlusive disease ; 2:Marjolin ulcer ; 3:Fournier's gangrene ; 4:Pseudomonas aeruginosa
+1068|post-traumatic osteomyelitis|mate|< Osteomyelitis|Y|1:Ischemic wound ; 2:Infected wound ; 3:Tertiarily-healing wound ; 4:Arterial insufficiency wound
+1069|postoperative osteomyelitis|cont|< Osteomyelitis|Y|1:Surgical site infection ; 2:Wound dehiscence causally related to suture insufficiency ; 3:Infected wound ; 4:Secondarily-healing wound
+1070|presence of osteomyelitis|cont|= Osteomyelitis|N('presence of osteomyelitis' is a finding, not the disorder; not exact )|1:open ; 2:inorganic oxide ; 3:infected ; 4:Abscess
+1071|residual bone infection|mate|< Osteomyelitis|Y|1:Surgical site infection ; 2:Infected wound ; 3:Abscess ; 4:Secondarily-healing wound
+1072|residual osteomyelitis|cont|< Osteomyelitis|Y|1:Methicillin-resistant Staphylococcus aureus infection ; 2:Chronic wound ; 3:MRSA infection ; 4:reddened
+1073|sternal osteomyelitis|cont|< Osteomyelitis|Y|1:Fournier's gangrene ; 2:Erysipelas ; 3:Marjolin ulcer ; 4:MRSA infection
+1074|tibial osteomyelitis|mate|< Osteomyelitis|Y|1:Marjolin ulcer ; 2:Fournier's gangrene ; 3:MRSA infection ; 4:Arterial leg ulcer
+1075|oxide|mate|= oxide|Y|1:inorganic oxide ; 2:oxygen molecular entity ; 3:oxygen atom ; 4:halogen oxide
+1076|dissolved oxygen|cont|< oxygen molecular entity|Y|1:oxygen atom ; 2:oxide ; 3:inorganic oxide ; 4:reactive oxygen species
+1077|O2|cont|< oxygen molecular entity|Y|1:oxygen atom ; 2:oxide ; 3:reactive oxygen species ; 4:inorganic oxide
+1078|ozone|mate|< oxygen molecular entity|Y|1:oxide ; 2:chlorine oxide ; 3:halogen oxide ; 4:oxygen atom
+1079|pain-management method|cont|< Pain management plan specification|N(pain-management method is not a plan specification)|1:painful ; 2:degree of wound pain ; 3:Primarily-healing wound ; 4:physical quality of a process
+1080|acute pain|qual|< painful|Y|1:acute ; 2:inflamed ; 3:Acute cutaneous wound ; 4:Redness
+1081|allodynia|spec|< painful|Y|1:agonist ; 2:degree of wound pain ; 3:inflamed ; 4:colonized
+1082|lateral hip pain|qual|< painful|Y|1:EC 3.5.1.* (non-peptide linear amide C-N hydrolase) inhibitor ; 2:reddened ; 3:livid ; 4:EC 1.3.1.9 [enoyl-[acyl-carrier-protein] reductase (NADH)] inhibitor
+1083|pain on application|qual|< painful|Y|1:application ; 2:degree of wound pain ; 3:degree of skin adherence to underlying tissue ; 4:Acute cutaneous wound
+1084|pain symptom|spec|< painful|N(pain symptom is a kind of symptom, not a kind of painful (quality))|1:inflamed ; 2:degree of wound pain ; 3:physical quality of a process ; 4:Redness
+1085|painful sensation|qual|= painful|N(Painful sensation is a sensation (process/experience), while painful i)|1:inflamed ; 2:Redness ; 3:degree of wound pain ; 4:poison
+1086|painful symptom|qual|< painful|N(painful symptom is a kind of symptom, not a kind of painful)|1:inflamed ; 2:Redness ; 3:degree of wound pain ; 4:swollen
+1087|post-operative pain|qual|< painful|Y|1:degree of wound pain ; 2:inflamed ; 3:Scarring ; 4:reddened
+1088|presence of pain|qual|= painful|N('presence of pain' is a finding, 'painful' is a quality; not synonyms.)|1:degree of wound pain ; 2:physical quality of a process ; 3:inflamed ; 4:open
+1089|rest pain|cont|< painful|N(Rest pain is a type of pain, not a kind of 'painful' as a class; term )|1:Redness ; 2:reddened ; 3:URGE scale ; 4:Gangrene
+1090|atypical pathogen|mate|< pathogen|Y|1:pathogen with wound infecting tendency ; 2:infection ; 3:pathogenic genetic variant ; 4:polyatomic entity
+1091|causative agent|cont|< pathogen|N(Not all causative agents are pathogens; causative agents include chemi)|1:aetiopathogenetic role ; 2:active ingredient ; 3:reagent ; 4:drug product
+1092|causative organism|cont|< pathogen|Y|1:aetiopathogenetic role ; 2:organism ; 3:organism ; 4:infected
+1093|causative pathogen|mate|< pathogen|Y|1:pathogen with wound infecting tendency ; 2:infection ; 3:organism ; 4:organism
+1094|common pathogen|mate|< pathogen|Y|1:pathogen with wound infecting tendency ; 2:infection ; 3:Bacteria ; 4:Viruses
+1095|ESKAPE pathogen|mate|< pathogen|Y|1:Pseudomonas aeruginosa ; 2:Erysipelas ; 3:elemental potassium ; 4:erysipeloid
+1096|fungal pathogen|mate|< pathogen|Y|1:pathogen with wound infecting tendency ; 2:infection ; 3:Colonized wound ; 4:Abscess
+1097|Gram-negative pathogen|mate|< pathogen|Y|1:Bacteria ; 2:pathogen with wound infecting tendency ; 3:Sepsis ; 4:Escherichia coli
+1098|infection agent|mate|= pathogen|Y|1:infection ; 2:Viruses ; 3:organism ; 4:organism
+1099|multidrug-resistant pathogen|mate|< pathogen|Y|1:MRSA infection ; 2:pathogen with wound infecting tendency ; 3:Pseudomonas aeruginosa ; 4:heteroatomic molecular entity
+1100|nosocomial pathogen|cont|< pathogen|Y|1:pathogen with wound infecting tendency ; 2:Unusual infection ; 3:wound infecting tendency ; 4:Colonized wound
+1101|opportunistic pathogen|cont|< pathogen|Y|1:pathogen with wound infecting tendency ; 2:Unusual infection ; 3:infected ; 4:infection
+1102|pathogen|cont|= pathogen|Y|1:infection ; 2:organism ; 3:organism ; 4:infected
+1103|pathogenic microorganism|mate|< pathogen|Y|1:infection ; 2:pathogen with wound infecting tendency ; 3:organism ; 4:organism
+1104|resistant pathogen|mate|< pathogen|Y|1:pathogen with wound infecting tendency ; 2:MRSA infection ; 3:Pseudomonas aeruginosa ; 4:infection
+1105|virus|mate|< pathogen|N(Not all viruses are pathogens; many are harmless or beneficial.)|1:Viruses ; 2:virion component ; 3:infection ; 4:genetic variant
+1106|burn-wound pathogen|mate|< pathogen with wound infecting tendency|Y|1:pathogen ; 2:Wound biofilm ; 3:Pseudomonas aeruginosa ; 4:Colonized wound
+1107|pathogenic bacterium|mate|< pathogen with wound infecting tendency|N(Not all pathogenic bacteria have a wound infecting tendency; many caus)|1:pathogen ; 2:Bacteria ; 3:infection ; 4:organism
+1108|wound isolate|mate|< pathogen with wound infecting tendency|N(A wound isolate may be a non-pathogenic contaminant or colonizer, not )|1:Infected wound ; 2:Contaminated wound ; 3:Wound ; 4:Acute wound
+1109|wound pathogen|mate|= pathogen with wound infecting tendency|N('wound pathogen' typically refers to a pathogen present in a wound, wh)|1:Infected wound ; 2:pathogen ; 3:Contaminated wound ; 4:Colonized wound
+1110|autoimmune disorder|cont|< pathological disorder|Y|1:Autoimmune tissue disorder ; 2:Abnormality of the immune system ; 3:Autoimmune disease related wound ; 4:inflamed
+1111|bleeding disorder|mate|< pathological disorder|Y|1:disorder ; 2:Hematoma ; 3:Angiopathy ; 4:infection
+1112|depressive disorder|cont|< pathological disorder|Y|1:central nervous system depressant ; 2:disorder ; 3:candidate diagnosis ; 4:differential diagnosis result
+1113|immune-mediated disorder|mate|< pathological disorder|Y|1:Autoimmune tissue disorder ; 2:Immunosuppression ; 3:infection ; 4:disorder
+1114|mental disorder|mate|< pathological disorder|Y|1:disorder ; 2:material disease entity ; 3:unknown-disorder disease ; 4:compound pathological disorder
+1115|metabolic disorder|cont|< pathological disorder|Y|1:Diabetic metabolic disorder ; 2:metabolite ; 3:disorder ; 4:Microangiopathy
+1116|musculoskeletal disorder|mate|< pathological disorder|Y|1:disorder ; 2:material disease entity ; 3:Wound healing disorder ; 4:unknown-disorder disease
+1117|pathological fracture|mate|< pathological disorder|Y|1:Wound with accompanying fracture ; 2:mineral ; 3:processed material entity ; 4:processed material
+1118|pathological state|mate|= pathological disorder|N(Pathological state and pathological disorder are not exact synonyms; s)|1:disorder ; 2:compound pathological disorder ; 3:material disease entity ; 4:unknown-disorder disease
+1119|underlying pathology|mate|< pathological disorder|Y|1:compound pathological disorder ; 2:heteroorganic entity ; 3:material disease entity ; 4:disorder
+1120|abnormal scar formation|proc|< Pathological scarring process|Y|1:Scarring process ; 2:Impaired wound healing process ; 3:Tissue repair process ; 4:Wound development process
+1121|abnormal scarring|proc|= Pathological scarring process|Y|1:Scarring process ; 2:Impaired wound healing process ; 3:Tissue repair process ; 4:Excessive collagen deposition process
+1122|fibrosis|proc|< Pathological scarring process|N(Fibrosis is a broader pathological process, not all fibrosis is scarri)|1:Scarring process ; 2:Excessive collagen deposition process ; 3:tissue remodeling ; 4:Tissue repair process
+1123|hypertrophic scar formation|proc|< Pathological scarring process|Y|1:Scarring process ; 2:Granulation tissue formation process ; 3:Excessive collagen deposition process ; 4:Wound contraction process
+1124|hypertrophic scarring|proc|< Pathological scarring process|Y|1:Scarring process ; 2:Excessive collagen deposition process ; 3:Granulation tissue formation process ; 4:Wound contraction process
+1125|pathological scar formation|proc|= Pathological scarring process|Y|1:Scarring process ; 2:Tissue repair process ; 3:Granulation tissue formation process ; 4:Regenerative wound healing process
+1126|antimicrobial peptide|mate|< peptide|Y|1:peptide zwitterion ; 2:polypeptide ; 3:anionic amino-acid residue ; 4:amino-acid anion
+1127|bioactive peptide|mate|< peptide|Y|1:polypeptide ; 2:peptide zwitterion ; 3:proteinogenic amino-acid residue ; 4:information biomacromolecule
+1128|collagen peptide|mate|< peptide|Y|1:polypeptide ; 2:Bovine collagen containing wound dressing ; 3:protein polypeptide chain ; 4:polymer
+1129|glycopeptide|mate|< peptide|Y|1:peptide zwitterion ; 2:glycol ; 3:biguanide ; 4:biguanides
+1130|neuropeptide|mate|< peptide|Y|1:polypeptide ; 2:nuclear particle ; 3:polyatomic ion ; 4:primary amide
+1131|peptide|mate|= peptide|Y|1:polypeptide ; 2:proteinogenic amino-acid residue ; 3:amino-acid residue ; 4:amino acid chain
+1132|short peptide|mate|< peptide|Y|1:polypeptide ; 2:proteinogenic amino-acid residue ; 3:amino acid chain ; 4:amino-acid residue
+1133|SSI prophylaxis|info|< Perioperative antimicrobial prophylaxis plan specification|Y|1:Prophylactic antibiotic therapy plan specification ; 2:Systemic antibiotic therapy plan specification ; 3:prophylaxis plan specification ; 4:Biosurgical debridement plan specification
+1134|infrapopliteal artery disease|cont|< Peripheral arterial occlusive disease|Y|1:Arterial leg ulcer ; 2:Microangiopathy ; 3:Marjolin ulcer ; 4:ischemic
+1135|lower-extremity artery disease|mate|< Peripheral arterial occlusive disease|Y|1:Arterial leg ulcer ; 2:Livedovasculopathy ; 3:Microangiopathy ; 4:Angiopathy
+1136|Paod|mate|< Peripheral arterial occlusive disease|Y|1:Pseudomonas aeruginosa ; 2:hadron ; 3:Livedovasculopathy ; 4:pnictogen molecular entity
+1137|peripheral artery disease|cont|= Peripheral arterial occlusive disease|Y|1:Angiopathy ; 2:Microangiopathy ; 3:ischemic ; 4:Arterial leg ulcer
+1138|phenolic compound|mate|< phenols|N(Phenolic compounds are a broader class that includes many substances b)|1:phenol ; 2:Antiseptic phenol derivative ; 3:phenolate ; 4:aromatic compound
+1139|anti-inflammatory phenotype|real|< phenotype|Y|1:antagonist ; 2:inhibitor ; 3:normal ; 4:increased quality
+1140|clinical phenotype|cont|< phenotype|Y|1:Phenotypic abnormality ; 2:morphology ; 3:color ; 4:structure
+1141|expression pattern|qual|< phenotype|Y|1:morphology ; 2:Phenotypic abnormality ; 3:structure ; 4:qualitative
+1142|gingival phenotype|qual|< phenotype|Y|1:granulating ; 2:degree of granulation ; 3:degree of epithelialization ; 4:morphology
+1143|immune cell phenotype|qual|< phenotype|Y|1:Phenotypic abnormality ; 2:Abnormality of the immune system ; 3:morphology ; 4:composition
+1144|macrophage phenotype|cont|< phenotype|Y|1:morphology ; 2:main group molecular entity ; 3:cell ; 4:mammalian metabolite
+1145|pro-regenerative M2 phenotype|cont|< phenotype|Y|1:main group molecular entity ; 2:categorical label ; 3:class discovery objective ; 4:anion
+1146|abnormal signal|cont|< Phenotypic abnormality|N(Abnormal signal is too vague; not clearly a phenotypic abnormality.)|1:deviation (from_normal) ; 2:genetic variant ; 3:disorder ; 4:pathological disorder
+1147|scar quality|qual|< physical object quality|Y|1:Scarring ; 2:physical quality ; 3:color ; 4:quality
+1148|skin quality|qual|< physical object quality|Y|1:Abnormal skin morphology ; 2:physical quality ; 3:quality of a substance ; 4:quality
+1149|long-term scar quality|qual|< physical quality|Y|1:Scarring ; 2:Chronic cutaneous wound ; 3:quality ; 4:chronic
+1150|mechanical characteristic|qual|< physical quality|Y|1:morphology ; 2:physical object quality ; 3:physical quality of a process ; 4:degree of tissue firmness
+1151|physical activity level|qual|< physical quality|Y|1:physical quality of a process ; 2:physical object quality ; 3:physiological role ; 4:pharmacological role
+1152|tissue function|spec|< physiological role|Y|1:clinical function ; 2:therapeutic function ; 3:biological role ; 4:physical quality
+1153|planimetric assessment|proc|= Planimetry|Y|1:planned process ; 2:planned process ; 3:partitioning data transformation ; 4:disease diagnosis process by conceptualization
+1154|polyhexanide|mate|= Polihexanide|Y|1:Polihexanide gel ; 2:Polihexanide containing solution ; 3:polyatomic anion ; 4:polyatomic cation
+1155|polymer polyhexamethylene biguanide|mate|= Polihexanide|Y|1:Polihexanide gel ; 2:Polyfilament thread material ; 3:polymer ; 4:Polihexanide containing solution
+1156|polyhexamethylene biguanide solution|mate|< Polihexanide containing solution|Y|1:Polihexanide ; 2:Polihexanide gel ; 3:Antiseptic biguanide ; 4:biguanide
+1157|polyhexanide gel|mate|= Polihexanide gel|Y|1:Polihexanide ; 2:Octenidine gel ; 3:Polihexanide containing solution ; 4:Hydrogel containing wound dressing
+1158|polyhexanide-betaine gel|mate|< Polihexanide gel|Y|1:Polihexanide ; 2:Octenidine gel ; 3:Polihexanide containing solution ; 4:Hydrogel containing wound dressing
+1159|Prontosan Wound Gel X|mate|< Polihexanide gel|Y|1:Wound gel/ointment/cream ; 2:Polihexanide ; 3:Fibrin coating of the wound ; 4:Octenidine gel
+1160|poly-absorbent fiber|mate|< Polyfilament thread material|N(Poly-absorbent fiber is a type of fiber, not necessarily a polyfilamen)|1:polymer ; 2:Monofilament thread material ; 3:polyatomic anion ; 4:polyatomic cation
+1161|polypropylene mesh|mate|< Polyfilament thread material|N(Polypropylene mesh is a mesh structure, not a thread material; it is m)|1:Cellulose acetate mesh impregnated with a petrolatum emulsion ; 2:Monofilament thread material ; 3:Wound dressing composed of polyurethane foam ; 4:Transparent polyurethane film
+1162|extracellular polymeric substance|mate|< polymer|Y|1:macromolecule ; 2:Polyfilament thread material ; 3:polypeptide ; 4:scattered molecular aggregate
+1163|natural polymer|mate|< polymer|Y|1:polyol ; 2:polypeptide ; 3:polyatomic ion ; 4:macromolecule
+1164|Poly (lactic-co-glycolic acid)|mate|< polymer|Y|1:Polihexanide ; 2:Polihexanide gel ; 3:polyol ; 4:Wound dressing composed of a polylactide membrane
+1165|poly-l-lactic acid|mate|< polymer|Y|1:polyol ; 2:Wound dressing composed of a polylactide membrane ; 3:Plaster ; 4:Polihexanide
+1166|polyacrylate|mate|< polymer|Y|1:polyatomic anion ; 2:polyol ; 3:Plaster ; 4:polyatomic cation
+1167|polymeric matrix|mate|< polymer|N(A polymeric matrix is a macroscopic structure made of polymer, not a p)|1:material anatomical entity ; 2:Polyfilament thread material ; 3:macromolecule ; 4:processed material entity
+1168|polysaccharide-based biomaterial|mate|< polymer|N(Polysaccharide-based biomaterial is a macroscopic material composed of)|1:polyol ; 2:macromolecule ; 3:polypeptide ; 4:Biosynthetic cellulose
+1169|polyurethane|mate|< polymer|Y|1:Transparent polyurethane film ; 2:Polyfilament thread material ; 3:polyol ; 4:Wound dressing composed of polyurethane foam
+1170|synthetic polymer|mate|< polymer|Y|1:polyol ; 2:polyatomic ion ; 3:polyatomic cation ; 4:polyatomic entity
+1171|closed-incision negative pressure wound therapy|proc|< Postoperative wound control process|Y|1:Cold plasma wound treatment process ; 2:Water-jet assisted wound debridement process ; 3:Pressure offloading process ; 4:Wound causing pressure impact process
+1172|incisional negative pressure wound therapy|proc|< Postoperative wound control process|Y|1:Cold plasma wound treatment process ; 2:Water-jet assisted wound debridement process ; 3:Wound irrigation process ; 4:Pressure offloading process
+1173|infection control practice|proc|< Postoperative wound control process|N(Infection control practice is broader than postoperative wound control)|1:Antibiotic administration process ; 2:Wound irrigation process ; 3:Biosurgical wound debridement process ; 4:Wound documentation process
+1174|postoperative hyperbaric oxygen therapy|proc|< Postoperative wound control process|Y|1:Cold plasma wound treatment process ; 2:Water-jet assisted wound debridement process ; 3:Pressure offloading process ; 4:Biosurgical wound debridement process
+1175|postoperative wound care|proc|< Postoperative wound control process|Y|1:Wound cleansing process ; 2:Wound closure process ; 3:wound healing ; 4:Wound treatment process
+1176|prophylactic incisional negative-pressure wound therapy|proc|< Postoperative wound control process|Y|1:Cold plasma wound treatment process ; 2:Wound edge protection process ; 3:Pressure offloading process ; 4:Wound causing pressure impact process
+1177|surgical wound care|proc|< Postoperative wound control process|Y|1:Surgical wound debridement process ; 2:Wound cleansing process ; 3:Wound treatment process ; 4:wound healing
+1178|PVP-Iodine|mate|= Povidone-iodine|Y|1:diatomic iodine ; 2:elemental iodine ; 3:diiodine ; 4:Polihexanide
+1179|pressure|proc|< Pressure impact process|N(Pressure is a physical quantity, not a process.)|1:Wound causing pressure impact process ; 2:Pressure offloading process ; 3:Trauma process ; 4:Heat impact process
+1180|prolonged pressure|proc|< Pressure impact process|Y|1:Wound causing pressure impact process ; 2:Pressure offloading process ; 3:vasoconstriction ; 4:Wound causing acidity impact process
+1181|conservative offloading|proc|< Pressure offloading process|Y|1:Mechanical wound debridement process ; 2:disorder modification process ; 3:Wound dressing process ; 4:lavage
+1182|offloading|proc|= Pressure offloading process|Y|1:Pressure impact process ; 2:Wound dressing process ; 3:Wound causing pressure impact process ; 4:dimensionality reduction
+1183|offloading pressure|proc|= Pressure offloading process|Y|1:Pressure impact process ; 2:Wound causing pressure impact process ; 3:Wound volumetrics ; 4:Wound causing acidity impact process
+1184|offloading therapy|proc|< Pressure offloading process|Y|1:Pressure impact process ; 2:Wound dressing process ; 3:disorder modification process ; 4:Mechanical wound debridement process
+1185|pressure injury prevention|proc|< Pressure offloading process|N(Pressure injury prevention is not a kind of pressure offloading proces)|1:Pressure impact process ; 2:Wound causing pressure impact process ; 3:Wound edge protection process ; 4:Cold plasma wound treatment process
+1186|pressure injury prevention practice|proc|< Pressure offloading process|N(pressure injury prevention includes more than offloading; not a kind o)|1:Pressure impact process ; 2:Wound causing pressure impact process ; 3:Cold plasma wound treatment process ; 4:Wound edge protection process
+1187|pressure reduction|proc|< Pressure offloading process|Y|1:Pressure impact process ; 2:vasoconstriction ; 3:Wound causing pressure impact process ; 4:dimensionality reduction
+1188|pressure relief|proc|< Pressure offloading process|Y|1:Pressure impact process ; 2:Wound causing pressure impact process ; 3:vasoconstriction ; 4:Wound causing acidity impact process
+1189|pressure therapy|proc|< Pressure offloading process|N(Pressure therapy often applies pressure rather than offloading, so not)|1:Pressure impact process ; 2:Wound causing pressure impact process ; 3:Cold plasma wound treatment process ; 4:Heat impact process
+1190|pressure-garment therapy|proc|< Pressure offloading process|Y|1:Pressure impact process ; 2:Wound causing pressure impact process ; 3:Wound dressing process ; 4:Cold plasma wound treatment process
+1191|surgical offloading method|proc|< Pressure offloading process|Y|1:Mechanical wound debridement process ; 2:Biosurgical wound debridement process ; 3:Surgical wound debridement process ; 4:Enzymatic wound debridement process
+1192|unloading|proc|< Pressure offloading process|Y|1:lavage ; 2:excision ; 3:Pressure impact process ; 4:partitioning data transformation
+1193|air mattress|mate|< Pressure redistribution mattress|Y|1:Horizontal mattress suture ; 2:Vertical mattress suture ; 3:Gauze bandage ; 4:Fat gauze
+1194|anti-decubitus mattress|mate|= Pressure redistribution mattress|Y|1:Horizontal mattress suture ; 2:Vertical mattress suture ; 3:Gravity drain ; 4:Fat gauze
+1195|gel mattress|mate|< Pressure redistribution mattress|Y|1:Horizontal mattress suture ; 2:Vertical mattress suture ; 3:Fat gauze ; 4:Gauze bandage
+1196|pressure mat|mate|< Pressure redistribution mattress|N(pressure mat is not a mattress.)|1:Pressure ulcer ; 2:Gauze bandage ; 3:Elastic bandage ; 4:Transparent polyurethane film
+1197|support surface mattress|mate|< Pressure redistribution mattress|N(Not all support surface mattresses are specifically pressure redistrib)|1:Horizontal mattress suture ; 2:Vertical mattress suture ; 3:Gauze bandage ; 4:Fixing bandage
+1198|active ulceration|mate|< Pressure ulcer|N(Active ulceration is a process, not a pressure ulcer material entity.)|1:Marjolin ulcer ; 2:Dry necrosis ; 3:Moist necrosis ; 4:Epithelializing wound bed
+1199|chronic pressure ulcer|mate|< Pressure ulcer|Y|1:Marjolin ulcer ; 2:Diabetic foot ulcer ; 3:Chronic wound ; 4:Necrotic wound bed

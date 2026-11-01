@@ -325,3 +325,119 @@ def test_dotenv_lookup_does_not_depend_on_the_call_stack():
         "AssertionError when there is no parent frame"
     )
     assert "usecwd=True" in conftest.read_text(encoding="utf-8")
+
+
+# ── a cached artefact is only valid while it is newer than its sources ───────
+#
+# `build_reasoner_skeleton` reused `skeleton_tbox.ttl` on existence alone.
+# Measured 2026-09-10: the skeleton was written 20 Aug 22:13 and
+# ground_truth_final.owl 4 Sep 19:32, so BOTH reasoner gates had spent fifteen
+# days reasoning over a WONT that no longer existed -- and neither said so.
+
+def _skeleton_harness(tmp_path, monkeypatch, gt_mtime, mild_mtime, sk_mtime):
+    """Three files with chosen mtimes, and a build_skeleton that records calls."""
+    import config.settings as settings
+    import wound_ontology.reasoning.skeleton as skel
+    from wound_ontology.orchestrator import Orchestrator
+
+    gt   = tmp_path / "ground_truth_final.owl"
+    mild = tmp_path / "mild.ttl"
+    sk   = tmp_path / "skeleton_tbox.ttl"
+    for f in (gt, mild, sk):
+        f.write_text("# stub\n")
+    import os
+    for f, when in ((gt, gt_mtime), (mild, mild_mtime), (sk, sk_mtime)):
+        os.utime(f, (when, when))
+
+    monkeypatch.setattr(settings, "GROUND_TRUTH_TTL", gt)
+    monkeypatch.setattr(settings, "MILD_TTL", mild)
+    monkeypatch.setattr(settings, "REASONER_SKELETON", sk)
+    # The skeleton also reads the import modules (BFO's axioms, the relations'
+    # domains and ranges, 2026-10-03), so they count for staleness too: one
+    # module, as old as the oldest source.
+    mods = tmp_path / "modules"
+    mods.mkdir()
+    mod = mods / "obi_module.owl"
+    mod.write_text("# stub\n")
+    os.utime(mod, (min(gt_mtime, mild_mtime),) * 2)
+    monkeypatch.setattr(settings, "MILD_MODULES_DIR", mods)
+
+    built: list = []
+
+    def fake_build(ground_truth, mild_, output, modules=None):
+        built.append((ground_truth, mild_, output))
+        return pathlib.Path(output), 1
+    monkeypatch.setattr(skel, "build_skeleton", fake_build)
+
+    # build_reasoner_skeleton never touches self, and constructing a real
+    # Orchestrator costs ~2 minutes.
+    return Orchestrator.build_reasoner_skeleton, built, (gt, mild, sk)
+
+
+def test_a_skeleton_older_than_wont_is_rebuilt_not_reused(tmp_path, monkeypatch, capsys):
+    run, built, (gt, _mild, _sk) = _skeleton_harness(
+        tmp_path, monkeypatch, gt_mtime=2_000, mild_mtime=1_000, sk_mtime=1_500)
+    run(None)
+    assert built, "a skeleton older than WONT must be rebuilt"
+    assert "STALE" in capsys.readouterr().out
+
+
+def test_a_skeleton_older_than_mild_is_rebuilt_too(tmp_path, monkeypatch, capsys):
+    run, built, _ = _skeleton_harness(
+        tmp_path, monkeypatch, gt_mtime=1_000, mild_mtime=2_000, sk_mtime=1_500)
+    run(None)
+    assert built
+    assert "STALE" in capsys.readouterr().out
+
+
+def test_a_current_skeleton_is_still_reused(tmp_path, monkeypatch, capsys):
+    """The cache is the point; only staleness is the defect."""
+    run, built, _ = _skeleton_harness(
+        tmp_path, monkeypatch, gt_mtime=1_000, mild_mtime=1_000, sk_mtime=2_000)
+    run(None)
+    assert not built, "a current skeleton must not be rebuilt"
+    assert "Reusing" in capsys.readouterr().out
+
+
+def test_a_skeleton_older_than_a_module_is_rebuilt(tmp_path, monkeypatch, capsys):
+    import os
+    run, built, (gt, _mild, _sk) = _skeleton_harness(
+        tmp_path, monkeypatch, gt_mtime=1_000, mild_mtime=1_000, sk_mtime=1_500)
+    os.utime(tmp_path / "modules" / "obi_module.owl", (2_000, 2_000))
+    run(None)
+    assert built, "a skeleton older than an import module must be rebuilt"
+    assert "obi_module.owl" in capsys.readouterr().out
+
+
+def test_the_rebuild_names_which_source_moved(tmp_path, monkeypatch, capsys):
+    run, _built, (gt, _mild, _sk) = _skeleton_harness(
+        tmp_path, monkeypatch, gt_mtime=2_000, mild_mtime=1_000, sk_mtime=1_500)
+    run(None)
+    assert gt.name in capsys.readouterr().out
+
+
+def test_a_missing_source_raises_rather_than_building_a_partial_skeleton(
+        tmp_path, monkeypatch):
+    run, built, (gt, _mild, _sk) = _skeleton_harness(
+        tmp_path, monkeypatch, gt_mtime=1_000, mild_mtime=1_000, sk_mtime=2_000)
+    gt.unlink()
+    with pytest.raises(FileNotFoundError, match="cannot read its sources"):
+        run(None)
+    assert not built
+
+
+def test_the_gate_goes_through_the_staleness_check(tmp_path, monkeypatch):
+    """Taking REASONER_SKELETON directly is what kept the stale file in service,
+    so the one consumer must route through the checked builder."""
+    import ast
+    src = (SRC / "orchestrator.py").read_text()
+    tree = ast.parse(src)
+    fn = next(n for n in ast.walk(tree)
+              if isinstance(n, ast.FunctionDef) and n.name == "reasoner_gate")
+    # The docstring explains why it must NOT name REASONER_SKELETON, so read the
+    # statements and not the prose.
+    stmts = [n for n in fn.body
+             if not (isinstance(n, ast.Expr) and isinstance(n.value, ast.Constant))]
+    body = "".join(ast.dump(n) for n in stmts)
+    assert "build_reasoner_skeleton" in body
+    assert "REASONER_SKELETON" not in body

@@ -140,8 +140,17 @@ class ConceptLattice:
         if self._lattice is not None:
             self.dm.save_as_pickle(self._lattice, self.file_name)
 
-    def get_data_and_run_fca(self):
+    UNKNOWN_BOTH = "both"
+    UNKNOWN_ABSENT = "absent"
+
+    def get_data_and_run_fca(self, unknown: str = UNKNOWN_BOTH):
         """
+        `unknown="absent"` (rule 65, curator 2026-10-02): the closed world, for
+        FCA only. A property no abstract states is read as not holding, one
+        lattice is built and every concept in it counts as certain. The number
+        of cells read that way is printed. The open-world dual build below stays
+        the default for any other caller.
+
         Runs FCA over the ContextMatrix, twice, and separates what is certain
         from what merely depends on an undecided cell.
 
@@ -167,8 +176,20 @@ class ConceptLattice:
         objs, attrs = self.matrix.objects, self.matrix.attributes
         undecided = self.matrix.undecided_count
 
+        if unknown not in (self.UNKNOWN_BOTH, self.UNKNOWN_ABSENT):
+            raise ValueError(f"unknown must be {self.UNKNOWN_BOTH!r} or {self.UNKNOWN_ABSENT!r}, got {unknown!r}")
+
         print("Constructing concept lattice from FCA matrix...")
         pess = Context(objs, attrs, self.matrix.tuples(self.matrix.UNKNOWN_ABSENT)).lattice
+
+        if undecided and unknown == self.UNKNOWN_ABSENT:
+            self.certain_intents = {frozenset(c.intent) for c in pess}
+            self.candidate_intents = set()
+            print(f"  closed world: {undecided} unstated cell(s) "
+                  f"({self.matrix.undecided_density:.1%} of the matrix) read as absent — "
+                  f"{len(pess)} concepts.")
+            self.lattice = pess
+            return self._lattice
 
         if not undecided:
             self.certain_intents = {frozenset(c.intent) for c in pess}
@@ -252,8 +273,7 @@ class ConceptLattice:
         `is_a: <ancestor>` columns for hierarchy ancestors, which are ordinary
         classes and not types.
         """
-        from wound_ontology.llm.extraction_models import CATEGORY_PARENT
-        by_lower = {c.lower(): c for c in CATEGORY_PARENT}
+        from wound_ontology.llm.category_vocab import declared_category
 
         df = self.matrix.df
         cats: set[str] = set()
@@ -264,9 +284,9 @@ class ConceptLattice:
             for col, value in row.items():
                 if value != 1.0 or not str(col).startswith("is_a:"):
                     continue
-                target = str(col).split(":", 1)[1].strip().lower()
-                if target in by_lower:
-                    cats.add(by_lower[target])
+                declared = declared_category(str(col).split(":", 1)[1])
+                if declared is not None:
+                    cats.add(declared)
         return cats
 
     @staticmethod
@@ -287,17 +307,13 @@ class ConceptLattice:
         category itself. That is not a biomedical grouping, it is the constraint
         read back, and as a superclass it says nothing.
         """
-        import re
+        from wound_ontology.llm.category_vocab import is_category
 
-        from wound_ontology.llm.extraction_models import CATEGORY_PARENT
-
-        # The categories are CamelCase ("MaterialEntity") and the model answers in
-        # prose ("Material entity"), so compare with separators removed or the
-        # check passes exactly the answers it exists to catch.
-        def squash(x: str) -> str:
-            return re.sub(r"[^a-z0-9]", "", x.lower())
-
-        if squash(name) in {squash(c) for c in CATEGORY_PARENT}:
+        # The comparison is separator-blind on purpose: the vocabulary spells it
+        # `material entity`, the model may answer "Material Entity" or the old
+        # "MaterialEntity", and a naive match passes exactly the answers this
+        # check exists to catch.
+        if is_category(name):
             return False, "names the BFO category rather than a biomedical grouping"
         return True, ""
 
@@ -344,7 +360,7 @@ class ConceptLattice:
         A label the ontologies do not know cannot be judged this way at all, and
         is allowed through. Asking the model to declare a category for its own new
         label looked like a check and was not one: unverifiable by construction,
-        and satisfied by answering "MaterialEntity" whatever the name meant. Over
+        and satisfied by answering "material entity" whatever the name meant. Over
         five live runs it refused no bad name and lost one good one. What keeps
         new names honest is naming top-down under an already-named parent, not a
         self-reported type.
@@ -396,6 +412,7 @@ class ConceptLattice:
                                                           sorted(c.intent)))
         taken: set[str] = set()
         named = 0
+        failed: list[tuple[list, str]] = []
         for concept in ordered:
             try:
                 cats = self.extent_categories(concept)
@@ -426,9 +443,28 @@ class ConceptLattice:
                 taken.add(smart_title(name))
                 named += 1
             except Exception as e:
-                print(f"Failed to name concept {list(concept.intent)[:2]}: {e}")
+                msg = str(e)
+                print(f"Failed to name concept {list(concept.intent)[:2]}: {msg}")
+                failed.append((list(concept.intent)[:2], msg))
+                # A refused account is not a bad concept: every further call is
+                # refused too. On 2026-10-11 all 91 calls failed with "402 ...
+                # requires more credits", the step went on, saved a lattice with
+                # no names over the named one of 2026-10-09, and the run said
+                # ALL DONE (rule 1). Stop before anything is saved.
+                if any(code in msg for code in ("Error code: 402", "Error code: 401", "Error code: 403")):
+                    raise RuntimeError(
+                        f"[FCA] the model service refused the account ({msg[:160]}); "
+                        f"{named} of {len(ordered)} concept(s) named before it; nothing is "
+                        f"saved -- top up or fix access, then re-run the concept step") from e
 
         print(f"Named {named} superclasses.")
+        if failed:
+            print(f"*** {len(failed)} of {len(ordered)} concept(s) could not be named "
+                  f"(the model call failed); they stay unnamed and propose nothing ***")
+            if named == 0:
+                raise RuntimeError(
+                    f"[FCA] none of the {len(ordered)} concept(s) could be named "
+                    f"(e.g. {failed[0][1][:160]}); nothing is saved")
         if self.rejected_names:
             print(f"{len(self.rejected_names)} name(s) refused as the wrong kind of "
                   f"thing for their members — the concept stays unnamed and "

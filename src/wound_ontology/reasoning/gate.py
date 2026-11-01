@@ -21,7 +21,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
+import signal
 import shutil
 import subprocess
 import tempfile
@@ -36,7 +38,10 @@ from wound_ontology.llm.extraction_models import CATEGORY_IRI, RELATION_IRI
 
 BATCH_NS = "urn:wont:batch#"
 _UNSAT_RE = re.compile(r"unsatisfiable:\s*(\S+)")
-_MAX_PASSES = 6   # tiered dropping needs a pass per provenance tier
+_MAX_PASSES = 12  # a pass per provenance tier, plus explanation-guided passes (2026-10-03)
+#: The edge gate judges the empty classes whose kept parents are satisfiable
+#: first (2026-10-29), so a chain of empty classes takes a pass per level.
+_MAX_EDGE_PASSES = 30
 
 
 @dataclass
@@ -52,6 +57,8 @@ class EdgeGateResult:
     quarantined_sources: dict = field(default_factory=dict)
     #: edges kept because a lower-ranked edge on the same child was dropped instead.
     spared: list = field(default_factory=list)
+    #: (child, parent) -> why THIS edge was refused (rule 89: one reason per verdict).
+    why: dict = field(default_factory=dict)
 
     @property
     def clean(self) -> bool:
@@ -77,6 +84,17 @@ class GateResult:
     unsatisfiable: list[str] = field(default_factory=list)
     explanation: str = ""
     skipped: str | None = None          # set when the gate could not run
+    #: one line per reasoner run that had to be asked again without WONT's
+    #: named individuals, saying which individuals sat in which emptied class.
+    without_individuals: list[str] = field(default_factory=list)
+    #: classes still empty when the gate stopped (pass limit, or no cause found).
+    still_empty: list[str] = field(default_factory=list)
+    #: one entry per cause found (`ReasonerGate._causes`): what kind of clash,
+    #: and the statements on each side -- what the curator decides between.
+    causes: list[dict] = field(default_factory=list)
+    #: (subject, predicate, object) -> why THIS relation was held back (rule 89:
+    #: one reason per verdict, not the run's one explanation on every item).
+    why: dict = field(default_factory=dict)
 
     @property
     def clean(self) -> bool:
@@ -85,14 +103,61 @@ class GateResult:
     def summary(self) -> str:
         if self.skipped:
             return f"reasoner gate SKIPPED ({self.skipped})"
+        note = (f" [{len(self.without_individuals)} reasoner run(s) were inconsistent "
+                f"with WONT's individuals and were asked again without them]"
+                if self.without_individuals else "")
+        if self.still_empty:
+            note += f" [*** {len(self.still_empty)} class(es) STILL empty ***]"
         if self.clean:
             return (f"reasoner gate: clean "
                     f"({len(self.accepted_entities)} terms, "
-                    f"{len(self.accepted_relations)} relations)")
+                    f"{len(self.accepted_relations)} relations){note}")
         return (f"reasoner gate: {len(self.quarantined_entities)} term(s) and "
                 f"{len(self.quarantined_relations)} relation(s) quarantined; "
                 f"{len(self.accepted_entities)} terms, "
-                f"{len(self.accepted_relations)} relations committed")
+                f"{len(self.accepted_relations)} relations committed{note}")
+
+
+def _run_robot(cmd: list[str], timeout: int) -> subprocess.CompletedProcess:
+    """Run ROBOT and, on a timeout, end ALL of it.
+
+    `robot` is a shell script that starts Java. `subprocess.run` kills only the
+    script on a timeout, and the Java process ran on alone: the explanation
+    that timed out on 2026-10-08 09:10 was still reasoning 25 hours later at
+    ~180 % CPU, slowing every run after it. ROBOT now gets its own process
+    group, and a timeout ends the group before TimeoutExpired goes on."""
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                            text=True, start_new_session=True)
+    try:
+        out, err = proc.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            # Already gone: nothing left to end. Said aloud because it means
+            # ROBOT exited in the instant between the timeout and the kill.
+            print(f"[ReasonerGate] ROBOT (process group {proc.pid}) had already "
+                  f"exited when its {timeout} s timeout fired; nothing to kill")
+        proc.communicate()
+        raise
+    return subprocess.CompletedProcess(cmd, proc.returncode, out, err)
+
+
+def without_individuals(graph: rdflib.Graph) -> tuple[rdflib.Graph, dict]:
+    """A copy of `graph` with every named individual and every triple that
+    mentions one taken out, and {individual -> the classes it was typed with}.
+    The input graph is not changed."""
+    bare = rdflib.Graph()
+    bare += graph
+    removed = {}
+    for ind in set(bare.subjects(RDF.type, OWL.NamedIndividual)):
+        removed[ind] = {t for t in bare.objects(ind, RDF.type)
+                        if isinstance(t, URIRef) and t != OWL.NamedIndividual}
+        for t in list(bare.triples((ind, None, None))):
+            bare.remove(t)
+        for t in list(bare.triples((None, None, ind))):
+            bare.remove(t)
+    return bare, removed
 
 
 def _slug(label: str) -> str:
@@ -126,6 +191,10 @@ class ReasonerGate:
         self.robot_cmd = robot_cmd
         self.reasoner = reasoner
         self.timeout = timeout
+        #: filled by `_reason` whenever it had to drop the individuals; `check`
+        #: empties it at the start and hands it on in its result.
+        self.individual_notes: list[str] = []
+        self.cause_notes: list[dict] = []
 
     # ── category reconciliation ────────────────────────────────────────────
     #
@@ -137,8 +206,8 @@ class ReasonerGate:
     # The honest third option is to retreat to what the abstracts DO agree on:
     # the most specific category that subsumes every one they proposed. That
     # ancestor is read out of the skeleton TBox, so MILD decides it, not a table
-    # written here. `Process` + `ProcessBoundary` agree on `Occurrent`;
-    # `MaterialEntity` + `Process` agree on nothing below `entity` and stay
+    # written here. `process` + `process boundary` agree on `occurrent`;
+    # `material entity` + `process` agree on nothing below `entity` and stay
     # excluded, because there is no honest answer for them.
 
     def _category_ancestors(self) -> dict[str, set[str]]:
@@ -168,7 +237,13 @@ class ReasonerGate:
         categories the extractor can assign. Those stay out of the gate and get
         reported, rather than being forced to a value nobody proposed.
         """
-        cats = sorted(set(categories))
+        # Callers pass whatever the store holds, so names are declared first:
+        # an unrecognised name falls through to None below and the disagreement
+        # is reported as irreconcilable, which is the honest answer for a name
+        # that is not a category at all -- but must NOT be the answer for one
+        # that merely arrived spelled the old way.
+        from wound_ontology.llm.category_vocab import declared_category
+        cats = sorted({declared_category(c) or c for c in categories})
         if not cats:
             return None
         if len(cats) == 1:
@@ -227,31 +302,163 @@ class ReasonerGate:
             g.add((URIRef(prop), RDF.type, OWL.ObjectProperty))
         return g
 
+    def _locally_inconsistent(self, entities, relations) -> list:
+        """The relations that contradict the ontology ON THEIR OWN.
+
+        Each relation is asserted on a fresh pair of classes -- a copy of its
+        subject and a copy of its object, each typed only with the term's
+        category (and its grounded class, if any) -- so it meets the skeleton's
+        axioms and nothing else. One reasoner run tests all of them; a copy
+        that is unsatisfiable names a relation that is wrong by itself
+        (`healing --has as process boundary at end--> completely healed`, a
+        quality where an instant is required), not one caught up in a
+        neighbour's contradiction. Holding those back first is what keeps one
+        bad sentence on a hub term from quarantining everything that touches
+        it: on 2026-09-30 that sentence made `healing` unsatisfiable, and with
+        it 7,163 classes and 20,777 relations.
+        """
+        g = rdflib.Graph()
+        g.parse(str(self.skeleton_path), format="turtle")
+        by_label = {e.label: e for e in entities}
+        probes = {}
+        for n, r in enumerate(relations):
+            se, oe = by_label.get(r.subject), by_label.get(r.object)
+            prop = RELATION_IRI.get(r.predicate.value)
+            if se is None or oe is None or prop is None:
+                continue
+            s_c = URIRef(f"{BATCH_NS}probe_s_{n}")
+            o_c = URIRef(f"{BATCH_NS}probe_o_{n}")
+            for c, e in ((s_c, se), (o_c, oe)):
+                g.add((c, RDF.type, OWL.Class))
+                g.add((c, RDFS.subClassOf, URIRef(CATEGORY_IRI[e.category.value])))
+                if getattr(e, "grounded_to", None):
+                    g.add((c, RDFS.subClassOf, URIRef(e.grounded_to)))
+            restriction = rdflib.BNode()
+            g.add((restriction, RDF.type, OWL.Restriction))
+            g.add((restriction, OWL.onProperty, URIRef(prop)))
+            g.add((restriction, OWL.someValuesFrom, o_c))
+            g.add((s_c, RDFS.subClassOf, restriction))
+            g.add((URIRef(prop), RDF.type, OWL.ObjectProperty))
+            probes[str(s_c)] = r
+        unsat = self._unsatisfiable(g)
+        return [r for iri, r in probes.items() if iri in unsat]
+
     # ── reasoning ──────────────────────────────────────────────────────────
     def _unsatisfiable(self, graph: rdflib.Graph) -> set[str]:
+        """IRIs ELK finds unsatisfiable in `graph`.
+
+        An inconsistent ontology names no culprit. Here it means that a class
+        the batch emptied holds one of WONT's 48 named individuals (Wagner
+        grades, zones of a burn): an empty class with a member in it is a
+        contradiction about the whole ontology, not about a class. On
+        2026-10-07 that stopped the relation gate cold ("The ontology is
+        inconsistent"), and the run went on without it. The question is then
+        asked again without the individuals, so the emptied classes are named
+        -- as `build_wont_core.elk_unsat` and the edge graph already do -- and
+        that is said, loudly, with the individuals and the classes they sit in
+        (rule 1). If the ontology is inconsistent without them too, or holds
+        none, or no class comes back empty, nothing can be named and it raises.
+        """
+        try:
+            return self._run_elk(graph)
+        except RuntimeError as exc:
+            if "inconsistent" not in str(exc):
+                raise
+            first = exc
+        bare, removed = without_individuals(graph)
+        if not removed:
+            raise first
+        found = self._run_elk(bare)
+        if not found:
+            raise RuntimeError(
+                f"ELK: the ontology is inconsistent with WONT's {len(removed)} named "
+                f"individual(s), and without them no class is unsatisfiable -- the "
+                f"contradiction is not an emptied class; nothing can be called "
+                f"clean, look by hand:\n{first}")
+        msg = self._describe_removed(graph, removed, found)
+        print(f"[ReasonerGate] *** {msg} ***", flush=True)
+        self.individual_notes.append(msg)
+        return found
+
+    @staticmethod
+    def _describe_removed(graph: rdflib.Graph, removed: dict, found: set[str]) -> str:
+        """Plain words: which individuals were set aside, and which emptied
+        class each of them sits in."""
+        def name(node) -> str:
+            lab = graph.value(node, RDFS.label)
+            return f"{lab} <{node}>" if lab is not None else f"<{node}>"
+
+        held = sorted((name(ind), name(c)) for ind, types in removed.items()
+                      for c in types if str(c) in found)
+        msg = (f"inconsistent with WONT's {len(removed)} named individual(s); asked "
+               f"again without them: {len(found)} class(es) are unsatisfiable")
+        if held:
+            shown = "; ".join(f"{i} is a member of {c}" for i, c in held[:10])
+            more = f" (and {len(held) - 10} more)" if len(held) > 10 else ""
+            return (f"{msg}. {len(held)} individual(s) sit in a class that is now "
+                    f"empty: {shown}{more}")
+        return (f"{msg}. None of the individuals' own classes is among them, so "
+                f"the contradiction reached the individuals another way -- look "
+                f"at the unsatisfiable classes by hand")
+
+    def _run_elk(self, graph: rdflib.Graph) -> set[str]:
         with tempfile.TemporaryDirectory() as td:
             src = Path(td) / "batch.ttl"
             graph.serialize(destination=str(src), format="turtle")
-            proc = subprocess.run(
+            proc = _run_robot(
                 [self.robot_cmd, "reason", "--input", str(src),
                  "--reasoner", self.reasoner,
                  "--equivalent-classes-allowed", "all",
                  "--output", str(Path(td) / "out.owl")],
-                capture_output=True, text=True, timeout=self.timeout,
+                timeout=self.timeout,
             )
-        return set(_UNSAT_RE.findall(proc.stdout + proc.stderr))
+        out = proc.stdout + proc.stderr
+        found = set(_UNSAT_RE.findall(out))
+        # ROBOT exits non-zero when it lists unsatisfiable classes -- that is a
+        # result. Any other failure (an inconsistent ontology, a crash, too little
+        # memory) used to come back as the empty set, i.e. "clean": on 2026-10-03
+        # the hierarchy gate reported 36,644 edges clean while `Allergy` sat
+        # under both disposition and material disease entity.
+        if proc.returncode != 0 and not found:
+            tail = "\n".join(out.strip().splitlines()[-12:])
+            raise RuntimeError(f"ELK did not run to a result (exit {proc.returncode}); "
+                               f"nothing can be called clean:\n{tail}")
+        return found
+
+    _AXIOM_RE = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)\s+SubClassOf\s+\[[^\]]*\]\(([^)\s]+)\)\s*$")
+
+    def _explained_pairs(self, graph: rdflib.Graph) -> set[tuple[str, str]]:
+        """(child IRI, parent IRI) of every named SubClassOf axiom in one
+        explanation per root unsatisfiable class."""
+        text = self._explain(graph, max_expl=1)
+        pairs = set()
+        for line in text.splitlines():
+            m = self._AXIOM_RE.search(line.strip().lstrip("-").strip())
+            if m:
+                pairs.add((m.group(1), m.group(2)))
+        return pairs
 
     def _explain(self, graph: rdflib.Graph, max_expl: int = 5) -> str:
         with tempfile.TemporaryDirectory() as td:
             src = Path(td) / "batch.ttl"
             out = Path(td) / "expl.md"
             graph.serialize(destination=str(src), format="turtle")
-            subprocess.run(
-                [self.robot_cmd, "explain", "--input", str(src),
-                 "--reasoner", self.reasoner, "-M", "unsatisfiability",
-                 "-u", "root", "-m", str(max_expl), "--explanation", str(out)],
-                capture_output=True, text=True, timeout=self.timeout,
-            )
+            try:
+                _run_robot(
+                    [self.robot_cmd, "explain", "--input", str(src),
+                     "--reasoner", self.reasoner, "-M", "unsatisfiability",
+                     "-u", "root", "-m", str(max_expl), "--explanation", str(out)],
+                    timeout=self.timeout,
+                )
+            except subprocess.TimeoutExpired:
+                # The explanation is a report, not the verdict: the unsatisfiable
+                # classes are already known and are quarantined either way. Losing
+                # the whole reasoner run to a slow explanation (2026-09-30) was
+                # worse than saying it timed out.
+                msg = (f"robot explain timed out after {self.timeout} s; the "
+                       f"unsatisfiable classes are listed in the gate report")
+                print(f"[ReasonerGate] {msg}")
+                return msg
             return out.read_text(encoding="utf-8") if out.exists() else ""
 
     # ── the gate ───────────────────────────────────────────────────────────
@@ -262,21 +469,93 @@ class ReasonerGate:
                               accepted_relations=list(relations), skipped=why)
 
         ents, rels = list(entities), list(relations)
+        self.individual_notes = []
+        self.cause_notes = []
+        self.cause_why: dict = {}
         q_ents: list = []
         q_rels: list = []
+        why: dict = {}
+        key = lambda r: (r.subject, r.predicate.value, r.object)   # noqa: E731
         unsat_seen: set[str] = set()
         explanation = ""
 
+        # An abstract that says something about the bare word `tendency` (or
+        # `process`, `disposition`) is not stating an axiom about the BFO/MILD
+        # category itself. Asserted on the category class it is one: on
+        # 2026-09-30 `tendency --has realization--> therapy`, once `therapy`
+        # was ruled an information entity, made MILD's tendency class
+        # unsatisfiable, and with it every tendency in the store and the
+        # curated classes that mention one -- 7,361 classes and 20,844
+        # relations quarantined for one sentence. Such a relation is held back
+        # here, by name, and reported with the rest.
+        cat_iris = {str(v) for v in CATEGORY_IRI.values()}
+        by_label0 = {e.label: str(self._iri_for(e)) for e in ents}
+        on_category = [r for r in rels if by_label0.get(r.subject) in cat_iris]
+        if on_category:
+            print(f"[ReasonerGate] {len(on_category)} relation(s) whose subject is a "
+                  f"BFO/MILD category class held back, e.g. "
+                  f"{[(r.subject, r.predicate.value, r.object) for r in on_category[:3]]}")
+            q_rels += on_category
+            for r in on_category:
+                why[key(r)] = (f"its subject {r.subject!r} is the BFO/MILD category itself; a sentence "
+                               f"about the bare word is no axiom about the category")
+            held = {id(r) for r in on_category}
+            rels = [r for r in rels if id(r) not in held]
+
+        local = self._locally_inconsistent(ents, rels) if rels else []
+        if local:
+            print(f"[ReasonerGate] {len(local)} relation(s) contradict the ontology on "
+                  f"their own and are held back before the batch is reasoned, e.g. "
+                  f"{[(r.subject, r.predicate.value, r.object) for r in local[:3]]}")
+            q_rels += local
+            for r in local:
+                why[key(r)] = (f"contradicts the ontology on its own: {r.subject!r} typed as it is "
+                               f"cannot {r.predicate.value} {r.object!r} typed as it is")
+            held = {id(r) for r in local}
+            rels = [r for r in rels if id(r) not in held]
+
         for _ in range(_MAX_PASSES):
             g = self.build_batch_graph(ents, rels)
+            n_notes = len(self.individual_notes)
             unsat = self._unsatisfiable(g)
             if not unsat:
                 break
             unsat_seen |= unsat
             if not explanation:
-                explanation = self._explain(g)
+                # An explanation is asked of the graph that gave the answer:
+                # with the individuals in, it is inconsistent and explains
+                # nothing.
+                asked_bare = len(self.individual_notes) > n_notes
+                explanation = self._explain(without_individuals(g)[0] if asked_bare else g)
 
             by_label = {e.label: str(self._iri_for(e)) for e in ents}
+
+            # Causes first (2026-10-08). Holding back every relation that
+            # touches an empty class, all at once, cannot tell the relation
+            # that empties a class from the thousands that merely point at
+            # it: on 2026-10-08 31 terms whose relations asked for two kinds
+            # of thing at once (`wound size` inheres in a wound AND is about
+            # something) emptied `wound size`, through it `Wound`, and
+            # through that 6,756 classes -- and 20,363 of 24,584 relations
+            # were held back. Only the causes go; the next pass re-asks.
+            causes, how = self._causes(ents, rels, unsat, by_label)
+            if causes:
+                print(f"[ReasonerGate] pass: {len(unsat)} empty class(es); holding back "
+                      f"{len(causes)} relation(s) that empty a class themselves "
+                      f"({how}), e.g. "
+                      f"{[(r.subject, r.predicate.value, r.object) for r in causes[:3]]}",
+                      flush=True)
+                q_rels += causes
+                for r in causes:
+                    why[key(r)] = self.cause_why.get(id(r)) or f"empties a class by itself ({how})"
+                held = {id(r) for r in causes}
+                rels = [r for r in rels if id(r) not in held]
+                continue
+
+            print(f"[ReasonerGate] *** {len(unsat)} empty class(es) and no relation "
+                  f"found that empties one by itself; holding back EVERY relation that "
+                  f"touches an empty class, the old way. Expect collateral loss. ***",
+                  flush=True)
             bad_labels = {lab for lab, iri in by_label.items() if iri in unsat}
 
             # A pre-existing class made unsatisfiable means the batch RELATION is
@@ -302,7 +581,19 @@ class ReasonerGate:
                 break                       # cannot attribute further; stop
             q_ents += drop_ents
             q_rels += drop_rels
+            for r in drop_rels:
+                hit = sorted({r.subject, r.object} & (bad_labels | touched))
+                why[key(r)] = (f"touches the empty class {', '.join(map(repr, hit))}; no relation was "
+                               f"found that empties it by itself, so every relation touching it is "
+                               f"held back")
             ents, rels = keep_ents, keep_rels
+        else:
+            unsat = self._unsatisfiable(self.build_batch_graph(ents, rels))
+
+        if unsat:
+            print(f"[ReasonerGate] *** {len(unsat)} class(es) are STILL empty after the "
+                  f"last pass; the relations kept are not all sound: "
+                  f"{sorted(unsat)[:5]} ***", flush=True)
 
         return GateResult(
             accepted_entities=ents,
@@ -311,7 +602,203 @@ class ReasonerGate:
             quarantined_relations=q_rels,
             unsatisfiable=sorted(unsat_seen),
             explanation=explanation,
+            without_individuals=list(self.individual_notes),
+            still_empty=sorted(unsat),
+            causes=list(self.cause_notes),
+            why=why,
         )
+
+    def _causes(self, ents, rels, unsat: set[str], by_label: dict) -> tuple[list, str]:
+        """The relations among those on an empty class that empty it THEMSELVES.
+
+        One reasoner run over the batch without the suspects (every relation
+        on an empty class, and every relation pointing at one), plus probes:
+        a fresh copy of the subject, typed as the subject is, carrying
+
+        * one suspect relation, pointing at its REAL target: empty means the
+          relation clashes with what its target is (`X has quality Y` where
+          Y's own relations make it a piece of information); and, for a term
+          with none of those,
+        * two of its relation types at once, each to `Thing`: empty means the
+          two ask for incompatible kinds (`inheres in` wants a property, `is
+          about` a piece of information). That depends on the relation types
+          only, never on the targets: tested against its real targets, the
+          clash on `pressure ulcer stage` stayed hidden (2026-10-09), because
+          its `is about` points at itself and so at a target as empty as it
+          is. All of its relation types together are tried as well. Every
+          group in a clash is held back -- which one the abstracts got wrong
+          is a judgement, not something to guess (rule 12).
+
+        A target that is itself empty is replaced by a stand-in that keeps
+        its KIND -- its category or ontology class, and one bare relation of
+        each type it has (`∃inheres in.Thing`), so the domains it implies hold
+        -- but not its emptiness. Without it a loop hides its own cause
+        (2026-10-09, second pass, 6,721 empty classes and none to blame): A's
+        relation needs B to be a quality, B's own relation back towards A
+        makes it a piece of information; both go empty, and each probe saw
+        only an empty target. A probe whose target is empty even so proves
+        nothing and is ignored.
+        Returns (causes, how they were found), or ([], "") when none is found.
+        """
+        suspects = [r for r in rels if by_label.get(r.subject) in unsat]
+        if not suspects:
+            return [], ""
+        susp = {id(r) for r in suspects}
+        ent = {e.label: e for e in ents}
+        preds_of: dict[str, set] = {}
+        for r in rels:
+            if RELATION_IRI.get(r.predicate.value):
+                preds_of.setdefault(r.subject, set()).add(r.predicate.value)
+        g = self.build_batch_graph(ents, [])
+
+        def some(c, prop_name: str, filler) -> None:
+            b = rdflib.BNode()
+            prop = URIRef(RELATION_IRI[prop_name])
+            g.add((b, RDF.type, OWL.Restriction))
+            g.add((b, OWL.onProperty, prop))
+            g.add((b, OWL.someValuesFrom, filler))
+            g.add((c, RDFS.subClassOf, b))
+            g.add((prop, RDF.type, OWL.ObjectProperty))
+
+        def kind(c, label: str) -> None:
+            e = ent[label]
+            g.add((c, RDF.type, OWL.Class))
+            g.add((c, RDFS.subClassOf, URIRef(e.grounded_to) if e.grounded_to
+                   else URIRef(CATEGORY_IRI[e.category.value])))
+
+        stand_ins: dict[str, URIRef] = {}
+
+        def target(label: str) -> URIRef:
+            if by_label[label] not in unsat:
+                return URIRef(by_label[label])
+            if label not in stand_ins:
+                c = URIRef(BATCH_NS + "kind_" + _slug(label))
+                kind(c, label)
+                for pred in sorted(preds_of.get(label, ())):
+                    some(c, pred, OWL.Thing)
+                stand_ins[label] = c
+            return stand_ins[label]
+
+        for r in rels:
+            if id(r) not in susp and r.object in by_label and RELATION_IRI.get(r.predicate.value):
+                some(URIRef(by_label[r.subject]), r.predicate.value, target(r.object))
+
+        def probe(name: str, subject: str, group, *, to_thing: bool = False) -> str:
+            c = URIRef(BATCH_NS + name)
+            kind(c, subject)
+            for r in group:
+                some(c, r.predicate.value, OWL.Thing if to_thing else target(r.object))
+            return str(c)
+
+        usable = [r for r in suspects
+                  if r.object in by_label and RELATION_IRI.get(r.predicate.value)]
+        singles = {probe(f"cause_{n}", r.subject, [r]): r for n, r in enumerate(usable)}
+        by_subject: dict[str, dict] = {}
+        for r in usable:
+            by_subject.setdefault(r.subject, {}).setdefault(r.predicate.value, []).append(r)
+        pairs, wholes = {}, {}
+        for n, (subj, preds) in enumerate(sorted(by_subject.items())):
+            names = sorted(preds)
+            if len(names) < 2:
+                continue
+            for i, p1 in enumerate(names):
+                for j, p2 in enumerate(names[i + 1:]):
+                    group = preds[p1] + preds[p2]
+                    pairs[probe(f"pair_{n}_{i}_{j}", subj, group, to_thing=True)] = ((p1, p2), group)
+            if len(names) > 2:
+                group = [r for q in names for r in preds[q]]
+                wholes[probe(f"all_{n}", subj, group, to_thing=True)] = (tuple(names), group)
+        u2 = self._unsatisfiable(g)
+
+        def typing_holds(subject: str) -> bool:
+            # A subject whose own class is empty even here makes every probe
+            # on it empty; that proves nothing about its relations.
+            e = ent[subject]
+            return not (e.grounded_to and str(e.grounded_to) in u2)
+
+        def proves(group) -> bool:
+            return all(str(target(r.object)) not in u2 for r in group)
+
+        single_bad = [r for c, r in singles.items()
+                      if c in u2 and typing_holds(r.subject) and proves([r])]
+        done = {r.subject for r in single_bad}
+        pair_bad, seen = [], set()
+
+        def hold(group) -> None:
+            for r in group:
+                if id(r) not in seen:
+                    seen.add(id(r)); pair_bad.append(r)
+
+        clashing: dict[str, list] = {}
+        for c, (names, group) in pairs.items():
+            if c in u2 and group[0].subject not in done and typing_holds(group[0].subject):
+                hold(group)
+                clashing.setdefault(group[0].subject, []).append(list(names))
+        for c, (names, group) in wholes.items():
+            subj = group[0].subject
+            if c in u2 and subj not in done | set(clashing) and typing_holds(subj):
+                hold(group)
+                clashing.setdefault(subj, []).append(list(names))
+
+        # What each cause is, for the curator (rule 72): which statements are
+        # on each side. For a clash with the target, one more run asks which
+        # of the target's own relation types make it the wrong kind.
+        blame = self._target_blame(g, kind, some, single_bad, preds_of) if single_bad else {}
+        self.cause_why = {}
+        for r in single_bad:
+            b = blame.get(id(r), [])
+            self.cause_why[id(r)] = (f"clashes with what its target {r.object!r} is"
+                                     + (f" (made so by the target's own {', '.join(map(str, b))})" if b else ""))
+        for subj, sets in clashing.items():
+            kinds = "; ".join(" and ".join(s) for s in sets)
+            for r in pair_bad:
+                if r.subject == subj:
+                    self.cause_why[id(r)] = (f"{subj!r} is asked to be two kinds of thing at once "
+                                             f"by its relations {kinds}")
+        for r in single_bad:
+            self.cause_notes.append({
+                "kind": "target", "subject": r.subject, "predicate": r.predicate.value,
+                "object": r.object,
+                "target_blamed": blame.get(id(r), []),
+                "target_statements": sorted((x.predicate.value, x.object) for x in rels
+                                            if x.subject == r.object)})
+        for subj, sets in sorted(clashing.items()):
+            self.cause_notes.append({
+                "kind": "two kinds", "subject": subj, "clashing": sets,
+                "groups": {q: sorted(r.object for r in by_subject[subj][q])
+                           for q in sorted({q for st in sets for q in st})}})
+        how = []
+        if single_bad:
+            how.append(f"{len(single_bad)} clash with what their target is")
+        if pair_bad:
+            how.append(f"{len(pair_bad)} on {len({r.subject for r in pair_bad})} term(s) "
+                       f"whose relations ask for two kinds of thing at once")
+        return single_bad + pair_bad, "; ".join(how)
+
+    def _target_blame(self, g, kind, some, single_bad, preds_of) -> dict:
+        """{id(relation) -> the target's relation types that make it the wrong
+        kind for that relation}, by one reasoner run on fresh copies: the
+        subject's kind with the relation pointing at the target's kind plus
+        one of its relation types. Empty list: the target's own class or
+        category is what clashes."""
+        probes = {}
+        for n, r in enumerate(single_bad):
+            for m, q in enumerate(sorted(preds_of.get(r.object, ()))):
+                t = URIRef(f"{BATCH_NS}blame_t_{n}_{m}")
+                kind(t, r.object)
+                some(t, q, OWL.Thing)
+                c = URIRef(f"{BATCH_NS}blame_{n}_{m}")
+                kind(c, r.subject)
+                some(c, r.predicate.value, t)
+                probes[str(c)] = (r, q)
+        if not probes:
+            return {}
+        u = self._unsatisfiable(g)
+        out: dict = {}
+        for c, (r, q) in probes.items():
+            if c in u:
+                out.setdefault(id(r), []).append(q)
+        return out
 
     # ── subsumption edges ──────────────────────────────────────────────────
     #
@@ -319,7 +806,7 @@ class ReasonerGate:
     # filtered by the category-pair table, but is_a edges are not: the curated
     # CSV and the FCA lattice bypass the extraction schema entirely. And the
     # table is blind to same-category disjointness — `Wound base`, `Wound edge`
-    # and `Wound pocket` are all MaterialEntity yet pairwise disjoint, so an edge
+    # and `Wound pocket` are all `material entity` yet pairwise disjoint, so an edge
     # making something a subclass of two of them passes every schema check and
     # only a reasoner rejects it.
 
@@ -351,7 +838,12 @@ class ReasonerGate:
                     g.add((node, RDF.type, OWL.Class))
                     g.add((node, RDFS.label, rdflib.Literal(str(lab))))
             g.add((c, RDFS.subClassOf, p))
-        return g
+        # The gate asks which CLASSES an edge makes empty. WONT's 48 named
+        # individuals (Wagner grades, zones of a burn) turn one empty class into
+        # an inconsistent ontology, and an inconsistent ontology names no
+        # culprit at all (2026-10-03: 32,655 text edges, "inconsistent", no
+        # edge attributable). Individuals are not what this gate checks.
+        return without_individuals(g)[0]
 
     def check_edges(self, edges, sources=None) -> EdgeGateResult:
         """Reason over candidate subsumption edges; quarantine the inconsistent ones.
@@ -382,19 +874,31 @@ class ReasonerGate:
         kept = list(edges)
         dropped: list = []
         spared: list = []
+        why: dict = {}
         unsat_seen: set[str] = set()
         explanation = ""
+        src = lambda e: (sources or {}).get(tuple(e)) or "unstamped"   # noqa: E731
 
         def resolve(label: str) -> str:
             hit = idx.get(str(label).strip().lower())
             return str(hit) if hit is not None else BATCH_NS + _slug(str(label))
 
-        def rank(edge) -> int:
+        # Rule 79 (2026-10-18): which edge gives way FIRST in a clash. An FCA
+        # edge reaches the hierarchy only through the accepted slice, and only
+        # when the curator's head-word rule licensed it, so here it gives way
+        # after one abstract's is_a and before a checked placement. At rank 1
+        # all 436 licensed edges of 2026-10-18 were dropped first whenever
+        # their child was unsatisfiable through a text edge elsewhere, and the
+        # cause stayed. SOURCE_RANK itself (which source owns a shared edge) is
+        # unchanged.
+        gate_rank = {**SOURCE_RANK, "fca": 2.5}
+
+        def rank(edge) -> float:
             if not sources:
                 return 0
-            return SOURCE_RANK.get(sources.get(tuple(edge)), 0)
+            return gate_rank.get(sources.get(tuple(edge)), 0)
 
-        for _ in range(_MAX_PASSES):
+        for _ in range(_MAX_EDGE_PASSES):
             g = self.build_edge_graph(kept, label_index=idx)
             unsat = self._unsatisfiable(g)
             if not unsat:
@@ -408,6 +912,15 @@ class ReasonerGate:
             culprits = [e for e in kept if resolve(e[0]) in unsat]
             if not culprits:
                 break                       # cannot attribute further
+            # A class empty only because a parent it keeps is empty is not where
+            # the clash is: blaming its own weakest edge refused correct typings
+            # under every empty class (2026-10-29: `Aggressive surgical
+            # debridement is_a process`, `Debridement method is_a information
+            # entity`). The empty classes whose kept parents are all satisfiable
+            # are judged first; their descendants are heard again next pass. A
+            # loop of empty classes has no such class: all are judged, as before.
+            under_empty = {resolve(c) for c, p in kept if resolve(p) in unsat}
+            culprits = [e for e in culprits if resolve(e[0]) not in under_empty] or culprits
 
             # Drop the weakest evidence FIRST, and globally rather than per
             # child. Per-child was not enough: `Dry Necrosis is_a Necrosis` is
@@ -418,14 +931,42 @@ class ReasonerGate:
             # rank at a time and re-checking lets the cause go before its
             # consequences are judged.
             lowest = min(rank(e) for e in culprits)
+            # Before a placed or curated edge goes, ask the reasoner WHY
+            # (2026-10-03). The cause need not be on the empty class at all:
+            # `Nutrient is_a Material Entity` (text) leaves nothing that can be
+            # protein's `has role some nutrient`, so CHEBI protein and its 33
+            # placed children went empty while nutrient itself stayed fine --
+            # and the gate, blaming only the empty classes' own edges, dropped
+            # the checked placements. An explanation names the text edge.
+            if sources and lowest >= SOURCE_RANK.get("placed", 3):
+                pairs = self._explained_pairs(g)
+                weaker = [e for e in kept if rank(e) < lowest
+                          and (resolve(e[0]), resolve(e[1])) in pairs]
+                if weaker:
+                    for e in weaker:
+                        why[tuple(e)] = (f"the reasoner's explanation of an empty class names it; "
+                                         f"a {src(e)} edge gives way before a {src(culprits[0])} one "
+                                         f"(rule 79)")
+                    dropped += weaker
+                    bad = {tuple(e) for e in weaker}
+                    kept = [e for e in kept if tuple(e) not in bad]
+                    continue
             now_bad = [e for e in culprits if rank(e) == lowest]
             spared += [e for e in culprits if rank(e) != lowest]
             if not now_bad:
                 break
 
+            for e in now_bad:
+                why[tuple(e)] = (f"{e[0]!r} is unsatisfiable with it; of the edges on empty classes "
+                                 f"the weakest evidence ({src(e)}) gives way first (rule 79)")
             dropped += now_bad
             bad = {tuple(e) for e in now_bad}
             kept = [e for e in kept if tuple(e) not in bad]
+        else:
+            left = self._unsatisfiable(self.build_edge_graph(kept, label_index=idx))
+            if left:
+                print(f"[ReasonerGate] *** the edge gate stopped after {_MAX_EDGE_PASSES} passes with "
+                      f"{len(left)} class(es) still empty: {sorted(left)[:5]} ***")
 
         # Anything "spared" that survived to the end really was spared; anything
         # dropped on a later pass was not.
@@ -439,6 +980,7 @@ class ReasonerGate:
             explanation=explanation,
             quarantined_sources={tuple(e): (sources or {}).get(tuple(e)) for e in dropped},
             spared=spared,
+            why={e: why[e] for e in dropped_set},
         )
 
     # ── persistence ────────────────────────────────────────────────────────
@@ -460,5 +1002,8 @@ class ReasonerGate:
                            "object": r.object}
                           for r in result.quarantined_relations],
             "explanation": result.explanation,
+            "asked_without_individuals": result.without_individuals,
+            "still_empty": result.still_empty,
+            "causes": result.causes,
         }, indent=2), encoding="utf-8")
         return path

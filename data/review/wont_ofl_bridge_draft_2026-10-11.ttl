@@ -1,0 +1,67 @@
+# WONT-OFL bridge (D6, D7), DRAFT 2026-10-11 -- for the curator to place and adopt.
+# Imports WONT and OFL, so neither curated file imports the other (D6 a).
+# Classes: OFL v22 (OFL Versionen/flap_onto_corrected_and_inferred_22.owl).
+# New WONT id: WONT_0007839 (after the WONT patch's 0007807-0007838).
+
+@prefix wont: <https://bioportal.bioontology.org/ontologies/WONT/> .
+@prefix ofl: <https://purl.bioontology.org/ontology/OFL/> .
+@prefix fma: <http://purl.obolibrary.org/obo/fma#> .
+@prefix obo: <http://purl.obolibrary.org/obo/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<https://bioportal.bioontology.org/ontologies/WONT/bridge/ofl> rdf:type owl:Ontology ;
+    owl:imports <https://bioportal.bioontology.org/ontologies/WONT> , <https://purl.bioontology.org/ontology/OFL> ;
+    dcterms:title "WONT-OFL bridge"@en ;
+    dcterms:description "Axioms that name classes of both the Wound Ontology (WONT) and the Ontology of Flaps (OFL): the defect a flap closes is a WONT wound."@en .
+
+#################################################################
+#  D7: FMA's part relations under OFL's 'Ofl part of'
+#  OFL already has BFO part of and BioPortal's fma part_of under it;
+#  fma_obo.owl, where both ontologies take their FMA classes from,
+#  states its part axioms with these three (19,664 / 12,392 / 2,658
+#  axioms). Without them no reasoner sees 'Epidermis part of Skin'.
+#################################################################
+
+fma:regional_part_of rdf:type owl:ObjectProperty ; rdfs:subPropertyOf ofl:OFLID13297 .
+fma:constitutional_part_of rdf:type owl:ObjectProperty ; rdfs:subPropertyOf ofl:OFLID13297 .
+fma:systemic_part_of rdf:type owl:ObjectProperty ; rdfs:subPropertyOf ofl:OFLID13297 .
+
+#################################################################
+#  5.8 the donor site is a surgical wound
+#################################################################
+
+wont:WONT_0007839 rdf:type owl:Class ;
+    owl:equivalentClass [ owl:intersectionOf ( wont:WONT_0006845
+        [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0002353 ; owl:someValuesFrom ofl:OFLID1000136 ] ) ;
+        rdf:type owl:Class ] ;
+    rdfs:subClassOf wont:WONT_0006845 ;
+    obo:IAO_0000115 "A surgical wound that is the output of a flap transfer process: the site the flap was raised from."@en ;
+    rdfs:label "Flap donor site wound"@en .
+
+#################################################################
+#  6.6 - 6.9 treatment links
+#################################################################
+
+# 6.6 a flap transfer carries out a flap plasty plan
+ofl:OFLID1000136 rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000055 ;
+        owl:someValuesFrom [ owl:intersectionOf ( obo:OBI_0000260
+              [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0000059 ; owl:someValuesFrom wont:WONT_0000114 ] ) ;
+            rdf:type owl:Class ] ] .
+
+# 6.7 the defect OFL's flap closes is a WONT wound
+ofl:OFLID10170 rdfs:subClassOf wont:WONT_0000388 ,
+    [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0000057 ; owl:someValuesFrom wont:WONT_0000380 ] .
+
+# 6.8
+ofl:OFLID10169 rdfs:subClassOf wont:WONT_0000388 ,
+    [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0000057 ; owl:someValuesFrom wont:WONT_0007839 ] .
+
+# 6.9 'only', not 'some': a role need not ever be realized (a planned flap
+# that is never transferred still has it). OWL DL; HermiT.
+ofl:OFLID106000 rdfs:subClassOf [ rdf:type owl:Restriction ; owl:onProperty obo:BFO_0000054 ;
+        owl:allValuesFrom [ owl:intersectionOf ( wont:WONT_0000388
+              [ rdf:type owl:Restriction ; owl:onProperty obo:RO_0000057 ; owl:someValuesFrom wont:WONT_0000380 ] ) ;
+            rdf:type owl:Class ] ] .

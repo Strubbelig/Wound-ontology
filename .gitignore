@@ -17,8 +17,31 @@ env/first_env/
 data/raw/
 output/
 
-# Cache — track versioned pipeline state, but skip large regeneratable CSVs
-data/cache/pubmed_abstracts_*.csv
+# Test artefacts — regenerated, never inputs. tests/integration/conftest.py
+# DELETES every *.json/*.csv/*.pkl in here at session start and the OWL files
+# are rewritten each run, so a test run always left the repo dirty. Both
+# consumers mkdir it themselves (tests/test_inspection.py, integration conftest).
+tests/test_output/
+
+# Cache — pipeline working state, not repo content (2026-09-24).
+# It used to be tracked ("track versioned pipeline state"), and that fought the
+# DataManager: it keeps the newest ten files per prefix and deletes the rest, so
+# every build left git with a batch of deletions nobody had asked for — 26 of
+# them stood in the tree at the time this changed, while everything written
+# since 18 Sep was untracked anyway. 445 MB of regenerable JSON/CSV/PKL.
+#
+# The two files here that are NOT regenerable are `concept_store_*.json` (the
+# store and its decisions) and `term_mapping_*.json` (the mapping ground truth
+# and the curator's refusals, rule 38). Git is no longer their safety net;
+# `data/backup/` is, and a destructive step copies them there first.
+data/cache/
+
+# Pre-apply snapshots. 30 MB copies of state that already exists in
+# data/cache/; they live outside the cache's ten-version rotation so a
+# destructive step has a way back, not so git carries them. The README
+# beside them is tracked — it says what each copy is and how to restore it.
+data/backup/*
+!data/backup/README.md
 
 # Flap ontology template files (large OWL/FMA/ABox files)
 notebooks/templates/

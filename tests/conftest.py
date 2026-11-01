@@ -79,3 +79,89 @@ def pytest_sessionstart(session) -> None:
         "Interpreter', or run pytest from `conda activate onto_env`. "
         "Refusing to run rather than reporting import errors as test failures."
     )
+
+
+# ── A real TermMappingAndGate over an in-memory file ────────────────────────────────
+#
+# Five test modules used to hand-roll a `_Mapping` double carrying `data`,
+# `add_batch` and `remove`. The doubles drifted apart from each other and from
+# the class, and when `remove` became `retire` all five went red at once for a
+# reason that had nothing to do with what they test. A double that has to track
+# a class this closely IS the class, so the tests use the real one -- refusals,
+# retirement, the record format -- and only the file underneath is fake.
+
+class MemoryDataManager:
+    """DataManager's whole surface as far as TermMappingAndGate is concerned.
+
+    A save ROUND-TRIPS through JSON and becomes what the next load returns, the
+    way a file does. Keeping the saved object by reference instead would make a
+    reload read the live records back and pass whatever the save did -- which is
+    the one thing a persistence test is for.
+    """
+
+    def __init__(self, records: dict | None = None) -> None:
+        self.records = dict(records or {})
+        self.written: dict | None = None
+
+    def load_latest_json(self, name):
+        return self.records
+
+    def save_as_json(self, data, name):
+        import json
+        self.written = json.loads(json.dumps(data))
+        self.records = self.written
+        return name
+
+
+def memory_mapping(data: dict | None = None):
+    """A real `TermMappingAndGate` whose file is a dict. Accepts the flat
+    `term -> canonical` shape and the records before rule 89, which `_load`
+    translates in memory exactly as it would on disk, or a file of rule 89
+    (`rule89_file`)."""
+    from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
+    return TermMappingAndGate(MemoryDataManager(dict(data or {})))
+
+
+def rule89_file(terms: dict) -> dict:
+    """A term dict file in the form of rule 89 holding `terms`."""
+    from wound_ontology.mappers.judgements import AGENTS
+    from wound_ontology.mappers.term_mapping_and_gate import FORMAT
+    return {"format": FORMAT, "agents": AGENTS, "terms": terms}
+
+
+def J(verdict, by="author", why="test", when="2026-10-01T12:00:00", iri=None):
+    """One judgement (rule 89), for seeding a record."""
+    from wound_ontology.mappers.judgements import make
+    return make(verdict, by, why, when, iri)
+
+
+def memory_mapper(data: dict | None = None, name: str = "test"):
+    """A real `TermMapper` over `memory_mapping`."""
+    from wound_ontology.mappers.term_mapper import TermMapper
+    return TermMapper(memory_mapping(data), name=name)
+
+
+@pytest.fixture(autouse=True)
+def _vector_store_stays_out_of_data_cache(tmp_path_factory, monkeypatch):
+    """No test may write a fake vector into the project's SapBERT store.
+
+    `TermMapper._embeddings_for` keeps one growing file of term -> vector in
+    data/cache, so a term embedded once is never embedded again. Every unit
+    test embeds with a toy embedder: without this, `alpha one` would enter the
+    real store with a three-dimensional made-up vector, and the next real run
+    would silently reuse it instead of asking SapBERT. The old cache was keyed
+    by the whole term list and could only be hit by an identical list, so this
+    hazard is new with the per-term store.
+    """
+    from pathlib import Path
+
+    from wound_ontology.mappers.term_mapper import TermMapper
+
+    sandbox = Path(tmp_path_factory.mktemp("vector_store"))
+    monkeypatch.setattr(
+        TermMapper,
+        "_vector_store_paths",
+        lambda self: (sandbox / "sapbert_vectors.npy",
+                      sandbox / "sapbert_vectors_terms.json"),
+    )
+    return sandbox

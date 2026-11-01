@@ -1,0 +1,600 @@
+2400|hard-to-heal critically colonized leg ulcer|mate|< Colonized wound|1:Marjolin ulcer ; 2:Arterial leg ulcer ; 3:Wound with microbial burden assessed according to IWII ; 4:Wound with microbial burden assessed according to CDC
+2401|locally infected leg ulcer|mate|< Colonized wound|1:Arterial leg ulcer ; 2:Marjolin ulcer ; 3:Diabetic foot ulcer ; 4:Pressure ulcer
+2402|wound MRSA carriage|mate|< Colonized wound|1:MRSA infection ; 2:Wound biofilm ; 3:pathogen with wound infecting tendency ; 4:Wound with microbial burden assessed according to CDC
+2403|biofilm brightness|qual|< color|1:degree of microbial burden ; 2:degree of fibrin coverage ; 3:degree of maceration ; 4:granulating
+2404|black|cont|< color|1:necrotic ; 2:baryon ; 3:Cyanosis ; 4:Necrosis
+2405|bronze discoloration|qual|< color|1:Pallor ; 2:Bronsted base ; 3:Cyanosis ; 4:reddened
+2406|cherry-pink skin discoloration|qual|< color|1:Pallor ; 2:Cyanosis ; 3:reddened ; 4:Redness
+2407|color appearance|qual|< color|1:phenotype ; 2:Phenotypic abnormality ; 3:quality of a substance ; 4:composition
+2408|coloration|qual|< color|1:Cyanosis ; 2:Pallor ; 3:Redness ; 4:optical quality
+2409|cyan|qual|< color|1:Cyanosis ; 2:Redness ; 3:Pallor ; 4:acute
+2410|darker skin tone|qual|< color|1:Pallor ; 2:increased depth ; 3:Redness ; 4:increased area
+2411|discoloration|qual|< color|1:Pallor ; 2:Cyanosis ; 3:Redness ; 4:reddened
+2412|discrete gray or black spot|qual|< color|1:Cyanosis ; 2:Thread size 0 ; 3:increased area ; 4:Pallor
+2413|dyschromic|qual|< color|1:Redness ; 2:Pallor ; 3:Cyanosis ; 4:reddened
+2414|fair or intermediate pigmentation phenotype|qual|< color|1:phenotype ; 2:optical quality ; 3:EC 2.5.* (non-methyl-alkyl or aryl transferase) inhibitor ; 4:Pallor
+2415|fair pigmentation phenotype|qual|< color|1:Pallor ; 2:undermined ; 3:optical quality ; 4:EC 2.5.1.* (non-methyl-alkyl or aryl transferase) inhibitor
+2416|gray-white discoloration|qual|< color|1:Pallor ; 2:Cyanosis ; 3:reddened ; 4:necrotic
+2417|greenish|qual|< color|1:Cyanosis ; 2:reddened ; 3:Redness ; 4:optical quality
+2418|Hypopigmented|qual|< color|1:Pallor ; 2:Cyanosis ; 3:reddened ; 4:undermined
+2419|mismatched skin color|qual|< color|1:Abnormal skin morphology ; 2:Phenotypic abnormality ; 3:Cyanosis ; 4:Scarring
+2420|normal coloration|qual|< color|1:normal ; 2:Pallor ; 3:Cyanosis ; 4:Redness
+2421|normal skin color|qual|< color|1:normal ; 2:Pallor ; 3:Redness ; 4:Abnormal skin morphology
+2422|perineal discoloration|qual|< color|1:Pallor ; 2:reddened ; 3:Cyanosis ; 4:Redness
+2423|pink|qual|< color|1:Pallor ; 2:Redness ; 3:Cyanosis ; 4:reddened
+2424|purple/red discolored skin|qual|< color|1:Pallor ; 2:Redness ; 3:reddened ; 4:Cyanosis
+2425|recipient site color match|qual|< color|1:acceptor ; 2:donor ; 3:information carrier ; 4:Scarring
+2426|reticulated violaceous patch|qual|< color|1:Pallor ; 2:reddened ; 3:fibrin-covered ; 4:granulating
+2427|scar pigmentation|qual|< color|1:Scarring ; 2:Abnormal skin morphology ; 3:Pallor ; 4:reddened
+2428|skin discoloration|qual|< color|1:Pallor ; 2:Redness ; 3:Cyanosis ; 4:Abnormal skin morphology
+2429|skin of color|qual|< color|1:Abnormal skin morphology ; 2:Pallor ; 3:Redness ; 4:Scarring
+2430|skin tone|qual|< color|1:degree of tissue firmness ; 2:degree of skin adherence to underlying tissue ; 3:Abnormal skin morphology ; 4:phenotype
+2431|skin tone variation|qual|< color|1:Abnormal skin morphology ; 2:degree of tissue firmness ; 3:degree of skin adherence to underlying tissue ; 4:Phenotypic abnormality
+2432|Skin/scar color match|qual|< color|1:Scarring ; 2:Abnormal skin morphology ; 3:Cyanosis ; 4:degree of skin adherence to underlying tissue
+2433|violaceous|qual|< color|1:Cyanosis ; 2:Redness ; 3:Pallor ; 4:reddened
+2434|violaceous border|qual|< color|1:undermined ; 2:Cyanosis ; 3:Pallor ; 4:reddened
+2435|violaceous skin discoloration|qual|< color|1:Pallor ; 2:Cyanosis ; 3:reddened ; 4:Redness
+2436|white or red bottom|qual|< color|1:Pallor ; 2:reddened ; 3:Bronsted base ; 4:Cyanosis
+2437|wound color|qual|< color|1:degree of wound pain ; 2:Acute cutaneous wound ; 3:Cutaneous wound ; 4:Chronic cutaneous wound
+2438|yellow|qual|< color|1:Redness ; 2:Cyanosis ; 3:Pallor ; 4:reddened
+2439|yellow-green|qual|< color|1:reddened ; 2:Cyanosis ; 3:Redness ; 4:livid
+2440|AbClo + AbThera|proc|< completely executed planned process|1:CART ; 2:Ankle-brachial index measurement process ; 3:hierarchical clustering ; 4:disorder addition process
+2441|Abdominal and pelvic irradiation|proc|< completely executed planned process|1:partitioning data transformation ; 2:principal components analysis dimensionality reduction ; 3:Peripheral arterial occlusive disease process ; 4:Planimetry
+2442|Autologous pericardial conduit reconstruction|proc|< completely executed planned process|1:class prediction data transformation ; 2:CART ; 3:Wound healing by tertiary intention process ; 4:partitioning data transformation
+2443|chair-based upper extremity exercise|proc|< completely executed planned process|1:CART ; 2:Pressure offloading process ; 3:leave one out cross validation method ; 4:hierarchical clustering
+2444|clopidogrel use|proc|< completely executed planned process|1:Smoking ; 2:coagulation ; 3:hemostasis ; 4:class prediction data transformation
+2445|closed reduction and intramedullary nail fixation|proc|< completely executed planned process|1:clustered data visualization ; 2:dimensionality reduction ; 3:class discovery data transformation ; 4:k-means clustering
+2446|closed reduction with percutaneous fixation|proc|< completely executed planned process|1:Cold plasma wound treatment process ; 2:class prediction data transformation ; 3:clustered data visualization ; 4:dimensionality reduction
+2447|colocolonic anastomosis|proc|< completely executed planned process|1:class prediction data transformation ; 2:class discovery data transformation ; 3:Wound healing by tertiary intention process ; 4:CART
+2448|combined chemotherapy|proc|< completely executed planned process|1:material component separation ; 2:hierarchical clustering ; 3:Malignant process ; 4:Antibiotic administration process
+2449|continuous lateral rotation therapy|proc|< completely executed planned process|1:class discovery data transformation ; 2:class prediction data transformation ; 3:CART ; 4:leave one out cross validation method
+2450|Coordinated Resuscitation|proc|< completely executed planned process|1:clustered data visualization ; 2:Wound healing by tertiary intention process ; 3:hierarchical clustering ; 4:Regenerative wound healing process
+2451|CTP application series|proc|< completely executed planned process|1:class prediction data transformation ; 2:Cold plasma wound treatment process ; 3:partitioning data transformation ; 4:CART
+2452|CYT997 treatment|proc|< completely executed planned process|1:class prediction data transformation ; 2:class discovery data transformation ; 3:Cold plasma wound treatment process ; 4:CART
+2453|direct-to-implant PP|proc|< completely executed planned process|1:partitioning data transformation ; 2:class prediction data transformation ; 3:planned process ; 4:planned process
+2454|dual-step CO laser protocol|proc|< completely executed planned process|1:Cold plasma wound treatment process ; 2:Water-jet assisted wound debridement process ; 3:class discovery data transformation ; 4:Ultrasound-assisted wound debridement process
+2455|dual-step macro-pinhole column plus fractional CO protocol|proc|< completely executed planned process|1:partitioning data transformation ; 2:material component separation ; 3:planned process ; 4:planned process
+2456|extended AP|proc|< completely executed planned process|1:disorder addition process ; 2:Disease diagnosis process by exclusion ; 3:intended disorder elimination process ; 4:peak matching
+2457|intensive cardiovascular risk management|proc|< completely executed planned process|1:Vascular assessment process ; 2:blood vessel diameter maintenance ; 3:clustered data visualization ; 4:k-means clustering
+2458|intramuscular UCMSC|proc|< completely executed planned process|1:k-means clustering ; 2:statistical model validation ; 3:peak matching ; 4:manufacturing
+2459|ipsilateral CFA reintervention|proc|< completely executed planned process|1:CUSA(r) assisted debridement ; 2:class prediction data transformation ; 3:Wound healing by tertiary intention process ; 4:class discovery data transformation
+2460|IV-PCA fentanyl consumption|proc|< completely executed planned process|1:Acidity impact process ; 2:Heat impact process ; 3:Pressure impact process ; 4:Wound volumetrics
+2461|IVCA monotherapy|proc|< completely executed planned process|1:leave one out cross validation method ; 2:CART ; 3:statistical model validation ; 4:clustered data visualization
+2462|laparoscopic cholecystectomy|proc|< completely executed planned process|1:leave one out cross validation method ; 2:Bacterial culture process ; 3:Clinical inspection ; 4:hierarchical clustering
+2463|osteochondral autograft transplantation|proc|< completely executed planned process|1:class prediction data transformation ; 2:CART ; 3:Autolytic wound debridement process ; 4:class discovery data transformation
+2464|PCP-3 NFMs treatment|proc|< completely executed planned process|1:Cold plasma wound treatment process ; 2:class prediction data transformation ; 3:k-means clustering ; 4:material component separation
+2465|PCSK9 inhibitor therapy|proc|< completely executed planned process|1:CART ; 2:principal components analysis dimensionality reduction ; 3:clustered data visualization ; 4:k-means clustering
+2466|percutaneous SCS implantation|proc|< completely executed planned process|1:partitioning data transformation ; 2:dataset creating ; 3:Cold plasma wound treatment process ; 4:class prediction data transformation
+2467|peri-implant marginal bone preservation|proc|< completely executed planned process|1:peak matching ; 2:Pressure offloading process ; 3:partitioning data transformation ; 4:CUSA(r) assisted debridement
+2468|Peri-operative allogenic red blood cell transfusion|proc|< completely executed planned process|1:Cold plasma wound treatment process ; 2:Autolytic wound debridement process ; 3:Wound causing peripheral arterial occlusive disease process ; 4:CART
+2469|perioperative antineoplastic therapy|proc|< completely executed planned process|1:Surgical treatment process ; 2:Postoperative wound control process ; 3:Process of administering a local anesthetic agent ; 4:Wound causing malignant process
+2470|PIPC/TAZ treatment|proc|< completely executed planned process|1:partitioning data transformation ; 2:CART ; 3:Cold plasma wound treatment process ; 4:class prediction data transformation
+2471|portable negative pressure wound therapy|proc|< completely executed planned process|1:Cold plasma wound treatment process ; 2:Pressure offloading process ; 3:Water-jet assisted wound debridement process ; 4:Wound causing pressure impact process
+2472|posterior trunk reconstruction|proc|< completely executed planned process|1:partitioning data transformation ; 2:decision tree building data transformation ; 3:class prediction data transformation ; 4:Wound healing by tertiary intention process
+2473|prepectoral breast reconstruction method|proc|< completely executed planned process|1:partitioning data transformation ; 2:Wound healing by tertiary intention process ; 3:class prediction data transformation ; 4:Wound healing by primary intention process
+2474|prepectoral direct-to-implant reconstruction|proc|< completely executed planned process|1:partitioning data transformation ; 2:class prediction data transformation ; 3:class discovery data transformation ; 4:decision tree building data transformation
+2475|prepectoral implant placement|proc|< completely executed planned process|1:partitioning data transformation ; 2:class prediction data transformation ; 3:dataset creating ; 4:class discovery data transformation
+2476|prepectoral implant-based reconstruction|proc|< completely executed planned process|1:partitioning data transformation ; 2:class prediction data transformation ; 3:principal components analysis dimensionality reduction ; 4:dataset creating
+2477|prepectoral placement|proc|< completely executed planned process|1:partitioning data transformation ; 2:class prediction data transformation ; 3:peak matching ; 4:material component separation
+2478|prepectoral reconstruction|proc|< completely executed planned process|1:Wound healing by tertiary intention process ; 2:class prediction data transformation ; 3:partitioning data transformation ; 4:principal components analysis dimensionality reduction
+2479|prolonged procedure|proc|< completely executed planned process|1:Surgical treatment process ; 2:material processing ; 3:material processing ; 4:disorder addition process
+2480|silicone catheter use|proc|< completely executed planned process|1:Smoking ; 2:Pressure offloading process ; 3:class discovery data transformation ; 4:dataset creating
+2481|single non-peroneal revascularization|proc|< completely executed planned process|1:Irreversibly diminished microvascular perfusion process ; 2:Wound healing by primary intention process ; 3:Cold plasma wound treatment process ; 4:Pressure offloading process
+2482|single peroneal tibial revascularization|proc|< completely executed planned process|1:partitioning data transformation ; 2:Cold plasma wound treatment process ; 3:Wound healing by tertiary intention process ; 4:Wound healing by primary intention process
+2483|source-control reassessment|proc|< completely executed planned process|1:class discovery data transformation ; 2:class prediction data transformation ; 3:statistical model validation ; 4:material component separation
+2484|survival of musculocutaneous flap|proc|< completely executed planned process|1:Wound healing by tertiary intention process ; 2:Postoperative wound control process ; 3:Wound healing by secondary intention process ; 4:Irreversibly diminished microvascular perfusion process
+2485|SVF+CO2 method|proc|< completely executed planned process|1:statistical model validation ; 2:leave one out cross validation method ; 3:class prediction data transformation ; 4:clustered data visualization
+2486|technically successful infrapopliteal endovascular treatment|proc|< completely executed planned process|1:Peripheral arterial occlusive disease process ; 2:Wound causing peripheral arterial occlusive disease process ; 3:Irreversibly diminished microvascular perfusion process ; 4:Vascular assessment process
+2487|three-dimensional conformal RT|proc|< completely executed planned process|1:class prediction data transformation ; 2:CART ; 3:dimensionality reduction ; 4:class discovery data transformation
+2488|ADMSC-exosome|mate|< complex of molecules|1:scattered molecular aggregate ; 2:subatomic particle ; 3:composite particle ; 4:Amniota
+2489|bioactive complex|mate|< complex of molecules|1:protein-containing complex ; 2:mixture ; 3:composite particle ; 4:biomacromolecule
+2490|biofilm matrix|mate|< complex of molecules|1:Wound biofilm ; 2:Fibrin-covered wound bed ; 3:scattered molecular aggregate ; 4:Polyfilament thread material
+2491|biomembrane|mate|< complex of molecules|1:biomacromolecule ; 2:information biomacromolecule ; 3:macromolecule ; 4:Amniota
+2492|biomimetic and nanoenzyme system|mate|< complex of molecules|1:biomacromolecule ; 2:information biomacromolecule ; 3:macromolecule ; 4:enzyme
+2493|biomimetic nanozyme system|mate|< complex of molecules|1:biomacromolecule ; 2:information biomacromolecule ; 3:heteroatomic molecular entity ; 4:macromolecule
+2494|CM-DiI-labeled exosome|mate|< complex of molecules|1:subatomic particle ; 2:composite particle ; 3:scattered molecular aggregate ; 4:fundamental particle
+2495|co-cultured EV|mate|< complex of molecules|1:composite particle ; 2:mixture ; 3:scattered molecular aggregate ; 4:electron
+2496|collagen and elastin matrix|mate|< complex of molecules|1:cellular_component ; 2:Bovine collagen containing wound dressing ; 3:cellular anatomical entity ; 4:Biosynthetic cellulose
+2497|curcumin micelle|mate|< complex of molecules|1:composite particle ; 2:Polihexanide gel ; 3:Octenidine gel ; 4:heteromonocyclic compound
+2498|cytokine milieu|mate|< complex of molecules|1:cellular anatomical entity ; 2:cellular_component ; 3:region ; 4:cell
+2499|ECM composition|mate|< complex of molecules|1:cellular_component ; 2:material anatomical entity ; 3:gross anatomical part ; 4:anatomical structure
+2500|ECM scaffold|mate|< complex of molecules|1:cellular_component ; 2:Hydrogel containing wound dressing ; 3:material anatomical entity ; 4:scattered molecular aggregate
+2501|ECM-based scaffold|mate|< complex of molecules|1:Hydrogel containing wound dressing ; 2:material anatomical entity ; 3:scattered molecular aggregate ; 4:anatomical structure
+2502|enzymatic microenvironment|mate|< complex of molecules|1:enzyme ; 2:Substance used for enzymatic wound debridement ; 3:region ; 4:experimental_feature
+2503|exosome-based system|mate|< complex of molecules|1:subatomic particle ; 2:scattered molecular aggregate ; 3:composite particle ; 4:protein-containing complex
+2504|fibril|mate|< complex of molecules|1:Polyfilament thread material ; 2:scattered molecular aggregate ; 3:polymer ; 4:Monofilament thread material
+2505|fibroblast complex|mate|< complex of molecules|1:cellular_component ; 2:cellular anatomical entity ; 3:scattered molecular aggregate ; 4:cell
+2506|homodimeric combination|mate|< complex of molecules|1:mixture ; 2:monoatomic monocation ; 3:composite particle ; 4:monocyclic compound
+2507|ion channel|mate|< complex of molecules|1:ion ; 2:cation ; 3:organic cation ; 4:organic ion
+2508|metabolome|mate|< complex of molecules|1:molecular entity ; 2:main group molecular entity ; 3:molecule ; 4:molecule
+2509|micellar platform|mate|< complex of molecules|1:scattered molecular aggregate ; 2:peptide zwitterion ; 3:main group molecular entity ; 4:biomacromolecule
+2510|Migrasome|mate|< complex of molecules|1:subatomic particle ; 2:scattered molecular aggregate ; 3:composite particle ; 4:fundamental particle
+2511|molecularly engineered antibacterial nanoassembly|mate|< complex of molecules|1:biomacromolecule ; 2:information biomacromolecule ; 3:scattered molecular aggregate ; 4:peptide zwitterion
+2512|multifunctional co-assembly system|mate|< complex of molecules|1:protein-containing complex ; 2:scattered molecular aggregate ; 3:composite particle ; 4:mixture
+2513|multifunctional platform|mate|< complex of molecules|1:mixture ; 2:composite particle ; 3:polyatomic entity ; 4:heteroatomic molecular entity
+2514|multifunctional system|mate|< complex of molecules|1:mixture ; 2:polyatomic entity ; 3:coordination entity ; 4:composite particle
+2515|Nano delivery system|mate|< complex of molecules|1:subatomic particle ; 2:composite particle ; 3:nuclear particle ; 4:polymer
+2516|nanocarrier-mediated drug delivery system|mate|< complex of molecules|1:composite particle ; 2:polymer ; 3:subatomic particle ; 4:nuclear particle
+2517|nanoscale assembly|mate|< complex of molecules|1:polymer ; 2:subatomic particle ; 3:assembly ; 4:composite particle
+2518|nanoscale vesicle|mate|< complex of molecules|1:subatomic particle ; 2:nuclear particle ; 3:composite particle ; 4:nucleon
+2519|nanostructure|mate|< complex of molecules|1:subatomic particle ; 2:nuclear particle ; 3:polymer ; 4:anatomical structure
+2520|nanosystem|mate|< complex of molecules|1:subatomic particle ; 2:composite particle ; 3:scattered molecular aggregate ; 4:nuclear particle
+2521|purified vesicle|mate|< complex of molecules|1:subatomic particle ; 2:composite particle ; 3:scattered molecular aggregate ; 4:virion component
+2522|self-assembled micelle|mate|< complex of molecules|1:scattered molecular aggregate ; 2:polymer ; 3:biomacromolecule ; 4:peptide zwitterion
+2523|supramolecular self-assembled biomaterial|mate|< complex of molecules|1:polymer ; 2:biomacromolecule ; 3:scattered molecular aggregate ; 4:information biomacromolecule
+2524|transferosome|mate|< complex of molecules|1:subatomic particle ; 2:composite particle ; 3:scattered molecular aggregate ; 4:protein-containing complex
+2525|vesicular nanocarrier|mate|< complex of molecules|1:composite particle ; 2:subatomic particle ; 3:nuclear particle ; 4:virion component
+2526|acute congestive heart failure exacerbation|proc|< complication disease process|1:Wound causing acidity impact process ; 2:disease course process putting out disorders as part of a complication ; 3:Acidity impact process ; 4:Wound causing heat impact process
+2527|co-occurring complication|proc|< complication disease process|1:Wound complication process ; 2:disease course process putting out disorders as part of a complication ; 3:completely executed planned process ; 4:disorder addition process
+2528|device-related serious adverse event|proc|< complication disease process|1:Suspected disease diagnosis process ; 2:intended disorder elimination process ; 3:response to stimulus ; 4:system process
+2529|diabetic foot disease event|proc|< complication disease process|1:Wound causing diabetes mellitus disease process ; 2:Diabetes mellitus disease process ; 3:Diabetes mellitus type II disease process ; 4:Diabetes mellitus type I disease process
+2530|diabetic foot outcome|proc|< complication disease process|1:Wound causing diabetes mellitus disease process ; 2:Diabetes mellitus disease process ; 3:Diabetes mellitus type II disease process ; 4:Diabetes mellitus type I disease process
+2531|end-organ damage|proc|< complication disease process|1:Wound causing malignant process ; 2:Trauma process ; 3:disease course process putting out disorders as part of a complication ; 4:Wound causing process
+2532|HF event|proc|< complication disease process|1:Heat impact process ; 2:Wound causing acidity impact process ; 3:Acidity impact process ; 4:Wound causing heat impact process
+2533|infections in immunocompromised patient|proc|< complication disease process|1:Wound causing autoimmune disease process ; 2:Wound infection process ; 3:Wound causing venous insufficiency disease process ; 4:Venous insufficiency disease process
+2534|inflammation-related complication|proc|< complication disease process|1:Inflammation process ; 2:inflammatory response ; 3:Wound complication process ; 4:Wound infection process
+2535|Initial vascular complication|proc|< complication disease process|1:Wound causing angiopathic disease process ; 2:Angiopathic disease process ; 3:Vascular assessment process ; 4:Wound causing venous insufficiency disease process
+2536|medical and infection complication|proc|< complication disease process|1:Wound complication process ; 2:Wound infection process ; 3:disease course process putting out disorders as part of a complication ; 4:Wound causing malignant process
+2537|mucormycosis following COVID-19|proc|< complication disease process|1:Wound causing acidity impact process ; 2:Wound causing diabetes mellitus disease process ; 3:Water-jet assisted wound debridement process ; 4:CART
+2538|nerve-related complication|proc|< complication disease process|1:Wound causing neuropathic disease process ; 2:Neuropathic disease process ; 3:Wound complication process ; 4:Wound causing process
+2539|nosocomial infection complication|proc|< complication disease process|1:Wound infection process ; 2:Wound complication process ; 3:Postoperative wound control process ; 4:Wound causing venous insufficiency disease process
+2540|OM episode|proc|< complication disease process|1:disease course process putting out disorders as part of a complication ; 2:Peripheral arterial occlusive disease process ; 3:disease perpetuation process ; 4:Wound causing peripheral arterial occlusive disease process
+2541|opportunistic infection|proc|< complication disease process|1:Wound infection process ; 2:Peripheral arterial occlusive disease process ; 3:collecting specimen from organism ; 4:CART
+2542|peri- and postoperative complication|proc|< complication disease process|1:Wound complication process ; 2:Postoperative wound control process ; 3:Impaired wound healing process ; 4:Clinical wound assessment
+2543|post-RT complication|proc|< complication disease process|1:Wound complication process ; 2:Wound causing malignant process ; 3:disease course process putting out disorders as part of a complication ; 4:Postoperative wound control process
+2544|postoperative adverse event|proc|< complication disease process|1:Postoperative wound control process ; 2:Wound complication process ; 3:Impaired wound healing process ; 4:wound healing
+2545|postoperative inflammatory complication|proc|< complication disease process|1:Postoperative wound control process ; 2:Wound complication process ; 3:Wound infection process ; 4:Impaired wound healing process
+2546|postoperative vascular crisis|proc|< complication disease process|1:Wound causing venous insufficiency disease process ; 2:Wound causing angiopathic disease process ; 3:Wound causing peripheral arterial occlusive disease process ; 4:Venous insufficiency disease process
+2547|progression of sepsis|proc|< complication disease process|1:disease perpetuation process ; 2:Wound causing malignant process ; 3:disease course process putting out disorders as part of a complication ; 4:Malignant process
+2548|puerperal sepsis|proc|< complication disease process|1:Peripheral arterial occlusive disease process ; 2:Wound infection process ; 3:Irreversibly diminished microvascular perfusion process ; 4:Wound causing peripheral arterial occlusive disease process
+2549|rebleeding|proc|< complication disease process|1:disease perpetuation process ; 2:Wound healing by secondary intention process ; 3:Wound dehiscence process ; 4:Wound healing by tertiary intention process
+2550|recurrent periprosthetic infection|proc|< complication disease process|1:disease perpetuation process ; 2:Wound infection process ; 3:Microbial analysis of the wound swab for wound pathogens ; 4:Postoperative wound control process
+2551|site-specific complication|proc|< complication disease process|1:Wound complication process ; 2:disease course process putting out disorders as part of a complication ; 3:Scarring process ; 4:Pathological scarring process
+2552|smoke inhalation-related multiple organ dysfunction|proc|< complication disease process|1:Smoking ; 2:disease course process putting out disorders as part of a complication ; 3:Wound causing diabetes mellitus disease process ; 4:Heat impact process
+2553|systemic thromboembolic complication|proc|< complication disease process|1:coagulation ; 2:Wound causing venous insufficiency disease process ; 3:Venous insufficiency disease process ; 4:disease course process putting out disorders as part of a complication
+2554|venous complication|proc|< complication disease process|1:Venous insufficiency disease process ; 2:Wound causing venous insufficiency disease process ; 3:Wound complication process ; 4:disease course process putting out disorders as part of a complication
+2555|worsening venous hypertension|proc|< complication disease process|1:Venous insufficiency disease process ; 2:Wound causing venous insufficiency disease process ; 3:disease course process putting out disorders as part of a complication ; 4:Wound causing angiopathic disease process
+2556|Ag-Cur nanoparticle|mate|< composite particle|1:silver atom ; 2:Silver-containing wound dressing ; 3:polymer ; 4:peptide zwitterion
+2557|Ag-Curcumin nanoparticle|mate|< composite particle|1:Silver-containing wound dressing ; 2:silver atom ; 3:Octenidine gel ; 4:peptide zwitterion
+2558|CuS NP|mate|< composite particle|1:subatomic particle ; 2:scattered molecular aggregate ; 3:Octenidine gel ; 4:copper group element atom
+2559|ABCA3 expression|qual|< composition|1:open ; 2:EC 3.1.* (ester hydrolase) inhibitor ; 3:granulating ; 4:degree of epithelialization
+2560|abdominal fat percentage|qual|< composition|1:degree of fibrin coverage ; 2:macronutrient ; 3:degree of skin adherence to underlying tissue ; 4:food component
+2561|ALA concentration|qual|< composition|1:acid ; 2:age ; 3:livid ; 4:acute
+2562|albumin level|cont|< composition|1:Burn classification grade ; 2:Burn classification scale ; 3:Burn wound classification grade according to Hildanus and Derganc ; 4:Burn wound classification according to Hildanus and Derganc
+2563|albumin status|qual|< composition|1:degree of microbial burden ; 2:Malnutrition ; 3:degree of fibrin coverage ; 4:age
+2564|alcohol status|qual|< composition|1:age ; 2:acute ; 3:size ; 4:acceptor
+2565|Angiogenic cytokine level|qual|< composition|1:degree of tissue perfusion ; 2:degree of granulation ; 3:inorganic acid ; 4:granulating
+2566|atherosclerotic burden|qual|< composition|1:degree of microbial burden ; 2:degree of fibrin coverage ; 3:degree of maceration ; 4:ischemic
+2567|ATP content|qual|< composition|1:degree of tissue perfusion ; 2:acute ; 3:age ; 4:degree of necrosis
+2568|bacterial community characteristic|qual|< composition|1:bacterial metabolite ; 2:phenotype ; 3:color ; 4:prokaryotic metabolite
+2569|bacterial composition|qual|< composition|1:bacterial metabolite ; 2:prokaryotic metabolite ; 3:degree of microbial burden ; 4:acid
+2570|bacterial presence|qual|< composition|1:bacterial metabolite ; 2:colonized ; 3:degree of microbial burden ; 4:infected
+2571|balance between PEDF and VEGF|qual|< composition|1:degree of tissue perfusion ; 2:degree of fibrin coverage ; 3:EC 1.3.1.9 [enoyl-[acyl-carrier-protein] reductase (NADH)] inhibitor ; 4:increased process quality
+2572|blood PCT/CRP level|qual|< composition|1:color ; 2:degree of tissue perfusion ; 3:Cyanosis ; 4:acute
+2573|blood t-PAIC level|qual|< composition|1:EC 2.* (transferase) inhibitor ; 2:livid ; 3:degree of tissue perfusion ; 4:degree of time after disease inception
+2574|Blood TM and t-PAIC level|qual|< composition|1:degree of tissue perfusion ; 2:degree of time after disease inception ; 3:degree of microbial burden ; 4:cofactor
+2575|bone volume/total volume|qual|< composition|1:degree of microbial burden ; 2:livid ; 3:swollen ; 4:size
+2576|bone-specific alkaline phosphatase level|qual|< composition|1:antimetabolite ; 2:EC 3.1.1.* (carboxylic ester hydrolase) inhibitor ; 3:base ; 4:protein kinase agonist
+2577|calcified|qual|< composition|1:softened ; 2:granulating ; 3:swollen ; 4:depth
+2578|calcified femoro-popliteal|qual|< composition|1:fibrin-covered ; 2:degree of fibrin coverage ; 3:reddened ; 4:softened
+2579|cell composition|qual|< composition|1:color ; 2:macronutrient ; 3:chemical role ; 4:biochemical role
+2580|cellularity|qual|< composition|1:granulating ; 2:color ; 3:neoplastic ; 4:swollen
+2581|Chlorhexidine Concentration|qual|< composition|1:degree of microbial burden ; 2:colonized ; 3:bacterial metabolite ; 4:degree of fibrin coverage
+2582|Circulatory levels of FABP4|qual|< composition|1:livid ; 2:degree of fibrin coverage ; 3:degree of tissue perfusion ; 4:EC 3.5.1.* (non-peptide linear amide C-N hydrolase) inhibitor
+2583|Collagen Balance|qual|< composition|1:softened ; 2:degree of fibrin coverage ; 3:degree of tissue firmness ; 4:Scarring
+2584|collagen composition|qual|< composition|1:degree of tissue firmness ; 2:phenotype ; 3:degree of granulation ; 4:structure
+2585|collagen content|qual|< composition|1:degree of granulation ; 2:degree of tissue firmness ; 3:quality of a substance ; 4:Scarring
+2586|collagen-rich|qual|< composition|1:fibrin-covered ; 2:softened ; 3:Scarring ; 4:degree of tissue firmness
+2587|community composition|qual|< composition|1:chemical role ; 2:bacterial metabolite ; 3:color ; 4:biochemical role
+2588|concentration of growth factor|qual|< composition|1:degree of granulation ; 2:nutrient ; 3:granulating ; 4:degree of fibrin coverage
+2589|concentration of oxy/deoxyhaemoglobin|qual|< composition|1:EC 1.3.1.* (oxidoreductase acting on donor CH-CH group, NAD(+) or NADP(+) as acceptor) inhibitor ; 2:EC 1.3.* (oxidoreductase acting on donor CH-CH group) inhibitor ; 3:EC 1.5.1.* (oxidoreductase acting on donor CH-NH group, NAD(+) or NADP(+) as acceptor) inhibitor ; 4:EC 1.5.* (oxidoreductase acting on donor CH-NH group) inhibitor
+2590|cytokines/growth factor expression|qual|< composition|1:degree of epithelialization ; 2:inflamed ; 3:epithelialized ; 4:degree of granulation
+2591|density of hair follicles/gland|qual|< composition|1:degree of granulation ; 2:size ; 3:degree of fibrin coverage ; 4:degree of necrosis
+2592|EV composition|qual|< composition|1:quality of interaction of a substance with electromagnetic radiation ; 2:degree of epithelialization ; 3:color ; 4:size
+2593|exudate characteristic|qual|< composition|1:granulating ; 2:degree of granulation ; 3:swollen ; 4:protruding
+2594|exudate type|qual|< composition|1:degree of granulation ; 2:granulating ; 3:degree of epithelialization ; 4:softened
+2595|fat-to-muscle ratio|qual|< composition|1:macronutrient ; 2:degree of microbial burden ; 3:degree of fibrin coverage ; 4:degree of tissue firmness
+2596|fibroblast content|qual|< composition|1:degree of fibrin coverage ; 2:degree of granulation ; 3:Scarring ; 4:fibrin-covered
+2597|Fungal diversity|qual|< composition|1:fungal metabolite ; 2:depth ; 3:colonized ; 4:increased object quality
+2598|glucose concentration|qual|< composition|1:degree of granulation ; 2:hypoglycemic agent ; 3:granulating ; 4:macronutrient
+2599|growth factor content|qual|< composition|1:degree of granulation ; 2:nutrient ; 3:size ; 4:macronutrient
+2600|HCA level|qual|< composition|1:human metabolite ; 2:acid ; 3:chemical role ; 4:mouse metabolite
+2601|HCO level|qual|< composition|1:chemical role ; 2:human metabolite ; 3:EC 1.3.* (oxidoreductase acting on donor CH-CH group) inhibitor ; 4:mouse metabolite
+2602|hemoglobin concentration|qual|< composition|1:Cyanosis ; 2:color ; 3:degree of microbial burden ; 4:granulating
+2603|hemoglobin content|qual|< composition|1:degree of microbial burden ; 2:color ; 3:Cyanosis ; 4:granulating
+2604|heterogeneous|qual|< composition|1:phenotype ; 2:deviation (from_normal) ; 3:Phenotypic abnormality ; 4:qualitative
+2605|HgA1c|qual|< composition|1:color ; 2:Lewis base ; 3:acute ; 4:age
+2606|immune cell density|qual|< composition|1:degree of microbial burden ; 2:granulating ; 3:degree of granulation ; 4:degree of necrosis
+2607|leukocyte content|cont|< composition|1:cell specimen ; 2:cell ; 3:granulating ; 4:cellular_component
+2608|lipoprotein [Lp] level|qual|< composition|1:biochemical role ; 2:livid ; 3:optical quality ; 4:protic solvent
+2609|lipoprotein profile|qual|< composition|1:phenotype ; 2:biochemical role ; 3:degree of fibrin coverage ; 4:role
+2610|local concentration|qual|< composition|1:granulating ; 2:depth ; 3:size ; 4:increased area
+2611|microbial balance|qual|< composition|1:degree of microbial burden ; 2:bacterial metabolite ; 3:sterile ; 4:prokaryotic metabolite
+2612|microbiologic complexity|qual|< composition|1:degree of microbial burden ; 2:morphology ; 3:granulating ; 4:bacterial metabolite
+2613|microbiome diversity|qual|< composition|1:bacterial metabolite ; 2:degree of microbial burden ; 3:colonized ; 4:prokaryotic metabolite
+2614|Microbiome heterogeneity|qual|< composition|1:Unusual infection ; 2:degree of microbial burden ; 3:deviation (from_normal) ; 4:colonized
+2615|microbiota structure|qual|< composition|1:bacterial metabolite ; 2:prokaryotic metabolite ; 3:colonized ; 4:structure
+2616|mixed nature|qual|< composition|1:qualitative ; 2:morphology ; 3:neoplastic ; 4:phenotype
+2617|Neutrophil level|qual|< composition|1:granulating ; 2:degree of necrosis ; 3:nutrient ; 4:macronutrient
+2618|osteocalcin carboxylation state|qual|< composition|1:mouse metabolite ; 2:closed ; 3:Escherichia coli metabolite ; 4:biochemical role
+2619|oxidant-antioxidant balance|qual|< composition|1:oxidising agent ; 2:EC 1.* (oxidoreductase) inhibitor ; 3:acid ; 4:inorganic acid
+2620|oxygen balance|qual|< composition|1:degree of tissue perfusion ; 2:inorganic acid ; 3:biochemical role ; 4:base
+2621|PGE2 concentration|qual|< composition|1:degree of granulation ; 2:degree of epithelialization ; 3:granulating ; 4:livid
+2622|platelet concentration|qual|< composition|1:granulating ; 2:swollen ; 3:degree of fibrin coverage ; 4:degree of tissue perfusion
+2623|preoperative hematocrit|qual|< composition|1:degree of time after disease inception ; 2:EC 1.3.* (oxidoreductase acting on donor CH-CH group) inhibitor ; 3:cofactor ; 4:degree of fibrin coverage
+2624|preoperative nutritional status|qual|< composition|1:Malnutrition ; 2:nutrient ; 3:macronutrient ; 4:colonized
+2625|regenerative immune profile|qual|< composition|1:inflamed ; 2:sterile ; 3:degree of time after disease inception ; 4:degree of granulation
+2626|serum 25-hydroxyvitamin D [25D] concentration|qual|< composition|1:depth ; 2:vitamin (role) ; 3:duration ; 4:biochemical role
+2627|serum AGE level|qual|< composition|1:age ; 2:increased age ; 3:acute ; 4:size
+2628|serum albumin concentration|qual|< composition|1:antimetabolite ; 2:size ; 3:degree of microbial burden ; 4:age
+2629|serum C-reactive protein level|qual|< composition|1:chronic ; 2:chronic ; 3:Methicillin-resistant Staphylococcus aureus infection ; 4:NMR chemical shift reference compound
+2630|silver or copper concentration|qual|< composition|1:micronutrient ; 2:degree of maceration ; 3:color ; 4:size
+2631|systemic cytokine balance|qual|< composition|1:biochemical role ; 2:Abnormality of the immune system ; 3:biological role ; 4:base
+2632|systemic lactate concentration|qual|< composition|1:degree of tissue perfusion ; 2:livid ; 3:ischemic ; 4:Cyanosis
+2633|total cholesterol level|qual|< composition|1:color ; 2:chemical role ; 3:time ; 4:size
+2634|total protein content|qual|< composition|1:macronutrient ; 2:allergen ; 3:physical quality ; 4:size
+2635|trace-element homeostasis|qual|< composition|1:micronutrient ; 2:vitamin (role) ; 3:biochemical role ; 4:environmental contaminant
+2636|Treg/Th17 balance|cont|< composition|1:regulatory role ; 2:regulator role ; 3:pressure redistribution function ; 4:Autoimmune tissue disorder
+2637|Vit D nutritional status|qual|< composition|1:Malnutrition ; 2:nutrient ; 3:vitamin (role) ; 4:micronutrient
+2638|ADHD-comorbidity|mate|< compound pathological disorder|1:disorder ; 2:heteroorganic entity ; 3:anatomical cluster ; 4:coordination entity
+2639|arterial and venous disorder|mate|< compound pathological disorder|1:Angiopathy ; 2:Microangiopathy ; 3:Venous insufficiency disorder ; 4:Angiopathic wound
+2640|bi-sphincteric dysfunction|mate|< compound pathological disorder|1:Bilateria ; 2:heteroorganic entity ; 3:bismuth atom ; 4:coordination entity
+2641|Cardiometabolic Multimorbidity|mate|< compound pathological disorder|1:Diabetic metabolic disorder ; 2:Microangiopathy ; 3:mixture ; 4:complex of molecules
+2642|comorbidities other than DM and obesity|mate|< compound pathological disorder|1:Diabetic metabolic disorder ; 2:material complication disease entity ; 3:Diabetic wound ; 4:Developed material disease entity
+2643|complex comorbidity|mate|< compound pathological disorder|1:material complication disease entity ; 2:heteroorganic entity ; 3:mixture ; 4:complex of molecules
+2644|complex, multilevel, calcified disease|mate|< compound pathological disorder|1:mineral ; 2:mixture ; 3:Developed material disease entity ; 4:inorganic oxide
+2645|metabolic syndrome|mate|< compound pathological disorder|1:Diabetic metabolic disorder ; 2:Microangiopathy ; 3:Sepsis ; 4:mixture
+2646|multi-organ comorbidity|mate|< compound pathological disorder|1:heteroorganic entity ; 2:material complication disease entity ; 3:polyatomic entity ; 4:mixture
+2647|multiple organ dysfunction syndrome|mate|< compound pathological disorder|1:Sepsis ; 2:heteroorganic entity ; 3:Immunosuppression ; 4:Developed material disease entity
+2648|psychiatric comorbidity|cont|< compound pathological disorder|1:pathological disorder ; 2:disorder ; 3:disease complication diagnostic result ; 4:candidate diagnosis
+2649|renal/urological comorbidity|mate|< compound pathological disorder|1:material complication disease entity ; 2:Malignancy ; 3:organonitrogen heterocyclic compound ; 4:heteroorganic entity
+2650|stress-induced hypothalamic-pituitary-adrenal axis dysregulation|mate|< compound pathological disorder|1:Hypergranulation ; 2:heteroorganic entity ; 3:Autoimmune disease related wound ; 4:Autoimmune tissue disorder
+2651|individualized compression therapy|info|< Compression therapy plan specification|1:Negative pressure wound therapy plan specification ; 2:Compress debridement plan specification ; 3:Medical condition treatment plan specification ; 4:denotator type
+2652|Personalized and Multidimensional Compression Assessment and Therapy|info|< Compression therapy plan specification|1:Medical condition treatment plan specification ; 2:Compress debridement plan specification ; 3:Pain management plan specification ; 4:Shea classification of pressure ulcers
+2653|antibiotic recommendation|info|< conclusion based on data|1:Antibiotic therapy plan specification ; 2:Systemic antibiotic therapy plan specification ; 3:Topical antibiotic therapy plan specification ; 4:Prophylactic antibiotic therapy plan specification
+2654|lesion-to-background ratio|info|< conclusion based on data|1:length unit ; 2:threshold value ; 3:rate unit ; 4:binary_comparison_operator
+2655|mild to moderate OA|info|< confirmed disease diagnostic result by not completely objective criterion|1:Wagner and Anderson wound classification grade ; 2:IWII wound classification grade ; 3:less_than_operator ; 4:less_than_or_equal_operator
+2656|Pseudomonas aeruginosa-positive culture|info|< confirmed diseases diagnostic result by objective criterion|1:Prophylactic antibiotic therapy plan specification ; 2:Antibiotic therapy plan specification ; 3:portioning objective ; 4:Topical antibiotic therapy plan specification
+2657|signs of OM on MRI|info|< confirmed diseases diagnostic result by objective criterion|1:obsolescence reason specification ; 2:pathologic distant metastases stage for ovary according to AJCC 7th edition ; 3:data about an ontology part ; 4:confirmed disease diagnostic result by not completely objective criterion
+2658|the presence of multidrug-resistant infection|info|< confirmed diseases diagnostic result by objective criterion|1:material transformation objective ; 2:Mechanical debridement plan specification ; 3:Shea classification of pressure ulcers ; 4:confirmed disease diagnostic result by not completely objective criterion
+2659|X-ray evidence of osteomyelitis|info|< confirmed diseases diagnostic result by objective criterion|1:obsolescence reason specification ; 2:data about an ontology part ; 3:confirmed disease diagnostic result by not completely objective criterion ; 4:Antibiotic therapy plan specification
+2660|C acnes contamination|qual|< contaminated|1:Methicillin-resistant Staphylococcus aureus infection ; 2:reddened ; 3:abscess ; 4:infected
+2661|culture-positive|cont|< contaminated|1:colonized ; 2:Bacteria ; 3:sterile ; 4:composition
+2662|embedded contamination|qual|< contaminated|1:environmental contaminant ; 2:colonized ; 3:abscess ; 4:persistent organic pollutant
+2663|heavy wound contamination|qual|< contaminated|1:Acute cutaneous wound ; 2:Chronic cutaneous wound ; 3:reddened ; 4:colonized
+2664|intra-abdominal contamination|qual|< contaminated|1:abscess ; 2:colonized ; 3:Unusual infection ; 4:infected
+2665|perioperative C acnes contamination|qual|< contaminated|1:Methicillin-resistant Staphylococcus aureus infection ; 2:colonized ; 3:abscess ; 4:reddened
+2666|primary wound contamination|qual|< contaminated|1:Acute cutaneous wound ; 2:Chronic cutaneous wound ; 3:colonized ; 4:Cutaneous wound
+2667|surgical site contamination|qual|= contaminated|1:colonized ; 2:disinfectant ; 3:sterile ; 4:infected
+2668|abdominal contamination|mate|< Contaminated wound|1:Abdominal drain ; 2:Contaminated wound according to CDC ; 3:Dirty wound according to CDC ; 4:Blake drain
+2669|class 3 or 4 surgical wound|mate|< Contaminated wound|1:Deep wound ; 2:Open wound ; 3:Clean wound according to IWII ; 4:Wound complication
+2670|contaminated and dirty wound|mate|< Contaminated wound|1:Infected wound ; 2:Dirty wound according to CDC ; 3:Contaminated wound according to CDC ; 4:Colonized wound
+2671|severely contaminated traumatic injury|mate|< Contaminated wound|1:Large wound ; 2:Thermal wound ; 3:Traumatic wound ; 4:Contaminated wound according to CDC
+2672|soil-contaminated traumatic wound|mate|< Contaminated wound|1:Contaminated wound according to CDC ; 2:Thermal wound ; 3:Clean-contaminated wound according to CDC ; 4:Dog bite wound
+2673|unclean wound|mate|< Contaminated wound|1:Open wound ; 2:Wound ; 3:Traumatic wound ; 4:Wound complication
+2674|circumferential cinch-loop suture|mate|< Continuous suture|1:Horizontal mattress suture ; 2:Vertical mattress suture ; 3:Simple interrupted suture ; 4:Intracutaneous suture
+2675|self-locking suture|mate|< Continuous suture|1:Vertical mattress suture ; 2:Simple interrupted suture ; 3:Horizontal mattress suture ; 4:Suture in situ
+2676|CuNp|mate|= copper group element atom|1:copper atom ; 2:Ulcus cruris mixtum ; 3:monocarboxylic acid anion ; 4:Marjolin ulcer
+2677|gold|mate|< copper group element atom|1:nonmetal atom ; 2:copper atom ; 3:silver atom ; 4:metal atom
+2678|CLTI progression|proc|< course of the disease process|1:class prediction data transformation ; 2:class discovery data transformation ; 3:disease course ; 4:Keloid development process
+2679|DRA progression|proc|< course of the disease process|1:disease course ; 2:class discovery data transformation ; 3:disorder addition process ; 4:decision tree building data transformation
+2680|edema progression|proc|< course of the disease process|1:Exudation process ; 2:Pressure offloading process ; 3:Wound volumetrics ; 4:Wound causing venous insufficiency disease process
+2681|infection dynamic|proc|< course of the disease process|1:disease perpetuation process ; 2:disease course ; 3:disorder development process ; 4:inflammatory response
+2682|MLTC progression|proc|< course of the disease process|1:Malignant process ; 2:class prediction data transformation ; 3:class discovery data transformation ; 4:disease course
+2683|pathogenesis|proc|< course of the disease process|1:disease perpetuation process ; 2:disease diagnosis process by conceptualization ; 3:biological_process ; 4:Disease diagnostic process
+2684|PVR progression|proc|< course of the disease process|1:class prediction data transformation ; 2:principal components analysis dimensionality reduction ; 3:partitioning data transformation ; 4:statistical model validation
+2685|rapid progression|proc|< course of the disease process|1:Malignant process ; 2:disease course ; 3:disease perpetuation process ; 4:disorder addition process
+2686|relapsing-remitting course|proc|< course of the disease process|1:disease course ; 2:disease perpetuation process ; 3:regeneration ; 4:spatiotemporal region
+2687|renal function decline|proc|< course of the disease process|1:Impaired wound healing process ; 2:Irreversibly diminished microvascular perfusion process ; 3:disease course ; 4:dimensionality reduction
+2688|symptom progression|proc|< course of the disease process|1:disease course ; 2:disease perpetuation process ; 3:disorder development process ; 4:disease classification process
+2689|systemic disease activity|proc|< course of the disease process|1:disease course ; 2:Suspected disease diagnosis process ; 3:disease classification process ; 4:disease diagnosis process by measurement
+2690|systemic disease exacerbation|proc|< course of the disease process|1:complication disease process ; 2:disease course process putting out disorders as part of a complication ; 3:disease perpetuation process ; 4:disorder addition process
+2691|ulcer progression|proc|< course of the disease process|1:disease perpetuation process ; 2:disease course ; 3:Acidity impact process ; 4:Pressure offloading process
+2692|underlying disease process|proc|< course of the disease process|1:Disease diagnostic process ; 2:disease perpetuation process ; 3:disease diagnosis process by conceptualization ; 4:disease classification process
+2693|wound healing trajectory|proc|< course of the disease process|1:wound healing ; 2:Wound healing related physiological process ; 3:Wound closure process ; 4:Wound development process
+2694|recipient wound|role|= Cutaneous wound|1:Wound expert role ; 2:acceptor ; 3:Wound manager role ; 4:Chronic cutaneous wound
+2695|cephalosporin|mate|< cyclic compound|1:quaternary nitrogen compound ; 2:copper group element atom ; 3:biguanide ; 4:quaternary ammonium salt
+2696|CoQ|mate|< cyclic compound|1:chalcogen ; 2:chalcogen molecular entity ; 3:monocarboxylic acid anion ; 4:polyol
+2697|cyclic oxygen|mate|< cyclic compound|1:oxygen molecular entity ; 2:organic cyclic compound ; 3:oxygen atom ; 4:organooxygen compound
+2698|cyclodextrin|mate|< cyclic compound|1:Biosynthetic cellulose ; 2:Capillary drain ; 3:triclosan ; 4:polymer
+2699|cyclophosphamide|mate|< cyclic compound|1:chlorine oxoanion ; 2:cellular_component ; 3:carboxamide ; 4:chloronium
+2700|tetracycline|mate|< cyclic compound|1:triclosan ; 2:erysipeloid ; 3:Vancomycin ; 4:diatomic iodine
+2701|ferredoxin 1|mate|< d-block molecular entity|1:Escherichia coli ; 2:enzyme ; 3:azane ; 4:transition element coordination entity
+2702|Silvadene|mate|< d-block molecular entity|1:s-block molecular entity ; 2:s-block element atom ; 3:hydridonitrate(2-) ; 4:octenidine
+2703|disease-specific myofibroblast program|info|< data entity|1:source code module ; 2:disease stage classification result ; 3:data format specification ; 4:manufacturing objective
+2704|E.C. 2.7.8.8|info|< data entity|1:class discovery objective ; 2:source code module ; 3:disease stage classification result ; 4:algorithm
+2705|molecular and cell mechanism|info|< data entity|1:algorithm ; 2:textual entity ; 3:diagram ; 4:source code module
+2706|physical finding|info|< data entity|1:measurement datum ; 2:disease diagnostic result ; 3:document ; 4:hypothesis textual entity
+2707|Sets Transfer|proc|< data transformation|1:class prediction data transformation ; 2:partitioning data transformation ; 3:decision tree building data transformation ; 4:class discovery data transformation
+2708|DESTINE 2.0|info|< data transformation objective|1:decision tree induction objective ; 2:differential diagnosis result ; 3:candidate diagnosis ; 4:class discovery objective
+2709|goal-directed fluid resuscitation|info|< data transformation objective|1:volumetric flow rate unit ; 2:decision tree induction objective ; 3:Wound healing criterion ; 4:Gustilo and Anderson wound classification
+2710|AI supported imaging|proc|< data visualization|1:Ankle-brachial index measurement process ; 2:Ultrasound-assisted wound debridement process ; 3:Doppler sonographic diagnostic process ; 4:decision tree building data transformation
+2711|AI-enhanced multispectral imaging|proc|< data visualization|1:Ultrasound-assisted wound debridement process ; 2:dimensionality reduction ; 3:temporal instant ; 4:Doppler sonographic diagnostic process
+2712|autofluorescence imaging|proc|< data visualization|1:Wound photography process ; 2:Autolytic wound debridement process ; 3:Doppler sonographic diagnostic process ; 4:Planimetry
+2713|FL-imaging|proc|< data visualization|1:Planimetry ; 2:spatiotemporal region ; 3:temporal instant ; 4:Wound photography process
+2714|fluid tracking|proc|< data visualization|1:regulation of body fluid levels ; 2:Wound volumetrics ; 3:Planimetry ; 4:Exudation process
+2715|fluorescence imaging|proc|< data visualization|1:Wound photography process ; 2:temporal instant ; 3:Planimetry ; 4:Doppler sonographic diagnostic process
+2716|fluoroscopic procedure|proc|< data visualization|1:Clinical inspection ; 2:Planimetry ; 3:Wound photography process ; 4:Doppler sonographic diagnostic process
+2717|Point-of-care fluorescence imaging|proc|< data visualization|1:Wound photography process ; 2:partitioning data transformation ; 3:clustered data visualization ; 4:Ultrasound-assisted wound debridement process
+2718|real-time fluorescence imaging|proc|< data visualization|1:Wound photography process ; 2:temporal instant ; 3:regeneration ; 4:zero-dimensional temporal region
+2719|contaminated/dirty|info|< datum label|1:denotator type ; 2:image ; 3:document ; 4:disease complication diagnostic result
+2720|abdominal wall debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Biosurgical wound debridement process ; 3:Autolytic wound debridement process ; 4:Mechanical wound debridement process
+2721|active debridement|proc|< Debridement process|1:Autolytic wound debridement process ; 2:Mechanical wound debridement process ; 3:Surgical wound debridement process ; 4:Enzymatic wound debridement process
+2722|autofluorescence-guided debridement|proc|< Debridement process|1:Autolytic wound debridement process ; 2:Ultrasound-assisted wound debridement process ; 3:Water-jet assisted wound debridement process ; 4:Biosurgical wound debridement process
+2723|autolysis|proc|< Debridement process|1:Autolytic wound debridement process ; 2:Enzymatic wound debridement process ; 3:Autoimmune disease process ; 4:coagulation
+2724|bacterial biofilm-targeting mechanism|proc|< Debridement process|1:Bacterial colonization process ; 2:Biosurgical wound debridement process ; 3:decision tree building data transformation ; 4:Antibiotic administration process
+2725|bacterial load reduction|proc|< Debridement process|1:Biosurgical wound debridement process ; 2:Bacterial colonization process ; 3:Bacterial culture process ; 4:dimensionality reduction
+2726|bedside wound debridement|proc|< Debridement process|1:Biosurgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Surgical wound debridement process ; 4:Water-jet assisted wound debridement process
+2727|biofilm debridement|proc|< Debridement process|1:Biosurgical wound debridement process ; 2:Enzymatic wound debridement process ; 3:Autolytic wound debridement process ; 4:Mechanical wound debridement process
+2728|biofilm debulking|proc|< Debridement process|1:Biosurgical wound debridement process ; 2:Enzymatic wound debridement process ; 3:Autolytic wound debridement process ; 4:Mechanical wound debridement process
+2729|biofilm removal|proc|< Debridement process|1:Biosurgical wound debridement process ; 2:Enzymatic wound debridement process ; 3:Autolytic wound debridement process ; 4:Mechanical wound debridement process
+2730|Biological debridement|proc|< Debridement process|1:Biosurgical wound debridement process ; 2:Autolytic wound debridement process ; 3:Surgical wound debridement process ; 4:Mechanical wound debridement process
+2731|careful debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2732|chemical ablation|proc|< Debridement process|1:material component separation ; 2:Enzymatic wound debridement process ; 3:excision ; 4:Mechanical wound debridement process
+2733|chemical TDA debridement|proc|< Debridement process|1:Enzymatic wound debridement process ; 2:Autolytic wound debridement process ; 3:Mechanical wound debridement process ; 4:Biosurgical wound debridement process
+2734|chronic wound debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Surgical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2735|combined desiccating chemical debridement|proc|< Debridement process|1:Enzymatic wound debridement process ; 2:Autolytic wound debridement process ; 3:Water-jet assisted wound debridement process ; 4:Mechanical wound debridement process
+2736|Common femoral endarterectomy|proc|< Debridement process|1:CUSA(r) assisted debridement ; 2:class discovery data transformation ; 3:material component separation ; 4:Peripheral arterial occlusive disease process
+2737|complete corneal epithelial debridement|proc|< Debridement process|1:Enzymatic wound debridement process ; 2:Autolytic wound debridement process ; 3:Mechanical wound debridement process ; 4:Water-jet assisted wound debridement process
+2738|complete surgical clearance|proc|< Debridement process|1:excision ; 2:Surgical treatment process ; 3:Surgical wound debridement process ; 4:Wound closure process
+2739|comprehensive debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2740|conservative initial muscle debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Autolytic wound debridement process ; 3:Biosurgical wound debridement process ; 4:Surgical wound debridement process
+2741|continuous integral debridement|proc|< Debridement process|1:Biosurgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Enzymatic wound debridement process ; 4:Autolytic wound debridement process
+2742|controlled degradation|proc|< Debridement process|1:disorder elimination process ; 2:disorder modification process ; 3:biological regulation ; 4:dimensionality reduction
+2743|covered debridement method|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Autolytic wound debridement process ; 3:Biosurgical wound debridement process ; 4:Enzymatic wound debridement process
+2744|DAIR procedure|proc|< Debridement process|1:Autolytic wound debridement process ; 2:Biosurgical wound debridement process ; 3:Enzymatic wound debridement process ; 4:partitioning data transformation
+2745|dead cell clearance|proc|< Debridement process|1:Autolytic wound debridement process ; 2:Mechanical wound debridement process ; 3:Enzymatic wound debridement process ; 4:Biosurgical wound debridement process
+2746|debridement alone|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Surgical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2747|debridement of soft tissue infection|proc|< Debridement process|1:Surgical wound debridement process ; 2:Biosurgical wound debridement process ; 3:Mechanical wound debridement process ; 4:Enzymatic wound debridement process
+2748|debridement of the fistula tract|proc|< Debridement process|1:Surgical wound debridement process ; 2:Autolytic wound debridement process ; 3:Biosurgical wound debridement process ; 4:Mechanical wound debridement process
+2749|Debridement plus orthobiologic|proc|< Debridement process|1:Biosurgical wound debridement process ; 2:Autolytic wound debridement process ; 3:Mechanical wound debridement process ; 4:Surgical wound debridement process
+2750|debridement practice|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Enzymatic wound debridement process
+2751|debris removal|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Surgical wound debridement process ; 3:material component separation ; 4:Biosurgical wound debridement process
+2752|decompressive escharotomy|proc|< Debridement process|1:CUSA(r) assisted debridement ; 2:Ultrasound-assisted wound debridement process ; 3:Water-jet assisted wound debridement process ; 4:Autolytic wound debridement process
+2753|decrustation|proc|< Debridement process|1:material component separation ; 2:excision ; 3:Mechanical wound debridement process ; 4:Wound dehiscence process
+2754|degrading eschar protein|proc|< Debridement process|1:Enzymatic wound debridement process ; 2:Ultrasound-assisted wound debridement process ; 3:Autolytic wound debridement process ; 4:CUSA(r) assisted debridement
+2755|Disrupt Biofilm|proc|< Debridement process|1:Biosurgical wound debridement process ; 2:Enzymatic wound debridement process ; 3:Autolytic wound debridement process ; 4:Mechanical wound debridement process
+2756|disrupting biofilm architecture|proc|< Debridement process|1:Biosurgical wound debridement process ; 2:Enzymatic wound debridement process ; 3:Mechanical wound debridement process ; 4:Autolytic wound debridement process
+2757|disruption/removal of submucosal biofilm|proc|< Debridement process|1:Biosurgical wound debridement process ; 2:Enzymatic wound debridement process ; 3:CUSA(r) assisted debridement ; 4:Autolytic wound debridement process
+2758|drip method|proc|< Debridement process|1:partitioning data transformation ; 2:Water-jet assisted wound debridement process ; 3:Ultrasound-assisted wound debridement process ; 4:class discovery data transformation
+2759|early debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Surgical wound debridement process ; 3:Autolytic wound debridement process ; 4:Biosurgical wound debridement process
+2760|early soft-tissue debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Surgical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2761|emergency debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2762|endoscopic nasopharyngeal necrosis debridement|proc|< Debridement process|1:Water-jet assisted wound debridement process ; 2:Ultrasound-assisted wound debridement process ; 3:CUSA(r) assisted debridement ; 4:Enzymatic wound debridement process
+2763|endoscopic transgastric necrosectomy|proc|< Debridement process|1:Ultrasound-assisted wound debridement process ; 2:Wound edge protection process ; 3:Enzymatic wound debridement process ; 4:Water-jet assisted wound debridement process
+2764|enhanced tissue debridement|proc|< Debridement process|1:Autolytic wound debridement process ; 2:Enzymatic wound debridement process ; 3:Biosurgical wound debridement process ; 4:Ultrasound-assisted wound debridement process
+2765|eschar removal|proc|< Debridement process|1:Wound cleansing process ; 2:Enzymatic wound debridement process ; 3:Autolytic wound debridement process ; 4:Surgical wound debridement process
+2766|eschar/slough separation|proc|< Debridement process|1:Wound dehiscence process ; 2:material component separation ; 3:Enzymatic wound debridement process ; 4:Wound edge protection process
+2767|extracellular polymeric substance destabilization|proc|< Debridement process|1:Wound contraction process ; 2:Exudation process ; 3:Enzymatic wound debridement process ; 4:material component separation
+2768|extracellular polymeric substance disruption|proc|< Debridement process|1:Enzymatic wound debridement process ; 2:Wound contraction process ; 3:material component separation ; 4:Wound edge protection process
+2769|foreign-body removal|proc|< Debridement process|1:Wound causing foreign body process ; 2:material component separation ; 3:excision ; 4:Biosurgical wound debridement process
+2770|fully ablative CO laser debridement|proc|< Debridement process|1:Autolytic wound debridement process ; 2:Water-jet assisted wound debridement process ; 3:Enzymatic wound debridement process ; 4:Cold plasma wound treatment process
+2771|gentle debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Surgical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2772|guided debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Biosurgical wound debridement process ; 3:Autolytic wound debridement process ; 4:Ultrasound-assisted wound debridement process
+2773|hematoma clearance|proc|< Debridement process|1:Autolytic wound debridement process ; 2:hemostasis ; 3:Wound cleansing process ; 4:Wound contraction process
+2774|hematoma evacuation|proc|< Debridement process|1:Exudation process ; 2:Wound contraction process ; 3:Autolytic wound debridement process ; 4:hemostasis
+2775|high-quality debridement|proc|< Debridement process|1:Autolytic wound debridement process ; 2:Mechanical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Water-jet assisted wound debridement process
+2776|hydrosurgery|proc|< Debridement process|1:lavage ; 2:Acidity impact process ; 3:Wound causing acidity impact process ; 4:Heat impact process
+2777|hyperkeratosis removal|proc|< Debridement process|1:Autolytic wound debridement process ; 2:Enzymatic wound debridement process ; 3:Wound cleansing process ; 4:Mechanical wound debridement process
+2778|in-clinic debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2779|infected bone resection|proc|< Debridement process|1:Biosurgical wound debridement process ; 2:Surgical wound debridement process ; 3:Mechanical wound debridement process ; 4:Autolytic wound debridement process
+2780|initial periodontal therapy|proc|< Debridement process|1:Wound healing by primary intention process ; 2:Wound healing by tertiary intention process ; 3:Biosurgical wound debridement process ; 4:Cold plasma wound treatment process
+2781|joint debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Enzymatic wound debridement process
+2782|limited additional debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Autolytic wound debridement process ; 3:Biosurgical wound debridement process ; 4:Surgical wound debridement process
+2783|limited debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Surgical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2784|maintenance debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Surgical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2785|minimal debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Surgical wound debridement process ; 3:Autolytic wound debridement process ; 4:Biosurgical wound debridement process
+2786|mucosal sloughing|proc|< Debridement process|1:excision ; 2:lavage ; 3:Wound dehiscence process ; 4:Exudation process
+2787|near-complete removal|proc|< Debridement process|1:excision ; 2:material component separation ; 3:Mechanical wound debridement process ; 4:Wound dehiscence process
+2788|necrotic tissue clearance|proc|< Debridement process|1:Autolytic wound debridement process ; 2:Enzymatic wound debridement process ; 3:Mechanical wound debridement process ; 4:Surgical wound debridement process
+2789|necrotic tissue removal|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Surgical wound debridement process ; 3:Autolytic wound debridement process ; 4:Enzymatic wound debridement process
+2790|non-traumatic debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Surgical wound debridement process ; 3:Autolytic wound debridement process ; 4:Biosurgical wound debridement process
+2791|nonspecific debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Surgical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2792|Nonsurgical debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2793|nonthermal ablation|proc|< Debridement process|1:excision ; 2:Autolytic wound debridement process ; 3:Mechanical wound debridement process ; 4:Cold plasma wound treatment process
+2794|one-off debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Autolytic wound debridement process ; 3:Surgical wound debridement process ; 4:Biosurgical wound debridement process
+2795|osmolarity-driven debridement|proc|< Debridement process|1:Enzymatic wound debridement process ; 2:Autolytic wound debridement process ; 3:Water-jet assisted wound debridement process ; 4:Biosurgical wound debridement process
+2796|over-debridement|proc|< Debridement process|1:Autolytic wound debridement process ; 2:Mechanical wound debridement process ; 3:Surgical wound debridement process ; 4:Enzymatic wound debridement process
+2797|point-by-point debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Biosurgical wound debridement process ; 3:Autolytic wound debridement process ; 4:Enzymatic wound debridement process
+2798|pre-reconstruction debridement|proc|< Debridement process|1:Autolytic wound debridement process ; 2:Biosurgical wound debridement process ; 3:CUSA(r) assisted debridement ; 4:Surgical wound debridement process
+2799|precise debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Surgical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2800|precise necrotic tissue removal|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Autolytic wound debridement process ; 3:Enzymatic wound debridement process ; 4:Ultrasound-assisted wound debridement process
+2801|preliminary debridement method|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Biosurgical wound debridement process ; 3:Autolytic wound debridement process ; 4:Enzymatic wound debridement process
+2802|preoperative debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Biosurgical wound debridement process ; 3:Autolytic wound debridement process ; 4:Mechanical wound debridement process
+2803|primary debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Autolytic wound debridement process ; 3:Surgical wound debridement process ; 4:Biosurgical wound debridement process
+2804|radical wound debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2805|rapid tissue erosion|proc|< Debridement process|1:Autolytic wound debridement process ; 2:Wound contraction process ; 3:Enzymatic wound debridement process ; 4:Wound causing acidity impact process
+2806|reduction of slough|proc|< Debridement process|1:Autolytic wound debridement process ; 2:Enzymatic wound debridement process ; 3:lavage ; 4:Mechanical wound debridement process
+2807|removal of infected device|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Biosurgical wound debridement process ; 3:Surgical wound debridement process ; 4:CUSA(r) assisted debridement
+2808|removal of maggot|proc|< Debridement process|1:Mechanical wound debridement process ; 2:material component separation ; 3:Water-jet assisted wound debridement process ; 4:Autolytic wound debridement process
+2809|removal of the spacer|proc|< Debridement process|1:CUSA(r) assisted debridement ; 2:material component separation ; 3:Wound dehiscence process ; 4:partitioning data transformation
+2810|repeat debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Autolytic wound debridement process ; 4:Biosurgical wound debridement process
+2811|resloughing|proc|< Debridement process|1:lavage ; 2:Wound contraction process ; 3:Autolytic wound debridement process ; 4:Wound dehiscence process
+2812|routine debridement procedure|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2813|Safe circumferential debridement|proc|< Debridement process|1:Biosurgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Surgical wound debridement process ; 4:CUSA(r) assisted debridement
+2814|scrotal debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Biosurgical wound debridement process ; 3:Mechanical wound debridement process ; 4:Autolytic wound debridement process
+2815|secondary removal procedure|proc|< Debridement process|1:Wound healing by secondary intention process ; 2:excision ; 3:material component separation ; 4:Wound healing by tertiary intention process
+2816|selective eschar removal|proc|< Debridement process|1:Ultrasound-assisted wound debridement process ; 2:Autolytic wound debridement process ; 3:Enzymatic wound debridement process ; 4:CUSA(r) assisted debridement
+2817|simple debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Surgical wound debridement process ; 3:Autolytic wound debridement process ; 4:Biosurgical wound debridement process
+2818|single-stage debridement|proc|< Debridement process|1:Mechanical wound debridement process ; 2:Biosurgical wound debridement process ; 3:Surgical wound debridement process ; 4:Autolytic wound debridement process
+2819|soft tissue debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Enzymatic wound debridement process
+2820|staged deep + superficial|proc|< Debridement process|1:Suspected disease diagnosis process ; 2:decision tree building data transformation ; 3:class discovery data transformation ; 4:Ultrasound-assisted wound debridement process
+2821|subsequent debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Biosurgical wound debridement process ; 3:Mechanical wound debridement process ; 4:Autolytic wound debridement process
+2822|surgical and mechanical debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Enzymatic wound debridement process
+2823|TDA debridement|proc|< Debridement process|1:Autolytic wound debridement process ; 2:CUSA(r) assisted debridement ; 3:Surgical wound debridement process ; 4:Enzymatic wound debridement process
+2824|TE removal|proc|< Debridement process|1:excision ; 2:material component separation ; 3:Mechanical wound debridement process ; 4:Surgical wound debridement process
+2825|tendon debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Enzymatic wound debridement process ; 4:Biosurgical wound debridement process
+2826|tissue removal|proc|< Debridement process|1:excision ; 2:Surgical wound debridement process ; 3:Mechanical wound debridement process ; 4:Surgical treatment process
+2827|urgent debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Autolytic wound debridement process ; 4:Biosurgical wound debridement process
+2828|vacuum debridement|proc|< Debridement process|1:Water-jet assisted wound debridement process ; 2:Autolytic wound debridement process ; 3:Enzymatic wound debridement process ; 4:Mechanical wound debridement process
+2829|validated eradication of mature polymicrobial biofilm|proc|< Debridement process|1:Biosurgical wound debridement process ; 2:Autolytic wound debridement process ; 3:statistical model validation ; 4:Mechanical wound debridement process
+2830|wide cheek debridement|proc|< Debridement process|1:CUSA(r) assisted debridement ; 2:Autolytic wound debridement process ; 3:Water-jet assisted wound debridement process ; 4:Biosurgical wound debridement process
+2831|wide debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2832|wound bed debridement|proc|< Debridement process|1:Surgical wound debridement process ; 2:Mechanical wound debridement process ; 3:Biosurgical wound debridement process ; 4:Autolytic wound debridement process
+2833|acute complex deep soft tissue defect|mate|< Deep wound|1:Wound and soft tissue drain ; 2:Softened wound edge ; 3:Active drain ; 4:Wound with accompanying fracture
+2834|bone-deep ulcer|mate|< Deep wound|1:Marjolin ulcer ; 2:Pressure ulcer ; 3:Osteomyelitis ; 4:Diabetic foot ulcer
+2835|chronic complete thickness wound|mate|< Deep wound|1:Chronic wound ; 2:Secondarily-healing wound ; 3:Tertiarily-healing wound ; 4:Second-degree burn wound
+2836|chronic deep wound|mate|< Deep wound|1:Chronic wound ; 2:Secondarily-healing wound ; 3:Tertiarily-healing wound ; 4:Softened wound edge
+2837|complete-thickness dorsal wound|mate|< Deep wound|1:Third-degree burn wound ; 2:Second-degree burn wound ; 3:Fourth-degree burn wound ; 4:First-degree burn wound
+2838|Complete-thickness incision|mate|< Deep wound|1:Full-thickness skin graft ; 2:Incision foil ; 3:Split-thickness skin graft ; 4:Undermined wound margin
+2839|deep alkali facial burn|mate|< Deep wound|1:Fourth-degree burn wound ; 2:Third-degree burn wound ; 3:Second-degree burn wound ; 4:First-degree burn wound
+2840|deep and difficult-to-heal ulcer|mate|< Deep wound|1:Marjolin ulcer ; 2:Pressure ulcer ; 3:Diabetic foot ulcer ; 4:Necrotic wound bed
+2841|deep caustic esophageal burn|mate|< Deep wound|1:Fourth-degree burn wound ; 2:Third-degree burn wound ; 3:Ulcus hypertonicus Martorell ; 4:Second-degree burn wound
+2842|deep caustic esophageal injury|mate|< Deep wound|1:Fourth-degree burn wound ; 2:Third-degree burn wound ; 3:Ulcus hypertonicus Martorell ; 4:Wound base
+2843|deep cavity wound|mate|< Deep wound|1:Large wound ; 2:Contaminated wound ; 3:Malignant wound ; 4:Dirty wound according to CDC
+2844|deep chemical burn|mate|< Deep wound|1:Second-degree burn wound ; 2:Third-degree burn wound ; 3:Fourth-degree burn wound ; 4:Thermal wound
+2845|deep electrical burn wound|mate|< Deep wound|1:Fourth-degree burn wound ; 2:Second-degree burn wound ; 3:Third-degree burn wound ; 4:Thermal wound
+2846|deep excisional wound|mate|< Deep wound|1:Fourth-degree burn wound ; 2:Large wound ; 3:Softened wound edge ; 4:Undermined wound margin
+2847|deep facial burn|mate|< Deep wound|1:Third-degree burn wound ; 2:Fourth-degree burn wound ; 3:Second-degree burn wound ; 4:First-degree burn wound
+2848|deep open injury|mate|< Deep wound|1:Open wound ; 2:Large wound ; 3:Fourth-degree burn wound ; 4:Ischemic wound
+2849|Deep or Extensive Ulcer|mate|< Deep wound|1:Pressure ulcer ; 2:Marjolin ulcer ; 3:Diabetic foot ulcer ; 4:Fourth-degree burn wound
+2850|deep partial-thickness|mate|< Deep wound|1:Split-thickness skin graft ; 2:Plaster ; 3:Full-thickness skin graft ; 4:Transparent polyurethane film
+2851|deep partial-thickness injury|mate|< Deep wound|1:Second-degree burn wound ; 2:Fourth-degree burn wound ; 3:Third-degree burn wound ; 4:First-degree burn wound
+2852|deep sinus tract wound|mate|< Deep wound|1:Venous insufficiency wound ; 2:Infected wound ; 3:Wound and soft tissue drain ; 4:Diabetic wound
+2853|deep skin and soft tissue defect|mate|< Deep wound|1:Wound and soft tissue drain ; 2:Softened wound edge ; 3:Undermined wound margin ; 4:Secondary dressing
+2854|deep skin defect|mate|< Deep wound|1:Undermined wound margin ; 2:Softened wound edge ; 3:Incision foil ; 4:Wound pocket
+2855|deep skin ulcer|mate|< Deep wound|1:Diabetic foot ulcer ; 2:Pressure ulcer ; 3:Necrotic wound bed ; 4:Marjolin ulcer
+2856|deep sternal wound|mate|< Deep wound|1:Fourth-degree burn wound ; 2:Wound with accompanying fracture ; 3:Livider wound margin ; 4:Wound and soft tissue drain
+2857|Deep tissue defect|mate|< Deep wound|1:Wound pocket ; 2:Undermined wound margin ; 3:Softened wound edge ; 4:Wound dehiscence
+2858|deep total facial burn|mate|< Deep wound|1:Third-degree burn wound ; 2:Fourth-degree burn wound ; 3:Second-degree burn wound ; 4:First-degree burn wound
+2859|deep ulcerated wound|mate|< Deep wound|1:Fourth-degree burn wound ; 2:Necrotic wound bed ; 3:Third-degree burn wound ; 4:Large wound
+2860|deeper burn|mate|< Deep wound|1:Third-degree burn wound ; 2:Fourth-degree burn wound ; 3:Second-degree burn wound ; 4:First-degree burn wound
+2861|deeper wound|mate|< Deep wound|1:Large wound ; 2:Tertiarily-healing wound ; 3:Wound base ; 4:Secondarily-healing wound
+2862|delayed pediatric puncture wound|mate|< Deep wound|1:Wound pocket ; 2:Tertiarily-healing wound ; 3:Wound and soft tissue drain ; 4:Secondarily-healing wound
+2863|exposed tendon|cont|< Deep wound|1:Softened wound edge ; 2:Wound edge ; 3:Laceration ; 4:Reddened wound edge
+2864|grade III corrosive injury|mate|< Deep wound|1:Third-degree burn wound ; 2:Malignant wound ; 3:Fourth-degree burn wound ; 4:Dirty wound according to CDC
+2865|grade III to grade V chemical injury|mate|< Deep wound|1:Dirty wound according to CDC ; 2:Malignant wound ; 3:Large wound ; 4:Contaminated wound according to CDC
+2866|hard-to-heal Chopart amputation wound|mate|< Deep wound|1:Tertiarily-healing wound ; 2:Fourth-degree burn wound ; 3:Wound with accompanying fracture ; 4:Large wound
+2867|hard-to-heal stage 3 PI|mate|< Deep wound|1:Wound with microbial burden assessed according to IWII ; 2:Third-degree burn wound ; 3:Tertiarily-healing wound ; 4:Clean wound according to IWII
+2868|penetrating chest wound|mate|< Deep wound|1:Contaminated wound ; 2:Soft tissue wound ; 3:Wound base ; 4:Thermal wound
+2869|penetrating injury|mate|< Deep wound|1:Scratch wound ; 2:Traumatic wound ; 3:Wound ; 4:Wound base
+2870|postamputation wound|mate|< Deep wound|1:Secondarily-healing wound ; 2:Tertiarily-healing wound ; 3:Wound complication ; 4:Wound complication disorder
+2871|secondary deepening|mate|< Deep wound|1:Secondary dressing ; 2:Softened wound edge ; 3:Hypertrophic scar ; 4:Secondarily-healing wound
+2872|small-area deep burn wound|mate|< Deep wound|1:Second-degree burn wound ; 2:Fourth-degree burn wound ; 3:Third-degree burn wound ; 4:First-degree burn wound
+2873|stage 3 or 4 PU|mate|< Deep wound|1:post-transition metal atom ; 2:Fourth-degree burn wound ; 3:copper atom ; 4:copper group element atom
+2874|stage IV PI|mate|< Deep wound|1:Fourth-degree burn wound ; 2:Fournier's gangrene ; 3:Venous insufficiency disorder ; 4:Peripheral arterial occlusive disease
+2875|tendon-exposed wound|mate|< Deep wound|1:Soft tissue wound ; 2:Softened wound edge ; 3:Traumatic wound ; 4:Reddened wound edge
+2876|ulcers that were deep to the bone|mate|< Deep wound|1:Marjolin ulcer ; 2:Pressure ulcer ; 3:Diabetic foot ulcer ; 4:Necrotic wound bed
+2877|very deep burn wound|mate|< Deep wound|1:Fourth-degree burn wound ; 2:Third-degree burn wound ; 3:Second-degree burn wound ; 4:First-degree burn wound
+2878|activating the immune system|proc|< defense response|1:Inflammation process ; 2:inflammatory response ; 3:Autoimmune disease process ; 4:Wound causing autoimmune disease process
+2879|active immunization|proc|< defense response|1:Autoimmune disease process ; 2:regeneration ; 3:Bacterial colonization process ; 4:Inflammation process
+2880|adaptive immune activation|proc|< defense response|1:Autoimmune disease process ; 2:inflammatory response ; 3:Inflammation process ; 4:Wound causing autoimmune disease process
+2881|Ag-mediated antimicrobial activity|proc|< defense response|1:Autolytic wound debridement process ; 2:Bacterial colonization process ; 3:Biosurgical wound debridement process ; 4:Enzymatic wound debridement process
+2882|anti-inflammation|proc|< defense response|1:Inflammation process ; 2:inflammatory response ; 3:wound healing ; 4:Impaired wound healing process
+2883|antimicrobial barrier-supporting response|proc|< defense response|1:response to wounding ; 2:inflammatory response ; 3:Wound healing related physiological process ; 4:Biosurgical wound debridement process
+2884|antimicrobial peptide expression|proc|< defense response|1:Antibiotic administration process ; 2:Bacterial colonization process ; 3:Autolytic wound debridement process ; 4:Exudation process
+2885|antisepsis|proc|< defense response|1:lavage ; 2:Wound cleansing process ; 3:Debridement process ; 4:disorder elimination process
+2886|cGAS-STING|proc|< defense response|1:CART ; 2:peak matching ; 3:Inflammation process ; 4:Germ spectrum assessment process
+2887|cholinergic anti-inflammatory response|proc|< defense response|1:inflammatory response ; 2:Inflammation process ; 3:Wound contraction process ; 4:vasodilation
+2888|combined antibacterial‑metabolic‑immune mechanism|proc|< defense response|1:Antibiotic administration process ; 2:Biosurgical wound debridement process ; 3:Bacterial culture process ; 4:Bacterial colonization process
+2889|coughing|proc|< defense response|1:Smoking ; 2:Exudation process ; 3:Debridement process ; 4:Disease diagnosis process by exclusion
+2890|cytokine response|proc|< defense response|1:inflammatory response ; 2:response to stimulus ; 3:response to stress ; 4:cellular process
+2891|danger-associated molecular pattern release|proc|< defense response|1:inflammatory response ; 2:Inflammation process ; 3:Autolytic wound debridement process ; 4:Ultrasound-assisted wound debridement process
+2892|defense of C. perfringens infection|proc|< defense response|1:Wound edge protection process ; 2:Cold plasma wound treatment process ; 3:Enzymatic wound debridement process ; 4:Water-jet assisted wound debridement process
+2893|Development Of Resistance|proc|< defense response|1:predisposition realizing disorder development process ; 2:response to stress ; 3:regeneration ; 4:Regenerative wound healing process
+2894|early host defense|proc|< defense response|1:inflammatory response ; 2:Wound healing related physiological process ; 3:response to stress ; 4:Inflammation process
+2895|foreign body reaction|proc|< defense response|1:Wound causing foreign body process ; 2:Pathological scarring process ; 3:Scarring process ; 4:response to stimulus
+2896|foreign-body giant-cell reaction|proc|< defense response|1:Wound causing foreign body process ; 2:Granulation tissue formation process ; 3:Scarring process ; 4:Pathological scarring process
+2897|fundamental immune mechanism|proc|< defense response|1:inflammatory response ; 2:Autoimmune disease process ; 3:biological_process ; 4:multicellular organismal process
+2898|graft rejection|proc|< defense response|1:regeneration ; 2:tissue regeneration ; 3:Regenerative wound healing process ; 4:Pathological scarring process
+2899|granulomatous foreign-body reaction|proc|< defense response|1:Wound causing foreign body process ; 2:Granulation tissue formation process ; 3:Autolytic wound debridement process ; 4:Wound causing autoimmune disease process
+2900|host innate immune response|proc|< defense response|1:inflammatory response ; 2:Inflammation process ; 3:response to wounding ; 4:response to stress
+2901|host response to infection|proc|< defense response|1:inflammatory response ; 2:response to stress ; 3:response to wounding ; 4:Inflammation process
+2902|human immune-mediated response|proc|< defense response|1:inflammatory response ; 2:Inflammation process ; 3:Autoimmune disease process ; 4:response to stimulus
+2903|human serum-mediated killing|proc|< defense response|1:Biosurgical wound debridement process ; 2:Autolytic wound debridement process ; 3:Enzymatic wound debridement process ; 4:Debridement process
+2904|Ifn Gamma Production|proc|< defense response|1:Granulation tissue formation process ; 2:inflammatory response ; 3:Inflammation process ; 4:Exudation process
+2905|IgA-associated response|proc|< defense response|1:inflammatory response ; 2:Autoimmune disease process ; 3:peak matching ; 4:Acidity impact process
+2906|immediate antimicrobial activity|proc|< defense response|1:inflammatory response ; 2:Autolytic wound debridement process ; 3:Inflammation process ; 4:Biosurgical wound debridement process
+2907|immune activation|proc|< defense response|1:Inflammation process ; 2:inflammatory response ; 3:Autoimmune disease process ; 4:regeneration
+2908|immune cascade|proc|< defense response|1:inflammatory response ; 2:Inflammation process ; 3:Autoimmune disease process ; 4:multicellular organismal process
+2909|immune cell activation|proc|< defense response|1:Inflammation process ; 2:inflammatory response ; 3:Autoimmune disease process ; 4:Granulation tissue formation process
+2910|immune clearance|proc|< defense response|1:disorder elimination process ; 2:Inflammation process ; 3:inflammatory response ; 4:Autoimmune disease process
+2911|immunological rejection|proc|< defense response|1:inflammatory response ; 2:Inflammation process ; 3:Autoimmune disease process ; 4:Pathological scarring process
+2912|immunologically mediated hypersensitivity reaction|proc|< defense response|1:Wound causing autoimmune disease process ; 2:Autoimmune disease process ; 3:inflammatory response ; 4:Inflammation process
+2913|immunorecognition|proc|< defense response|1:inflammatory response ; 2:biological regulation ; 3:Autoimmune disease process ; 4:Inflammation process
+2914|innate and adaptive immune response|proc|< defense response|1:inflammatory response ; 2:Inflammation process ; 3:Autoimmune disease process ; 4:response to stimulus
+2915|innate immune signaling pathway|proc|< defense response|1:inflammatory response ; 2:Inflammation process ; 3:Autoimmune disease process ; 4:multicellular organismal process
+2916|keeping the immune system activated|proc|< defense response|1:Wound causing autoimmune disease process ; 2:Autoimmune disease process ; 3:Inflammation process ; 4:inflammatory response
+2917|Local Foreign Body Reaction|proc|< defense response|1:Wound causing foreign body process ; 2:Scarring process ; 3:Pathological scarring process ; 4:Process of administering a local anesthetic agent
+2918|local or systemic adverse reaction|proc|< defense response|1:response to stimulus ; 2:spatiotemporal region ; 3:inflammatory response ; 4:Process of administering a local anesthetic agent
+2919|long-term antibacterial activity|proc|< defense response|1:disease perpetuation process ; 2:regulation of biological quality ; 3:Biosurgical wound debridement process ; 4:Antibiotic administration process
+2920|mucosal immune response|proc|< defense response|1:inflammatory response ; 2:Inflammation process ; 3:response to wounding ; 4:Epithelialization process
+2921|neuroimmune activation|proc|< defense response|1:inflammatory response ; 2:Inflammation process ; 3:Autoimmune disease process ; 4:Neuropathic disease process
+2922|neuronal stimulator of interferon genes signaling|proc|< defense response|1:k-nearest neighbors ; 2:inflammatory response ; 3:peak matching ; 4:Inflammation process
+2923|neutrophil activity|proc|< defense response|1:catalytic activity ; 2:Inflammation process ; 3:inflammatory response ; 4:Debridement process
+2924|neutrophil bactericidal activity|proc|< defense response|1:Biosurgical wound debridement process ; 2:catalytic activity ; 3:Autolytic wound debridement process ; 4:Debridement process
+2925|nrf2 Activation|proc|< defense response|1:Nutritional status improvement process ; 2:regeneration ; 3:Wound healing by tertiary intention process ; 4:response to stimulus
+2926|nutritional immunity|proc|< defense response|1:Nutritional status improvement process ; 2:growth ; 3:developmental growth ; 4:multicellular organism development
+2927|pathogen-specific clearance|proc|< defense response|1:disorder elimination process ; 2:Debridement process ; 3:Biosurgical wound debridement process ; 4:intended disorder elimination process
+2928|protection from ferroptosis|proc|< defense response|1:Wound edge protection process ; 2:Cold plasma wound treatment process ; 3:Ultrasound-assisted wound debridement process ; 4:partitioning data transformation
+2929|reactive oxygen species scavenging|proc|< defense response|1:Autolytic wound debridement process ; 2:Enzymatic wound debridement process ; 3:dimensionality reduction ; 4:Pressure offloading process
+2930|reducing excess reactive oxygen species|proc|< defense response|1:dimensionality reduction ; 2:Regenerative wound healing process ; 3:Autolytic wound debridement process ; 4:CUSA(r) assisted debridement
+2931|rejection|proc|< defense response|1:Inflammation process ; 2:inflammatory response ; 3:Scarring process ; 4:Pathological scarring process
+2932|rejection reaction|proc|< defense response|1:Scarring process ; 2:Pathological scarring process ; 3:response to stress ; 4:inflammatory response
+2933|robust ROS scavenging|proc|< defense response|1:dimensionality reduction ; 2:Regenerative wound healing process ; 3:Autolytic wound debridement process ; 4:regeneration
+2934|ROS burst|proc|< defense response|1:regeneration ; 2:Autolytic wound debridement process ; 3:disease perpetuation process ; 4:cell population proliferation
+2935|selective ROS scavenging|proc|< defense response|1:dimensionality reduction ; 2:Autolytic wound debridement process ; 3:regeneration ; 4:Regenerative wound healing process
+2936|self-activated antimicrobial activity|proc|< defense response|1:Autolytic wound debridement process ; 2:Biosurgical wound debridement process ; 3:Bacterial colonization process ; 4:Enzymatic wound debridement process
+2937|sun protection|proc|< defense response|1:Wound edge protection process ; 2:Skin color assessment process ; 3:Scarring process ; 4:Wound cleansing process
+2938|systemic innate immune activation|proc|< defense response|1:Inflammation process ; 2:inflammatory response ; 3:Autoimmune disease process ; 4:Wound causing autoimmune disease process
+2939|T cell immune response|proc|< defense response|1:inflammatory response ; 2:response to stimulus ; 3:Inflammation process ; 4:Autoimmune disease process
+2940|tissue protection|proc|< defense response|1:Wound edge protection process ; 2:Wound closure process ; 3:Postoperative wound control process ; 4:wound healing
+2941|tissue-specific immune response|proc|< defense response|1:inflammatory response ; 2:Inflammation process ; 3:Tissue repair process ; 4:Autoimmune disease process
+2942|trained-immunity loop|proc|< defense response|1:CART ; 2:decision tree building data transformation ; 3:Wound causing autoimmune disease process ; 4:disease perpetuation process
+2943|type I interferon response|proc|< defense response|1:inflammatory response ; 2:response to wounding ; 3:response to stimulus ; 4:response to stress
+2944|type II interferon response|proc|< defense response|1:inflammatory response ; 2:response to stress ; 3:response to wounding ; 4:response to stimulus
+2945|E|qual|< degree of epithelialization|1:1-D extent ; 2:2-D extent ; 3:qualitative ; 4:size
+2946|E-cadherin positivity|qual|< degree of epithelialization|1:epithelialized ; 2:increased area ; 3:2-D extent ; 4:1-D extent
+2947|early epithelialization quality|qual|< degree of epithelialization|1:epithelialized ; 2:1-D extent ; 3:acute ; 4:2-D extent
+2948|Early Wound Coverage|qual|< degree of epithelialization|1:Acute cutaneous wound ; 2:Chronic cutaneous wound ; 3:degree of skin adherence to underlying tissue ; 4:closure
+2949|epidermal coverage|qual|< degree of epithelialization|1:epithelialized ; 2:degree of skin adherence to underlying tissue ; 3:undermined ; 4:Scarring
+2950|healed ulcer area|qual|< degree of epithelialization|1:Pressure ulcer ; 2:Chronic cutaneous wound ; 3:Scarring ; 4:necrotic
+2951|keratinized tissue coverage|qual|< degree of epithelialization|1:epithelialized ; 2:fibrin-covered ; 3:degree of skin adherence to underlying tissue ; 4:degree of fibrin coverage
+2952|maximal EC coverage|qual|< degree of epithelialization|1:degree of microbial burden ; 2:degree of maceration ; 3:degree of fibrin coverage ; 4:1-D extent
+2953|neo-epithelial coverage|qual|< degree of epithelialization|1:epithelialized ; 2:neoplastic ; 3:Scarring ; 4:neoplastic, malignant
+2954|none epithelialization|qual|= degree of epithelialization|1:epithelialized ; 2:Scarring ; 3:necrotic ; 4:undermined
+2955|partial epithelialization|qual|< degree of epithelialization|1:epithelialized ; 2:Scarring ; 3:fibrin-covered ; 4:undermined
+2956|quality of mucosal healing|qual|< degree of epithelialization|1:degree of granulation ; 2:degree of maceration ; 3:quality ; 4:degree of microbial burden
+2957|ulcer epithelialization parameter|qual|< degree of epithelialization|1:epithelialized ; 2:degree of granulation ; 3:degree of maceration ; 4:Pressure ulcer
+2958|fibrin/sphacel area|qual|< degree of fibrin coverage|1:fibrin-covered ; 2:Thread size 0 ; 3:degree of granulation ; 4:Thread size 2-0
+2959|increased FI|qual|< degree of fibrin coverage|1:increased quality ; 2:increased process quality ; 3:increased object quality ; 4:increased depth
+2960|increased FS|qual|< degree of fibrin coverage|1:increased size ; 2:increased depth ; 3:increased area ; 4:swollen
+2961|Fibrosis Extent|qual|< degree of granulation|1:degree of fibrin coverage ; 2:Scarring ; 3:degree of tissue firmness ; 4:degree of necrosis
+2962|granulation tissue score quality|qual|< degree of granulation|1:granulating ; 2:degree of fibrin coverage ; 3:quality ; 4:degree of tissue firmness
+2963|level of granulation tissue growth|qual|< degree of granulation|1:granulating ; 2:degree of fibrin coverage ; 3:softened ; 4:increased area
+2964|minimal granulation|qual|< degree of granulation|1:granulating ; 2:Thread size 0 ; 3:softened ; 4:increased area
+2965|percentage of granulation tissue|qual|< degree of granulation|1:granulating ; 2:degree of fibrin coverage ; 3:degree of maceration ; 4:degree of epithelialization
+2966|Pre-G-med/min CSA|qual|< degree of granulation|1:degree of microbial burden ; 2:Thread size 1-0 ; 3:polar solvent ; 4:mouse metabolite
+2967|quality of granulation tissue|qual|< degree of granulation|1:granulating ; 2:degree of tissue firmness ; 3:Scarring ; 4:degree of fibrin coverage
+2968|wound bed condition|qual|< degree of granulation|1:degree of skin adherence to underlying tissue ; 2:Chronic cutaneous wound ; 3:Cutaneous wound ; 4:degree of wound pain
+2969|maceration area|qual|< degree of maceration|1:macerated ; 2:necrotic ; 3:increased area ; 4:undermined
+2970|maceration reduction|qual|< degree of maceration|1:macerated ; 2:degree of microbial burden ; 3:undermined ; 4:reddened
+2971|moist|qual|< degree of maceration|1:softened ; 2:depth ; 3:degree of granulation ; 4:swollen
+2972|Moist Dressing Condition|qual|< degree of maceration|1:degree of skin adherence to underlying tissue ; 2:softened ; 3:depth ; 4:degree of granulation
+2973|periwound skin maceration|qual|< degree of maceration|1:macerated ; 2:degree of skin adherence to underlying tissue ; 3:undermined ; 4:reddened
+2974|Subepidermal moisture|qual|< degree of maceration|1:degree of skin adherence to underlying tissue ; 2:depth ; 3:softened ; 4:2-D extent
+2975|water absorption/retention|qual|< degree of maceration|1:softened ; 2:swollen ; 3:Malnutrition ; 4:reddened
+2976|wet state|qual|< degree of maceration|1:softened ; 2:necrotic ; 3:closed ; 4:Pallor
+2977|wettability|qual|< degree of maceration|1:softened ; 2:degree of tissue firmness ; 3:depth ; 4:degree of granulation
+2978|wound hydration level|qual|< degree of maceration|1:degree of wound pain ; 2:Acute cutaneous wound ; 3:softened ; 4:degree of granulation
+2979|bacterial colonization density|qual|< degree of microbial burden|1:colonized ; 2:bacterial metabolite ; 3:composition ; 4:granulating
+2980|bacterial colonization level|qual|< degree of microbial burden|1:colonized ; 2:bacterial metabolite ; 3:contaminated ; 4:composition
+2981|bacterial count|cont|< degree of microbial burden|1:Bacteria ; 2:bacterial metabolite ; 3:Escherichia coli ; 4:colonized
+2982|bacterial number|qual|< degree of microbial burden|1:bacterial metabolite ; 2:sterile ; 3:colonized ; 4:infected
+2983|baseline bacterial count|qual|< degree of microbial burden|1:base ; 2:colonized ; 3:sterile ; 4:bacterial metabolite
+2984|Bifidobacterium abundance|qual|< degree of microbial burden|1:Escherichia coli metabolite ; 2:colonized ; 3:bacterial metabolite ; 4:composition
+2985|bioburden level|qual|= degree of microbial burden|1:base ; 2:bacterial metabolite ; 3:biological role ; 4:composition
+2986|biofilm burden|qual|< degree of microbial burden|1:colonized ; 2:bacterial metabolite ; 3:abscess ; 4:degree of fibrin coverage
+2987|chronic bacterial presence|qual|< degree of microbial burden|1:colonized ; 2:chronic ; 3:chronic ; 4:infected
+2988|clinically significant bacterial load|qual|< degree of microbial burden|1:colonized ; 2:contaminated ; 3:sterile ; 4:bacterial metabolite
+2989|clinically significant bioburden|qual|< degree of microbial burden|1:reference compound ; 2:sterile ; 3:chronic ; 4:chronic
+2990|Corynebacterium abundance|qual|< degree of microbial burden|1:composition ; 2:colonized ; 3:livid ; 4:Escherichia coli metabolite
+2991|degree of peritoneal contamination|qual|< degree of microbial burden|1:contaminated ; 2:colonized ; 3:degree of fibrin coverage ; 4:degree of granulation
+2992|extent of infection|qual|< degree of microbial burden|1:infected ; 2:2-D extent ; 3:1-D extent ; 4:degree of time after disease inception
+2993|foot infection grade|qual|< degree of microbial burden|1:infected ; 2:Unusual infection ; 3:Gangrene ; 4:inflamed
+2994|fungal burden|qual|< degree of microbial burden|1:fungal metabolite ; 2:fungicide ; 3:antifungal agent ; 4:colonized
+2995|fungal density|qual|< degree of microbial burden|1:fungal metabolite ; 2:depth ; 3:degree of granulation ; 4:degree of fibrin coverage
+2996|fungal presence|qual|< degree of microbial burden|1:fungal metabolite ; 2:colonized ; 3:fungicide ; 4:antifungal agent
+2997|grade of infection|qual|< degree of microbial burden|1:infected ; 2:inflamed ; 3:Unusual infection ; 4:degree of granulation
+2998|Gram-positive bacterial bioburden|qual|< degree of microbial burden|1:bacterial metabolite ; 2:granulating ; 3:prokaryotic metabolite ; 4:degree of granulation
+2999|high local fungal burden|qual|< degree of microbial burden|1:fungicide ; 2:abscess ; 3:increased area ; 4:colonized

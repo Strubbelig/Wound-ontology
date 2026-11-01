@@ -1,0 +1,133 @@
+' The two dictionaries the pipeline keeps, and how a reader sees them (rule 51).
+' Box titles use the terms the thesis uses; the JSON keys are the real ones.
+' Render: java -jar plantuml.jar -tsvg dictionaries_wound_ontology.plantuml
+
+@startuml dictionaries_structure
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam class {
+  BackgroundColor<<evidence>> #EEF3F8
+  BackgroundColor<<decision>> #F8F1E7
+  BackgroundColor<<derived>>  #EEF6EE
+}
+hide empty methods
+
+title Evidence store and terminology decision register
+
+package "Evidence store  (concept_store_<timestamp>.json, class ConceptStore)" {
+  class "Evidence store file" as Store <<evidence>> {
+    {field} key : PubMed identifier (PMID)
+    {field} value : AbstractRecord
+  }
+  class "AbstractRecord" as Abstract <<evidence>> {
+    entities : map<extracted string, AssertionSet>
+    meta_stamp : extraction run identifier
+    evidence_from : source of the evidence
+    schema_report : relations the schema refused
+  }
+  class "AssertionSet" as Assertions <<evidence>> {
+    {field} key : "predicate: target string"
+    {field} value : truth value (1.0 asserted)
+    --
+    is_a: <upper-level category>  (typing)
+    <relation>: <other extracted string>
+  }
+  Store *-- "1..*" Abstract
+  Abstract *-- "0..*" Assertions
+  note bottom of Assertions
+    Written once, at extraction, as the abstract said it.
+    Never renamed, merged or deleted afterwards.
+  end note
+}
+
+package "Terminology decision register  (term_mapping_<timestamp>.json, class TermMappingAndGate)" {
+  class "Register file" as Register <<decision>> {
+    {field} key : term string
+    {field} value : SpellingVariantRecord | TermRecord
+  }
+  class "SpellingVariantRecord" as Alias <<decision>> {
+    spelling.to : the spelling now used
+    spelling.by : rule or curator
+    spelling.when : timestamp
+    --
+    holds no other decision
+  }
+  class "TermRecord" as Term <<decision>> {
+    to : preferred term, or null
+    method : how the mapping was proposed
+    confidence : embedding similarity
+    retired : {reason, when}  (mapping deactivated, kept)
+    pairs : map<candidate preferred term, PairJudgement>
+    gate : map<source, ScopeDecision>
+    gate_contested : sources that disagree
+    rejected : EntityRejection  (non-scope reasons)
+    relations : map<"predicate: target", RelationRejection>
+    senses : map<category, sense name>
+  }
+  class "PairJudgement" as Pair <<decision>> {
+    pass1 : {verdict, reason}  first adjudication
+    pass2 : {verdict, reason}  second adjudication
+    curator : {verdict, reason}
+    refused : {by, when}
+    --
+    verdict ∈ same_class | narrower | broader | different
+  }
+  class "ScopeDecision" as Scope <<decision>> {
+    verdict ∈ in | out
+    reason / by / when
+    score, margin, near  (nearest-neighbour source only)
+    --
+    source ∈ curator > pass2 ~ pass1 > rule
+  }
+  Register *-- Alias
+  Register *-- Term
+  Term *-- "0..*" Pair
+  Term *-- "0..*" Scope
+}
+
+class "Resolved evidence  (computed on every read: ConceptStore.view())" as View <<derived>> {
+  {field} key : PMID
+  {field} value : map<resolved name, AssertionSet>
+  --
+  never stored; cannot go stale
+}
+
+Store ..> View : read
+Register ..> View : applied
+@enduml
+
+
+@startuml dictionaries_resolution
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+title How one extracted assertion is resolved on read
+
+start
+:extracted string s, assertion "p: t"
+(evidence store, as written);
+:follow spelling-variant records
+s -> s' (chains resolved, cycles refused);
+:look up the synonym mapping
+exact spelling first, then the normalised comparison key
+s' -> preferred term P;
+if (a curator or a check rejected P\n(non-scope rejection on its record)?) then (yes)
+  :left out of the resolved evidence\n(decision retained on the record);
+  stop
+endif
+if (scope decision on P's concept\nis "out" (register or keyword rules)?) then (yes)
+  :left out, same way;
+  stop
+endif
+:resolve the target t the same way -> T;
+if (T out of scope, or the relation\n"p: T" rejected on P's record?) then (yes)
+  :assertion left out;
+else (no)
+  :keep "p: T" on P;
+endif
+:split P by upper-level category
+if its record lists senses;
+:merge with any other string of the same abstract
+that resolved to P (strongest evidence wins);
+stop
+@enduml

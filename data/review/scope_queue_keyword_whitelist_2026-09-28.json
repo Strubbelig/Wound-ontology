@@ -1,0 +1,581 @@
+{
+ "contested": [
+  {
+   "id": "saabb4ffa6cb8",
+   "term": "cesarean delivery",
+   "mentions": 14,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "cesarean delivery",
+     "reason": "Obstetric procedure, not directly wound care",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "cesarean delivery",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s04b756500840",
+   "term": "histology",
+   "mentions": 14,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "histology",
+     "reason": "Study methodology (examination of tissue), not a wound entity.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "histology",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s79ab91fa53b9",
+   "term": "skin cancer",
+   "mentions": 12,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "skin cancer",
+     "reason": "Disease entity not inherently wound-related",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "skin cancer",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s702c5e48e820",
+   "term": "sarcoma",
+   "mentions": 8,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "sarcoma",
+     "reason": "Malignancy type, not itself a wound, wound-related condition, treatment, or healing biology.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "sarcoma",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s1f7754c16a8e",
+   "term": "traffic accident",
+   "mentions": 8,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "traffic accident",
+     "reason": "External event causing injury, not itself a wound-care entity.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "traffic accident",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s0b6bd4de1e4b",
+   "term": "toxin",
+   "mentions": 6,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "toxin",
+     "reason": "Generic molecule class, not wound-specific treatment or healing molecule.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "toxin",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s10aceb2a0919",
+   "term": "Post-thrombotic syndrome",
+   "mentions": 5,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "curator",
+     "verdict": "out",
+     "spelling": "Post-thrombotic syndrome",
+     "reason": "curator via the contradiction queue",
+     "when": "2026-09-28T20:05:57+00:00"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "Post-thrombotic syndrome",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (curator)",
+   "source": "keyword"
+  },
+  {
+   "id": "sced87a82e71a",
+   "term": "bulkiness",
+   "mentions": 4,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "bulkiness",
+     "reason": "A quality not specific to wound care.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "bulkiness",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s3fe6e5add8cd",
+   "term": "upper layer",
+   "mentions": 4,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "upper layer",
+     "reason": "Generic anatomical term without specific wound context; not a defined wound structure.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "upper layer",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "sc16e81d8dfa4",
+   "term": "Haemophilus influenzae",
+   "mentions": 3,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "Haemophilus influenzae",
+     "reason": "Pathogen not typically associated with wound infections; more relevant to respiratory tract infections.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "Haemophilus influenzae",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s31eebf14ff63",
+   "term": "nipple-sparing mastectomy",
+   "mentions": 3,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "nipple-sparing mastectomy",
+     "reason": "A surgical procedure for breast cancer, not a wound care treatment or wound-related condition per se.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "nipple-sparing mastectomy",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s3d2b8d2bfb7c",
+   "term": "radiofrequency ablation",
+   "mentions": 3,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "radiofrequency ablation",
+     "reason": "Not a standard wound care treatment.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "radiofrequency ablation",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s026051edb2d5",
+   "term": "antibiotic prescription",
+   "mentions": 2,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "antibiotic prescription",
+     "reason": "Administrative/ordering process rather than a wound-care treatment or biology.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "antibiotic prescription",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s073c5dc664c2",
+   "term": "capsule",
+   "mentions": 2,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "capsule",
+     "reason": "Generic material entity with no specified wound, anatomical, or pathogen role.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "capsule",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s1875f8cc6b65",
+   "term": "methanesulfonic acid",
+   "mentions": 2,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "methanesulfonic acid",
+     "reason": "not a wound care agent or biological molecule",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "methanesulfonic acid",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "se71b2fa07f63",
+   "term": "photophobia",
+   "mentions": 2,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "photophobia",
+     "reason": "Non-wound symptom; not a wound sign or wound-related quality.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "photophobia",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "sa967030267b0",
+   "term": "splinting",
+   "mentions": 2,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "splinting",
+     "reason": "Given as part of polytrauma management, not specifically a wound-care intervention.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "splinting",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s26e9206db98e",
+   "term": "Bifidobacterium longum",
+   "mentions": 1,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "Bifidobacterium longum",
+     "reason": "Not a wound pathogen or wound-care therapeutic agent in the given context.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "Bifidobacterium longum",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s75de39831b11",
+   "term": "lymphovascular invasion",
+   "mentions": 1,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "lymphovascular invasion",
+     "reason": "Tumor histopathologic feature, not a wound condition, healing process, or treatment.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "lymphovascular invasion",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "sadd9508bb759",
+   "term": "microbial profiling",
+   "mentions": 1,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass1",
+     "verdict": "out",
+     "spelling": "microbial profiling",
+     "reason": "inherited from a near-identical term already decided",
+     "when": "2026-09-28 sapbert nearest-neighbour"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "microbial profiling",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass1)",
+   "source": "keyword"
+  },
+  {
+   "id": "sa982c82a622d",
+   "term": "optical sensor",
+   "mentions": 1,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "optical sensor",
+     "reason": "Generic measurement instrument, not a wound-care device.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "optical sensor",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s823cc77a1383",
+   "term": "rubber membrane",
+   "mentions": 1,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "rubber membrane",
+     "reason": "Generic material entity with no demonstrated wound-care role.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "rubber membrane",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s81c6faf558d6",
+   "term": "Ta'liq al-'Alaq",
+   "mentions": 1,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "Ta'liq al-'Alaq",
+     "reason": "Information entity/bibliographic text about leech therapy, not the therapy itself or a wound entity.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "Ta'liq al-'Alaq",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  },
+  {
+   "id": "s9bba2653e7d1",
+   "term": "tibialis anterior",
+   "mentions": 1,
+   "spellings": 1,
+   "sides": [
+    {
+     "who": "pass2",
+     "verdict": "out",
+     "spelling": "tibialis anterior",
+     "reason": "Generic muscle anatomy; not wound-specific.",
+     "when": "2026-09-28 llm scope pass"
+    },
+    {
+     "who": "keyword whitelist",
+     "verdict": "in",
+     "spelling": "tibialis anterior",
+     "reason": "an entry on KEYWORD_WHITELIST (config/whitelist.py), which protects every name containing it",
+     "when": ""
+    }
+   ],
+   "gate_now": "out (pass2)",
+   "source": "keyword"
+  }
+ ],
+ "disagreements": []
+}

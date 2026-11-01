@@ -1,4 +1,9 @@
-"""run_build_hierarchies must actually load curated edges when given none.
+"""refresh_class_hierarchy must actually load curated edges when given none.
+
+Since 2026-10-21 the class hierarchy is a VIEW: refresh_class_hierarchy derives
+it from its sources and stores nothing but a provenance snapshot; the
+mereological hierarchy is no longer built (run_build_hierarchies is a
+deprecated alias).
 
 The loader is unit-tested in test_curated_seed.py and the export side in
 test_extend_lexicon.py; what neither covered is the wiring between them. The
@@ -32,12 +37,39 @@ class _FakeStore:
             "read from the ontologies as their own source."
         )
 
+    def view(self):
+        return iter(())
+
+
+class _FakeTermMapper:
+    """The real term dict over an empty in-memory file: no placements (rule 64),
+    the `placed` source is tested in test_placements_view."""
+
+    def __init__(self):
+        from conftest import memory_mapping
+        self._term_mapping = memory_mapping()
+
+
+def _elk_no(pipeline, child, parent):
+    from conftest import J
+    tm = pipeline.term_mapper._term_mapping
+    tm.records.setdefault(child, {}).setdefault("is_a", {})[parent] = [J("no", "elk", "a clash")]
+    tm._dirty()
+
 
 class _FakeDM:
     def list_prefixes(self, *a, **kw):
         return []
 
     def load_latest_json(self, *a, **kw):
+        return None
+
+
+class _FakeGate:
+    """A unit test builds no reasoner skeleton; only the resolver is handed on."""
+
+    @staticmethod
+    def least_common_category(cats):
         return None
 
 
@@ -48,12 +80,16 @@ class _FakeHier:
         self.curated = None
         self.fca = None
         self.saved = False
+        self.snapshot = False
+        self.df = pd.DataFrame(dtype=float)
         self.concepts, self.roots = [], []
         self._prov = {}
 
-    def get_data(self, store, curated=None, fca=()):
+    def get_data(self, store, curated=None, fca=(), reconcile_categories=None, placed=()):
         self.curated = curated
+        self.placed = list(placed)
         self.fca = list(fca)
+        self.reconciler = reconcile_categories
         if curated is None or curated.empty:
             return
         for _, row in curated.iterrows():
@@ -61,6 +97,9 @@ class _FakeHier:
 
     def save(self):
         self.saved = True
+
+    def save_snapshot(self):
+        self.snapshot = True
 
     def provenance_summary(self):
         counts = {}
@@ -74,8 +113,12 @@ def pipeline():
     p = orch.Orchestrator.__new__(orch.Orchestrator)
     p.store = _FakeStore()
     p.dm = _FakeDM()
-    p.class_hier = _FakeHier()
-    p.mere_hier = _FakeHier()
+    fake = _FakeHier()
+    p._class_hier = None
+    p._view_factory = lambda dm: fake
+    p._gate = _FakeGate()
+    p.term_mapper = _FakeTermMapper()
+    p.fake_view = fake
     return p
 
 
@@ -87,7 +130,7 @@ def onto(tmp_path):
 
 
 def test_none_loads_curated_edges_from_the_ontologies(pipeline, onto):
-    pipeline.run_build_hierarchies(curated_sources=[onto])
+    pipeline.refresh_class_hierarchy(curated_sources=[onto])
 
     pairs = set(map(tuple, pipeline.class_hier.curated.values))
     assert pairs == {("Chronic Wound", "Wound"), ("Acute Wound", "Wound")}
@@ -108,7 +151,7 @@ def test_the_default_sources_are_wont_and_mild(pipeline, monkeypatch, onto):
         "wound_ontology.hierarchies.curated_seed.default_curated_sources",
         fake_defaults,
     )
-    pipeline.run_build_hierarchies()
+    pipeline.refresh_class_hierarchy()
     assert seen.get("called"), "should fall back to the WONT/MILD defaults"
     assert pipeline.class_hier.curated is not None
 
@@ -120,7 +163,7 @@ def test_an_explicit_frame_is_used_verbatim(pipeline, monkeypatch):
         lambda: (_ for _ in ()).throw(AssertionError("must not load")),
     )
     df = pd.DataFrame([{"Class": "A", "Parent class": "B"}])
-    pipeline.run_build_hierarchies(predefined_df=df)
+    pipeline.refresh_class_hierarchy(predefined_df=df)
     assert pipeline.class_hier.curated is df
 
 
@@ -131,21 +174,55 @@ def test_an_empty_frame_means_no_curated_edges(pipeline, monkeypatch):
         lambda: (_ for _ in ()).throw(AssertionError("must not load")),
     )
     empty = pd.DataFrame(columns=["Class", "Parent class"])
-    pipeline.run_build_hierarchies(predefined_df=empty)
+    pipeline.refresh_class_hierarchy(predefined_df=empty)
     assert pipeline.class_hier.provenance_summary() == {}
 
 
 def test_a_missing_source_stops_the_build(pipeline, tmp_path):
     """Not a warning and a smaller hierarchy — curated edges outrank the rest."""
     with pytest.raises(FileNotFoundError, match="outrank"):
-        pipeline.run_build_hierarchies(curated_sources=[tmp_path / "gone.ttl"])
-    assert pipeline.class_hier.curated is None
-    assert not pipeline.class_hier.saved
+        pipeline.refresh_class_hierarchy(curated_sources=[tmp_path / "gone.ttl"])
+    assert pipeline.fake_view.curated is None
+    assert pipeline._class_hier is None, "a failed derivation must not leave a view behind"
 
 
-def test_hierarchies_are_saved_on_the_default_path(pipeline, onto):
-    pipeline.run_build_hierarchies(curated_sources=[onto])
-    assert pipeline.class_hier.saved and pipeline.mere_hier.saved
+def test_the_view_is_not_stored_and_there_is_no_mereological_hierarchy(pipeline, onto):
+    """The class hierarchy is a view (2026-10-21): no matrix is written, only the
+    provenance snapshot for the inspection pages. The mereological hierarchy is
+    gone (2026-10-27): part_of reaches the FCA from the cleaned store, and WONT
+    only as a read relation."""
+    view = pipeline.refresh_class_hierarchy(curated_sources=[onto])
+    assert view is pipeline.fake_view and pipeline.class_hier is view
+    assert not view.saved, "the view itself must never be written"
+    assert view.snapshot, "the inspection pages read the provenance snapshot"
+    assert not hasattr(orch.Orchestrator, "mere_hier")
+
+
+def test_run_build_hierarchies_is_an_alias_for_the_view(pipeline, onto):
+    view = pipeline.run_build_hierarchies(curated_sources=[onto])
+    assert view is pipeline.fake_view
+
+
+def test_the_edge_gate_verdicts_are_taken_off_the_view(pipeline, onto):
+    """A later process (build_wont_core.py) must see the gated view the
+    extension was built from -- but a curated edge is never taken off."""
+    _elk_no(pipeline, "Chronic Wound", "Wound")
+    _elk_no(pipeline, "Burn", "Process")
+    fake = pipeline.fake_view
+    fake.df = pd.DataFrame(1.0, index=["Chronic Wound", "Burn"], columns=["Wound", "Process"])
+    view = pipeline.refresh_class_hierarchy(curated_sources=[onto])
+    assert view.df.at["Burn", "Process"] == 0.0, "a text edge the gate rejected stays off"
+    assert view.df.at["Chronic Wound", "Wound"] == 1.0, "a curated edge is the curator's to remove"
+    assert view.verdicts_applied
+
+
+def test_the_gate_can_ask_for_every_edge_again(pipeline, onto):
+    _elk_no(pipeline, "Burn", "Process")
+    fake = pipeline.fake_view
+    fake.df = pd.DataFrame(1.0, index=["Burn"], columns=["Process"])
+    view = pipeline.refresh_class_hierarchy(curated_sources=[onto], include_rejected=True)
+    assert view.df.at["Burn", "Process"] == 1.0
+    assert not view.verdicts_applied
 
 
 def test_accepted_lattice_slices_reach_the_hierarchy(pipeline, onto):
@@ -156,16 +233,28 @@ def test_accepted_lattice_slices_reach_the_hierarchy(pipeline, onto):
             return ["concept_lattice_wound_accepted"]
 
         def load_latest_json(self, prefix):
-            return [["Chronic Wound", "Injury"]]
+            if prefix == "concept_lattice_wound_accepted":
+                return [["Chronic Wound", "Injury"]]
+            return None
 
     pipeline.dm = _DM()
-    pipeline.run_build_hierarchies(curated_sources=[onto])
+    pipeline.refresh_class_hierarchy(curated_sources=[onto])
+    # Injury is no class of the ontology and no abstract names it: the edge is
+    # below the evidence cut (rule 79, curator 2026-10-30), kept in the slice
+    assert pipeline.class_hier.fca == [[]]
+    assert pipeline.fca_edges_below_cut == [("Chronic Wound", "Injury")]
 
+    class _Named(_FakeStore):
+        def view(self):
+            return iter([("1", {"Injury": {}}), ("2", {"injury": {}})])
+    pipeline.store = _Named()
+    pipeline.refresh_class_hierarchy(curated_sources=[onto])
     assert pipeline.class_hier.fca == [[("Chronic Wound", "Injury")]]
+    assert pipeline.fca_edges_below_cut == []
 
 
 def test_no_review_means_no_fca_source(pipeline, onto):
-    pipeline.run_build_hierarchies(curated_sources=[onto])
+    pipeline.refresh_class_hierarchy(curated_sources=[onto])
     assert pipeline.class_hier.fca == []
 
 
@@ -176,3 +265,11 @@ def test_a_subtree_gets_its_own_artifact_names():
     assert _slugify("Chronic Wound") == "chronic_wound"
     assert _slugify("CO2 Wound") == "co2_wound"
     assert _slugify("  ") == "unnamed"
+
+
+def test_the_class_hierarchy_is_given_a_category_resolver(pipeline, onto):
+    """Without it the hierarchy contradicts itself by construction: one term
+    typed several ways across abstracts becomes several category edges, and the
+    reasoner has to clean up afterwards."""
+    pipeline.refresh_class_hierarchy(curated_sources=[onto])
+    assert pipeline.class_hier.reconciler is not None

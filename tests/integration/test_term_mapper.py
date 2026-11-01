@@ -18,7 +18,7 @@ import pytest
 
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.embedding.embedder import Embedder
-from wound_ontology.mappers.term_mapping import TermMapping
+from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
 from wound_ontology.mappers.term_mapper import TermMapper
 
 
@@ -55,31 +55,54 @@ def embedder():
 
 
 @pytest.fixture(scope="module")
-def built_mapper(tmp_data_dir, embedder):
+def built(tmp_data_dir, embedder):
+    """Returns (mapper, assignment).
+
+    The two are no longer the same thing. The persisted mapping holds MERGES
+    only — an identity entry is a no-op that `map()` already performs for any
+    unmapped term, and writing one per canonical had made the live file 92%
+    no-ops (24441 of 26625 entries). The build's return value still answers for
+    every term it was given, which is what a test about coverage needs.
+    """
     dm = DataManager(base_path=tmp_data_dir)
-    tm = TermMapping(dm, "term_mapping_test")
+    tm = TermMappingAndGate(dm, "term_mapping_test")
     mapper = TermMapper(term_mapping=tm, name="test_mapper")
-    mapper.build_from_embeddings(
+    assignment = mapper.build_from_embeddings(
         TERMS,
         embedder=embedder,
         similarity_threshold=0.95,
     )
-    return mapper
+    return mapper, assignment
+
+
+@pytest.fixture(scope="module")
+def built_mapper(built):
+    return built[0]
 
 
 # ── Mechanics ─────────────────────────────────────────────────────────────────
 
 @pytest.mark.integration
-def test_all_terms_in_mapping(built_mapper):
-    """Every input term must appear as a key in the output mapping."""
+def test_all_terms_accounted_for(built):
+    """The build must return a decision for every term it was given.
+
+    Asserted against the RETURN value, not the file: the file holds merges only,
+    so a term that was left alone is legitimately absent from it. Dropping a term
+    on the floor and deciding to leave it alone look identical from the file and
+    are very different things, which is why this is asked of the assignment.
+    """
+    _, assignment = built
     for term in TERMS:
-        assert term in built_mapper.mapping, f"'{term}' missing from mapping"
+        assert term in assignment, f"'{term}' missing from the build's assignment"
 
 
 @pytest.mark.integration
 def test_every_canonical_maps_to_itself(built_mapper):
-    for term, canonical in built_mapper.mapping.items():
-        assert built_mapper.mapping[canonical] == canonical, \
+    """No chains: resolving a canonical must be a fixed point. Asked through
+    map(), which passes an unmapped term through, so it holds whether or not the
+    identity entry was persisted."""
+    for _, canonical in built_mapper.mapping.items():
+        assert built_mapper.map(canonical) == canonical, \
             f"Canonical '{canonical}' does not map to itself"
 
 
@@ -98,8 +121,8 @@ def test_surface_form_synonyms_collapse(built_mapper, term_a, term_b):
     Near-identical surface forms (case / hyphen / whitespace variants)
     must map to the same canonical.
     """
-    std_a = built_mapper.mapping[term_a]
-    std_b = built_mapper.mapping[term_b]
+    std_a = built_mapper.map(term_a)
+    std_b = built_mapper.map(term_b)
     assert std_a == std_b, (
         f"'{term_a}' → '{std_a}' and '{term_b}' → '{std_b}' "
         f"should collapse to one canonical"
@@ -116,8 +139,8 @@ def test_distinct_terms_stay_separate(built_mapper, term_a, term_b):
     Note: morphological variants like infected/infection are also expected to
     stay separate under the string-similarity guard (string_sim ≈ 0.71 < 0.92).
     """
-    std_a = built_mapper.mapping[term_a]
-    std_b = built_mapper.mapping[term_b]
+    std_a = built_mapper.map(term_a)
+    std_b = built_mapper.map(term_b)
     assert std_a != std_b, (
         f"'{term_a}' and '{term_b}' incorrectly collapsed to '{std_a}'"
     )

@@ -56,12 +56,12 @@ def category_block() -> str:
         "2. Prefer the most specific category you are confident in.",
         "3. If you are NOT confident, move UP the tree and pick the nearest ancestor "
         "you are sure of. A [FALLBACK] answer is a correct answer, not a failure — "
-        "'Continuant' when you cannot tell a substance from a quality is better than "
-        "guessing 'MaterialEntity'. Coarse answers are flagged for human refinement; "
+        "'continuant' when you cannot tell a substance from a quality is better than "
+        "guessing 'material entity'. Coarse answers are flagged for human refinement; "
         "a confident wrong answer is not.",
         "4. Choose on what the term IS, not what it is associated with. Something that "
-        "unfolds over time is a Process even when it also names a condition. Something "
-        "that raises a probability rather than describing a present state is a Tendency.",
+        "unfolds over time is a 'process' even when it also names a condition. Something "
+        "that raises a probability rather than describing a present state is a 'tendency'.",
     ]
     return "\n".join(lines)
 

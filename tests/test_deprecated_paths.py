@@ -43,7 +43,6 @@ def test_export_to_owl_warns_before_it_does_any_work(tmp_path, monkeypatch):
 
     pipeline = orch.Orchestrator.__new__(orch.Orchestrator)
     pipeline.class_hier = _hier()
-    pipeline.mere_hier = _hier()
     pipeline.fca_hier = None
     pipeline.store = None
     pipeline.dm = None

@@ -37,7 +37,7 @@ from typing import Iterable
 
 import pandas as pd
 import rdflib
-from rdflib.namespace import OWL, RDFS
+from rdflib.namespace import OWL, RDF, RDFS
 
 from wound_ontology.utils.rdf_io import parse_graph, sniff_format
 
@@ -207,3 +207,114 @@ def default_curated_sources() -> tuple[list[Path], list[Path]]:
     labels = sorted(mods.glob("*_module.owl")) + sorted(mods.glob("*_stub.owl")) \
         if mods.exists() else []
     return [Path(GROUND_TRUTH_TTL), Path(MILD_TTL)], labels
+
+
+def module_ancestry(iris: Iterable[str], module_sources: Iterable[Path | str]) -> pd.DataFrame:
+    """The import modules' named subsumption ABOVE the given classes only.
+
+    2026-10-02: placements use module classes as parents (`planned process`,
+    `1-D extent`); WONT/MILD alone leave those parentless, so the tree showed
+    them at top level. Folding whole modules in would stamp thousands of
+    imported classes as curated (see `default_curated_sources`), so this walks
+    upward from the classes actually used and returns just those chains, as a
+    'Class' / 'Parent class' frame.
+    """
+    g = rdflib.Graph()
+    for path in module_sources:
+        g += _parse(Path(path))
+    labels = {s: str(o) for s, o in g.subject_objects(RDFS.label)}
+    # The hierarchy is keyed by label, so a non-BFO class carrying a BFO label
+    # IS that BFO node there. Its own parents would be read as BFO's: obi_module
+    # states ChEBI `role` (CHEBI_50906) under PATO `quality`, and that came out
+    # as `Role ⊑ Quality` (2026-10-03). BFO is the top ontology; its own
+    # subsumption comes from `bfo_edges`, never through a namesake.
+    bfo_labels = {str(o).lower() for s, o in g.subject_objects(RDFS.label) if str(s).startswith(BFO_NS)}
+    namesakes = []
+    rows, seen = [], set()
+    stack = [rdflib.URIRef(i) for i in iris]
+    visited = set()
+    while stack:
+        c = stack.pop()
+        if c in visited:
+            continue
+        visited.add(c)
+        if not str(c).startswith(BFO_NS) and labels.get(c, "").lower() in bfo_labels:
+            namesakes.append((str(c), labels[c]))
+            continue
+        for p in g.objects(c, RDFS.subClassOf):
+            if isinstance(p, rdflib.BNode) or p == OWL.Thing:
+                continue
+            if c in labels and p in labels and (labels[c], labels[p]) not in seen:
+                seen.add((labels[c], labels[p]))
+                rows.append({"Class": labels[c], "Parent class": labels[p]})
+            stack.append(p)
+    if namesakes:
+        print(f"[curated_seed] module ancestry: {len(namesakes)} non-BFO class(es) carry a BFO label "
+              f"and were not climbed (BFO's own edges stand for that node): {namesakes}")
+    return pd.DataFrame(rows, columns=["Class", "Parent class"])
+
+
+BFO_NS = "http://purl.obolibrary.org/obo/BFO_"
+
+
+def bfo_label(iri, labels) -> str:
+    """The one name of a BFO class that the modules label several ways.
+
+    Some modules carry BFO's older names beside BFO 2020's (`fiat point` and
+    `zero-dimensional continuant fiat boundary` for BFO_0000147, likewise
+    `fiat line`, `fiat surface`). Taking whichever label came first let the
+    hash seed pick a different name each run (seen 2026-10-28, fixed
+    2026-10-29). The extraction's own category name wins, as it does in the
+    reasoner's skeleton; otherwise the first label in sorted order.
+    """
+    from wound_ontology.llm.extraction_models import CATEGORY_IRI
+    named = sorted(c for c, i in CATEGORY_IRI.items() if i == str(iri) and c in labels)
+    return named[0] if named else sorted(labels)[0]
+
+
+def bfo_edges(module_sources: Iterable[Path | str]) -> pd.DataFrame:
+    """BFO's own subsumption, whole, plus the extraction categories that are not
+    BFO labels, as a 'Class' / 'Parent class' frame (2026-10-03).
+
+    BFO is the top ontology of WONT, and WONT, MILD and the modules become the
+    extraction schema and the class hierarchy. Before this the hierarchy read
+    subsumption from WONT + MILD only, which hold no BFO axiom, so `disposition`,
+    `function`, `realizable entity` and `process boundary` had no parent and
+    `role` had the wrong one. The modules carry all 36 BFO 2020 classes since
+    the build seeds BFO core whole (build_disease_proposal.sh, FIX 4); this
+    raises if they do not.
+
+    The two extraction categories that are not BFO labels hang where their
+    definition puts them: `information entity` (typed as BFO_0000031) under
+    generically dependent continuant, `tendency` (MILD_120005) under realizable
+    entity (CATEGORY_PARENT).
+    """
+    from wound_ontology.llm.extraction_models import CATEGORY_IRI, CATEGORY_PARENT
+    g = rdflib.Graph()
+    for path in module_sources:
+        g += _parse(Path(path))
+    labels: dict = {}
+    for s, o in g.subject_objects(RDFS.label):
+        if str(s).startswith(BFO_NS) and getattr(o, "language", None) in (None, "en"):
+            labels.setdefault(s, set()).add(str(o))
+    label = {s: bfo_label(s, ls) for s, ls in labels.items()}
+    classes = {s for s in g.subjects(RDF.type, OWL.Class) if str(s).startswith(BFO_NS)}
+    if len(classes) < 36 or classes - set(label):
+        raise RuntimeError(
+            f"the import modules hold {len(classes)} BFO class(es), {len(classes - set(label))} unlabelled; "
+            f"BFO 2020 core has 36. Rebuild the modules (build_disease_proposal.sh seeds BFO core whole).")
+    rows = []
+    for c in sorted(classes):
+        for p in g.objects(c, RDFS.subClassOf):
+            if isinstance(p, rdflib.URIRef) and str(p).startswith(BFO_NS):
+                rows.append({"Class": label[c], "Parent class": label[p]})
+    by_iri = {str(k): v for k, v in label.items()}
+    names = {v.lower() for v in label.values()}
+    for cat, iri in CATEGORY_IRI.items():
+        if cat in names:
+            continue
+        if iri in by_iri:                       # a category named apart from the BFO class it is
+            rows.append({"Class": cat, "Parent class": by_iri[iri]})
+        elif CATEGORY_PARENT.get(cat):
+            rows.append({"Class": cat, "Parent class": CATEGORY_PARENT[cat]})
+    return pd.DataFrame(rows, columns=["Class", "Parent class"]).drop_duplicates()

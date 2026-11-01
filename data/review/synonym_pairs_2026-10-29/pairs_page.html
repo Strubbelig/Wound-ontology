@@ -1,0 +1,436 @@
+<title>Open Synonym Pairs</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,650&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; each pair is a card with the two terms side by side, DeepSeek's two answers, then the choice. Same look as the conflict page of 29 Oct. */
+:root {
+  --bg: #f4f5f2;
+  --surface: #ffffff;
+  --ink: #1d2422;
+  --muted: #5d6764;
+  --line: #d9dfdb;
+  --side-a: #1d6a86;
+  --side-a-soft: #e3f0f4;
+  --side-b: #8f5a12;
+  --side-b-soft: #f6ecdc;
+  --warn: #b02a22;
+  --warn-soft: #f8e4e1;
+  --pick: #2a4f8f;
+  --pick-soft: #e6ecf7;
+  --ok: #2f6b3a;
+  --ok-soft: #e4f1e6;
+  --f-display: "Literata", "Iowan Old Style", Georgia, serif;
+  --f-body: "Public Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141917; --surface: #1c2220; --ink: #e6ebe8; --muted: #9aa5a1; --line: #303a37;
+    --side-a: #6fb6d0; --side-a-soft: #18303a; --side-b: #e0a75a; --side-b-soft: #36291a;
+    --warn: #f0857b; --warn-soft: #3a1f1c; --pick: #9db8ec; --pick-soft: #1f2a40; --ok: #7cc68a; --ok-soft: #1c3020;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141917; --surface: #1c2220; --ink: #e6ebe8; --muted: #9aa5a1; --line: #303a37;
+  --side-a: #6fb6d0; --side-a-soft: #18303a; --side-b: #e0a75a; --side-b-soft: #36291a;
+  --warn: #f0857b; --warn-soft: #3a1f1c; --pick: #9db8ec; --pick-soft: #1f2a40; --ok: #7cc68a; --ok-soft: #1c3020;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 15px/1.55 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 64px;
+}
+.wrap { max-width: 860px; margin: 0 auto; display: grid; gap: 22px; }
+h1, h2 { font-family: var(--f-display); font-weight: 650; text-wrap: balance; margin: 0; }
+h1 { font-size: 1.85rem; line-height: 1.2; }
+h2 { font-size: 1.3rem; line-height: 1.3; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 68ch; }
+.mono { font-family: var(--f-mono); font-size: 0.82em; }
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--bg); padding-block: 10px; border-bottom: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.pips { display: flex; flex-wrap: wrap; gap: 5px; }
+.pip { width: 18px; height: 8px; border-radius: 4px; background: var(--line); border: 0; padding: 0; cursor: pointer; }
+.pip.rule { box-shadow: inset 0 0 0 1.5px var(--ok); }
+.pip.done { background: var(--ok); }
+.pip:focus-visible { outline: 2px solid var(--pick); outline-offset: 2px; }
+.count { font-variant-numeric: tabular-nums; font-weight: 600; }
+.status { color: var(--muted); font-size: 0.86rem; margin-left: auto; }
+.status.warn { color: var(--warn); }
+button.bulk {
+  font: inherit; font-size: 0.88rem; font-weight: 600; color: var(--ok); background: var(--ok-soft);
+  border: 1px solid color-mix(in srgb, var(--ok) 40%, transparent); border-radius: 8px; padding: 6px 12px; cursor: pointer;
+}
+button.bulk:hover { border-color: var(--ok); }
+button.bulk:disabled { opacity: 0.55; cursor: default; }
+button.bulk:focus-visible { outline: 2px solid var(--pick); outline-offset: 2px; }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 22px; display: grid; gap: 14px; scroll-margin-top: 70px;
+}
+.card.decided { border-color: color-mix(in srgb, var(--ok) 45%, var(--line)); }
+.head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.today { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.badge-done { font-size: 0.8rem; color: var(--ok); font-weight: 600; }
+.sides { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.side { border-radius: 8px; padding: 12px 14px; display: grid; gap: 4px; align-content: start; min-width: 0; }
+.side.a { background: var(--side-a-soft); }
+.side.b { background: var(--side-b-soft); }
+.side .nm { font-weight: 600; overflow-wrap: anywhere; }
+.side.a .nm { color: var(--side-a); }
+.side.b .nm { color: var(--side-b); }
+.side .facts { font-size: 0.86rem; color: var(--muted); display: grid; gap: 1px; }
+.answers { display: grid; gap: 6px; font-size: 0.9rem; }
+.answers div { display: grid; grid-template-columns: 8.5em 1fr; gap: 10px; }
+.answers .who { color: var(--muted); }
+.answers .v { font-weight: 600; }
+.aside { font-size: 0.9rem; color: var(--muted); max-width: 72ch; }
+.rule { background: var(--ok-soft); border-radius: 8px; padding: 9px 12px; font-size: 0.9rem; }
+.rule b { color: var(--ok); font-weight: 600; }
+fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; }
+legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
+.opt {
+  display: grid; grid-template-columns: auto 1fr; gap: 3px 10px; align-items: start;
+  border: 1px solid var(--line); border-radius: 8px; padding: 10px 13px; cursor: pointer;
+}
+.opt:hover { border-color: var(--pick); }
+.opt:has(input:checked) { border-color: var(--pick); background: var(--pick-soft); }
+.opt:has(input:focus-visible) { outline: 2px solid var(--pick); outline-offset: 2px; }
+.opt input { margin: 4px 0 0; accent-color: var(--pick); }
+.opt .t { font-weight: 600; }
+.opt .e { grid-column: 2; color: var(--muted); font-size: 0.9rem; }
+.opt .s { grid-column: 2; font-size: 0.84rem; color: var(--ok); font-weight: 600; }
+.note-l { display: grid; gap: 6px; font-size: 0.9rem; color: var(--muted); }
+textarea {
+  font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+  border-radius: 8px; padding: 9px 11px; min-height: 56px; resize: vertical; width: 100%;
+}
+textarea:focus-visible { outline: 2px solid var(--pick); outline-offset: 1px; }
+.saved { font-size: 0.82rem; color: var(--muted); min-height: 1.2em; }
+.saved.err { color: var(--warn); }
+fieldset:disabled .opt { cursor: default; opacity: 0.85; }
+details.skipped { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 22px; }
+details.skipped summary { cursor: pointer; font-weight: 600; }
+details.skipped summary:focus-visible { outline: 2px solid var(--pick); outline-offset: 2px; border-radius: 3px; }
+.sk { display: grid; gap: 10px; margin-top: 12px; font-size: 0.9rem; }
+.sk h3 { font-size: 0.95rem; margin: 6px 0 0; }
+.sk ul { margin: 0; padding-left: 1.2em; display: grid; gap: 3px; }
+.sk .why { color: var(--muted); }
+.foot { color: var(--muted); font-size: 0.9rem; max-width: 70ch; }
+@media (max-width: 640px) {
+  .sides { grid-template-columns: 1fr; }
+  .answers div { grid-template-columns: 1fr; gap: 0; }
+  .card { padding: 16px; }
+  h1 { font-size: 1.5rem; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+</style>
+<div class="wrap">
+  <header style="display:grid;gap:10px">
+    <h1>Eighteen pairs where DeepSeek's two answers disagree</h1>
+    <p class="lede">DeepSeek answered each pair twice, on 22 and on 28 September, and its two answers disagree. You have not answered any of them yet. Each card shows the two terms, how they stand today, both answers with DeepSeek's reasons, and what each choice changes. Six cards carry an answer that follows from one of your own rules; the green button takes those six at once. A choice is saved the moment you click it. Nothing in the ontology changes until you tell me in chat that you are done.</p>
+  </header>
+  <div class="bar" role="navigation" aria-label="Progress">
+    <span class="count" id="count">0 of 17 decided</span>
+    <div class="pips" id="pips"></div>
+    <button class="bulk" id="bulk" type="button">Take the 6 answers by your rules</button>
+    <span class="status" id="status">Connecting…</span>
+  </div>
+  <main id="cards" style="display:grid;gap:22px"></main>
+  <details class="skipped">
+    <summary>10 pairs not asked, and why</summary>
+    <div class="sk">
+      <h3>Both terms out of scope (9)</h3>
+      <p class="why">Your answer would change nothing that is built. The three marked * have a scope copied from a neighbouring term, which DeepSeek will judge again; a pair comes back here if both its terms then turn out to be in scope.</p>
+      <ul>
+        <li>Anesthesia application / Anesthetic application</li>
+        <li>Integrative intervention therapy / Integrative therapy</li>
+        <li>Multivariate linear regression model / Multivariate linear regression</li>
+        <li>Noninferiority comparison / Noninferiority analysis</li>
+        <li>PCR test / Pcr</li>
+        <li>PCR-based assay / PCR-based method *</li>
+        <li>Polymerase chain reaction / Polymerase chain reaction test</li>
+        <li>Polymerase chain reaction analysis / Polymerase chain reaction test</li>
+        <li>Preoperative surgical planning / Preoperative plan *</li>
+      </ul>
+      <h3>Already answered by you (1)</h3>
+      <ul>
+        <li>Debridement therapy / Debridement process: you put Debridement therapy under Debridement process on 2 Oct.</li>
+      </ul>
+    </div>
+  </details>
+  <p class="foot">Source: the term dictionary of 29 Oct 2026, pairs on which DeepSeek's answers of 22 and 28 Sep disagree and that carry no answer of yours (28; one turned out to be answered through your placement of 2 Oct). Abstract counts are those of the cleaned store; "its own" counts the abstracts that name the term itself. A term with fewer than 2 abstracts is kept but not built. When you are done, say so in chat. I then enter each choice as your judgement; a "kind of" answer also becomes a superclass link, as with your 44 answers this morning.</p>
+</div>
+<script>
+const OTHER = { id: "other", title: "Something else", effect: "Write in the note what should happen." };
+// kind: "merged" (one class today) or "apart" (two classes today). rule: the option id one of the author's rules gives, with the rule in plain words.
+const CARDS = [
+  { id: "complete-thickness", a: "Complete-thickness skin wound", b: "Complete-thickness wound", kind: "merged", name: "Complete-thickness wound",
+    aFacts: ["2 abstracts of its own"], bFacts: ["7 abstracts of its own"], together: 9, type: "typed a material entity in the abstracts",
+    first: ["same", "a complete-thickness wound is a skin wound, so “skin” adds nothing"],
+    second: ["a kind of", "a complete-thickness skin wound is one kind of complete-thickness wound"],
+    rule: { pick: "a_under_b", text: "An added word that narrows the meaning makes a kind of, not the same class (your ruling of 1 Oct, as for Knee injury and Traumatic knee injury). Both keep 2 abstracts or more, so both are built." } },
+  { id: "skin-perfusion", a: "Skin perfusion", b: "Skin blood perfusion", kind: "merged", name: "Skin blood perfusion",
+    aFacts: ["1 abstract of its own"], bFacts: ["1 abstract of its own", "a process, by your end-word rule for “perfusion”"], together: 2,
+    first: ["same", "skin perfusion is the usual short form of skin blood perfusion"],
+    second: ["A is broader", "perfusion is broader than blood perfusion"],
+    rule: { pick: "b_under_a", text: "An added word that narrows the meaning makes a kind of, not the same class (your ruling of 1 Oct). Apart, each has 1 abstract, so neither is built; together they are." } },
+  { id: "debridement-method", a: "Debridement method", b: "Debridement process", kind: "apart",
+    aFacts: ["9 abstracts of its own; you named Debridement modality by it (2 more)", "information, by your end-word rule for “method”"],
+    bFacts: ["WONT's class", "342 abstracts with everything named by it"],
+    first: ["same", "the debridement method names the debridement process (and the same for Debridement modality)"],
+    second: ["different", "a debridement method is not the debridement process itself"],
+    pairs: 2,
+    rule: { pick: "different", text: "Information and a process are never one class: the method is a description, the process is what is done. Your answer is written on both pairs, Debridement method and Debridement modality." } },
+  { id: "necrosis", a: "Necrosis process", b: "Necrosis", kind: "apart",
+    aFacts: ["2 abstracts of its own", "typed a process in the abstracts"], bFacts: ["82 abstracts of its own", "a material entity: your ruling of 18 Oct"],
+    first: ["same", "the word “process” does not change the class"],
+    second: ["different", "a process and a material entity cannot be one class"],
+    rule: { pick: "different", text: "A process and a material entity are never one class, as you decided for Infection and Scarring this morning." } },
+  { id: "dehiscence", a: "Wound dehiscence process", b: "Wound dehiscence", kind: "apart",
+    aFacts: ["1 abstract of its own", "typed a process in the abstracts"], bFacts: ["77 abstracts of its own", "a material entity: your ruling of 18 Oct"],
+    first: ["same", "the word “process” is only another way of saying it"],
+    second: ["different", "the process leads to the disorder; it is not the material entity"],
+    rule: { pick: "different", text: "A process and a material entity are never one class, as you decided for Infection and Scarring this morning." } },
+  { id: "primary-intention", a: "Wound healing by primary intention process", b: "Wound healing by primary intention", kind: "merged", name: "Wound healing by primary intention process",
+    aFacts: ["a process: your ruling of 18 Oct"], bFacts: ["you named it by the other on 25 Sep, in the bulk acceptance"], together: 9,
+    first: ["same", "adding “process” is only another way of saying it"],
+    second: ["different", "a process and a material entity are disjoint"],
+    aside: "The second answer's reason does not fit: both terms are processes. The bulk acceptance of 25 Sep covered pairs on which both answers said “same”, which this one does not.",
+    rule: { pick: "same", text: "“Process” marks what kind of thing it is, not a different thing (your naming of Wound healing process, 24 Oct: “the process suffix is what I actually want here”)." } },
+  { id: "acute-infection", a: "Acute infection disorder", b: "Acute infection", kind: "merged", name: "Acute infection",
+    aFacts: ["1 abstract of its own"], bFacts: ["3 abstracts of its own", "a process, by your end-word rule for “infection”"], together: 4,
+    first: ["same", "“disorder” adds nothing; an acute infection is a disease"],
+    second: ["different", "a disease and an infection are not the same kind of thing"],
+    aside: "This morning you gave Infection itself IDO's sense, the infected part of the body. Acute infection is still a process only through the end-word rule." },
+  { id: "anti-biofilm", a: "Anti-biofilm function", b: "Anti-biofilm ability", kind: "merged", name: "Anti-biofilm ability",
+    aFacts: ["1 abstract of its own"], bFacts: ["1 abstract of its own"], together: 2, type: "typed a function in one abstract, a disposition in the other",
+    first: ["same", "function and ability are synonyms"],
+    second: ["A is a kind of B", "a function is one kind of ability"],
+    aside: "In BFO a function is one kind of disposition. Apart, each has 1 abstract, so neither is built." },
+  { id: "aseptic", a: "Aseptic conditions", b: "Aseptic", kind: "merged", name: "Aseptic",
+    aFacts: ["2 abstracts of its own"], bFacts: ["1 abstract of its own"], together: 3, type: "typed a quality in the abstracts",
+    first: ["different", "aseptic conditions is a state, aseptic the quality"],
+    second: ["same", "the same quality, named by a phrase"] },
+  { id: "bacillus", a: "Bacillus", b: "Bacillus species", kind: "merged", name: "Bacillus species",
+    aFacts: ["2 abstracts of its own"], bFacts: ["no abstract of its own"], together: 2, type: "typed a material entity in the abstracts",
+    first: ["same", "Bacillus is the genus; Bacillus species is any species of it"],
+    second: ["A is broader", "“bacillus” often means any rod-shaped bacterium, not only the genus"] },
+  { id: "broad-spectrum", a: "Broad-spectrum antibacterial activity", b: "Broad-spectrum antimicrobial activity", kind: "merged", name: "Broad-spectrum antimicrobial activity",
+    aFacts: ["5 abstracts of its own"], bFacts: ["6 abstracts of its own", "a function, by your end-word rule for “activity”"], together: 11,
+    first: ["same", "antibacterial and antimicrobial mean the same here"],
+    second: ["A is a kind of B", "antibacterial activity is one kind of antimicrobial activity"] },
+  { id: "dermal-scar", a: "Dermal scar", b: "Skin scar", kind: "merged", name: "Skin scar",
+    aFacts: ["1 abstract of its own"], bFacts: ["1 abstract of its own"], together: 2, type: "typed a material entity in the abstracts",
+    first: ["same", "dermal means skin here"],
+    second: ["A is a kind of B", "a dermal scar is a scar in the dermis, one kind of skin scar"],
+    aside: "Apart, each has 1 abstract, so neither is built." },
+  { id: "mri", a: "Magnetic resonance imaging study", b: "MRI", kind: "merged", name: "MRI",
+    aFacts: ["1 abstract of its own"], bFacts: ["7 abstracts of its own", "a material entity: your ruling of 30 Sep"], together: 10,
+    first: ["same", "MRI is the abbreviation of magnetic resonance imaging; “study” is generic"],
+    second: ["different", "a study adds an examination that MRI alone does not say"],
+    aside: "The class is named by an abbreviation, which your rule forbids; “Magnetic resonance imaging” already points to it. Write “rename” in the note if I should name the class Magnetic resonance imaging." },
+  { id: "skin-regeneration", a: "Skin tissue regeneration", b: "Skin regeneration process", kind: "merged", name: "Skin regeneration process",
+    aFacts: ["2 abstracts of its own"], bFacts: ["no abstract of its own", "you placed it under Regenerative wound healing process"], together: 4, type: "typed a process in the abstracts",
+    first: ["same", "skin tissue regeneration is the same process as skin regeneration"],
+    second: ["A is a kind of B", "regeneration of one tissue is one kind of skin regeneration"] },
+  { id: "manual-npwt", a: "Manual negative pressure wound therapy method", b: "Manual negative pressure wound therapy method wound treatment", kind: "merged", name: "Manual negative pressure wound therapy method wound treatment",
+    aFacts: ["1 abstract of its own"], bFacts: ["1 abstract of its own"], together: 1, type: "typed a process in the abstract",
+    first: ["same", "wound treatment is implied by the method; both name the same process"],
+    second: ["different", "a method and a wound treatment are different classes"],
+    aside: "The second name looks like two phrases the extraction ran together. Both come from one abstract, so neither is built either way." },
+  { id: "softening", a: "Softening", b: "softened", kind: "apart",
+    aFacts: ["1 abstract of its own"], bFacts: ["1 abstract of its own"],
+    first: ["same", "the change and its result name the same thing"],
+    second: ["different", "softening is a process, softened a quality"],
+    aside: "One abstract each, so neither is built either way." },
+  { id: "healing-disturbance", a: "Wound healing disturbance", b: "Wound healing disorder", kind: "apart",
+    aFacts: ["1 abstract of its own", "typed a disposition in the abstract"], bFacts: ["4 abstracts of its own", "typed a disposition in two, a material entity in two"],
+    first: ["same", "disturbance and disorder are synonyms"],
+    second: ["different", "a disturbance is a process, a wound healing disorder a material entity"],
+    aside: "They are apart today because the abstracts type them differently." }
+];
+const $ = (sel, el = document) => el.querySelector(sel);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function options(c) {
+  const A = c.a, B = c.b;
+  const merged = c.kind === "merged";
+  return [
+    { id: "same", title: "The same thing",
+      effect: merged ? `Stays one class, named ${c.name}.` : `I merge ${A} into ${B}: one class.` },
+    { id: "a_under_b", title: `${A} is a kind of ${B}`,
+      effect: merged ? `${A} gets its own class, under ${B}.` : `Two classes stay; ${A} goes under ${B}.` },
+    { id: "b_under_a", title: `${B} is a kind of ${A}`,
+      effect: merged ? `${B} gets its own class, under ${A}.` : `Two classes stay; ${B} goes under ${A}.` },
+    { id: "different", title: "Different things",
+      effect: merged ? `${A} gets its own class, not linked to ${B}.` : "Stays as it is: two classes, not linked." },
+    OTHER
+  ];
+}
+function cardHtml(c) {
+  const opts = options(c).map(o => `
+    <label class="opt">
+      <input type="radio" name="pick-${c.id}" value="${o.id}" id="pick-${c.id}-${o.id}">
+      <span class="t">${esc(o.title)}</span>
+      <span class="e">${esc(o.effect)}</span>
+      ${c.rule && c.rule.pick === o.id ? `<span class="s">By your rule</span>` : ""}
+    </label>`).join("");
+  const today = c.kind === "merged"
+    ? `Today: one class, ${c.name}, ${c.together} abstract${c.together === 1 ? "" : "s"}${c.type ? ", " + c.type : ""}`
+    : "Today: two classes";
+  return `
+  <article class="card" id="${c.id}" aria-labelledby="h-${c.id}">
+    <div class="head">
+      <h2 id="h-${c.id}">${esc(c.a)} / ${esc(c.b)}</h2>
+      <span class="badge-done" id="done-${c.id}" hidden>Decided</span>
+    </div>
+    <span class="today">${esc(today)}</span>
+    <div class="sides">
+      <div class="side a"><span class="nm">${esc(c.a)}</span><div class="facts">${c.aFacts.map(f => `<span>${esc(f)}</span>`).join("")}</div></div>
+      <div class="side b"><span class="nm">${esc(c.b)}</span><div class="facts">${c.bFacts.map(f => `<span>${esc(f)}</span>`).join("")}</div></div>
+    </div>
+    <div class="answers">
+      <div><span class="who">DeepSeek, 22 Sep</span><span><span class="v">${esc(c.first[0])}</span>: ${esc(c.first[1])}</span></div>
+      <div><span class="who">DeepSeek, 28 Sep</span><span><span class="v">${esc(c.second[0])}</span>: ${esc(c.second[1])}</span></div>
+    </div>
+    ${c.aside ? `<p class="aside">${esc(c.aside)}</p>` : ""}
+    ${c.rule ? `<p class="rule"><b>By your rule:</b> ${esc(c.rule.text)}</p>` : ""}
+    <fieldset id="fs-${c.id}">
+      <legend>How do the two stand?</legend>
+      ${opts}
+      <label class="note-l" for="note-${c.id}">Note (optional, needed for “Something else”)
+        <textarea id="note-${c.id}" rows="2"></textarea>
+      </label>
+      <span class="saved" id="saved-${c.id}" aria-live="polite"></span>
+    </fieldset>
+  </article>`;
+}
+$("#cards").innerHTML = CARDS.map(cardHtml).join("");
+$("#pips").innerHTML = CARDS.map(c =>
+  `<button class="pip${c.rule ? " rule" : ""}" id="pip-${c.id}" title="${esc(c.a)} / ${esc(c.b)}" aria-label="Go to ${esc(c.a)}"></button>`).join("");
+CARDS.forEach(c => $(`#pip-${c.id}`).addEventListener("click", () =>
+  document.getElementById(c.id).scrollIntoView({ block: "start" })));
+
+const state = {};          // id -> {pair, choice, choice_text, note, at}
+let db = null;
+let canWrite = true;
+const queue = {};          // id -> promise chain, one write at a time per document
+const noteTimers = {};
+function fmtTime(iso) {
+  try { return new Date(iso).toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); }
+  catch (e) { return iso; }
+}
+function applyState() {
+  let n = 0;
+  for (const c of CARDS) {
+    const s = state[c.id];
+    const decided = !!(s && s.choice);
+    if (decided) n++;
+    document.getElementById(c.id).classList.toggle("decided", decided);
+    $(`#done-${c.id}`).hidden = !decided;
+    $(`#pip-${c.id}`).classList.toggle("done", decided);
+    if (s && s.choice) {
+      const r = document.getElementById(`pick-${c.id}-${s.choice}`);
+      if (r && !r.checked) r.checked = true;
+    }
+    const ta = $(`#note-${c.id}`);
+    if (s && typeof s.note === "string" && document.activeElement !== ta && ta.value !== s.note) ta.value = s.note;
+    const sv = $(`#saved-${c.id}`);
+    if (s && s.at && !sv.classList.contains("err") && !sv.dataset.busy) sv.textContent = `Saved ${fmtTime(s.at)}`;
+  }
+  $("#count").textContent = `${n} of ${CARDS.length} decided`;
+  const open = CARDS.filter(c => c.rule && !(state[c.id] && state[c.id].choice)).length;
+  const bulk = $("#bulk");
+  bulk.disabled = open === 0 || !canWrite;
+  bulk.textContent = open === 0 ? "All answers by your rules taken" : `Take the ${open} answer${open === 1 ? "" : "s"} by your rules`;
+}
+function save(c, pick) {
+  const sv = $(`#saved-${c.id}`);
+  if (pick) { const r = document.getElementById(`pick-${c.id}-${pick}`); if (r) r.checked = true; }
+  const choice = (document.querySelector(`input[name="pick-${c.id}"]:checked`) || {}).value || "";
+  const note = $(`#note-${c.id}`).value.trim();
+  const opt = options(c).find(o => o.id === choice);
+  const body = { pair: `${c.a} / ${c.b}`, choice, choice_text: opt ? opt.title : "", note,
+                 by_rule: !!(pick && c.rule && c.rule.pick === pick), at: new Date().toISOString() };
+  state[c.id] = body;
+  applyState();
+  if (!db || !canWrite) {
+    sv.classList.add("err");
+    sv.textContent = db ? "Read-only here: only the owner's choices are saved." : "Not saved: this view has no storage. Tell me your choice in chat.";
+    return;
+  }
+  sv.dataset.busy = "1";
+  sv.classList.remove("err");
+  sv.textContent = "Saving…";
+  queue[c.id] = (queue[c.id] || Promise.resolve()).then(() =>
+    db.collection("decisions").doc(c.id).set(body)
+      .then(() => { delete sv.dataset.busy; sv.textContent = `Saved ${fmtTime(body.at)}`; })
+      .catch(e => {
+        delete sv.dataset.busy;
+        sv.classList.add("err");
+        if (e && e.code === "invalid_argument") { canWrite = false; sv.textContent = "Not saved: this view may not write. Tell me your choice in chat."; }
+        else sv.textContent = `Not saved (${(e && e.code) || "error"}). Click the choice again to retry.`;
+      }));
+}
+
+for (const c of CARDS) {
+  document.querySelectorAll(`input[name="pick-${c.id}"]`).forEach(r => r.addEventListener("change", () => save(c)));
+  $(`#note-${c.id}`).addEventListener("input", () => {
+    clearTimeout(noteTimers[c.id]);
+    noteTimers[c.id] = setTimeout(() => save(c), 900);
+  });
+  $(`#note-${c.id}`).addEventListener("blur", () => {
+    if (noteTimers[c.id]) { clearTimeout(noteTimers[c.id]); noteTimers[c.id] = null; const s = state[c.id]; if (!s || s.note !== $(`#note-${c.id}`).value.trim()) save(c); }
+  });
+}
+$("#bulk").addEventListener("click", () => {
+  for (const c of CARDS) {
+    if (c.rule && !(state[c.id] && state[c.id].choice)) save(c, c.rule.pick);
+  }
+});
+
+applyState();
+
+(async () => {
+  const status = $("#status");
+  const use = window.claude && window.claude.use ? n => window.claude.use(n) : async () => null;
+  db = await use("db");
+  if (!db) {
+    status.textContent = "Choices are not saved in this view. Tell me them in chat.";
+    status.classList.add("warn");
+    return;
+  }
+  const user = await use("user");
+  if (user && typeof user.isOwner === "function" && !user.isOwner()) {
+    canWrite = false;
+    CARDS.forEach(c => { $(`#fs-${c.id}`).disabled = true; });
+    status.textContent = "Read-only: only the owner decides here.";
+    applyState();
+  } else {
+    status.textContent = "Choices save as you click.";
+  }
+  db.collection("decisions").onSnapshot(snap => {
+    for (const d of snap.docs) {
+      const known = CARDS.some(c => c.id === d.id);
+      if (known && d.exists) state[d.id] = d.data();
+    }
+    applyState();
+  }, e => {
+    status.textContent = `Saved choices could not be loaded (${(e && e.code) || "error"}).`;
+    status.classList.add("warn");
+  });
+})();
+</script>

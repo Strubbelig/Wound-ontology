@@ -1,5 +1,7 @@
 from __future__ import annotations
 import asyncio
+
+import httpx
 import json
 from pathlib import Path
 
@@ -39,12 +41,17 @@ def _build_cq_block() -> str:
 from wound_ontology.llm.schemas import (
     ExtractResponse, NormalizationResponse, FillNanResponse,
     FillNanBatchResponse, SemanticNameResponse, ScopeCheckResponse,
-    MereRelationResult, MereRelationBatchResponse,
     OccursInTargetBatch,
     TypingResponse, RelationResponse,
+    MappingVerdict, MappingVerdictBatch,
 )
 
 _OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+
+#: The transport's own ceiling on a single request, in seconds. Every call site
+#: passes its own budget (240s for extraction, 360s for the batch judgements)
+#: and that wins per request; this is what applies when nobody says.
+_DEFAULT_TIMEOUT = 300.0
 _DEFAULT_MODEL = "deepseek/deepseek-v4-flash"
 
 
@@ -58,15 +65,47 @@ class LLMClient:
     """
 
     def __init__(self, api_key: str, model_id: str = _DEFAULT_MODEL):
+        # A TRANSPORT timeout, not just an `asyncio.wait_for` around the call.
+        #
+        # On 2026-09-26 the term-mapping build hung for 3h40m after two
+        # timeout-and-retry cycles: no open sockets, no timers, 2.5 seconds of
+        # CPU in two hours, the event loop parked in kqueue forever.
+        # `asyncio.wait_for` does not abort a request, it CANCELS it and then
+        # awaits the cancellation finishing -- and if the HTTP client's
+        # teardown never finishes, `wait_for` hangs after its own timeout has
+        # already fired. Nothing above it can help, because the await that
+        # never returns is inside the timeout mechanism itself.
+        #
+        # A transport timeout fails the request at the socket, so a stall
+        # becomes an ordinary exception the retry wrapper can see. `pool` is
+        # the one that matters most here: a cancelled request can leave its
+        # connection slot un-returned, and without a pool timeout the next
+        # call waits for a free connection forever -- which is exactly the
+        # shape of the hang, since no socket was ever opened for it.
         self._client  = openai_sdk.AsyncOpenAI(
             api_key=api_key,
             base_url=_OPENROUTER_BASE_URL,
+            # The SDK retries twice by default, inside our own budget, which
+            # both multiplies the wall time and makes the retry log a lie
+            # about how many attempts were made. Retrying is this class's job.
+            max_retries=0,
+            timeout=httpx.Timeout(_DEFAULT_TIMEOUT, connect=30.0, pool=60.0),
         )
         self.model_id = model_id
         # Circuit breaker — set by callers that want early abort on sustained failures.
         self.abort_event: asyncio.Event | None = None
         self._consec_errors: int = 0
         self._max_consec_errors: int = 0
+
+    @property
+    def has_credentials(self) -> bool:
+        """Whether this client could reach the model at all.
+
+        Steps that cannot degrade gracefully without the model check this up
+        front and raise, rather than discovering it mid-run after an hour of
+        embedding work.
+        """
+        return bool(getattr(self._client, "api_key", ""))
 
     # ── Retry wrapper ──────────────────────────────────────────────────────────
 
@@ -104,7 +143,18 @@ class LLMClient:
 
     # ── Core call ──────────────────────────────────────────────────────────────
 
-    async def _call_json(self, prompt: str, schema: type, temperature=0.0, timeout=240):
+    #: Output budget for the batch judgements (scope, mapping adjudication).
+    #: Without one, OpenRouter reserves credit for the model's whole output
+    #: window -- 131,072 tokens -- per request in flight, and on 2026-09-28 a
+    #: pass of eight parallel batches ran into the account's in-flight budget
+    #: with 402s long before the credit was actually spent. Measured on 25-term
+    #: scope batches: 3,238 / 12,136 / 13,379 output tokens, almost all of it
+    #: reasoning, so the cap leaves 2.4x the largest. A reply that hits it ends
+    #: in `finish_reason == "length"` and is raised, never parsed half-written.
+    BATCH_MAX_TOKENS = 32_768
+
+    async def _call_json(self, prompt: str, schema: type, temperature=0.0, timeout=240,
+                         max_tokens: int | None = None):
         """POST to OpenRouter, enforce JSON mode, parse into Pydantic schema."""
         schema_json = (
             schema.model_json_schema()
@@ -124,7 +174,12 @@ class LLMClient:
                 messages=[{"role": "user", "content": full_prompt}],
                 response_format={"type": "json_object"},
                 temperature=temperature,
+                timeout=timeout,
+                **({"max_tokens": max_tokens} if max_tokens else {}),
             )
+            if max_tokens and resp.choices[0].finish_reason == "length":
+                raise RuntimeError(f"the reply hit the {max_tokens:,}-token cap and "
+                                   f"was cut off; raise BATCH_MAX_TOKENS")
             raw = resp.choices[0].message.content.strip()
             # Remove code fences if the model wrapped JSON inside them.
             raw = raw.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
@@ -132,7 +187,11 @@ class LLMClient:
                 return schema.model_validate_json(raw)
             return schema.parse_raw(raw)
 
-        return await asyncio.wait_for(_inner(), timeout=timeout)
+        # The per-call budget goes to the TRANSPORT, which can enforce it
+        # without cancellation. `wait_for` stays as a backstop, with slack, so
+        # that it fires only if the transport somehow did not -- and if it ever
+        # does fire, that is a defect worth seeing rather than a normal timeout.
+        return await asyncio.wait_for(_inner(), timeout=timeout + 30)
 
     # ── Prompt builders ────────────────────────────────────────────────────────
 
@@ -430,43 +489,107 @@ class LLMClient:
         result = await self._execute_with_retry(self._call_json, prompt, ScopeCheckResponse, temperature=0.0, timeout=360)
         return result.inappropriate
 
-    async def validate_mere_batch(
-        self, triples: list[tuple[str, str]]
-    ) -> list[MereRelationResult]:
-        """
-        Classify (child, part_of, parent) triples for a wound ontology.
+    async def gate_scope_batch(
+        self, candidates: list[tuple[str, int, list[str]]]
+    ) -> tuple[dict[str, tuple[str, str]], list[str]]:
+        """`({term: (verdict, reason)}, [echoes we could not place])`.
 
-        Returns list of MereRelationResult with verdict:
-          keep  – valid anatomical/physical part_of
-          is_a  – child is a subtype of parent, not a part
-          drop  – relation is wrong in both directions
+        candidates: (term, pmid_count, sample_true_attrs)
+
+        A term missing from the answer is missing from the result. That is the
+        whole difference from `classify_scope_batch`, which returns only the
+        out-of-scope names and so cannot tell an in-scope judgement from an
+        omission -- the caller then treated every omission as "in scope" and
+        wrote it to the whitelist for good.
+
+        The model's echo of a term is matched exactly, then case-insensitively,
+        then through `normalize_term`, because a model asked about
+        `Kaplan-Meier analysis` may answer about `Kaplan Meier analysis` and an
+        exact-only match turns a judgement into a silent omission -- the same
+        failure one layer along. It is also matched after pulling the first
+        quoted span out of the echo: on 2026-09-25, 1,126 of 3,848 answers came
+        back as the whole input LINE, `"high-risk cohort" (in 2 abstracts):
+        is_a: material entity`, and the term is the quoted part of it.
+
+        Whatever still does not place is RETURNED, not dropped: an echo naming
+        nothing we asked about means the answer is about something else, and the
+        caller says so instead of quietly losing it.
         """
-        lines = [f'- ("{c}", part_of, "{p}")' for c, p in triples]
+        import re as _re
+        from wound_ontology.utils.string_utils import normalize_term
+        from wound_ontology.llm.schemas import GateBatchResponse
+
+        lines = []
+        for term, freq, attrs in candidates:
+            attr_str = ", ".join(attrs) if attrs else "no attributes"
+            lines.append(f'- "{term}" (in {freq} abstracts): {attr_str}')
+        body = "\n".join(lines)
+
         prompt = f"""
-        You are a biomedical ontologist curating a wound care ontology (BFO/RO).
+        You are curating a clinical wound-care ontology. For EVERY term below,
+        say whether the ontology should carry it as a class.
 
-        BFO rule: part_of connects CONTINUANTS (material entities, anatomical structures).
-        A PROCESS or PROCEDURE cannot be part_of a material entity.
+        OUT of scope:
+        - study design or methodology (randomized controlled trial, cohort study,
+          meta-analysis, propensity matching, Kaplan-Meier analysis)
+        - statistics and reporting (sample size, confidence interval, odds ratio,
+          p-value, PRISMA, registration numbers)
+        - study participant groupings (control group, intervention arm,
+          participants, patients)
+        - generic administrative or bibliometric vocabulary (research, findings,
+          data, Cochrane Library, tertiary care hospital)
+        - a measurement instrument with no wound content (Likert scale)
 
-        Classify each triple with one of three verdicts:
-          keep  – the child is physically/anatomically a PART of the parent
-                  (e.g. "Wound Bed part_of Wound", "Dermis part_of Skin")
-          is_a  – the child is a SUBTYPE/KIND of the parent, not a part
-                  (e.g. "Pressure Injury is_a Wound", "Alveolar Bone Plate Avulsion is_a Alveolar Bone Injury")
-          drop  – the relation is wrong in both directions; remove it
-                  (e.g. "Alginate Hydrogel part_of Wound Management" — a dressing is not a part of a management concept)
+        IN scope:
+        - a wound, wound complication, or wound-related condition
+        - a treatment, intervention, dressing, device, or drug used in wound care
+        - a pathogen, biological process, tissue, cell type, or molecule that
+          takes part in wound healing
+        - an anatomical structure wounds occur in
+        - a risk factor or comorbidity that drives wound outcomes
+        - a clinical sign, symptom or quality of a wound -- INCLUDING pain,
+          exudate, odour and their severities
 
-        TRIPLES:
-        {chr(10).join(lines)}
+        Two judgements that are easy to get wrong, so read them twice:
+        - a MOLECULE or PROCESS named in a wound study (IL-6, TNF-alpha,
+          collagen synthesis, angiogenesis, re-epithelialization) is IN scope;
+          it is the biology, not the method.
+        - a NAMED THERAPY OR AGENT (silver sulfadiazine, photobiomodulation,
+          negative pressure wound therapy, VAC therapy) is IN scope even when the
+          abstract is a trial of it.
 
-        Return JSON with "results": list of {{child, parent, verdict}}.
-        Use the EXACT child and parent strings from the input — do not paraphrase.
+        Answer with one entry per term, in the same order, each with a short
+        reason. Do not omit any term.
+
+        TERMS:
+        {body}
         """
         result = await self._execute_with_retry(
-            self._call_json, prompt, MereRelationBatchResponse,
-            temperature=0.0, timeout=360,
-        )
-        return result.results
+            self._call_json, prompt, GateBatchResponse, temperature=0.0, timeout=360,
+            max_tokens=self.BATCH_MAX_TOKENS)
+        exact = {t: t for t, _, _ in candidates}
+        folded = {t.strip().lower(): t for t, _, _ in candidates}
+        normed = {normalize_term(t): t for t, _, _ in candidates}
+        out: dict[str, tuple[str, str]] = {}
+        unmatched: list[str] = []
+        for v in result.verdicts:
+            verdict = (v.verdict or "").strip().lower()
+            if verdict not in ("in", "out"):
+                unmatched.append(f"{v.term} (verdict {v.verdict!r})")
+                continue
+            def _place(echo: str) -> str | None:
+                return (exact.get(echo)
+                        or folded.get(echo.strip().lower())
+                        or normed.get(normalize_term(echo)))
+
+            term = _place(v.term)
+            if term is None and (q := _re.search(r'"([^"]+)"', v.term)):
+                term = _place(q.group(1))
+            if term is None:
+                unmatched.append(v.term)
+                continue
+            out[term] = (verdict, v.reason)
+        return out, unmatched
 
     async def generate_semantic_name(self, intent_attributes, superclass_names,
                                      extent_categories=(), parent_names=(),
@@ -535,6 +658,102 @@ class LLMClient:
         "Process", "Quality" and the like are the constraint, not an answer.
         Name what these members have in common as medicine would name it.
         """
-        result = await self._execute_with_retry(self._call_json, prompt, SemanticNameResponse, temperature=0.3)
+        # A capped reply: without max_tokens OpenRouter reserves the model's whole
+        # output window (131,072 tokens) against the credit, and on 2026-10-11 every
+        # naming call was refused with 402 although each needed a few thousand.
+        result = await self._execute_with_retry(self._call_json, prompt, SemanticNameResponse, temperature=0.3,
+                                                max_tokens=self.BATCH_MAX_TOKENS)
         return result.superclass_name
 
+
+    async def adjudicate_mappings_batch(
+        self, candidates: list[dict]
+    ) -> list[MappingVerdict]:
+        """Decide whether each (store term, ontology class) pair names ONE class.
+
+        SapBERT has already said the two labels are close; that question is
+        settled and asking it again would only reproduce the error. What is asked
+        here is the ontological one it cannot answer: same class, or one narrower
+        than the other, or simply different.
+
+        Each candidate is a dict with `store_term`, `ontology_class`, and
+        optionally `store_category`, `ontology_category`, `ontology_definition`.
+        The definition is the point of the exercise -- the LABEL is what fooled
+        the embedding, so the class is judged by what the ontology says it is.
+
+        Returns one verdict per pair. A pair the model omits is NOT decided, and
+        the caller must treat it as such rather than defaulting either way.
+        """
+        if not candidates:
+            return []
+
+        blocks = []
+        for i, c in enumerate(candidates, 1):
+            lines = [f'{i}. store term    : "{c["store_term"]}"',
+                     f'   ontology class: "{c["ontology_class"]}"']
+            if c.get("store_category"):
+                lines.append(f'   the store types the store term as: {c["store_category"]}')
+            if c.get("ontology_category"):
+                lines.append(f'   the ontology types the class as  : {c["ontology_category"]}')
+            if c.get("ontology_definition"):
+                lines.append(f'   the ontology DEFINES the class as: {c["ontology_definition"]}')
+            elif c.get("ontology_parents"):
+                lines.append("   the ontology gives no definition, but places the class under: "
+                             + ", ".join(sorted(c["ontology_parents"])))
+            else:
+                lines.append("   the ontology gives no definition for this class.")
+            blocks.append("\n".join(lines))
+        body = "\n\n".join(blocks)
+
+        prompt = f"""
+        You are a biomedical ontologist curating a wound care ontology built on BFO.
+
+        Each pair below was proposed by an embedding model as a SYNONYM match: the
+        claim is that the store term and the existing ontology class are two names
+        for the SAME class, and that the store term should therefore be absorbed
+        into the existing one rather than minted as a new class beside it.
+
+        The embedding is good at surface variance and bad at meaning. It has
+        proposed pairs like "Horizontal mattress suture" / "Vertical mattress
+        suture" and "clean wound classification grade" / "clean-contaminated wound
+        classification grade" — labels that differ by a single word which is the
+        whole distinction. Your job is to catch exactly those.
+
+        Judge each pair by what the ontology DEFINITION says the class is, not by
+        how similar the two labels look. For each pair return one verdict:
+
+          same_class — the two are the same class under different names, including
+                       abbreviation/expansion ("E. coli" / "Escherichia coli") and
+                       ordinary lexical variants. Absorbing the store term loses
+                       NOTHING.
+          narrower   — the store term is a genuine SUBTYPE of the ontology class
+                       ("Skin scarring" under "Scarring"). Real information would
+                       be lost by merging them.
+          broader    — the store term is more general than the ontology class
+                       ("clean wound classification grade" is not the same as
+                       "clean-contaminated wound classification grade"; where
+                       neither contains the other, use `different`).
+          different  — neither names the other, or they are siblings that merely
+                       share most of their words.
+
+        A BFO note that decides several of these: a PROCESS and the material
+        entity it acts on are never the same class, however similar the labels.
+        "Debridement" the procedure and "Debridement process" MAY be the same
+        class stated twice; "Skin graft" the material and "Skin grafting" the
+        process are NOT.
+
+        When you are unsure, answer `different`. A refused mapping costs one
+        duplicate class that a curator can merge later; a wrong `same_class`
+        silently destroys a distinction and cannot be recovered.
+
+        Give `reason` as one short clause. Use the EXACT store term and ontology
+        class strings from the input — do not paraphrase them.
+
+        PAIRS:
+        {body}
+        """
+        result = await self._execute_with_retry(
+            self._call_json, prompt, MappingVerdictBatch,
+            temperature=0.0, timeout=360, max_tokens=self.BATCH_MAX_TOKENS,
+        )
+        return result.results

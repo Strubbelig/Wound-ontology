@@ -1,0 +1,34 @@
+{
+  "made": "2026-10-12",
+  "source": "Wound Axiom Decisions page (https://claude.ai/artifact/TzM2cHbYTv1bCMRk35jYQ5), notes N1-N4, read back with ArtifactData 2026-10-12",
+  "rule": "INSTRUCTIONS.md rules 72, 77",
+  "not_here": {
+    "N2 axiom": "the wavelength bound waits for the curator's yes on the corrected form (a number belongs to a measurement about the wavelength, never to the quality); only the 660 nm statement is held out here",
+    "N4 parent": "OGMS symptom (OGMS_0000020) is not in the OGMS module yet; the placement is written after the WONT hand edit names it and the modules are rebuilt"
+  },
+  "reject": [
+    {"subject": "skin perfusion pressure", "predicate": "inheres in", "object": "extremity", "by": "curator",
+     "why": "N1 a: hold out 'inheres in extremity'; no bearer is stated", "item": "N1"},
+    {"subject": "skin perfusion pressure", "predicate": "inheres in", "object": "patient", "by": "same type",
+     "why": "N1 a says no bearer is stated; this is the other bearer statement on the same term", "item": "N1"},
+    {"subject": "red-spectrum laser", "predicate": "has quality", "object": "660 nm", "by": "curator",
+     "why": "N2 a: the wavelength is stated as a bound, not as the single value from one abstract (option b, keep 660 nm, was not chosen)", "item": "N2"},
+    {"subject": "Wound", "predicate": "has quality", "object": "wound-related symptom", "by": "same type",
+     "why": "N4 a: wound-related symptom is an OGMS symptom, a process; a quality is never a process", "item": "N4"},
+    {"subject": "wound-related symptom", "predicate": "has part", "object": "exudate", "by": "same type",
+     "why": "N4 a: a symptom is a process; exudate takes part in it, it is not a part of it", "item": "N4"},
+    {"subject": "patient", "predicate": "has quality", "object": "wound pain score", "by": "same type",
+     "why": "N3: a score is information, never a quality (rule 77); 'Wound has quality wound pain score' was held out on 2026-10-10", "item": "N3"}
+  ],
+  "category": [
+    {"term": "wound pain score", "category": "information entity",
+     "why": "N3 c: placed beside Wound classification scale, under information content entity"},
+    {"term": "wound-related symptom", "category": "process",
+     "why": "N4 a: under OGMS symptom, which OGMS defines as a process experienced by the patient"}
+  ],
+  "place": [
+    {"term": "wound pain score", "parent": "information content entity",
+     "parent_iri": "http://purl.obolibrary.org/obo/IAO_0000030",
+     "why": "N3 c (curator): 'einfach eine schwester von wound classification scale, was auch immer dessen parent ist'; Wound classification scale (WONT_0000066) is under IAO_0000030"}
+  ]
+}

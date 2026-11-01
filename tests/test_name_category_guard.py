@@ -57,7 +57,7 @@ class _LLM:
 
 def test_extent_categories_come_from_the_context(lattice):
     cats = lattice.extent_categories(_Concept(["Chronic Wound", "Bite Wound"]))
-    assert cats == {"MaterialEntity"}
+    assert cats == {"material entity"}
 
 
 def test_scaled_ancestor_columns_are_not_mistaken_for_types(lattice):
@@ -68,41 +68,41 @@ def test_scaled_ancestor_columns_are_not_mistaken_for_types(lattice):
 
 # ── the rule: only a label the ontologies know can be judged ────────────────
 
-KNOWN_MATERIAL = "2nd degree burn"      # GROUNDING: MaterialEntity
+KNOWN_MATERIAL = "Second-degree burn wound"   # GROUNDING: MaterialEntity (WONT_0000483; "2nd degree burn" is its alt term since 2026-09-12)
 KNOWN_PROCESS = "Autolytic wound debridement process"   # GROUNDING: Process
 KNOWN_QUALITY = "Redness"               # GROUNDING: Quality
 
 
 def test_a_known_label_of_the_members_own_kind_is_licensed(lattice):
-    ok, _ = lattice.name_is_licensed(KNOWN_MATERIAL, {"MaterialEntity"})
+    ok, _ = lattice.name_is_licensed(KNOWN_MATERIAL, {"material entity"})
     assert ok
 
 
 def test_a_known_label_of_the_wrong_kind_is_refused(lattice):
     """The actual failure this exists for: a process named over material wounds."""
-    ok, why = lattice.name_is_licensed(KNOWN_PROCESS, {"MaterialEntity"})
+    ok, why = lattice.name_is_licensed(KNOWN_PROCESS, {"material entity"})
     assert not ok
-    assert "Process" in why and "MaterialEntity" in why
+    assert "process" in why and "material entity" in why
 
 
 def test_a_known_label_more_specific_than_its_members_is_refused(lattice):
     """A superclass is more general, never sideways and never narrower."""
-    ok, _ = lattice.name_is_licensed(KNOWN_MATERIAL, {"Continuant"})
+    ok, _ = lattice.name_is_licensed(KNOWN_MATERIAL, {"continuant"})
     assert not ok
 
 
 def test_a_mixed_extent_needs_a_common_ancestor(lattice):
-    ok, _ = lattice.name_is_licensed(KNOWN_MATERIAL, {"MaterialEntity", "Quality"})
+    ok, _ = lattice.name_is_licensed(KNOWN_MATERIAL, {"material entity", "quality"})
     assert not ok, "MaterialEntity does not generalise Quality"
 
 
 def test_a_label_the_ontologies_do_not_know_is_not_judged(lattice):
     """This is the part that was pretending. A category the model declared about
     its own new label was unverifiable by construction and satisfied by answering
-    "MaterialEntity"; across five live runs it refused no bad name and lost one
+    "material entity"; across five live runs it refused no bad name and lost one
     good one. What keeps a new name honest is being named top-down under an
     already-named parent."""
-    ok, why = lattice.name_is_licensed("Open Fracture Wound", {"MaterialEntity"})
+    ok, why = lattice.name_is_licensed("Open Fracture Wound", {"material entity"})
     assert ok
     assert "not in MILD or WONT" in why
 
@@ -118,7 +118,7 @@ def test_an_untyped_extent_is_not_judged(lattice):
 def test_the_category_label_is_not_an_acceptable_name(lattice):
     """Telling the model the extent's category stopped it proposing a disorder
     over wounds — and started it answering "Material entity"."""
-    for bad in ("Material entity", "MATERIALENTITY", "Process", "Quality"):
+    for bad in ("Material entity", "MATERIALENTITY", "process", "quality"):
         ok, why = lattice.name_is_a_grouping(bad)
         assert not ok, bad
         assert "biomedical grouping" in why
@@ -224,3 +224,37 @@ def test_names_already_taken_are_passed_on(lattice):
 
     assert "Wound" in llm.seen[1]["existing"], \
         "the second call could not know the first name; that is how duplicates got in"
+
+
+
+# ── a refused account stops the step (2026-10-11) ───────────────────────────
+
+class _Refusing:
+    def __init__(self, message):
+        self.message, self.calls = message, 0
+
+    async def generate_semantic_name(self, *a, **kw):
+        self.calls += 1
+        raise RuntimeError(self.message)
+
+
+def _two_concepts(lattice):
+    lattice._lattice = [_Concept(["Chronic Wound", "Bite Wound"]),
+                        _Concept(["Chronic Wound", "Scratch Wound"], intent=("is_a: wound", "has_quality: chronic"))]
+
+
+def test_an_account_without_credits_stops_naming_at_once(lattice):
+    """2026-10-11: all 91 calls failed with 402, the step went on and saved an
+    unnamed lattice over the named one, and the run said ALL DONE."""
+    _two_concepts(lattice)
+    llm = _Refusing("Error code: 402 - {'error': {'message': 'This request requires more credits'}}")
+    with pytest.raises(RuntimeError, match="refused the account"):
+        asyncio.run(lattice.create_superclass_names(llm))
+    assert llm.calls == 1
+
+
+def test_naming_nothing_at_all_is_an_error(lattice, capsys):
+    _two_concepts(lattice)
+    with pytest.raises(RuntimeError, match="none of the 2"):
+        asyncio.run(lattice.create_superclass_names(_Refusing("timed out")))
+    assert "2 of 2 concept(s) could not be named" in capsys.readouterr().out

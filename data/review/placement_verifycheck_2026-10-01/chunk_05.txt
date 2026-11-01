@@ -1,0 +1,114 @@
+2309|endothelial disorder|proc|< Angiopathic disease process|N(Endothelial disorder is not necessarily angiopathic; angiopathy refers)|1:Wound causing angiopathic disease process ; 2:angiogenesis ; 3:vasculature development ; 4:vascular process in circulatory system
+2310|vascular disorder|cont|< Angiopathy|Y|1:Microangiopathy ; 2:Angiopathic wound ; 3:ischemic ; 4:disorder
+2311|ankle-brachial index measurement|proc|= Ankle-brachial index measurement process|Y|1:Wound volumetrics ; 2:Wound size measurement process ; 3:Planimetry ; 4:Vascular assessment process
+2312|ankle-brachial pressure index measurement|proc|= Ankle-brachial index measurement process|Y|1:Pressure offloading process ; 2:Planimetry ; 3:Acidity impact process ; 4:Pressure impact process
+2313|immune disorder|proc|< Autoimmune disease process|N(Immune disorder is broader than autoimmune disease; not all immune dis)|1:Wound causing autoimmune disease process ; 2:Inflammation process ; 3:inflammatory response ; 4:disorder development process
+2314|chronic inflammatory bowel disorder|mate|< Autoimmune tissue disorder|N(Chronic inflammatory bowel disorder is not necessarily an autoimmune t)|1:Escherichia coli ; 2:Chronic wound ; 3:Bacteria ; 4:Sepsis
+2315|Inflammatory bowel disorder|cont|< Autoimmune tissue disorder|N(Some inflammatory bowel disorders are not autoimmune (e.g., infectious)|1:inflamed ; 2:Sepsis ; 3:infection ; 4:Bacteria
+2316|Centers for Disorder Control wound class|info|= CDC surgical wound classification|N(The correct name is CDC surgical wound classification, not 'Centers fo)|1:Wound classification result ; 2:CDC surgical wound classification grade ; 3:wound classification grade ; 4:Wound classification scale
+2317|chronic wound disorder|mate|= Chronic wound|N(Chronic wound disorder and chronic wound are not exact synonyms; disor)|1:Wound healing disorder ; 2:Secondarily-healing wound ; 3:Wound complication disorder ; 4:Wound complication
+2318|pressure ulcer assessment|proc|< Clinical wound assessment|Y|1:Pressure offloading process ; 2:Diagnostic process to assess wound characteristics ; 3:Wound causing pressure impact process ; 4:Pressure impact process
+2319|pressure ulcer risk assessment|proc|< Clinical wound assessment|Y|1:Pressure offloading process ; 2:Pressure impact process ; 3:Wound causing pressure impact process ; 4:Vascular assessment process
+2320|Cold atmospheric plasma application|proc|= Cold plasma wound treatment process|Y|1:Water-jet assisted wound debridement process ; 2:Pressure impact process ; 3:Heat impact process ; 4:Wound causing acidity impact process
+2321|Cold Atmospheric Plasma therapy|proc|= Cold plasma wound treatment process|Y|1:Water-jet assisted wound debridement process ; 2:Heat impact process ; 3:Pressure impact process ; 4:Wound causing acidity impact process
+2322|Low-Temperature Atmospheric-Pressure Plasma therapy|proc|= Cold plasma wound treatment process|Y|1:Pressure impact process ; 2:Water-jet assisted wound debridement process ; 3:Pressure offloading process ; 4:Wound causing pressure impact process
+2323|chronic obstructive pulmonary disorder|mate|< compound pathological disorder|N(Chronic obstructive pulmonary disorder is a specific disease, not a co)|1:Peripheral arterial occlusive disease ; 2:organic group ; 3:heteroorganic entity ; 4:Chronic wound
+2324|disorder progression|proc|< course of the disease process|N(Disorder progression is a part of the course, not a kind of course.)|1:disease course ; 2:disorder development process ; 3:disease perpetuation process ; 4:disease classification process
+2325|chronic non-healing Diabetic foot ulcer|mate|< Diabetic foot ulcer|Y|1:Diabetic wound ; 2:Marjolin ulcer ; 3:Chronic wound ; 4:Necrotic wound bed
+2326|complex Diabetic foot ulcer|mate|< Diabetic foot ulcer|Y|1:Diabetic wound ; 2:Marjolin ulcer ; 3:Pressure ulcer ; 4:Fourth-degree burn wound
+2327|diabetes-related foot disorder|cont|< Diabetic foot ulcer|N(Diabetes-related foot disorder includes other conditions besides ulcer)|1:Diabetic wound ; 2:Diabetic metabolic disorder ; 3:Bullosis diabeticorum ; 4:Therapeutic footwear
+2328|diabetes-related foot ulcer disorder|mate|= Diabetic foot ulcer|Y|1:Diabetic wound ; 2:Marjolin ulcer ; 3:Bullosis diabeticorum ; 4:Pressure ulcer
+2329|Diabetic foot ulcer disorder|mate|= Diabetic foot ulcer|N(Diabetic foot ulcer disorder is not exactly synonymous with diabetic f)|1:Diabetic wound ; 2:Arterial leg ulcer ; 3:Pressure ulcer ; 4:Marjolin ulcer
+2330|persistent Diabetic foot ulcer|mate|< Diabetic foot ulcer|Y|1:Marjolin ulcer ; 2:Diabetic wound ; 3:Pressure ulcer ; 4:Necrotic wound bed
+2331|refractory Diabetic foot ulcer|mate|< Diabetic foot ulcer|Y|1:Diabetic wound ; 2:Therapeutic footwear ; 3:Marjolin ulcer ; 4:Wound dehiscence causally related to suture insufficiency
+2332|uncomplicated diabetic foot ulcer|mate|= Diabetic foot ulcer|N('Uncomplicated diabetic foot ulcer' is a subtype of 'Diabetic foot ulc)|1:Diabetic wound ; 2:Arterial leg ulcer ; 3:Marjolin ulcer ; 4:Pressure ulcer
+2333|Wagner grade 4 Diabetic foot ulcer|mate|< Diabetic foot ulcer|Y|1:Fourth-degree burn wound ; 2:Diabetic wound ; 3:Deep wound ; 4:Granulating wound bed
+2334|uncomplicated Diabetes mellitus|mate|< Diabetic metabolic disorder|Y|1:Diabetic wound ; 2:Diabetic foot ulcer ; 3:Bullosis diabeticorum ; 4:unknown-disorder disease
+2335|disorder recurrence|proc|< disease perpetuation process|N(Disorder recurrence is a process that may contribute to disease perpet)|1:complication disease process ; 2:disease course ; 3:course of the disease process ; 4:Malignant process
+2336|disorder stage|info|< disease stage classification result|Y|1:disease classification stage ; 2:disease threshold specification ; 3:disease diagnostic result ; 4:data entity
+2337|extremity-threatening disorder|mate|< disorder|Y|1:Malignant wound ; 2:Sepsis ; 3:Malignancy ; 4:Wound
+2338|rheumatologic disorder|mate|< disorder|Y|1:pathological disorder ; 2:unknown-disorder disease ; 3:material disease entity ; 4:Wound healing disorder
+2339|spinal disorder|cont|< disorder|Y|1:pathological disorder ; 2:disease ; 3:material disease entity ; 4:compound pathological disorder
+2340|terminal disorder|cont|< disorder|Y|1:disease classification stage ; 2:chronic ; 3:chronic ; 4:Malignancy
+2341|disorder flare|proc|< disorder modification process|Y|1:disease perpetuation process ; 2:disease course ; 3:course of the disease process ; 4:complication disease process
+2342|disorder-associated shift|proc|< disorder modification process|Y|1:disorder addition process ; 2:class discovery data transformation ; 3:disorder development process ; 4:data transformation
+2343|autologous Complete-thickness skin graft|mate|= Full-thickness skin graft|N(Autologous complete-thickness skin graft specifies donor source, while)|1:Split-thickness skin graft ; 2:Skin graft ; 3:Activated carbon layer wound dressing ; 4:Regeneratively-healing wound
+2344|invasive group A streptococcus|mate|< Group A Streptococcus|Y|1:Streptococcus ; 2:MRSA infection ; 3:Erysipelas ; 4:erysipeloid
+2345|impaired Diabetic foot ulcer healing|proc|< Impaired wound healing process|Y|1:Wound causing diabetes mellitus disease process ; 2:Pressure offloading process ; 3:Irreversibly diminished microvascular perfusion process ; 4:Wound causing venous insufficiency disease process
+2346|infection disorder|mate|< infection|N(Infection disorder is a disease, not an infection process; they are di)|1:Sepsis ; 2:Infected wound ; 3:pathogen ; 4:disorder
+2347|metastatic disorder|mate|< Malignancy|Y|1:Malignant wound ; 2:Neoplasm ; 3:Developed material disease entity ; 4:material complication disease entity
+2348|small-vessel disorder|mate|< Microangiopathy|Y|1:Angiopathy ; 2:Livedovasculopathy ; 3:Angiopathic wound ; 4:Peripheral arterial occlusive disease
+2349|diabetic Osteomyelitis|mate|< Osteomyelitis|Y|1:Diabetic wound ; 2:Bullosis diabeticorum ; 3:Diabetic foot ulcer ; 4:Diabetic metabolic disorder
+2350|acute disorder|mate|< pathological disorder|Y|1:Acute wound ; 2:disorder ; 3:Sepsis ; 4:infection
+2351|allergic disorder|mate|< pathological disorder|Y|1:Autoimmune tissue disorder ; 2:disorder ; 3:Autoimmune disease related wound ; 4:infection
+2352|anorectal disorder|cont|< pathological disorder|Y|1:disorder ; 2:disease ; 3:Escherichia coli ; 4:Diabetic metabolic disorder
+2353|cardiometabolic disorder|mate|< pathological disorder|Y|1:Diabetic metabolic disorder ; 2:Microangiopathy ; 3:Angiopathy ; 4:material complication disease entity
+2354|chronic liver disorder|mate|< pathological disorder|Y|1:Chronic wound ; 2:unknown-disorder disease ; 3:disorder ; 4:Malignancy
+2355|connective tissue disorder|mate|< pathological disorder|Y|1:disorder ; 2:material disease entity ; 3:material complication disease entity ; 4:Microangiopathy
+2356|corneal disorder|mate|< pathological disorder|Y|1:disorder ; 2:Wound healing disorder ; 3:mucosa ; 4:Angiopathy
+2357|glomerular disorder|mate|< pathological disorder|Y|1:Microangiopathy ; 2:Diabetic metabolic disorder ; 3:Angiopathy ; 4:Autoimmune tissue disorder
+2358|hepatic disorder|cont|< pathological disorder|Y|1:disease ; 2:disorder ; 3:Diabetic metabolic disorder ; 4:unknown-disorder disease
+2359|hepatobiliary disorder|mate|< pathological disorder|Y|1:disorder ; 2:Bilateria ; 3:Diabetic metabolic disorder ; 4:Opisthokonta
+2360|inflammatory skin disorder|mate|< pathological disorder|Y|1:Autoimmune tissue disorder ; 2:Wound healing disorder ; 3:infection ; 4:Sepsis
+2361|interstitial lung disorder|mate|< pathological disorder|Y|1:Livedovasculopathy ; 2:Microangiopathy ; 3:Wound healing disorder ; 4:unknown-disorder disease
+2362|intra-abdominal disorder|mate|< pathological disorder|Y|1:Abdominal drain ; 2:Bilateria ; 3:heteroorganic entity ; 4:disorder
+2363|intra-articular disorder|mate|< pathological disorder|Y|1:disorder ; 2:heteroorganic entity ; 3:organic group ; 4:Autoimmune tissue disorder
+2364|liver disorder|mate|< pathological disorder|Y|1:disorder ; 2:unknown-disorder disease ; 3:Opisthokonta ; 4:compound pathological disorder
+2365|neglected tropical disorder|cont|< pathological disorder|Y|1:Unusual infection ; 2:unknown-disorder disease ; 3:disease ; 4:disorder
+2366|neuromuscular disorder|mate|< pathological disorder|Y|1:disorder ; 2:material disease entity ; 3:coordination entity ; 4:compound pathological disorder
+2367|neuropathic disorder|cont|< pathological disorder|Y|1:painful ; 2:disorder ; 3:neurotoxin ; 4:Necrosis
+2368|non-communicable disorder|mate|< pathological disorder|Y|1:disorder ; 2:unknown-disorder disease ; 3:infection ; 4:compound pathological disorder
+2369|recurrent disorder|cont|< pathological disorder|Y|1:perpetuation tendency ; 2:chronic ; 3:chronic ; 4:compound pathological disorder
+2370|renal disorder|cont|< pathological disorder|Y|1:disorder ; 2:disease ; 3:Diabetic metabolic disorder ; 4:Microangiopathy
+2371|skin disorder|cont|< pathological disorder|Y|1:Abnormal skin morphology ; 2:dermatologic drug ; 3:disorder ; 4:Cutaneous wound
+2372|systemic disorder|mate|< pathological disorder|Y|1:disorder ; 2:Sepsis ; 3:unknown-disorder disease ; 4:compound pathological disorder
+2373|Systemic Inflammatory Disorder|mate|< pathological disorder|Y|1:Sepsis ; 2:Autoimmune tissue disorder ; 3:infection ; 4:Immunosuppression
+2374|underlying medical disorder|cont|< pathological disorder|Y|1:disorder ; 2:unknown-disorder disease ; 3:disease ; 4:heteroorganic entity
+2375|Hypertrophic scars formation|proc|< Pathological scarring process|Y|1:Scarring process ; 2:Granulation tissue formation process ; 3:Excessive collagen deposition process ; 4:Wound contraction process
+2376|peripheral artery disorder|cont|< Peripheral arterial occlusive disease|N(Peripheral artery disorder includes non-occlusive conditions, not all )|1:Angiopathy ; 2:Microangiopathy ; 3:Arterial leg ulcer ; 4:Angiopathic wound
+2377|poly(ethylene oxide)|mate|< polymer|Y|1:polyol ; 2:polyatomic anion ; 3:glycol ether ; 4:glycol
+2378|polylactic acid matrix|mate|< polymer|N(A polylactic acid matrix is a structure/material made of polylactic ac)|1:Wound dressing composed of a polylactide membrane ; 2:Polyfilament thread material ; 3:polyatomic anion ; 4:polyatomic cation
+2379|Deep tissue pressure ulcer prevention|proc|< Pressure offloading process|N(Deep tissue pressure ulcer prevention may include processes other than)|1:Pressure impact process ; 2:Wound causing pressure impact process ; 3:Cold plasma wound treatment process ; 4:Wound edge protection process
+2380|preventive pressure ulcer care|proc|< Pressure offloading process|N(Preventive pressure ulcer care includes more than pressure offloading;)|1:Wound causing pressure impact process ; 2:Postoperative wound control process ; 3:Pressure impact process ; 4:Wound dressing process
+2381|Deep tissue pressure ulcer|mate|< Pressure ulcer|Y|1:Diabetic foot ulcer ; 2:Deep wound ; 3:Necrotic wound bed ; 4:Marjolin ulcer
+2382|device-related pressure ulcer|mate|< Pressure ulcer|Y|1:Diabetic foot ulcer ; 2:Wound-integrating wound dressing ; 3:Marjolin ulcer ; 4:Arterial leg ulcer
+2383|existing pressure ulcer|mate|< Pressure ulcer|Y|1:Diabetic foot ulcer ; 2:Arterial leg ulcer ; 3:Necrotic wound bed ; 4:Marjolin ulcer
+2384|health care-acquired pressure ulcer|mate|< Pressure ulcer|Y|1:Colonized wound ; 2:MRSA infection ; 3:Marjolin ulcer ; 4:Diabetic foot ulcer
+2385|immobility-related pressure ulcer|mate|< Pressure ulcer|Y|1:Marjolin ulcer ; 2:Diabetic foot ulcer ; 3:Arterial leg ulcer ; 4:Necrotic wound bed
+2386|medical device-related pressure ulcer|cont|< Pressure ulcer|Y|1:Shea classification of pressure ulcers ; 2:Diabetic foot ulcer ; 3:Wound-integrating wound dressing ; 4:Marjolin ulcer
+2387|mucosal membrane pressure ulcer|mate|< Pressure ulcer|Y|1:Marjolin ulcer ; 2:Mucous membrane pemphigoid ; 3:Diabetic foot ulcer ; 4:Ulcus hypertonicus Martorell
+2388|oral mucosal membrane pressure ulcer|mate|< Pressure ulcer|Y|1:Marjolin ulcer ; 2:Ulcus hypertonicus Martorell ; 3:Mucous membrane pemphigoid ; 4:Diabetic foot ulcer
+2389|perioperative pressure ulcer|cont|< Pressure ulcer|Y|1:Marjolin ulcer ; 2:Shea classification of pressure ulcers ; 3:Perioperative antimicrobial prophylaxis plan specification ; 4:Diabetic foot ulcer
+2390|stage 1 pressure ulcer|mate|< Pressure ulcer|Y|1:Diabetic foot ulcer ; 2:Marjolin ulcer ; 3:Necrotic wound bed ; 4:Bullous impetigo
+2391|stage 2 pressure ulcer|cont|< Pressure ulcer|Y|1:Second-degree burn wound ; 2:second wound dressing layer function ; 3:Shea classification of pressure ulcers ; 4:Thread size 2
+2392|stage 3 pressure ulcer|mate|< Pressure ulcer|Y|1:Third-degree burn wound ; 2:Fourth-degree burn wound ; 3:Necrotic wound bed ; 4:Granulating wound bed
+2393|stage 4 pressure ulcer|mate|< Pressure ulcer|Y|1:Fourth-degree burn wound ; 2:Fournier's gangrene ; 3:Granulating wound bed ; 4:Diabetic foot ulcer
+2394|stage III and IV pressure ulcer|mate|< Pressure ulcer|Y|1:Fourth-degree burn wound ; 2:Third-degree burn wound ; 3:Wound with microbial burden assessed according to IWII ; 4:Granulating wound bed
+2395|unstageable pressure ulcer|mate|< Pressure ulcer|Y|1:Necrotic wound bed ; 2:Marjolin ulcer ; 3:Diabetic foot ulcer ; 4:Arterial leg ulcer
+2396|urinary catheter-related meatal pressure ulcer|mate|< Pressure ulcer|Y|1:Marjolin ulcer ; 2:Ulcus hypertonicus Martorell ; 3:Wound dressing composed of polyurethane foam ; 4:Diabetic foot ulcer
+2397|pressure ulcer prophylaxis|info|< prophylaxis plan specification|N(Pressure ulcer prophylaxis is typically a process or intervention, not)|1:Shea classification of pressure ulcers ; 2:Compression therapy plan specification ; 3:Perioperative antimicrobial prophylaxis plan specification ; 4:Negative pressure wound therapy plan specification
+2398|Surgical site infection prophylaxis|info|< prophylaxis plan specification|Y|1:Perioperative antimicrobial prophylaxis plan specification ; 2:Aseptic conditions plan specification ; 3:Prophylactic antibiotic therapy plan specification ; 4:Surgical debridement plan specification
+2399|Z-deep neck abscess-binding protein 1|mate|< protein|N(The term 'Z-deep neck abscess-binding protein 1' is not a recognized p)|1:zinc atom ; 2:zinc group element atom ; 3:chlorhexidine ; 4:material information bearer
+2400|multidrug-resistant P. aeruginosa|mate|< Pseudomonas aeruginosa|Y|1:MRSA infection ; 2:Polihexanide ; 3:mononuclear parent hydride ; 4:polyatomic anion
+2401|excess reactive oxygen species|mate|< reactive oxygen species|Y|1:ethoxide ; 2:oxygen molecular entity ; 3:organooxygen compound ; 4:oxide
+2402|Diabetic foot ulcers size|qual|< size|Y|1:Thread size ; 2:degree of microbial burden ; 3:Pressure ulcer ; 4:degree of maceration
+2403|pressure ulcers size|qual|< size|Y|1:Pressure ulcer ; 2:Thread size ; 3:degree of maceration ; 4:increased size
+2404|Surgical site infection case|cont|= Surgical site infection|N(Surgical site infection case refers to an instance or occurrence, not )|1:Infected wound ; 2:wound infecting tendency ; 3:Colonized wound ; 4:Sepsis
+2405|chronic venous disorder|cont|< Venous insufficiency disorder|N(Chronic venous disorder is not necessarily venous insufficiency; it in)|1:Venous insufficiency wound ; 2:Chronic wound ; 3:Ulcus cruris venosum ; 4:chronic
+2406|recalcitrant Venous leg ulcer|mate|< Venous insufficiency wound|Y|1:Marjolin ulcer ; 2:Ulcus cruris venosum ; 3:Venous insufficiency disorder ; 4:Arterial leg ulcer
+2407|wound disorder|mate|= Wound|N('Wound disorder' refers to a pathological condition involving wounds, )|1:Skin wound ; 2:Wound complication disorder ; 3:Traumatic wound ; 4:Wound complication
+2408|hospital-acquired pressure ulcer development|proc|< Wound causing pressure impact process|Y|1:Pressure offloading process ; 2:Pressure impact process ; 3:Wound causing acidity impact process ; 4:Wound causing peripheral arterial occlusive disease process
+2409|Wound, Ischemia, and foot Infection clinical stage|info|< wound classification grade|Y|1:IWII wound classification grade ; 2:IWII wound classification scale ; 3:CDC surgical wound classification grade ; 4:Wound classification result
+2410|Wound, Ischemia, and foot Infection clinical stage 4|cont|< wound classification grade|Y|1:IWII wound classification grade ; 2:Fourth-degree burn wound ; 3:Wound with microbial burden assessed according to IWII ; 4:Deep wound
+2411|Wound, ischemia, and foot infection stage 3|info|< wound classification grade|Y|1:IWII wound classification grade ; 2:IWII wound classification scale ; 3:Jackson burn wound zone ; 4:Wagner and Anderson wound classification grade
+2412|Wound, Ischemia, and foot Infection staging|proc|< Wound classification process|Y|1:Wound temperature assessment process ; 2:Clinical wound assessment ; 3:Wound documentation process ; 4:Diagnostic process to assess wound characteristics
+2413|Bates-Jensen Wound Assessment Tool score|info|< Wound classification result|N(A Bates-Jensen Wound Assessment Tool score is a measurement result, no)|1:wound classification grade ; 2:Wound classification scale ; 3:Tscherne and Oestern wound classification grade ; 4:Jackson burn wound zone classification
+2414|wound bed score score|info|< Wound classification result|N(The term 'wound bed score score' is not a standard term and is too vag)|1:wound classification grade ; 2:Wound classification scale ; 3:IWII wound classification scale ; 4:Jackson burn wound zone classification
+2415|3S Intraoperative Pressure Ulcer Risk Assessment Scale|info|< Wound classification scale|N(The 3S scale is a risk assessment scale, not a wound classification sc)|1:IWII wound classification scale ; 2:Shea classification of pressure ulcers ; 3:Perioperative antimicrobial prophylaxis plan specification ; 4:CDC surgical wound classification grade
+2416|end-of-life wound assessment tool|cont|< Wound classification scale|N(An end-of-life wound assessment tool is not necessarily a wound classi)|1:Tscherne and Oestern wound classification grade ; 2:wound classification grade ; 3:Wound expert role ; 4:Tscherne and Oestern wound classification
+2417|Redness, Edema, Ecchymosis, Discharge, Approximation scale|info|< Wound classification scale|Y|1:Burn classification scale ; 2:URGE scale ; 3:Epithelialization criterion ; 4:Burn classification grade
+2418|Wound, ischemia, and foot infection classification|info|< Wound classification scale|Y|1:IWII wound classification scale ; 2:IWII wound classification grade ; 3:wound classification grade ; 4:Wound classification result
+2419|Diabetic foot ulcer development|proc|< Wound development process|Y|1:Wound causing diabetes mellitus disease process ; 2:Diabetes mellitus disease process ; 3:Diabetes mellitus type II disease process ; 4:Diabetes mellitus type I disease process
+2420|closed incision negative pressure wound therapy system|mate|< Wound dressing|N(A closed incision negative pressure wound therapy system is a device t)|1:Wound-integrating wound dressing ; 2:Wound spacer grid ; 3:Low-vacuum drain ; 4:Wound irrigation solution
+2421|Diabetic foot ulcer healing outcome|proc|< wound healing|N(A healing outcome is the result of wound healing, not the process itse)|1:Impaired wound healing process ; 2:Autolytic wound debridement process ; 3:Wound dehiscence process ; 4:Wound healing by tertiary intention process
+2422|multidrug-resistant organisms infection|proc|< Wound infection process|N(Multidrug-resistant organisms infection can occur in various body site)|1:Wound causing malignant process ; 2:Antibiotic administration process ; 3:Malignant process ; 4:peak matching

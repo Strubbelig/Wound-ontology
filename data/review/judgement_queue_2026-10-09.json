@@ -1,0 +1,4731 @@
+{
+ "made": "2026-10-09T19:49:14",
+ "items": [
+  {
+   "id": "r000",
+   "section": "relations",
+   "subject": "Granulation Tissue",
+   "predicate": "part of",
+   "value": "Wound",
+   "key": "granulation tissue|http://purl.obolibrary.org/obo/BFO_0000050|wound",
+   "abstracts": 5,
+   "pmids": [
+    "23294989",
+    "27428720",
+    "31134552",
+    "31978478",
+    "40270716",
+    "41541046"
+   ],
+   "reading": "granulation tissue forms in a healing wound",
+   "as_written": [
+    "granulation tissue part of Wound"
+   ],
+   "subject_parents": [],
+   "elk": "no contradiction",
+   "flags": []
+  },
+  {
+   "id": "r001",
+   "section": "relations",
+   "subject": "Lower Extremity",
+   "predicate": "has part",
+   "value": "Lower Extremity",
+   "key": "lower extremity|http://purl.obolibrary.org/obo/BFO_0000051|lower extremity",
+   "abstracts": 2,
+   "pmids": [
+    "39890082",
+    "42527036"
+   ],
+   "reading": "",
+   "as_written": [
+    "lower extremity has part leg"
+   ],
+   "subject_parents": [
+    "gross anatomical part"
+   ],
+   "elk": "no contradiction",
+   "flags": [
+    "points at itself"
+   ]
+  },
+  {
+   "id": "r002",
+   "section": "relations",
+   "subject": "Negative Pressure Wound Therapy Dressing",
+   "predicate": "participates in",
+   "value": "Negative pressure wound therapy plan specification",
+   "key": "negative pressure wound therapy dressing|http://purl.obolibrary.org/obo/RO_0000056|negative pressure wound therapy plan specification",
+   "abstracts": 3,
+   "pmids": [
+    "31839387",
+    "37407900",
+    "42009792"
+   ],
+   "reading": "",
+   "as_written": [
+    "negative pressure wound therapy dressing participates in Negative pressure wound therapy"
+   ],
+   "subject_parents": [
+    "Wound dressing"
+   ],
+   "elk": "contradiction: Negative Pressure Wound Therapy Dressing",
+   "flags": [
+    "reasoner finds a contradiction"
+   ]
+  },
+  {
+   "id": "r003",
+   "section": "relations",
+   "subject": "Surgical Site Infection Event",
+   "predicate": "has participant",
+   "value": "Surgical site infection",
+   "key": "surgical site infection event|http://purl.obolibrary.org/obo/RO_0000057|surgical site infection",
+   "abstracts": 2,
+   "pmids": [
+    "42304142",
+    "42417091"
+   ],
+   "reading": "",
+   "as_written": [
+    "surgical site infection event has participant Surgical site infection"
+   ],
+   "subject_parents": [
+    "Wound infection process"
+   ],
+   "elk": "no contradiction",
+   "flags": []
+  },
+  {
+   "id": "t004",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Burn injury",
+   "predicate": "has quality",
+   "value": "superficial II degree",
+   "key": "target|burn injury|has quality|superficial ii degree",
+   "pmids": [
+    "12569689"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Second-degree burn wound",
+       "pmids": [
+        "20459012"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t005",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Chronic non-healing wound",
+   "predicate": "has quality",
+   "value": "Granulation tissue score",
+   "key": "target|chronic non-healing wound|has quality|granulation tissue score",
+   "pmids": [
+    "42563139"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "granulation tissue",
+       "pmids": [
+        "42195250"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t006",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Diabetic foot ulcer",
+   "predicate": "has disposition",
+   "value": "diabetic peripheral neuropathy",
+   "key": "target|diabetic foot ulcer|has disposition|diabetic peripheral neuropathy",
+   "pmids": [
+    "38129301"
+   ],
+   "needs": "a disposition",
+   "blamed": [
+    {
+     "predicate": "has tendency",
+     "kind": "a thing that can have a tendency",
+     "said": [
+      {
+       "value": "risk factor",
+       "pmids": [
+        "39506269"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t007",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Diabetic foot ulcer",
+   "predicate": "has quality",
+   "value": "ulcer grade",
+   "key": "target|diabetic foot ulcer|has quality|ulcer grade",
+   "pmids": [
+    "37421808"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Diabetic foot ulcer",
+       "pmids": [
+        "39899544"
+       ]
+      },
+      {
+       "value": "Wound",
+       "pmids": [
+        "42528694"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t008",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Diabetic foot ulcer",
+   "predicate": "has quality",
+   "value": "wound area reduction rate",
+   "key": "target|diabetic foot ulcer|has quality|wound area reduction rate",
+   "pmids": [
+    "42631595"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "wound area",
+       "pmids": [
+        "31847977"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t009",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Dialkylcarbamoyl chloride dressing",
+   "predicate": "has quality",
+   "value": "microbial composition",
+   "key": "target|dialkylcarbamoyl chloride dressing|has quality|microbial composition",
+   "pmids": [
+    "36567138"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "sharp trauma wound",
+       "pmids": [
+        "42413747"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t010",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Erythropoietin",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|erythropoietin|has role|biomarker",
+   "pmids": [
+    "42348596"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t011",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Pressure ulcer",
+   "predicate": "has quality",
+   "value": "Pressure Ulcer Scale for Healing score",
+   "key": "target|pressure ulcer|has quality|pressure ulcer scale for healing score",
+   "pmids": [
+    "38197278"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Pressure ulcer",
+       "pmids": [
+        "39496059"
+       ]
+      },
+      {
+       "value": "refractory chronic wound",
+       "pmids": [
+        "34253665"
+       ]
+      },
+      {
+       "value": "wound healing",
+       "pmids": [
+        "31847977",
+        "40091352",
+        "40756511"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t012",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Pressure ulcer",
+   "predicate": "has quality",
+   "value": "Stages 3 and 4",
+   "key": "target|pressure ulcer|has quality|stages 3 and 4",
+   "pmids": [
+    "42695638"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Pressure ulcer",
+       "pmids": [
+        "35022147",
+        "38403980"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t013",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Pressure ulcer",
+   "predicate": "has quality",
+   "value": "stage 4",
+   "key": "target|pressure ulcer|has quality|stage 4",
+   "pmids": [
+    "42049621"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Pressure ulcer",
+       "pmids": [
+        "38566023",
+        "42054887"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t014",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Pressure ulcer",
+   "predicate": "has quality",
+   "value": "unstageable",
+   "key": "target|pressure ulcer|has quality|unstageable",
+   "pmids": [
+    "42049621",
+    "42695638"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Pressure ulcer",
+       "pmids": [
+        "42054887"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t015",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Pressure ulcer",
+   "predicate": "has quality",
+   "value": "wound healing indicator",
+   "key": "target|pressure ulcer|has quality|wound healing indicator",
+   "pmids": [
+    "40091352"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "wound healing",
+       "pmids": [
+        "38156736"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t016",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Serum 25-hydroxyvitamin D [25D]",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|serum 25-hydroxyvitamin d [25d]|has role|biomarker",
+   "pmids": [
+    "42451155"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t017",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Topical antifungal",
+   "predicate": "has quality",
+   "value": "low risk",
+   "key": "target|topical antifungal|has quality|low risk",
+   "pmids": [
+    "40095492"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "has realization",
+     "kind": "a disposition, function or role",
+     "said": [
+      {
+       "value": "pressure ulcer development",
+       "pmids": [
+        "40841070"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t018",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Wound",
+   "predicate": "has quality",
+   "value": "grade",
+   "key": "target|wound|has quality|grade",
+   "pmids": [
+    "36054775",
+    "41199260"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Wound",
+       "pmids": [
+        "35588171"
+       ]
+      },
+      {
+       "value": "severity of the wound",
+       "pmids": [
+        "40889990"
+       ]
+      },
+      {
+       "value": "wound recovery time",
+       "pmids": [
+        "35523753"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t019",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Wound",
+   "predicate": "has quality",
+   "value": "mixed etiology",
+   "key": "target|wound|has quality|mixed etiology",
+   "pmids": [
+    "41201879"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Wound",
+       "pmids": [
+        "38639526"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t020",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Wound",
+   "predicate": "has quality",
+   "value": "pain score",
+   "key": "target|wound|has quality|pain score",
+   "pmids": [
+    "36001700"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Dressing change",
+       "pmids": [
+        "40783871"
+       ]
+      },
+      {
+       "value": "Wound pain",
+       "pmids": [
+        "41201879"
+       ]
+      },
+      {
+       "value": "degree of wound pain",
+       "pmids": [
+        "37827940"
+       ]
+      },
+      {
+       "value": "moderate-to-severe pain",
+       "pmids": [
+        "40512647"
+       ]
+      },
+      {
+       "value": "pain",
+       "pmids": [
+        "23993403",
+        "35281950",
+        "37610397",
+        "38843013",
+        "40145987",
+        "40228014",
+        "40600255",
+        "41255349",
+        "41690803",
+        "41962210",
+        "42080480",
+        "42674570",
+        "42678054",
+        "42703669"
+       ]
+      },
+      {
+       "value": "pain at dressing change",
+       "pmids": [
+        "31383609"
+       ]
+      },
+      {
+       "value": "pain intensity",
+       "pmids": [
+        "31008744"
+       ]
+      },
+      {
+       "value": "patient-reported pain",
+       "pmids": [
+        "33870760"
+       ]
+      },
+      {
+       "value": "post-operative pain",
+       "pmids": [
+        "39299852",
+        "40783871"
+       ]
+      },
+      {
+       "value": "refractory chronic wound",
+       "pmids": [
+        "42394157"
+       ]
+      },
+      {
+       "value": "surgical and mechanical debridement",
+       "pmids": [
+        "40512647"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t021",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Wound",
+   "predicate": "has quality",
+   "value": "positive culture",
+   "key": "target|wound|has quality|positive culture",
+   "pmids": [
+    "42053144"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Pseudomonas aeruginosa",
+       "pmids": [
+        "35466808"
+       ]
+      },
+      {
+       "value": "Serratia marcescen",
+       "pmids": [
+        "39801175"
+       ]
+      },
+      {
+       "value": "bacterium",
+       "pmids": [
+        "42231221"
+       ]
+      },
+      {
+       "value": "deep tissue sample",
+       "pmids": [
+        "42371140"
+       ]
+      },
+      {
+       "value": "monomicrobial growth",
+       "pmids": [
+        "36905125"
+       ]
+      },
+      {
+       "value": "polymicrobial",
+       "pmids": [
+        "36905125"
+       ]
+      },
+      {
+       "value": "sample",
+       "pmids": [
+        "41016615"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t022",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Wound",
+   "predicate": "has quality",
+   "value": "superficial II degree",
+   "key": "target|wound|has quality|superficial ii degree",
+   "pmids": [
+    "12569689",
+    "12920719"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Second-degree burn wound",
+       "pmids": [
+        "20459012"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t023",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Wound",
+   "predicate": "has quality",
+   "value": "ulcer grade",
+   "key": "target|wound|has quality|ulcer grade",
+   "pmids": [
+    "20713816",
+    "37819011",
+    "40886741"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Diabetic foot ulcer",
+       "pmids": [
+        "39899544"
+       ]
+      },
+      {
+       "value": "Wound",
+       "pmids": [
+        "42528694"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t024",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Wound",
+   "predicate": "has quality",
+   "value": "wound closure time",
+   "key": "target|wound|has quality|wound closure time",
+   "pmids": [
+    "41399221"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Wound closure process",
+       "pmids": [
+        "33870760",
+        "41392837",
+        "42003476"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t025",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Wound",
+   "predicate": "has quality",
+   "value": "wound type",
+   "key": "target|wound|has quality|wound type",
+   "pmids": [
+    "32870774"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Acute wound",
+       "pmids": [
+        "42076853"
+       ]
+      },
+      {
+       "value": "Chronic wound",
+       "pmids": [
+        "41918265",
+        "42076853"
+       ]
+      },
+      {
+       "value": "Diabetic foot ulcer",
+       "pmids": [
+        "40801880"
+       ]
+      },
+      {
+       "value": "Infected wound",
+       "pmids": [
+        "40801763"
+       ]
+      },
+      {
+       "value": "Wound",
+       "pmids": [
+        "29424643",
+        "30925246",
+        "38684120",
+        "41674187",
+        "42640993"
+       ]
+      },
+      {
+       "value": "chronic hard-to-heal wound",
+       "pmids": [
+        "42076853"
+       ]
+      },
+      {
+       "value": "postamputation wound",
+       "pmids": [
+        "40801880"
+       ]
+      },
+      {
+       "value": "spontaneous wound closure",
+       "pmids": [
+        "40770062"
+       ]
+      },
+      {
+       "value": "wounds at risk of infection",
+       "pmids": [
+        "40801763"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t026",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Wound base",
+   "predicate": "has quality",
+   "value": "tissue type of the wound bed",
+   "key": "target|wound base|has quality|tissue type of the wound bed",
+   "pmids": [
+    "38149767"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Wound base",
+       "pmids": [
+        "35736844"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t027",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Wound dressing",
+   "predicate": "has quality",
+   "value": "dressing type",
+   "key": "target|wound dressing|has quality|dressing type",
+   "pmids": [
+    "42257915"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Wound dressing",
+       "pmids": [
+        "32117583"
+       ]
+      },
+      {
+       "value": "chronic lower extremity ulcer treatment",
+       "pmids": [
+        "40770535"
+       ]
+      },
+      {
+       "value": "donor site care",
+       "pmids": [
+        "32117583"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t028",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "Wound exudate",
+   "predicate": "has quality",
+   "value": "exudate amount",
+   "key": "target|wound exudate|has quality|exudate amount",
+   "pmids": [
+    "41415866"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "exudate",
+       "pmids": [
+        "39142672"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t029",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "amniotic membrane dressing",
+   "predicate": "has quality",
+   "value": "cosmetic outcome",
+   "key": "target|amniotic membrane dressing|has quality|cosmetic outcome",
+   "pmids": [
+    "38409959"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "facial skin and soft tissue defect repair",
+       "pmids": [
+        "42020561"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t030",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "anticoagulation therapy",
+   "predicate": "has as process boundary at end",
+   "value": "complete resolution",
+   "key": "target|anticoagulation therapy|has as process boundary at end|complete resolution",
+   "pmids": [
+    "42013179"
+   ],
+   "needs": "the point where a process ends",
+   "blamed": [
+    {
+     "predicate": "has input",
+     "kind": "a process",
+     "said": [
+      {
+       "value": "infection",
+       "pmids": [
+        "37976179"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t031",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "burn wound",
+   "predicate": "has quality",
+   "value": "mean score",
+   "key": "target|burn wound|has quality|mean score",
+   "pmids": [
+    "39051681"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "healing",
+       "pmids": [
+        "30204574"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t032",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "burn wound",
+   "predicate": "has quality",
+   "value": "superficial II degree",
+   "key": "target|burn wound|has quality|superficial ii degree",
+   "pmids": [
+    "12920719"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Second-degree burn wound",
+       "pmids": [
+        "20459012"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t033",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "chitosan",
+   "predicate": "has role",
+   "value": "scaffold",
+   "key": "target|chitosan|has role|scaffold",
+   "pmids": [
+    "40513720"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "has function",
+     "kind": "a thing that can have a function",
+     "said": [
+      {
+       "value": "Antibacterial Functionality",
+       "pmids": [
+        "42419051"
+       ]
+      }
+     ]
+    },
+    {
+     "predicate": "has role",
+     "kind": "a thing that can have a role",
+     "said": [
+      {
+       "value": "role",
+       "pmids": [
+        "40833670"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t034",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "clavicle fracture",
+   "predicate": "has quality",
+   "value": "fracture pattern",
+   "key": "target|clavicle fracture|has quality|fracture pattern",
+   "pmids": [
+    "42703666"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "fracture",
+       "pmids": [
+        "41591313"
+       ]
+      },
+      {
+       "value": "pelvic fracture",
+       "pmids": [
+        "42703653"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t035",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "complete thickness PrI",
+   "predicate": "has quality",
+   "value": "stage 4",
+   "key": "target|complete thickness pri|has quality|stage 4",
+   "pmids": [
+    "39127012"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Pressure ulcer",
+       "pmids": [
+        "38566023",
+        "42054887"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t036",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "complete thickness PrI",
+   "predicate": "has quality",
+   "value": "unstageable",
+   "key": "target|complete thickness pri|has quality|unstageable",
+   "pmids": [
+    "39127012"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Pressure ulcer",
+       "pmids": [
+        "42054887"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t037",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "complication",
+   "predicate": "has quality",
+   "value": "clinical sign",
+   "key": "target|complication|has quality|clinical sign",
+   "pmids": [
+    "42322180"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "infection",
+       "pmids": [
+        "33998845"
+       ]
+      },
+      {
+       "value": "macrovascular disorder",
+       "pmids": [
+        "19046206"
+       ]
+      },
+      {
+       "value": "neuropathy",
+       "pmids": [
+        "19046206"
+       ]
+      },
+      {
+       "value": "venous obstruction",
+       "pmids": [
+        "42337520"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t038",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "diabetes-related foot disorder",
+   "predicate": "has quality",
+   "value": "Wagner and Anderson wound classification grade",
+   "key": "target|diabetes-related foot disorder|has quality|wagner and anderson wound classification grade",
+   "pmids": [
+    "42422672"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Diabetic foot ulcer",
+       "pmids": [
+        "31823556",
+        "33231614",
+        "34477854",
+        "38324422",
+        "41024096",
+        "42095181",
+        "42217301",
+        "42311555"
+       ]
+      },
+      {
+       "value": "Diabetic wound",
+       "pmids": [
+        "37226466"
+       ]
+      },
+      {
+       "value": "Wound",
+       "pmids": [
+        "27428720",
+        "31536746",
+        "38287759",
+        "42699197"
+       ]
+      },
+      {
+       "value": "below-knee amputation",
+       "pmids": [
+        "42668913"
+       ]
+      },
+      {
+       "value": "diabetic foot osteomyelitis",
+       "pmids": [
+        "39884509"
+       ]
+      },
+      {
+       "value": "lesion severity",
+       "pmids": [
+        "42523638"
+       ]
+      },
+      {
+       "value": "severity of the wound",
+       "pmids": [
+        "31436621",
+        "42698183"
+       ]
+      },
+      {
+       "value": "toe",
+       "pmids": [
+        "42668913"
+       ]
+      },
+      {
+       "value": "wound stage",
+       "pmids": [
+        "38570013"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t039",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "diabetic foot osteomyelitis",
+   "predicate": "has quality",
+   "value": "duration of therapy",
+   "key": "target|diabetic foot osteomyelitis|has quality|duration of therapy",
+   "pmids": [
+    "36883207"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "therapy",
+       "pmids": [
+        "40701608"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t040",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "elevated inflammatory marker",
+   "predicate": "inheres in",
+   "value": "inflammatory marker",
+   "key": "target|elevated inflammatory marker|inheres in|inflammatory marker",
+   "pmids": [
+    "42631618"
+   ],
+   "needs": "a thing that can have properties",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "immune function",
+       "pmids": [
+        "40374110"
+       ]
+      },
+      {
+       "value": "inflammatory status",
+       "pmids": [
+        "41692743"
+       ]
+      },
+      {
+       "value": "interleukin-10",
+       "pmids": [
+        "42631884"
+       ]
+      },
+      {
+       "value": "systemic rheumatoid arthritis activity",
+       "pmids": [
+        "42146960"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t041",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "elevated procalcitonin",
+   "predicate": "inheres in",
+   "value": "inflammatory marker",
+   "key": "target|elevated procalcitonin|inheres in|inflammatory marker",
+   "pmids": [
+    "42239002"
+   ],
+   "needs": "a thing that can have properties",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "immune function",
+       "pmids": [
+        "40374110"
+       ]
+      },
+      {
+       "value": "inflammatory status",
+       "pmids": [
+        "41692743"
+       ]
+      },
+      {
+       "value": "interleukin-10",
+       "pmids": [
+        "42631884"
+       ]
+      },
+      {
+       "value": "systemic rheumatoid arthritis activity",
+       "pmids": [
+        "42146960"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t042",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "exudate",
+   "predicate": "has quality",
+   "value": "exudate volume",
+   "key": "target|exudate|has quality|exudate volume",
+   "pmids": [
+    "40588411"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "exudate",
+       "pmids": [
+        "39142672",
+        "42060504"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t043",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "fatty metabolite",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|fatty metabolite|has role|biomarker",
+   "pmids": [
+    "31490098"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t044",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "gene",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|gene|has role|biomarker",
+   "pmids": [
+    "42640683"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t045",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "granulocyte colony-stimulating factor",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|granulocyte colony-stimulating factor|has role|biomarker",
+   "pmids": [
+    "41051531"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t046",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "hospital-acquired pressure ulcer",
+   "predicate": "has quality",
+   "value": "rate of hospital-acquired pressure ulcer",
+   "key": "target|hospital-acquired pressure ulcer|has quality|rate of hospital-acquired pressure ulcer",
+   "pmids": [
+    "40391883"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "hospital-acquired pressure ulcer",
+       "pmids": [
+        "41037479"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t047",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "inflammatory cytokine",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|inflammatory cytokine|has role|biomarker",
+   "pmids": [
+    "31490098"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t048",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "interleukin-10",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|interleukin-10|has role|biomarker",
+   "pmids": [
+    "41051531"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t049",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "interwoven extracellular matrix",
+   "predicate": "has quality",
+   "value": "biological drug",
+   "key": "target|interwoven extracellular matrix|has quality|biological drug",
+   "pmids": [
+    "41819463"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Debridement process",
+       "pmids": [
+        "33263973"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t050",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "keratinized tissue coverage",
+   "predicate": "inheres in",
+   "value": "wound area",
+   "key": "target|keratinized tissue coverage|inheres in|wound area",
+   "pmids": [
+    "41633588"
+   ],
+   "needs": "a thing that can have properties",
+   "blamed": [
+    {
+     "predicate": "inheres in",
+     "kind": "a property of something",
+     "said": [
+      {
+       "value": "Chronic wound",
+       "pmids": [
+        "40931369",
+        "41605221"
+       ]
+      },
+      {
+       "value": "Diabetic foot ulcer",
+       "pmids": [
+        "32817595",
+        "37805732",
+        "38599150",
+        "38754593",
+        "38967341",
+        "41346156",
+        "41690803"
+       ]
+      },
+      {
+       "value": "Wound",
+       "pmids": [
+        "17558098",
+        "19638336",
+        "21482863",
+        "23103485",
+        "23230755",
+        "24633056",
+        "24848975",
+        "30016138",
+        "30625042",
+        "31168175",
+        "31823556",
+        "34191140",
+        "35466808",
+        "37572339",
+        "38683777",
+        "38683780",
+        "39376004",
+        "39630554",
+        "39928474",
+        "40341457",
+        "40419293",
+        "40419356",
+        "40906635",
+        "40931369",
+        "40956978",
+        "40981688",
+        "41062768",
+        "41216833",
+        "41649922",
+        "42049196",
+        "42274200",
+        "42319763",
+        "42680574",
+        "42706049"
+       ]
+      },
+      {
+       "value": "chronic lower extremity diabetic ulcer",
+       "pmids": [
+        "25424146"
+       ]
+      },
+      {
+       "value": "chronic lower extremity ulcer",
+       "pmids": [
+        "22517228",
+        "40981688"
+       ]
+      },
+      {
+       "value": "heel ulcer",
+       "pmids": [
+        "36787268"
+       ]
+      },
+      {
+       "value": "higher molecular weight hyaluronic acid plus povidone-iodine",
+       "pmids": [
+        "30807498"
+       ]
+      },
+      {
+       "value": "ischemic diabetic foot ulcer",
+       "pmids": [
+        "28371685"
+       ]
+      },
+      {
+       "value": "lower extremity ulcer",
+       "pmids": [
+        "40801774"
+       ]
+      },
+      {
+       "value": "oral mucosal ulcer",
+       "pmids": [
+        "38483398"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t051",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "lipocalin-2",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|lipocalin-2|has role|biomarker",
+   "pmids": [
+    "42531082"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t052",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "lower extremity ulcer",
+   "predicate": "has quality",
+   "value": "pain at dressing change",
+   "key": "target|lower extremity ulcer|has quality|pain at dressing change",
+   "pmids": [
+    "25375402"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "Dressing change",
+       "pmids": [
+        "30204578"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t053",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "microRNA",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|microrna|has role|biomarker",
+   "pmids": [
+    "40818308"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t054",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "neo-tissue",
+   "predicate": "has quality",
+   "value": "collagen type I/III ratio",
+   "key": "target|neo-tissue|has quality|collagen type i/iii ratio",
+   "pmids": [
+    "41666526"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "fiber organization",
+       "pmids": [
+        "40481016"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t055",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "non-coding RNA",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|non-coding rna|has role|biomarker",
+   "pmids": [
+    "38007032"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t056",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "oral antiseptic",
+   "predicate": "has quality",
+   "value": "low risk",
+   "key": "target|oral antiseptic|has quality|low risk",
+   "pmids": [
+    "32108654"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "has realization",
+     "kind": "a disposition, function or role",
+     "said": [
+      {
+       "value": "pressure ulcer development",
+       "pmids": [
+        "40841070"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t057",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "post-operative antibiotic use",
+   "predicate": "has as process boundary at start",
+   "value": "incision closure",
+   "key": "target|post-operative antibiotic use|has as process boundary at start|incision closure",
+   "pmids": [
+    "42457177"
+   ],
+   "needs": "the point where a process starts",
+   "blamed": [
+    {
+     "predicate": "has input",
+     "kind": "a process",
+     "said": [
+      {
+       "value": "incision",
+       "pmids": [
+        "33870760"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t058",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "protein",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|protein|has role|biomarker",
+   "pmids": [
+    "42450307"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t059",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "recombinant human epidermal growth factor treatment",
+   "predicate": "has as process boundary at end",
+   "value": "Wound closure process",
+   "key": "target|recombinant human epidermal growth factor treatment|has as process boundary at end|wound closure process",
+   "pmids": [
+    "22966096"
+   ],
+   "needs": "the point where a process ends",
+   "blamed": [
+    {
+     "predicate": "has as process boundary at end",
+     "kind": "a process",
+     "said": [
+      {
+       "value": "complete wound closure",
+       "pmids": [
+        "39137251"
+       ]
+      }
+     ]
+    },
+    {
+     "predicate": "has input",
+     "kind": "a process",
+     "said": [
+      {
+       "value": "Chronic wound",
+       "pmids": [
+        "39837084"
+       ]
+      },
+      {
+       "value": "Wound",
+       "pmids": [
+        "39837084",
+        "41760579"
+       ]
+      },
+      {
+       "value": "bioactive glass fiber",
+       "pmids": [
+        "41534443"
+       ]
+      },
+      {
+       "value": "facial laceration",
+       "pmids": [
+        "42020199"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t060",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "red-spectrum laser",
+   "predicate": "has quality",
+   "value": "660 nm",
+   "key": "target|red-spectrum laser|has quality|660 nm",
+   "pmids": [
+    "40545698"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "low-level laser",
+       "pmids": [
+        "29181642"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t061",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "sample",
+   "predicate": "has quality",
+   "value": "culture-negative",
+   "key": "target|sample|has quality|culture-negative",
+   "pmids": [
+    "37525143"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "postoperative meningitis",
+       "pmids": [
+        "42550272"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t062",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "scar",
+   "predicate": "has quality",
+   "value": "collagen type I/III ratio",
+   "key": "target|scar|has quality|collagen type i/iii ratio",
+   "pmids": [
+    "40536647"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "fiber organization",
+       "pmids": [
+        "40481016"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t063",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "scar",
+   "predicate": "has quality",
+   "value": "scar characteristic",
+   "key": "target|scar|has quality|scar characteristic",
+   "pmids": [
+    "42295872"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "hydration",
+       "pmids": [
+        "28557869"
+       ]
+      },
+      {
+       "value": "pigmentation",
+       "pmids": [
+        "28557869"
+       ]
+      },
+      {
+       "value": "transepidermal water loss",
+       "pmids": [
+        "28557869"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t064",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "slough component",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|slough component|has role|biomarker",
+   "pmids": [
+    "38558438"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t065",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "super tension-relieving suture",
+   "predicate": "has quality",
+   "value": "wound healing grade",
+   "key": "target|super tension-relieving suture|has quality|wound healing grade",
+   "pmids": [
+    "39987721"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "healing",
+       "pmids": [
+        "25847503"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t066",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "tension-relieving suture",
+   "predicate": "has quality",
+   "value": "wound healing grade",
+   "key": "target|tension-relieving suture|has quality|wound healing grade",
+   "pmids": [
+    "39987721"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "healing",
+       "pmids": [
+        "25847503"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t067",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "thrombomodulin",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|thrombomodulin|has role|biomarker",
+   "pmids": [
+    "42289744"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t068",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "tissue plasminogen activator-inhibitor complex",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|tissue plasminogen activator-inhibitor complex|has role|biomarker",
+   "pmids": [
+    "42289744"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t069",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "treatment",
+   "predicate": "has as process boundary at end",
+   "value": "Wound closure process",
+   "key": "target|treatment|has as process boundary at end|wound closure process",
+   "pmids": [
+    "30840551"
+   ],
+   "needs": "the point where a process ends",
+   "blamed": [
+    {
+     "predicate": "has as process boundary at end",
+     "kind": "a process",
+     "said": [
+      {
+       "value": "complete wound closure",
+       "pmids": [
+        "39137251"
+       ]
+      }
+     ]
+    },
+    {
+     "predicate": "has input",
+     "kind": "a process",
+     "said": [
+      {
+       "value": "Chronic wound",
+       "pmids": [
+        "39837084"
+       ]
+      },
+      {
+       "value": "Wound",
+       "pmids": [
+        "39837084",
+        "41760579"
+       ]
+      },
+      {
+       "value": "bioactive glass fiber",
+       "pmids": [
+        "41534443"
+       ]
+      },
+      {
+       "value": "facial laceration",
+       "pmids": [
+        "42020199"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t070",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "ulcerated occipital lesion",
+   "predicate": "has quality",
+   "value": "Malignancy",
+   "key": "target|ulcerated occipital lesion|has quality|malignancy",
+   "pmids": [
+    "41199148"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "has role",
+     "kind": "a thing that can have a role",
+     "said": [
+      {
+       "value": "risk factor",
+       "pmids": [
+        "42202366"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t071",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "vascular endothelial growth factor",
+   "predicate": "has role",
+   "value": "biomarker",
+   "key": "target|vascular endothelial growth factor|has role|biomarker",
+   "pmids": [
+    "41051531"
+   ],
+   "needs": "a role",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "deep vein thrombosis",
+       "pmids": [
+        "42668964"
+       ]
+      },
+      {
+       "value": "periorbital necrotizing fasciitis",
+       "pmids": [
+        "41251625"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t072",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "wound healing",
+   "predicate": "has as process boundary at end",
+   "value": "Wound closure process",
+   "key": "target|wound healing|has as process boundary at end|wound closure process",
+   "pmids": [
+    "22966096",
+    "41605221"
+   ],
+   "needs": "the point where a process ends",
+   "blamed": [
+    {
+     "predicate": "has as process boundary at end",
+     "kind": "a process",
+     "said": [
+      {
+       "value": "complete wound closure",
+       "pmids": [
+        "39137251"
+       ]
+      }
+     ]
+    },
+    {
+     "predicate": "has input",
+     "kind": "a process",
+     "said": [
+      {
+       "value": "Chronic wound",
+       "pmids": [
+        "39837084"
+       ]
+      },
+      {
+       "value": "Wound",
+       "pmids": [
+        "39837084",
+        "41760579"
+       ]
+      },
+      {
+       "value": "bioactive glass fiber",
+       "pmids": [
+        "41534443"
+       ]
+      },
+      {
+       "value": "facial laceration",
+       "pmids": [
+        "42020199"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t073",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "wound recovery",
+   "predicate": "has as process boundary at end",
+   "value": "complete resolution",
+   "key": "target|wound recovery|has as process boundary at end|complete resolution",
+   "pmids": [
+    "42013179"
+   ],
+   "needs": "the point where a process ends",
+   "blamed": [
+    {
+     "predicate": "has input",
+     "kind": "a process",
+     "said": [
+      {
+       "value": "infection",
+       "pmids": [
+        "37976179"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t074",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "wound repair program",
+   "predicate": "has as process boundary at end",
+   "value": "Wound closure process",
+   "key": "target|wound repair program|has as process boundary at end|wound closure process",
+   "pmids": [
+    "31572387"
+   ],
+   "needs": "the point where a process ends",
+   "blamed": [
+    {
+     "predicate": "has as process boundary at end",
+     "kind": "a process",
+     "said": [
+      {
+       "value": "complete wound closure",
+       "pmids": [
+        "39137251"
+       ]
+      }
+     ]
+    },
+    {
+     "predicate": "has input",
+     "kind": "a process",
+     "said": [
+      {
+       "value": "Chronic wound",
+       "pmids": [
+        "39837084"
+       ]
+      },
+      {
+       "value": "Wound",
+       "pmids": [
+        "39837084",
+        "41760579"
+       ]
+      },
+      {
+       "value": "bioactive glass fiber",
+       "pmids": [
+        "41534443"
+       ]
+      },
+      {
+       "value": "facial laceration",
+       "pmids": [
+        "42020199"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "t075",
+   "section": "clashes",
+   "kind": "target",
+   "subject": "wound swab",
+   "predicate": "has quality",
+   "value": "microbial composition",
+   "key": "target|wound swab|has quality|microbial composition",
+   "pmids": [
+    "36567138"
+   ],
+   "needs": "a quality",
+   "blamed": [
+    {
+     "predicate": "is about",
+     "kind": "a piece of information",
+     "said": [
+      {
+       "value": "sharp trauma wound",
+       "pmids": [
+        "42413747"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "k076",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "Skin",
+   "key": "two kinds|skin",
+   "sides": [
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Pressure ulcer",
+        "pmids": [
+         "38814848"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "has disposition",
+      "kind": "a thing that can have dispositions",
+      "said": [
+       {
+        "value": "Chronic graft-versus-host disorder",
+        "pmids": [
+         "42274459"
+        ]
+       }
+      ]
+     },
+     {
+      "predicate": "has function",
+      "kind": "a thing that can have a function",
+      "said": [
+       {
+        "value": "barrier function",
+        "pmids": [
+         "42634960"
+        ]
+       }
+      ]
+     },
+     {
+      "predicate": "has role",
+      "kind": "a thing that can have a role",
+      "said": [
+       {
+        "value": "role",
+        "pmids": [
+         "39714223"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k077",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "Wound, Ischemia, and foot Infection",
+   "key": "two kinds|wound, ischemia, and foot infection",
+   "sides": [
+    [
+     {
+      "predicate": "has tendency",
+      "kind": "a thing that can have a tendency",
+      "said": [
+       {
+        "value": "amputation risk",
+        "pmids": [
+         "41202976"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "40462388",
+         "40886741"
+        ]
+       },
+       {
+        "value": "foot infection",
+        "pmids": [
+         "40886741"
+        ]
+       },
+       {
+        "value": "infection",
+        "pmids": [
+         "40462388"
+        ]
+       },
+       {
+        "value": "ischemia",
+        "pmids": [
+         "40462388",
+         "40886741"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k078",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "burn area",
+   "key": "two kinds|burn area",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Burn injury",
+        "pmids": [
+         "42054930"
+        ]
+       },
+       {
+        "value": "burn wound",
+        "pmids": [
+         "42397773"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "deep II degree burn",
+        "pmids": [
+         "20632490"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k079",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "burn characteristic",
+   "key": "two kinds|burn characteristic",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Burn injury",
+        "pmids": [
+         "42252703"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Burn injury",
+        "pmids": [
+         "42644612"
+        ]
+       },
+       {
+        "value": "partial- or mixed-depth burn",
+        "pmids": [
+         "42644612"
+        ]
+       },
+       {
+        "value": "pediatric burn injury",
+        "pmids": [
+         "42102144"
+        ]
+       },
+       {
+        "value": "total body surface area",
+        "pmids": [
+         "42644612"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k080",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "clean",
+   "key": "two kinds|clean",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Second-degree burn wound",
+        "pmids": [
+         "25687836"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "40960565"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k081",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "clinical signs of infection",
+   "key": "two kinds|clinical signs of infection",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "37572339"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "infection",
+        "pmids": [
+         "24602074"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k082",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "closure rate",
+   "key": "two kinds|closure rate",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "carboxymethylcellulose/1.2% ionic silver-treated wound",
+        "pmids": [
+         "22517228"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "University of Texas 2 wound",
+        "pmids": [
+         "41771582"
+        ]
+       },
+       {
+        "value": "closure",
+        "pmids": [
+         "40712951"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k083",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "contaminated",
+   "key": "two kinds|contaminated",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "ventral hernia",
+        "pmids": [
+         "39299852"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "40960565"
+        ]
+       },
+       {
+        "value": "wound contamination",
+        "pmids": [
+         "39661349"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k084",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "degree of wound pain",
+   "key": "two kinds|degree of wound pain",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "37572339",
+         "40476462"
+        ]
+       },
+       {
+        "value": "obstetric wound",
+        "pmids": [
+         "38257078"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "post-operative pain",
+        "pmids": [
+         "41359595"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k085",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "granulation tissue coverage",
+   "key": "two kinds|granulation tissue coverage",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "30016138"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "granulation tissue",
+        "pmids": [
+         "42060504"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k086",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "injury characteristic",
+   "key": "two kinds|injury characteristic",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Traumatic wound",
+        "pmids": [
+         "40531233"
+        ]
+       },
+       {
+        "value": "injury",
+        "pmids": [
+         "42298457"
+        ]
+       },
+       {
+        "value": "open fracture",
+        "pmids": [
+         "40531233"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "ankle fracture",
+        "pmids": [
+         "42690130"
+        ]
+       },
+       {
+        "value": "burn wound",
+        "pmids": [
+         "41241137"
+        ]
+       },
+       {
+        "value": "infection",
+        "pmids": [
+         "42012038"
+        ]
+       },
+       {
+        "value": "injury",
+        "pmids": [
+         "42629558"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k087",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "pH level",
+   "key": "two kinds|ph level",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "36251505"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "bacterial burden",
+        "pmids": [
+         "33998845"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k088",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "pressure ulcer stage",
+   "key": "two kinds|pressure ulcer stage",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Pressure ulcer",
+        "pmids": [
+         "41544551"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "pressure ulcer stage",
+        "pmids": [
+         "41544551"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k089",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "risk factor",
+   "key": "two kinds|risk factor",
+   "sides": [
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "C‑reactive protein",
+        "pmids": [
+         "42010668"
+        ]
+       },
+       {
+        "value": "Malnutrition",
+        "pmids": [
+         "39960280"
+        ]
+       },
+       {
+        "value": "adhesive dressing",
+        "pmids": [
+         "39960280"
+        ]
+       },
+       {
+        "value": "age",
+        "pmids": [
+         "39960280",
+         "42010668"
+        ]
+       },
+       {
+        "value": "albumin molecule",
+        "pmids": [
+         "42010668"
+        ]
+       },
+       {
+        "value": "chronic obstructive pulmonary disorder",
+        "pmids": [
+         "42010668"
+        ]
+       },
+       {
+        "value": "deep wound dehiscence",
+        "pmids": [
+         "42316915"
+        ]
+       },
+       {
+        "value": "dehydration",
+        "pmids": [
+         "39960280"
+        ]
+       },
+       {
+        "value": "fragile skin",
+        "pmids": [
+         "39960280"
+        ]
+       },
+       {
+        "value": "history of diabetes",
+        "pmids": [
+         "42010668"
+        ]
+       },
+       {
+        "value": "peripheral vascular disorder",
+        "pmids": [
+         "42010668"
+        ]
+       },
+       {
+        "value": "serum sodium",
+        "pmids": [
+         "42010668"
+        ]
+       },
+       {
+        "value": "urinary incontinence",
+        "pmids": [
+         "42010668"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "has realization",
+      "kind": "a disposition, function or role",
+      "said": [
+       {
+        "value": "Epstein-Barr virus infection",
+        "pmids": [
+         "42507125"
+        ]
+       },
+       {
+        "value": "Wound development process",
+        "pmids": [
+         "42372224"
+        ]
+       },
+       {
+        "value": "amputation",
+        "pmids": [
+         "39150301",
+         "41104837"
+        ]
+       },
+       {
+        "value": "chronic inflammation",
+        "pmids": [
+         "38789144"
+        ]
+       },
+       {
+        "value": "cytomegalovirus infection",
+        "pmids": [
+         "42507125"
+        ]
+       },
+       {
+        "value": "disorder progression",
+        "pmids": [
+         "39909214"
+        ]
+       },
+       {
+        "value": "formation",
+        "pmids": [
+         "41778740",
+         "42544802"
+        ]
+       },
+       {
+        "value": "healing",
+        "pmids": [
+         "42661182"
+        ]
+       },
+       {
+        "value": "healing failure",
+        "pmids": [
+         "41236191"
+        ]
+       },
+       {
+        "value": "hospitalization",
+        "pmids": [
+         "42606384"
+        ]
+       },
+       {
+        "value": "infection",
+        "pmids": [
+         "42208193"
+        ]
+       },
+       {
+        "value": "major amputation",
+        "pmids": [
+         "41384024"
+        ]
+       },
+       {
+        "value": "medical device use",
+        "pmids": [
+         "41332352"
+        ]
+       },
+       {
+        "value": "occurrence of infection",
+        "pmids": [
+         "42373509"
+        ]
+       },
+       {
+        "value": "past-amputation",
+        "pmids": [
+         "39833236"
+        ]
+       },
+       {
+        "value": "postoperative infection",
+        "pmids": [
+         "42269915"
+        ]
+       },
+       {
+        "value": "postoperative nonhealing",
+        "pmids": [
+         "42431290"
+        ]
+       },
+       {
+        "value": "postoperative poor healing",
+        "pmids": [
+         "41681099"
+        ]
+       },
+       {
+        "value": "postoperative wound healing process",
+        "pmids": [
+         "42247256"
+        ]
+       },
+       {
+        "value": "pressure ulcer development",
+        "pmids": [
+         "40801775",
+         "41254330",
+         "41397936",
+         "41926469"
+        ]
+       },
+       {
+        "value": "prolonged second stage",
+        "pmids": [
+         "42557632"
+        ]
+       },
+       {
+        "value": "re-infection",
+        "pmids": [
+         "39567214",
+         "39835482"
+        ]
+       },
+       {
+        "value": "recurrent thrombosis",
+        "pmids": [
+         "41790140"
+        ]
+       },
+       {
+        "value": "subsequent knee surgery",
+        "pmids": [
+         "42393591"
+        ]
+       },
+       {
+        "value": "thrombus progression",
+        "pmids": [
+         "42606384"
+        ]
+       },
+       {
+        "value": "vasoconstrictor medication use",
+        "pmids": [
+         "41416642"
+        ]
+       }
+      ]
+     },
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Diabetic foot ulcer",
+        "pmids": [
+         "36905796"
+        ]
+       },
+       {
+        "value": "HbA1c level",
+        "pmids": [
+         "42260297"
+        ]
+       },
+       {
+        "value": "Pressure ulcer",
+        "pmids": [
+         "27827275",
+         "37924783"
+        ]
+       },
+       {
+        "value": "Venous leg ulcer",
+        "pmids": [
+         "41681099"
+        ]
+       },
+       {
+        "value": "chronic kidney disorder",
+        "pmids": [
+         "42260297"
+        ]
+       },
+       {
+        "value": "diabetic foot osteomyelitis",
+        "pmids": [
+         "36905796"
+        ]
+       },
+       {
+        "value": "facial pressure ulcer",
+        "pmids": [
+         "42217300"
+        ]
+       },
+       {
+        "value": "injury",
+        "pmids": [
+         "42520268"
+        ]
+       },
+       {
+        "value": "interleukin-6",
+        "pmids": [
+         "40481668"
+        ]
+       },
+       {
+        "value": "levator ani muscle avulsion",
+        "pmids": [
+         "41738166"
+        ]
+       },
+       {
+        "value": "local pressure relief device",
+        "pmids": [
+         "40058180"
+        ]
+       },
+       {
+        "value": "material disease entity",
+        "pmids": [
+         "40828532"
+        ]
+       },
+       {
+        "value": "obesity",
+        "pmids": [
+         "40739263"
+        ]
+       },
+       {
+        "value": "pediatric invasive group A streptococcus",
+        "pmids": [
+         "40828532"
+        ]
+       },
+       {
+        "value": "pediatric orthopedic trauma",
+        "pmids": [
+         "42208193"
+        ]
+       },
+       {
+        "value": "peripheral artery disorder",
+        "pmids": [
+         "42260297"
+        ]
+       },
+       {
+        "value": "peripheral neuropathy",
+        "pmids": [
+         "42260297"
+        ]
+       },
+       {
+        "value": "platelet-derived growth factor",
+        "pmids": [
+         "40481668"
+        ]
+       },
+       {
+        "value": "primary site skin melanoma",
+        "pmids": [
+         "42124509"
+        ]
+       },
+       {
+        "value": "spinal cord injury/disorder",
+        "pmids": [
+         "37970711"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k090",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "sign",
+   "key": "two kinds|sign",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "worsening sepsis",
+        "pmids": [
+         "38846026"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "bone regeneration",
+        "pmids": [
+         "39951628"
+        ]
+       },
+       {
+        "value": "bone resorption",
+        "pmids": [
+         "39951628"
+        ]
+       },
+       {
+        "value": "central skin tightening",
+        "pmids": [
+         "42713316"
+        ]
+       },
+       {
+        "value": "clinical infection",
+        "pmids": [
+         "42312035"
+        ]
+       },
+       {
+        "value": "complete healing",
+        "pmids": [
+         "41834601"
+        ]
+       },
+       {
+        "value": "dysregulated wound healing process",
+        "pmids": [
+         "39217278"
+        ]
+       },
+       {
+        "value": "incomplete functional closure",
+        "pmids": [
+         "42639303"
+        ]
+       },
+       {
+        "value": "maggot",
+        "pmids": [
+         "30410258"
+        ]
+       },
+       {
+        "value": "sclerosis",
+        "pmids": [
+         "42713316"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k091",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "skin perfusion pressure",
+   "key": "two kinds|skin perfusion pressure",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "extremity",
+        "pmids": [
+         "41711130"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "chronic extremity-threatening ischemia",
+        "pmids": [
+         "39880643"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k092",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "stage 3",
+   "key": "two kinds|stage 3",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "stage 3 injury",
+        "pmids": [
+         "33206626"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Minimal healing tissue",
+        "pmids": [
+         "42632041"
+        ]
+       },
+       {
+        "value": "Pressure ulcer",
+        "pmids": [
+         "38566023",
+         "42054887"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k093",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "taxonomic composition",
+   "key": "two kinds|taxonomic composition",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "bacterial community",
+        "pmids": [
+         "42271189"
+        ]
+       },
+       {
+        "value": "fungal community",
+        "pmids": [
+         "42271189"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "microbial community",
+        "pmids": [
+         "42413747"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k094",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "tissue composition",
+   "key": "two kinds|tissue composition",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "35451982"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "33320742"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k095",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "total body surface area",
+   "key": "two kinds|total body surface area",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Burn injury",
+        "pmids": [
+         "33126858",
+         "42153543",
+         "42155293",
+         "42427321",
+         "42644612"
+        ]
+       },
+       {
+        "value": "Second-degree burn wound",
+        "pmids": [
+         "32844994",
+         "40341353"
+        ]
+       },
+       {
+        "value": "deep partial-thickness thermal burn injury",
+        "pmids": [
+         "25909422"
+        ]
+       },
+       {
+        "value": "flash burn",
+        "pmids": [
+         "32844994"
+        ]
+       },
+       {
+        "value": "hand",
+        "pmids": [
+         "42644612"
+        ]
+       },
+       {
+        "value": "partial- or mixed-depth burn",
+        "pmids": [
+         "42644612"
+        ]
+       },
+       {
+        "value": "scald lesion",
+        "pmids": [
+         "27507189"
+        ]
+       },
+       {
+        "value": "thermal burn",
+        "pmids": [
+         "41709317"
+        ]
+       },
+       {
+        "value": "thigh region",
+        "pmids": [
+         "42644612"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Burn injury",
+        "pmids": [
+         "23817002",
+         "40346855",
+         "42140174",
+         "42148018",
+         "42207149"
+        ]
+       },
+       {
+        "value": "Second-degree burn wound",
+        "pmids": [
+         "28682677"
+        ]
+       },
+       {
+        "value": "acute burn wound",
+        "pmids": [
+         "41990602"
+        ]
+       },
+       {
+        "value": "burn size",
+        "pmids": [
+         "42229105"
+        ]
+       },
+       {
+        "value": "deep-partial thickness thermal burn",
+        "pmids": [
+         "39322504"
+        ]
+       },
+       {
+        "value": "flame burn",
+        "pmids": [
+         "42171648"
+        ]
+       },
+       {
+        "value": "injury",
+        "pmids": [
+         "42140174"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k096",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "width",
+   "key": "two kinds|width",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Venous leg ulcer",
+        "pmids": [
+         "34121320"
+        ]
+       },
+       {
+        "value": "Wound",
+        "pmids": [
+         "34121320",
+         "38343251",
+         "40047814",
+         "42363214"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "calcaneal fracture",
+        "pmids": [
+         "42468064"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k097",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "wound characteristic",
+   "key": "two kinds|wound characteristic",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Diabetic foot ulcer",
+        "pmids": [
+         "39899544"
+        ]
+       },
+       {
+        "value": "Pressure ulcer",
+        "pmids": [
+         "41381114"
+        ]
+       },
+       {
+        "value": "Wound",
+        "pmids": [
+         "41205151",
+         "41456143"
+        ]
+       },
+       {
+        "value": "complex Diabetic foot ulcer",
+        "pmids": [
+         "42229616"
+        ]
+       },
+       {
+        "value": "lower extremity ulcer",
+        "pmids": [
+         "40801774",
+         "42366847"
+        ]
+       },
+       {
+        "value": "surgical wound",
+        "pmids": [
+         "42121339"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "39950603",
+         "41649911",
+         "42060505"
+        ]
+       },
+       {
+        "value": "wound length",
+        "pmids": [
+         "41428938"
+        ]
+       },
+       {
+        "value": "wound size",
+        "pmids": [
+         "41428938"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k098",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "wound duration",
+   "key": "two kinds|wound duration",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Arterial leg ulcer",
+        "pmids": [
+         "41216935"
+        ]
+       },
+       {
+        "value": "Wound",
+        "pmids": [
+         "12766123",
+         "17558098",
+         "23163982",
+         "24633056",
+         "31663922",
+         "36251505",
+         "40382653",
+         "41677127"
+        ]
+       },
+       {
+        "value": "lower extremity ulcer",
+        "pmids": [
+         "40419293"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "30840551"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k099",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "wound healing status",
+   "key": "two kinds|wound healing status",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Venous leg ulcer",
+        "pmids": [
+         "41681099"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "chronic wound healing process",
+        "pmids": [
+         "40288706"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k100",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "wound pain score",
+   "key": "two kinds|wound pain score",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "42104753"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Wound pain",
+        "pmids": [
+         "33379851"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k101",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "wound parameter",
+   "key": "two kinds|wound parameter",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "40338200",
+         "40981691"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Venous leg ulcer",
+        "pmids": [
+         "34121320"
+        ]
+       },
+       {
+        "value": "Wound",
+        "pmids": [
+         "34121320"
+        ]
+       },
+       {
+        "value": "area",
+        "pmids": [
+         "34121320"
+        ]
+       },
+       {
+        "value": "length",
+        "pmids": [
+         "33942998",
+         "34121320"
+        ]
+       },
+       {
+        "value": "width",
+        "pmids": [
+         "33942998",
+         "34121320"
+        ]
+       },
+       {
+        "value": "wound area",
+        "pmids": [
+         "40369497"
+        ]
+       },
+       {
+        "value": "wound depth",
+        "pmids": [
+         "40369497"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k102",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "wound size",
+   "key": "two kinds|wound size",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Diabetic foot ulcer",
+        "pmids": [
+         "33657252"
+        ]
+       },
+       {
+        "value": "Pressure ulcer",
+        "pmids": [
+         "41235844"
+        ]
+       },
+       {
+        "value": "Ulcus cruris venosum",
+        "pmids": [
+         "39890082"
+        ]
+       },
+       {
+        "value": "Wound",
+        "pmids": [
+         "12766123",
+         "22066961",
+         "23627562",
+         "31823556",
+         "36251505",
+         "37572339",
+         "39178286",
+         "39928474",
+         "40341457",
+         "40476462",
+         "40640990",
+         "40665945",
+         "40981690",
+         "41176771",
+         "41205151",
+         "42350162",
+         "42388051",
+         "42565341",
+         "42570250",
+         "7698050"
+        ]
+       },
+       {
+        "value": "breast cancer wound",
+        "pmids": [
+         "40227969"
+        ]
+       },
+       {
+        "value": "chronic diabetic neuropathic foot ulcer",
+        "pmids": [
+         "21371164"
+        ]
+       },
+       {
+        "value": "chronic lower extremity ulcer",
+        "pmids": [
+         "22517228"
+        ]
+       },
+       {
+        "value": "chronic venous lower extremity ulcer",
+        "pmids": [
+         "31134552"
+        ]
+       },
+       {
+        "value": "deoxyribonucleic acid",
+        "pmids": [
+         "41841442"
+        ]
+       },
+       {
+        "value": "foot ulcer",
+        "pmids": [
+         "41474823"
+        ]
+       },
+       {
+        "value": "fresh traumatic wound",
+        "pmids": [
+         "36262707"
+        ]
+       },
+       {
+        "value": "incision",
+        "pmids": [
+         "40760388"
+        ]
+       },
+       {
+        "value": "lower extremity ulcer",
+        "pmids": [
+         "40419293",
+         "40801774"
+        ]
+       },
+       {
+        "value": "lower-extremity hard-to-heal wound",
+        "pmids": [
+         "32654603"
+        ]
+       },
+       {
+        "value": "oral mucosal ulcer",
+        "pmids": [
+         "37285589"
+        ]
+       },
+       {
+        "value": "tendon-exposed wound",
+        "pmids": [
+         "41805434"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "35736844"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k103",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "wound status",
+   "key": "two kinds|wound status",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Chronic wound",
+        "pmids": [
+         "35216936"
+        ]
+       },
+       {
+        "value": "Wound",
+        "pmids": [
+         "22399083",
+         "27697281"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "digital ulcer",
+        "pmids": [
+         "34328440"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k104",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "wound volume",
+   "key": "two kinds|wound volume",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "42195080",
+         "42570250"
+        ]
+       },
+       {
+        "value": "worsening stage 4 sacral pressure ulcer",
+        "pmids": [
+         "40136106"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "42060505"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "k105",
+   "section": "clashes",
+   "kind": "two kinds",
+   "subject": "wound-related symptom",
+   "key": "two kinds|wound-related symptom",
+   "sides": [
+    [
+     {
+      "predicate": "inheres in",
+      "kind": "a property of something",
+      "said": [
+       {
+        "value": "Chronic wound",
+        "pmids": [
+         "20528993"
+        ]
+       }
+      ]
+     }
+    ],
+    [
+     {
+      "predicate": "is about",
+      "kind": "a piece of information",
+      "said": [
+       {
+        "value": "Wound",
+        "pmids": [
+         "18619764"
+        ]
+       }
+      ]
+     }
+    ]
+   ]
+  },
+  {
+   "id": "d106",
+   "section": "duplicates",
+   "subject": "Metabolic Disorder",
+   "iri": "WONT_0004396",
+   "bfo": "",
+   "parents": [
+    "pathological disorder"
+   ],
+   "matches": [
+    {
+     "label": "disease of metabolism",
+     "said": "metabolic disease",
+     "source": "DOID",
+     "iri": "DOID_0014667"
+    }
+   ]
+  },
+  {
+   "id": "d107",
+   "section": "duplicates",
+   "subject": "Skin Disorder",
+   "iri": "WONT_0006431",
+   "bfo": "continuant",
+   "parents": [
+    "pathological disorder"
+   ],
+   "matches": [
+    {
+     "label": "skin disease",
+     "said": "skin disease",
+     "source": "DOID",
+     "iri": "DOID_37"
+    }
+   ]
+  }
+ ]
+}

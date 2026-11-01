@@ -107,9 +107,12 @@ PUBMED_SEARCH = [
 
     # REVISED: "postoperative complications" was too broad; now anchored to
     # wound-specific MeSH to exclude cardiac, pain, and orthopaedic literature.
+    # REVISED 2026-09-20: "Wounds and Injuries"[MeSH] dropped - that tree holds
+    # every fracture, rupture and trauma paper, and "wound" as free text is in
+    # almost any surgical abstract. Measured at cap 200: 156 of 220 fetched
+    # PMIDs carried no wound vocabulary at all.
 
-    '(("Wound Healing"[MeSH Terms] OR "Surgical Wound Infection"[MeSH Terms] OR '
-    '"Wounds and Injuries"[MeSH Terms]) AND '
+    '(("Wound Healing"[MeSH Terms] OR "Surgical Wound Infection"[MeSH Terms]) AND '
     '(wound OR dehiscence OR "wound breakdown" OR "surgical site infection") AND '
     '(management OR treatment OR care OR prevention OR classification) AND '
     '"humans"[MeSH Terms]) '
@@ -131,16 +134,18 @@ PUBMED_SEARCH = [
 
     # ── Traumatic & acute wounds ──────────────────────────────────────────────
 
+    # REVISED 2026-09-20: "avulsion"[tiab] dropped - in the literature the word
+    # means avulsion fractures and tendon/ligament avulsions far more often than
+    # skin. Measured at cap 200: 125 of 199 fetched PMIDs off-topic.
     _q('("lacerations"[MeSH Terms] OR "abrasions"[tiab] OR "puncture wound"[tiab] OR '
-       '"bite wound"[tiab] OR "avulsion"[tiab] OR "degloving"[tiab]) AND '
+       '"bite wound"[tiab] OR "degloving"[tiab]) AND '
        '(management OR treatment OR closure OR infection OR classification OR care) AND '
        '"humans"[MeSH Terms]'),
 
-    _q('("fasciitis, necrotizing"[MeSH Terms] OR "necrotizing fasciitis"[tiab] OR '
-       '"gas gangrene"[MeSH Terms] OR "Fournier gangrene"[tiab]) AND '
-       '(diagnosis OR classification OR management OR treatment OR debridement OR '
-       'mortality OR complication) AND '
-       '"humans"[MeSH Terms]'),
+    # REMOVED 2026-09-20: the necrotizing fasciitis / gas gangrene / Fournier
+    # gangrene query. Necrotizing fasciitis is an infection, not a wound, and was
+    # ruled out of WONT's scope on 2026-09-17 (CQ005, CQ022, CQ044 retired). The
+    # query worked as written - 103 of 199 PMIDs were about the infection itself.
 
     # ── Wound anatomy & tissue components ────────────────────────────────────
     # REVISED: added clinical study type filter to block in vitro keratinocyte

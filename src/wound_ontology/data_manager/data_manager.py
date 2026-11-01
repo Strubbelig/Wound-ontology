@@ -37,15 +37,25 @@ class DataManager:
 
     def _cleanup_old_files(self, prefix, limit=10):
         """
-        Removes oldest files matching the prefix, regardless of extension.
-        Assumes prefix is unique to file type.
+        Removes the oldest versions of THIS prefix, keeping the newest `limit`.
 
-        This keeps only the most recent `limit` files and prevents the cache
-        directory from growing without bound.
+        The prefix must match exactly, not as a string prefix. Globbing
+        `class_hierarchy_*` also matches `class_hierarchy_provenance_*`, and
+        because a digit sorts before a letter the matrix files were always at the
+        front of the list and always the ones deleted. Ten saves later every
+        `class_hierarchy_<stamp>.csv` was gone and only the provenance sidecars
+        remained -- the hierarchy could not be reloaded at all, and nothing said
+        so, because a rebuild from the sources hides it.
+
+        `_find_latest_path` was fixed for exactly this over-matching; the same
+        bug lived on here, in the code that deletes rather than reads.
         """
-        # search for any file starting with prefix_
+        stamped = re.compile(
+            rf"^{re.escape(prefix)}_\d{{4}}-\d{{2}}-\d{{2}}_\d{{2}}-\d{{2}}\.[A-Za-z0-9]+$"
+        )
         search_pattern = str(self.base_path / f"{prefix}_*")
-        files = sorted(glob.glob(search_pattern))
+        files = sorted(f for f in glob.glob(search_pattern)
+                       if stamped.match(os.path.basename(f)))
 
         if len(files) > limit:
             # The file names are timestamped in a sortable format, so the

@@ -1,19 +1,30 @@
 @startuml classes_wound_ontology
 set namespaceSeparator none
-class "AnthropicClient" as wound_ontology.llm.llm_client.AnthropicClient #coral {
-  client
-  model_id : str
-  {abstract}create_normalization_mapping()
-  {abstract}extract_entities()
-  {abstract}fill_nan()
-  generate_semantic_name(intent_attributes, superclass_names) -> str
+class "AdjudicationReport" as wound_ontology.mappers.mapping_adjudicator.AdjudicationReport #darkgoldenrod {
+  accepted_by_model : dict[str, str]
+  accepted_without_model : dict[str, str]
+  asked
+  refused : list[tuple[str, str, str, str]]
+  subsumption_candidates : list[tuple[str, str, str, str]]
+  extend(other: 'AdjudicationReport') -> 'AdjudicationReport'
+  summary() -> str
 }
-class "BFOConnector" as wound_ontology.connectors.bfo_connector.BFOConnector #aquamarine {
-  BFO_ANCHOR_CLASSES : list
-  label_list : list
-  fetch_labels()
-  get_anchor_names() -> list[str]
-  get_hierarchy_df() -> pd.DataFrame
+class "AttemptResult" as wound_ontology.connectors.pubmed_query_validator.AttemptResult #aquamarine {
+  n_fetched : int
+  problem : Optional[str]
+  query : str
+  reason : str
+  score : int
+  verdict : str
+}
+class "BFOCategory" as wound_ontology.llm.extraction_models.BFOCategory #cyan {
+  name
+}
+class "BaseCleaner" as wound_ontology.store.base_cleaner.BaseCleaner #forestgreen {
+  allowed_predicates : set[str]
+  blocked_entities
+  blocker
+  whitelist
 }
 class "BaseConnector" as wound_ontology.connectors.base_connector.BaseConnector #aquamarine {
   dm
@@ -23,62 +34,191 @@ class "BaseConnector" as wound_ontology.connectors.base_connector.BaseConnector 
   {abstract}get_data(query)
   {abstract}save()
 }
-class "BaseHierarchy" as wound_ontology.hierarchies.base_hierarchy.BaseHierarchy #chocolate {
+class "BaseHierarchy" as wound_ontology.hierarchies.base_hierarchy.BaseHierarchy #coral {
+  candidates
   concepts
   df
   dm : str
   file_name
+  file_name
+  irreconcilable : dict[str, set[str]]
   roots
+  ancestors_of(concept: str) -> set
+  apply_curated(predefined_df) -> int
   children_of(concept: str) -> list
-  get_data(store) -> None
+  concepts_from(sources) -> list[str]
+  edges_by_source(source: str) -> list[tuple[str, str]]
+  get_data(store, curated, fca, reconcile_categories) -> None
   parents_of(concept: str) -> list
+  promote_candidates(only: set[tuple[str, str]] | None, lattice) -> int
+  propose_edge(specific: str, general: str, source: str) -> None
+  provenance_axioms() -> list[tuple[str, str, str, str]]
+  provenance_summary() -> dict[str, int]
   save() -> None
+  save_candidates() -> None
+  save_provenance() -> None
+  source_of(specific: str, general: str) -> str | None
   subtree_of(root: str) -> set
 }
-class "BaseLLMClient" as wound_ontology.llm.llm_client.BaseLLMClient #coral {
-  {abstract}create_normalization_mapping(terms, standards) -> dict
-  {abstract}extract_entities(text, predicates, targets, attributes, predicate_definitions)
-  {abstract}fill_nan(object_name: str, attributes: list[str]) -> list[str]
-  {abstract}generate_semantic_name(intent_attributes, superclass_names) -> str
+class "BaseList" as wound_ontology.store.term_lists.BaseList #forestgreen {
+  add(terms: set[str]) -> int
+  dedupe() -> list[str]
+  ensure_loaded() -> None
+  {abstract}load() -> None
+  {abstract}match(term: str) -> bool
+  reload() -> None
+  remove(terms: set[str]) -> int
 }
-class "ClassHierarchy" as wound_ontology.hierarchies.class_hierarchy.ClassHierarchy #chocolate {
+class "BlockKeywordList" as wound_ontology.store.term_lists.BlockKeywordList #forestgreen {
+  load() -> None
+}
+class "BlockList" as wound_ontology.store.term_lists.BlockList #forestgreen {
+  CLUSTER_RULES : list[tuple[str, list[str]]]
+  assign_cluster(term: str) -> str
+  cluster() -> dict[str, list[str]]
+  cluster_report() -> None
+  load() -> None
+  recluster(dry_run: bool) -> None
+}
+class "Blocker" as wound_ontology.store.blocker.Blocker #forestgreen {
+  block_kw
+  gate : NoneType
+  suspicious
+  terms
+  white_kw
+  white_terms
+  cluster_report() -> None
+  flag(term: str) -> str | None
+  gate_verdict(term: str) -> tuple[str, str]
+  is_blocked(term: str) -> bool
+  is_noise(term: str) -> bool
+  recluster(dry_run: bool) -> None
+  recluster_sapbert(embedder, n_clusters: int, dry_run: bool) -> None
+  recluster_whitelist_sapbert(embedder, n_clusters: int, dry_run: bool) -> None
+  reload() -> None
+  score(term: str) -> float
+}
+class "CQResult" as wound_ontology.evaluation.competency.CQResult #chartreuse {
+  cq
+  detail : str
+  query : str
+  verdict
+}
+class "ClassHierarchy" as wound_ontology.hierarchies.class_hierarchy.ClassHierarchy #coral {
   file_name : str
 }
-class "ConceptLattice" as wound_ontology.fca.concept_lattice.ConceptLattice #chartreuse {
+class "CompetencyQuestion" as wound_ontology.evaluation.competency.CompetencyQuestion #chartreuse {
+  id : str
+  in_scope : bool
+  question : str
+  reason : str
+  theme : str
+  triple : Optional[tuple[str, str, str] | None]
+}
+class "ConceptLattice" as wound_ontology.fca.concept_lattice.ConceptLattice #chocolate {
+  accepted
+  candidate_intents : set
+  certain_intents : set
   dm
   file_name : str
   lattice
+  lattice
   matrix
+  rejected_names : list[tuple[str, str]]
   semantic_superclass_names
+  accept(pairs) -> int
+  candidate_summary(max_display: int) -> None
+  category_of_known_class(name: str) -> str | None
   create_superclass_names(llm, min_objects, batch_size)
+  edges() -> list[tuple[str, str]]
+  extent_categories(concept) -> set[str]
   get_data_and_run_fca()
+  is_certain(concept) -> bool
+  name_is_a_grouping(name: str) -> tuple[bool, str]
+  name_is_licensed(name: str, extent_cats) -> tuple[bool, str]
+  name_is_unused(name: str, taken) -> tuple[bool, str]
   save()
+  slice() -> list[tuple[str, str]]
+  summary(max_display: int) -> None
+  withdraw(pairs) -> int
 }
-class "ConceptStore" as wound_ontology.store.concept_store.ConceptStore #antiquewhite {
+class "ConceptStore" as wound_ontology.store.concept_store.ConceptStore #forestgreen {
+  DECISIONS : str
+  REJECTED : str
   attributes
   dict
   dm
+  entities
   file_name : str
   predicates
+  scope : NoneType
   targets
-  add_llm_extracts(df_pubmed, llm, allowed_predicates, batch_size: int, extra_targets, predicate_definitions) -> None
+  terms
+  add_llm_extracts(df_pubmed, llm, allowed_predicates, batch_size: int, extra_targets, predicate_definitions, max_consecutive_failures: int, max_vocab_hints: int, milestone_every: int, on_milestone, schema_constrained: bool) -> None
+  apply_renames(renames: dict[str, str]) -> dict
+  assertions() -> Iterator[tuple[str, str, str, float]]
+  clean_entity_str(term: str) -> str
+  clean_target_str(term: str) -> str
+  decisions() -> dict
+  document_keys() -> list[str]
+  effective_dict() -> dict
+  entities_raw() -> list[str]
+  fill_missing_attributes(llm, batch_size: int, entity_batch: int, max_entities: int | None, max_attrs_per_entity: int) -> None
   get_data(source, child_col: str, parent_col: str) -> None
+  lift_decisions(by: str) -> dict
+  merge_entity_records(entities: dict[str, dict[str, float]]) -> int
   normalize(mapper) -> None
+  out_of_scope(names) -> set[str]
+  record_rename(old: str, new: str) -> None
+  records() -> Iterator[tuple[str, dict[str, dict[str, float]]]]
+  reject_cells(cells: Iterable[tuple[str, str]]) -> int
+  reject_entities(names: Iterable[str]) -> int
+  rejected_cells() -> dict[str, dict[str, dict]]
+  rejected_entities() -> dict[str, dict]
+  resolver()
+  restore_decisions(lifted: dict) -> int
   save() -> None
+  split_irreconcilable_terms(resolve_conflict) -> dict
+  summary() -> dict
+  top_attributes(n: int) -> list[str]
+  trace(name: str) -> dict
+  verdict(entity: str, triple: str | None) -> dict | None
+  view() -> Iterator[tuple[str, dict[str, dict[str, float]]]]
 }
-class "ContextMatrix" as wound_ontology.fca.context_matrix.ContextMatrix #chartreuse {
+class "ContextMatrix" as wound_ontology.fca.context_matrix.ContextMatrix #chocolate {
+  UNKNOWN_ABSENT : str
+  UNKNOWN_PRESENT : str
   attributes
   bool_tuples
   df
+  df : NoneType
   dm
   file_name
   objects
   predicates
   targets
-  fill_nan(llm, batch_size)
-  get_data(store, entities: set, predicates: list) -> None
+  undecided_count
+  undecided_density
+  fill_nan(llm, store, batch_size, entity_batch)
+  get_data(store, entities: set | None, predicates: list | None, scale_hierarchy, inherit_attributes: bool) -> None
   merge(df: pd.DataFrame) -> pd.DataFrame
+  nan_report(top: int) -> None
+  rebuild() -> None
   save()
+  tuples(unknown: str)
+  undecided_cells() -> list[tuple[str, str]]
+}
+class "CuratedSeedReport" as wound_ontology.hierarchies.curated_seed.CuratedSeedReport #coral {
+  duplicates_dropped : int
+  kept
+  per_source : dict[str, int]
+  recovered_labels : int
+  skipped_anonymous : int
+  skipped_deprecated : int
+  skipped_owl_thing : int
+  skipped_unlabelled : int
+  unresolved_iris : list[str]
+  summary() -> str
 }
 class "DataManager" as wound_ontology.data_manager.data_manager.DataManager #burlywood {
   base_path : Path
@@ -86,236 +226,648 @@ class "DataManager" as wound_ontology.data_manager.data_manager.DataManager #bur
   meta_id_dict
   reference_path
   get_meta_stamp(workflow_prefix: str)
+  list_prefixes(pattern: str, extension: str) -> list[str]
   load_latest_csv(prefix: str)
   load_latest_json(prefix: str)
+  load_latest_owl_abox(prefix: str)
+  load_latest_owl_tbox(prefix: str) -> owlready2.Ontology | None
   load_latest_pickle(prefix: str)
+  load_owl(source: str, world, base_iri, id_prefix, id_start, iri: str)
   load_reference_csv(filename: str) -> pd.DataFrame | None
   purge_by_prefix(prefix: str, confirm: bool)
+  save_abox_as_owl(graph, filename_prefix: str) -> str
   save_as_csv(df, filename_prefix)
   save_as_json(data_list, filename_prefix)
   save_as_pickle(obj, filename_prefix)
+  save_owl(ontology, output_file) -> str
   save_reference_csv(df: pd.DataFrame, filename: str) -> str
+  save_tbox_as_owl(onto, filename_prefix: str) -> str
 }
-class "Entity" as wound_ontology.llm.schemas.Entity #coral {
+class "EdgeGateResult" as wound_ontology.reasoning.gate.EdgeGateResult #dodgerblue {
+  accepted : list
+  clean
+  explanation : str
+  quarantined : list
+  quarantined_sources : dict
+  skipped : Optional[str | None]
+  spared : list
+  unsatisfiable : list[str]
+  summary() -> str
+}
+class "Embedder" as wound_ontology.embedding.embedder.Embedder #cadetblue {
+  MODEL_NAME : str
+  batch_size : int
+  create_embeddings(texts: list[str]) -> list[list[float]]
+  embed(texts: list[str]) -> np.ndarray
+}
+class "Entity" as wound_ontology.llm.schemas.Entity #cyan {
   false_attributes : list[FCAAttribute]
   object : str
   true_attributes : list[FCAAttribute]
 }
-class "ExtractResponse" as wound_ontology.llm.schemas.ExtractResponse #coral {
+class "ExtendReport" as wound_ontology.owl.extend.ExtendReport #darkseagreen {
+  ambiguous : dict[str, int]
+  catalog : Optional[str | None]
+  folded : dict[str, list[str]]
+  minted : dict[str, str]
+  resolved : dict[str, str]
+  resolved_category : dict[str, str]
+  resolved_imported : dict[str, str]
+  resolved_variant : dict[str, str]
+  restrictions_added : dict[str, int]
+  skipped_no_iri : dict[str, int]
+  subclass_added : int
+  triples_after : int
+  triples_before : int
+  withheld_existing : list[tuple[str, str, str]]
+  summary() -> str
+}
+class "ExtractResponse" as wound_ontology.llm.schemas.ExtractResponse #cyan {
   entities : list[Entity]
 }
-class "FCAAttribute" as wound_ontology.llm.schemas.FCAAttribute #coral {
+class "ExtractedEntity" as wound_ontology.llm.extraction_models.ExtractedEntity #cyan {
+  bfo_iri
+  category
+  grounded_to
+  grounded_to : Optional[str]
+  label : str
+  needs_refinement
+  subsumption_axiom() -> tuple[str, str, str]
+}
+class "ExtractedRelation" as wound_ontology.llm.extraction_models.ExtractedRelation #cyan {
+  object : str
+  predicate
+  subject : str
+}
+class "ExtractionResult" as wound_ontology.llm.extraction_models.ExtractionResult #cyan {
+  entities : list[ExtractedEntity]
+  rejected_relations : list
+  rejected_relations : list
+  relations : list
+  relations : list[ExtractedRelation]
+}
+class "FCAAttribute" as wound_ontology.llm.schemas.FCAAttribute #cyan {
   predicate : str
   target : str
 }
-class "FCAHierarchy" as wound_ontology.hierarchies.fca_hierarchy.FCAHierarchy #chocolate {
+class "FCAHierarchy" as wound_ontology.hierarchies.fca_hierarchy.FCAHierarchy #coral {
   file_name : str
   get_data(lattice) -> None
 }
-class "FillNanResponse" as wound_ontology.llm.schemas.FillNanResponse #coral {
+class "FillNanBatchResponse" as wound_ontology.llm.schemas.FillNanBatchResponse #cyan {
+  results : list[FillNanEntityResult]
+}
+class "FillNanEntityResult" as wound_ontology.llm.schemas.FillNanEntityResult #cyan {
+  confirmed_attributes : list[str]
+  denied_attributes : list[str]
+  object_name : str
+}
+class "FillNanResponse" as wound_ontology.llm.schemas.FillNanResponse #cyan {
   confirmed_attributes : list[str]
 }
-class "GEXFExporter" as wound_ontology.export.gexf_exporter.GEXFExporter #cadetblue {
-  export(kg: KnowledgeGraph, output_file: str) -> None
+class "GateBatchResponse" as wound_ontology.llm.schemas.GateBatchResponse #cyan {
+  verdicts : list[GateVerdict]
+}
+class "GateResult" as wound_ontology.reasoning.gate.GateResult #dodgerblue {
+  accepted_entities : list
+  accepted_relations : list
+  clean
+  explanation : str
+  quarantined_entities : list
+  quarantined_relations : list
+  skipped : Optional[str | None]
+  unsatisfiable : list[str]
+  summary() -> str
+}
+class "GateVerdict" as wound_ontology.llm.schemas.GateVerdict #cyan {
+  reason : str
+  term : str
+  verdict : str
+}
+class "GraphVisualizer" as wound_ontology.graph_visualizer.GraphVisualizer #aliceblue {
+  export(graph, output_file: str) -> None
   export_owl(owl_file: str, output_file: str) -> None
-  export_store(store, *hierarchies, output_file: str) -> None
 }
-class "GeminiClient" as wound_ontology.llm.llm_client.GeminiClient #coral {
-  client
-  model_id : str
-  create_normalization_mapping(terms, standards) -> dict
-  extract_entities(text, predicates, targets, attributes, predicate_definitions)
-  fill_nan(object_name: str, attributes: list[str]) -> list[str]
-  generate_semantic_name(intent_attributes, superclass_names) -> str
+class "KeywordList" as wound_ontology.store.term_lists.KeywordList #forestgreen {
+  match(term: str) -> bool
 }
-class "KnowledgeGraph" as wound_ontology.graph.knowledge_graph.KnowledgeGraph #lightsteelblue {
-  edges
-  graph : DiGraph
-  nodes
-  sparql : SPARQLHelper
-  filter_by_namespace(prefix: str) -> KnowledgeGraph
-  find(label: str) -> list[tuple]
-  from_owl(owl_file: str) -> KnowledgeGraph
-  from_store(store, *hierarchies) -> KnowledgeGraph
-  neighbours(node_id: str) -> dict
+class "KnowledgeGraph" as wound_ontology.knowledge_graph.model.KnowledgeGraph #cornflowerblue {
+  graph
+  sparql
+  filter_by_namespace(prefix: str) -> 'KnowledgeGraph'
+  find(label: str) -> list[tuple[str, str]]
+  neighbours(iri: str) -> dict
   print_stats() -> None
   stats() -> dict
-  subgraph(root_label: str) -> KnowledgeGraph
 }
-class "LLMClient" as wound_ontology.llm.llm_client.LLMClient #coral {
-  create_normalization_mapping(terms, standards) -> dict
-  extract_entities(text, predicates, targets, attributes, predicate_definitions)
-  fill_nan(object_name: str, attributes: list[str]) -> list[str]
-  generate_semantic_name(intent_attributes, superclass_names) -> str
-}
-class "MereologicalHierarchy" as wound_ontology.hierarchies.mereological_hierarchy.MereologicalHierarchy #chocolate {
-  file_name : str
-}
-class "NormalizationEntry" as wound_ontology.llm.schemas.NormalizationEntry #coral {
-  original : str
-  standard : str
-}
-class "TermMapper" as wound_ontology.mappers.term_mapper.TermMapper #cornflowerblue {
-  mapping
-  originals
-  standards
-  apply(df: pd.DataFrame) -> pd.DataFrame
-  build_mapping(terms: list[str], client, batch_size)
-  get_data(terms: list[str], client, batch_size)
-  map(term: str) -> str
-}
-class "NormalizationResponse" as wound_ontology.llm.schemas.NormalizationResponse #coral {
-  mappings : list[NormalizationEntry]
-}
-class "OBIConnector" as wound_ontology.connectors.obi_connector.OBIConnector #aquamarine {
-  label_list : list
-  fetch_labels()
-}
-class "OWLOntology" as wound_ontology.export.owl_ontology.OWLOntology #cadetblue {
-  base_iri : str
-  id_prefix : str
-  onto : Ontology
-  world : World
-  get_data(class_hierarchy, mereological_hierarchy, fca_hierarchy) -> OWLOntology
-  import_bfo() -> OWLOntology
-  import_connector(*connectors) -> OWLOntology
-  import_external(*urls) -> OWLOntology
-  import_obi() -> OWLOntology
-  import_ro() -> OWLOntology
-  is_local(entity) -> bool
-  load(owl_file: str) -> OWLOntology
-  normalize_label_language(target_lang: str, source_lang: str) -> OWLOntology
-  rename_iris() -> OWLOntology
-  resolve_external_classes() -> OWLOntology
-  {static} safe_name(name: str) -> str
-  save(output_file) -> None
-  umls_mapping(umls_connector, max_results: int) -> OWLOntology
-}
-class "OWLReasoner" as wound_ontology.export.owl_reasoner.OWLReasoner #cadetblue {
-  load(owl_file: str) -> OWLReasoner
-  reason(input_file: str, output_file: str, infer_property_values: bool) -> None
-  run(infer_property_values: bool) -> OWLReasoner
-  save(output_file: str) -> None
-}
-class "OntoConnector" as wound_ontology.connectors.onto_connector.OntoConnector #aquamarine {
-  iri_to_label : dict
-  label_list
-  label_to_iri : dict
-  onto : NoneType, Ontology
-  onto_url
-  connect()
-  {abstract}fetch_labels()
-  get_data(query)
-  save()
-}
-class "OpenAIClient" as wound_ontology.llm.llm_client.OpenAIClient #coral {
-  client
-  model_id : str
-  create_normalization_mapping(terms, standards) -> dict
-  {abstract}extract_entities()
-  {abstract}fill_nan()
-  {abstract}generate_semantic_name()
-}
-class "Orchestrator" as wound_ontology.orchestrator.Orchestrator #aliceblue {
-  allowed_predicates : list
-  bfo
-  class_hier
-  context_matrix
-  dm
-  fca_hier
-  gexf
-  lattice
-  llm
-  mere_hier
-  obi
-  pubcon
-  reasoner
-  ro
-  store
-  term_mapper
-  build_knowledge_graph(input_owl: str) -> KnowledgeGraph
-  export_to_gexf(output_file: str, input_owl: str) -> None
-  export_to_owl(output_file)
-  run_build_hierarchies(predefined_df: pd.DataFrame) -> None
-  run_curate_owl(input_file: str, output_file: str, import_bfo: bool, import_ro: bool, import_obi: bool, umls_api_key: str) -> None
-  run_extract_to_store(batch_size, use_bfo_attributes)
-  run_fca(subtree_root: str, hierarchy, predicates: list, batch_size: int) -> None
-  run_full_pipeline(query, max_results, predefined_df)
-  run_matrix_nan_fill(batch_size)
-  run_pubmed_search(queries: str | list[str], max_results_per_query: int)
-  run_reason_owl(input_file: str, output_file: str, infer_property_values: bool) -> None
-  run_store_fill(batch_size: int, entity_batch: int, max_entities: int) -> None
-}
-class "PubmedConnector" as wound_ontology.connectors.pubmed_connector.PubmedConnector #aquamarine {
-  database
-  email
-  connect()
-  get_data(queries: str | list[str], max_abstracts_per_query: int)
-  save()
-}
-class "ROConnector" as wound_ontology.connectors.ro_connector.ROConnector #aquamarine {
-  label_list : list
-  fetch_bfo_relations()
-  fetch_labels()
-}
-class "SPARQLHelper" as wound_ontology.graph.sparql_helper.SPARQLHelper #lightsteelblue {
-  add_prefix(alias: str, iri: str) -> SPARQLHelper
+class "KnowledgeGraphQuerier" as wound_ontology.knowledge_graph.querier.KnowledgeGraphQuerier #cornflowerblue {
+  add_prefix(alias: str, iri: str) -> 'KnowledgeGraphQuerier'
   all_classes() -> list[dict]
-  citations(class_iri: str) -> list[dict]
+  citations(class_iri: str | None) -> list[dict]
   classes_in_namespace(prefix: str) -> list[dict]
   classes_with_restriction(property_iri: str) -> list[dict]
   find_by_label(text: str) -> list[dict]
-  query(sparql: str) -> Result
+  iri_of_label(label: str, lang: str | None) -> str | None
+  label_of(iri: str, lang: str) -> str | None
+  query(sparql: str) -> rdflib.query.Result
   restrictions_on(class_iri: str) -> list[dict]
   subclasses_of(class_iri: str, direct: bool) -> list[dict]
   subjects_of_property(property_iri: str) -> list[dict]
   superclasses_of(class_iri: str) -> list[dict]
   used_properties() -> list[dict]
 }
-class "SemanticNameResponse" as wound_ontology.llm.schemas.SemanticNameResponse #coral {
+class "KnowledgeGraphRepository" as wound_ontology.knowledge_graph.repository.KnowledgeGraphRepository #cornflowerblue {
+  load(path: str | Path) -> KnowledgeGraph
+}
+class "LLMClient" as wound_ontology.llm.llm_client.LLMClient #cyan {
+  BATCH_MAX_TOKENS : int
+  abort_event : Optional[asyncio.Event | None]
+  has_credentials
+  model_id : str
+  adjudicate_mappings_batch(candidates: list[dict]) -> list[MappingVerdict]
+  classify_scope_batch(candidates: list[tuple[str, int, list[str]]]) -> list[str]
+  create_normalization_mapping(terms, standards) -> dict
+  extract_entities(text, predicates, targets, attributes, predicate_definitions)
+  extract_relations(text, entities)
+  extract_two_stage(text, with_definitions: bool)
+  fill_nan(object_name: str, attributes: list[str]) -> list[str]
+  fill_nan_batch(entity_attrs: dict[str, list[str]]) -> dict[str, dict[str, list[str]]]
+  gate_scope_batch(candidates: list[tuple[str, int, list[str]]]) -> tuple[dict[str, tuple[str, str]], list[str]]
+  generate_semantic_name(intent_attributes, superclass_names, extent_categories, parent_names, differentia, extent_sample) -> str
+  type_terms(text, with_definitions: bool)
+  validate_mere_batch(triples: list[tuple[str, str]]) -> list[MereRelationResult]
+}
+class "LabelIndex" as wound_ontology.utils.label_match.LabelIndex #gold {
+  exact : dict[str, object]
+  folded : dict[str, set]
+  add(label: str, iri) -> None
+  get(term: str)
+  items()
+  keys()
+  update(other: 'LabelIndex') -> None
+  values()
+}
+class "MapMatch" as wound_ontology.owl.ontology_mapper.MapMatch #darkseagreen {
+  method : str
+  score : float
+  source_iri
+  source_label : str
+  target_def : str | None
+  target_iri
+  target_label : str
+  target_prefix : str
+}
+class "MapResult" as wound_ontology.owl.ontology_mapper.MapResult #darkseagreen {
+  candidates : list[dict]
+  matches : list[MapMatch]
+  method : str
+  mode : str
+  source_label_index : dict[str, URIRef]
+  source_max_id : int
+  source_owl : Path
+  target_concepts : list
+  target_path : Optional[Path | None]
+  unmatched : list[URIRef]
+}
+class "MappingCleaner" as wound_ontology.mappers.mapping_cleaner.MappingCleaner #darkgoldenrod {
+  term_mapper
+  apply(store) -> int
+  clean_mappings() -> dict[str, int]
+  export_review_csv(path: str) -> None
+  import_review_csv(path: str) -> None
+  list_mappings() -> None
+  list_suspicious_mappings() -> None
+  review_mappings() -> None
+  review_merged_mappings() -> None
+}
+class "MappingVerdict" as wound_ontology.llm.schemas.MappingVerdict #cyan {
+  ontology_class : str
+  reason : str
+  store_term : str
+  verdict : str
+}
+class "MappingVerdictBatch" as wound_ontology.llm.schemas.MappingVerdictBatch #cyan {
+  results : list[MappingVerdict]
+}
+class "MereRelationBatchResponse" as wound_ontology.llm.schemas.MereRelationBatchResponse #cyan {
+  results : list[MereRelationResult]
+}
+class "MereRelationResult" as wound_ontology.llm.schemas.MereRelationResult #cyan {
+  child : str
+  parent : str
+  verdict : str
+}
+class "MereologicalHierarchy" as wound_ontology.hierarchies.mereological_hierarchy.MereologicalHierarchy #coral {
+  file_name : str
+}
+class "Normalised" as wound_ontology.utils.normalise.Normalised #gold {
+  key
+  label : str
+  name
+  strict
+}
+class "NormalizationEntry" as wound_ontology.llm.schemas.NormalizationEntry #cyan {
+  original : str
+  standard : str
+}
+class "NormalizationResponse" as wound_ontology.llm.schemas.NormalizationResponse #cyan {
+  mappings : list[NormalizationEntry]
+}
+class "OWLOntology" as wound_ontology.owl.model.OWLOntology #darkseagreen {
+  base_iri : str
+  id_prefix : str
+  labels
+  onto : Ontology, Any
+  rdf_graph
+  world : Any
+  create(iri: str, base_iri: str, id_prefix: str, id_start: int, world: Any) -> 'OWLOntology'
+  iri_of_label(label: str, lang: str | None) -> str | None
+  is_local(entity) -> bool
+  label_of(iri: str | URIRef, lang: str) -> str | None
+  load(source: str, dm: 'DataManager', world, base_iri: str | None, id_prefix: str | None, id_start: int | None, iri: str) -> 'OWLOntology'
+  safe_name(name: str) -> str
+  save(dm: 'DataManager', output_file: str | Path | None) -> str
+}
+class "OWLReasoner" as wound_ontology.reasoning.reasoner.OWLReasoner #dodgerblue {
+  expand_owlrl(tbox_file: str, abox_file: str, output_file: str, extra_ontologies: list[str] | None, check_consistency: bool) -> bool
+  load(owl_file: str) -> 'OWLReasoner'
+  reason(input_file: str, output_file: str, infer_property_values: bool) -> None
+  run(infer_property_values: bool) -> 'OWLReasoner'
+  save(output_file: str) -> None
+}
+class "OccursInTargetBatch" as wound_ontology.llm.schemas.OccursInTargetBatch #cyan {
+  results : list[OccursInTargetResult]
+}
+class "OccursInTargetResult" as wound_ontology.llm.schemas.OccursInTargetResult #cyan {
+  anatomical : bool
+  term : str
+}
+class "Onto" as wound_ontology.llm.schema_builder.Onto #cyan {
+  g
+  ancestors(c) -> set
+  category(c) -> str | None
+  definition(n) -> str | None
+  filler_category(f) -> str | None
+  label(n) -> str | None
+  named_parents(c) -> list[URIRef]
+  restrictions(c) -> list[tuple[URIRef, object]]
+  synonyms(n) -> list[str]
+}
+class "OntoGPTExtractor" as wound_ontology.owl.ontogpt_extractor.OntoGPTExtractor #darkseagreen {
+  model : str
+  template : str
+  extract(text: str) -> Any
+  extract_batch(texts: list[str]) -> list[Any]
+  result_to_dict(result: Any) -> dict
+}
+class "OntologyCurator" as wound_ontology.owl.curator.OntologyCurator #darkseagreen {
+  RELATION_IRIS : dict[str, tuple[str, str, bool]]
+  ontology
+  from_hierarchies(class_hierarchy, mereological_hierarchy, fca_hierarchy, store) -> None
+  import_external() -> None
+  normalize_label_language(target_lang: str, source_lang: str | None) -> None
+  normalize_labels(strip_whitespace: bool, title_case: bool) -> None
+  rename_iris() -> None
+  resolve_external_classes() -> None
+  umls_mapping(umls_connector, max_results: int) -> None
+}
+class "OntologyMapper" as wound_ontology.owl.ontology_mapper.OntologyMapper #darkseagreen {
+  onto_dir : NoneType
+  onto_files : ClassVar[dict[str, tuple[str, str]]]
+  priority : list
+  align(source_owl: Path, target: Path, method: str, top_k: int, threshold: float) -> MapResult
+  curie_to_iri(curie: str) -> URIRef | None
+  enrich(result: MapResult, out_path: Path, dry_run: bool) -> dict[str, int]
+  enrich_external(graph_path: str | Path, output_path: str | Path | None, dry_run: bool) -> dict[str, int]
+  extend(result: MapResult, out_path: Path, dry_run: bool) -> dict[str, int]
+  run(source_owl: str | Path, output_path: str | Path | None, targets: list[str] | None, method: str, mode: str, threshold: float, use_synonyms: bool, model: str, schema_path: str | Path | None, cache_path: str | Path | None, candidates_path: str | Path | None, sssom_path: str | Path | None, top_k: int, dry_run: bool) -> MapResult
+  write_candidates(result: MapResult, out_path: Path) -> None
+  write_sssom(result: MapResult, out_path: Path) -> None
+}
+class "Orchestrator" as wound_ontology.orchestrator.Orchestrator #aliceblue {
+  GATE_AUTHOR : str
+  allowed_predicates : list | None
+  class_hier
+  cleaner
+  context_matrix
+  dm
+  fca_hier
+  fca_hiers : dict[str, FCAHierarchy]
+  graph_exporter
+  lattice
+  lattices : dict[str, ConceptLattice]
+  llm
+  mapping_cleaner
+  mere_hier
+  pubcon
+  reasoner
+  reasoner_gate
+  store
+  term_mapper
+  accepted_fca_slices() -> list[list[tuple[str, str]]]
+  align_ontology(source_owl: str, target: str, out_dir: str, method: str, top_k: int, close_thresh: float, extend: bool, enrich: bool, dry_run: bool)
+  blocked_names() -> set[str]
+  build_knowledge_graph(input_owl: str)
+  build_reasoner_skeleton(force: bool) -> str
+  check_term_mapping(threshold: float) -> list[dict]
+  cluster_blocklist(dry_run: bool) -> None
+  export_gate_lists() -> dict[str, int]
+  export_to_gexf(output_file: str, input_owl: str) -> None
+  export_to_owl(output_file) -> None
+  fetch_snomed_concepts(out_dir: str, prune_only: bool, rebuild_from_cache: bool) -> list[dict]
+  gate_lists_drift() -> dict[str, set[str]]
+  gate_overrides() -> list[dict]
+  gate_sources() -> dict[str, str]
+  generate_uml(out_dir: str) -> None
+  ontology_categories(skeleton) -> dict[str, str]
+  ontology_definitions(sources) -> dict[str, str]
+  ontology_label_spellings() -> dict[str, str]
+  ontology_labels(sources) -> set[str]
+  ontology_parents() -> dict[str, list[str]]
+  plot_hierarchy(hierarchy, output_file: str, height: str, root: str | None, max_nodes: int) -> None
+  prune_inert_mappings() -> dict
+  recluster_lists(bl_clusters: int, wl_clusters: int) -> None
+  review_lists(high_threshold: float, low_threshold: float, save_skipped: bool, llm_batch_size: int, recluster: bool, bl_clusters: int, wl_clusters: int) -> None
+  review_mapping() -> None
+  review_mere_relations(batch_size: int) -> None
+  run_apply_mapping() -> None
+  run_build_hierarchies(predefined_df: pd.DataFrame | None, curated_sources, curated_label_sources) -> None
+  run_build_term_mapping(similarity_threshold: float, use_ontology_anchors: bool, readjudicate: bool) -> dict
+  run_clean_store(extra_blocked_entities: set[str] | None) -> None
+  run_competency_check(ontology_file: str | None, with_imports: bool, write_report: bool)
+  run_curate_owl(input_file: str, output_file: str, import_bfo: bool, import_ro: bool, import_obi: bool, umls_api_key: str | None, umls_max_results: int) -> None
+  run_deep_reason(input_file: str, output_file: str) -> None
+  run_enrich_external(input_file: str, output_file: str | None, onto_dir: str | None, dry_run: bool) -> None
+  run_extend_ground_truth(output_file: str | None, touch_existing: bool, include_fca: bool, lexicon)
+  run_extract_to_store(batch_size: int, use_bfo_attributes: bool, max_consecutive_failures: int, max_vocab_hints: int, normalize_every: int)
+  run_fca(subtree_root: str | None, hierarchy, predicates: list | None, batch_size: int, commit_fca: bool, scale: bool) -> None
+  run_gate_hierarchy_edges(hierarchy, quarantine: bool)
+  run_gate_store_relations(store, quarantine: bool, apply: bool)
+  run_map_ontology(owl_file: str, output_file: str | None, onto_dir: str | None, targets: list[str] | None, method: str, mode: str, threshold: float, use_synonyms: bool, model: str, schema_path: str | None, cache_path: str | None, candidates_path: str | None, sssom_path: str | None, top_k: int, dry_run: bool) -> None
+  run_matrix_nan_fill(batch_size: int, entity_batch: int) -> None
+  run_pass0_normalise() -> dict
+  run_promote_clusters(target_labels: list[str] | None, dry_run: bool) -> None
+  run_pubmed_search(queries: str | list[str], max_results_per_query: int)
+  run_reason_owl(input_file: str, output_file: str, infer_property_values: bool) -> None
+  run_replace_upper_stubs(source_file: str, output_file: str | None, dry_run: bool) -> None
+  run_store_fill(batch_size: int, entity_batch: int, max_entities: int | None, max_attrs_per_entity: int) -> None
+  run_validate_pubmed_queries(queries: list[str] | None, sample_n: int, max_retries: int, delay: float, out_path: str | None) -> list
+  store_categories() -> dict[str, str]
+  store_typings() -> dict[str, set[str]]
+}
+class "PubMedQueryValidator" as wound_ontology.connectors.pubmed_query_validator.PubMedQueryValidator #aquamarine {
+  api_key : str
+  entrez_email : str
+  run(queries: list[str], sample_n: int, max_retries: int, delay: float, out_path: str | Path | None) -> list[QueryReport]
+  validate_query(query: str, sample_n: int, max_retries: int, delay: float) -> QueryReport
+}
+class "PubmedConnector" as wound_ontology.connectors.pubmed_connector.PubmedConnector #aquamarine {
+  database
+  database : DataFrame
+  email
+  connect()
+  get_data(queries: str | list[str], max_abstracts_per_query: int)
+  save()
+}
+class "QueryReport" as wound_ontology.connectors.pubmed_query_validator.QueryReport #aquamarine {
+  attempts : list[AttemptResult]
+  final_query : str
+  final_verdict : str
+  original_query : str
+}
+class "ReasonerGate" as wound_ontology.reasoning.gate.ReasonerGate #dodgerblue {
+  reasoner : str
+  robot_cmd : str
+  skeleton_path : Path
+  timeout : int
+  available() -> str | None
+  build_batch_graph(entities, relations) -> rdflib.Graph
+  build_edge_graph(edges, label_index) -> rdflib.Graph
+  check(entities, relations) -> GateResult
+  check_edges(edges, sources) -> EdgeGateResult
+  least_common_category(categories) -> str | None
+  write_quarantine(result: GateResult, directory: str | Path, tag: str) -> Path | None
+}
+class "RelationCandidate" as wound_ontology.llm.schemas.RelationCandidate #cyan {
+  object : str
+  predicate : str
+  subject : str
+}
+class "RelationResponse" as wound_ontology.llm.schemas.RelationResponse #cyan {
+  relations : list[RelationCandidate]
+}
+class "RelationType" as wound_ontology.llm.extraction_models.RelationType #cyan {
+  name
+}
+class "RobotModuleExtractor" as wound_ontology.owl.robot_module_extractor.RobotModuleExtractor #darkseagreen {
+  modules_dir : Path
+  onto_dir : Path
+  onto_files : dict
+  robot_cmd : str
+  slme_method : str
+  extract_module(prefix: str, seed_iris: list[str], dry_run: bool) -> Path | None
+  run(owl_path: str | Path, prefixes: list[str] | None, dry_run: bool) -> dict[str, Path]
+  seeds_from_owl(owl_path: str | Path) -> dict[str, list[str]]
+}
+class "ScopeCheckResponse" as wound_ontology.llm.schemas.ScopeCheckResponse #cyan {
+  inappropriate : list[str]
+}
+class "SemanticNameResponse" as wound_ontology.llm.schemas.SemanticNameResponse #cyan {
   superclass_name : str
+}
+class "SnomedFetcher" as wound_ontology.connectors.snomed_fetcher.SnomedFetcher #aquamarine {
+  api_key : str
+  out_dir : Path
+  fetch() -> list[dict]
+  prune() -> list[dict]
+  rebuild_cache() -> list[dict]
+}
+class "StoreCleaner" as wound_ontology.store.store_cleaner.StoreCleaner #forestgreen {
+  AUTHORS : tuple
+  clean(store) -> dict
+  clean_attributes(store) -> dict
+  clean_entities(store) -> dict
+  clean_predicates(store) -> dict
+  clean_targets(store) -> dict
+  list_blocked(store) -> list[str]
+  list_blocked_targets(store) -> list[str]
+  print_report(report: dict) -> None
+  prune_empty_entities(store) -> dict
+  review_blocked_entities(store) -> None
+  review_blocked_targets(store) -> None
+  review_good_entities(store) -> None
+  review_good_targets(store) -> None
+  review_susp_entities(store, embedder, high_threshold: float, low_threshold: float, save_skipped: bool, llm, llm_batch_size: int, run_sync) -> None
+  review_susp_targets(store, embedder, high_threshold: float, low_threshold: float, save_skipped: bool, llm, llm_batch_size: int, run_sync) -> None
+}
+class "SuspiciousList" as wound_ontology.store.term_lists.SuspiciousList #forestgreen {
+  load() -> None
+}
+class "TargetConcept" as wound_ontology.alignment.target_loader.TargetConcept #antiquewhite {
+  definition : Optional[str | None]
+  iri : str
+  label : str
+  parent_iri : Optional[str | None]
+  synonyms : list[str]
+}
+class "TermList" as wound_ontology.store.term_lists.TermList #forestgreen {
+  match(term: str) -> bool
+  recluster_sapbert(embedder, n_clusters: int, dry_run: bool) -> None
+}
+class "TermMapper" as wound_ontology.mappers.term_mapper.TermMapper #darkgoldenrod {
+  VECTOR_STORE : str
+  mapping
+  name : str
+  originals
+  refused_mappings : list[tuple[str, str]]
+  standards
+  annotate(term: str) -> None
+  apply(df: pd.DataFrame) -> pd.DataFrame
+  build_from_embeddings(terms: list[str], embedder, similarity_threshold: float, frequencies: dict[str, int] | None, anchors: set[str] | None, accept_mapping) -> dict[str, str]
+  enforce_canonical_policy() -> dict
+  gate(term: str) -> None
+  gate_disagreements() -> list[dict]
+  gate_verdict(term: str) -> tuple[str, str]
+  gated(verdict: str) -> dict[str, str]
+  judge(term: str, canonical: str) -> None
+  map(term: str) -> str
+  prune(live_terms: set[str], ontology_labels) -> dict
+  refuse(term: str, canonical: str, reason: str, by: str) -> None
+  resolve_chains() -> dict
+  save() -> None
+  subsumption_candidates() -> list[dict]
+  withdraw() -> int
+}
+class "TermMappingAndGate" as wound_ontology.mappers.term_mapping_and_gate.TermMappingAndGate #darkgoldenrod {
+  data
+  metadata
+  originals
+  records
+  standards
+  add(term: str, standard: str, confidence: float, method: str) -> None
+  add_batch(entries: dict[str, str], metadata_batch: dict[str, dict] | None) -> list[tuple[str, str]]
+  aliases() -> dict[str, dict]
+  annotate(term: str) -> None
+  apply_renames(renames: dict[str, str]) -> dict
+  disagreements() -> list[dict]
+  effective_gate_verdict(term: str) -> tuple[str, str]
+  forget() -> int
+  gate(term: str) -> None
+  gate_contradictions() -> list[dict]
+  gate_disagreements() -> list[dict]
+  gate_record(term: str) -> dict
+  gate_verdict(term: str) -> tuple[str, str]
+  gated(verdict: str) -> dict[str, str]
+  get(term: str) -> str
+  import_pass(name: str, cache: dict[str, dict]) -> dict
+  is_alias(term: str) -> bool
+  is_refused(term: str, canonical: str) -> dict | None
+  judge(term: str, canonical: str) -> None
+  judged(name: str) -> int
+  judgement(term: str, canonical: str) -> dict
+  own_gate_verdict(term: str) -> tuple[str, str]
+  pass_cache(name: str) -> _PassCache
+  peek(term: str, canonical: str) -> dict
+  peek_gate(term: str) -> dict
+  record(term: str) -> dict
+  refuse(term: str, canonical: str, reason: str, by: str) -> None
+  resolve(term: str) -> str
+  retire() -> int
+  save() -> None
+  spell(old: str, new: str) -> bool
+  subsumption_candidates() -> list[dict]
+  verdicts(name: str) -> dict[str, dict]
+}
+class "TypedTerm" as wound_ontology.llm.schemas.TypedTerm #cyan {
+  category : str
+  label : str
+}
+class "TypingResponse" as wound_ontology.llm.schemas.TypingResponse #cyan {
+  terms : list[TypedTerm]
 }
 class "UMLSConnector" as wound_ontology.connectors.umls_connector.UMLSConnector #aquamarine {
   api_key
   base_url : str
   delay : float
+  list_of_labels
   list_of_labels : list
   connect()
   get_data(term)
+  lookup(term: str, max_results: int) -> list[tuple[str, str]]
   save()
 }
-wound_ontology.connectors.bfo_connector.BFOConnector --|> wound_ontology.connectors.onto_connector.OntoConnector
-wound_ontology.connectors.obi_connector.OBIConnector --|> wound_ontology.connectors.onto_connector.OntoConnector
-wound_ontology.connectors.onto_connector.OntoConnector --|> wound_ontology.connectors.base_connector.BaseConnector
+class "UpperStubReplacer" as wound_ontology.owl.upper_stub_replacer.UpperStubReplacer #darkseagreen {
+  is_domain(iri: URIRef) -> bool
+  is_ext(iri: URIRef) -> bool
+  is_stub(iri: URIRef) -> bool
+  replace(g: Graph, dry_run: bool) -> dict[str, int]
+  run(source: str | Path, output: str | Path | None, dry_run: bool) -> dict[str, int]
+}
+class "Verdict" as wound_ontology.evaluation.competency.Verdict #chartreuse {
+  name
+}
+class "WhiteKeywordList" as wound_ontology.store.term_lists.WhiteKeywordList #forestgreen {
+  load() -> None
+}
+class "WhiteList" as wound_ontology.store.term_lists.WhiteList #forestgreen {
+  load() -> None
+}
+class "_NoFile" as wound_ontology.store.concept_store._NoFile #forestgreen {
+  load_latest_json(_name)
+  save_as_json(_data, _name)
+}
+class "_PassCache" as wound_ontology.mappers.term_mapping_and_gate._PassCache #darkgoldenrod {
+}
+class "hasUMLSSynonym" as wound_ontology.owl.curator.OntologyCurator.umls_mapping.hasUMLSSynonym #darkseagreen {
+  namespace
+}
 wound_ontology.connectors.pubmed_connector.PubmedConnector --|> wound_ontology.connectors.base_connector.BaseConnector
-wound_ontology.connectors.ro_connector.ROConnector --|> wound_ontology.connectors.onto_connector.OntoConnector
 wound_ontology.connectors.umls_connector.UMLSConnector --|> wound_ontology.connectors.base_connector.BaseConnector
 wound_ontology.hierarchies.class_hierarchy.ClassHierarchy --|> wound_ontology.hierarchies.base_hierarchy.BaseHierarchy
 wound_ontology.hierarchies.fca_hierarchy.FCAHierarchy --|> wound_ontology.hierarchies.base_hierarchy.BaseHierarchy
 wound_ontology.hierarchies.mereological_hierarchy.MereologicalHierarchy --|> wound_ontology.hierarchies.base_hierarchy.BaseHierarchy
-wound_ontology.llm.llm_client.AnthropicClient --|> wound_ontology.llm.llm_client.BaseLLMClient
-wound_ontology.llm.llm_client.GeminiClient --|> wound_ontology.llm.llm_client.BaseLLMClient
-wound_ontology.llm.llm_client.LLMClient --|> wound_ontology.llm.llm_client.BaseLLMClient
-wound_ontology.llm.llm_client.OpenAIClient --|> wound_ontology.llm.llm_client.BaseLLMClient
-wound_ontology.store.concept_store.ConceptStore --* wound_ontology.orchestrator.Orchestrator : store
-wound_ontology.connectors.bfo_connector.BFOConnector --* wound_ontology.orchestrator.Orchestrator : bfo
-wound_ontology.connectors.obi_connector.OBIConnector --* wound_ontology.orchestrator.Orchestrator : obi
+wound_ontology.mappers.mapping_cleaner.MappingCleaner --|> wound_ontology.store.base_cleaner.BaseCleaner
+wound_ontology.store.store_cleaner.StoreCleaner --|> wound_ontology.store.base_cleaner.BaseCleaner
+wound_ontology.store.term_lists.BlockKeywordList --|> wound_ontology.store.term_lists.KeywordList
+wound_ontology.store.term_lists.BlockList --|> wound_ontology.store.term_lists.TermList
+wound_ontology.store.term_lists.KeywordList --|> wound_ontology.store.term_lists.BaseList
+wound_ontology.store.term_lists.SuspiciousList --|> wound_ontology.store.term_lists.KeywordList
+wound_ontology.store.term_lists.TermList --|> wound_ontology.store.term_lists.BaseList
+wound_ontology.store.term_lists.WhiteKeywordList --|> wound_ontology.store.term_lists.KeywordList
+wound_ontology.store.term_lists.WhiteList --|> wound_ontology.store.term_lists.TermList
 wound_ontology.connectors.pubmed_connector.PubmedConnector --* wound_ontology.orchestrator.Orchestrator : pubcon
-wound_ontology.connectors.ro_connector.ROConnector --* wound_ontology.orchestrator.Orchestrator : ro
 wound_ontology.data_manager.data_manager.DataManager --* wound_ontology.orchestrator.Orchestrator : dm
-wound_ontology.export.gexf_exporter.GEXFExporter --* wound_ontology.orchestrator.Orchestrator : gexf
-wound_ontology.export.owl_reasoner.OWLReasoner --* wound_ontology.orchestrator.Orchestrator : reasoner
+wound_ontology.embedding.embedder.Embedder --* wound_ontology.orchestrator.Orchestrator : _embedder
+wound_ontology.evaluation.competency.CompetencyQuestion --* wound_ontology.evaluation.competency.CQResult : cq
+wound_ontology.evaluation.competency.Verdict --* wound_ontology.evaluation.competency.CQResult : verdict
+wound_ontology.fca.concept_lattice.ConceptLattice --* wound_ontology.orchestrator.Orchestrator : lattice
 wound_ontology.fca.concept_lattice.ConceptLattice --* wound_ontology.orchestrator.Orchestrator : lattice
 wound_ontology.fca.context_matrix.ContextMatrix --* wound_ontology.orchestrator.Orchestrator : context_matrix
+wound_ontology.graph_visualizer.GraphVisualizer --* wound_ontology.orchestrator.Orchestrator : graph_exporter
 wound_ontology.hierarchies.class_hierarchy.ClassHierarchy --* wound_ontology.orchestrator.Orchestrator : class_hier
 wound_ontology.hierarchies.fca_hierarchy.FCAHierarchy --* wound_ontology.orchestrator.Orchestrator : fca_hier
+wound_ontology.hierarchies.fca_hierarchy.FCAHierarchy --* wound_ontology.orchestrator.Orchestrator : fca_hier
 wound_ontology.hierarchies.mereological_hierarchy.MereologicalHierarchy --* wound_ontology.orchestrator.Orchestrator : mere_hier
-wound_ontology.llm.llm_client.GeminiClient --* wound_ontology.llm.llm_client.LLMClient : _gemini
+wound_ontology.llm.extraction_models.BFOCategory --* wound_ontology.llm.extraction_models.ExtractedEntity : category
+wound_ontology.llm.extraction_models.RelationType --* wound_ontology.llm.extraction_models.ExtractedRelation : predicate
 wound_ontology.llm.llm_client.LLMClient --* wound_ontology.orchestrator.Orchestrator : llm
+wound_ontology.mappers.mapping_cleaner.MappingCleaner --* wound_ontology.orchestrator.Orchestrator : mapping_cleaner
 wound_ontology.mappers.term_mapper.TermMapper --* wound_ontology.orchestrator.Orchestrator : term_mapper
-wound_ontology.data_manager.data_manager.DataManager --o wound_ontology.store.concept_store.ConceptStore : dm
+wound_ontology.mappers.term_mapping_and_gate.TermMappingAndGate --* wound_ontology.store.concept_store.ConceptStore : _terms
+wound_ontology.reasoning.gate.ReasonerGate --* wound_ontology.orchestrator.Orchestrator : _gate
+wound_ontology.reasoning.reasoner.OWLReasoner --* wound_ontology.orchestrator.Orchestrator : reasoner
+wound_ontology.store.blocker.Blocker --* wound_ontology.store.base_cleaner.BaseCleaner : blocker
+wound_ontology.store.concept_store.ConceptStore --* wound_ontology.orchestrator.Orchestrator : store
+wound_ontology.store.store_cleaner.StoreCleaner --* wound_ontology.orchestrator.Orchestrator : cleaner
+wound_ontology.store.term_lists.BlockKeywordList --* wound_ontology.store.blocker.Blocker : block_kw
+wound_ontology.store.term_lists.BlockList --* wound_ontology.store.blocker.Blocker : terms
+wound_ontology.store.term_lists.SuspiciousList --* wound_ontology.store.blocker.Blocker : suspicious
+wound_ontology.store.term_lists.WhiteKeywordList --* wound_ontology.store.blocker.Blocker : white_kw
+wound_ontology.store.term_lists.WhiteList --* wound_ontology.store.blocker.Blocker : white_terms
 wound_ontology.data_manager.data_manager.DataManager --o wound_ontology.connectors.base_connector.BaseConnector : dm
+wound_ontology.data_manager.data_manager.DataManager --o wound_ontology.mappers.term_mapping_and_gate.TermMappingAndGate : _dm
+wound_ontology.data_manager.data_manager.DataManager --o wound_ontology.store.concept_store.ConceptStore : dm
 wound_ontology.fca.context_matrix.ContextMatrix --o wound_ontology.fca.concept_lattice.ConceptLattice : matrix
-wound_ontology.graph.knowledge_graph.KnowledgeGraph --o wound_ontology.graph.sparql_helper.SPARQLHelper : _rdf_graph
-wound_ontology.graph.knowledge_graph.KnowledgeGraph --o wound_ontology.export.gexf_exporter.GEXFExporter : uses
+wound_ontology.mappers.term_mapping_and_gate.TermMappingAndGate --o wound_ontology.mappers.term_mapper.TermMapper : _term_mapping
+wound_ontology.owl.model.OWLOntology --o wound_ontology.owl.curator.OntologyCurator : ontology
 @enduml

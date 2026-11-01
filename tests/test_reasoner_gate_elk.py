@@ -67,9 +67,11 @@ def test_catches_same_category_disjointness_the_schema_cannot(gate):
 
 
 def test_catches_disorder_versus_predisposition(gate):
-    """MILD asserts pathological disorder and disease predisposition disjoint."""
+    """MILD asserts material disease entity (pathological disorder, its exact
+    synonym, was a class of its own until 2026-10-30) and disease
+    predisposition disjoint."""
     out = gate.check_edges([
-        ("Some Risk Thing", "pathological disorder"),
+        ("Some Risk Thing", "material disease entity"),
         ("Some Risk Thing", "disease predisposition"),
     ])
     assert len(out.quarantined) == 2
@@ -83,3 +85,28 @@ def test_a_clean_batch_of_edges_passes(gate):
     ])
     assert out.clean
     assert len(out.accepted) == 2
+
+
+def test_a_relation_wrong_on_its_own_is_held_back_without_taking_its_neighbours(gate):
+    """2026-09-30: `healing --has as process boundary at end--> completely
+    healed` (a quality) made `healing` unsatisfiable, and through every
+    relation to it, 7,163 classes. The bad sentence alone is held back; the
+    good relations on the same hub term are accepted."""
+    from wound_ontology.llm.extraction_models import BFOCategory, RelationType
+
+    class E:
+        def __init__(self, label, cat):
+            self.label, self.category, self.grounded_to = label, cat, None
+
+    class R:
+        def __init__(self, s, p, o):
+            self.subject, self.predicate, self.object = s, p, o
+
+    ents = [E("healing", BFOCategory.Process), E("completely healed", BFOCategory.Quality),
+            E("impaired wound healing", BFOCategory.Process), E("gel", BFOCategory.MaterialEntity)]
+    bad = R("healing", RelationType.HAS_AS_PROCESS_BOUNDARY_AT_END, "completely healed")
+    good1 = R("impaired wound healing", RelationType.PART_OF, "healing")
+    good2 = R("gel", RelationType.PARTICIPATES_IN, "impaired wound healing")
+    res = gate.check(ents, [bad, good1, good2])
+    assert bad in res.quarantined_relations
+    assert good1 in res.accepted_relations and good2 in res.accepted_relations

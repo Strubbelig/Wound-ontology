@@ -46,16 +46,16 @@ def _run(coro):
 def misbehaving_llm():
     return StubLLM(
         typing=TypingResponse(terms=[
-            TypedTerm(label="Wound", category="MaterialEntity"),
-            TypedTerm(label="Wound development process", category="Process"),
-            TypedTerm(label="reddened", category="Quality"),
-            TypedTerm(label="Novel Foam Dressing", category="MaterialEntity"),
-            TypedTerm(label="Something Unclear", category="Continuant"),
+            TypedTerm(label="Wound", category="material entity"),
+            TypedTerm(label="Wound development process", category="process"),
+            TypedTerm(label="reddened", category="quality"),
+            TypedTerm(label="Novel Foam Dressing", category="material entity"),
+            TypedTerm(label="Something Unclear", category="continuant"),
             TypedTerm(label="Study Design", category="Symptom"),        # invented category
         ]),
         relations=RelationResponse(relations=[
             RelationCandidate(subject="Wound", predicate="has quality", object="reddened"),
-            RelationCandidate(subject="Wound", predicate="is specified output of",
+            RelationCandidate(subject="Wound", predicate="output of",
                               object="Wound development process"),
             RelationCandidate(subject="reddened", predicate="has part",
                               object="Wound"),                          # unlicensed pair
@@ -89,7 +89,7 @@ def test_licensed_relations_survive(misbehaving_llm):
     result, _ = _run(misbehaving_llm.extract_two_stage("text"))
     kept = {(r.subject, r.predicate.value, r.object) for r in result.relations}
     assert ("Wound", "has quality", "reddened") in kept
-    assert ("Wound", "is specified output of", "Wound development process") in kept
+    assert ("Wound", "output of", "Wound development process") in kept
 
 
 def test_grounding_is_lookup_not_generation(misbehaving_llm):
@@ -110,7 +110,7 @@ def test_new_terms_survive_and_are_bfo_subsumed(misbehaving_llm):
 
 def test_coarse_terms_are_flagged_for_refinement(misbehaving_llm):
     result, _ = _run(misbehaving_llm.extract_two_stage("text"))
-    assert ("Something Unclear", "Continuant") in ad.needs_refinement(result)
+    assert ("Something Unclear", "continuant") in ad.needs_refinement(result)
 
 
 def test_every_stored_entity_carries_an_is_a_edge(misbehaving_llm):
@@ -141,7 +141,7 @@ def test_single_term_skips_the_relation_call():
                 raise AssertionError("relation stage should not run")
             return self._typing
 
-    llm = Boom(TypingResponse(terms=[TypedTerm(label="Wound", category="MaterialEntity")]),
+    llm = Boom(TypingResponse(terms=[TypedTerm(label="Wound", category="material entity")]),
                RelationResponse(relations=[]))
     result, _ = _run(llm.extract_two_stage("text"))
     assert len(result.entities) == 1

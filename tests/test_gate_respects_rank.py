@@ -36,7 +36,7 @@ class _Gate(ReasonerGate):
         parents = {p for c, p in g if c == "Necrosis"}
         return {BATCH_NS + _slug("Necrosis")} if self._bad_when(parents) else set()
 
-    def _explain(self, g):
+    def _explain(self, g, max_expl=5):
         return "explanation"
 
 
@@ -79,12 +79,16 @@ def test_a_curated_edge_that_is_inconsistent_alone_is_still_quarantined():
     assert ("Necrosis", "Pathological Disorder") in r.quarantined
 
 
-def test_fca_is_dropped_before_text():
+def test_a_ruled_fca_edge_gives_way_after_text_and_still_goes_when_it_is_the_cause():
+    """Rule 79: an FCA edge is in the hierarchy only because the curator's
+    head-word rule licensed it, so in a clash text gives way first; an FCA edge
+    that is itself the cause is still quarantined, and the curated edge stays."""
     edges = EDGES + [("Necrosis", "Skin Wound")]
     sources = {**SOURCES, ("Necrosis", "Skin Wound"): SOURCE_FCA}
     r = _Gate(lambda p: "Skin Wound" in p).check_edges(edges, sources=sources)
-    assert r.quarantined == [("Necrosis", "Skin Wound")]
-    assert len(r.accepted) == 2
+    assert ("Necrosis", "Skin Wound") in r.quarantined
+    assert ("Necrosis", "Pathological Disorder") in r.accepted
+    assert r.quarantined.index(("Necrosis", "Process")) < r.quarantined.index(("Necrosis", "Skin Wound"))
 
 
 def test_an_unstamped_edge_gives_up_first():
@@ -114,3 +118,50 @@ def test_a_consequence_is_not_judged_before_its_cause():
     r = _Inheriting(None).check_edges(edges, sources=sources)
     assert r.quarantined == [("Necrosis", "Process")]
     assert ("Dry Necrosis", "Necrosis") in r.accepted
+
+
+class _RemoteCause(_Gate):
+    """`Protein` is empty while `Nutrient is_a Material Entity` stands -- an
+    edge on ANOTHER class (2026-10-03). The explanation names it."""
+
+    def _unsatisfiable(self, g):
+        self.passes += 1
+        return {BATCH_NS + _slug("Protein")} if ("Nutrient", "Material Entity") in g else set()
+
+    def _explain(self, g, max_expl=5):
+        n, m = BATCH_NS + _slug("Nutrient"), BATCH_NS + _slug("Material Entity")
+        return f"  - [Nutrient]({n}) SubClassOf [Material Entity]({m})\n"
+
+
+def test_a_cause_on_another_class_goes_before_a_placed_edge():
+    from wound_ontology.hierarchies.base_hierarchy import SOURCE_PLACED
+    edges = [("Protein", "Biomacromolecule"), ("Nutrient", "Material Entity")]
+    sources = {edges[0]: SOURCE_PLACED, edges[1]: SOURCE_TEXT}
+    r = _RemoteCause(lambda p: False).check_edges(edges, sources=sources)
+    assert r.quarantined == [("Nutrient", "Material Entity")]
+    assert ("Protein", "Biomacromolecule") in r.accepted
+
+
+class _InheritingGate(_Gate):
+    """`Necrosis` is empty while both its parents stand; `Dry Necrosis`, under
+    it, is empty exactly as long as Necrosis is -- by inheritance only."""
+
+    def _unsatisfiable(self, g):
+        self.passes += 1
+        parents = {p for c, p in g if c == "Necrosis"}
+        if not _clash_while_both_present(parents):
+            return set()
+        return {BATCH_NS + _slug("Necrosis"), BATCH_NS + _slug("Dry Necrosis")}
+
+
+def test_a_class_empty_only_through_its_parent_keeps_its_own_typing():
+    """2026-10-29: `Aggressive surgical debridement is_a process` was refused
+    though only its parent was empty -- the child's own text edge was the
+    weakest on an empty class. The parent's clash is resolved first; the child,
+    satisfiable again, keeps its typing."""
+    edges = EDGES + [("Dry Necrosis", "Necrosis"), ("Dry Necrosis", "Material Entity")]
+    sources = {**SOURCES, ("Dry Necrosis", "Necrosis"): SOURCE_CURATED,
+               ("Dry Necrosis", "Material Entity"): SOURCE_TEXT}
+    r = _InheritingGate(_clash_while_both_present).check_edges(edges, sources=sources)
+    assert r.quarantined == [("Necrosis", "Process")]
+    assert ("Dry Necrosis", "Material Entity") in r.accepted

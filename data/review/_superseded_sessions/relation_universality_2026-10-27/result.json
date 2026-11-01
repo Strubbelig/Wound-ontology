@@ -1,0 +1,470 @@
+{
+ "read_by": "Claude, 2026-10-27",
+ "rows": 34,
+ "verdicts": {
+  "no": 18,
+  "all": 9,
+  "some": 7
+ },
+ "why_no": {
+  "misread subclass": 4,
+  "a severity is a grading": 3,
+  "rule 68": 2,
+  "wrong bearer": 2,
+  "vague": 2,
+  "self-loop": 1,
+  "vague term": 1,
+  "misread part-hood": 1,
+  "a stage is information about the ulcer": 1,
+  "study-local term": 1
+ },
+ "by_predicate": {
+  "has_disposition": {
+   "no": 2
+  },
+  "has_quality": {
+   "all": 8,
+   "no": 9,
+   "some": 5
+  },
+  "part_of": {
+   "no": 7,
+   "all": 1,
+   "some": 2
+  }
+ },
+ "axioms": [
+  {
+   "subject": "Burn Wound",
+   "predicate": "has_quality",
+   "value": "Burn depth",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "vae2acae1",
+   "universality": "all",
+   "note": "every burn has a depth"
+  },
+  {
+   "subject": "Burn Wound",
+   "predicate": "has_quality",
+   "value": "Burn size",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "v1bfcf592",
+   "universality": "all",
+   "note": "every burn has a size"
+  },
+  {
+   "subject": "Burn Wound",
+   "predicate": "has_quality",
+   "value": "Burn surface area",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "vde07ac92",
+   "universality": "all",
+   "note": "every burn has a surface area"
+  },
+  {
+   "subject": "Burn Wound",
+   "predicate": "has_quality",
+   "value": "depth",
+   "abstracts": 5,
+   "for": "FCA inheritance, rule 88",
+   "id": "v0d9f2347",
+   "universality": "all",
+   "note": "every burn has a depth"
+  },
+  {
+   "subject": "Chronic Wound",
+   "predicate": "has_quality",
+   "value": "Wound area",
+   "abstracts": 3,
+   "for": "FCA inheritance, rule 88",
+   "id": "v750d4d0b",
+   "universality": "all",
+   "note": "every wound has an area"
+  },
+  {
+   "subject": "Chronic Wound",
+   "predicate": "has_quality",
+   "value": "depth",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "va023078c",
+   "universality": "all",
+   "note": "every wound has a depth"
+  },
+  {
+   "subject": "Foot Wound",
+   "predicate": "part_of",
+   "value": "Foot",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "vefb9ab3e",
+   "universality": "all",
+   "note": "a foot wound is on the foot (as curator axiom w024 for diabetic foot ulcer)"
+  },
+  {
+   "subject": "Second-Degree Burn Wound",
+   "predicate": "has_quality",
+   "value": "Burn depth",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "v0f294d83",
+   "universality": "all",
+   "note": "every burn has a depth"
+  },
+  {
+   "subject": "Wound",
+   "predicate": "has_quality",
+   "value": "Wound duration",
+   "abstracts": 13,
+   "for": "FCA inheritance, rule 88",
+   "id": "v6079ff24",
+   "universality": "all",
+   "note": "every wound has an age (curator axiom Wound has quality age; WONT: degree of time after disease inception)"
+  }
+ ],
+ "all_rows": [
+  {
+   "subject": "Burn Wound",
+   "predicate": "has_disposition",
+   "value": "wound infecting tendency",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "v349ca9a3",
+   "universality": "no",
+   "note": "rule 68: a tendency is borne by has tendency, never by has disposition"
+  },
+  {
+   "subject": "Burn Wound",
+   "predicate": "has_quality",
+   "value": "Burn depth",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "vae2acae1",
+   "universality": "all",
+   "note": "every burn has a depth"
+  },
+  {
+   "subject": "Burn Wound",
+   "predicate": "has_quality",
+   "value": "Burn severity",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "v0d89a61f",
+   "universality": "no",
+   "note": "a severity is a grading, information about the burn (rule 77)"
+  },
+  {
+   "subject": "Burn Wound",
+   "predicate": "has_quality",
+   "value": "Burn size",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "v1bfcf592",
+   "universality": "all",
+   "note": "every burn has a size"
+  },
+  {
+   "subject": "Burn Wound",
+   "predicate": "has_quality",
+   "value": "Burn surface area",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "vde07ac92",
+   "universality": "all",
+   "note": "every burn has a surface area"
+  },
+  {
+   "subject": "Burn Wound",
+   "predicate": "has_quality",
+   "value": "Complete-thickness burn area",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "vd13e3a5c",
+   "universality": "some",
+   "note": "only full-thickness burns have one"
+  },
+  {
+   "subject": "Burn Wound",
+   "predicate": "has_quality",
+   "value": "II degree",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "v0c48c1b2",
+   "universality": "some",
+   "note": "only second-degree burns"
+  },
+  {
+   "subject": "Burn Wound",
+   "predicate": "has_quality",
+   "value": "Pain",
+   "abstracts": 4,
+   "for": "FCA inheritance, rule 88",
+   "id": "vce551075",
+   "universality": "no",
+   "note": "wrong bearer: the pain is the patient's"
+  },
+  {
+   "subject": "Burn Wound",
+   "predicate": "has_quality",
+   "value": "Total body surface area",
+   "abstracts": 14,
+   "for": "FCA inheritance, rule 88",
+   "id": "vab5e86cd",
+   "universality": "no",
+   "note": "wrong bearer: the body's quality, not the burn's"
+  },
+  {
+   "subject": "Burn Wound",
+   "predicate": "has_quality",
+   "value": "depth",
+   "abstracts": 5,
+   "for": "FCA inheritance, rule 88",
+   "id": "v0d9f2347",
+   "universality": "all",
+   "note": "every burn has a depth"
+  },
+  {
+   "subject": "Burn Wound",
+   "predicate": "part_of",
+   "value": "Burn wound",
+   "abstracts": 5,
+   "for": "FCA inheritance, rule 88",
+   "id": "v2e2f9c18",
+   "universality": "no",
+   "note": "self-loop"
+  },
+  {
+   "subject": "Burn Wound",
+   "predicate": "part_of",
+   "value": "Wound",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "v35f6a57d",
+   "universality": "no",
+   "note": "misread subclass"
+  },
+  {
+   "subject": "Chronic Wound",
+   "predicate": "has_disposition",
+   "value": "wound infecting tendency",
+   "abstracts": 3,
+   "for": "FCA inheritance, rule 88",
+   "id": "ve05e6384",
+   "universality": "no",
+   "note": "rule 68: a tendency is borne by has tendency, never by has disposition"
+  },
+  {
+   "subject": "Chronic Wound",
+   "predicate": "has_quality",
+   "value": "Wound area",
+   "abstracts": 3,
+   "for": "FCA inheritance, rule 88",
+   "id": "v750d4d0b",
+   "universality": "all",
+   "note": "every wound has an area"
+  },
+  {
+   "subject": "Chronic Wound",
+   "predicate": "has_quality",
+   "value": "depth",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "va023078c",
+   "universality": "all",
+   "note": "every wound has a depth"
+  },
+  {
+   "subject": "Diabetic Foot Ulcer",
+   "predicate": "has_quality",
+   "value": "Hard-to-heal",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "v2fdfd5eb",
+   "universality": "some",
+   "note": "not every diabetic foot ulcer is hard to heal"
+  },
+  {
+   "subject": "Diabetic Foot Ulcer",
+   "predicate": "has_quality",
+   "value": "Severity of the wound",
+   "abstracts": 3,
+   "for": "FCA inheritance, rule 88",
+   "id": "vd608d135",
+   "universality": "no",
+   "note": "a severity is a grading, information about the wound (rule 77); the curator left out the same on pressure ulcer, w041"
+  },
+  {
+   "subject": "Diabetic Foot Ulcer",
+   "predicate": "part_of",
+   "value": "Diabetic foot",
+   "abstracts": 5,
+   "for": "FCA inheritance, rule 88",
+   "id": "v2a655a85",
+   "universality": "no",
+   "note": "vague term: diabetic foot also names the syndrome; the part is the foot (curator axiom w024)"
+  },
+  {
+   "subject": "Diabetic Foot Ulcer",
+   "predicate": "part_of",
+   "value": "diabetes mellitus",
+   "abstracts": 4,
+   "for": "FCA inheritance, rule 88",
+   "id": "v20dbc3fb",
+   "universality": "no",
+   "note": "misread part-hood: the ulcer is a complication of diabetes, not part of it"
+  },
+  {
+   "subject": "Foot Wound",
+   "predicate": "part_of",
+   "value": "Diabetic foot ulcer",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "vdb9dabb1",
+   "universality": "no",
+   "note": "misread subclass, reversed"
+  },
+  {
+   "subject": "Foot Wound",
+   "predicate": "part_of",
+   "value": "Foot",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "vefb9ab3e",
+   "universality": "all",
+   "note": "a foot wound is on the foot (as curator axiom w024 for diabetic foot ulcer)"
+  },
+  {
+   "subject": "Pressure Ulcer",
+   "predicate": "has_quality",
+   "value": "disease classification stage",
+   "abstracts": 4,
+   "for": "FCA inheritance, rule 88",
+   "id": "vfe9efae5",
+   "universality": "no",
+   "note": "a stage is information about the ulcer, never its quality (rule 77)"
+  },
+  {
+   "subject": "Pressure Ulcer",
+   "predicate": "part_of",
+   "value": "Skin",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "vf4140fd9",
+   "universality": "some",
+   "note": "deep tissue and mucosal pressure ulcers are not in the skin"
+  },
+  {
+   "subject": "Second-Degree Burn Wound",
+   "predicate": "has_quality",
+   "value": "Burn depth",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "v0f294d83",
+   "universality": "all",
+   "note": "every burn has a depth"
+  },
+  {
+   "subject": "Second-Degree Burn Wound",
+   "predicate": "part_of",
+   "value": "Burn wound",
+   "abstracts": 5,
+   "for": "FCA inheritance, rule 88",
+   "id": "v22ff3670",
+   "universality": "no",
+   "note": "misread subclass"
+  },
+  {
+   "subject": "Wound",
+   "predicate": "has_quality",
+   "value": "Baseline wound size",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "v8946d7d7",
+   "universality": "no",
+   "note": "study-local term: the size at a study's baseline"
+  },
+  {
+   "subject": "Wound",
+   "predicate": "has_quality",
+   "value": "Painful condition",
+   "abstracts": 3,
+   "for": "FCA inheritance, rule 88",
+   "id": "v8a8d4a56",
+   "universality": "some",
+   "note": "not every wound is painful"
+  },
+  {
+   "subject": "Wound",
+   "predicate": "has_quality",
+   "value": "Severity of the wound",
+   "abstracts": 3,
+   "for": "FCA inheritance, rule 88",
+   "id": "v9c0a80e6",
+   "universality": "no",
+   "note": "a severity is a grading, information about the wound (rule 77); the curator left out the same on pressure ulcer, w041"
+  },
+  {
+   "subject": "Wound",
+   "predicate": "has_quality",
+   "value": "Wound condition",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "v9531dfc6",
+   "universality": "no",
+   "note": "vague: a description of the wound, not one quality"
+  },
+  {
+   "subject": "Wound",
+   "predicate": "has_quality",
+   "value": "Wound duration",
+   "abstracts": 13,
+   "for": "FCA inheritance, rule 88",
+   "id": "v6079ff24",
+   "universality": "all",
+   "note": "every wound has an age (curator axiom Wound has quality age; WONT: degree of time after disease inception)"
+  },
+  {
+   "subject": "Wound",
+   "predicate": "has_quality",
+   "value": "Wound morphology",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "v3ac56d82",
+   "universality": "no",
+   "note": "vague: a description of the wound, not one quality"
+  },
+  {
+   "subject": "Wound",
+   "predicate": "has_quality",
+   "value": "macerated",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "v1db3f098",
+   "universality": "some",
+   "note": "only some wounds are macerated"
+  },
+  {
+   "subject": "Wound",
+   "predicate": "part_of",
+   "value": "Burn wound",
+   "abstracts": 2,
+   "for": "FCA inheritance, rule 88",
+   "id": "vb019113f",
+   "universality": "no",
+   "note": "misread subclass, reversed"
+  },
+  {
+   "subject": "Wound",
+   "predicate": "part_of",
+   "value": "Skin",
+   "abstracts": 3,
+   "for": "FCA inheritance, rule 88",
+   "id": "vca3ce618",
+   "universality": "some",
+   "note": "there are wounds outside the skin (WONT: Skin wound is a subclass)"
+  }
+ ]
+}

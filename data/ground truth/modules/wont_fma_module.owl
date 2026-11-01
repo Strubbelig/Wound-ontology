@@ -1,0 +1,674 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="https://bioportal.bioontology.org/ontologies/WONT/modules/fma_module.owl#"
+     xml:base="https://bioportal.bioontology.org/ontologies/WONT/modules/fma_module.owl"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#">
+    <owl:Ontology rdf:about="https://bioportal.bioontology.org/ontologies/WONT/modules/fma_module.owl">
+        <owl:versionIRI rdf:resource="https://bioportal.bioontology.org/ontologies/WONT/modules/2026-10-31/fma_module.owl"/>
+        <rdfs:comment>BOT module of the OBO FMA release 2020-04-13 (the FMA OFL 2.0.0 imports) for the layers WONT&apos;s wound depth classes name -- Epidermis, Dermis, Superficial fascia (the subcutis), Investing fascia (the deep fascia), Muscle organ, Bone organ -- and Skin. Extracted 2026-10-31 by scripts/wont_fma_module_and_bridge_2026_10_31.py.</rdfs:comment>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/IAO_0000115 -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.obolibrary.org/obo/IAO_0000115"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#hasExactSynonym -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasExactSynonym"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#hasOBONamespace -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#hasOBONamespace"/>
+    
+
+
+    <!-- http://www.geneontology.org/formats/oboInOwl#id -->
+
+    <owl:AnnotationProperty rdf:about="http://www.geneontology.org/formats/oboInOwl#id"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/fma#constitutional_part_of -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/fma#constitutional_part_of">
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/fma#part_of"/>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>constitutional_part_of</oboInOwl:id>
+        <rdfs:label>constitutional_part_of</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/fma#part_of -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/fma#part_of">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>part_of</oboInOwl:id>
+        <rdfs:label>part_of</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/fma#regional_part_of -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/fma#regional_part_of">
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/fma#part_of"/>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>regional_part_of</oboInOwl:id>
+        <rdfs:label>regional_part_of</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/fma#systemic_part_of -->
+
+    <owl:ObjectProperty rdf:about="http://purl.obolibrary.org/obo/fma#systemic_part_of">
+        <rdfs:subPropertyOf rdf:resource="http://purl.obolibrary.org/obo/fma#part_of"/>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>systemic_part_of</oboInOwl:id>
+        <rdfs:label>systemic_part_of</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_14065 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_14065">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_82472"/>
+        <obo:IAO_0000115>Cardinal organ part which is bounded predominantly by bonafide boundaries.  Examples: lobe of lung, osteon, acinus, submucosa, anterior leaflet of mitral valve, capsule of kidney, cortical bone, muscle fasciculus.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:14065</oboInOwl:id>
+        <rdfs:label>Organ component</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_20394 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_20394">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_256133"/>
+        <obo:IAO_0000115>Anatomical structure which is the aggregate material substance of an individual member of the Homo sapiens species. Examples: There is only one human body.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:20394</oboInOwl:id>
+        <rdfs:label>Human body</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_256133 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_256133">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_256135"/>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:256133</oboInOwl:id>
+        <rdfs:label>Body of vertebrate</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_256135 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_256135">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_67135"/>
+        <obo:IAO_0000115>Anatomical structure which is the aggregate material substance of an individual member of a species.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:256135</oboInOwl:id>
+        <rdfs:label>Body</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_27935 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_27935">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_5023"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#systemic_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_79063"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:27935</oboInOwl:id>
+        <rdfs:label>Investing fascia</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_45562 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_45562">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_9639"/>
+        <obo:IAO_0000115>Epithelium which consists of more than one layer of epithelial cells that may or may not be in contact with a basement membrane. Examples: keratinized stratified squamous epithelium, ciliated stratified columnar epithelium.</obo:IAO_0000115>
+        <oboInOwl:hasExactSynonym>Stratified epithelium</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:45562</oboInOwl:id>
+        <rdfs:label>Multilaminar epithelium</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_45563 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_45563">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_45562"/>
+        <obo:IAO_0000115>Multilaminar epithelium which consists of more than one layer of squamous cells only one layer of which is in contact with a basement membrane. Examples: keratinized stratified squamous epithelium, epithelium of wall of esophagus.</obo:IAO_0000115>
+        <oboInOwl:hasExactSynonym>Epithelium stratificatum squamosum</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:45563</oboInOwl:id>
+        <rdfs:label>Stratified squamous epithelium</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_45568 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_45568">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_45563"/>
+        <obo:IAO_0000115>Keratinized stratified squamous epithelium is a stratified squamous epithelium, the cells of which synthesize and accumulate keratin.</obo:IAO_0000115>
+        <oboInOwl:hasExactSynonym>Epithelium stratificatum squamosum cornificatum</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:45568</oboInOwl:id>
+        <rdfs:label>Keratinized stratified squamous epithelium</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_5018 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_5018">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_55673"/>
+        <obo:IAO_0000115>Organ with cavitated organ parts, which primarily consists of compact (cortical) and cancellous bone, which surround bone marrow cavities; together with other bones, cartilages and joints, it constitutes the skeletal system.  Examples: femur, sternum, maxilla, vertebra, talus.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:5018</oboInOwl:id>
+        <rdfs:label>Bone organ</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_5022 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_5022">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_55665"/>
+        <obo:IAO_0000115>Nonparenchymatous organ that primarily consists of skeletal muscle tissue aggregated into macroscopic fasciculi by connective tissue; together with other muscles, it constitutes the muscular system. Examples: biceps, diaphragm, masseter, right third external intercostal muscle, external oblique, levator ani, serratus anterior.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:5022</oboInOwl:id>
+        <rdfs:label>Muscle organ</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_5023 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_5023">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_55665"/>
+        <obo:IAO_0000115>Nonparenchymatous organ that consists of organ parts composed of various types of connective tissue; it surrounds and interconnects various organs and body parts, and establishes the anatomical integrity of body parts and organ systems. Examples: superficial fascia, investing fascia, fat pad.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:5023</oboInOwl:id>
+        <rdfs:label>Fascia organ</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_55665 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_55665">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_55670"/>
+        <obo:IAO_0000115>Solid organ which consists of organ parts that are arranged as fascicles or sheets. Examples: muscle (organ), ligament (organ), membrane (organ), skin, viscerocranial mucosa.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:55665</oboInOwl:id>
+        <rdfs:label>Nonparenchymatous organ</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_55670 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_55670">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_67498"/>
+        <obo:IAO_0000115>Organ the unshared parts of which do not surround macroscopic anatomical spaces; only its shared parts (subdivisions of hollow tree organs) contain anatomical spaces. Examples: lung, liver, thymus, ovary, muscle (organ), meninx, superficial fascia, skin.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:55670</oboInOwl:id>
+        <rdfs:label>Solid organ</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_55671 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_55671">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_67498"/>
+        <obo:IAO_0000115>Organ the unshared parts of which surround one or more macroscopic anatomical spaces. Examples: neuraxis, tooth, esophagus, heart, long bone, corpus spongiosum of penis.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:55671</oboInOwl:id>
+        <rdfs:label>Cavitated organ</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_55673 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_55673">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_55671"/>
+        <obo:IAO_0000115>Cavitated organ in which its unshared parts surround two or more macroscopic anatomical spaces. Examples: heart, long bone, corpus spongiosum of penis, bulb of vestibule.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:55673</oboInOwl:id>
+        <rdfs:label>Organ with cavitated organ parts</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_61775 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_61775">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_62955"/>
+        <obo:IAO_0000115>Anatomical entity which has three or fewer spatial dimensions. Examples: hemoglobin molecule, mitochondrion, hepatocyte, erythrocyte, heart, head, blood, urine, peritoneal cavity, diaphragmatic surface of heart, inferior margin of liver, apex of lung.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:61775</oboInOwl:id>
+        <rdfs:label>Physical anatomical entity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_62955 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_62955">
+        <obo:IAO_0000115>Organismal continuant entity which is enclosed by the bona fide boundary of an organism or is an attribute of its structural organization. Examples: cell, heart, head, peritoneal cavity, apex of lung, anatomical term, sagittal plane.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:62955</oboInOwl:id>
+        <rdfs:label>Anatomical entity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_67135 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_67135">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_67165"/>
+        <obo:IAO_0000115>Material anatomical entity which is generated by coordinated expression of the organism&apos;s own genes that guide its morphogenesis; has inherent 3D shape; its parts are connected and spatially related to one another in patterns determined by coordinated gene expression. Examples: heart, right ventricle, mitral valve, myocardium, endothelium, lymphocyte, fibroblast, thorax, cardiovascular system, hemoglobin, T cell receptor.</obo:IAO_0000115>
+        <oboInOwl:hasExactSynonym>Biological structure</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:67135</oboInOwl:id>
+        <rdfs:label>Anatomical structure</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_67165 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_67165">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_61775"/>
+        <obo:IAO_0000115>Physical anatomical entity which has mass. Examples: hemoglobin molecule, mitochondrion, hepatocyte, erythrocyte, heart, head, blood, urine.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:67165</oboInOwl:id>
+        <rdfs:label>Material anatomical entity</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_67498 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_67498">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_67135"/>
+        <obo:IAO_0000115>Anatomical structure which has as its direct parts portions of two or more types of tissue or two or more types of cardinal organ part which constitute a maximally connected anatomical structure demarcated predominantly by a bona fide anatomical surface. Examples: femur, biceps, liver, heart, skin, tracheobronchial tree, ovary.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:67498</oboInOwl:id>
+        <rdfs:label>Organ</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_67509 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_67509">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_67135"/>
+        <obo:IAO_0000115>Anatomical structure, which consists of a specific set of the members of (predominantly) one organ or organ part subclass interconnected by zones of continuity or body substances; is demarcated from other subdivisions of the same organ system by one or more zones of continuity or anatomical lines; together with other subdivisions of the same organ system, it constitutes an organ system. Examples: rib cage, facial skeleton, portal system, central nervous system, upper respiratory tract, muscle group of back.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:67509</oboInOwl:id>
+        <rdfs:label>Organ system subdivision</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_67811 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_67811">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_20394"/>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:67811</oboInOwl:id>
+        <rdfs:label>Male human body</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_67812 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_67812">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_20394"/>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:67812</oboInOwl:id>
+        <rdfs:label>Female human body</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_70323 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_70323">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_82485"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#constitutional_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_7163"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115>Dense irregular connective tissue which consists of a papillary layer and a reticular layer.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:70323</oboInOwl:id>
+        <rdfs:label>Dermis</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_70596 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_70596">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_45568"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#constitutional_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_7163"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:70596</oboInOwl:id>
+        <rdfs:label>Epidermis</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_7149 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_7149">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_67135"/>
+        <obo:IAO_0000115>Anatomical structure, which has as its direct parts instances of one or more organ types which are interconnected with one another by zones of continuity. Examples: skeletal system, cardiovascular system, alimentary system.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:7149</oboInOwl:id>
+        <rdfs:label>Organ system</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_7163 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_7163">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_55665"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#constitutional_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_20394"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#constitutional_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_67811"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#constitutional_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_67812"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#constitutional_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_74657"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#systemic_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_74657"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115>Nonparenchymatous organ that consists of the epidermis, dermis and sets of hair and nails and which surrounds the entire body. Subdivisions of the skin surround various body parts; as a whole, the skin constitutes the external layer of the body.  Examples: There is only one skin.</obo:IAO_0000115>
+        <oboInOwl:hasExactSynonym>Skin of body</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:7163</oboInOwl:id>
+        <rdfs:label>Skin</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_72979 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_72979">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_7149"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#systemic_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_20394"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#systemic_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_67811"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#systemic_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_67812"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <oboInOwl:hasExactSynonym>Integumental system</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:72979</oboInOwl:id>
+        <rdfs:label>Integumentary system</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_74657 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_74657">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_67509"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#constitutional_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_72979"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#systemic_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_72979"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115>Organ system subdivision which consists of the skin and the superficial fascia. Examples: There is only one integument.</obo:IAO_0000115>
+        <oboInOwl:hasExactSynonym>The integument</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:74657</oboInOwl:id>
+        <rdfs:label>Integument</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_79063 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_79063">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_7149"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#systemic_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_20394"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#systemic_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_67811"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#systemic_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_67812"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:79063</oboInOwl:id>
+        <rdfs:label>Deep fascial system</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_82472 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_82472">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_67135"/>
+        <obo:IAO_0000115>anatomical structure which has as its direct parts two or more types of tissue and is continuous with one or more anatomical structures likewise constituted by two or more portions of tissues distinct from those of their complement. Examples: osteon, cortical bone, neck of femur, bronchopulmonary segment, left lobe of liver, anterior right side of heart, interventricular branch of left coronary artery, right atrium, mitral valve, head of pancreas.</obo:IAO_0000115>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:82472</oboInOwl:id>
+        <rdfs:label>Cardinal organ part</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_82485 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_82485">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_14065"/>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:82485</oboInOwl:id>
+        <rdfs:label>Organ component layer</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_9630 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_9630">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_5023"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#constitutional_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_20394"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#constitutional_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_67811"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#constitutional_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_67812"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#constitutional_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_74657"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#systemic_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_74657"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <oboInOwl:hasExactSynonym>Subcutaneous tissue</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:9630</oboInOwl:id>
+        <rdfs:label>Superficial fascia</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_9637 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_9637">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_67135"/>
+        <obo:IAO_0000115>Anatomical structure which has as its parts cells of predominantly one type with or without intercellular matrix. Examples: epithelium, muscle tissue, connective tissue, neural tissue, lymphoid tissue.</obo:IAO_0000115>
+        <oboInOwl:hasExactSynonym>Tissue</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:9637</oboInOwl:id>
+        <rdfs:label>Portion of tissue</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/FMA_9639 -->
+
+    <owl:Class rdf:about="http://purl.obolibrary.org/obo/FMA_9639">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/FMA_9637"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/fma#regional_part_of"/>
+                <owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/FMA_14065"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <obo:IAO_0000115>Tissue, which consists of one or more layers of epithelial cells and a basement membrane; it covers the external surface of the body and lines the internal surfaces of the anatomical structures. Examples: simple squamous epithelium, glandular cuboidal epithelium, transitional epithelium, myoepithelium.</obo:IAO_0000115>
+        <oboInOwl:hasExactSynonym>Epithelial tissue</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasExactSynonym>Epithelium</oboInOwl:hasExactSynonym>
+        <oboInOwl:hasOBONamespace>fma</oboInOwl:hasOBONamespace>
+        <oboInOwl:id>FMA:9639</oboInOwl:id>
+        <rdfs:label>Portion of epithelium</rdfs:label>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.29) https://github.com/owlcs/owlapi -->
+

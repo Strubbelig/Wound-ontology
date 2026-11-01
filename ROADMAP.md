@@ -1,0 +1,638 @@
+# Roadmap to the thesis build
+
+**Target.** Thesis writing starts **end of October 2026** — seven weeks from
+2026-09-10 — on the extended wound ontology, with three gates closed:
+
+1. **HermiT approves** the full merge.
+2. **The ontology is on BioPortal.**
+3. **The competency questions are all green.**
+
+This file is updated every time one of the measured numbers below moves. It is
+the living companion to `WONT_TODO.md` (hand edits to the curated files) and
+`INSTRUCTIONS.md` (standing design rules).
+
+---
+
+## Priority — decided 2026-09-10
+
+**The ontology is the deliverable. The pipeline is how it grows.**
+
+A hand-curated class that satisfies a competency question is a legitimate
+answer, not a workaround. What the pipeline is for is *growth*: more leaves,
+placed under the right parent, carrying the right axioms. Those are two
+different jobs and they are measured separately (next section) rather than
+being made to compete for one number.
+
+This is not a compromise position. It is how OBO ontologies are actually built:
+a curator authors the upper and mid-level structure and the defining axioms,
+and automated extraction populates beneath it. The curated layer is not
+scaffolding to be removed — it is the part that makes everything below it
+meaningful.
+
+**And the two reinforce each other.** Every curated class is also a **mapping
+anchor**: SapBERT maps extracted terms onto curated labels, so a class hand-authored
+today is a landing site for every future extraction that means the same thing.
+Curation raises pipeline yield. It does not spend it.
+
+---
+
+## Measured state
+
+Every figure measured, never estimated (rule 15). Add a column per revision so
+the trend is visible rather than asserted.
+
+| | 2026-09-10 | 2026-09-11 | 2026-09-12 |
+|---|---|---|---|
+| corpus | **142 abstracts extracted** of 606 fetched — 464 unextracted, extraction started 2026-09-10 | **606 of 606 extracted** (2026-09-11 21:01) — **12,901 entities** (3.6x); 5,425 more fetched at cap 200, extraction gated on E | unchanged |
+| distinct store entities | 3536 | **12,901** | unchanged |
+| **CQ in-scope score** (full closure) | 6 / 65 | 6 / 65 | **15 / 65** — A + E applied by hand; checker now sees defining axioms |
+| import closure (WONT + MILD + modules) | 220,252 triples, 6,169 classes, 29 foreign roots | same | **34,071 triples, 1,174 classes, 3 foreign roots** (`disease`, `unit`, `Skin`) |
+| `obi_module.owl` | 16.3 MB | same | **1.0 MB** |
+| WONT classes | 343 own | same | **379** (36 minted, 6 deleted) |
+| class-hierarchy edges (with provenance) | 4011 — **3552 `text`**, 459 `curated` |
+| entities placed under a curated WONT/MILD class | **2811 (80%)** |
+| entities parked at an upper-level root | 684 (19%) |
+| curated labels available as anchors (WONT + MILD, incl. alt terms) | 600 |
+| **CQ in-scope score** | **6 / 65 (9%)** |
+| CQ FAIL (class exists, axiom does not) | 18 |
+| CQ UNRESOLVED (class does not exist) | 41 |
+| CQ DECLARED (out of scope, not counted) | 8 |
+| `wont_extended.ttl` | 8 Sep 14:43 — **stale**, predates the current store |
+| HermiT full-merge verdict | **unknown** — deferred to P5 by decision, 2026-09-10 |
+| BioPortal | WONT IRIs are already `bioportal.bioontology.org/ontologies/WONT` — submission currency **to verify** |
+| working tree | uncommitted since `9553d20` |
+
+---
+
+## Two measures, not one
+
+The CQ score and the pipeline's contribution are different questions, and
+conflating them is what made the old plan point the wrong way.
+
+**The CQ score measures the ontology.** It asks whether the artefact can answer
+the questions it was scoped to answer. It does not care who authored a class,
+and the thesis does not have to pretend it does — provenance is recorded per
+edge (`text` / `curated`), so the method chapter can state exactly which is
+which.
+
+**The pipeline's contribution is its own headline number**, tracked as a trend:
+
+| what | 2026-09-10 |
+|---|---|
+| edges the pipeline proposed (`text`) | **3552 of 4011 (89%)** |
+| entities it placed under a curated class | **2811 of 3536 (80%)** |
+| entities left parked at an upper-level root | 684 (19%) |
+
+That last row is the one to drive down, and it is not evenly spread. All 684
+hang under just **9 upper-level roots**:
+
+| root | entities |
+|---|---|
+| Information Entity | 514 |
+| Immaterial Entity | 61 |
+| Continuant | 44 |
+| Process Boundary | 32 |
+| Occurrent | 15 |
+| Function | 11 |
+| Realizable Entity | 3 |
+| Specifically Dependent Continuant | 2 |
+| Independent Continuant | 2 |
+
+Reading the contents changes what the number means. The 514 under `Information
+Entity` are mostly study-methodology vocabulary the corpus is full of — *Before
+After Design*, *Noninferiority Margin*, *Cinahl Ebsco*, *Population Based
+Surveys*. Those belong at the top of the tree; they are not misplaced and no
+curation will move them.
+
+The other **170 are different**, and are the real pool: *Chronic
+Limb-Threatening Ischemia*, *Surgical Site Infection*, *Bacterial Load*,
+*Complete Wound Closure*, *Suture Removal*, *Inflammatory Phases*, *Healed*,
+*Antibacterial Functionality*. Wound-domain content parked at a BFO root
+because nothing more specific existed to attach it to. **Each mid-level class
+curated in the right place converts some of these into properly placed
+leaves** — which is the mechanism by which P1 and P2 below raise the pipeline's
+own number.
+
+---
+
+## Where the CQ gap actually is
+
+The 41 UNRESOLVED CQs name **51 distinct concepts** with no class. Measured
+against the concept store:
+
+- **4** are label-index misses — present under a different spelling
+  (`Acute Wound`/`Acute Wounds`, `Ankle-Brachial Index`/`Ankle Brachial Index`,
+  `Non-Healing Wound`/`Non Healing Wounds`, `Subcutaneous Tissue`/`Subcutaneous
+  Tissues`).
+- **2** are present but unreachable through `fold()`: `Inflammatory Phases` and
+  `Proliferative Phases` fold to `inflammatory phas` / `proliferative phas`.
+  Both sit in the store today, parked under `Process Boundary`.
+- **45** are absent from the store as well — never extracted, because 142
+  abstracts never mentioned them. `Sepsis`, `Laceration`, `Osteomyelitis`,
+  `Fascia` and `Vancomycin` are ordinary wound-care vocabulary; their absence
+  is a statement about the corpus, not about the extractor.
+
+**Of the 65 in-scope CQs, 18 sit on one pattern** — a wound subclass defined by
+the determinate quality that makes it that subclass:
+
+| predicate | CQs | unblocked by |
+|---|---|---|
+| `has_quality` | 13 | the determinate-quality block (P1) — 11 by axiom, 2 by correcting the question |
+| `is_a … Chronic Wound` | 3 | populating the chronic branch (`WONT_TODO` 1.11) |
+| `co_located_with` | 1 | class from P1 **+** `RelationType` extension (P3) |
+| `is_treatment_for` | 1 | class from P1 **+** `RelationType` extension (P3) |
+
+That is why P1 is first: it is 10 axioms of a shape WONT already carries ten
+times, and it moves 16 CQs on its own.
+
+---
+
+## Pipeline run order — and what a WONT edit destroys
+
+Traced through `orchestrator.py` against the notebook's canonical order. The
+question this answers: **if WONT changes, is the current pipeline data trash?**
+
+**No — but only two steps are safe, and they happen to be the expensive ones.**
+
+| # | step | reads | writes | cost | re-run when… |
+|---|---|---|---|---|---|
+| 1 | `run_pubmed_search` | PubMed + `pubmed_query_list.py` | abstract database | network | **never** — purely additive |
+| 2 | `run_validate_pubmed_queries` | the query list | report | small LLM | a query is added |
+| 3 | **`run_extract_to_store`** | abstracts + `extraction_schema.yaml` — a **generated snapshot** of WONT + MILD (`scripts/build_extraction_schema.py`) | `concept_store_*.json` | **LLM per abstract — the expensive one** | **never** for the store; the schema **regenerates itself** at the start of this step when WONT, MILD or a module is newer (rule 32) |
+| 4 | `run_build_term_mapping` | store terms **+ `ontology_labels()`** | `term_mapping_*.json` | SapBERT + LLM adjudication *(cached)* | **corpus or WONT** |
+| 5 | `review_mapping`, `check_term_mapping` | the mapping | curated mapping | **manual** | corpus or WONT |
+| 6 | `run_apply_mapping` | the mapping | **the store, in place** — renames recorded under `decisions.renamed` | cheap | corpus or WONT |
+| 7 | `review_lists`, `cluster_blocklist`, `run_promote_clusters` | store + the lists | `config/blocklist.py`, `config/whitelist.py` | manual + SapBERT | corpus |
+| 8 | `run_clean_store` | store + lists | store — **verdicts** (`blocklist`, `predicate_filter`, `prune`), nothing deleted; its own earlier verdicts lifted first | cheap | corpus, or a list changed |
+| 8b | **`build_reasoner_skeleton`** | **WONT + MILD** | `output/owl/skeleton_tbox.ttl` | ~1 min | **automatic** — rebuilt when WONT or MILD is newer than the cache (rule 32) |
+| 9 | `run_gate_store_relations` | store + skeleton | store — **verdicts** by `reasoner_gate`, re-heard on every run; `output/quarantine/` kept as the batch log | ELK | corpus or WONT |
+| 10 | `run_build_hierarchies` | store **+ curated seed from WONT + MILD** + accepted FCA slices | `class_hierarchy_*.csv` + provenance, `mereological_hierarchy_*.csv` | cheap | corpus or WONT |
+| 11 | `run_gate_hierarchy_edges` | class hierarchy + skeleton | hierarchy + quarantine | ELK | corpus or WONT |
+| 12 | `run_store_fill` | store | store | **LLM per entity** | corpus |
+| 13 | `run_fca` | class hierarchy | `context_matrix_*.csv`, `concept_lattice_*.pkl`, accepted slices | cheap + manual accept | corpus or WONT |
+| 13b | `run_matrix_nan_fill` | context matrix | context matrix | **LLM per undecided cell** | corpus or WONT |
+| 14 | `run_extend_ground_truth` | **WONT** + hierarchies + store | `output/owl/wont_extended.ttl` | cheap | corpus or WONT |
+| 15 | `run_curate_owl`, `run_map_ontology`, `run_enrich_external` | extended OWL + import ontologies | extended OWL | LLM + SapBERT | corpus or WONT |
+| 16 | `run_competency_check` | **WONT + MILD** + `competency_questions.json` | report | cheap | corpus or WONT |
+| 17 | `run_deep_reason` | full merge | inferred OWL | **slow — HermiT** | corpus or WONT |
+
+### What survives a WONT edit
+
+- **The abstracts.** `run_pubmed_search` merges into one database; nothing
+  invalidates it.
+- **The concept store.** `run_extract_to_store` never opens
+  `ground_truth_final.owl` at runtime. What it is prompted with is
+  `config/extraction_schema.yaml`, generated from WONT + MILD by
+  `scripts/build_extraction_schema.py` (last on 2026-09-08 from the 2026-09-04
+  WONT). Three things come from that snapshot, and only one of them reaches
+  the store:
+  - the **category enum** (BFO/MILD upper categories) → stored as
+    `is_a: <category>`. Section E does not change it.
+  - the **relation enum** → stored as relations. E does not change it either
+    (P3 will).
+  - the **per-category lists of existing classes** offered as `grounded_to`
+    targets → **not stored** (`result_to_store_entities` drops it). It is used
+    by the per-batch reasoner gate, which checks a grounded term against its
+    real axioms and an ungrounded one against a placeholder under its category.
+
+  So an abstract extracted before E yields the **same store record** it would
+  after E. What it loses is gate strength: `open wound` extracted today is an
+  ungrounded new term checked against a placeholder; after E it would be
+  recognised as `Open wound` and checked against its defining axiom. Step 4
+  then maps the ungrounded term onto the class anyway — that is what the
+  anchors are for. Nothing extracted before a curation edit is wasted.
+- **The curated lists.** `blocklist.py` / `whitelist.py` are keyed on store
+  terms, not on WONT.
+- **The LLM adjudication cache** inside the term mapping — a rebuild re-asks
+  only genuinely new anchor pairs, so rebuild *n* is far cheaper than rebuild 1.
+- **Accepted FCA slices**, which are read from disk, not from the session.
+
+### What a WONT edit invalidates
+
+Steps 4, 6, 8b, 9, 10, 11, 13, 13b, 14, 16, 17 — the whole derived layer. It is
+also the **cheap** layer: no step in it re-reads an abstract.
+
+Two caveats that are not cheap:
+
+1. **`run_apply_mapping` mutates the store in place** and title-cases it, so the
+   extraction spelling is gone after the first apply. The mapping can be
+   re-applied — `normalize()` folds both sides now — but the only route back to
+   an earlier state is the dated snapshot in `data/cache/`.
+2. **Every anchor mapping is an identity claim.** Absorbing a store term into a
+   WONT class that section E is about to redefine means re-reviewing that
+   decision, not just recomputing it. Step 5 is manual for a reason.
+
+### Two snapshots of WONT, neither checked for staleness
+
+`skeleton_tbox.ttl` (below) is one derived-from-WONT file the pipeline reused
+without asking whether WONT had moved. `config/extraction_schema.yaml` is the
+other, and it has no check either: generated 2026-09-08, WONT last edited
+2026-09-04, so in sync today — and out of sync the moment E lands. The
+consequence is quieter than the skeleton's: extraction still runs and the store
+is still right, but the 14 new classes are simply not on offer as grounding
+targets, so every mention of them goes through the gate as a placeholder.
+Fixed 2026-09-12: `schema_builder.ensure_current()` runs first thing in
+`run_extract_to_store` (rule 32). Measured on the way: a fresh build against
+the 4 Sep WONT is **33 s** and differs from the 8 Sep file in one line, the
+date — so the check touches an unchanged schema instead of rewriting it.
+
+### The live defect this traced out
+
+`build_reasoner_skeleton` reuses a cached `skeleton_tbox.ttl` whenever the file
+exists, with **no staleness check against WONT**. Measured today:
+
+| file | modified |
+|---|---|
+| `data/ground truth/ground_truth_final.owl` | **4 Sep 19:32** |
+| `output/owl/skeleton_tbox.ttl` | **20 Aug 22:13** |
+
+**The reasoner gate has been reasoning over a WONT that is fifteen days old.**
+Both gates (steps 9 and 11) run against it. Nothing announced this. Fix in P0:
+compare mtimes and rebuild, or refuse — a stale skeleton is exactly the silent
+degradation the standing rule forbids.
+
+### What this means for the order of work
+
+Because steps 4–17 must re-run after **either** a corpus change or a WONT
+change, running them repeatedly while both are still moving is wasted work.
+The cheapest schedule is:
+
+1. **Grow the corpus and extract** (steps 1–3) until coverage is where it needs
+   to be. Additive, never invalidated, and independent of every curation
+   decision — so this can start immediately and run all the way through.
+2. **Make the WONT hand edits** (`WONT_TODO` — done 12 Sep; the residue is `WONT_TODO` §1) while extraction runs.
+3. **Then run steps 4–17 once**, against the final store and the final WONT.
+
+One refinement, decided 2026-09-11 when the cap-200 fetch turned up **5,659**
+unextracted abstracts (~47 h at the measured rate): a run that long should go
+through the strongest gate available. **Do E first, regenerate the extraction
+schema, then start the big batch.** E is a day of hand curation; the store
+would be identical either way, but every mention of the 14 new classes would
+then be gate-checked against a real axiom instead of a placeholder. The 235 in
+flight are small enough not to wait.
+
+Run the derived chain in between only to *measure* — and treat those runs as
+throwaway, because they are. The number they produce is real; the artefact they
+produce is not the one being submitted.
+
+---
+
+## Critical path
+
+Two lanes that only converge at the end, because they do not depend on each
+other. **Curation** (P0–P3) is what closes the CQ gate. **Extraction** (PC) is
+what the pipeline contributes, and it is the one thing that is never
+invalidated by a curation decision — so it starts now and runs the whole way
+through.
+
+They meet at **P4**, the single derived rebuild.
+
+---
+
+### PC · Corpus and extraction — starts now, runs to 6 Oct · **lane B**
+
+Steps 1–3 of the run order. The only steps that never have to be run twice:
+abstracts merge into one database, and extraction is additive and does not read
+WONT.
+
+**Start by extracting what is already fetched.** Measured 2026-09-10 against
+`data/cache/pubmed_abstracts_2026-08-24_17-39.csv`:
+
+| | |
+|---|---|
+| rows in the abstract database | 860 |
+| unique PMIDs | **606** |
+| of those, already in the concept store | 142 |
+| **already fetched, never extracted** | **464** (614 rows) |
+| queries represented | 43 — all of them |
+| unique PMIDs per query | **20 — min, median and max alike** |
+
+Two things follow. First, **464 abstracts were sitting on disk unextracted**, so
+the first batch of PC costs no PubMed calls at all and takes the corpus from 142
+to 606 — a **4.3x** increase before a single new search. *Started 2026-09-10;
+reached 371 PMIDs / 8,575 entities before the session that launched it ended
+and took the process with it. Relaunched 2026-09-11 for the remaining 235.*
+
+The runner now lives at `scripts/pc_extract.py` and logs to
+`output/pc_extract.log` — not in a session scratchpad, which was wiped along
+with the process. It is resumable by construction (the store is keyed by PMID),
+so a killed run costs time only. Launch it detached:
+`( nohup python -u scripts/pc_extract.py > output/pc_extract.log 2>&1 < /dev/null & )`.
+`scripts/pc_fetch.py` is the cap-200 re-run of the query list, same pattern.
+
+Second, every query returned *exactly* 20 PMIDs, so the search ran at
+`max_results_per_query=20` — not the 200 the orchestrator defaults to, and not
+the 1000 the connector allows. All 43 queries ran; each was capped at 20.
+**Raising the cap and re-running the existing list is the lever, not writing new
+queries** — the list already covers burns, osteomyelitis, healing phases,
+scarring and vascular assessment, all of which are among the 45 absent
+concepts. At a cap of 200 the same 43 queries are worth roughly 8600 rows.
+
+- Targeted PubMed queries for the concepts the corpus is thin on.
+  `config/pubmed_query_list.py` is the mechanism; `run_validate_pubmed_queries`
+  is the validator, and it runs before the search, not after.
+- `run_pubmed_search` → `run_extract_to_store` in batches.
+- **Measure after every batch** and add a column to *Measured state*: entities,
+  edges by provenance, placement rate. Placement rate against corpus size is
+  the pipeline's recall curve — a thesis result in its own right, and one that
+  does not depend on the CQ score at all.
+- Measuring means running steps 4–17, which is fine. **Treat those runs as
+  throwaway.** The number is real; the artefact is not the one being submitted.
+
+**Exit:** a stated coverage figure — *n* of the 45 absent concepts recovered at
+*m* abstracts — and, per remaining concept, a decision between another query
+round and curating it by hand in P2.
+
+---
+
+### P0 · Land the tree, fix matching, fix the stale skeleton — 10–19 Sep
+
+- Commit the working tree: folded pre-merge in `term_mapper`, competency
+  provenance block, `TermList.match` normalisation, `dedupe`, FCA candidate
+  persistence, prompt rule 31 + its 6 tests.
+- **`build_reasoner_skeleton` reuses a stale skeleton with no check.**
+  `skeleton_tbox.ttl` is 20 Aug; `ground_truth_final.owl` is 4 Sep. Both gates
+  have been reasoning over a WONT fifteen days old, and nothing said so. Compare
+  mtimes and rebuild, or refuse. This is a standing-rule violation, not a
+  nice-to-have — and P1 makes it worse, because every WONT edit from here
+  silently widens the gap.
+- **`fold()` mis-singularises `-es` plurals.** The branch fires whenever the
+  stem ends in `s/x/z/ch/sh`. Measured: **45 of 3536** store terms take it and
+  **31 are wrong** across 12 head nouns (`responses→respons`, `nurses→nurs`,
+  `cases→cas`, `phases→phas`, `orthoses→orthos`…); the other 14 are right
+  (`processes→process`, `lenses→lens`). `buses→bus` and `phases→phase` cannot be
+  told apart by suffix, so `singularize` must yield **candidates** and the
+  lookup try each.
+- **The CQ resolver has its own label index.** `competency.label_index()` builds
+  a plain `{lower(label): iri}` dict and `_answerable` does `idx.get(...)` —
+  exact match only. `utils.label_match.LabelIndex` already exists with a folded
+  fallback. Rule 13 says one normalisation.
+- ~~**`extraction_schema.yaml` has the same staleness hole the skeleton had.**~~
+  Done 2026-09-12: `run_extract_to_store` calls `schema_builder.ensure_current()`
+  first; it regenerates when WONT, MILD or a module is newer, touches rather
+  than rewrites when only the date would change, and stops the process when the
+  content changed (rule 32). "Regenerate the schema" is no longer a manual
+  step anywhere.
+- ~~Apply **`WONT_TODO` B**~~ — closed 2026-09-12 as not needed: the three
+  parents were asserted all along, inside `rdfs:subClassOf` intersections.
+
+**Exit:** the 4 label-miss CQs and the 2 phase CQs resolve, measured; the
+skeleton is provably newer than WONT; full suite green; `git status` clean.
+
+---
+
+### P1 · The determinate-quality block — 12–26 Sep · **the big one**
+
+> **2026-09-12 — applied by hand, reviewed, mostly done.** A1–A3 and E1–E5
+> are in WONT (36 entities, `WONT_0000475`–`0000510`; see `WONT_TODO` for the
+> deviations: no `colonized`, no `full-thickness`, `Epithelialized wound` in
+> place of `Healed wound`, `infected` minted as a determinate, `degree of
+> malignancy` added, `Infected wound` now primitive). F2 done on the way (the
+> modules had to carry the PATO terms). Measured: CQ **6 → 15 / 65**; ELK over
+> the skeleton 0 unsatisfiable. **Still open here:** A4 (chronic branch empty —
+> CQ001/002/006), CQ010/012 (`Large`/`Deep` vs PATO's `increased size`/`depth`
+> — question-file fix), CQ011 (`full-thickness`), CQ110 (`Healed wound`),
+> the co-location axiom on `WONT_0000510`, and the burn-grade duplication
+> (`WONT_0000052–56` beside the new Hildanus/Derganc individuals).
+
+`WONT_TODO` **A** (chronic) and **E** (the other fourteen). One pattern:
+`X ≡ Wound ⊓ has_quality some <determinate>`. Measured against WONT + MILD +
+the import modules **and against the full PATO** (259 922 triples):
+
+| to author | count |
+|---|---|
+| PATO determinates already there — **reuse, do not mint** | 4 — `open` PATO_0000610, `closed` PATO_0000608, `increased size` PATO_0000586, `increased depth` PATO_0001596 |
+| PATO stubs to add to WONT's import block | 5 (the four above plus `closure` PATO_0000136) |
+| WONT classes to mint | **14** — 2 determinables, 5 determinates, 7 wound classes |
+| `equivalentClass` axioms to write | **10** |
+| alt terms instead of new classes | 2 — `Chronic non-healing wound`, `Non-healing wound` on WONT_0000442 |
+
+Checking PATO first removed four mintings and found two **false friends**:
+`PATO_0000956 sterile` is a *fertility* quality (children `male sterile`,
+`female sterile`) and `PATO_0001863 chronic` is a *duration quality of a
+process*, so its bearer is an occurrent while `Wound` is a material entity.
+Neither can be used. That check also confirms A2's decision to mint a WONT
+`chronic` rather than import PATO's.
+
+It also found that **two classes are already better defined than the CQs ask
+for**: `Infected wound` is `Wound ⊓ participates_in some wound infection
+process` and `Malignant wound` is defined through its causal history, while
+CQ093 and CQ091 ask for `has_quality`. The ontology is right; those two
+questions need rewriting, as a written-down decision in
+`config/competency_questions.json` — not a WONT edit, and not something to do
+quietly.
+
+Then **A4** — populate the chronic branch, which today has zero subclasses.
+Sheet at `data/review/chronic_decision_sheet.csv`.
+
+**CQ yield:** 11 from E, 3 from A4 (CQ001, CQ002, CQ006) = **14 by curation**;
+2 more (CQ091, CQ093) by the question-file decision; 2 more (CQ033, CQ050)
+unblocked here but still waiting on P3.
+
+**Exit:** 14 CQs move to PASS, measured by re-running `run_competency_check`;
+HermiT clean on the edited WONT — ten new defining axioms on one parent is
+exactly where a bearer mistake surfaces.
+
+---
+
+### P2 · Curate the remaining CQ classes — 26 Sep – 10 Oct
+
+The residue of the 45 absent concepts, after P1 and after whatever the
+continuous track has recovered. Each one authored the way P1's are: a real
+parent, a real definition, a defining axiom where the class has one. A bare
+`rdfs:label` that makes a CQ pass is not the deliverable.
+
+Work in the order the CQs weight them, and record for each whether it was
+curated or recovered by extraction — that split is a thesis figure.
+
+**Exit:** every remaining UNRESOLVED CQ is either PASS or deliberately
+`DECLARED` out of scope, with the reason written down.
+
+---
+
+### P3 · Extend `RelationType` — 29 Sep – 13 Oct
+
+**Withdrawn 2026-09-17 (curator).** `is_treatment_for` is not needed: an agent *participates in* a treatment process and the wound participates in every wound treatment process — both relations already in `RelationType`. `co_located_with` was retired for the complication pattern (rule 35), `occurs_in` for `has_participant` (CQ100). No CQ tests a relation the extractor cannot produce any more; measured 2026-09-17: 48 / 53 PASS, the 5 open are FMA anatomy references. The table below is the state that motivated the item.
+
+**9 of the 18 FAILs test relations the extractor structurally cannot produce:**
+
+| predicate | FAILs | in `RelationType`? |
+|---|---|---|
+| `is_a` | 5 | yes |
+| `is_treatment_for` | 5 | **no** |
+| `co_located_with` | 2 | **no** |
+| `occurs_in` | 2 | **no** |
+| `part_of` | 2 | yes |
+| `has_quality` | 2 | yes |
+
+`is_treatment_for` and `occurs_in` are listed in `config/settings.py` under
+"legacy stores only; no RelationType produces these"; `co_located_with` appears
+only in the competency module. Until `RelationType` carries them with IRIs and
+domain/range, those 9 cannot pass by any amount of corpus work or curation.
+
+**Exit:** `RelationType` extended and gated; the 9 re-measured.
+
+---
+
+### P4 · The single derived rebuild — 10–14 Oct · **the lanes converge**
+
+Steps 4–17 of the run order, once, against the final store and the final WONT.
+Everything before this point was either additive (PC) or curation (P0–P3);
+this is where they become one artefact.
+
+Order matters and the dependency table is the order:
+
+1. `build_reasoner_skeleton()` — first, because both gates read it (it rebuilds
+   on its own when WONT or MILD is newer; `force=True` only if you distrust mtimes).
+2. `run_build_term_mapping` → `review_mapping` → `run_apply_mapping`.
+   **The review is manual and is the long pole of this phase**: section E
+   redefines classes that store terms have already been absorbed into, so those
+   adjudications need re-reading, not just recomputing.
+3. `review_lists` → `run_clean_store`.
+4. `run_gate_store_relations` → `run_build_hierarchies` →
+   `run_gate_hierarchy_edges`.
+5. `run_store_fill` → `run_fca` → `run_matrix_nan_fill`.
+6. `run_extend_ground_truth` → `run_curate_owl` / `run_map_ontology` /
+   `run_enrich_external`.
+7. `run_competency_check`.
+
+**Exit:** `wont_extended.ttl` newer than every cache it derives from; the CQ
+score and the contribution figures measured on that one build; nothing in
+`data/cache/` older than the WONT edit that preceded it.
+
+---
+
+### P5 · HermiT — 14–19 Oct
+
+The per-batch gate uses ELK, which cannot express inverse properties,
+cardinality or universal restrictions. `run_deep_reason` runs HermiT over the
+full merge and is the gate that has to be clean.
+
+**`run_deep_reason` does not work as written.** Measured 2026-09-10, before the
+run was called off as premature — two independent blockers, both fixable, both
+to be fixed *in* P5 and not before:
+
+1. **It cannot read the input.** `OWLReasoner.load` uses
+   `owlready2.get_ontology(...).load()`, which parses RDF/XML, OWL/XML and
+   ntriples — not Turtle. `wont_extended.ttl` and `ground_truth_final.owl` are
+   both Turtle. The merge has to be serialised to RDF/XML first, with
+   `owl:imports` stripped and the closure inlined, because owlready2 resolves
+   imports by filename and ignores `catalog-v001.xml`.
+2. **The default heap is too small.** owlready2 launches HermiT at
+   `-Xmx2000M`. On the 240 292-triple merge (9633 classes, 312 individuals)
+   that dies with `java.lang.OutOfMemoryError: Java heap space` inside
+   `QuasiOrderClassification`, after 168 s — and `world.inconsistent_classes()`
+   then returns an empty list, so **the failure reads as a clean result.**
+   Set `owlready2.reasoning.JAVA_MEMORY` explicitly, and treat an empty
+   unsatisfiable set after a raised reasoner as unknown, never as zero.
+
+The second one is a silent-failure defect in its own right: a crashed reasoner
+that reports "0 unsatisfiable classes" is exactly the degradation the standing
+rule forbids.
+
+- Re-run after each WONT hand edit — the curated files are the usual source of
+  a continuant/occurrent clash, and P1–P2 are all curated edits.
+
+**"No unsatisfiable classes" is the wrong exit criterion, and the code already
+says so.** `build_reasoner_skeleton`'s docstring records that *"the full import
+closure carries 54 pre-existing unsatisfiable classes"* — which is why the gate
+reasons over a stripped skeleton instead. Those 54 are not ours to fix and will
+not disappear.
+
+**Exit:** the full merge is **consistent**, and its unsatisfiable set is a
+subset of the pre-existing import-closure set — measured, with the baseline
+taken *before* P1. Any class WONT or MILD owns that turns up unsatisfiable is a
+defect to fix, not to exclude.
+
+---
+
+### P6 · BioPortal — 20–26 Oct
+
+- Verify what is currently published under
+  `bioportal.bioontology.org/ontologies/WONT` and how it was submitted.
+- Submit the P5 build with a version IRI, licence, and description.
+- Confirm BioPortal's own parser accepts it — its validation is stricter than a
+  local `rdflib` parse and will reject things HermiT tolerated.
+
+**Exit:** the extended ontology resolves on BioPortal at a citable version.
+
+---
+
+### P7 · Freeze and measure — 27–31 Oct
+
+- Final `run_competency_check` against the submitted build.
+- Final figures: corpus size, entities, classes curated vs extracted, edges by
+  provenance, placement rate, CQ score before/after, HermiT verdict, BioPortal
+  version.
+- Update the pipeline reference artifact (rule 17) so the method chapter has a
+  current description to draw on.
+
+**Exit:** writing starts.
+
+---
+
+## What is most likely to slip
+
+| risk | why | what it costs | mitigation |
+|---|---|---|---|
+| **HermiT finds unsats late** | the deep check has not run against the current store, and P1–P2 add 10 defining axioms on one parent | P5 → P6 slip, and P6 has a hard external dependency | take the baseline at the **start of P5**, on the pre-P1 build, not before — a baseline against a corpus and an ontology that are both still moving measures nothing. Deliberately deferred 2026-09-10. |
+| **P1 curation is slower than 10 axioms suggests** | each needs a definition, a bearer decision, and a parent — the `degree of wound pain` note shows how much thought one takes, and PATO turned up two false friends in one pass | the 16 CQs it carries | the pattern is fixed and already exists ten times; copy structurally, decide only the names |
+| **BioPortal submission mechanics** | external service, unknown current state | the whole tail | verify in P0, not in P6 |
+| **9 FAILs blocked on `RelationType`** | structural, not incidental | 9 CQs | P3 is scheduled in parallel, not after |
+| **The derived rebuild (P4) is dirtier than it looks** | section E redefines classes that store terms have already been absorbed into, so the mapping review is re-reading decisions, not recomputing them | P4 slips into P5's window, and P6 has a hard external dependency | keep every measuring run throwaway, so only the last review is load-bearing; the LLM adjudication cache means rebuild *n* is far cheaper than rebuild 1 |
+| **The stale skeleton has already cost something** | both gates have reasoned over a 20 Aug WONT since 4 Sep; quarantine decisions made in that window were made against the wrong ontology | unknown until re-measured | fix the staleness check in P0, then re-run both gates and diff the quarantine |
+| **Curated / extracted split gets muddled** | if provenance is not recorded per class, the method chapter cannot state it | credibility of the whole result | provenance is already per-edge (`text` / `curated`); keep it that way and never let a curated edit be written by code |
+
+---
+
+## How this file is maintained
+
+1. Add a column to **Measured state** whenever a number moves; never overwrite
+   the previous column — the trend is the evidence.
+2. Record what *caused* the movement next to it. "CQ 6 → 22" is a number;
+   "CQ 6 → 22 after the determinate-quality block" is a result.
+3. When a phase closes, keep its text and mark it closed with the exit figure.
+4. Every figure measured, never estimated (rule 15).
+
+---
+
+## Changelog
+
+| date | what |
+|---|---|
+| 2026-09-26 (later) | **`resolve_chains` rebuilt on connected components, and the mapping applies in one hop for the first time.** From the curator, on being asked whether a curator's `A -> B` should follow when B moves to C: *"these are logical basics. Transitivity. No point in arguing with that."* Right — and the second half of their answer was the fix: match the canonicals and merge both term sets rather than chase the chain. The old function WALKED each chain to its terminal over FOLDED nodes while verifying the RAW mapping, so **2,206 entries whose first hop folded to one node were invisible to the resolution and visible to the check** and it raised rather than finishing — correct, and useless. The mapping is now read as connected components: one concept, one canonical, every member one hop away, nothing left to iterate. Which spelling wins is the only question — **one sink** is the canonical already chosen and is NOT re-elected (re-ranking would rename what the curator settled); **no sink** is a cycle and elects by `canonical_rank`; **several sinks** is two spellings that fold together pointing different ways (`patient-reported outcome` against `patient-reported outcome measure`, 27 live), which elect and whose losers are REPORTED, because if they are really two concepts the fix is to refuse an edge, not to keep a chain. Two more shapes live inside a single folded node where the component pass draws no edge: a cycle (`Co-assembly <-> co-assembly`, **874** after pass 0) and a chain (`IL‑10 -> Il10 -> il10`, the last one standing, and its hyphen is U+2011 — with an ordinary hyphen it folds differently and takes the other code path, which is how the first version of that test passed while covering nothing). Every one of the five shapes was found by RUNNING it on the live mapping, not by reasoning about it. Result: **2,206 chained -> 0**, 37,300 entries, and `ConceptStore.normalize`'s single hop is finally enough. An earlier attempt at the same fix dropped 491 mappings it should not have and was reverted rather than shipped. `tests/test_mapping_resolve_chains.py` 25 tests, 15 mutations, all caught. Full suite **1,489 passed, 1 xfailed** (the 8 title-cased acronym plurals, pinned). Rules 37/38 updated. |
+| 2026-09-26 | **Pass 0: a rule settles it, or nothing does.** From the curator — exhaust regex and the other strong methods before any SapBERT or LLM call, and stop seeing plural-to-singular merges come back as model verdicts. Measured: of 96,243 store terms, **9,650 are a pure spelling variant of another** (5,638 needing only the singular rule, 3,027 case alone, 584 a hyphen, 272 British spelling) against 2,820 the mapping had found. Four deterministic steps — singular head noun, British to American, case/hyphen/punctuation folded, group and merge — singular BEFORE spelling, because `Statistical Analyses` must reach `Statistical Analysis` and never the British-verb reading of `analyses` that `breame` answers with `analyzes`. **Applied: 22,724 group merges + 9,578 lone respellings, mapped terms 6,292 → 37,614, distinct concepts 90,291 → 84,405.** British/American uses `breame` (the curator's suggestion; it knows `exercise`, `surprise` and `expertise` are not British) over morphological patterns guarded by Zipf — nothing above 4.5 is touched and the candidate must be strictly commoner. Guarded instead by "the result occurs in the corpus", as first written, the patterns produced `toe → te`, `four → for`, `anaerobic → anerobic` and `expertise → expertize`, the last because a typo in one abstract made `expertize` occur: **the corpus is not evidence**. Nor is a dictionary — `/usr/share/dict/words` is Webster 1934 and blocked `oesophageal → esophageal`. All 144 conversions the corpus triggers were listed and read; five are wrong for medicine and are held back (`disc` — intervertebral, optic, and disc diffusion; `aesthetic`; `gases`; `gauge`; `fillet`). Two more real-data bugs: `irAEs` reaches the store title-cased as `Iraes` and `ae → e` made it `Ires` (mid-word patterns now need six characters), and `-yses` is the plural of `-ysis`, not a British verb. **And a bug far beyond pass 0: `canonical_rank` was not a total order.** `Derived Indices` and `derived indices` tie on anchor, frequency, word count and length, so `max()` over a set returned whichever the process's hash seed iterated first — the canonical of a tied group differed between runs of the same pipeline, and `build_from_embeddings` and `resolve_chains` share the function. Found by pass 0 failing to converge: a second run wanted to rewrite 773 groups it had just written. The rank now ends with the term; a test runs it in five separate interpreters. Rule 41; `tests/test_pass0.py` 32, `tests/test_spelling.py` 96, `tests/test_canonical_rank_is_total.py` 6, all mutation-checked. **Left open and named:** `resolve_chains` cannot reach a fixed point — it resolves a graph of FOLDED nodes and then verifies the RAW mapping, so every chain whose first hop folds to one node (`Subcutaneous Tissues → subcutaneous tissues → subcutaneous tissue`) is invisible to the resolution and visible to the check. 2,206 chained entries remain and the function raises rather than half-applying, which is correct; a fix attempted here dropped 491 mappings it should not have and was reverted. Also open: 8 title-cased acronym plurals (`Dfus`) cannot fold onto their acronym, pinned by an xfail. |
+| 2026-09-25 (evening) | **`TermMapping` became `TermMappingAndGate`: whether a term belongs is now a verdict on its record, beside where it belongs.** From the curator's question — would it not make sense to fold the block and whitelists in, so the inclusion verdict on a canonical is visible where its mapping verdicts are. Yes for two of the five lists, no for the other two, and the split is rule 29: `METHODOLOGY_BLOCKLIST` (7,757) and `WHITELIST` (2,684) are per-term decisions wearing a list costume, while the 69 + 1,246 KEYWORDS are rules over strings nobody has seen — `Blocker` applies them to all 96,243 store names — and cannot be per-term records. The two exact lists folded in as `gate.rule` verdicts labelled *provenance unknown*, which is the honest verdict: they were written by a `cos ≥ 0.92` threshold and an LLM batch straight into source files, with no verdict, reason, date or author, and they had swallowed `silver sulfadiazine`, `photobiomodulation`, `tissue repair`, `collagen synthesis`, `bone healing` and `vac therapy`. **10,441 rule verdicts written, records 9,304 → 19,318**, read back from disk. Precedence is curator, then the passes, then the rule; passes that CONTRADICT each other decide nothing and fall through, because a disagreement is the only signal saying a term needs looking at and picking a pass throws it away. Two things the migration taught: a `rule` verdict has to keep the position its list had — behind the whitelist keywords — because putting it first changed `abusive head trauma` and `absence of vaginal cleansing right before surgery`, and a fold that changes a decision has lost one; and `if self.gate` turned the gate OFF silently, because `__len__` counts the live mapping and a gate holding ten thousand scope verdicts with no mappings is falsy — found by a test failing on a term the curator had explicitly let through, fixed to `is not None`. Verified, not assumed: after the fold `Blocker` condemns **exactly the same 4,138 of 96,243 names**, identical `score()` distribution. `blocked_names()` reads `gated("out")` and the review sheet gained a `gate says` column, so the **201 of 1,612 hand-reviewed families whose canonical was already rejected** (167 of them approved) can no longer be invisible. Rule 40; `tests/test_gate.py` 34 tests, 14 mutations, all caught. Also this session: the contested 15 republished as a per-TERM review (`claude.ai/artifact/3YAcYZdx8C1ZmWaiYNrtFq`) with the persistence rebuilt — every decision written on the tap, `update()` merge, `DB` set only after a successful read-back, a `localStorage` mirror reconciled on boot, and the buttons inert while nothing is saving; `Na+ → NA` refused (the sodium ion is not 'not applicable'); `MemoryDataManager` now round-trips through JSON, because a double that returns the live object back on reload passes whatever the save did. **Not done, and named:** the two config literals are still what `BlockList`/`WhiteList` read and `term_lists.add/remove` write, so gate and literal are two writers until the literals become a generated view; and neither gate pass has run — `pass1` and `pass2` are empty and **77,317 store names still have no verdict from anyone**. |
+| 2026-09-25 | **The phone review applied — 1,612 families — and the four ways the sheet was not carrying what the curator wrote.** The store held **1,612 decisions, not the 308 remembered** (1,285 keep, 296 reverse, 20 repoint, 11 reject across 29 buckets); the earlier reading of 209 was a snapshot taken mid-session. Rehearsing the apply against the real data before running it found four defects, each of which would have been invisible afterwards. **(1)** One re-point target was prose — `wound healing is a class in the onto and everything should merge into that` — which applied as typed mints a 74-character class name holding 995 mentions; `label_shaped` now refuses a target over eight words or holding a finite verb, and `--resolve` records the reading with the original words kept in `why`. It was read as `keep`, and the substance is right: GO_0042060 is the class, and it carries **no `rdfs:label` in the build at all**, only `IAO_0000118 "wound healing process"`, which is why the canonical looked wrong. **(2)** 18 of the 19 re-points were a plural canonical being singularised, and the applier moved only the MEMBERS — `silver-containing dressings` would have gone on standing beside `silver-containing dressing`, holding its own mentions. `expand_families` adds the canonical whenever a correction moves the family, and only then. **(3)** `type 2 diabetes` gathers both `Diabetes Mellitus type 2` and `diabetes mellitus type 2`; the correction `Diabetes mellitus type 2` named both case-insensitively, so both rows read themselves as the chosen one and each wrote an inverse entry for the same canonical, the second overwriting the first. The fallback now fires only on a unique match, scoped to the family, and anything else is a re-point reported by name. **(4)** `N/A -> NA` and `Na+ -> NA` are live entries and pandas reads both cells as missing: family 3200 showed in the UI with no canonical and no terms, and `.fillna("")` would have applied a decision on it to the empty string. Every sheet reader now passes `keep_default_na=False`. Applied and verified: **312 refusals, 584 re-points, 296 reversals, 1,943 approvals**; then the curator's ruling that every untouched family agreeing same_class on both passes is accepted — **1,835 families, 2,105 terms, 13,098 mentions** — leaving **15** held back (8 with a dissenting pass, 6 never adjudicated, and family 3200). Record: 9,304 terms, 7,945 pairs, **5,295 curator verdicts** (4,065 kept, 640 refused, 301 reversed, 289 re-pointed), 6,527 live entries. `TermMapper.judge` stopped saving — it had written the whole 4.4 MB record after each of 2,105 verdicts, 9 GB and twenty minutes — and the applier now reads the `curator` verdict back off the file, because an approval changes no mapping and would otherwise read back identical whether or not it landed. Rule 39. Then the blocking audit the review provoked: **201 of the 1,612 families decided by hand have a canonical the blocklist already rejects**, 167 of them approved. Of 96,243 store names, 14,788 are whitelisted, 4,138 blocked and **77,317 never ruled on either way** (133,646 mentions). The damage is in the 69 KEYWORDS, which block 3,988 names against the explicit list's 129: `pain` alone blocks **429 names / 607 mentions** — `wound pain`, `Severe distal pain`, `painful ulcerations` — while WONT defines `painful` as *"A degree of wound pain that qualifies its bearer as painful."* `METHODOLOGY_BLOCKLIST` holds `silver sulfadiazine`, `photobiomodulation`, `tissue repair`, `collagen synthesis`, `bone healing`, `vac therapy`, `il-6` with no provenance for any of them, because the two blocking passes write straight into `config/*.py` and record nothing. `data/review/blocking_keyword_damage_2026-09-25.csv` ranks all 69. Nothing on any list changed. Tests 1,177 + 59 new (30 + 17 + 12), all mutation-checked. |
+| 2026-09-24 (evening) | **The curator's first review pass, and the bug it found in the singular rule.** 173 rows marked. Nine marked `n`, and reading them showed the sheet could not say what six of them meant: "reverse the mapping", "the process suffix is what i acutally want here", "always prefer the non hyphenated synonym", "stick to american". `n` refuses a merge and leaves BOTH spellings standing as separate concepts — the opposite of "the other one is the right name". The row's own term in `corrected canonical` now means REVERSE: refuse that pair, write the inverse entry. Two writes together, because the refusal is what stops the next build re-proposing the direction the curator rejected. Applied and verified against the file: **8 refusals, 6 reversals, 1 re-point**, 6,531 → 6,529 live entries, 15 curator verdicts on record. Then the bug behind one of the marks — *"canonical is always the singular, this should have been handled by the regex"*. It had not been: `singular_spelling('cases')` returned **`cas`**. `singular_candidates` returns two answers for the ambiguous `-es` branch and `singularize` takes the first, documented as harmless **because a key is only ever looked up** — a premise rule 23 broke on 23 Sep by making that function produce the store's NAMES. **938 store names across 96 head nouns, 1,722 mentions**, in line to be written `cas`, `dos`, `phas`, `nurs`, `caus`, `respons`, `diseas`; none of it had happened, because the store was still at its pre-apply state. Naming split from lookup: `naming_singular` decides by group (`-ses`/`-zes` keep the `e`, `-ches`/`-shes`/`-xes` drop it), lists the stems that are already words (`virus`, `census`, `gas`, `bias`) because no suffix separates them from `cause`, handles the open-ended `-sis` compounds by tail (`osteosyntheses`, `sub-analyses`, a `meta‑analyses` with a non-breaking hyphen), and leaves all-caps alone — 275 all-caps heads end in S and the rules were eating the last letter of `POSAS`, `ARDS`, `NIRS`, `KOOS`, `ASES`. **42 head nouns corrected, 1,257 mentions**; `singularize` and every folded lookup unchanged, with `fold` gaining exactly 20 changes and 4 newly-merged pairs, each a real singular/plural. Rule 23a. Tests 1,177. |
+| 2026-09-24 (later) | **"The term mapping class should be a bucket for the mapping ground truth and all of its views."** The curator's follow-up, and the fix for drift I had introduced the same day: rule 37 copied each model verdict onto the record while `mapping_adjudication_*.json` and `mapping_second_opinion_*.json` stayed authoritative — two homes for one fact, no single writer. `TermMapping` now holds the ground truth and computes every view from it: `data`, `pass_cache(name)`, `verdicts`, `judged`, `subsumption_candidates`, `disagreements`, `metadata`. Verdicts moved from the term to the **pair** (`pairs` keyed by canonical), because 192 terms had been judged against more than one canonical and a term-level `pass1` could hold only one of them. `pass_cache` is a `MutableMapping` over the records, so the adjudicator's cache reads and writes the entry it judges; the orchestrator no longer loads or saves a cache file, and `readjudicate` stops the reading, not the writing. Three consequences measured on the live file: **the caches folded in with 0 conflicts** (7,418 pass-1 and 4,813 pass-2 verdicts read back from disk; 2,761 + 157 were new to the records, and **2,548 judged terms had had no record at all**, so 6,531 records became 9,079); **`mapping_subsumption_candidates_*.csv` went from 8 rows to 1,072**, because it was written from what a run happened to RE-ASK and the cache answered the rest from memory — 952 candidate edges silently absent from the artifact whose job is to carry them; and among those 1,072, **93 are live merges pass 2 calls `narrower`/`broader`** while pass 1 called them the same class, which is a review queue that did not previously exist. `remove()` became `retire()`: a mechanical prune unmaps and keeps the record, because deleting it also threw away verdicts the pair had cost credits to obtain. A write over a standing refusal is no longer silent — `add` raises, `add_batch` skips and returns the skipped pairs, every caller prints them. Five hand-rolled `_Mapping` doubles that had drifted apart were deleted for one `memory_mapper` over the real class. Rule 38; `tests/test_mapping_ground_truth.py` 29 tests, 15 mutations, all caught. Tests 1,105. |
+| 2026-09-24 | **The mapping became a record, and a curator's refusal stopped being a deletion.** From the curator's question — why a separate CSV rather than more data in the mapping dict. Everything known about an entry lived in four artifacts, three of them derivable; the fourth was being thrown away. `withdraw()` deleted the entry and recorded nothing, so the next `build_from_embeddings` re-proposed the merge and the adjudication cache re-approved it from memory: **the category guard's refusals survived a rebuild and the curator's did not** — an evening of review erased by a step that runs whenever the store changes. `term_mapping_*.json` now holds one record per term (`to`, method, confidence, `pass1`, `pass2`, `curator`, and `refused` keyed BY CANONICAL so refusing `materials -> material entity` leaves `materials` free to map elsewhere). `data` stays a `dict[str, str]` projection, so no consumer changed; the old flat file migrates on load. `build_from_embeddings` skips any pair with a standing refusal and says so; `apply_review_sheet` records refusals and verifies they read back. Rule 37. Live file migrated and backfilled: 6,531 records, 4,657 carrying pass 1 and 4,656 pass 2. Ten test failures from the change were all scaffolding — eight doubles missing `is_refused`, two poking a private `_metadata` that records replaced; no defensive getattr was added, because hiding that drift is what the refusal check must never do. Tests 1,076. Classification checked afterwards: the two review CSVs are pure views, but the two adjudication caches are NOT — 2,548 of the pass-1 cache's 7,418 verdicts are on pairs the mapping no longer holds, so they are primary evidence, and re-asking is re-measuring, not deriving. |
+| 2026-09-23 (late) | **"I always want the singular. This can be regex too."** The curator's ruling moved rule 23 out of the mapping and into `ConceptStore.normalize`: the store's name is singular, applied to every name it keeps, after the mapping has had its say so a plural canonical cannot reintroduce one. `singular_spelling` keeps the label's own casing (`Diabetic Foot Ulcers → Diabetic Foot Ulcer`) and handles the acronym plurals no suffix rule sees (`DFUs → DFU`), while the singulariser under it protects `diabetes`, `sepsis`, `necrosis`, `osteomyelitis`, `series`; declared categories are exempt. **The mapping lost 7,516 entries that could not change a name** — 3,324 case-only, then 4,192 more once the store singularised — going 14,047 → **6,531**, of which 4,659 are content decisions. `store_name` is now the single implementation of "what is this term called", used by `normalize` to rename and by `prune_inert_mappings` to judge inertness, so the two cannot drift. Pass 2 complete: 4,813 pairs, 4,007 agree, **800 disagree in 715 families**, 0.17 credits. Review queue: 3,456 families, 845 needing eyes. Tests 1,073. |
+| 2026-09-23 (evening) | **The category guard had never seen the case it was written for.** A failing test after the apply traced to `Necrosis Process -> Necrosis` — a process absorbed into a material entity — landing in the store. Cause: the guard is consulted only for ANCHORS, and anchors are the ontology labels that are NOT also store terms, so it goes quiet whenever a class label is common enough to be extracted. Measured: 5 such merges, 2 of them its own docstring's examples; 516 content merges cross disjoint BFO branches with nothing checking them. Curator's ruling — **the ontology's own label always wins** — is the fix: re-spelling a canonical to the class label turns a store-to-store merge into the anchor mapping it always was, and the guard then sees it (rule 36). Applied: **88 canonicals re-spelled, 42 identities dropped, 3 refused** (`Necrosis Process`, `softening -> softened`, `antibiotic treatments -> Antibiotic therapy`); only content differences are put to the guard, since asking it about inflections refused 19 good ones. Second finding: the methodology blocklist runs at extraction only, while rule 23 singularises canonicals, so `patients -> patient` put **462 blocked names back into the store carrying 7,201 mentions**, all queued for deletion with whatever merged into them — 990 such entries reported to `data/review/blocked_canonicals_2026-09-23.csv` as a `review_lists` decision, not repaired here. Store restored from `data/backup/` to the pre-apply state; mapping 14,101 → 14,056. Review rebuilt around **3,574 families** (4,813 entries) with a rule-filled `suggested` column, and pass 2 — a second, independently-evidenced adjudication whose disagreements are the only rows that reach the curator — running over all 4,813 content pairs. `GLOSSARY.md` added. |
+| 2026-09-23 | **Mapping applied; two more silent shortfalls found in the applying.** `run_apply_mapping` run against the 14,101-entry mapping with the store backed up first to `data/backup/` (outside the cache's ten-version rotation). **98,522 → 84,418 distinct terms, 14,104 names absorbed, 15,386 renames logged in the store's own decision record, 176,360 entity records.** Two defects surfaced in the doing. (1) A chain only the FOLD could see — `deep partial thickness skin burns -> deep partial-thickness burns` beside `Deep partial-thickness burns -> …burn wounds`, one capital letter — survived the exact-string resolution and the store's own folded lookup found it; `resolve_chains` now walks folded, and leaves fold-equal entries alone so a chosen spelling (`Povidone-iodine`) is not traded for the fallback. (2) One `normalize` pass was not the whole apply: pass 1 collapsed 12,912 names, pass 2 another **1,191**, pass 3 one, pass 4 none — and the run reported a finished apply after pass 1. `MappingCleaner.apply` now runs to convergence, says how many rounds a single pass would have left, and raises if it never settles (rule 24 refined). Store verified at the mapping's fixed point: 0 of 84,418 live names still match a mapping entry. |
+| 2026-09-22 | **P4 step 2 built, and the mapping was not a forest.** The 21 Sep run finished in 283 min: 7,188 SapBERT pairs, 5,026 non-identity mappings, 10,433 pairs kept on surface form, 7,062 adjudicated → 5,155 same class, 960 subsumption candidates, 947 refused and withdrawn. Then a shape defect: the mapping FILE accumulates across builds even though every build writes a forest, so it held **735 chains whose second hop really renames** and **408 two-cycles that are not case variants** — `thermal burns -> thermal burn` beside `thermal burn -> thermal burn injuries`, `CFU -> CFUs` beside `CFUs -> CFU`. `normalize` follows one hop, so a chain half-landed the merge and a cycle undid it, both silently; `prune` could not see either. New `TermMapper.resolve_chains` (rule 23 refinement, ten mutation-checked tests) re-pointed 349 entries, broke 1,444 cycles and withdrew 10 whose chain ended at a class the category guard refuses for that term. It runs BEFORE the adjudication now: re-asking the 4,818 content pairs cost 0.01 credits and withdrew **30 more** — `granulations -> Granulation process`, `autoimmune disorder -> Autoimmune disease` — all created by the resolution itself. **15,585 → 14,101 entries.** Review sheet rebuilt as `scripts/mapping_review_sheet.py` + `scripts/apply_review_sheet.py` (the 10 Sep applier had been a scratchpad file and was gone): 4,818 rows differ by a real word, 9,283 by case/punctuation/plural and are not asked about. Handed to Moritz as `data/review/MAPPING_REVIEW.md`. Tests: 1,024 pass. |
+| 2026-09-21 | **PC big batch complete.** Run 4 (mid-run normalisation off) went 2,097 of 2,105 in 13.3 h with no breaker stop; the retry pass recovered 6 of the 8 leftovers. **Store: 6,029 of 6,031 fetched PMIDs, 179,489 mentions, 91,754 distinct terms** (from 606 / 12,901 on 17 Sep). Two abstracts fail on every attempt with an empty error - both ~3,200-character structured abstracts (a rotator-cuff rehabilitation trial, a pressure-injury risk-model review); left out, recorded here. Cost of the whole 5,425-abstract batch: 6.6 credits (0.12 per 100 abstracts once the milestone was off; 0.5 before it). PC exit reached; next is P4, the single derived rebuild, starting with the term mapping review. |
+| 2026-09-20 | **The timeout bursts were self-inflicted.** Run 3 stopped after 250 abstracts with credits still in hand. Cause found in the logs: `normalize_every=1000` counts *mentions*, so the mapping milestone (SapBERT over ~56k store terms, on the CPU, synchronously) fired every ~35 abstracts — 89 times across the 18–20 Sep runs — and the ten in-flight LLM requests timed out behind it. Measured on run 2: 615 of 750 timeouts within 30 abstracts of a milestone; two of the three breaker stops with zero abstracts cached after one. `pc_extract.py` now runs with mid-run normalisation off (third argument; the mapping is a P4 step and runs once). Run 4 launched at 15:06 on the remaining 2,105. |
+| 2026-09-20 | **Batch stopped by credits; extraction quality measured.** OpenRouter at 50.17/50 → breaker at 05:59. Store **3,676 PMIDs** (606 old-schema + 3,070 new), **2,355 to go**. New-schema docs: 28.2 entities and 14.4 relations per abstract (old: 26.9 / 9.8); categories material 34 %, process 30 %, information 14 %, quality 13 %, realizables 6 %, off-tree BFO uppers 0.1 %; 13 empty docs. Schema rejected 10,069 relations (41 % of docs touched): 2,134 endpoints not among the extracted entities, the rest category pairs the schema does not license (`is about` 3,006, `has function` 1,015 …); 24 unknown predicates in 3,070 docs. **Grounding:** 2.8 % of mentions hit a curated label, and there the extracted category agrees with the ontology **86 %** (old schema 91 %); the disagreements are systematic — SSI / wound complication / dehiscence / sepsis extracted as *process* or *disposition* where WONT says material entity (~220). Blocklist would catch 4.1 % of new mentions (old docs already cleaned: 0.1 %). **Corpus:** 20 % of abstracts carry no wound vocabulary at all — three queries (wound-healing MeSH, lacerations/abrasions, necrotizing fasciitis) contribute 343 of the 613 off-topic papers. |
+| 2026-09-18 | **PC big batch started.** Pilot of 50 abstracts first (29 min, 35 s/abstract, 27 transient timeouts all recovered, 1,576 entities = 31.5 per abstract, category and relation mix sane, 6 relations rejected by the schema): clean. Schema regenerated on start (rule 32) — 80 titles added/changed, 39 gone. Then the cap-200 batch launched detached: **5,375 abstracts to extract** (6,031 fetched, 656 in store), ≈ 52 h at the pilot rate; `output/pc_extract_batch2.log`; resumable by PMID. Authorised by Moritz 18 Sep. |
+| 2026-09-17 | **CQ 49 / 49.** The last anatomy CQ answered (`Diabetic foot ulcer ≡ Diabetic wound ⊓ located_in some Foot`, FMA_9664 via `fma_module`), three retired as incorrect on the curator's ruling; the plan-specification naming convention applied to 31 classes; one scarring process instead of two; `Inflammation process` minted. Every in-scope competency question now passes; 24 are declared out of scope with a recorded reason. ELK 0 unsatisfiable, closure 34,856 triples, 168 external terms labelled, 1009 unit tests. |
+| 2026-09-17 | **Ownership extended to annotations.** WONT carried 65 `IAO_0000115` definitions on classes it does not own (CHEBI, DOID, GO, HP, PATO, OBI, COB, IAO) — every one a duplicate of the module's; removed, rule 34 refined. Also: `Method used for medical condition treatment` and a `prophylaxis plan specification` moved into MILD (120099/120100), hypertrophic scar off the disorder branch, `Wound care procedure` dropped, DOID `relatedMatch` on sepsis/osteomyelitis, CQ022 retired. Measured: **CQ 48 / 52**, closure 34,787, 167 external terms labelled, ELK 0, 1009 tests. |
+| 2026-09-17 | **Treatment and phase CQs rewritten on the curator's rulings; P3 withdrawn.** Nine `is_treatment_for` CQs → an agent `participates_in` a treatment process (dressing → wound dressing process, vancomycin → antibiotic administration process, mattress/footwear → pressure offloading process) or a process `has_participant Wound`; `Wound treatment process ⊑ has_participant some Wound`. Four phase CQs → what the classification scheme says (`Proliferative phase is_about Granulation tissue formation process`; `Inflammatory phase is_a Wound healing phase`), the checker reading individuals (rdf:type step, plain assertions; 2 tests, mutation-checked). CQ044/073 retired. Measured: **CQ 48 / 53**, ELK 0 unsatisfiable, closure 34,721 triples, 1009 unit tests. Left: the five FMA anatomy references. |
+| 2026-09-17 | **Ten CQs retired on curator rulings, three answered.** Premises rejected and recorded as `out_of_scope` with reasons (NF and abscess are not wounds; laceration not acute by definition; DFU, impaired healing, sepsis, dehiscence not complications by definition; colonization is a grade; irrigation not part of cleansing) — in-scope denominator 65 → **55**. Burn ⊑ trauma, `Wound complication disorder`, `has_participant` in the checker. Measured: **CQ 35 / 55**, ELK 0 unsatisfiable, 1007 unit tests. |
+| 2026-09-17 | **Complication pattern and the sixth curation round.** Co-location retired for MILD's complication pattern (rule 35); `output_of` on unplanned processes; venous/arterial classes renamed. Then 44 hand-minted classes reviewed and renumbered to `WONT_0000544–587` (wounds, disorders, phases, interventions, diagnostics, criteria, roles/functions), `threshold specification` moved to MILD (`MILD_120098`) because MILD had been made to depend on WONT. Fourteen CQ label fixes, CQ003/CQ056 rewritten. Measured: **CQ 21 → 22 → 32 / 65**, closure 34,661 triples, 165 external terms all labelled, ELK 0 unsatisfiable, 441 WONT classes + 48 individuals. What is left is in `WONT_TODO` §1: 13 curator's calls, 4 anatomy references, and the `is_treatment_for` decision (9 CQs). |
+| 2026-09-16 | **Three more rounds of hand curation reviewed.** `colonized` and the CDC/IWII bioburden split, aetiology via wound-causing processes, `Neoplastic wound` dropped; 23 new entities renumbered `WOND_1200xx` → `WONT_0000511–533` (the `WOND_` prefix keeps recurring from Protégé's entity-creation default — check it each round). Review fixes: venous co-location axiom restored (cut, not copied); `arterial-inflow wound ⊑ PAOD` removed; `Autoimmune disease related wound` had lost its parent; CDC `Clean wound` freed from `≡ Wound ⊓ sterile`; IWII hub union completed. `fma_module` built (Skin → Anatomical entity, grounded under material entity), MILD imports it. **The chronic branch will never be populated** — no wound class is chronic by definition, every wound starts acute — so CQ001/002/006 were rewritten, plus CQ010/011/012/033/091/110; the checker learned `output_of` and intersection fillers. `ontology_labels()` now skips individuals (grades stay individuals by decision) and includes alt terms. Measured: **CQ 15 → 21 / 65**, closure 34,275 triples, roots beside `entity`: `disease`, `unit`. |
+| 2026-09-12 | **WONT/MILD hand edit reviewed; modules regenerated (F2).** Moritz applied `WONT_TODO` A and most of E in Protégé. Review: 36 `WOND_1200xx` IRIs renumbered to `WONT_0000475`–`0000510` with `extend.next_free_id`; definitions written for all 36; `Wound ⊑ has_quality some epithelialized` removed; a definition that had landed on `skos:relatedMatch` moved; Jackson's zones relabelled as zones; direct `owl:imports pato.owl` removed. `build_disease_proposal.sh` FIX 3: the 16.3 MB `obi_module` was STAR running away over full `pato.owl` (measured: 0.9 MB without it, 15.2 MB with) — PATO is now BOT-extracted alone first, DOID/HP are MIREOT paths, `unit` a stub; closure 220,252 → **34,071 triples**, 29 foreign roots → 3, schema rebuild 33 s → 2.6 s, every external class WONT/MILD uses labelled. CQ checker taught to see restrictions inside `owl:equivalentClass` (they entail the subClassOf form) — 1 test, mutation-checked. **CQ 6 → 15 / 65.** B closed as not needed (parents were inside intersections). |
+| 2026-09-12 | **The store is the one record (rule 33).** Blocklist, predicate filter, prune and reasoner gate now write *verdicts* into the store's `decisions` record instead of deleting; one `effective_records()` applies them for every reader; verdicts are authored and liftable, so un-blocking a term and re-hearing a quarantined triple against a newer WONT both work. Measured: live store 606 docs / 22,280 cells, effective view identical to raw (no verdicts yet); the 278 entities the blocklist removed mid-extraction are gone for good. 16 tests, 5 mutations fail by name. |
+| 2026-09-12 | **Schema staleness closed** (the last open P0 item besides B): the builder moved into the package as `llm/schema_builder.py`, `run_extract_to_store` regenerates it when any source is newer; 14 tests, 4 mutation-checked by name. Measured: rebuild 33 s, current schema identical to a fresh build apart from the date. The full-suite run of 2026-09-12 also found and fixed the `Skin grafting → Skin graft` guard hole (a contradicted typing read as unknown). |
+| 2026-09-10 | Created. Baseline measured: 142 abstracts, CQ 6/65, 47 of 51 unresolved concepts absent from the store, 9 of 18 FAILs blocked on `RelationType`. |
+| 2026-09-11 | **PC batch 1 complete: all 606 fetched abstracts extracted, 12,901 distinct entities** (from 3,536). Two interruptions on the way — the provider went unresponsive and the circuit breaker aborted at 469 after 22 consecutive timeouts, exactly as designed; and a relaunch picked up the cap-200 CSV and started the unauthorised big batch, killed after one PMID; the runner now takes a PMID-restriction file. |
+| 2026-09-11 | Found and fixed: `add_llm_extracts` queued rows, not PMIDs, so a paper found by three queries went to the model three times and the last answer silently overwrote the first — 193 calls for 136 PMIDs measured; the cap-200 batch would have wasted 1,974 of 7,536 calls. Deduped on PMID, folded count announced, 4 tests, mutation-checked. |
+| 2026-09-11 | Cap-200 fetch done in 3 min, 0 errors: 606 → **6,031 unique PMIDs** (9,351 rows), **5,659 unextracted**. Big-batch extraction gated on E + schema regeneration, by decision. Found `extraction_schema.yaml` is a WONT snapshot with no staleness check — same class as the skeleton; only the gate weakens, not the store. Added to P0. |
+| 2026-09-11 | PC extraction relaunched for the remaining 235 after the first run died with its session at 371 PMIDs / 8,575 entities. Runner moved into `scripts/`, logs into `output/`. Cap-200 fetch of the same 43 queries started in parallel (`scripts/pc_fetch.py`). |
+| 2026-09-10 | **PC started.** The abstract database holds 606 unique PMIDs across all 43 queries and only 142 were in the store, so 464 were fetched and never extracted — 614 rows now running through `run_extract_to_store`, at no PubMed cost. Every query returned exactly 20 PMIDs: the search ran at a cap of 20, so re-running the same list at 200 is the next lever. |
+| 2026-09-10 | **P0 done and verified: 118 tests pass.** `fold()` now yields candidates instead of guessing once; the CQ resolver uses the shared `LabelIndex` (rule 13); `build_reasoner_skeleton` compares mtimes and `reasoner_gate` routes through it. All 8 new tests mutation-checked — restoring either defect fails them by name. One existing test changed meaning and was rewritten: `Chronic Wounds` used to be reported as a missing class and now resolves. |
+| 2026-09-10 | **Environment hazard, hit and cleared:** 18 files in the tree were dataless iCloud placeholders (`st_blocks == 0`) — including the corpus CSV and three modules on the Orchestrator's import path. Reads block indefinitely at 0% CPU and `brctl download` returns 0 without materialising; forcing a full read of each one worked. 8 remain evicted, none on the extraction path (`ro.owl`, `uo.owl`, three superseded `ground_truth_*` copies, two stale caches). Worth knowing before the next stall: it looks like a hang, not an error. |
+| 2026-09-10 | HermiT baseline called off as premature — the corpus and the ontology are both still moving, so it is deferred to the start of P5. Measured on the way out: `run_deep_reason` cannot read Turtle and OOMs at owlready2's default 2 GB heap, and reports an empty unsatisfiable set when it does. Both recorded in P5. |
+| 2026-09-10 | Pipeline run order traced end to end and added. The concept store and the abstracts survive a WONT edit — extraction never reads WONT — so the derived layer (steps 4–17) is what a curation change costs, and it is the cheap layer. Critical path split into two lanes converging on a single derived rebuild (P4). Found `build_reasoner_skeleton` reusing a skeleton 15 days older than WONT, with no staleness check. |
+| 2026-09-10 | P1 re-scoped after checking the full PATO: 4 determinates reused instead of minted, 2 false friends found (`sterile` is fertility, `chronic` is process duration), and `Infected wound` / `Malignant wound` found already better defined than CQ093/CQ091 ask. |
+| 2026-09-10 | **Rewritten for the stated priority: the ontology over the pipeline proof.** Hand curation moved onto the critical path (P1, P2); corpus expansion demoted from "the long pole" to a continuous non-gating track; the pipeline given its own measure (3552/4011 edges, 2811/3536 placed) instead of sharing the CQ score. Re-measured: 45 absent, not 47 — `Inflammatory Phases` and `Proliferative Phases` are in the store, unreachable through `fold()`. 684 parked entities resolved to 9 roots, of which 514 are methodology vocabulary and 170 are the real curation pool. |
