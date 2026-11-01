@@ -67,9 +67,11 @@ def test_catches_same_category_disjointness_the_schema_cannot(gate):
 
 
 def test_catches_disorder_versus_predisposition(gate):
-    """MILD asserts pathological disorder and disease predisposition disjoint."""
+    """MILD asserts material disease entity (pathological disorder, its exact
+    synonym, was a class of its own until 2026-10-30) and disease
+    predisposition disjoint."""
     out = gate.check_edges([
-        ("Some Risk Thing", "pathological disorder"),
+        ("Some Risk Thing", "material disease entity"),
         ("Some Risk Thing", "disease predisposition"),
     ])
     assert len(out.quarantined) == 2

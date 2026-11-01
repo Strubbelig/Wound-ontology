@@ -175,7 +175,7 @@ def test_part_of_is_bfo_not_a_minted_local_property(gt, tmp_path):
     property when it found none, so exported mereology pointed at an invented
     IRI no reasoner would recognise."""
     extend_ground_truth(
-        gt, tmp_path / "out.ttl", mere_hier=_hier([("New Part", "Wound")]))
+        gt, tmp_path / "out.ttl", relations=[("New Part", "part_of", "Wound")])
     g = rdflib.Graph(); g.parse(str(tmp_path / "out.ttl"), format="turtle")
     props = {str(o) for o in g.objects(None, OWL.onProperty)}
     assert props == {OBO + "BFO_0000050"}
@@ -269,15 +269,15 @@ def test_export_vocabulary_covers_the_extractor():
 
 
 def test_predicate_vocabularies_agree():
-    """StoreCleaner deletes any predicate not in ALLOWED_PREDICATES, so a
-    predicate missing there never even reaches the exporter."""
+    """The store's view leaves out any predicate not in ALLOWED_PREDICATES, so
+    a predicate missing there never even reaches the exporter."""
     from config.settings import ALLOWED_PREDICATES
 
     allowed = set(ALLOWED_PREDICATES) - {"is_a"}
     assert allowed - set(RELATION_IRIS) == set(), (
         "ALLOWED_PREDICATES permits a predicate the exporter has no IRI for")
     assert set(RELATION_IRIS) - allowed == set(), (
-        "the exporter knows a predicate StoreCleaner would strip from the store")
+        "the exporter knows a predicate the view would leave out")
 
 
 def test_every_export_iri_is_a_real_ontology_iri():

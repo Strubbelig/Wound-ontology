@@ -58,10 +58,14 @@ from rdflib.collection import Collection
 
 # ── paths ──────────────────────────────────────────────────────────────────
 from config.settings import (  # noqa: E402  (after the docstring, by design)
+    ALLOWED_PREDICATES,
+    BFO_OWL,
     GROUND_TRUTH_TTL as WONT_TTL,
+    LEGACY_PREDICATES,
     MILD_MODULES_DIR as MODULES,
     MILD_TTL,
     PROJECT_ROOT as PROJ,
+    RO_OWL,
 )
 
 OUT_YAML = PROJ / "config" / "extraction_schema.yaml"
@@ -335,12 +339,19 @@ def collect(onto: Onto):
     target.
     """
     anchors = {i for _, i, _, _, _ in ANCHORS} | {OBO + "BFO_0000001"}   # entity: the root, above every category
+    # An obsolete class is no grounding target (2026-10-30: pathological
+    # disorder, MILD_120022, merged into material disease entity); its label
+    # lives on as the new class's exact synonym.
+    obsolete = {c for c in onto.g.subjects(OWL.deprecated, None) if str(onto.g.value(c, OWL.deprecated)).lower() == "true"}
     own = sorted(
         (c for c in set(onto.g.subjects(RDF.type, OWL.Class))
-         if isinstance(c, URIRef) and (str(c).startswith(MILD) or str(c).startswith(WONT)
-                                       or (str(c).startswith(OBO + "BFO_") and str(c) not in anchors))),
+         if isinstance(c, URIRef) and c not in obsolete
+         and (str(c).startswith(MILD) or str(c).startswith(WONT)
+              or (str(c).startswith(OBO + "BFO_") and str(c) not in anchors))),
         key=str,
     )
+    if obsolete:
+        print(f"  {len(obsolete)} obsolete class(es) left out: {sorted(str(c).rsplit('/', 1)[-1] for c in obsolete)}")
     by_cat: dict[str, list] = collections.defaultdict(list)
     unresolved: list = []
     for c in own:
@@ -374,11 +385,61 @@ def collect(onto: Onto):
     for sc, p, oc, lab in REQUIRED_PATTERNS:
         patterns[(sc, p, oc)] += 0
         prop_labels.setdefault(p, lab)
+    # Every allowed relation is offered, whether WONT and MILD use it now or
+    # not (2026-10-30). Three times in one evening a relation dropped out of
+    # the schema unseen when the axiom that used it went (has as process
+    # boundary at end/start, immediately causally downstream of, has
+    # realization); the curator: "jetzt importier gesamt RO und fertig". MILD
+    # imports the whole of RO and BFO: a relation no axiom uses takes its
+    # domain and range from there, under the pipeline's own name (RO calls
+    # BFO_0000054 "realized in", the pipeline "has realization"). A relation
+    # with neither stops the build.
+    snake = lambda lab: lab.strip().lower().replace(" ", "_")  # noqa: E731
+    have = {snake(lab) for lab in prop_labels.values()}
+    wanted = [p for p in ALLOWED_PREDICATES if p != "is_a" and p not in LEGACY_PREDICATES and p not in have]
+    if wanted:
+        ext = rdflib.Graph()
+        for src in (RO_OWL, BFO_OWL):
+            ext.parse(str(src))
+        both = ext + onto.g
+        missing = []
+        for name in wanted:
+            props = {s_ for s_, l_ in both.subject_objects(RDFS.label)
+                     if snake(str(l_)) == name and (s_, RDF.type, OWL.ObjectProperty) in both}
+            pairs = {(onto.category(d), onto.category(r)) for p in props
+                     for d in both.objects(p, RDFS.domain) if isinstance(d, URIRef)
+                     for r in both.objects(p, RDFS.range) if isinstance(r, URIRef)}
+            pairs = {(d, r) for d, r in pairs if d and r}
+            if len(props) != 1 or not pairs:
+                missing.append(f"{name} ({len(props)} property(ies) of that name, {len(pairs)} category pair(s))")
+                continue
+            p = str(next(iter(props)))
+            for d, r in sorted(pairs):
+                patterns[(d, p, r)] += 0
+            prop_labels.setdefault(p, name.replace("_", " "))
+            print(f"  {name}: no axiom uses it; offered by its domain and range {sorted(pairs)} <{p}>")
+        if missing:
+            raise RuntimeError("allowed relation(s) the schema cannot offer -- no axiom uses them and RO/BFO give "
+                               "no domain and range: " + "; ".join(missing) + ". Add a REQUIRED_PATTERNS entry.")
     return own, dict(by_cat), unresolved, patterns, prop_labels
 
 
 REQUIRED_PATTERNS: list[tuple[str, str, str, str]] = [
     ("material entity", OBO + "RO_0000091", "disposition", "has disposition"),
+    # MILD no longer uses it (2026-10-30: course of the disease process lost its
+    # causal axiom, curator: "causally downstream wenn ich kausalität immer
+    # abgelehnt habe finde ich schwierig"), but the relations the abstracts
+    # state stay (asked, "Bleiben, wie sie sind"): without this line the next
+    # schema would drop it silently, as it once dropped has disposition.
+    ("process", OBO + "RO_0002405", "process", "immediately causally downstream of"),
+    # Their one use in MILD went with the required threshold crossing (rule 92);
+    # recurrences (rule 91) and the end of wound healing are boundaries the
+    # abstracts state with them.
+    ("process", MILD + "MILD_120085", "process boundary", "has as process boundary at end"),
+    ("process", MILD + "MILD_120084", "process boundary", "has as process boundary at start"),
+    # Its one use in MILD went with realized disease predisposition (curator
+    # 2026-10-30: "lösch nur realized predisposition"); the abstracts state it.
+    ("tendency", OBO + "BFO_0000054", "process", "has realization"),
 ]
 
 

@@ -96,6 +96,8 @@ class BaseHierarchy(ABC):
             self._df = pd.DataFrame(dtype=float)
         # (child, parent) -> source. Persisted next to the matrix.
         self._prov: dict[tuple[str, str], str] = {}
+        #: node -> the string a source wrote for it (set by get_data).
+        self.names: dict[str, str] = {}
         #: False until provenance is actually loaded. Consulted by
         #: provenance_summary() so "no conflicts" can never be confused
         #: with "precedence was never in force".
@@ -388,7 +390,9 @@ class BaseHierarchy(ABC):
                   (child, parent) pairs. Stamped `fca`.
         placed  – (term, class label) pairs the placement step put under an
                   existing WONT/MILD class and the review kept
-                  (`TermMappingAndGate.placements()`). Stamped `placed`.
+                  (`TermMappingAndGate.placements()`), and (term, term)
+                  pairs the author put one under the other
+                  (`term_links()`, rule 89). Stamped `placed`.
         reconcile_categories
                 – callable(categories) -> category | None, deciding which single
                   BFO category a term typed several ways actually gets. Pass
@@ -423,6 +427,15 @@ class BaseHierarchy(ABC):
         """
         edges: list[tuple[str, str]] = []
         edge_source: dict[tuple[str, str], str] = {}
+        # node -> the string a source wrote for it, first source first (the
+        # store's own names before the ontologies' labels): what a verdict on
+        # an edge is written against in the term dict (rule 89).
+        names: dict[str, str] = {}
+
+        def _t(name) -> str:
+            node = smart_title(str(name))
+            names.setdefault(node, str(name))
+            return node
 
         def _note(pair, source):
             specific, general = pair
@@ -454,7 +467,7 @@ class BaseHierarchy(ABC):
                         # old CamelCase spelling reads correctly through this.
                         declared = declared_category(target.strip())
                         if declared is not None:
-                            typings.setdefault(smart_title(entity), set()).add(declared)
+                            typings.setdefault(_t(entity), set()).add(declared)
 
         self.irreconcilable: dict[str, set[str]] = {}
         agreed: dict[str, str] = {}
@@ -485,12 +498,12 @@ class BaseHierarchy(ABC):
                         # on Occurrent, which neither of them said.
                         if declared_category(target) and smart_title(entity) in typings:
                             continue
-                        _note((smart_title(entity), smart_title(target)), source)
+                        _note((_t(entity), _t(target)), source)
                     elif pred in self._inverse_predicates:
-                        _note((smart_title(target), smart_title(entity)), source)
+                        _note((_t(target), _t(entity)), source)
 
         for term, category in agreed.items():
-            _note((term, smart_title(category)), source)
+            _note((term, _t(category)), source)
         from_store = len(edges)
 
         if reconcile_categories is not None:
@@ -523,19 +536,19 @@ class BaseHierarchy(ABC):
                 child, parent = row[child_col], row[parent_col]
                 if pd.isna(child) or pd.isna(parent):
                     continue
-                _note((smart_title(str(child)), smart_title(str(parent))),
-                      SOURCE_CURATED)
+                _note((_t(child), _t(parent)), SOURCE_CURATED)
         from_curated = len(edges) - from_store
 
         for child, parent in placed or ():
-            _note((smart_title(str(child)), smart_title(str(parent))), SOURCE_PLACED)
+            _note((_t(child), _t(parent)), SOURCE_PLACED)
         from_placed = len(edges) - from_store - from_curated
 
         for accepted in fca or ():
             for child, parent in accepted:
-                _note((smart_title(str(child)), smart_title(str(parent))), SOURCE_FCA)
+                _note((_t(child), _t(parent)), SOURCE_FCA)
         from_fca = len(edges) - from_store - from_curated - from_placed
 
+        self.names = names
         if not edges:
             self._df = pd.DataFrame(dtype=float)
             self._prov = {}

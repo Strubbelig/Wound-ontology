@@ -122,7 +122,7 @@ def plan(decisions, standing):
     return [p for p in writes if not (p in seen or seen.add(p))], held, clashes
 
 
-def apply_writes(record, writes, stamp) -> set[str]:
+def apply_writes(record, writes, stamp, decide_name=None) -> set[str]:
     """Point every loser at its winner, make every winner a name. `{winners}`.
 
     `record(term)` hands back that term's record, creating it if it is new.
@@ -130,11 +130,21 @@ def apply_writes(record, writes, stamp) -> set[str]:
     pointing at one of its losers -- `ulcer area` at `area of ulcer`, and
     three more two-cycles like it -- has to stop before the loser is turned
     round, or the pair ends up pointing at each other.
+
+    `decide_name` (`TermMappingAndGate.decide_name`) records each winner as the
+    curator's choice of name for its cluster (2026-10-24), so the next
+    election reads it instead of the corpus count.
     """
     from scripts.apply_contradiction_verdicts import record_curator
 
     named = {w for _, w in writes}
+    losers: dict[str, list[str]] = defaultdict(list)
+    for loser, winner in writes:
+        losers[winner].append(loser)
     for winner in sorted(named):
+        if decide_name is not None:
+            decide_name(winner, losers[winner], by="curator", when=stamp,
+                        reason="the canonical tie-breaks: this spelling names the class")
         rec = record(winner)
         rec["to"] = None                      # it is the name now, not a synonym
         rec.pop("retired", None)
@@ -184,7 +194,7 @@ def main() -> None:
         print("[canonical] dry run — nothing written. Pass --write to apply.")
         return
 
-    named = apply_writes(gt.record, writes, stamp)
+    named = apply_writes(gt.record, writes, stamp, decide_name=gt.decide_name)
     gt._dirty()
     gt.save()
 

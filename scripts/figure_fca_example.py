@@ -19,14 +19,15 @@ from pathlib import Path
 
 from figure_abstracts_to_wont import CHAR, FIG_DIR, FS, FS_SMALL, LH, LH_SMALL, PAD, ROOT, render
 
-#: Tabelle 2.2, row by row: the wound and the features it has.
+#: Tabelle 2.2, row by row: the wound (object) and the attributes it has. Curator, 2026-10-29:
+#: objects and attributes, not Gegenstaende and Merkmale; 'am Bein' as in his table.
 CONTEXT = {
     "Dekubitus": {"heilt verzögert", "durch Druck verursacht"},
-    "Diabetisches Fußulkus": {"heilt verzögert", "an der unteren Extremität", "durch Druck verursacht"},
-    "Ulcus cruris venosum": {"heilt verzögert", "an der unteren Extremität"},
+    "Diabetisches Fußulkus": {"heilt verzögert", "am Bein", "durch Druck verursacht"},
+    "Ulcus cruris venosum": {"heilt verzögert", "am Bein"},
     "Schnittwunde": set(),
 }
-FEATURES = ["heilt verzögert", "an der unteren Extremität", "durch Druck verursacht"]
+FEATURES = ["heilt verzögert", "am Bein", "durch Druck verursacht"]
 #: A concept whose intent is exactly this already has a class; every other inner node is a candidate.
 NAMED = {frozenset({"heilt verzögert"}): "chronische Wunde"}
 
@@ -59,10 +60,10 @@ def covers(cs):
 def lines_of(c) -> list[tuple[str, str]]:
     ext, itt = c
     names = [g for g in CONTEXT if g in ext]
-    umfang = "alle vier Wunden" if len(names) == len(CONTEXT) else ", ".join(names)
-    inhalt = ("kein gemeinsames Merkmal" if not itt else
-              "alle drei Merkmale" if len(itt) == len(FEATURES) else ", ".join(f for f in FEATURES if f in itt))
-    out = [(f"Umfang: {umfang}", "b"), (f"Inhalt: {inhalt}", "r")]
+    objekte = "alle vier Wunden" if len(names) == len(CONTEXT) else ", ".join(names)
+    attribute = ("keine" if not itt else
+                 "alle drei" if len(itt) == len(FEATURES) else ", ".join(f for f in FEATURES if f in itt))
+    out = [(f"Objekte: {objekte}", "b"), (f"Attribute: {attribute}", "r")]
     if itt in NAMED:
         out.append((f"bekannte Klasse: {NAMED[itt]}", "s"))
     elif 0 < len(ext) < len(CONTEXT) and len(ext) > 1:

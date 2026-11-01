@@ -44,7 +44,6 @@ load_dotenv(ROOT / ".env")
 
 OWL_DIR = ROOT / "output" / "owl"
 READ = ROOT / "data" / "review" / "relation_universality_2026-10-02" / "result.json"
-CURATOR = ROOT / "data" / "review" / "curator_axioms_2026-10-03.json"
 from config.settings import MILD_TTL as MILD   # the current MILD file (dated since 2026-10-20)
 OBO = "http://purl.obolibrary.org/obo/"
 PLAIN = {OBO + "RO_0000057": "has participant", OBO + "RO_0002233": "has input", OBO + "RO_0002234": "has output",
@@ -295,13 +294,15 @@ def main(argv: list[str]) -> int:
                       "now_under": parents(ext, pi) if pi is not None else []})
 
     # ---- classes that are in only because a curator axiom names them
-    cur = json.loads(CURATOR.read_text(encoding="utf-8"))["axioms"]
+    # (the author's axioms are his `yes` on a relation in the term dict; until
+    # 2026-10-30 they were read from curator_axioms_2026-10-03.json)
+    cur = [(s_, pr.replace("_", " "), t_) for s_, pr, t_, j in tdict.author_relations() if j["verdict"] == "yes"]
     placed_keys = {K(t) for t, _ in kept}
     for c in sorted(new_classes, key=lambda x: lab(x).lower()):
         if K(lab(c)) in placed_keys:
             continue
-        uses = [f"{a['subject_label']} {a['predicate']} {a['filler_label']}" for a in cur
-                if K(a["filler_label"]) == K(lab(c)) or K(tdict.resolve(a["filler_label"])) == K(lab(c))]
+        uses = [f"{s_} {pr} {t_}" for s_, pr, t_ in cur
+                if K(t_) == K(lab(c)) or K(tdict.resolve(t_)) == K(lab(c))]
         items.append({"id": f"f{len(items):03d}", "section": "fillers", "subject": lab(c),
                       "iri": str(c).rsplit("/", 1)[-1], "bfo": bfo_type(c), "uses": uses})
 

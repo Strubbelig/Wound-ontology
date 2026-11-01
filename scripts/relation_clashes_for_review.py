@@ -18,7 +18,7 @@ from wound_ontology.llm.extraction_adapter import store_to_gate_inputs
 out = Path(sys.argv[1]); ref = json.load(open(sys.argv[2]))
 p = Orchestrator(entrez_email=ENTREZ_EMAIL, allowed_predicates=ALLOWED_PREDICATES, base_path=BASE_PATH)
 st = p.store; st.terms.save = lambda *a, **k: None
-st.lift_decisions(p.GATE_AUTHOR)
+st.reopen = (p.GATE_AUTHOR, "relations")      # ELK's own verdicts set aside, as in the real run (rule 89)
 gate = p.reasoner_gate
 gate._explain = lambda g, max_expl=5: "(not asked)"
 ents, rels, _ = store_to_gate_inputs(st, resolve_conflict=gate.least_common_category)

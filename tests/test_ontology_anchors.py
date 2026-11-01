@@ -148,8 +148,10 @@ def test_the_orchestrator_collects_real_ontology_labels():
     p = orch.Orchestrator.__new__(orch.Orchestrator)
     labels = p.ontology_labels()
     assert len(labels) > 400
-    for expected in ("Granulation process", "Wound complication process",
-                     "Wound infection process", "Necrosis"):
+    # MILD of 2026-10-20 has no complication classes; WONT of 2026-10-29
+    # labels Necrosis "Necrotic material".
+    for expected in ("Granulation process", "Wound dehiscence",
+                     "Wound infection process", "Necrotic material"):
         assert expected in labels, expected
 
 
@@ -214,7 +216,7 @@ def test_the_real_guard_refuses_a_process_mapped_onto_its_bearer():
     import wound_ontology.orchestrator as orch
     p = orch.Orchestrator()
     accept = p._category_compatible_mapping(set(p.ontology_categories()))
-    assert not accept("Necrosis Process", "Necrosis")
+    assert not accept("Necrosis Process", "Necrotic material")   # WONT_120020's label since 2026-10-29
     assert not accept("Skin grafting", "Skin graft")
     assert accept("chronic wounds", "Chronic wound")
 
@@ -228,7 +230,7 @@ def test_the_guard_knows_the_class_under_the_store_s_spelling():
     import wound_ontology.orchestrator as orch
     p = orch.Orchestrator()
     accept = p._category_compatible_mapping(set(p.ontology_categories()))
-    assert not accept("Necrosis Process", "necrosis")
+    assert not accept("Necrosis Process", "necrotic material")   # WONT_120020's label since 2026-10-29
     assert not accept("Skin grafting", "skin graft")
 
 
@@ -267,7 +269,7 @@ def test_a_refused_mapping_recorded_earlier_is_withdrawn(mapper):
     """The mapping persists across builds, so a pair refused now may still be
     present from a build that had no validator. The guard must not be defeated by
     the file."""
-    mapper._term_mapping.data["Necrosis Process"] = "Necrosis"
+    mapper._term_mapping.add("Necrosis Process", "Necrosis", method="sapbert_cluster")
     _build(
         mapper,
         ["Necrosis", "Necrosis Process"],

@@ -213,7 +213,8 @@ def test_pubmed_row_count_is_not_reported_as_an_abstract_count(capsys):
 
 
 def test_orchestrator_default_predicates_are_the_configured_ones():
-    """StoreCleaner DELETES any attribute whose predicate is not on this list.
+    """The view leaves out any attribute whose predicate is not on this list
+    (the cleaner DELETED it until 2026-09-12).
 
     The orchestrator used to define its own five-entry literal, so the 29-entry
     config.settings.ALLOWED_PREDICATES was never consulted and 19 of the 26

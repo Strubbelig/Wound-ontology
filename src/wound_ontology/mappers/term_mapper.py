@@ -42,7 +42,8 @@ def _is_generic(term: str) -> bool:
 SIMILARITY_BLOCK = 1000
 
 
-def canonical_rank(term: str, anchors=frozenset(), frequencies: dict[str, int] | None = None):
+def canonical_rank(term: str, anchors=frozenset(), frequencies: dict[str, int] | None = None,
+                   named=frozenset(), heads=frozenset()):
     """How strong a claim `term` has to be the canonical spelling of its cluster.
 
     Higher is stronger: an ontology anchor outranks any store term; among store
@@ -63,9 +64,20 @@ def canonical_rank(term: str, anchors=frozenset(), frequencies: dict[str, int] |
     2026-09-25 store by failing to converge on a second run. A canonical that
     depends on the hash seed is not a decision, it is a coin toss with a
     record.
+
+    `named` are the terms a person chose as the name of their cluster
+    (`TermMappingAndGate.named`, 2026-10-24). They come right after the
+    anchors: the ontology's own label still wins (rule 36), a person's choice
+    beats the corpus count.
+
+    `heads` are the names clusters already have (`TermMappingAndGate.heads`).
+    They come next (rule 85, 2026-10-25): a name stays the name when a rebuild
+    or a new abstract shifts the counts -- only a label or a person moves it.
     """
     freq = frequencies or {}
     return (1 if term in anchors else 0,
+            1 if term in named else 0,
+            1 if term in heads else 0,
             freq.get(term, 0),
             len(normalize_term(term).split()),
             -len(term),
@@ -76,7 +88,7 @@ class TermMapper:
     """Action layer: synonym clustering and mapping lookup.
 
     Layer 3 in the mapper stack:
-      DataManager (repo) → TermMappingAndGate (persistence) → TermMapper (action) → MappingCleaner (curator)
+      DataManager (repo) → TermMappingAndGate (persistence) → TermMapper (action)
     """
 
     def __init__(self, term_mapping: TermMappingAndGate, name: str = "Term mapper") -> None:
@@ -142,7 +154,7 @@ class TermMapper:
         return self._term_mapping.retire(*terms, reason=reason)
 
     def refuse(self, term: str, canonical: str, reason: str = "",
-               by: str = "curator") -> None:
+               by: str = "curator", *, verdict: str = "different") -> None:
         """Record a refusal of this exact pair and unmap it.
 
         The difference from `withdraw` is memory. `withdraw` deletes, which is
@@ -151,11 +163,7 @@ class TermMapper:
         build (rule 33, and the reason `build_from_embeddings` consults
         `is_refused`).
         """
-        self._term_mapping.refuse(term, canonical, reason=reason, by=by)
-
-    def annotate(self, term: str, **fields) -> None:
-        """Attach term-level evidence — a note, a method — to a term's record."""
-        self._term_mapping.annotate(term, **fields)
+        self._term_mapping.refuse(term, canonical, reason=reason, by=by, verdict=verdict)
 
     def judge(self, term: str, canonical: str, **fields) -> None:
         """Attach evidence to one PAIR — a pass verdict, a curator's mark.
@@ -224,7 +232,10 @@ class TermMapper:
         alive = set(live_terms) | set(ontology_labels)
 
         def resolves(canonical: str) -> bool:
-            seen, cur = set(), canonical
+            # through a respelling too: a target renamed by pass 0 is alive under
+            # its new spelling (73 confirmed mappings were retired as dead targets
+            # before 2026-10-25)
+            seen, cur = set(), self._term_mapping.resolve(canonical)
             while cur not in seen:
                 if cur in alive:
                     return True
@@ -305,14 +316,22 @@ class TermMapper:
         succ = {t: c for t, c in data.items() if t != c}
         fold = normalize_term
         freq = frequencies or {}
+        named = self._term_mapping.named()
+        heads = self._term_mapping.heads()
+
+        def rank(t: str):
+            return canonical_rank(t, anchors, freq, named, heads)
 
         # A curator's same-class ruling outranks the category guard (2026-10-04:
         # the guard withdrew "wound healing process" -> "wound healing", which
         # the curator had stated the day before).
         def ruled(term: str, end: str) -> bool:
             for target in {end, data.get(term)} - {None}:
-                cur = (self._term_mapping.peek(term, target).get("curator") or {}).get("verdict")
-                if cur == "same_class":
+                j = self._term_mapping.peek(term, target)
+                # `check` wrote under `curator` until 2026-10-24 and counted
+                # here; moving it to its own source must not change that.
+                if any((j.get(s) or {}).get("verdict") == "same_class"
+                       for s in ("curator", "check")):
                     return True
             return False
         if accept_mapping is not None:
@@ -399,7 +418,7 @@ class TermMapper:
                     looped.update(seen[seen.index(cur):])
             if looped:
                 champion = max(sorted(looped),
-                               key=lambda t: canonical_rank(t, anchors, freq))
+                               key=rank)
                 for member in sorted(looped):
                     if member == champion:
                         dropped.append(member)
@@ -434,7 +453,15 @@ class TermMapper:
             # and there is nothing to resolve.
             sink_nodes = [n for n in nodes if n not in out_edge]
             sinks = sorted({sp for n in sink_nodes for sp in spellings[n]})
-            if len(sink_nodes) == 1:
+            claimed = [m for m in group if m in named]
+            if claimed:
+                # A person chose the name (2026-10-24: first the cluster, then
+                # its name). Only an anchor outranks that choice, whatever the
+                # sink is; two choices in one component are reported.
+                winner = max(claimed + [m for m in group if m in anchors], key=rank)
+                if len(claimed) > 1:
+                    contested.append((winner, [t for t in claimed if t != winner]))
+            elif len(sink_nodes) == 1:
                 # Among the sink's spellings, the one the mapping ALREADY
                 # points at wins. Re-ranking here would rename a canonical the
                 # curator settled: `wounds -> Wound` and `wound -> Wound` is a
@@ -442,18 +469,18 @@ class TermMapper:
                 # every entry for nothing.
                 targets = [t for t in sinks if t in set(succ.values())]
                 winner = max(targets or sinks,
-                             key=lambda t: canonical_rank(t, anchors, freq))
+                             key=rank)
             elif not sink_nodes:
-                # A cycle. Where the curator ruled on one of its live pairs,
-                # the target they chose is the name (2026-09-28: `miRNA ->
+                # A cycle. Where the curator confirmed one of its live pairs,
+                # the target of that pair is the name (2026-09-28: `miRNA ->
                 # microRNA` was re-proposed backwards by a rebuild and lost the
-                # frequency vote); otherwise the usual rank decides.
+                # frequency vote); otherwise the usual rank decides. A name
+                # decision never gets here: it is handled above.
                 chosen = sorted({data[m] for m in group if data.get(m) and
                                  (self._term_mapping.peek(m, data[m]).get("curator") or {})
-                                 .get("verdict") in ("same_class", "kept", "reverse", "reversed",
-                                                     "repointed")})
+                                 .get("verdict") == "same_class"})
                 winner = max(chosen or sorted(group),
-                             key=lambda t: canonical_rank(t, anchors, freq))
+                             key=rank)
             else:
                 # Several sinks in one component: two spellings that FOLD
                 # together point at different canonicals, so the component has
@@ -464,10 +491,11 @@ class TermMapper:
                 # elect, and the ones that lose are reported -- if two sinks
                 # really are different concepts, the fix is to refuse one of
                 # the edges that joined them, not to keep a chain.
-                winner = max(sinks, key=lambda t: canonical_rank(t, anchors, freq))
+                winner = max(sinks, key=rank)
                 contested.append((winner, [t for t in sinks if t != winner]))
             if all(data.get(m) == winner for m in group
-                   if m != winner and m in succ) and winner not in succ:
+                   if m != winner and (m in succ or (claimed and m in sinks))) \
+                    and winner not in succ:
                 continue                      # already a star; nothing to do
             multi += 1
             if (accept_mapping is not None and winner in anchors
@@ -490,10 +518,11 @@ class TermMapper:
                     if member in succ:
                         dropped.append(member)     # it won its own component
                     continue
-                if member not in succ:
+                if member not in succ and not (claimed and member in sinks):
                     # A spelling that only ever appears as a TARGET has no
                     # entry, and giving it one here would invent a mapping
-                    # nobody proposed.
+                    # nobody proposed. The old name of a cluster a person has
+                    # renamed is the exception: the name decision proposed it.
                     continue
                 if self._term_mapping.is_refused(member, winner):
                     refused.append((member, winner))
@@ -597,21 +626,22 @@ class TermMapper:
            and `Pressure ulcers -> Pressure ulcer` is not a claim anybody needs
            checked.
 
-        3. A BLOCKED CANONICAL IS REPORTED, NOT REPAIRED. The methodology
-           blocklist is applied at extraction, by exact lowercase name, and never
-           again -- while rule 23 makes the canonical singular. `patients` is not
+        3. A BLOCKED CANONICAL IS REPORTED, NOT REPAIRED. (`blocked` is what the
+           gate puts out, `Orchestrator.blocked_names`; until 2026-10-25 a
+           blocklist was applied at extraction.) Rule 23 makes the canonical
+           singular, and the list was applied by exact lowercase name. `patients` is not
            on the list and `patient` is, so the mapping renames the survivor back
            onto the blocked name: 462 store names arrived that way carrying 7,201
-           mentions, which `run_clean_store` then removes together with whatever
-           had merged into them.
+           mentions, which the view then leaves out together with whatever had
+           merged into them.
 
            This method does NOT withdraw those entries. Withdrawing would leave
            the variant standing as its own concept, which is noise leaking back
            in under a plural; keeping the merge collapses the family onto one
            name that the cleanup then removes once. Which of the two is right
-           depends on whether the blocklist entry is correct -- `intervention`
-           yes, `tissue repair` almost certainly not -- and that is a decision
-           for `review_lists`, not for a mapping pass. So the pairs are counted
+           depends on whether the `out` is correct -- `intervention` yes,
+           `tissue repair` almost certainly not -- and that is a decision for the
+           curator, not for a mapping pass. So the pairs are counted
            and returned, and the caller writes them out as a work item.
 
         4. A LABEL IS NEVER MAPPED AWAY (2026-10-01, rule 36 in INSTRUCTIONS).
@@ -623,8 +653,8 @@ class TermMapper:
            kept the label direction. Rule 1 cannot see it: the two do not fold
            together. So the entry is turned round -- the store spelling and
            everything mapped onto it now map onto the label -- unless a curator
-           chose the direction (`method: curator`, or `reverse` on the pair the
-           other way), which is reported and left. If the category guard refuses
+           chose the direction (`method: curator`, or the curator's
+           `same_class` on this very pair, rule 85), which is reported and left. If the category guard refuses
            the turned-round claim, the label is only unmapped, and reported.
 
         Returns counts, and the entries behind each of them.
@@ -637,7 +667,6 @@ class TermMapper:
         data = self._term_mapping.data
 
         # ── rule 4: a label mapped onto a store spelling is turned round ────
-        recs = self._term_mapping.records
         restored: dict[str, str] = {}            # label -> the store spelling it pointed at
         held: list[tuple[str, str]] = []
         unmapped: list[tuple[str, str]] = []
@@ -646,8 +675,9 @@ class TermMapper:
                 continue
             if labels.get(normalize_term(canonical)) is not None:
                 continue                         # folds to a label: rule 1's case
-            back = (recs.get(canonical, {}).get("pairs", {}).get(term) or {}).get("curator") or {}
-            if recs.get(term, {}).get("method") == "curator" or back.get("verdict") == "reverse":
+            if (self._term_mapping.named_by(term) == "author"
+                    or (self._term_mapping.peek(term, canonical).get("curator") or {})
+                    .get("verdict") == "same_class"):
                 held.append((term, canonical))
                 continue
             if (accept_mapping is not None and label_difference(canonical, term) == "content"
@@ -735,8 +765,8 @@ class TermMapper:
               f"ontology's own label, dropped {len(identities)} that became "
               f"identities, and refused {len(refused)} mapping(s) onto a class of "
               f"a different BFO kind. {len(on_blocklist)} entr(ies) point at a "
-              f"blocklisted canonical — reported, not touched; that is a "
-              f"review_lists decision.")
+              f"canonical the gate puts out — reported, not touched; that is "
+              f"the curator's decision.")
         for t, c in list(respelled.items())[:5]:
             print(f"[{self.name}]     {t!r} -> {data[t]!r} … now -> {c!r}")
         for t, c, tgt in refused[:5]:
@@ -906,8 +936,10 @@ class TermMapper:
         anchor_set = {a for a in (anchors or set())}
         # An anchor outranks any store term on frequency, and one anchor outranks
         # another by being the shorter, more general label.
+        named = self._term_mapping.named()
+        heads = self._term_mapping.heads()
         def _rank(t: str):
-            return canonical_rank(t, anchor_set, freq)
+            return canonical_rank(t, anchor_set, freq, named, heads)
 
         def _canonical(members: list[str]) -> tuple[str, str]:
             """Pick the cluster's canonical, then take the singular spelling of it.

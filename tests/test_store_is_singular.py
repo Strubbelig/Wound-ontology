@@ -48,13 +48,13 @@ def _view(st):
 
 def test_a_plural_entity_reads_singular():
     st = _ingested({"patients": {"is_a: material entity": 1.0}})
-    assert list(_view(st)) == ["patient"]
+    assert list(_view(st)) == ["Patient"]
     assert list(st.dict["1"]["entities"]) == ["patients"], "the evidence is as written"
 
 
 def test_a_plural_target_reads_singular_too():
     st = _ingested({"wound": {"has_part: granulation tissues": 1.0}})
-    assert list(_view(st)["wound"]) == ["has_part: granulation tissue"]
+    assert list(_view(st)["Wound"]) == ["has_part: Granulation tissue"]
 
 
 def test_a_plural_canonical_cannot_reintroduce_a_plural():
@@ -76,13 +76,12 @@ def test_a_declared_category_is_untouched():
 
 
 def test_two_spellings_collapse_onto_one_record():
-    """Ingestion singularises; the case difference left is pass 0's to settle."""
+    """Ingestion singularises and, since 2026-10-24, puts the name in sentence
+    case, so two spellings differing in number and case are one record at once."""
     st = _ingested({"Wounds": {"is_a: material entity": 1.0},
                     "wound": {"has_quality: chronic": 1.0}})
-    assert set(_view(st)) == {"Wound", "wound"}
-    st.apply_renames({"Wound": "wound"}, by="pass0")
-    assert _view(st) == {"wound": {"is_a: material entity": 1.0,
-                                   "has_quality: chronic": 1.0}}
+    assert _view(st) == {"Wound": {"is_a: material entity": 1.0,
+                                   "has_quality: Chronic": 1.0}}
 
 
 @pytest.mark.parametrize("plural, singular", [

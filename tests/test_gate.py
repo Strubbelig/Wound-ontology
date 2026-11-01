@@ -1,4 +1,4 @@
-"""Whether a term belongs is a verdict on its record, not a line in a .py file.
+"""Whether a term belongs is a judgement on its record, not a line in a .py file.
 
 `METHODOLOGY_BLOCKLIST` (7,757) and `WHITELIST` (2,684) decided scope with no
 verdict, no reason, no date and no author, because a cosine threshold and an LLM
@@ -8,9 +8,9 @@ batch wrote straight into the source files. Two things followed, both measured o
 just reviewed by hand had a canonical the blocklist already rejects -- 167
 approved -- because nothing in front of them said so.
 
-The gate puts that decision where the mapping's decisions already are, with the
-same precedence rule 28 gives everything else: an explicit decision outranks a
-heuristic, and a model is a heuristic.
+Rule 89 (2026-10-28): the scope is a list of judgements on the CONCEPT, each
+with its agent, reason and time. The author's last judgement counts; without
+one, the last of any agent. A rule and a list are machines.
 """
 
 import pytest
@@ -19,76 +19,55 @@ from conftest import memory_mapping
 from wound_ontology.mappers.term_mapping_and_gate import GATE_SOURCES, GATE_VERDICTS
 
 
-# ── precedence ───────────────────────────────────────────────────────────────
+# ── which judgement counts ───────────────────────────────────────────────────
 
 def test_nothing_decided_is_not_a_verdict():
     assert memory_mapping().gate_verdict("wound") == ("", "")
 
 
-def test_the_rule_decides_when_it_is_alone():
+def test_one_judgement_decides_and_names_its_agent():
     g = memory_mapping()
     g.gate("cohort", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
-    assert g.gate_verdict("cohort") == ("out", "rule")
+    assert g.gate_verdict("cohort") == ("out", "methodology-blocklist")
 
 
-def test_one_pass_outranks_the_rule():
+def test_among_machines_the_later_judgement_counts():
     g = memory_mapping()
-    g.gate("silver sulfadiazine", rule={"verdict": "out", "by": "list"},
-           pass2={"verdict": "in", "reason": "a topical antimicrobial"})
-    assert g.gate_verdict("silver sulfadiazine") == ("in", "pass2")
+    g.gate("silver sulfadiazine", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
+    g.gate("silver sulfadiazine", pass2={"verdict": "in", "reason": "a topical antimicrobial"})
+    assert g.gate_verdict("silver sulfadiazine") == ("in", "deepseek-v4-flash")
 
 
-def test_two_passes_agreeing_outrank_the_rule():
+def test_the_author_outranks_a_later_machine():
     g = memory_mapping()
-    g.gate("tissue repair", rule={"verdict": "out", "by": "list"},
-           pass1={"verdict": "in"}, pass2={"verdict": "in"})
-    assert g.gate_verdict("tissue repair") == ("in", "pass1+pass2")
+    g.gate("vac therapy", curator={"verdict": "in", "reason": "vacuum-assisted closure"})
+    g.gate("vac therapy", pass2={"verdict": "out", "reason": "a device"})
+    assert g.gate_verdict("vac therapy") == ("in", "author")
 
 
-def test_the_curator_outranks_everything():
+def test_a_rule_is_a_machine():
     g = memory_mapping()
-    g.gate("vac therapy", rule={"verdict": "out", "by": "list"},
-           pass1={"verdict": "out"}, pass2={"verdict": "out"},
-           curator={"verdict": "in", "reason": "vacuum-assisted closure"})
-    assert g.gate_verdict("vac therapy") == ("in", "curator")
+    g.gate("NaCl 0.9%", curator={"verdict": "in", "reason": "a curated class"})
+    g.gate("NaCl 0.9%", rule={"verdict": "out", "by": "noise rule: a number with a unit"})
+    assert g.gate_verdict("NaCl 0.9%") == ("in", "author")
 
 
-def test_passes_that_contradict_each_other_fall_through_to_the_rule():
-    # Two passes exist so that a disagreement becomes a question. Answering it
-    # by picking one would throw away the only signal that says "look at this".
+def test_nothing_is_deleted():
     g = memory_mapping()
-    g.gate("bone healing", rule={"verdict": "out", "by": "list"},
-           pass1={"verdict": "out"}, pass2={"verdict": "in"})
-    assert g.gate_verdict("bone healing") == ("out", "rule")
-
-
-def test_contradicting_passes_with_no_rule_decide_nothing():
-    g = memory_mapping()
-    g.gate("bone healing", pass1={"verdict": "out"}, pass2={"verdict": "in"})
-    assert g.gate_verdict("bone healing") == ("", "")
+    g.gate("bone healing", pass1={"verdict": "out", "near": "bone", "score": 0.96},
+           pass2={"verdict": "in", "reason": "healing of a fracture"})
+    assert [j["by"] for j in g.records["bone healing"]["scope"]] == \
+        ["sapbert-neighbour", "deepseek-v4-flash"]
 
 
 # ── the views that replace the two literals ──────────────────────────────────
 
 def test_gated_out_is_what_the_blocklist_used_to_be():
     g = memory_mapping()
-    g.gate("cohort", rule={"verdict": "out", "by": "list"})
-    g.gate("wound", rule={"verdict": "in", "by": "list"})
-    assert g.gated("out") == {"cohort": "rule"}
-
-
-def test_gated_in_is_what_the_whitelist_used_to_be():
-    g = memory_mapping()
-    g.gate("cohort", rule={"verdict": "out", "by": "list"})
-    g.gate("wound", rule={"verdict": "in", "by": "list"})
-    assert g.gated("in") == {"wound": "rule"}
-
-
-def test_the_view_names_the_source_so_an_entry_cannot_be_anonymous():
-    g = memory_mapping()
-    g.gate("vac therapy", rule={"verdict": "out", "by": "list"},
-           curator={"verdict": "in", "reason": "…"})
-    assert g.gated("in")["vac therapy"] == "curator"
+    g.gate("cohort", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
+    g.gate("wound", rule={"verdict": "in", "by": "WHITELIST"})
+    assert g.gated("out") == {"cohort": "methodology-blocklist"}
+    assert g.gated("in") == {"wound": "whitelist"}
 
 
 def test_an_unknown_verdict_is_refused_by_the_view():
@@ -98,37 +77,27 @@ def test_an_unknown_verdict_is_refused_by_the_view():
 
 # ── the review queue ─────────────────────────────────────────────────────────
 
-def test_agreeing_sources_are_not_a_disagreement():
+def test_agreeing_agents_are_not_a_disagreement():
     g = memory_mapping()
-    g.gate("cohort", rule={"verdict": "out"}, pass1={"verdict": "out"})
+    g.gate("cohort", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"},
+           pass2={"verdict": "out", "reason": "a study design"})
     assert g.gate_disagreements() == []
 
 
-def test_two_passes_contradicting_each_other_surface():
+def test_agents_that_disagree_surface_with_the_verdict_that_counts():
     g = memory_mapping()
-    g.gate("bone healing", pass1={"verdict": "out"}, pass2={"verdict": "in"})
+    g.gate("vac therapy", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
+    g.gate("vac therapy", curator={"verdict": "in", "reason": "vacuum-assisted closure"})
     rows = g.gate_disagreements()
-    assert [r["term"] for r in rows] == ["bone healing"]
-    assert rows[0]["said"] == {"pass2": "in", "pass1": "out"}
-
-
-def test_a_pass_contradicting_the_rule_surfaces():
-    g = memory_mapping()
-    g.gate("silver sulfadiazine", rule={"verdict": "out"}, pass2={"verdict": "in"})
-    assert [r["term"] for r in g.gate_disagreements()] == ["silver sulfadiazine"]
-
-
-def test_the_row_carries_the_resolved_verdict_and_its_source():
-    g = memory_mapping()
-    g.gate("vac therapy", rule={"verdict": "out"}, curator={"verdict": "in"})
-    r = g.gate_disagreements()[0]
-    assert r["verdict"] == "in" and r["source"] == "curator"
+    assert [r["term"] for r in rows] == ["vac therapy"]
+    assert rows[0]["said"] == {"methodology-blocklist": "out", "author": "in"}
+    assert (rows[0]["verdict"], rows[0]["source"]) == ("in", "author")
 
 
 def test_the_queue_is_ordered_so_a_run_is_comparable_to_the_last():
     g = memory_mapping()
     for t in ("Zebra", "apple", "Mango"):
-        g.gate(t, rule={"verdict": "out"}, pass1={"verdict": "in"})
+        g.gate(t, rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"}, pass2={"verdict": "in", "reason": "r"})
     assert [r["term"] for r in g.gate_disagreements()] == ["apple", "Mango", "Zebra"]
 
 
@@ -144,13 +113,17 @@ def test_a_gate_verdict_needs_a_known_verdict():
         memory_mapping().gate("wound", curator={"verdict": "probably"})
 
 
+def test_a_rule_needs_a_known_agent():
+    with pytest.raises(ValueError, match="no agent"):
+        memory_mapping().gate("wound", rule={"verdict": "in", "by": "some list"})
+
+
 def test_the_gate_writes_a_record_for_a_term_that_maps_nowhere():
     # most out-of-scope terms were never proposed for a merge, so the gate must
     # be able to speak about a term with no mapping at all
     g = memory_mapping()
-    g.gate("Kaplan-Meier analysis", rule={"verdict": "out", "by": "list"})
-    assert "Kaplan-Meier analysis" in g.records
-    assert g.records["Kaplan-Meier analysis"]["to"] is None
+    g.gate("Kaplan-Meier analysis", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
+    assert set(g.records["Kaplan-Meier analysis"]) == {"scope"}
 
 
 def test_the_gate_does_not_disturb_the_mapping():
@@ -159,24 +132,25 @@ def test_the_gate_does_not_disturb_the_mapping():
     assert g.data == {"wounds": "Wound"}
 
 
-def test_peek_does_not_create_a_record():
+def test_reading_does_not_create_a_record():
     g = memory_mapping()
-    g.peek_gate("nothing here")
+    g.gate_verdict("nothing here")
+    g.own_gate_verdict("nothing here")
     assert "nothing here" not in g.records
 
 
 def test_the_gate_survives_a_save_and_reload():
     g = memory_mapping()
-    g.gate("cohort", rule={"verdict": "out", "by": "list"})
+    g.gate("cohort", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
     g.save()
     from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
     again = TermMappingAndGate(g._dm)
-    assert again.gate_verdict("cohort") == ("out", "rule")
+    assert again.gate_verdict("cohort") == ("out", "methodology-blocklist")
 
 
 def test_the_gate_does_not_save_because_a_pass_writes_thousands():
     g = memory_mapping()
-    g.gate("cohort", rule={"verdict": "out"})
+    g.gate("cohort", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
     assert g._dm.written is None
 
 
@@ -186,117 +160,22 @@ def test_the_two_verdicts_are_in_and_out():
     assert GATE_VERDICTS == ("in", "out")
 
 
-def test_the_sources_are_ordered_strongest_first():
-    assert GATE_SOURCES == ("curator", "pass2", "pass1", "rule")
+def test_the_sources_a_caller_may_name():
+    assert set(GATE_SOURCES) == {"curator", "pass2", "pass1", "rule"}
 
 
-# ── what the gate does to the Blocker ────────────────────────────────────────
+# ── the one rule over strings (rule 86) ───────────────────────────────────────
 
-def _blocker(gate=None):
-    from wound_ontology.store.blocker import Blocker
-    return Blocker(gate=gate)
-
-
-def _a_blocked_term():
-    from config.blocklist import METHODOLOGY_BLOCKLIST
-    return sorted(METHODOLOGY_BLOCKLIST)[0]
+@pytest.mark.parametrize("term", ["12.5 mg/kg", "3 days", "44.8%", "7 d", "---"])
+def test_the_noise_rule_takes_a_number_with_a_unit(term):
+    from wound_ontology.mappers.term_mapping_and_gate import noise_rule
+    assert noise_rule(term)
 
 
-def _a_whitelisted_term():
-    from config.whitelist import WHITELIST
-    return sorted(WHITELIST)[0]
-
-
-def test_without_a_gate_the_lists_decide_exactly_as_before():
-    b = _blocker()
-    assert b.gate is None
-    assert b.gate_verdict("anything") == ("", "")
-    assert b.is_blocked(_a_blocked_term())
-    assert not b.is_blocked(_a_whitelisted_term())
-
-
-def test_the_gate_can_let_a_blocklisted_term_through():
-    t = _a_blocked_term()
-    g = memory_mapping()
-    g.gate(t, rule={"verdict": "out", "by": "list"},
-           curator={"verdict": "in", "reason": "a real wound concept"})
-    assert _blocker().is_blocked(t)
-    assert not _blocker(g).is_blocked(t)
-
-
-def test_a_rule_verdict_keeps_the_position_the_list_it_came_from_had():
-    # A whitelist KEYWORD used to rescue a term on the exact blocklist, and the
-    # fold must not change that: `rule` IS that list, moved, not re-decided.
-    # Only a curator or a pass -- new evidence -- goes ahead of the keywords.
-    from config.whitelist import KEYWORD_WHITELIST
-    kw = sorted(KEYWORD_WHITELIST)[0]
-    t = kw + " in a methodology phrase"
-    g = memory_mapping()
-    g.gate(t, rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
-    assert _blocker(g).white_kw.match(t)
-    assert not _blocker(g).is_blocked(t)          # the keyword still rescues it
-    g.gate(t, pass2={"verdict": "out", "reason": "a study-design phrase"})
-    assert _blocker(g).is_blocked(t)              # new evidence does not
-
-
-def test_the_gate_can_block_a_whitelisted_term():
-    t = _a_whitelisted_term()
-    g = memory_mapping()
-    g.gate(t, curator={"verdict": "out", "reason": "methodology after all"})
-    assert not _blocker().is_blocked(t)
-    assert _blocker(g).is_blocked(t)
-
-
-def test_a_gate_verdict_beats_the_noise_regex():
-    from config.blocklist import is_noise_term
-    noise = "12.5 mg/kg"
-    assert is_noise_term(noise)
-    g = memory_mapping()
-    g.gate(noise, curator={"verdict": "in", "reason": "a dosage that names a class"})
-    assert _blocker().is_blocked(noise)
-    assert not _blocker(g).is_blocked(noise)
-
-
-def test_a_keyword_still_decides_a_term_the_gate_says_nothing_about():
-    b = _blocker(memory_mapping())
-    assert b.is_blocked("multivariable Cox regression")      # KEYWORD_BLOCKLIST
-    assert not b.is_blocked("venous leg ulcer")
-
-
-def test_score_follows_is_blocked_through_the_gate():
-    t = _a_blocked_term()
-    g = memory_mapping()
-    g.gate(t, curator={"verdict": "in"})
-    assert _blocker().score(t) == 100.0
-    assert _blocker(g).score(t) == 0.0
-
-
-def test_a_gate_that_only_holds_the_imported_rule_changes_nothing():
-    # what the one-time fold produces: every list entry as `rule`, nothing else.
-    # The two must then agree by construction, or the fold moved a decision.
-    from config.blocklist import METHODOLOGY_BLOCKLIST
-    from config.whitelist import WHITELIST
-    g = memory_mapping()
-    sample = sorted(METHODOLOGY_BLOCKLIST)[:40] + sorted(WHITELIST)[:40]
-    for t in sorted(METHODOLOGY_BLOCKLIST)[:40]:
-        g.gate(t, rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
-    for t in sorted(WHITELIST)[:40]:
-        g.gate(t, rule={"verdict": "in", "by": "WHITELIST"})
-    plain, gated = _blocker(), _blocker(g)
-    assert [plain.is_blocked(t) for t in sample] == [gated.is_blocked(t) for t in sample]
-
-
-def test_a_gate_with_an_empty_mapping_is_still_a_gate():
-    # `TermMappingAndGate.__len__` counts the live MAPPING, so a gate carrying
-    # ten thousand scope verdicts and no mappings is falsy. `if self.gate` turned
-    # the gate off and left the lists deciding, silently -- found by this test
-    # failing on a term the curator had explicitly let through.
-    t = _a_blocked_term()
-    g = memory_mapping()
-    g.gate(t, curator={"verdict": "in"})
-    assert len(g) == 0 and not bool(g)
-    assert _blocker(g).gate_verdict(t) == ("in", "curator")
-    assert not _blocker(g).is_blocked(t)
+@pytest.mark.parametrize("term", ["Wagner grade 1D", "venous leg ulcer", "2D imaging"])
+def test_the_noise_rule_leaves_a_name_alone(term):
+    from wound_ontology.mappers.term_mapping_and_gate import noise_rule
+    assert not noise_rule(term)
 
 
 # ── the gate matches the way the lists always have ───────────────────────────
@@ -307,178 +186,120 @@ def test_a_capitalised_spelling_finds_the_verdict():
     # holds both -- 92,683 of its 96,243 names looked undecided to the gate
     # against 77,317 to the lists.
     g = memory_mapping()
-    g.gate("cohort", rule={"verdict": "out", "by": "list"})
-    assert g.gate_verdict("Cohort") == ("out", "rule")
-    assert g.gate_verdict("COHORT") == ("out", "rule")
+    g.gate("cohort", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
+    assert g.gate_verdict("Cohort") == ("out", "methodology-blocklist")
+    assert g.gate_verdict("COHORT") == ("out", "methodology-blocklist")
 
 
 def test_a_hyphen_finds_the_verdict():
     g = memory_mapping()
-    g.gate("cell based therapies", rule={"verdict": "out"})
-    assert g.gate_verdict("Cell-Based Therapies") == ("out", "rule")
+    g.gate("cell based therapies", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
+    assert g.gate_verdict("Cell-Based Therapies")[0] == "out"
 
 
-def test_a_trailing_parenthetical_finds_the_verdict():
+def test_a_bracketed_name_is_not_folded_onto_the_bare_word():
+    # `normalize_term` drops the bracket; `vitamin (role)` is not `vitamin`
+    # (2026-10-28: with the scope on the concept, the fold would have put the
+    # substance in scope by the role's verdict)
     g = memory_mapping()
-    g.gate("vitamin", rule={"verdict": "in"})
-    assert g.gate_verdict("vitamin (role)") == ("in", "rule")
+    g.gate("vitamin (role)", pass2={"verdict": "in", "reason": "r"})
+    assert g.gate_verdict("vitamin") == ("", "")
 
 
 def test_the_terms_own_verdict_wins_over_another_spellings():
     g = memory_mapping()
-    g.gate("cohort", rule={"verdict": "out"})
+    g.gate("cohort", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
     g.gate("Cohort", curator={"verdict": "in", "reason": "a named cohort study arm"})
-    assert g.gate_verdict("Cohort") == ("in", "curator")
-    assert g.gate_verdict("cohort") == ("out", "rule")
-
-
-def test_a_spelling_with_no_gate_of_its_own_stays_out_of_the_view():
-    # otherwise every export would add the aliases to the file and the next
-    # export would add theirs
-    g = memory_mapping({"Cohort": "cohort"})
-    g.gate("cohort", rule={"verdict": "out"})
-    assert g.gate_verdict("Cohort") == ("out", "rule")
-    assert set(g.gated("out")) == {"cohort"}
+    assert g.gate_verdict("Cohort") == ("in", "author")
+    assert g.gate_verdict("cohort") == ("out", "methodology-blocklist")
 
 
 def test_own_gate_verdict_does_not_fall_back():
     g = memory_mapping()
-    g.gate("cohort", rule={"verdict": "out"})
+    g.gate("cohort", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
     assert g.own_gate_verdict("Cohort") == ("", "")
 
 
 def test_an_alias_does_not_invent_a_disagreement():
     g = memory_mapping({"Cohort": "cohort"})
-    g.gate("cohort", rule={"verdict": "out"})
+    g.gate("cohort", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
     assert g.gate_disagreements() == []
 
 
 def test_the_index_is_rebuilt_after_a_write():
     g = memory_mapping()
     assert g.gate_verdict("Cohort") == ("", "")     # builds the index empty
-    g.gate("cohort", rule={"verdict": "out"})
-    assert g.gate_verdict("Cohort") == ("out", "rule")
+    g.gate("cohort", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
+    assert g.gate_verdict("Cohort")[0] == "out"
 
 
 # ── scope belongs to the CONCEPT, not to the spelling ────────────────────────
 
-def test_a_member_inherits_its_canonicals_verdict():
+def test_a_member_reads_its_concepts_verdict():
     g = memory_mapping({"wounds": "Wound"})
     g.gate("Wound", curator={"verdict": "in"})
-    assert g.effective_gate_verdict("wounds") == ("in", "curator")
+    assert g.gate_verdict("wounds") == ("in", "author")
 
 
-def test_a_term_that_maps_nowhere_decides_for_itself():
-    g = memory_mapping()
-    g.gate("cohort", rule={"verdict": "out"})
-    assert g.effective_gate_verdict("cohort") == ("out", "rule")
-
-
-def test_better_evidence_on_a_MEMBER_beats_a_rule_on_the_canonical():
-    # `IL6` carries an imported `rule` of out that nobody can account for; its
-    # member `IL-6` carries a pass2 of in, with a reason. Letting the canonical
-    # simply win undid 37 judgements the scope pass had just made.
+def test_a_verdict_written_through_a_member_lands_on_the_concept():
     g = memory_mapping({"IL-6": "IL6"})
-    g.gate("IL6", rule={"verdict": "out", "by": "list"})
     g.gate("IL-6", pass2={"verdict": "in", "reason": "a cytokine in wound healing"})
-    assert g.effective_gate_verdict("IL6") == ("in", "pass2")
-    assert g.effective_gate_verdict("IL-6") == ("in", "pass2")
-
-
-def test_the_canonical_wins_when_the_source_is_the_same_strength():
-    g = memory_mapping({"conventional treatment": "conventional therapy"})
-    g.gate("conventional therapy", pass2={"verdict": "out", "reason": "a"})
-    g.gate("conventional treatment", pass2={"verdict": "in", "reason": "b"})
-    assert g.effective_gate_verdict("conventional treatment") == ("out", "pass2")
+    assert "scope" not in g.records["IL-6"]
+    assert g.gate_verdict("IL6") == ("in", "deepseek-v4-flash")
 
 
 def test_one_concept_gets_one_answer_whichever_spelling_is_asked():
     g = memory_mapping({"post-operative pain": "postoperative pain"})
-    g.gate("postoperative pain", rule={"verdict": "out"})
+    g.gate("postoperative pain", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
     g.gate("post-operative pain", pass2={"verdict": "in", "reason": "wound pain"})
-    assert (g.effective_gate_verdict("post-operative pain")
-            == g.effective_gate_verdict("postoperative pain"))
+    assert g.gate_verdict("post-operative pain") == g.gate_verdict("postoperative pain") \
+        == ("in", "deepseek-v4-flash")
 
 
-def test_a_sibling_contributes_its_evidence_too():
-    g = memory_mapping({"a variant": "the canonical", "another": "the canonical"})
-    g.gate("the canonical", rule={"verdict": "out"})
-    g.gate("another", curator={"verdict": "in", "reason": "a real concept"})
-    assert g.effective_gate_verdict("a variant") == ("in", "curator")
-
-
-def test_the_contradiction_is_reported_not_hidden():
-    g = memory_mapping({"post-operative pain": "postoperative pain"})
-    g.gate("postoperative pain", rule={"verdict": "out"})
-    g.gate("post-operative pain", pass2={"verdict": "in", "reason": "r"})
-    rows = g.gate_contradictions()
-    assert len(rows) == 1
-    assert rows[0]["term"] == "post-operative pain"
-    assert rows[0]["canonical"] == "postoperative pain"
-
-
-def test_agreeing_spellings_are_not_a_contradiction():
-    g = memory_mapping({"wounds": "Wound"})
-    g.gate("Wound", rule={"verdict": "in"})
-    g.gate("wounds", pass2={"verdict": "in", "reason": "r"})
-    assert g.gate_contradictions() == []
-
-
-def test_the_member_index_is_rebuilt_after_a_mapping_change():
-    # the verdict has to sit on the MEMBER: with it on the canonical a stale
-    # index still finds it, and the test passes while the cache is broken
+def test_a_scope_written_before_the_mapping_moves_with_the_name():
+    # the verdict has to sit on the MEMBER first: with it on the concept a
+    # missing move still finds it, and the test passes while the move is broken
     g = memory_mapping()
     g.gate("wounds", curator={"verdict": "in"})
-    assert g.effective_gate_verdict("Wound") == ("", "")     # builds the index
+    assert g.gate_verdict("Wound") == ("", "")
     g.add("wounds", "Wound")
-    assert g.effective_gate_verdict("Wound") == ("in", "curator")
+    assert g.gate_verdict("Wound") == ("in", "author")
+    assert "scope" not in g.records["wounds"]
 
 
-def test_a_disagreement_across_two_spellings_of_one_concept_is_found():
-    # counted per record this is invisible: `IL6` holds only a rule and `IL-6`
-    # only a pass2, so neither record contradicts itself. 65 of the 149 concepts
-    # the scope pass overturned looked exactly like this.
-    g = memory_mapping({"IL-6": "IL6"})
-    g.gate("IL6", rule={"verdict": "out", "by": "list"})
-    g.gate("IL-6", pass2={"verdict": "in", "reason": "a cytokine"})
-    rows = g.gate_disagreements()
-    assert [r["term"] for r in rows] == ["IL6"]
-    assert rows[0]["said"] == {"pass2": "in", "rule": "out"}
+def test_a_moved_scope_joins_the_concepts_in_time_order():
+    g = memory_mapping()
+    g.gate("Wound", pass2={"verdict": "out", "reason": "later", "when": "2026-10-02T10:00:00"})
+    g.gate("wounds", pass2={"verdict": "in", "reason": "earlier", "when": "2026-10-01T10:00:00"})
+    g.add("wounds", "Wound")
+    assert [j["why"] for j in g.records["Wound"]["scope"]] == ["earlier", "later"]
+    assert g.gate_verdict("wounds")[0] == "out"
 
 
-def test_the_row_names_which_spelling_each_source_sits_on():
-    g = memory_mapping({"IL-6": "IL6"})
-    g.gate("IL6", rule={"verdict": "out"})
-    g.gate("IL-6", pass2={"verdict": "in", "reason": "r"})
-    assert g.gate_disagreements()[0]["where"] == {"rule": "IL6", "pass2": "IL-6"}
-
-
-def test_one_concept_is_reported_once_however_many_spellings_it_has():
-    g = memory_mapping({"IL-6": "IL6", "il 6": "IL6", "Il-6": "IL6"})
-    g.gate("IL6", rule={"verdict": "out"})
-    g.gate("IL-6", pass2={"verdict": "in", "reason": "r"})
-    assert len(g.gate_disagreements()) == 1
-
-
-def test_the_reported_term_is_the_canonical_not_the_spelling_that_clashed():
-    g = memory_mapping({"IL-6": "IL6"})
-    g.gate("IL6", rule={"verdict": "out"})
-    g.gate("IL-6", pass2={"verdict": "in", "reason": "r"})
-    assert g.gate_disagreements()[0]["term"] == "IL6"
+def test_there_is_nothing_to_contradict_across_spellings():
+    g = memory_mapping({"post-operative pain": "postoperative pain"})
+    g.gate("postoperative pain", rule={"verdict": "out", "by": "METHODOLOGY_BLOCKLIST"})
+    g.gate("post-operative pain", pass2={"verdict": "in", "reason": "r"})
+    assert g.gate_contradictions() == []
 
 
 def test_a_spelling_with_no_concept_of_its_own_still_finds_the_verdict():
     # `Conventional Treatment` maps nowhere and carries nothing, while
-    # `conventional treatment` has a pass 2 verdict. Pooling over the concept
-    # skipped the spelling fallback that `gate_verdict` does, so the capitalised
-    # form came back undecided and fell through to the keyword lists.
+    # `conventional treatment` has a judgement: the fold finds it.
     g = memory_mapping()
     g.gate("conventional treatment", pass2={"verdict": "in", "reason": "r"})
-    assert g.effective_gate_verdict("Conventional Treatment") == ("in", "pass2")
+    assert g.gate_verdict("Conventional Treatment") == ("in", "deepseek-v4-flash")
 
 
 def test_the_concept_still_wins_over_the_spelling_fallback():
     g = memory_mapping({"Conventional Treatment": "conventional therapy"})
     g.gate("conventional therapy", pass2={"verdict": "out", "reason": "a"})
     g.gate("conventional treatment", pass2={"verdict": "in", "reason": "b"})
-    assert g.effective_gate_verdict("Conventional Treatment") == ("out", "pass2")
+    assert g.gate_verdict("Conventional Treatment") == ("out", "deepseek-v4-flash")
+
+
+def test_a_sense_of_a_split_term_takes_the_split_terms_scope():
+    g = memory_mapping()
+    g.gate("Biopsy", rule={"verdict": "in", "by": "WHITELIST"})
+    g.split_by_category("Biopsy", {"process": "Biopsy procedure", "material entity": "Biopsy material"})
+    assert g.gate_verdict("Biopsy procedure") == ("in", "whitelist")

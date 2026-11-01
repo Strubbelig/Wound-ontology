@@ -7,21 +7,19 @@ from collections import Counter
 import pandas as pd
 from wound_ontology.utils.string_utils import smart_title
 from wound_ontology.hierarchies.base_hierarchy import SOURCE_FCA as _SOURCE_FCA
+from wound_ontology.hierarchies.base_hierarchy import SOURCE_CURATED as _SOURCE_CURATED
 from dotenv import load_dotenv
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.llm.llm_client import LLMClient
 from wound_ontology.connectors.pubmed_connector import PubmedConnector
 from wound_ontology.store.concept_store import ConceptStore
-from wound_ontology.store.store_cleaner import StoreCleaner
-from wound_ontology.hierarchies.class_hierarchy import ClassHierarchy
-from wound_ontology.hierarchies.mereological_hierarchy import MereologicalHierarchy
+from wound_ontology.hierarchies.class_hierarchy import ClassHierarchy, ClassHierarchyView
 from wound_ontology.hierarchies.fca_hierarchy import FCAHierarchy
 from wound_ontology.fca.context_matrix import ContextMatrix
 from wound_ontology.fca.concept_lattice import ConceptLattice
 from wound_ontology.embedding.embedder import Embedder
 from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
 from wound_ontology.mappers.term_mapper import TermMapper, canonical_rank
-from wound_ontology.mappers.mapping_cleaner import MappingCleaner
 from wound_ontology.owl import OWLOntology, OntologyCurator
 from wound_ontology.reasoning import OWLReasoner
 from wound_ontology.graph_visualizer import GraphVisualizer
@@ -55,8 +53,8 @@ except ImportError as _exc:
 
 # NOTE: _DEFAULT_ALLOWED_PREDICATES now comes from config.settings above. It used
 # to be a five-entry literal defined right here, whose own comment pointed at
-# config/settings.py without importing it. StoreCleaner DELETES any attribute
-# whose predicate is not on this list, so that literal silently deleted 19 of the
+# config/settings.py without importing it. The cleaner then DELETED any attribute
+# whose predicate was not on this list (the store's view drops it now, rule 86), so that literal silently deleted 19 of the
 # 26 relation types two-stage extraction emits -- has_part, participates_in,
 # inheres_in, has_disposition, the BFO backbone MILD is built on -- leaving only
 # is_a, part_of and has_quality. Measured on a 142-abstract pilot: 316 relation
@@ -101,18 +99,17 @@ class Orchestrator:
 
         self.allowed_predicates = allowed_predicates
         self.pubcon        = PubmedConnector(self.dm, entrez_email)
-        # The gate is built before the cleaner because the cleaner's Blocker
-        # consults it: a curator's scope verdict outranks the lists it was
-        # imported from. And before the store, because every decision about a
-        # term lives in it and the store is read THROUGH it (rule 51).
+        # The term dict is built before the store, because every decision about
+        # a term lives in it and the store is read THROUGH it (rule 51). Scope
+        # comes from it alone: no list, no Blocker (rule 86). The cleaned store
+        # is the view, `store.cleaned`, recomputed on every read.
         _term_mapping      = TermMappingAndGate(self.dm, file_name="term_mapping")
         self.store         = ConceptStore(self.dm, "concept_store", terms=_term_mapping)
-        self.cleaner       = StoreCleaner(self.allowed_predicates, gate=_term_mapping)
-        # Scope is read live from the gate, through the same Blocker the
-        # cleaner and the lists use (rule 51; merged 2026-09-28).
-        self.store.scope   = self.cleaner._is_blocked
-        self.class_hier    = ClassHierarchy(self.dm)
-        self.mere_hier     = MereologicalHierarchy(self.dm)
+        self.store.allowed_predicates = self.allowed_predicates
+        # The class hierarchy is a VIEW (2026-10-21): derived from its sources on
+        # first use, never read from or written to a matrix CSV. See
+        # ClassHierarchyView and refresh_class_hierarchy().
+        self._class_hier: ClassHierarchyView | None = None
         self.context_matrix = ContextMatrix(self.dm, "context_matrix")
         # Replaced per analysis by run_fca; these are the "no analysis yet" ones.
         # `lattices` / `fca_hiers` keep every analysis of this session by subtree,
@@ -125,13 +122,37 @@ class Orchestrator:
         # head-word rule's verdicts with reasons, the names withheld before it,
         # and the report they were written to. Empty until run_fca has named.
         self.fca_head_rule: dict = {}
-        self.term_mapper     = TermMapper(_term_mapping, name="Term mapper")
-        self.mapping_cleaner = MappingCleaner(self.term_mapper, allowed_predicates=self.allowed_predicates)
+        # The head-word rule's edges the last hierarchy build left out by the
+        # evidence cut (rule 79, 2026-10-30), (child, parent).
+        self.fca_edges_below_cut: list[tuple[str, str]] = []
+        self.term_mapper    = TermMapper(_term_mapping, name="Term mapper")
         self._embedder: Embedder | None = None
         self.reasoner      = OWLReasoner()
         self.graph_exporter = GraphVisualizer()
 
     # ── Internal helpers ───────────────────────────────────────────────────────
+
+    # ── The class hierarchy as a view (2026-10-21) ─────────────────────────────
+
+    @property
+    def class_hier(self) -> ClassHierarchyView:
+        """The class hierarchy VIEW, derived from its sources on first use.
+
+        Curator, 2026-10-21: the hierarchies are not needed as a pipeline stage;
+        the concept store read through the mapping-and-gate register is what the
+        FCA works on. The is_a structure the FCA needs (wound subtree, conceptual
+        scaling) and the extension needs (subclass edges) is therefore a view of
+        WONT + MILD, the store, the register's placements and the accepted FCA
+        slices -- built here when first asked for, rebuilt by
+        refresh_class_hierarchy() or the edge gate, never loaded from disk.
+        """
+        if self._class_hier is None:
+            self.refresh_class_hierarchy()
+        return self._class_hier
+
+    @class_hier.setter
+    def class_hier(self, value) -> None:
+        self._class_hier = value
 
     def _run_sync(self, coroutine):
         """Run a coroutine from sync code, in a notebook or under pytest.
@@ -189,12 +210,8 @@ class Orchestrator:
         return freq
 
     async def _mapping_milestone(self, store) -> None:
-        """Periodic callback during extraction: clean store and rebuild term mapping."""
-        cleaner = StoreCleaner(self.allowed_predicates,
-                               gate=self.term_mapper._term_mapping)
-        report  = cleaner.clean(store)
-        StoreCleaner.print_report(report)
-
+        """Periodic callback during extraction: rebuild the term mapping. Nothing
+        is cleaned: the view reads scope from the term dict (rule 86)."""
         freq = self._collect_store_terms_with_freq(store)
         self.term_mapper.build_from_embeddings(
             list(freq.keys()),
@@ -205,8 +222,9 @@ class Orchestrator:
         print("\n[Orchestrator] Mapping milestone complete.")
 
     # ── Phase 1: Extraction ────────────────────────────────────────────────────
-    # Noise filtering (units, pure symbols) is applied automatically during
-    # the milestone callback and again in run_clean_store().
+    # Nothing is filtered at extraction (rule 86): every string is stored as
+    # extracted, and a number with a unit gets `out` from the term dict's
+    # `noise_rule`, as a verdict.
 
     def run_pubmed_search(self, queries: str | list[str], max_results_per_query: int = 200):
         """Fetch abstracts for one or more PubMed queries, merging into one database."""
@@ -497,16 +515,10 @@ class Orchestrator:
     def blocked_names(self) -> set[str]:
         """Names the GATE condemns, lowercased.
 
-        The blocklist is applied at extraction and never again, so the mapping
-        could rename a surviving variant back onto a blocked name. Held here so
-        the mapping can refuse to do that.
-
-        Read off the gate rather than `METHODOLOGY_BLOCKLIST`, which is where
-        the list's entries now live: a curator who lets `silver sulfadiazine`
-        back in has to see that reflected here, or the review sheet goes on
-        calling it blocked. Keyword blocks are deliberately absent, as they
-        always were -- this answers "is this name condemned by an entry", not
-        "would the blocker drop this string".
+        The mapping must not rename a surviving variant onto a name the gate
+        puts out, so it is held here and the mapping refuses to. Read off the
+        gate, the only place scope is decided since the lists went (rule 86): a
+        curator who lets `silver sulfadiazine` back in sees it here at once.
         """
         return {t.strip().lower() for t in self.term_mapper.gated("out")}
 
@@ -584,13 +596,16 @@ class Orchestrator:
             if gt.is_alias(term):
                 continue                    # a spelling already decided (rule 51)
             others.add(term)
-            if rec.get("to"):
-                others.add(rec["to"])
+            from wound_ontology.mappers.term_mapping_and_gate import split_of, target_of
+            if (to := target_of(rec, term)):
+                others.add(to)
+            others.update(split_of(rec).values())   # split by category (rule 87)
             others.update(rec.get("pairs") or {})
 
         renames, report = pass0_renames(
             freq, {str(a) for a in self.ontology_labels()}, others,
-            declares=declared_category)
+            declares=declared_category,
+            named=self.term_mapper._term_mapping.named())
         if not quiet:
             print(f"[pass0] {report['groups']:,} group(s) with more than one "
                   f"spelling, {report['respelled']:,} lone spelling(s) respelled; "
@@ -620,20 +635,18 @@ class Orchestrator:
                   f"{mp['targets renamed']:,} target(s) and "
                   f"{mp['pair keys renamed']:,} pair key(s) renamed; "
                   f"{mp['records merged']:,} record(s) merged; "
-                  f"{mp['identities dropped']:,} entr(ies) dropped as pure "
-                  f"spelling ({mp['records deleted']:,} record(s) gone entirely, "
-                  f"the rest kept for a gate or another canonical)")
+                  f"{mp['names kept on the old spelling']:,} name judgement(s) that now name "
+                  f"the new spelling kept on the old one; nothing dropped (rule 89)")
             if mp["chains"]:
                 print(f"[pass0] {mp['chains']:,} live entr(ies) now point at a "
                       f"term that is itself mapped — the rename revealed chains "
                       f"the spelling was hiding; resolve_chains is owed a run.")
-        if report["mapping"]["gate conflicts"]:
-            clashes = report["mapping"]["gate conflicts"]
-            print(f"[pass0] {len(clashes)} merged record(s) carry a gate source "
-                  f"that contradicts ITSELF across the spellings; that source now "
-                  f"decides nothing and both sides are kept in `gate_contested`:")
-            for term, source, kept, dropped in clashes[:10]:
-                print(f"[pass0]     {term!r}: {source} said both {kept!r} and {dropped!r}")
+        if report["mapping"].get("locked targets"):
+            locked = report["mapping"]["locked targets"]
+            print(f"[pass0] {len(locked)} merged record(s) mapped onto a target their "
+                  f"own pair locks; the mapping is withdrawn, the lock stands:")
+            for term, target in locked[:10]:
+                print(f"[pass0]     {term!r} -/-> {target!r}")
         if report["mapping"]["target conflicts"]:
             conflicts = report["mapping"]["target conflicts"]
             print(f"[pass0] {len(conflicts)} merged record(s) pointed at DIFFERENT "
@@ -661,111 +674,6 @@ class Orchestrator:
         print(f"[pass0] {len(renames):,} rename(s) applied and verified against "
               f"both files on disk.")
         return report
-
-    def export_gate_lists(self, *, quiet: bool = False) -> dict[str, int]:
-        """Rewrite the two exact curation lists from the gate. The lists are a VIEW.
-
-        `METHODOLOGY_BLOCKLIST` and `WHITELIST` were the authoring surface until
-        2026-09-25, written by a cosine threshold and an LLM batch straight into
-        source files with no verdict, reason, date or author. They are now what
-        the gate says, printed: one writer, and an entry that cannot exist
-        without saying who put it there.
-        """
-        from wound_ontology.store.term_lists import export_gate_lists
-        return export_gate_lists(self.term_mapper._term_mapping, quiet=quiet)
-
-    def gate_lists_drift(self) -> dict[str, set[str]]:
-        """What the two literals hold that the gate does not, and the reverse.
-
-        Empty on both sides is the invariant. Anything in it means someone edited
-        a generated file, or an export is owed — and either way one of the two is
-        deciding things the other does not know about.
-        """
-        # Re-read the files, never `from config... import`: the modules are in
-        # `sys.modules` from before an export in the same process, and a drift
-        # check that answers from a stale import reports drift that is not there
-        # -- or misses drift that is.
-        import ast
-        from pathlib import Path
-
-        def _literal(filename: str, var: str) -> set[str]:
-            src = (Path(__file__).resolve().parents[2] / "config" / filename).read_text()
-            for node in ast.parse(src).body:
-                target = getattr(node, "target", None) or (getattr(node, "targets", [None]) or [None])[0]
-                if getattr(target, "id", "") != var:
-                    continue
-                value = node.value
-                if isinstance(value, ast.Call):        # frozenset({...})
-                    value = value.args[0]
-                return set(ast.literal_eval(value))
-            raise RuntimeError(f"config/{filename} does not declare {var}")
-
-        METHODOLOGY_BLOCKLIST = _literal("blocklist.py", "METHODOLOGY_BLOCKLIST")
-        WHITELIST = _literal("whitelist.py", "WHITELIST")
-        out = {t.strip().lower() for t in self.term_mapper.gated("out")}
-        keep = {t.strip().lower() for t in self.term_mapper.gated("in")}
-        file_out = {t.strip().lower() for t in METHODOLOGY_BLOCKLIST}
-        file_in = {t.strip().lower() for t in WHITELIST}
-        return {"blocklist only in file": file_out - out,
-                "blocklist only in gate": out - file_out,
-                "whitelist only in file": file_in - keep,
-                "whitelist only in gate": keep - file_in}
-
-    def gate_overrides(self) -> list[dict]:
-        """Every term the gate decides DIFFERENTLY from the lists alone.
-
-        `gate_disagreements()` compares the record's own sources and cannot see
-        this one: only 150 of the 4,138 blocked store names are blocked by the
-        exact list, and 3,988 by one of the 69 KEYWORDS, which are rules and are
-        not on the record. A pass saying `in` about a keyword-blocked term
-        therefore contradicts nothing the record holds — and is exactly the
-        finding worth reading, because the `pain` keyword alone takes 429 names,
-        `wound pain` and `Severe distal pain` among them, while WONT defines
-        `painful` as "a degree of wound pain that qualifies its bearer as
-        painful".
-
-        Compared against the files AS THEY ARE. Before an export that is "what
-        the passes changed" -- 581 terms on 2026-09-25. After one it is only what
-        the files CANNOT express, because membership has caught up and precedence
-        has not: an exact-list entry is read behind the whitelist keywords, while
-        a `curator` or `pass` verdict is read ahead of them, so a pass saying
-        `out` about a keyword-whitelisted term blocks it and the exported list
-        alone does not. Four terms on 2026-09-25 (`pain assessment`,
-        `pain-management techniques`, `predictive factors`,
-        `wound healing models`). Anything reading the literal without a gate
-        differs from `Blocker(gate=...)` on exactly those.
-
-        Rows are `{term, was, now, verdict, source, reason, mentions}`, sorted
-        by mentions, so the review starts where the store has most to lose.
-        """
-        from collections import Counter
-
-        from wound_ontology.store.blocker import Blocker
-
-        gate = self.term_mapper._term_mapping
-        plain = Blocker()                       # the lists, with no gate
-        gated = self.cleaner.blocker
-
-        freq: Counter = Counter()
-        for _, ents in self.store.view(mapped=False, include_rejected=True):
-            for name in ents:
-                freq[name] += 1
-
-        rows = []
-        for term in freq:
-            before, after = plain.is_blocked(term), gated.is_blocked(term)
-            if before == after:
-                continue
-            verdict, source = gate.gate_verdict(term)
-            evidence = gate.peek_gate(term).get(source.split("+")[0]) or {}
-            rows.append({"term": term,
-                         "was": "blocked" if before else "kept",
-                         "now": "blocked" if after else "kept",
-                         "verdict": verdict, "source": source,
-                         "reason": evidence.get("reason", ""),
-                         "mentions": freq[term]})
-        rows.sort(key=lambda r: (-r["mentions"], r["term"].lower()))
-        return rows
 
     def gate_sources(self) -> dict[str, str]:
         """`lowercased name -> which source condemned it`, for the review sheets."""
@@ -1106,12 +1014,15 @@ class Orchestrator:
             # the LIVE pair is asked too (2026-09-28: `bone infection ->
             # Osteomyelitis` and `formation of blood vessel` were withdrawn
             # over the curator's same_class that way).
+            # `check` wrote under `curator` until 2026-10-24 and counted here.
             live = gt.data.get(t)
-            if gt.peek(t, c).get("curator") or (live and gt.peek(t, live).get("curator")):
+            def said(j: dict) -> bool:
+                return bool(j.get("curator") or j.get("check"))
+            if said(gt.peek(t, c)) or (live and said(gt.peek(t, live))):
                 return True
             keys = {_norm(c)} | ({_norm(live)} if live else set())
-            return any(_norm(k) in keys and (j.get("curator") or {}).get("verdict")
-                       for k, j in (gt.record(t).get("pairs") or {}).items())
+            return any(_norm(k) in keys and said(gt.peek(gt.resolve(t), k))
+                       for k in (gt.record(t).get("pairs") or {}))
 
         def is_live(t: str, c: str) -> bool:
             # Only the mapping pass 1 objected to is withdrawn: `withdraw`
@@ -1148,21 +1059,6 @@ class Orchestrator:
                   f"but they are not nothing; review before minting.")
         return self.term_mapper.mapping
 
-    def review_mapping(self) -> None:
-        """
-        Inspect and curate the term mapping before applying it to the store.
-
-        Runs sequentially:
-          1. List all mappings (informational).
-          2. Interactive review of auto-merged clusters.
-          3. List suspicious mappings (informational).
-          4. Interactive review of remaining mappings.
-        """
-        self.mapping_cleaner.list_mappings()
-        self.mapping_cleaner.review_merged_mappings()
-        self.mapping_cleaner.list_suspicious_mappings()
-        self.mapping_cleaner.review_mappings()
-
     def check_term_mapping(self, threshold: float = 0.95) -> list[dict]:
         """Re-evaluate term mappings with SapBERT and flag potential false merges.
 
@@ -1183,82 +1079,10 @@ class Orchestrator:
         return flagged
 
     def run_apply_mapping(self) -> None:
-        """Apply the reviewed term mapping to the store (normalise all entity and target names)."""
-        self.mapping_cleaner.apply(self.store)
+        """Read the store through the term mapping. Nothing is rewritten (rule 51)."""
+        self.store.normalize(mapper=self.term_mapper)
 
-    # ── Phase 3: Curation ─────────────────────────────────────────────────────
-
-    def review_lists(
-        self,
-        high_threshold: float = 0.92,
-        low_threshold: float = 0.40,
-        save_skipped: bool = False,
-        llm_batch_size: int = 50,
-        recluster: bool = False,
-        bl_clusters: int = 40,
-        wl_clusters: int = 25,
-    ) -> None:
-        """
-        Interactively review and curate entities in the store.
-
-        Targets are intentionally not cleaned here — they are normalised and
-        clustered to canonical forms by run_build_term_mapping() + run_apply_mapping().
-
-        Runs sequentially:
-          1. Validate blocklist/whitelist exclusivity.
-          2. Entities: score ≥ high_threshold → auto-block; score < low_threshold → skip;
-             in between → manual review.
-          3. Auto-blocked entities in store — allow to whitelist exceptions.
-          4. Whitelisted entities — allow to move to blocklist.
-          5. Recluster both lists with SapBERT K-means (only if recluster=True).
-
-        Call run_clean_store() afterwards to apply changes.
-        """
-        self.cleaner._abort_review = False
-        self.cleaner._reload_lists()
-        embedder = self._ensure_embedder()
-
-        self.cleaner._check_list_exclusivity(embedder, threshold=0.92)
-        self.cleaner.review_susp_entities(self.store, embedder=embedder,
-                                          high_threshold=high_threshold,
-                                          low_threshold=low_threshold,
-                                          save_skipped=save_skipped,
-                                          llm=self.llm,
-                                          llm_batch_size=llm_batch_size,
-                                          run_sync=self._run_sync)
-        self.cleaner.review_blocked_entities(self.store)
-        self.cleaner.review_good_entities(self.store)
-
-        if recluster:
-            self.recluster_lists(bl_clusters=bl_clusters, wl_clusters=wl_clusters)
-
-    def cluster_blocklist(self, dry_run: bool = False) -> None:
-        """Print a cluster summary of METHODOLOGY_BLOCKLIST and optionally rewrite
-        blocklist.py with cluster-headed sections.
-
-        dry_run=True  → print summary only, no file written.
-        dry_run=False → rewrite METHODOLOGY_BLOCKLIST in config/blocklist.py.
-        """
-        self.cleaner.blocker.recluster(dry_run=dry_run)
-
-    def recluster_lists(self, bl_clusters: int = 40, wl_clusters: int = 25) -> None:
-        """Recluster blocklist and whitelist with SapBERT K-means."""
-        embedder = self._ensure_embedder()
-
-        print("\n[recluster] Blocklist...")
-        self.cleaner.blocker.recluster_sapbert(embedder, n_clusters=bl_clusters)
-
-        print("\n[recluster] Whitelist...")
-        self.cleaner.blocker.recluster_whitelist_sapbert(embedder, n_clusters=wl_clusters)
-
-    # ── Phase 4: Filtering ─────────────────────────────────────────────────────
-
-    def run_clean_store(self, extra_blocked_entities: set[str] | None = None) -> None:
-        """Remove out-of-scope entities, invalid predicates, and empty entities from the store."""
-        cleaner = StoreCleaner(self.allowed_predicates, extra_blocked_entities,
-                               gate=self.term_mapper._term_mapping)
-        report = cleaner.clean(self.store)
-        StoreCleaner.print_report(report)
+    # ── Phase 3: Concept analysis ─────────────────────────────────────────────
 
     def _judge_fca_proposals(self, proposals, withheld: dict[str, list[str]] | None = None) -> int:
         """Rule 79: the head-word rule decides the concept analysis's edges.
@@ -1386,14 +1210,21 @@ class Orchestrator:
                   f"{len(slices)} reviewed lattice slice(s).")
         return slices
 
-    def run_build_hierarchies(
+    def refresh_class_hierarchy(
         self,
         predefined_df: pd.DataFrame | None = None,
         curated_sources=None,
         curated_label_sources=None,
-    ) -> None:
+        include_rejected: bool = False,
+    ) -> ClassHierarchyView:
         """
-        Build ClassHierarchy and MereologicalHierarchy from the ConceptStore.
+        Derive the class hierarchy VIEW from its sources and return it.
+
+        Replaces run_build_hierarchies (2026-10-21). Nothing is saved but a
+        provenance snapshot for the inspection pages; the mereological hierarchy
+        is no longer built. The edge gate's standing verdicts are taken off the
+        result unless `include_rejected` -- which the gate itself asks for, so
+        that every edge is heard again.
 
         predefined_df – DataFrame with 'Class' and 'Parent class' columns. When
                         None (the default) the curated seed edges are read from
@@ -1453,14 +1284,58 @@ class Orchestrator:
         print(f"[Orchestrator] {len(placed):,} placement edge(s) in the term dict; "
               f"{len(kept):,} kept by the evidence cut (>= {PLACEMENT_MIN_ABSTRACTS} abstracts), "
               f"{len(placed) - len(kept):,} below it (kept in the term dict, not built).")
-        placed = kept
+        # The author's links between two terms (rule 89) join the same source.
+        # Here the parent is a term too, not an ontology class, so BOTH ends
+        # must clear the cut: a parent the abstracts barely name would become a
+        # class on the strength of this one link.
+        links = self.term_mapper._term_mapping.term_links()
+        kept_links = [(t, p) for t, p in links
+                      if min(len(seen.get(t, ())), len(seen.get(p, ()))) >= PLACEMENT_MIN_ABSTRACTS]
+        print(f"[Orchestrator] {len(links):,} link(s) the author made between two terms; "
+              f"{len(kept_links):,} kept by the evidence cut on both ends, "
+              f"{len(links) - len(kept_links):,} below it (kept in the term dict, not built).")
+        placed = kept + kept_links
+        # The head-word rule's edges (rule 79) clear the same cut (curator,
+        # 2026-10-30, asked whether it should hold for them too: "ja"). Until
+        # then a name of the concept analysis became a class on the rule alone:
+        # 7 of the 12 classes it alone brought into the core were in fewer than
+        # 2 abstracts, 5 of them names of the accepted slice no abstract term
+        # carries (`Partial-Thickness Burn`). Both ends, as with the author's
+        # links; a WONT or MILD class is no term and needs no abstracts. A name
+        # is counted by the key the export mints one class by (`IdRegistry.key`),
+        # not as spelled: the slice's `Deep Burn` is the class of the term `Deep
+        # burn wound` (19 abstracts; rule 80: a bare burn is a burn wound),
+        # and spelled out it is in none. A WONT or MILD class is one only as the
+        # hierarchy's own node (its label, as `get_data` names it), not by the
+        # key: `Autoimmune Disorder Related Wound` shares its key with WONT's
+        # `Autoimmune disease related wound`, yet the export minted it a class
+        # of its own, under Injury. The slice on disk is not edited: a cut edge
+        # stays there, it is not built.
+        from wound_ontology.owl.id_registry import IdRegistry
+        curated_names = set()
+        if predefined_df is not None and not predefined_df.empty:
+            curated_names = {smart_title(str(x)) for col in ("Class", "Parent class")
+                             for x in predefined_df[col].dropna()}
+        named = {}
+        for name, keys in seen.items():
+            named.setdefault(IdRegistry.key(name), set()).update(keys)
+
+        def clears(n):
+            return (smart_title(n) in curated_names
+                    or len(named.get(IdRegistry.key(n), ())) >= PLACEMENT_MIN_ABSTRACTS)
+        fca_cut = sorted({e for sl in fca_slices for e in sl if not (clears(e[0]) and clears(e[1]))})
+        fca_slices = [[e for e in sl if clears(e[0]) and clears(e[1])] for sl in fca_slices]
+        self.fca_edges_below_cut = fca_cut
+        print(f"[Orchestrator] {sum(len(sl) for sl in fca_slices):,} edge(s) of the head-word rule kept by the "
+              f"evidence cut on both ends, {len(fca_cut):,} below it (kept in the lattice slice, not built)"
+              + (f": {fca_cut[:12]}" + (" ..." if len(fca_cut) > 12 else "") if fca_cut else ""))
         # The module classes a placement hangs from need their own parents, or
         # they float at the top (`planned process`): add the import modules'
         # chains above exactly those classes, stamped curated like WONT/MILD.
         if curated_label_sources:
             from wound_ontology.hierarchies.curated_seed import module_ancestry
             gtm = self.term_mapper._term_mapping
-            used = {((gtm.peek(t, c).get("placement") or {}).get("iri")) for t, c in placed} - {None}
+            used = {gtm.placement_iri(t, c) for t, c in placed} - {None}
             chains = module_ancestry(used, curated_label_sources)
             if len(chains):
                 predefined_df = pd.concat([predefined_df, chains], ignore_index=True).drop_duplicates()
@@ -1474,21 +1349,41 @@ class Orchestrator:
             predefined_df = pd.concat([predefined_df, bfo], ignore_index=True).drop_duplicates()
             print(f"[Orchestrator] BFO: {len(bfo):,} edge(s) of BFO's own tree (and the two "
                   f"non-BFO extraction categories) added to the curated tier.")
-        self.class_hier.get_data(
-            self.store, curated=predefined_df, fca=fca_slices,
-            reconcile_categories=self.reasoner_gate.least_common_category,
-            placed=placed,
-        )
-        self.mere_hier.get_data(self.store)
+        view = self._view_factory(self.dm)
+        # The edge gate hears every edge again: ELK's own is_a verdicts are set
+        # aside while the view is read, every other judgement still counts.
+        reopen = self.GATE_AUTHOR if include_rejected else None
+        self.store.reopen = (reopen, "is_a") if reopen else None
+        try:
+            view.get_data(
+                self.store, curated=predefined_df, fca=fca_slices,
+                reconcile_categories=self.reasoner_gate.least_common_category,
+                placed=placed,
+            )
+        finally:
+            self.store.reopen = None
+        view.built = True
+        self._apply_is_a_verdicts(view, reopen=reopen)
+        view.verdicts_applied = not include_rejected
+        view.save_snapshot()
+        self._class_hier = view
 
-        self.class_hier.save()
-        self.mere_hier.save()
+        print(f"ClassHierarchy (view) : {len(view.concepts)} concepts, "
+              f"roots={view.roots[:3]}")
+        print(f"ClassHierarchy sources: {view.provenance_summary()}"
+              + ("" if view.verdicts_applied else "  (edge-gate verdicts NOT applied: re-hearing)"))
+        return view
 
-        print(f"ClassHierarchy        : {len(self.class_hier.concepts)} concepts, "
-              f"roots={self.class_hier.roots[:3]}")
-        print(f"MereologicalHierarchy : {len(self.mere_hier.concepts)} concepts, "
-              f"roots={self.mere_hier.roots[:3]}")
-        print(f"ClassHierarchy sources: {self.class_hier.provenance_summary()}")
+    def run_build_hierarchies(self, *args, **kwargs) -> ClassHierarchyView:
+        """Deprecated (2026-10-21): the hierarchies are no longer a pipeline stage.
+
+        Kept so old notebooks and scripts still run. It derives the class
+        hierarchy VIEW (refresh_class_hierarchy) and builds no mereological
+        hierarchy; nothing is written but the provenance snapshot.
+        """
+        print("[Orchestrator] run_build_hierarchies() is deprecated: the class hierarchy "
+              "is a view now. Deriving it with refresh_class_hierarchy().")
+        return self.refresh_class_hierarchy(*args, **kwargs)
 
     # ── Enrichment ─────────────────────────────────────────────────────────────
 
@@ -1514,27 +1409,39 @@ class Orchestrator:
         batch_size: int = 10,
         commit_fca: bool = False,
         scale: bool = True,
-        min_support: int = 1,
-        inherit: str = "class_level",
+        min_support: int = 2,
+        inherit: str = "universal",
         unknown: str = "absent",
         name: bool = True,
     ) -> None:
         """
         Build FCA matrix → concept lattice → FCAHierarchy.
 
-        inherit      – "class_level" (default) | "all" | "none": which of an
-                       ancestor's own attributes pass to its subclasses (rule
-                       65, see ContextMatrix.get_data). Chosen on the Wound
-                       subtree by scripts/fca_inheritance_compare.py: "all"
-                       and "class_level" proposed the same groupings, but under
-                       "all" each dragged in 20-52 descendants that state none
-                       of the shared attributes (1% of the grouping's cells
-                       their own, against 22%).
+        min_support  – a measured attribute counts for an object only when this
+                       many abstracts state it of that object (rule 65: 2).
+                       The default was 1 until 2026-10-28, so every pipeline
+                       run analysed ~500 attributes where rule 65 and the
+                       thesis say ~80 (the cut lived only in the comparison
+                       scripts), and rule 88 found 385 unread pairs that are
+                       simply below the cut.
+        inherit      – "universal" (default) | "class_level" | "all" | "none":
+                       which of an ancestor's own attributes pass to its
+                       subclasses (see ContextMatrix.get_data). Rule 88: only
+                       those read as true of every instance, which is what a
+                       subclass means. It replaced "class_level" (rule 65, a
+                       Fisher test of how often the subtree states it), which
+                       measured frequency, not truth: on 2026-10-27 it passed
+                       down 17 relations read as false and 18 read as `some`,
+                       and held back 25 of the 44 read as `all`.
         unknown      – "absent" (default, rule 65): a property no abstract
                        states does not hold, for FCA; "both": the open-world
                        dual build, certain vs. candidate concepts.
         name         – False builds the lattice without naming its concepts
-                       (no model calls), e.g. to compare settings first.
+                       (no model calls), e.g. to compare settings first. Such a
+                       run only measures: the head-word rule is not run, so the
+                       accepted slice and the hierarchy's candidates stay as
+                       they are (2026-10-27: a measuring run had re-judged the
+                       slice and written a new version of it).
 
         subtree_root – restrict entities to the subtree of this concept.
         hierarchy    – which hierarchy to use for subtree lookup (default: class_hier).
@@ -1565,6 +1472,8 @@ class Orchestrator:
                        Pass scale=False for the unscaled context, e.g. to see
                        what the attributes alone suggest.
         """
+        # `name` is reused below for each concept's name; the switch is kept here.
+        naming = name
         hier = hierarchy or self.class_hier
         entities = hier.subtree_of(subtree_root) if subtree_root else None
 
@@ -1632,8 +1541,11 @@ class Orchestrator:
                             added += 1
                     else:
                         proposals.append((str(entity), name))
-            if not commit_fca:
+            if not commit_fca and naming:
                 proposed = self._judge_fca_proposals(proposals, withheld=withheld)
+            elif not commit_fca:
+                print("FCA → head-word rule  : not run -- the concepts were not named (name=False), "
+                      "so this run only measures; the accepted slice is left as it is.")
             if added:
                 self.class_hier._df = self.class_hier._df.copy()
                 self.class_hier.save()
@@ -1660,70 +1572,6 @@ class Orchestrator:
         self._run_sync(self.context_matrix.fill_nan(
             self.llm, store=self.store, batch_size=batch_size, entity_batch=entity_batch,
         ))
-
-    def review_mere_relations(self, batch_size: int = 50) -> None:
-        """
-        LLM-validate every part_of edge in the mereological hierarchy.
-
-        Each (child, part_of, parent) triple is classified as:
-          keep  – valid anatomical/physical part_of → left unchanged
-          is_a  – subtype relation mislabelled as part_of →
-                  removed from mere_hier, added to class_hier
-          drop  – wrong in both directions → removed from mere_hier
-
-        Both hierarchies are saved after correction.
-        Re-run after run_build_hierarchies() to keep corrections current.
-        """
-        df = self.mere_hier.df
-        if df.empty:
-            print("Mereological hierarchy is empty.")
-            return
-
-        # Collect all edges as (child, parent)
-        triples: list[tuple[str, str]] = []
-        for child in df.index:
-            for parent in df.columns[df.loc[child] == 1.0]:
-                triples.append((child, parent))
-
-        if not triples:
-            print("No part_of edges found.")
-            return
-
-        print(f"[review_mere_relations] Validating {len(triples)} part_of edges "
-              f"in batches of {batch_size}...")
-
-        async def _run():
-            results = []
-            total = (len(triples) + batch_size - 1) // batch_size
-            for i in range(0, len(triples), batch_size):
-                batch = triples[i:i + batch_size]
-                bn = i // batch_size + 1
-                print(f"  batch {bn}/{total} ({len(batch)} triples)...", flush=True)
-                results.extend(await self.llm.validate_mere_batch(batch))
-            return results
-
-        results = self._run_sync(_run())
-
-        kept = dropped = reclassified = 0
-        for r in results:
-            child, parent, verdict = r.child, r.parent, r.verdict.strip().lower()
-            if verdict == "keep":
-                kept += 1
-                continue
-            # Remove from mere_hier
-            if child in self.mere_hier._df.index and parent in self.mere_hier._df.columns:
-                self.mere_hier._df.at[child, parent] = 0.0
-            if verdict == "is_a":
-                self.class_hier._set_edge(child, parent)
-                reclassified += 1
-            else:
-                dropped += 1
-
-        self.mere_hier.save()
-        self.class_hier.save()
-        print(f"\n[review_mere_relations] done — "
-              f"kept={kept}, reclassified as is_a={reclassified}, dropped={dropped}. "
-              f"Both hierarchies saved.")
 
     # ── Export ─────────────────────────────────────────────────────────────────
 
@@ -1753,7 +1601,7 @@ class Orchestrator:
         )
         onto = OWLOntology.create()
         OntologyCurator(onto).from_hierarchies(
-            self.class_hier, self.mere_hier, self.fca_hier, store=self.store,
+            self.class_hier, fca_hierarchy=self.fca_hier, store=self.store,
         )
         onto.save(self.dm, output_file)
 
@@ -1796,11 +1644,20 @@ class Orchestrator:
         #    child is named in >= PLACEMENT_MIN_ABSTRACTS abstracts (the cut of
         #    rule 64, applied here to text as well).
         import json as _json
-        read = _Path(PROJECT_ROOT) / "data" / "review" / "relation_universality_2026-10-02" / "result.json"
-        if not read.exists():
-            raise FileNotFoundError(f"{read} is missing: the WONT addition takes only read relations "
-                                    f"(rule 66); run scripts/compile_universality.py")
-        axioms = _json.loads(read.read_text(encoding="utf-8"))["axioms"]
+        # The instance reading is in the term dict (2026-10-30; until then in
+        # result.json files beside it, curator: "das machst du ganz sicher
+        # nicht"): a relation is an axiom when the reading or the author says
+        # `yes` and nothing that counts says `no` (TermMappingAndGate.read_relations).
+        from wound_ontology.mappers.judgements import RELATION_READER
+        gtm = self.term_mapper._term_mapping
+        judged = gtm.read_relations(RELATION_READER)
+        if not judged:
+            raise RuntimeError(f"no relation in the term dict carries a judgement of {RELATION_READER}: the WONT "
+                               f"addition takes only read relations (rule 66); run "
+                               f"scripts/claude_read_universality.py --submit --wait --write")
+        axioms = [{"subject": s_, "predicate": p_, "value": o_} for s_, p_, o_, ax, _ in judged if ax]
+        print(f"[Orchestrator] instance reading in the term dict: {len(judged)} relation(s) judged, "
+              f"{len(axioms)} axiom(s)")
         # The reading was done on the names of its day; a later rename (rule 70:
         # `ulcer` is now `Wound`) must reach it, or the export mints the old
         # name as a class of its own. Every name goes through the store's
@@ -1811,6 +1668,21 @@ class Orchestrator:
         if renamed:
             print(f"[Orchestrator] {renamed} read relation(s) carry a name renamed since the reading; "
                   f"exported under the current name")
+        # A relation refused in the term dict -- by ELK or anyone (rule 89) --
+        # is not exported, though it was read as true of every instance: the
+        # reading came first and does not outrank a later refusal (2026-10-29;
+        # until then the read relations went out without a look at the term dict).
+        held = [(r, j) for r in relations
+                if (j := gtm.relation_judgement(*r)) and j["verdict"] == "no"]
+        if held:
+            print(f"[Orchestrator] *** {len(held)} read relation(s) stand refused in the term dict "
+                  f"and are NOT exported: ***")
+            for (s_, p_, o_), j in held[:20]:
+                print(f"[Orchestrator]     {s_} {p_} {o_}  (no by {j['by']}: {j['why'][:120]})")
+            gone = {r for r, _ in held}
+            relations = [r for r in relations if r not in gone]
+        else:
+            print(f"[Orchestrator] none of the {len(relations)} read relation(s) stands refused in the term dict")
         named = {}
         for key, ents in self.store.view():
             for name in ents:
@@ -1832,20 +1704,17 @@ class Orchestrator:
         print(f"[Orchestrator] WONT addition input: {len(relations)} read relation(s) (rule 66); "
               f"subclass edges {dict(cut)}")
         # Rule 71: persistent ids for minted classes. A renamed class keeps its
-        # id through its former spellings (the term dict's aliases).
+        # id through its former names (former_names_by_key), keyed the
+        # registry's way, so a bracket keeps its words.
         from wound_ontology.owl.id_registry import IdRegistry
-        from wound_ontology.utils.normalise import normalise as _normalise
         registry = IdRegistry(_Path(PROJECT_ROOT) / "data" / "registry" / "wont_ids.json",
                               namespace="https://bioportal.bioontology.org/ontologies/WONT/")
+        _key = IdRegistry.key
         tdict = self.term_mapper._term_mapping
-        live_keys = {_normalise(n).key for c, p in edges for n in (c, p)} | \
-                    {_normalise(n).key for s_, _p, t_ in relations for n in (s_, t_)}
-        former: dict[str, list[str]] = {}
-        for old in tdict.aliases():
-            now = tdict.resolve(old)
-            if now != old:
-                former.setdefault(_normalise(now).key, []).append(old)
-        from wound_ontology.owl.extend import IMPORT_SKIP, other_names
+        live_keys = {_key(n) for c, p in edges for n in (c, p)} | \
+                    {_key(n) for s_, _p, t_ in relations for n in (s_, t_)}
+        from wound_ontology.owl.extend import IMPORT_SKIP, former_names_by_key, other_names
+        former = former_names_by_key(tdict, _key)
         report = extend_ground_truth(
             ground_truth=GROUND_TRUTH_TTL,
             output=out,
@@ -1857,8 +1726,8 @@ class Orchestrator:
             registry=registry,
             # A former spelling counts only once it is no longer a name of its
             # own in this build; otherwise two live classes would be merged.
-            former_names=lambda term: [f for f in former.get(_normalise(term).key, ())
-                                       if _normalise(f).key not in live_keys],
+            former_names=lambda term: [f for f in former.get(_key(term), ())
+                                       if _key(f) not in live_keys],
             # Rule 74: a term no import defines is looked for under the class the
             # term dict maps it onto (it IS that class), else under its former
             # spellings (`sample from organism` was OBI's `specimen from organism`).
@@ -2202,19 +2071,21 @@ class Orchestrator:
             self._gate = ReasonerGate(self.build_reasoner_skeleton())
         return self._gate
 
-    GATE_AUTHOR = "reasoner_gate"
+    #: The agent of the reasoner's verdicts in the term dict (rule 89).
+    GATE_AUTHOR = "elk"
 
     def run_gate_store_relations(self, store=None, quarantine: bool = True,
                                  apply: bool = True):
         """Reason over the store's RELATIONS, before any hierarchy is built.
 
-        A quarantined triple is REJECTED in the store -- a verdict by
-        `reasoner_gate` beside the assertion -- not deleted. With `apply`, the
-        gate's own earlier verdicts are lifted first, so the run re-tests every
-        relation against the skeleton as it is NOW: a triple quarantined
-        against last month's WONT gets its hearing again. If the gate then
-        cannot run, the lifted verdicts are put back; a skipped gate must not
-        turn into an un-vetted store.
+        A quarantined triple gets `no` from `elk` in the term dict, with the
+        reason the reasoner found for THAT triple (rule 89) -- the assertion
+        stays in the store. Every relation is heard again against the
+        skeleton as it is NOW: the view sets ELK's own earlier verdicts aside
+        while the inputs are read (`ConceptStore.reopen`), so a triple refused
+        against last month's WONT gets its hearing; one that now passes gets
+        `yes`. Nothing is lifted from the term dict, so a gate that cannot run
+        leaves every earlier verdict standing.
 
         The sibling gate, `run_gate_hierarchy_edges`, runs at the other end of
         the pipeline and checks `is_a` edges. The two are not redundant: they see
@@ -2231,6 +2102,7 @@ class Orchestrator:
         already shaped the concept lattice that produced the is_a edges, so the
         damage outlives the axiom that caused it.
         """
+        from datetime import datetime as _dt
         from config.settings import QUARANTINE_DIR as _Q
         from wound_ontology.llm.extraction_adapter import (
             describe_gate_inputs,
@@ -2239,9 +2111,13 @@ class Orchestrator:
         )
 
         st = store or self.store
-        lifted = st.lift_decisions(self.GATE_AUTHOR) if apply else None
-        entities, relations, report = store_to_gate_inputs(
-            st, resolve_conflict=self.reasoner_gate.least_common_category)
+        st.reopen = (self.GATE_AUTHOR, "relations")
+        try:
+            entities, relations, report = store_to_gate_inputs(
+                st, resolve_conflict=self.reasoner_gate.least_common_category)
+            heard = {(e, t) for _, e, t, _ in st.assertions()}
+        finally:
+            st.reopen = None
         print("[Orchestrator] " + describe_gate_inputs(entities, relations, report)
               .replace("\n", "\n[Orchestrator] "))
 
@@ -2268,22 +2144,11 @@ class Orchestrator:
         if not relations:
             print("[Orchestrator] No gateable relations. This is NOT a clean result "
                   "unless the store is genuinely empty -- see the counts above.")
-            if lifted:
-                n = st.restore_decisions(lifted)
-                print(f"[Orchestrator] {n} earlier gate verdict(s) put back.")
             return None
 
-        try:
-            result = self.reasoner_gate.check(entities, relations)
-        except BaseException:
-            # `lift_decisions` has already saved the store without the gate's
-            # verdicts. On 2026-10-07 the check crashed here and its 14
-            # rejections stayed lifted: the next run took them as never made.
-            if lifted:
-                n = st.restore_decisions(lifted)
-                print(f"[Orchestrator] *** the reasoner check failed; {n} earlier "
-                      f"gate verdict(s) put back before stopping. ***")
-            raise
+        # Nothing was lifted, so a crash here leaves every earlier verdict in
+        # place (on 2026-10-07 a crash after lifting lost 14 rejections).
+        result = self.reasoner_gate.check(entities, relations)
         print(f"[Orchestrator] {result.summary()}")
         if result.without_individuals:
             print(f"[Orchestrator] *** WONT's named individuals were set aside for "
@@ -2296,24 +2161,35 @@ class Orchestrator:
         if result.skipped:
             print(f"[Orchestrator] *** GATE DID NOT RUN: {result.skipped} ***\n"
                   f"[Orchestrator] *** All {len(relations)} relation(s) were accepted "
-                  f"WITHOUT being checked. This is not a clean result. ***")
-            if lifted:
-                n = st.restore_decisions(lifted)
-                print(f"[Orchestrator] {n} earlier gate verdict(s) put back.")
+                  f"WITHOUT being checked. This is not a clean result. ***\n"
+                  f"[Orchestrator] The earlier verdicts stand; nothing was written.")
             return result
 
-        if apply and (result.quarantined_relations or result.quarantined_entities):
+        if apply:
             # A quarantined triple is ONE axiom but many store cells: the store is
             # keyed by document, so the same assertion sits under every abstract
             # that made it. A cell verdict is keyed by (entity, triple) and so
             # covers every document at once; the assertions stay in the file.
-            doomed = {(r.subject, f"{normalize_predicate(r.predicate.value)}: {r.object}")
-                      for r in result.quarantined_relations}
-            hit = {(e, t) for _, e, t, _ in st.assertions() if (e, t) in doomed}
-            n = st.reject_cells(hit, by=self.GATE_AUTHOR,
-                                note=(result.explanation or "unsatisfiable under the skeleton")[:200])
-            print(f"[Orchestrator] Rejected {n} triple(s) the reasoner quarantined; "
-                  f"the assertions stay in the store with the verdict beside them.")
+            cell = lambda r: (r.subject, f"{normalize_predicate(r.predicate.value)}: {r.object}")  # noqa: E731
+            why = {cell(r): result.why.get((r.subject, r.predicate.value, r.object))
+                   or (result.explanation or "unsatisfiable under the skeleton")[:200]
+                   for r in result.quarantined_relations}
+            doomed = set(why)
+            hit = doomed & heard
+            n = st.reject_cells(hit, by=self.GATE_AUTHOR, notes=why) if hit else 0
+            # A triple ELK refused before and now lets through gets its `yes`;
+            # a triple ELK never refused needs none.
+            gated = {cell(r) for r in relations}
+            back = (st.terms.last_of(self.GATE_AUTHOR, "no") & gated) - doomed
+            stamp = _dt.now().isoformat(timespec="seconds")
+            for e, t in sorted(back):
+                st.terms.judge_cell(e, t, "yes", by=self.GATE_AUTHOR,
+                                    why=f"consistent with the skeleton of {stamp[:10]}")
+            if back:
+                st.terms.save()
+            print(f"[Orchestrator] {n} triple(s) the reasoner quarantined judged `no` "
+                  f"(each with its own reason); {len(back)} triple(s) it had refused "
+                  f"before now pass and were judged `yes`. The assertions stay in the store.")
             missed = doomed - hit
             if missed:
                 print(f"[Orchestrator] *** {len(missed)} quarantined triple(s) were "
@@ -2334,7 +2210,94 @@ class Orchestrator:
                 print(f"[Orchestrator] Quarantined relations → {path}")
         return result
 
-    def run_gate_hierarchy_edges(self, hierarchy=None, quarantine: bool = True):
+    #: What a fresh view is built as. A class attribute so a test can hand in a
+    #: stand-in without touching the derivation itself.
+    _view_factory = ClassHierarchyView
+
+    def _edge_keys(self, view, edge) -> tuple[str, str]:
+        """The term dict's `(term, target)` for a view edge: a placement keeps its
+        own pair, any other edge the strings its sources wrote (`view.names`)."""
+        placed = getattr(view, "_placed_keys", None)
+        if placed is None:
+            gtm = self.term_mapper._term_mapping
+            placed = view._placed_keys = {
+                (smart_title(t), smart_title(c)): (t, c)
+                for t, c in gtm.placements() + gtm.term_links()}
+        c, p = edge
+        names = getattr(view, "names", {}) or {}
+        return placed.get(edge) or (names.get(c, c), names.get(p, p))
+
+    def _is_a_judgements(self, reopen: str | None = None) -> dict:
+        """`(child node, parent node) -> judgement` that counts on every is_a edge
+        in the term dict, one agent's set aside when `reopen` names it. Every
+        spelling of the two ends that the view draws as one node is one edge:
+        their judgements are read together (`Drug product` and `drug product`).
+        A placement's refusal is not a verdict on the edge (`edge_judgements`)."""
+        from wound_ontology.mappers.judgements import current, ordered
+        from wound_ontology.mappers.term_mapping_and_gate import edge_judgements
+        pooled: dict = {}
+        for t, r in self.term_mapper._term_mapping.records.items():
+            for tgt, js in (r.get("is_a") or {}).items():
+                js = edge_judgements(js)
+                if reopen:
+                    js = [j for j in js if j["by"] != reopen]
+                if js:
+                    pooled.setdefault((smart_title(t), smart_title(tgt)), []).extend(js)
+        return {e: cj for e, js in pooled.items() if (cj := current(ordered(js)))}
+
+    def _apply_is_a_verdicts(self, view, reopen: str | None = None) -> int:
+        """Take every edge whose is_a judgement in the term dict is `no` off a
+        freshly built view (rule 89: the hierarchy is a view of those judgements).
+
+        A curated edge -- WONT, MILD, the modules -- is never taken off: it is
+        the author's ontology. One that carries a `no` is kept and named, so
+        the conflict cannot go unseen.
+        """
+        n, spared = 0, []
+        for (c, p), cj in self._is_a_judgements(reopen).items():
+            if cj["verdict"] != "no":
+                continue
+            if not (c in view.df.index and p in view.df.columns and view.df.at[c, p] == 1.0):
+                continue
+            if view._prov.get((c, p)) == _SOURCE_CURATED:
+                spared.append((c, p, cj["by"]))
+                continue
+            view.df.at[c, p] = 0.0
+            view._prov.pop((c, p), None)
+            n += 1
+        print(f"[Orchestrator] class hierarchy view: {n} edge(s) taken off by an is_a `no` "
+              f"in the term dict" + (f" ({reopen}'s set aside for its re-check)" if reopen else "") + ".")
+        if spared:
+            print(f"[Orchestrator] *** {len(spared)} curated edge(s) carry an is_a `no` and "
+                  f"were KEPT -- the ontology is the author's to change: ***")
+            for c, p, by in spared[:10]:
+                print(f"[Orchestrator]     {c} is_a {p}  (no by {by})")
+        return n
+
+    def _write_edge_judgements(self, hier, result, edges) -> None:
+        """ELK's verdicts on the edges, as is_a judgements of each child in the
+        term dict (rule 89), each with its own reason and only where ELK's own
+        last word changes: `no` for an edge it refuses, `yes` for one it had
+        refused and now keeps."""
+        from datetime import datetime as _dt
+        gtm = self.term_mapper._term_mapping
+        refused = {e: self._edge_keys(hier, e) for e in map(tuple, result.quarantined)}
+        n_no = sum(gtm.judge_edge(c, p, "no", why=result.why.get(e) or "unsatisfiable under the skeleton")
+                   for e, (c, p) in refused.items())
+        stamp = _dt.now().isoformat(timespec="seconds")[:10]
+        was = {(smart_title(t), smart_title(k.partition(":")[2].strip()))
+               for t, k in gtm.last_of(self.GATE_AUTHOR, "no") if k.startswith("is_a:")}
+        back = [e for e in map(tuple, edges) if e in was and e not in refused]
+        n_yes = sum(gtm.judge_edge(*self._edge_keys(hier, e), "yes",
+                                   why=f"consistent with the skeleton of {stamp}") for e in back)
+        if n_no or n_yes:
+            gtm.save()
+        print(f"[Orchestrator] edge verdicts in the term dict: {n_no} new `no`, {n_yes} `yes` "
+              f"for an edge ELK had refused and now keeps; {len(refused) - n_no} refusal(s) "
+              f"unchanged since the last run.")
+
+    def run_gate_hierarchy_edges(self, hierarchy=None, quarantine: bool = True,
+                                 apply: bool = True):
         """Reason over the committed is_a edges and quarantine the inconsistent ones.
 
         This is where the gate matters most. Extracted relations are already
@@ -2346,7 +2309,12 @@ class Orchestrator:
         from wound_ontology.reasoning.gate import ReasonerGate
         from config.settings import QUARANTINE_DIR as _Q
 
-        hier = hierarchy or self.class_hier
+        # The view is rebuilt with ELK's own earlier verdicts set aside, so every
+        # edge gets its hearing again against the skeleton as it is now -- the
+        # rule the store gate follows: a verdict reached against last month's
+        # WONT is not a verdict about today's.
+        own_view = hierarchy is None
+        hier = self.refresh_class_hierarchy(include_rejected=True) if own_view else hierarchy
 
         # Edges come from the dataframe, which is what is actually committed.
         # This used to read hier._prov, i.e. only edges carrying provenance --
@@ -2374,7 +2342,15 @@ class Orchestrator:
         # curated `Necrosis subClassOf pathological disorder` was quarantined
         # alongside the text-asserted `Necrosis is_a Process` that contradicted
         # it, which is a lower-ranked source overriding a higher one.
-        result = self.reasoner_gate.check_edges(edges, sources=dict(hier._prov))
+        # An edge the author made or confirmed -- WONT and MILD, an accepted
+        # placement, a decided category -- ranks as the author's (rule 89): the
+        # gate gives way on everything else first and never drops one of them.
+        from wound_ontology.mappers.judgements import AUTHOR, rank as _rank
+        said = self._is_a_judgements()
+        author = {e for e in edges if hier._prov.get(e) == _SOURCE_CURATED
+                  or ((cj := said.get(e)) and _rank(cj) == AUTHOR and cj["verdict"] == "yes")}
+        sources = {**hier._prov, **{e: _SOURCE_CURATED for e in author}}
+        result = self.reasoner_gate.check_edges(edges, sources=sources)
         print(f"[Orchestrator] {result.summary()}")
         if result.quarantined_sources:
             import collections as _c
@@ -2391,14 +2367,42 @@ class Orchestrator:
             print(f"[Orchestrator] *** GATE DID NOT RUN: {result.skipped} ***\n"
                   f"[Orchestrator] *** All {len(edges)} edge(s) were accepted WITHOUT "
                   f"being checked. This is not a clean result. ***")
+            if own_view:
+                n = self._apply_is_a_verdicts(hier)
+                hier.verdicts_applied = True
+                print(f"[Orchestrator] the earlier edge verdicts stay in force ({n} applied).")
             return result
 
+        clash = sorted(set(map(tuple, result.quarantined)) & author)
+        if clash:
+            base = getattr(self.dm, "base_path", None)       # data/cache; review files sit beside it
+            if base is not None:
+                import json as _json
+                from datetime import datetime as _dt
+                from pathlib import Path
+                d = Path(base).parent / "review"
+                d.mkdir(parents=True, exist_ok=True)
+                f = d / f"elk_author_edge_clash_{_dt.now():%Y-%m-%d_%H-%M-%S}.json"
+                f.write_text(_json.dumps([{"child": c, "parent": q, "source": hier._prov.get((c, q)),
+                                           "why": result.why.get((c, q), "")} for c, q in clash],
+                                         ensure_ascii=False, indent=1), encoding="utf-8")
+                print(f"[Orchestrator] *** all {len(clash)} edge(s) of the author's ELK cannot keep -> {f} ***")
+            raise RuntimeError(
+                f"[Orchestrator] ELK cannot keep {len(clash)} edge(s) the author made or "
+                f"confirmed, and no weaker edge is left to give way: "
+                + "; ".join(f"{c} is_a {p} ({result.why.get((c, p), '')})" for c, p in clash[:10])
+                + ". Two of the author's own edges contradict each other; the author decides "
+                  "(rule 89). Nothing was written.")
         for child, parent in result.quarantined:
             if child in hier.df.index and parent in hier.df.columns:
                 hier.df.at[child, parent] = 0.0
             hier._prov.pop((child, parent), None)
+        if own_view:
+            hier.verdicts_applied = True
+            if apply:
+                self._write_edge_judgements(hier, result, edges)
+            hier.save_snapshot()
         if result.quarantined:
-            hier.save()
             if quarantine:
                 d = _Q
                 d.mkdir(parents=True, exist_ok=True)
@@ -2547,71 +2551,6 @@ class Orchestrator:
             top_k=top_k,
             dry_run=dry_run,
         )
-
-    # ── Store / list management ────────────────────────────────────────────────
-
-    def run_promote_clusters(
-        self,
-        target_labels: list[str] | None = None,
-        dry_run: bool = False,
-    ) -> None:
-        """Move named SapBERT clusters from METHODOLOGY_BLOCKLIST to WHITELIST.
-
-        Clusters are identified by partial matching of their comment-header
-        label in config/blocklist.py.  Matched terms are moved to
-        config/whitelist.py and removed from the blocklist.
-
-        target_labels: list of partial cluster-header strings to match.
-                       Defaults to the five clusters identified during
-                       initial review.
-        """
-        from wound_ontology.store.cluster_promoter import (
-            extract_and_strip_clusters,
-            append_to_whitelist,
-        )
-        from pathlib import Path as _Path
-        import re as _re
-
-        _DEFAULT_TARGET_LABELS = [
-            "bilayer hydrogel dressing · superabsorbent dressing · polymeric membrane dressing",
-            "diabetes-related foot ulcer · diabetes foot ulcer · complex diabetic foot ulcer",
-            "wound surface reduction · wound area reduction · wound retraction",
-            "scarring wound · incomplete healing · scar healing",
-            "wound stratification system · sinbad grading system · wound severity score",
-        ]
-        labels = target_labels or _DEFAULT_TARGET_LABELS
-
-        try:
-            from config.settings import PROJECT_ROOT as _root
-        except ImportError:
-            _root = _Path(__file__).resolve().parents[3]
-
-        bl_path = _Path(_root) / "config" / "blocklist.py"
-        wl_path = _Path(_root) / "config" / "whitelist.py"
-
-        src = bl_path.read_text()
-        promoted, new_src = extract_and_strip_clusters(src, labels)
-
-        print(f"\nPromoting {len(promoted)} terms from {len(labels)} clusters:")
-        for label in labels:
-            print(f"  • {label}")
-
-        if dry_run:
-            print(f"\n[dry-run] Terms that would be promoted (first 30):")
-            for t in sorted(promoted)[:30]:
-                print(f"    {t}")
-            if len(promoted) > 30:
-                print(f"    ... and {len(promoted) - 30} more")
-            print("\n[dry-run] No files written.")
-            return
-
-        remaining = len(_re.findall(r"""^\s*['"]""", new_src, _re.MULTILINE))
-        print(f"\nRemoving from blocklist: {len(promoted)} terms  ({remaining} remain)")
-        bl_path.write_text(new_src)
-        print("  ✓ blocklist.py updated")
-
-        added = append_to_whitelist(promoted, wl_path)
-        print(f"  ✓ whitelist.py: {added} new terms added")
 
     # ── PubMed query validation ────────────────────────────────────────────────
 

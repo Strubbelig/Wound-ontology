@@ -4,7 +4,8 @@
 
 Curator, 2026-10-02: "class level only inheritance and everything inheritance,
 that I don't make a guess but a data driven choice". Builds the Wound-subtree
-context and lattice three times -- inherit "all", "class_level", "none" --
+context and lattice once per mode -- inherit "all", "class_level", "universal"
+(rule 88), "none" --
 closed world, `min_support=2`, no naming (no model calls), and measures for
 each:
 
@@ -20,12 +21,14 @@ each:
   member states itself rather than inherits: a grouping resting on inherited
   cells is the hierarchy talking, not the abstracts.
 
-Writes `data/review/fca_inheritance_comparison_2026-10-02.json`, read back.
+Writes `data/review/fca_inheritance_comparison_<date>.json`, read back (the
+2026-10-02 one is rule 65's, the 2026-10-27 one rule 88's).
 """
 from __future__ import annotations
 
 import json
 import sys
+from datetime import date
 from collections import defaultdict
 from pathlib import Path
 
@@ -34,10 +37,10 @@ sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "src"))
 from dotenv import load_dotenv  # noqa: E402
 load_dotenv(ROOT / ".env")
 
-OUT = ROOT / "data" / "review" / "fca_inheritance_comparison_2026-10-02.json"
+OUT = ROOT / "data" / "review" / f"fca_inheritance_comparison_{date.today()}.json"
 PREDICATES = ["has_quality", "part_of", "has_participant", "has_disposition", "inheres_in"]
 MIN_SUPPORT = 2
-MODES = ("all", "class_level", "none")
+MODES = ("all", "class_level", "universal", "none")
 
 
 def _opt(argv, flag, default):
@@ -127,7 +130,7 @@ def main(argv: list[str]) -> int:
             "new_groupings": len(groupings),
             "new_groupings_every_member_states_one_intent_attribute": len(backed),
             "mean_own_share": (sum(g["own_share"] for g in groupings) / len(groupings)) if groupings else None,
-            "class_level_tests": p.context_matrix.inheritance_tests if mode == "class_level" else None,
+            "class_level_tests": p.context_matrix.inheritance_tests if mode in ("class_level", "universal") else None,
             "groupings": sorted(groupings, key=lambda g: (-g["own_share"], -len(g["extent"]))),
         }
         result["modes"][mode] = m

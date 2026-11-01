@@ -45,7 +45,6 @@ def main(argv):
     for k, why in plan:
         gt.gate(k, curator={"verdict": "out", "when": when, "by": BY, "reason": why})
     gt._dirty(); gt.save()
-    print(f"[scope] gate lists re-exported: {p.export_gate_lists()}")
     g2 = Orchestrator().term_mapper._term_mapping
     lost = [k for k, _ in plan if g2.effective_gate_verdict(k)[0] != "out"]
     if lost:

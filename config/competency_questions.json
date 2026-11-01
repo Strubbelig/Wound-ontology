@@ -320,18 +320,6 @@
           ]
         },
         {
-          "id": "CQ041",
-          "question": "What quality characterises a sterile wound?",
-          "example_triple": [
-            "Clean wound according to IWII",
-            "has_quality",
-            "Sterile"
-          ],
-          "label_fix": {
-            "Clean Wound": "Clean wound according to IWII"
-          }
-        },
-        {
           "id": "CQ043",
           "question": "What causes a foreign body wound?",
           "example_triple": [
@@ -375,6 +363,17 @@
             "Group A Streptococcus"
           ],
           "retired": "2026-09-17"
+        },
+        {
+          "id": "CQ041",
+          "question": "What quality characterises a sterile wound?",
+          "reason": "Premise gone 2026-11-01 (curator: \"Veraltet ohne Ersatz\"): the IWII wound infection continuum has no clean or sterile stage, so Clean wound according to IWII is obsolete; a clean wound is the CDC class, which is not the same thing.",
+          "retired_triple": [
+            "Clean wound according to IWII",
+            "has_quality",
+            "Sterile"
+          ],
+          "retired": "2026-11-01"
         }
       ]
     },

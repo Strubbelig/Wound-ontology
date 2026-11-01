@@ -67,7 +67,8 @@ TERM_NOTES: dict[str, dict] = {
     "hospital stay": {"category": "temporal region"},
     "recurrence": {"category": "process boundary",
                    "note": "event rather than a process (read as an instantaneous occurrent)"},
-    "biopsy": {"senses": {"process": "biopsy", "material entity": "biopsy specimen"}},
+    # renamed 2026-10-26 (rule 87): each sense has a name of its own
+    "biopsy": {"senses": {"process": "Biopsy procedure", "material entity": "Biopsy material"}},
     "operative time": {"category": "temporal region"},
     "therapy": {"category": "information entity", "note": "plan specification"},
     "loss of tissue": {"category": "immaterial entity"},
@@ -246,7 +247,7 @@ def main(argv: list[str]) -> int:
         gt.gate(name, curator={"verdict": "out", "reason": f"head word '{h}'", "when": when,
                                "by": "signature words page, 2026-09-29"})
     for term, senses in plan["term senses"]:
-        gt.record(term)["senses"] = senses
+        gt.split_by_category(term, senses)          # where the term points (rule 87)
     for term, target, note in plan["maps"]:
         # the mentions now read as the target: it carries the decision too, or
         # the abstracts' disagreement reappears under its name
@@ -259,17 +260,29 @@ def main(argv: list[str]) -> int:
     gt._dirty()
     gt.save()
     print(f"[rulings] written: {dict(outcome)}")
+    # An ending whose category goes into the name (curator, 2026-10-29): a
+    # process ending in "infection" is renamed "... infection process" by the
+    # rule, as the curator's 78 were renamed by hand that day.
+    from config.category_head_rules import HEAD_NAME_SUFFIX
+    from wound_ontology.owl.extend import ontology_label_test
+    renames = gt.end_word_renames(HEAD_NAME_SUFFIX, ontology_label_test(), head=head)
+    if renames:
+        rep = gt.apply_renames(renames, by="end-word-category",
+                               why="the category goes into the name (config/category_head_rules.HEAD_NAME_SUFFIX)")
+        print(f"[rulings] renamed by the end-word rule: {len(renames)} ({list(renames.items())[:4]}); "
+              f"{ {k: v for k, v in rep.items() if v} }")
     # the blocklist/whitelist files are views of the gate and must not drift
-    print(f"[rulings] gate lists re-exported: {p.export_gate_lists()}")
 
     # ── read back: the file, then the view ──────────────────────────────────
     p2 = Orchestrator()
     gt2 = p2.term_mapper._term_mapping
     cats = {t.lower(): c for t, c in gt2.categories().items()}
-    lost = [(t, c) for t, c, _ in plan["term category"] if cats.get(gt2.resolve(t).lower(), {}).get("verdict") != c]
-    lost += [(t, c) for t, c, _ in plan["head category"] if cats.get(gt2.resolve(t).lower(), {}).get("verdict") != c]
+    # the concept, not only the spelling: the end-word rule may have renamed it
+    now = lambda t: gt2.concept(gt2.resolve(t)).lower()  # noqa: E731
+    lost = [(t, c) for t, c, _ in plan["term category"] if cats.get(now(t), {}).get("verdict") != c]
+    lost += [(t, c) for t, c, _ in plan["head category"] if cats.get(now(t), {}).get("verdict") != c]
     lost += [(t, "out") for t in plan["term out"] + [n for n, _ in plan["head out"]]
-             if gt2.peek_gate(gt2.resolve(t)).get("curator", {}).get("verdict") != "out"]
+             if gt2.gate_verdict(t)[0] != "out"]
     lost += [(t, m) for t, m, _ in plan["maps"] if gt2.data.get(t) != m]
     if lost:
         raise RuntimeError(f"{len(lost)} decision(s) did not land: {lost[:10]}")

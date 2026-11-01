@@ -148,7 +148,7 @@ def test_a_repredicated_cell_reads_under_its_new_predicate():
     st = ConceptStore(_DM({"1": {"entities": {"Diabetic foot ulcer": {"has_disposition: amputation risk": 1.0}}}}),
                       "concept_store")
     assert st.repredicate_cells({("Diabetic foot ulcer", "has_disposition: amputation risk"): "has_tendency"},
-                                by="test") == 1
+                                by="tendency-not-disposition") == 1
     (_, ents), = list(st.view())
     assert ents["Diabetic foot ulcer"] == {"has_tendency: amputation risk": 1.0}
     assert "has_disposition: amputation risk" in st.dict["1"]["entities"]["Diabetic foot ulcer"]

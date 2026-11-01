@@ -584,7 +584,6 @@ def main(argv: list[str]) -> int:
     gt.save()
     rep = p.store.apply_renames(renames, by=BY)
     print(f"[inside2] renames: { {k: v for k, v in rep.items() if not isinstance(v, list)} }")
-    print(f"[inside2] gate lists re-exported: {p.export_gate_lists()}")
 
     fresh = Orchestrator()
     g2 = fresh.term_mapper._term_mapping

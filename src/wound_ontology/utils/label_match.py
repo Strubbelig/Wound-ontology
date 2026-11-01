@@ -101,6 +101,18 @@ _INVARIANT: frozenset[str] = frozenset({
     "xylosoxidans", "ulcerans", "protuberans", "elegans", "necessitans",
     "dissecans", "simulans", "adiacens", "sapiens",
     "glans", "dens", "pseudomonas", "erysipelas",
+    # More of the same, found 2026-10-25 behind `Streptococcus pyogene`: Latin
+    # epithets in -es/-ans/-ens, genera in -monas/-myces/-oides, and anatomy
+    # and conditions whose singular ends in -s. Each was in the store, cut.
+    "pyogenes", "aerogenes", "sporogenes", "acnes", "putrefaciens", "mutans",
+    "viridans", "fluorescens", "neoformans", "denitrificans", "tonsurans",
+    "mentagrophytes", "fungoides", "ossificans",
+    "aeromonas", "brevundimonas", "stenotrophomonas", "xanthomonas",
+    "actinomyces", "apophysomyces", "streptomyces", "saccharomyces",
+    "bacteroides", "parabacteroides",
+    "pancreas", "iliopsoas", "psoas", "atlas", "hypospadias", "epispadias",
+    # place and person names a capital does not protect
+    "texas", "americas", "vegas", "evans",
 })
 
 #: Endings that look plural but are not. "sepsis", "dermis", "abscess",
@@ -155,8 +167,9 @@ def singular_candidates(word: str) -> list[str]:
     w = word.lower()
     if w in _IRREGULAR:
         return [_IRREGULAR[w]]
-    if w in _INVARIANT:
-        return [w]
+    tail = w.rsplit("-", 1)[-1]
+    if w in _INVARIANT or (tail in _INVARIANT and not tail.endswith("ics")):
+        return [w]                               # also `risk-of-bias`; `C-statistics` is a plural
     for tail in _SIS_TAILS:                      # osteo|syntheses, sub-|analyses
         if len(w) > len(tail) and w.endswith(tail):
             return [w[:-len(tail)] + _IRREGULAR[tail]]
@@ -251,9 +264,12 @@ def singular_spelling(label: str) -> str:
     head = words[-1]
     core = head.rstrip(".,;:)")
     trailing = head[len(core):]
-    if len(core) > 1 and core[:-1].isupper() and core.endswith("s") and core[:-1].isalpha():
+    if len(core) > 2 and core[:-1].isupper() and core.endswith("s") and core[:-1].isalpha():
         # SSIs, DFUs, PJIs -- an acronym with a plural s, which no suffix rule
-        # recognises because the stem is not a word.
+        # recognises because the stem is not a word. Two capitals at least:
+        # one capital and an s is a capitalised WORD (`Is`, `As`, `Vs`), and
+        # since names are in sentence case (2026-10-24) `is` arrives as `Is`
+        # and was cut to `I`.
         return " ".join(words[:-1] + [core[:-1] + trailing])
     if len(core) > 1 and core.isupper() and core.isalpha():
         # An ALL-CAPS token is an acronym, not an English word, and its final S

@@ -1,10 +1,11 @@
 """Join Claude's universality reading to the relations it read (rule 66). Read-only on the store.
 
-    python -u scripts/compile_universality.py
+    python -u scripts/compile_universality.py [--dir relation_universality_2026-10-27]
 
-Reads data/review/relation_universality_2026-10-02/{rows.json, verdicts_*.txt};
+Reads data/review/<dir>/{rows.json, verdicts_*.txt} (default the 2026-10-02
+reading; 2026-10-27 is the one for FCA inheritance, rule 88);
 every row needs exactly one verdict (all / some / no), or this raises.
-Writes data/review/relation_universality_2026-10-02/result.json, read back:
+Writes data/review/<dir>/result.json, read back:
 the `all` rows are the relations that may become axioms.
 """
 import json
@@ -14,7 +15,8 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-D = ROOT / "data" / "review" / "relation_universality_2026-10-02"
+D = ROOT / "data" / "review" / (sys.argv[sys.argv.index("--dir") + 1] if "--dir" in sys.argv
+                                else "relation_universality_2026-10-02")
 
 
 def main() -> int:
@@ -43,7 +45,7 @@ def main() -> int:
     by_pred = {}
     for r in rows:
         by_pred.setdefault(r["predicate"], Counter())[r["universality"]] += 1
-    out = {"read_by": "Claude, 2026-10-02", "rows": len(rows), "verdicts": dict(tally),
+    out = {"read_by": f"Claude, {D.name.rsplit('_', 1)[-1]}", "rows": len(rows), "verdicts": dict(tally),
            "why_no": dict(why_no.most_common()), "by_predicate": {k: dict(v) for k, v in by_pred.items()},
            "axioms": [r for r in rows if r["universality"] == "all"], "all_rows": rows}
     (D / "result.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")

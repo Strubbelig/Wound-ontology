@@ -34,7 +34,9 @@ def _cat_of(label):
 # ── C1: the drift that motivated generating this file ──────────────────────
 def test_disease_is_material_not_disposition():
     assert _cat_of("material disease entity") == "material entity"
-    assert _cat_of("pathological disorder") == "material entity"
+    # one class since 2026-10-30 (rule 92): pathological disorder is its exact
+    # synonym, the obsolete MILD_120022 no grounding target
+    assert _cat_of("pathological disorder") is None
     assert _cat_of("Wound") == "material entity"
 
 
@@ -317,3 +319,38 @@ def test_has_quality_keeps_a_worked_determinable_example():
         "without a positive determinable example the rule reads as 'never put "
         "a quality on a parent', which is wrong"
     )
+
+
+# ── 2026-10-30: no allowed relation drops out unseen ──────────────────────────
+
+@pytest.fixture(scope="module")
+def onto():
+    from wound_ontology.llm.schema_builder import Onto, load_graph
+    return Onto(load_graph())
+
+
+def test_every_allowed_relation_is_offered():
+    """Three relations dropped out of the schema in one evening when the axiom
+    that used them went; the curator: "jetzt importier gesamt RO und fertig"."""
+    from config.settings import ALLOWED_PREDICATES, LEGACY_PREDICATES
+    offered = {r.value.replace(" ", "_") for r in RelationType}
+    assert set(ALLOWED_PREDICATES) - {"is_a"} - set(LEGACY_PREDICATES) <= offered
+
+
+def test_a_relation_no_axiom_uses_comes_from_ro_and_bfo_under_the_pipelines_name(onto, monkeypatch):
+    """Without its required pattern, has realization (BFO_0000054, which RO
+    calls "realized in") is offered by its domain and range."""
+    from wound_ontology.llm import schema_builder as sb
+    monkeypatch.setattr(sb, "REQUIRED_PATTERNS",
+                        [r for r in sb.REQUIRED_PATTERNS if not r[1].endswith("BFO_0000054")])
+    _, _, _, patterns, labels = sb.collect(onto)
+    p = "http://purl.obolibrary.org/obo/BFO_0000054"
+    assert labels[p] == "has realization"
+    assert ("realizable entity", p, "process") in patterns
+
+
+def test_an_allowed_relation_nothing_can_offer_stops_the_build(onto, monkeypatch):
+    from wound_ontology.llm import schema_builder as sb
+    monkeypatch.setattr(sb, "ALLOWED_PREDICATES", list(sb.ALLOWED_PREDICATES) + ["has_no_such_relation"])
+    with pytest.raises(RuntimeError, match="has_no_such_relation"):
+        sb.collect(onto)

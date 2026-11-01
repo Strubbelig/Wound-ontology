@@ -300,7 +300,10 @@ def main() -> None:
             unknown.append(r)
             print(f"[verdicts]   NO CANONICAL for {term!r}; skipped")
             continue
-        judgement = {"verdict": v, "reason": r.get("note", ""), "when": stamp}
+        # The page's `reverse` is "same class, and the term is the name": the
+        # verdict is the passes' word, the name a decision of its own (2026-10-24).
+        judgement = {"verdict": "same_class" if v == "reverse" else v,
+                     "reason": r.get("note", ""), "when": stamp}
         if write:
             # `judgement` is the one accessor that creates the pair entry if
             # the pair is new, which it can be: the curator may confirm a pair
@@ -365,17 +368,16 @@ def main() -> None:
             rec.pop("retired", None)
         for term, canonical in refused:
             gt.record(term)["pairs"][canonical]["refused"] = {
-                "by": "curator", "reason": "the contradiction queue: different classes",
-                "when": stamp}
+                "cause": "curator", "by": "curator",
+                "reason": "the contradiction queue: different classes", "when": stamp}
             if gt.records[term].get("to") == canonical:
                 gt.records[term]["to"] = None
         for term, canonical in reversed_:
-            # Both writes, together. The inverse alone leaves the original
-            # direction free to come back on the next build.
-            gt.record(term)["pairs"].setdefault(canonical, {})["refused"] = {
-                "by": "curator",
-                "reason": "the contradiction queue: reversed, the canonical is the term",
-                "when": stamp}
+            # The inverse mapping and the name decision, together. The lock
+            # on the original direction this wrote until 2026-10-24 is gone:
+            # the name decision keeps the old name from coming back.
+            gt.decide_name(term, [canonical], by="curator", when=stamp,
+                           reason="the contradiction queue: reversed, the canonical is the term")
             if gt.records[term].get("to") == canonical:
                 gt.records[term]["to"] = None
             inverse = gt.record(canonical)
@@ -437,12 +439,7 @@ def main() -> None:
                 f"did not read back from disk: "
                 f"{missing[:3]} {lost[:3]} {unflipped[:3]} {unmapped[:3]}")
         print(f"[verdicts] written and verified against the file on disk.")
-        if scope:
-            # The two exact lists are a VIEW of the gate (rule 40.7). A scope
-            # verdict written here without re-exporting left `whitelist.py`
-            # one term behind the record on 2026-09-27, and only
-            # test_the_live_files_and_the_live_gate_agree noticed.
-            Orchestrator().export_gate_lists()
+        # (the gate lists this re-exported were deleted on 2026-10-25, rule 86)
     else:
         print("[verdicts] dry run — nothing written. Pass --write to apply.")
 

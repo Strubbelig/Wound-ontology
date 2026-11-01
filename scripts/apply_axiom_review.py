@@ -53,6 +53,11 @@ SAME_AS = [("wound healing process", "wound healing"), ("wound age", "age")]
 
 
 def main(argv: list[str]) -> int:
+    # 2026-10-30: the axioms it wrote are the author's judgements in the term
+    # dict now (scripts/move_relation_decisions_2026_10_30.py); a file beside it
+    # would be a second record of his word (rule 51)
+    raise SystemExit("[axiom-review] retired 2026-10-30: the curator's axioms live in the term dict; "
+                     "write a new review's decisions there as the author's judgements")
     from wound_ontology.owl.extend import RELATION_IRIS
     db = Path(argv[1])
     rows = {r["id"]: r for r in json.loads(ROWS.read_text(encoding="utf-8"))["rows"]}

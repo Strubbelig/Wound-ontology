@@ -257,6 +257,21 @@ def module_ancestry(iris: Iterable[str], module_sources: Iterable[Path | str]) -
 BFO_NS = "http://purl.obolibrary.org/obo/BFO_"
 
 
+def bfo_label(iri, labels) -> str:
+    """The one name of a BFO class that the modules label several ways.
+
+    Some modules carry BFO's older names beside BFO 2020's (`fiat point` and
+    `zero-dimensional continuant fiat boundary` for BFO_0000147, likewise
+    `fiat line`, `fiat surface`). Taking whichever label came first let the
+    hash seed pick a different name each run (seen 2026-10-28, fixed
+    2026-10-29). The extraction's own category name wins, as it does in the
+    reasoner's skeleton; otherwise the first label in sorted order.
+    """
+    from wound_ontology.llm.extraction_models import CATEGORY_IRI
+    named = sorted(c for c, i in CATEGORY_IRI.items() if i == str(iri) and c in labels)
+    return named[0] if named else sorted(labels)[0]
+
+
 def bfo_edges(module_sources: Iterable[Path | str]) -> pd.DataFrame:
     """BFO's own subsumption, whole, plus the extraction categories that are not
     BFO labels, as a 'Class' / 'Parent class' frame (2026-10-03).
@@ -278,10 +293,11 @@ def bfo_edges(module_sources: Iterable[Path | str]) -> pd.DataFrame:
     g = rdflib.Graph()
     for path in module_sources:
         g += _parse(Path(path))
-    label = {}
+    labels: dict = {}
     for s, o in g.subject_objects(RDFS.label):
         if str(s).startswith(BFO_NS) and getattr(o, "language", None) in (None, "en"):
-            label.setdefault(s, str(o))
+            labels.setdefault(s, set()).add(str(o))
+    label = {s: bfo_label(s, ls) for s, ls in labels.items()}
     classes = {s for s in g.subjects(RDF.type, OWL.Class) if str(s).startswith(BFO_NS)}
     if len(classes) < 36 or classes - set(label):
         raise RuntimeError(

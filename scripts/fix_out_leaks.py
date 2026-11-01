@@ -76,7 +76,6 @@ def main(argv: list[str]) -> int:
         gt.refuse(t, to, reason="the abbreviation is out of scope (rule 58); its full form is not", by=BY)
     gt._dirty()
     gt.save()
-    print(f"[leaks] gate lists re-exported: {p.export_gate_lists()}")
     g2 = Orchestrator().term_mapper._term_mapping
     # a full form may still be out by its OWN sources (`placental membrane`
     # sits on the old blocklist): that is its verdict, not a leak

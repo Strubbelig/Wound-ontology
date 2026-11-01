@@ -20,13 +20,20 @@ write and raises rather than leaving the file in that state.
 """
 import pytest
 
-from conftest import memory_mapper
+from conftest import J, memory_mapper, rule89_file
 from wound_ontology.mappers.term_mapper import canonical_rank
 
 
 def _mapper(data):
     """The real TermMappingAndGate over an in-memory file — see tests/conftest.py."""
     return memory_mapper(data)
+
+
+def _cycle(links):
+    """A mapping that holds a cycle. An old file's cycle is broken when it is
+    translated (rule 89), so a cycle the chain step has to break is written in
+    the new form: one SapBERT name per string."""
+    return memory_mapper(rule89_file({t: {"name": [J(c, "sapbert-clustering")]} for t, c in links.items()}))
 
 
 def test_a_chain_collapses_onto_its_terminal():
@@ -46,7 +53,7 @@ def test_a_long_chain_collapses_in_one_pass():
 
 def test_a_cycle_is_broken_in_favour_of_the_more_frequent_term():
     """Both spellings survived a cycle because each was renamed onto the other."""
-    m = _mapper({"CFU": "CFUs", "CFUs": "CFU"})
+    m = _cycle({"CFU": "CFUs", "CFUs": "CFU"})
     rep = m.resolve_chains(frequencies={"CFU": 1, "CFUs": 2})
     assert rep["cycles"] == 1
     assert m.mapping == {"CFU": "CFUs"}
@@ -62,7 +69,7 @@ def test_the_cycle_winner_is_the_anchor_however_rare_it_is():
 
 
 def test_a_chain_into_a_cycle_lands_on_the_cycle_winner():
-    m = _mapper({"A": "X", "X": "Y", "Y": "X"})
+    m = _cycle({"A": "X", "X": "Y", "Y": "X"})
     m.resolve_chains(frequencies={"X": 1, "Y": 5})
     assert m.mapping == {"A": "Y", "X": "Y"}
 
@@ -284,7 +291,7 @@ def test_a_cycle_elects_the_curators_target_over_the_commoner_spelling():
     the rebuild re-proposed `microRNA -> miRNA`, the two formed a cycle, and the
     election by frequency retired the curator's entry as "spelling of its own
     canonical". A curator's same_class verdict on the live pair decides."""
-    m = _mapper({"miRNA": "microRNA", "microRNA": "miRNA"})
+    m = _cycle({"miRNA": "microRNA", "microRNA": "miRNA"})
     m._term_mapping.judge("miRNA", "microRNA", curator={"verdict": "same_class"})
     m.resolve_chains(frequencies={"miRNA": 50, "microRNA": 2})
     assert m.mapping == {"miRNA": "microRNA"}

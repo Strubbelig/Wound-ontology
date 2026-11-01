@@ -68,6 +68,7 @@ def pass0_renames(
     others: Iterable[str] = (),
     *,
     declares: Callable[[str], str | None] = lambda term: None,
+    named: set[str] = frozenset(),
 ) -> tuple[dict[str, str], dict]:
     """`({spelling: the spelling that survives}, report)`.
 
@@ -76,6 +77,9 @@ def pass0_renames(
     labels, which outrank any store spelling (rule 36) and are kept EXACTLY as
     the ontology writes them. `others` are strings that must be normalised but
     carry no frequency of their own -- the term mapping's keys and canonicals.
+    `named` are the terms a person chose as the name of their cluster
+    (`TermMappingAndGate.named`); in a group they outrank the corpus count,
+    never an anchor.
 
     **No person is consulted per term.** Pass 0 decides how a name is written
     -- the singular, the American form, the case, the hyphens, and the small
@@ -141,7 +145,7 @@ def pass0_renames(
                 return
             canonical = declared[0]
         else:
-            ranked = {m: canonical_rank(m, anchors, frequencies)
+            ranked = {m: canonical_rank(m, anchors, frequencies, named)
                       for m in sorted(members)}
             # Below the ontology test and the corpus count, `canonical_rank`
             # falls back to WORD COUNT -- a longer label is the more specific
@@ -162,7 +166,9 @@ def pass0_renames(
             # `antibiofilm` are not in a general-English list either, and the
             # corpus is entitled to prefer them.
             top = max(ranked.values())
-            tied = [m for m, r in ranked.items() if r[:2] == top[:2]]
+            # anchor, name decision, cluster name, frequency: the first four of
+            # the rank (`heads` joined it 2026-10-25; pass 0 passes none)
+            tied = [m for m, r in ranked.items() if r[:4] == top[:4]]
             if len(tied) > 1:
                 fewest = min(invented_words(m) for m in tied)
                 tied = [m for m in tied if invented_words(m) == fewest]

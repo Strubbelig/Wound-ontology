@@ -7,7 +7,8 @@ with ArtifactData and resolved to classes in
 data/review/judgement_queue_decisions_2026-10-07.json; every parent the curator
 typed is kept there beside the class it was read as, and the readings that were
 not an exact label were confirmed in chat (rule 39). The relations section is
-not handled here: build_wont_core.py reads new_class_relation_decisions.json.
+not handled here: its decisions are the author's judgements on the relations in
+the term dict (until 2026-10-30 in new_class_relation_decisions.json).
 
 * parents, fillers, conflicts with a parent -> the pair gets
   `placement: {verdict: "narrower"}` and a curator mark. For a conflict, every
@@ -146,14 +147,13 @@ def main(argv: list[str]) -> int:
     print(f"[judgement] backed up {latest.name} -> {backup.relative_to(ROOT)}")
     for action, term, cls, info in plan:
         if action == "narrower":
-            gt.judge(term, cls, placement={"verdict": "narrower", "when": when, **info},
-                     curator={"verdict": "narrower", "when": when, "by": BY, "reason": info["why"]})
+            gt.judge(term, cls, curator={"verdict": "narrower", "when": when, **info,
+                                         "by": BY, "reason": info["why"]})
         elif action == "same":
             rec = gt.record(term)
             rec.update({"to": cls, "confidence": 1.0, "method": "curator"})
             rec.pop("retired", None)
-            gt.judge(term, cls, placement={"verdict": "same_class", "when": when, **info},
-                     curator={"verdict": "same_class", "when": when, "by": BY,
+            gt.judge(term, cls, curator={"verdict": "same_class", "when": when, **info, "by": BY,
                               "reason": "same thing as the existing class (judgement queue)"})
         elif action == "refuse":
             gt.refuse(term, cls, reason=info["why"], by=BY)
@@ -161,7 +161,7 @@ def main(argv: list[str]) -> int:
             pairs = gt.records[term]["pairs"]
             for k in [k for k in pairs if k != cls and k.lower() == cls.lower()]:
                 j = pairs[k]
-                if set(j) <= {"refused", "curator"} and (j.get("refused") or {}).get("by") == BY:
+                if set(j) <= {"curator", "curator_history"} and (j.get("curator") or {}).get("by") == BY:
                     del pairs[k]
                     print(f"[judgement] removed the refusal written under the wrong spelling: {term!r} / {k!r}")
         elif action == "in":
@@ -171,13 +171,12 @@ def main(argv: list[str]) -> int:
             print(f"[judgement] category of {term!r}: {gt.set_category(term, cls, source=TERM_RULING, note=info['why'])}")
     gt._dirty()
     gt.save()
-    print(f"[judgement] gate lists re-exported: {p.export_gate_lists()}")
 
     g2 = Orchestrator().term_mapper._term_mapping
     lost = []
     for action, term, cls, _ in plan:
         j = g2.peek(g2.resolve(term), cls)
-        if action == "narrower" and ((j.get("placement") or {}).get("verdict") != "narrower" or j.get("refused")):
+        if action == "narrower" and ((j.get("curator") or {}).get("verdict") != "narrower" or j.get("refused")):
             lost.append((action, term, cls))
         elif action == "same" and g2.data.get(g2.resolve(term)) != cls:
             lost.append((action, term, cls))

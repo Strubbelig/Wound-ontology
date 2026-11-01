@@ -172,6 +172,20 @@ def test_a_latin_species_epithet_is_not_a_plural():
         assert singular_spelling(label) == label, label
 
 
+def test_more_latin_and_invariant_words_keep_their_s():
+    """Found 2026-10-25 behind `Streptococcus pyogene`: epithets in -es,
+    genera in -monas/-myces/-oides, and anatomy whose singular ends in -s. The
+    last part of a hyphenated word counts too (`risk-of-bias`), but an -ics
+    word there is a real plural (`C-statistics`)."""
+    from wound_ontology.utils.label_match import singular_spelling
+    for label in ["Streptococcus pyogenes", "Cutibacterium acnes", "Bacteroides",
+                  "Stenotrophomonas", "Actinomyces", "Mycosis fungoides",
+                  "pancreas", "iliopsoas", "Single-cell atlas", "hypospadias",
+                  "risk-of-bias", "Type-2-diabetes", "Texas"]:
+        assert singular_spelling(label) == label, label
+    assert singular_spelling("C-statistics") == "C-statistic"
+
+
 def test_a_real_plural_with_the_same_ending_still_singularises():
     """The list must not swallow the ordinary words that share the ending."""
     from wound_ontology.utils.label_match import singular_spelling

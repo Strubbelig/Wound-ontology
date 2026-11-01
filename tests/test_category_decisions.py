@@ -111,7 +111,7 @@ def test_a_later_term_ruling_replaces_a_head_rule_and_keeps_history():
     assert s.terms.set_category("Infection", "disposition", source="term ruling") == "set"
     c = s.terms.categories()["Infection"]
     assert c["verdict"] == "disposition"
-    assert c["history"][0]["verdict"] == "process"
+    assert [j["verdict"] for j in s.terms.records["Infection"]["is_a"]["process"]] == ["yes", "no"]
 
 
 def test_an_unknown_category_raises():
@@ -143,15 +143,58 @@ def test_a_synonym_names_what_its_canonical_names_when_the_view_stops_at_spellin
 def test_the_decision_travels_through_a_rename():
     s = _store()
     s.terms.set_category("Infection", "process", source="term ruling")
-    rep = s.terms.apply_renames({"Infection": "Infectious Process"}, by="test")
+    rep = s.terms.apply_renames({"Infection": "Infectious Process"}, by="pass0")
     assert rep["category conflicts"] == []
     assert s.terms.categories()["Infectious Process"]["verdict"] == "process"
+
+
+def test_the_authors_rename_moves_the_concept_and_says_why():
+    """2026-10-29: every process term ending in `infection` takes `process`
+    (`Soft tissue infection` -> `Soft tissue infection process`); the plain
+    name keeps IDO's material sense and points at the process for its mentions."""
+    s = _store()
+    s.terms.set_category("Soft tissue infection", "process", source="term ruling")
+    s.terms.apply_renames({"Soft tissue infection": "Soft tissue infection process"}, by="author",
+                          why="the end word: a process carries 'process' in its name")
+    assert s.terms.categories()["Soft tissue infection process"]["verdict"] == "process"
+    assert s.terms.concept(s.terms.resolve("Soft tissue infection")) == "Soft tissue infection process"
+    j = s.terms.records["Soft tissue infection"]["name"][-1]
+    assert (j["by"], j["why"]) == ("author", "the end word: a process carries 'process' in its name")
+
+
+def test_a_rename_leaves_the_old_strings_spelling_history_behind():
+    """2026-10-29: `Bacterial infection` once written `bacterial infection` (and
+    back); moved with the rename, that history pointed the new name at the old
+    spelling, which points at the new name -- 82 strings in a loop."""
+    from conftest import J
+    s = _store()
+    s.terms.set_category("Bacterial infection", "process", source="term ruling")
+    s.terms.records["Bacterial infection"]["name"] = [J("bacterial infection", "string-normalisation"),
+                                                      J("Bacterial infection", "unrecorded")]
+    s.terms.records["bacterial infection"] = {"name": [J("Bacterial infection", "string-normalisation")]}
+    s.terms._dirty()
+    s.terms.apply_renames({"Bacterial infection": "Bacterial infection process"}, by="author")
+    for t in ("bacterial infection", "Bacterial infection", "Bacterial infection process"):
+        assert s.terms.concept(s.terms.resolve(t)) == "Bacterial infection process"
+    assert s.terms.categories()["Bacterial infection process"]["verdict"] == "process"
+
+
+def test_the_end_word_rule_names_a_process_ending_in_infection():
+    """2026-10-29: a process ending in "infection" is named "... infection
+    process"; the plain word keeps IDO's material sense; an ontology class's
+    label keeps its name."""
+    s = _store()
+    s.terms.set_category("Wound infection", "process", source="head rule: infection")
+    s.terms.set_category("Viral infection", "process", source="head rule: infection")
+    s.terms.set_category("Infection", "material entity", source="term ruling")
+    got = s.terms.end_word_renames({"infection": "process"}, lambda t: t == "Viral infection")
+    assert got == {"Wound infection": "Wound infection process"}
 
 
 def test_two_spellings_decided_differently_are_reported():
     s = _store()
     s.terms.set_category("Infection", "process", source="head rule: infection")
     s.terms.set_category("infection", "material entity", source="term ruling")
-    rep = s.terms.apply_renames({"infection": "Infection"}, by="test")
-    assert rep["category conflicts"]
+    rep = s.terms.apply_renames({"infection": "Infection"}, by="pass0")
+    assert rep["category conflicts"] == [("Infection", ["material entity", "process"], "material entity")]
     assert s.terms.categories()["Infection"]["verdict"] == "material entity"

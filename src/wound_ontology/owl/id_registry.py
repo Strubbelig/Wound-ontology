@@ -10,8 +10,9 @@ The registry maps what a name SHARES with its spellings (`Normalised.key`, so
 case, plural, hyphen, British spelling, ulcer/wound fold away) to one IRI:
 
 * a class seen before gets its id back;
-* a renamed class keeps its id: the export hands over its former spellings
-  (the term dict's aliases) and any of them that is registered answers;
+* a renamed class keeps its id: the export hands over its former names (the
+  term dict's spelling aliases and every term whose `to` is now this name) and
+  any of them that is registered answers;
 * two registered classes merged by a rename keep ONE id -- the one registered
   under the current name, else the older -- and the other is recorded obsolete,
   `replaced_by` the survivor (OBO practice: an id is never reused and never
@@ -36,6 +37,11 @@ from typing import Iterable
 
 BLOCK_START = 1   # no separate block: WONT's main series continues (rule 71)
 _ID = re.compile(r"WONT_(\d+)$")
+#: A bracket that holds words, not an abbreviation. `Normalised.key` drops every
+#: parenthetical, which is right for `Ulcers (DFU)`, but `Poly(ethylene Oxide)`
+#: and `Poly (lactic-Co-Glycolic Acid)` both became `poly`, and on 2026-10-28
+#: WONT_0005416 passed from the one polymer to the other.
+_WORDS_IN_BRACKETS = re.compile(r"\(([^()]*\s[^()]*)\)")
 
 
 def _num(iri: str) -> int:
@@ -51,12 +57,31 @@ class IdRegistry:
         data = json.loads(self.path.read_text(encoding="utf-8")) if self.path.exists() else {}
         self.entries: dict[str, dict] = data.get("entries", {})
         self.changes = {"reused": 0, "issued": 0, "renamed": 0, "merged": []}
+        self._rekey()
         self._index()
 
     @staticmethod
     def key(label: str) -> str:
+        """`Normalised.key`, except that words in brackets are kept as words."""
         from wound_ontology.utils.normalise import normalise
-        return normalise(label).key
+        return normalise(_WORDS_IN_BRACKETS.sub(r" \1 ", label)).key
+
+    def _rekey(self) -> None:
+        """Entries keyed before brackets kept their words get their own key back.
+
+        The old key (`poly`) is dropped, not kept beside the new one: it is the
+        very key two classes shared.
+        """
+        from wound_ontology.utils.normalise import normalise
+        moved = []
+        for iri, e in self.entries.items():
+            label = e.get("label", "")
+            new, old = self.key(label), normalise(label).key
+            if new != old and old in e.get("keys", []):
+                e["keys"] = [new if k == old else k for k in e["keys"]]
+                moved.append(f"{iri.rsplit('/', 1)[-1]} {label!r}: {old!r} -> {new!r}")
+        if moved:
+            print(f"[ids] {len(moved)} entr(y/ies) re-keyed, words in brackets now count: {moved}")
 
     def _index(self) -> None:
         self.by_key: dict[str, str] = {}

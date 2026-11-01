@@ -58,7 +58,6 @@ def main(argv):
     for k in out_plan:
         gt.gate(k, curator={"verdict": "out", "when": when, "by": BY, "reason": "review page: out of scope"})
     gt._dirty(); gt.save()
-    print(f"[cat] gate lists re-exported: {p.export_gate_lists()}")
     g2 = Orchestrator().term_mapper._term_mapping
     # a category belongs to the term, not to each spelling: read it back by name
     c2 = {k.lower(): v for k, v in g2.categories().items()}

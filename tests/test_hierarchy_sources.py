@@ -150,7 +150,7 @@ def test_nothing_is_written_into_the_store():
     reviewed FCA edge is that."""
     import wound_ontology.orchestrator as orch
 
-    src = inspect.getsource(orch.Orchestrator.run_build_hierarchies)
+    src = inspect.getsource(orch.Orchestrator.refresh_class_hierarchy)
     assert "store.get_data(" not in src
     promote = inspect.getsource(ClassHierarchy.promote_candidates)
     assert "merge_entity_records" not in promote

@@ -25,7 +25,7 @@
 """
 import pytest
 
-from conftest import memory_mapper
+from conftest import J, memory_mapper, rule89_file
 
 
 def _mapper(data):
@@ -173,8 +173,8 @@ def test_a_label_mapped_onto_a_store_spelling_is_turned_round():
 
 
 def test_a_curators_direction_is_held_and_reported():
-    m = _mapper({"Impaired wound healing process": "impaired wound healing"})
-    m._term_mapping.records["Impaired wound healing process"]["method"] = "curator"
+    m = memory_mapper(rule89_file({"Impaired wound healing process": {
+        "name": [J("impaired wound healing", "author", "the curator's direction")]}}))
     rep = m.enforce_canonical_policy(label_spellings=L4)
     assert rep["labels_held"] == 1 and rep["labels_restored"] == 0
     assert m.mapping == {"Impaired wound healing process": "impaired wound healing"}

@@ -37,7 +37,7 @@ HEAD_CATEGORY: dict[str, str] = {
     "application": "process",
     "assessment": "process",
     "avulsion": "material entity",
-    "biopsy": "material entity",
+    "biopsy": "process",          # material entity until 2026-10-26; the curator: the procedure
     "bite": "process",
     "burn": "material entity",
     "care": "process",
@@ -112,3 +112,12 @@ HEAD_CATEGORY: dict[str, str] = {
 }
 
 HEAD_OUT: frozenset[str] = frozenset({"involvement", "ssi"})
+
+#: An ending whose category goes into the name (curator, 2026-10-29, after the
+#: pair page: "I would add the end word to infection", for all of them): a
+#: term ending in "infection" whose category is process is named
+#: "<term> process", the way Infection's process sense is Infection process;
+#: the plain word keeps IDO's material sense. A term that is the label of an
+#: ontology class keeps its name and the ontology's sense
+#: (`TermMappingAndGate.end_word_renames`).
+HEAD_NAME_SUFFIX: dict[str, str] = {"infection": "process"}

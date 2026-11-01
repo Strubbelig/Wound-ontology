@@ -1,0 +1,481 @@
+{
+ "made": "2026-10-29T00:15:46",
+ "unsatisfiable": [
+  "http://purl.obolibrary.org/obo/DOID_0050061",
+  "http://purl.obolibrary.org/obo/HP_0100699",
+  "urn:wont:batch#Bacteremia_cb5754c7",
+  "urn:wont:batch#Bacterial_Skin_Infection_136c877a",
+  "urn:wont:batch#Burn_Area_34d3abf6",
+  "urn:wont:batch#Burn_Wound_Surface_f6d2b46b",
+  "urn:wont:batch#Candidiasis_c5c68786",
+  "urn:wont:batch#Cellulitis_487369c2",
+  "urn:wont:batch#Central_Nervous_System_Infection_df0b7f22",
+  "urn:wont:batch#Difficult_To_Treat_Infection_efe4a3d5",
+  "urn:wont:batch#Endophthalmitis_5349f158",
+  "urn:wont:batch#Genital_Infection_f609e87a",
+  "urn:wont:batch#Infection_a9e7409c",
+  "urn:wont:batch#Intra_Abdominal_Infection_d649e968",
+  "urn:wont:batch#Leishmaniasis_92809d7b",
+  "urn:wont:batch#Life_Threatening_Infection_db74fa5a",
+  "urn:wont:batch#Localized_Infection_a8c7e9af",
+  "urn:wont:batch#Lower_Extremity_Injury_c5ea507c",
+  "urn:wont:batch#Multidrug_Resistant_Infection_9e3864a8",
+  "urn:wont:batch#Musculoskeletal_Infection_09f3fa52",
+  "urn:wont:batch#Odontogenic_Infection_5d9d5d53",
+  "urn:wont:batch#Pin_Tract_Infection_45dc475b",
+  "urn:wont:batch#Pneumonia_619e0e20",
+  "urn:wont:batch#Pressure_Ulcer_Therapy_c334075d",
+  "urn:wont:batch#Recurrence_Of_Wound_4aa8f29c",
+  "urn:wont:batch#Residual_Infection_271ae1b9",
+  "urn:wont:batch#Resistant_Infection_ce2a545b",
+  "urn:wont:batch#Spinal_Infection_ee593586",
+  "urn:wont:batch#Subcutaneous_Infection_76959512",
+  "urn:wont:batch#Toe_Infection_2e908293",
+  "urn:wont:batch#Trauma_Related_Infection_6191d795",
+  "urn:wont:batch#Tuberculosis_b8de84f8",
+  "urn:wont:batch#Visible_Scarring_a51738bd"
+ ],
+ "explanation": "## [Infection](urn:wont:batch#Infection_a9e7409c) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Infection](urn:wont:batch#Infection_a9e7409c) SubClassOf [process](http://purl.obolibrary.org/obo/BFO_0000015)\n    - [process](http://purl.obolibrary.org/obo/BFO_0000015) SubClassOf [occurrent](http://purl.obolibrary.org/obo/BFO_0000003)\n  - [Infection](urn:wont:batch#Infection_a9e7409c) SubClassOf [material entity](http://purl.obolibrary.org/obo/BFO_0000040)\n    - [material entity](http://purl.obolibrary.org/obo/BFO_0000040) SubClassOf [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004)\n      - [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004) SubClassOf [continuant](http://purl.obolibrary.org/obo/BFO_0000002)\n  - [continuant](http://purl.obolibrary.org/obo/BFO_0000002) DisjointWith [occurrent](http://purl.obolibrary.org/obo/BFO_0000003)\n\n\n## [Burn Area](urn:wont:batch#Burn_Area_34d3abf6) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Burn Area](urn:wont:batch#Burn_Area_34d3abf6) SubClassOf [Area](urn:wont:batch#Area_2745deba)\n    - [Area](urn:wont:batch#Area_2745deba) SubClassOf [2-D Extent](urn:wont:batch#2_D_Extent_4f82cdc8)\n      - [2-D Extent](urn:wont:batch#2_D_Extent_4f82cdc8) SubClassOf [size](http://purl.obolibrary.org/obo/PATO_0000117)\n        - [size](http://purl.obolibrary.org/obo/PATO_0000117) SubClassOf [Morphology](urn:wont:batch#Morphology_d4b4214a)\n          - [Morphology](urn:wont:batch#Morphology_d4b4214a) SubClassOf [Physical Object Quality](urn:wont:batch#Physical_Object_Quality_9293e9c8)\n            - [Physical Object Quality](urn:wont:batch#Physical_Object_Quality_9293e9c8) SubClassOf [quality](http://purl.obolibrary.org/obo/BFO_0000019)\n              - [quality](http://purl.obolibrary.org/obo/BFO_0000019) SubClassOf [specifically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000020)\n  - [Burn Area](urn:wont:batch#Burn_Area_34d3abf6) SubClassOf [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec)\n    - [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec) SubClassOf [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141)\n      - [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141) SubClassOf [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004)\n  - [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004) DisjointWith [specifically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000020)\n\n\n## [Burn Area](urn:wont:batch#Burn_Area_34d3abf6) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Burn Area](urn:wont:batch#Burn_Area_34d3abf6) SubClassOf [Area](urn:wont:batch#Area_2745deba)\n    - [Area](urn:wont:batch#Area_2745deba) SubClassOf [2-D Extent](urn:wont:batch#2_D_Extent_4f82cdc8)\n      - [2-D Extent](urn:wont:batch#2_D_Extent_4f82cdc8) SubClassOf [size](http://purl.obolibrary.org/obo/PATO_0000117)\n        - [size](http://purl.obolibrary.org/obo/PATO_0000117) SubClassOf [Morphology](urn:wont:batch#Morphology_d4b4214a)\n          - [Morphology](urn:wont:batch#Morphology_d4b4214a) SubClassOf [Physical Object Quality](urn:wont:batch#Physical_Object_Quality_9293e9c8)\n            - [Physical Object Quality](urn:wont:batch#Physical_Object_Quality_9293e9c8) SubClassOf [quality](http://purl.obolibrary.org/obo/BFO_0000019)\n              - [quality](http://purl.obolibrary.org/obo/BFO_0000019) SubClassOf [specifically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000020)\n  - [Burn Area](urn:wont:batch#Burn_Area_34d3abf6) SubClassOf [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec)\n    - [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec) SubClassOf [Anatomical Entity](urn:wont:batch#Anatomical_Entity_ae687316)\n      - [Anatomical Entity](urn:wont:batch#Anatomical_Entity_ae687316) SubClassOf [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004)\n  -  DisjointClasses: [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004), [specifically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000020), [generically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000031)\n\n\n## [Scarring](http://purl.obolibrary.org/obo/HP_0100699) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Scarring](http://purl.obolibrary.org/obo/HP_0100699) SubClassOf [process](http://purl.obolibrary.org/obo/BFO_0000015)\n    - [process](http://purl.obolibrary.org/obo/BFO_0000015) SubClassOf [occurrent](http://purl.obolibrary.org/obo/BFO_0000003)\n  - [Scarring](http://purl.obolibrary.org/obo/HP_0100699) SubClassOf [Phenotypic Abnormality](urn:wont:batch#Phenotypic_Abnormality_e70b0bcb)\n    - [Phenotypic Abnormality](urn:wont:batch#Phenotypic_Abnormality_e70b0bcb) SubClassOf [Phenotype](urn:wont:batch#Phenotype_9200f8fa)\n      - [Phenotype](urn:wont:batch#Phenotype_9200f8fa) SubClassOf [quality](http://purl.obolibrary.org/obo/BFO_0000019)\n        - [quality](http://purl.obolibrary.org/obo/BFO_0000019) SubClassOf [specifically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000020)\n          - [specifically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000020) SubClassOf [continuant](http://purl.obolibrary.org/obo/BFO_0000002)\n  - [continuant](http://purl.obolibrary.org/obo/BFO_0000002) DisjointWith [occurrent](http://purl.obolibrary.org/obo/BFO_0000003)\n\n\n## [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310)\n    - [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310) SubClassOf [Traumatic wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339)\n      - [Traumatic wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339) SubClassOf [Wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380)\n        - [Wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380) SubClassOf [Injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817)\n          - [Injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817) SubClassOf [pathological disorder](https://bioportal.bioontology.org/ontologies/MILD/MILD_120022)\n            - [pathological disorder](https://bioportal.bioontology.org/ontologies/MILD/MILD_120022) SubClassOf [material entity](http://purl.obolibrary.org/obo/BFO_0000040)\n  - [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec)\n    - [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec) SubClassOf [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141)\n  - [material entity](http://purl.obolibrary.org/obo/BFO_0000040) DisjointWith [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141)\n\n\n## [Burn Area](urn:wont:batch#Burn_Area_34d3abf6) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Burn Area](urn:wont:batch#Burn_Area_34d3abf6) SubClassOf [Area](urn:wont:batch#Area_2745deba)\n    - [Area](urn:wont:batch#Area_2745deba) SubClassOf [2-D Extent](urn:wont:batch#2_D_Extent_4f82cdc8)\n      - [2-D Extent](urn:wont:batch#2_D_Extent_4f82cdc8) SubClassOf [size](http://purl.obolibrary.org/obo/PATO_0000117)\n        - [size](http://purl.obolibrary.org/obo/PATO_0000117) SubClassOf [Morphology](urn:wont:batch#Morphology_d4b4214a)\n          - [Morphology](urn:wont:batch#Morphology_d4b4214a) SubClassOf [Physical Object Quality](urn:wont:batch#Physical_Object_Quality_9293e9c8)\n            - [Physical Object Quality](urn:wont:batch#Physical_Object_Quality_9293e9c8) SubClassOf [quality](http://purl.obolibrary.org/obo/BFO_0000019)\n              - [quality](http://purl.obolibrary.org/obo/BFO_0000019) SubClassOf [specifically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000020)\n  - [Burn Area](urn:wont:batch#Burn_Area_34d3abf6) SubClassOf [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec)\n    - [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec) SubClassOf [Anatomical Entity](urn:wont:batch#Anatomical_Entity_ae687316)\n      - [Anatomical Entity](urn:wont:batch#Anatomical_Entity_ae687316) SubClassOf [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004)\n  - [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004) DisjointWith [specifically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000020)\n\n\n## [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310)\n    - [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310) SubClassOf [Traumatic wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339)\n      - [Traumatic wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339) SubClassOf [Wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380)\n        - [Wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380) SubClassOf [Injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817)\n    - [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310) SubClassOf [output of](http://purl.obolibrary.org/obo/RO_0002353) some [Wound causing heat impact process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000140)\n      - [Wound causing heat impact process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000140) EquivalentTo [Wound causing process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000418) and [Heat impact process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000518)\n        - [Heat impact process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000518) SubClassOf [Trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338)\n  - [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec)\n    - [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec) SubClassOf [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141)\n  - [Traumatic injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007237) EquivalentTo [Injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817) and ([output of](http://purl.obolibrary.org/obo/RO_0002353) some [Trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338))\n  - [material entity](http://purl.obolibrary.org/obo/BFO_0000040) DisjointWith [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141)\n  - [Traumatic injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007237) SubClassOf [material entity](http://purl.obolibrary.org/obo/BFO_0000040)\n\n\n## [Recurrence Of Wound](urn:wont:batch#Recurrence_Of_Wound_4aa8f29c) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Recurrence Of Wound](urn:wont:batch#Recurrence_Of_Wound_4aa8f29c) SubClassOf [disease perpetuation process](https://bioportal.bioontology.org/ontologies/MILD/MILD_120035)\n    - [disease perpetuation process](https://bioportal.bioontology.org/ontologies/MILD/MILD_120035) SubClassOf [process](http://purl.obolibrary.org/obo/BFO_0000015)\n  - [Recurrence Of Wound](urn:wont:batch#Recurrence_Of_Wound_4aa8f29c) SubClassOf [process boundary](http://purl.obolibrary.org/obo/BFO_0000035)\n  - [process](http://purl.obolibrary.org/obo/BFO_0000015) DisjointWith [process boundary](http://purl.obolibrary.org/obo/BFO_0000035)\n\n\n## [Pressure Ulcer Therapy](urn:wont:batch#Pressure_Ulcer_Therapy_c334075d) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Pressure Ulcer Therapy](urn:wont:batch#Pressure_Ulcer_Therapy_c334075d) SubClassOf [process](http://purl.obolibrary.org/obo/BFO_0000015)\n    - [process](http://purl.obolibrary.org/obo/BFO_0000015) SubClassOf [occurrent](http://purl.obolibrary.org/obo/BFO_0000003)\n  - [Pressure Ulcer Therapy](urn:wont:batch#Pressure_Ulcer_Therapy_c334075d) SubClassOf [Wound treatment plan specification](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000200)\n    - [Wound treatment plan specification](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000200) SubClassOf [Medical condition treatment plan specification](https://bioportal.bioontology.org/ontologies/MILD/MILD_120099)\n      - [Medical condition treatment plan specification](https://bioportal.bioontology.org/ontologies/MILD/MILD_120099) SubClassOf [treatment plan specification](https://bioportal.bioontology.org/ontologies/MILD/MILD_120089)\n        - [treatment plan specification](https://bioportal.bioontology.org/ontologies/MILD/MILD_120089) SubClassOf [Plan Specification](urn:wont:batch#Plan_Specification_88f0e32f)\n          - [Plan Specification](urn:wont:batch#Plan_Specification_88f0e32f) SubClassOf [Directive Information Entity](urn:wont:batch#Directive_Information_Entity_ee380b18)\n            - [Directive Information Entity](urn:wont:batch#Directive_Information_Entity_ee380b18) SubClassOf [information content entity](http://purl.obolibrary.org/obo/IAO_0000030)\n              - [information content entity](http://purl.obolibrary.org/obo/IAO_0000030) SubClassOf [generically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000031)\n                - [generically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000031) SubClassOf [continuant](http://purl.obolibrary.org/obo/BFO_0000002)\n  - [continuant](http://purl.obolibrary.org/obo/BFO_0000002) DisjointWith [occurrent](http://purl.obolibrary.org/obo/BFO_0000003)\n\n\n## [Lower Extremity Injury](urn:wont:batch#Lower_Extremity_Injury_c5ea507c) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Lower Extremity Injury](urn:wont:batch#Lower_Extremity_Injury_c5ea507c) SubClassOf [material entity](http://purl.obolibrary.org/obo/BFO_0000040)\n    - [material entity](http://purl.obolibrary.org/obo/BFO_0000040) SubClassOf [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004)\n      - [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004) SubClassOf [continuant](http://purl.obolibrary.org/obo/BFO_0000002)\n  - [Lower Extremity Injury](urn:wont:batch#Lower_Extremity_Injury_c5ea507c) SubClassOf [Trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338)\n    - [Trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338) SubClassOf [process](http://purl.obolibrary.org/obo/BFO_0000015)\n      - [process](http://purl.obolibrary.org/obo/BFO_0000015) SubClassOf [occurrent](http://purl.obolibrary.org/obo/BFO_0000003)\n  - [continuant](http://purl.obolibrary.org/obo/BFO_0000002) DisjointWith [occurrent](http://purl.obolibrary.org/obo/BFO_0000003)\n\n\n## [Recurrence Of Wound](urn:wont:batch#Recurrence_Of_Wound_4aa8f29c) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Recurrence Of Wound](urn:wont:batch#Recurrence_Of_Wound_4aa8f29c) SubClassOf [disease perpetuation process](https://bioportal.bioontology.org/ontologies/MILD/MILD_120035)\n    - [disease perpetuation process](https://bioportal.bioontology.org/ontologies/MILD/MILD_120035) SubClassOf [BFO_0000055](http://purl.obolibrary.org/obo/BFO_0000055) some [perpetuation tendency](https://bioportal.bioontology.org/ontologies/MILD/MILD_120034)\n      - [BFO_0000055](http://purl.obolibrary.org/obo/BFO_0000055) Domain [process](http://purl.obolibrary.org/obo/BFO_0000015)\n  - [Recurrence Of Wound](urn:wont:batch#Recurrence_Of_Wound_4aa8f29c) SubClassOf [process boundary](http://purl.obolibrary.org/obo/BFO_0000035)\n  - [process](http://purl.obolibrary.org/obo/BFO_0000015) DisjointWith [process boundary](http://purl.obolibrary.org/obo/BFO_0000035)\n\n\n## [Burn Area](urn:wont:batch#Burn_Area_34d3abf6) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Burn Area](urn:wont:batch#Burn_Area_34d3abf6) SubClassOf [Area](urn:wont:batch#Area_2745deba)\n    - [Area](urn:wont:batch#Area_2745deba) SubClassOf [2-D Extent](urn:wont:batch#2_D_Extent_4f82cdc8)\n      - [2-D Extent](urn:wont:batch#2_D_Extent_4f82cdc8) SubClassOf [size](http://purl.obolibrary.org/obo/PATO_0000117)\n        - [size](http://purl.obolibrary.org/obo/PATO_0000117) SubClassOf [Morphology](urn:wont:batch#Morphology_d4b4214a)\n          - [Morphology](urn:wont:batch#Morphology_d4b4214a) SubClassOf [Physical Object Quality](urn:wont:batch#Physical_Object_Quality_9293e9c8)\n            - [Physical Object Quality](urn:wont:batch#Physical_Object_Quality_9293e9c8) SubClassOf [quality](http://purl.obolibrary.org/obo/BFO_0000019)\n              - [quality](http://purl.obolibrary.org/obo/BFO_0000019) SubClassOf [specifically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000020)\n  - [Burn Area](urn:wont:batch#Burn_Area_34d3abf6) SubClassOf [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec)\n    - [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec) SubClassOf [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141)\n      - [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141) SubClassOf [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004)\n  -  DisjointClasses: [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004), [specifically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000020), [generically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000031)\n\n\n## [Pressure Ulcer Therapy](urn:wont:batch#Pressure_Ulcer_Therapy_c334075d) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Pressure Ulcer Therapy](urn:wont:batch#Pressure_Ulcer_Therapy_c334075d) SubClassOf [process](http://purl.obolibrary.org/obo/BFO_0000015)\n    - [process](http://purl.obolibrary.org/obo/BFO_0000015) SubClassOf [occurrent](http://purl.obolibrary.org/obo/BFO_0000003)\n  - [Pressure Ulcer Therapy](urn:wont:batch#Pressure_Ulcer_Therapy_c334075d) SubClassOf [Wound treatment plan specification](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000200)\n    - [Wound treatment plan specification](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000200) SubClassOf [Medical condition treatment plan specification](https://bioportal.bioontology.org/ontologies/MILD/MILD_120099)\n      - [Medical condition treatment plan specification](https://bioportal.bioontology.org/ontologies/MILD/MILD_120099) SubClassOf [treatment plan specification](https://bioportal.bioontology.org/ontologies/MILD/MILD_120089)\n        - [treatment plan specification](https://bioportal.bioontology.org/ontologies/MILD/MILD_120089) SubClassOf [IAO_0000136](http://purl.obolibrary.org/obo/IAO_0000136) some [treatment plan](https://bioportal.bioontology.org/ontologies/MILD/MILD_120090)\n          - [IAO_0000136](http://purl.obolibrary.org/obo/IAO_0000136) Domain [information content entity](http://purl.obolibrary.org/obo/IAO_0000030)\n            - [information content entity](http://purl.obolibrary.org/obo/IAO_0000030) SubClassOf [generically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000031)\n              - [generically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000031) SubClassOf [continuant](http://purl.obolibrary.org/obo/BFO_0000002)\n  - [continuant](http://purl.obolibrary.org/obo/BFO_0000002) DisjointWith [occurrent](http://purl.obolibrary.org/obo/BFO_0000003)\n\n\n## [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310)\n    - [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310) SubClassOf [Traumatic wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339)\n      - [Traumatic wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339) EquivalentTo [Wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380) and ([output of](http://purl.obolibrary.org/obo/RO_0002353) some [Wound causing trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000516))\n        - [Wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380) SubClassOf [Injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817)\n    - [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310) SubClassOf [output of](http://purl.obolibrary.org/obo/RO_0002353) some [Wound causing heat impact process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000140)\n      - [Wound causing heat impact process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000140) EquivalentTo [Wound causing process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000418) and [Heat impact process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000518)\n        - [Heat impact process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000518) SubClassOf [Trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338)\n  - [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec)\n    - [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec) SubClassOf [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141)\n  - [Traumatic injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007237) EquivalentTo [Injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817) and ([output of](http://purl.obolibrary.org/obo/RO_0002353) some [Trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338))\n  - [material entity](http://purl.obolibrary.org/obo/BFO_0000040) DisjointWith [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141)\n  - [Traumatic injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007237) SubClassOf [material entity](http://purl.obolibrary.org/obo/BFO_0000040)\n\n\n## [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310)\n    - [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310) SubClassOf [Traumatic wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339)\n      - [Traumatic wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339) EquivalentTo [Wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380) and ([output of](http://purl.obolibrary.org/obo/RO_0002353) some [Wound causing trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000516))\n        - [Wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380) SubClassOf [Injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817)\n        - [Wound causing trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000516) EquivalentTo [Trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338) and [Wound causing process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000418)\n  - [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec)\n    - [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec) SubClassOf [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141)\n  - [Traumatic injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007237) EquivalentTo [Injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817) and ([output of](http://purl.obolibrary.org/obo/RO_0002353) some [Trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338))\n  - [material entity](http://purl.obolibrary.org/obo/BFO_0000040) DisjointWith [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141)\n  - [Traumatic injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007237) SubClassOf [material entity](http://purl.obolibrary.org/obo/BFO_0000040)\n\n\n## [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Nothing](http://www.w3.org/2002/07/owl#Nothing) ##\n\n  - [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310)\n    - [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310) SubClassOf [Traumatic wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339)\n      - [Traumatic wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339) EquivalentTo [Wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380) and ([output of](http://purl.obolibrary.org/obo/RO_0002353) some [Wound causing trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000516))\n        - [Wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380) SubClassOf [Injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817)\n          - [Injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817) SubClassOf [pathological disorder](https://bioportal.bioontology.org/ontologies/MILD/MILD_120022)\n            - [pathological disorder](https://bioportal.bioontology.org/ontologies/MILD/MILD_120022) EquivalentTo [material entity](http://purl.obolibrary.org/obo/BFO_0000040) and ([has quality](http://purl.obolibrary.org/obo/RO_0000086) some [pathological](https://bioportal.bioontology.org/ontologies/MILD/MILD_000600))\n  - [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec)\n    - [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec) SubClassOf [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141)\n  - [material entity](http://purl.obolibrary.org/obo/BFO_0000040) DisjointWith [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141)\n\n# Axiom Impact \n## Axioms used 7 times\n- [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec) SubClassOf [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141) [MILD]\n\n## Axioms used 5 times\n- [process](http://purl.obolibrary.org/obo/BFO_0000015) SubClassOf [occurrent](http://purl.obolibrary.org/obo/BFO_0000003) [MILD]\n- [quality](http://purl.obolibrary.org/obo/BFO_0000019) SubClassOf [specifically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000020) [MILD]\n- [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310) SubClassOf [Traumatic wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339) [MILD]\n- [Wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380) SubClassOf [Injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817) [MILD]\n- [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310) [MILD]\n- [Burn Wound Surface](urn:wont:batch#Burn_Wound_Surface_f6d2b46b) SubClassOf [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec) [MILD]\n- [continuant](http://purl.obolibrary.org/obo/BFO_0000002) DisjointWith [occurrent](http://purl.obolibrary.org/obo/BFO_0000003) [MILD]\n- [material entity](http://purl.obolibrary.org/obo/BFO_0000040) DisjointWith [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141) [MILD]\n\n## Axioms used 4 times\n- [size](http://purl.obolibrary.org/obo/PATO_0000117) SubClassOf [Morphology](urn:wont:batch#Morphology_d4b4214a) [MILD]\n- [Area](urn:wont:batch#Area_2745deba) SubClassOf [2-D Extent](urn:wont:batch#2_D_Extent_4f82cdc8) [MILD]\n- [Burn Area](urn:wont:batch#Burn_Area_34d3abf6) SubClassOf [Area](urn:wont:batch#Area_2745deba) [MILD]\n- [Burn Area](urn:wont:batch#Burn_Area_34d3abf6) SubClassOf [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec) [MILD]\n- [Morphology](urn:wont:batch#Morphology_d4b4214a) SubClassOf [Physical Object Quality](urn:wont:batch#Physical_Object_Quality_9293e9c8) [MILD]\n- [Physical Object Quality](urn:wont:batch#Physical_Object_Quality_9293e9c8) SubClassOf [quality](http://purl.obolibrary.org/obo/BFO_0000019) [MILD]\n- [2-D Extent](urn:wont:batch#2_D_Extent_4f82cdc8) SubClassOf [size](http://purl.obolibrary.org/obo/PATO_0000117) [MILD]\n\n## Axioms used 3 times\n- [Traumatic wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339) EquivalentTo [Wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380) and ([output of](http://purl.obolibrary.org/obo/RO_0002353) some [Wound causing trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000516)) [MILD]\n- [Traumatic injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007237) EquivalentTo [Injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817) and ([output of](http://purl.obolibrary.org/obo/RO_0002353) some [Trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338)) [MILD]\n- [Traumatic injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007237) SubClassOf [material entity](http://purl.obolibrary.org/obo/BFO_0000040) [MILD]\n\n## Axioms used 2 times\n- [Wound causing heat impact process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000140) EquivalentTo [Wound causing process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000418) and [Heat impact process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000518) [MILD]\n- [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004) SubClassOf [continuant](http://purl.obolibrary.org/obo/BFO_0000002) [MILD]\n- [generically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000031) SubClassOf [continuant](http://purl.obolibrary.org/obo/BFO_0000002) [MILD]\n- [material entity](http://purl.obolibrary.org/obo/BFO_0000040) SubClassOf [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004) [MILD]\n- [immaterial entity](http://purl.obolibrary.org/obo/BFO_0000141) SubClassOf [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004) [MILD]\n- [information content entity](http://purl.obolibrary.org/obo/IAO_0000030) SubClassOf [generically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000031) [MILD]\n- [Medical condition treatment plan specification](https://bioportal.bioontology.org/ontologies/MILD/MILD_120099) SubClassOf [treatment plan specification](https://bioportal.bioontology.org/ontologies/MILD/MILD_120089) [MILD]\n- [Wound treatment plan specification](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000200) SubClassOf [Medical condition treatment plan specification](https://bioportal.bioontology.org/ontologies/MILD/MILD_120099) [MILD]\n- [Thermal wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000310) SubClassOf [output of](http://purl.obolibrary.org/obo/RO_0002353) some [Wound causing heat impact process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000140) [MILD]\n- [Traumatic wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000339) SubClassOf [Wound](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000380) [MILD]\n- [Heat impact process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000518) SubClassOf [Trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338) [MILD]\n- [Injury](https://bioportal.bioontology.org/ontologies/WONT/WONT_0007817) SubClassOf [pathological disorder](https://bioportal.bioontology.org/ontologies/MILD/MILD_120022) [MILD]\n- [Anatomical Entity](urn:wont:batch#Anatomical_Entity_ae687316) SubClassOf [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004) [MILD]\n- [Immaterial Anatomical Entity](urn:wont:batch#Immaterial_Anatomical_Entity_2f4484ec) SubClassOf [Anatomical Entity](urn:wont:batch#Anatomical_Entity_ae687316) [MILD]\n- [Pressure Ulcer Therapy](urn:wont:batch#Pressure_Ulcer_Therapy_c334075d) SubClassOf [process](http://purl.obolibrary.org/obo/BFO_0000015) [MILD]\n- [Pressure Ulcer Therapy](urn:wont:batch#Pressure_Ulcer_Therapy_c334075d) SubClassOf [Wound treatment plan specification](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000200) [MILD]\n- [Recurrence Of Wound](urn:wont:batch#Recurrence_Of_Wound_4aa8f29c) SubClassOf [process boundary](http://purl.obolibrary.org/obo/BFO_0000035) [MILD]\n- [Recurrence Of Wound](urn:wont:batch#Recurrence_Of_Wound_4aa8f29c) SubClassOf [disease perpetuation process](https://bioportal.bioontology.org/ontologies/MILD/MILD_120035) [MILD]\n- [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004) DisjointWith [specifically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000020) [MILD]\n-  DisjointClasses: [independent continuant](http://purl.obolibrary.org/obo/BFO_0000004), [specifically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000020), [generically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000031) [MILD]\n- [process](http://purl.obolibrary.org/obo/BFO_0000015) DisjointWith [process boundary](http://purl.obolibrary.org/obo/BFO_0000035) [MILD]\n\n## Axioms used 1 times\n- [pathological disorder](https://bioportal.bioontology.org/ontologies/MILD/MILD_120022) EquivalentTo [material entity](http://purl.obolibrary.org/obo/BFO_0000040) and ([has quality](http://purl.obolibrary.org/obo/RO_0000086) some [pathological](https://bioportal.bioontology.org/ontologies/MILD/MILD_000600)) [MILD]\n- [Wound causing trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000516) EquivalentTo [Trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338) and [Wound causing process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000418) [MILD]\n- [specifically dependent continuant](http://purl.obolibrary.org/obo/BFO_0000020) SubClassOf [continuant](http://purl.obolibrary.org/obo/BFO_0000002) [MILD]\n- [Scarring](http://purl.obolibrary.org/obo/HP_0100699) SubClassOf [process](http://purl.obolibrary.org/obo/BFO_0000015) [MILD]\n- [Scarring](http://purl.obolibrary.org/obo/HP_0100699) SubClassOf [Phenotypic Abnormality](urn:wont:batch#Phenotypic_Abnormality_e70b0bcb) [MILD]\n- [pathological disorder](https://bioportal.bioontology.org/ontologies/MILD/MILD_120022) SubClassOf [material entity](http://purl.obolibrary.org/obo/BFO_0000040) [MILD]\n- [disease perpetuation process](https://bioportal.bioontology.org/ontologies/MILD/MILD_120035) SubClassOf [process](http://purl.obolibrary.org/obo/BFO_0000015) [MILD]\n- [disease perpetuation process](https://bioportal.bioontology.org/ontologies/MILD/MILD_120035) SubClassOf [BFO_0000055](http://purl.obolibrary.org/obo/BFO_0000055) some [perpetuation tendency](https://bioportal.bioontology.org/ontologies/MILD/MILD_120034) [MILD]\n- [treatment plan specification](https://bioportal.bioontology.org/ontologies/MILD/MILD_120089) SubClassOf [Plan Specification](urn:wont:batch#Plan_Specification_88f0e32f) [MILD]\n- [treatment plan specification](https://bioportal.bioontology.org/ontologies/MILD/MILD_120089) SubClassOf [IAO_0000136](http://purl.obolibrary.org/obo/IAO_0000136) some [treatment plan](https://bioportal.bioontology.org/ontologies/MILD/MILD_120090) [MILD]\n- [Trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338) SubClassOf [process](http://purl.obolibrary.org/obo/BFO_0000015) [MILD]\n- [Directive Information Entity](urn:wont:batch#Directive_Information_Entity_ee380b18) SubClassOf [information content entity](http://purl.obolibrary.org/obo/IAO_0000030) [MILD]\n- [Infection](urn:wont:batch#Infection_a9e7409c) SubClassOf [process](http://purl.obolibrary.org/obo/BFO_0000015) [MILD]\n- [Infection](urn:wont:batch#Infection_a9e7409c) SubClassOf [material entity](http://purl.obolibrary.org/obo/BFO_0000040) [MILD]\n- [Lower Extremity Injury](urn:wont:batch#Lower_Extremity_Injury_c5ea507c) SubClassOf [material entity](http://purl.obolibrary.org/obo/BFO_0000040) [MILD]\n- [Lower Extremity Injury](urn:wont:batch#Lower_Extremity_Injury_c5ea507c) SubClassOf [Trauma process](https://bioportal.bioontology.org/ontologies/WONT/WONT_0000338) [MILD]\n- [Phenotype](urn:wont:batch#Phenotype_9200f8fa) SubClassOf [quality](http://purl.obolibrary.org/obo/BFO_0000019) [MILD]\n- [Phenotypic Abnormality](urn:wont:batch#Phenotypic_Abnormality_e70b0bcb) SubClassOf [Phenotype](urn:wont:batch#Phenotype_9200f8fa) [MILD]\n- [Plan Specification](urn:wont:batch#Plan_Specification_88f0e32f) SubClassOf [Directive Information Entity](urn:wont:batch#Directive_Information_Entity_ee380b18) [MILD]\n- [BFO_0000055](http://purl.obolibrary.org/obo/BFO_0000055) Domain [process](http://purl.obolibrary.org/obo/BFO_0000015) [MILD]\n- [IAO_0000136](http://purl.obolibrary.org/obo/IAO_0000136) Domain [information content entity](http://purl.obolibrary.org/obo/IAO_0000030) [MILD]\n\n\n\n# Ontologies used: \n- MILD (https://bioportal.bioontology.org/ontologies/MILD)\n",
+ "rows": [
+  {
+   "term": "Bacteremia",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Bacteremia' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Bacterial Skin Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Bacterial Skin Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Burn Area",
+   "parent": "Area",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Burn Area' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Burn Area",
+   "parent": "Immaterial Anatomical Entity",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Burn Area' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Burn Wound Surface",
+   "parent": "Immaterial Anatomical Entity",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Burn Wound Surface' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Burn Wound Surface",
+   "parent": "Thermal Wound",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Burn Wound Surface' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Candidiasis",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Candidiasis' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Cellulitis",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Cellulitis' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Cellulitis",
+   "parent": "Material Entity",
+   "kind": "category the author decided",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "term ruling",
+   "when": "2026-09-29T23:47:42",
+   "ELK's reason": "'Cellulitis' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Central Nervous System Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Central Nervous System Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Difficult-To-Treat Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Difficult-To-Treat Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Endophthalmitis",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Endophthalmitis' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Endophthalmitis",
+   "parent": "Material Entity",
+   "kind": "category the author decided",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "term ruling",
+   "when": "2026-09-30T19:36:13",
+   "ELK's reason": "'Endophthalmitis' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Erysipeloid",
+   "parent": "Infection",
+   "kind": "curated (WONT, MILD, a module or BFO)",
+   "ELK drops it": "yes",
+   "who": "curated",
+   "why": "",
+   "when": "",
+   "ELK's reason": "'Erysipeloid' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Genital Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Genital Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Infection",
+   "parent": "Biological_process",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Infection",
+   "parent": "Material Entity",
+   "kind": "curated (WONT, MILD, a module or BFO)",
+   "ELK drops it": "yes",
+   "who": "curated",
+   "why": "",
+   "when": "",
+   "ELK's reason": "'Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Infection",
+   "parent": "Process",
+   "kind": "category the author decided",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "term ruling",
+   "when": "2026-09-29T23:47:42",
+   "ELK's reason": "'Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Intra-Abdominal Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Intra-Abdominal Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Leishmaniasis",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Leishmaniasis' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Life-Threatening Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Life-Threatening Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Localized Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Localized Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Lower Extremity Injury",
+   "parent": "Material Entity",
+   "kind": "category the author decided",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "term ruling; review page (curator, 2026-10-18)",
+   "when": "2026-10-18T21:58:19",
+   "ELK's reason": "'Lower Extremity Injury' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Lower Extremity Injury",
+   "parent": "Trauma Process",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Lower Extremity Injury' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Multidrug-Resistant Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Multidrug-Resistant Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Musculoskeletal Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Musculoskeletal Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Odontogenic Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Odontogenic Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Pin Tract Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Pin Tract Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Pneumonia",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Pneumonia' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Pneumonia",
+   "parent": "Material Entity",
+   "kind": "category the author decided",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "term ruling",
+   "when": "2026-09-30T19:36:13",
+   "ELK's reason": "'Pneumonia' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Pressure Ulcer Therapy",
+   "parent": "Process",
+   "kind": "category the author decided",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "term ruling; review page (curator, 2026-10-18)",
+   "when": "2026-10-18T21:58:19",
+   "ELK's reason": "'Pressure Ulcer Therapy' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Pressure Ulcer Therapy",
+   "parent": "Wound Treatment Plan Specification",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "exact label; judgement queue (curator page, 2026-10-07)",
+   "when": "2026-10-07T23:10:12",
+   "ELK's reason": "'Pressure Ulcer Therapy' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Recurrence Of Wound",
+   "parent": "Disease Perpetuation Process",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Recurrence Of Wound' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Recurrence Of Wound",
+   "parent": "Process Boundary",
+   "kind": "category the author decided",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "term ruling; event (read as an instantaneous occurrent)",
+   "when": "2026-09-29T23:47:42",
+   "ELK's reason": "'Recurrence Of Wound' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Residual Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Residual Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Resistant Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Resistant Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Scarring",
+   "parent": "Phenotypic Abnormality",
+   "kind": "curated (WONT, MILD, a module or BFO)",
+   "ELK drops it": "yes",
+   "who": "curated",
+   "why": "",
+   "when": "",
+   "ELK's reason": "'Scarring' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Scarring",
+   "parent": "Process",
+   "kind": "category the author decided",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "term ruling; review page (curator, 2026-10-18)",
+   "when": "2026-10-18T21:58:19",
+   "ELK's reason": "'Scarring' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Spinal Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Spinal Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Subcutaneous Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Subcutaneous Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Toe Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Toe Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Trauma-Related Infection",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Trauma-Related Infection' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Tuberculosis",
+   "parent": "Infection",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Tuberculosis' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  },
+  {
+   "term": "Visible Scarring",
+   "parent": "Scarring",
+   "kind": "placement the author accepted",
+   "ELK drops it": "yes",
+   "who": "author",
+   "why": "placed on the curator's review page; placement review (curator page, 2026-10-02)",
+   "when": "2026-10-02T15:26:18",
+   "ELK's reason": "'Visible Scarring' is unsatisfiable with it; of the edges on empty classes the weakest evidence (curated) gives way first (rule 79)"
+  }
+ ]
+}

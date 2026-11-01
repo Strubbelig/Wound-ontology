@@ -136,8 +136,8 @@ def main(argv: list[str]) -> int:
             gt.judge(term, target, curator={"verdict": "narrower", "reason": reason, "when": when})
         else:
             gt.judge(term, target,
-                     refused={"reason": reason, "by": "curator", "when": when},
-                     curator={"verdict": "refused", "reason": reason, "when": when})
+                     refused={"cause": "curator", "reason": reason, "by": "curator",
+                              "when": when})
             rec = gt.record(term)
             if rec.get("to") == target:
                 rec["to"] = None

@@ -100,3 +100,50 @@ def test_a_registered_id_that_turns_up_in_wont_stops_the_export(tmp_path):
     with pytest.raises(RuntimeError, match="curated class"):
         extend_ground_truth(gt, tmp_path / "o.ttl", class_hier=_hier([("New Term A", "Wound")]),
                             lexicon=(), registry=r)
+
+
+def test_words_in_brackets_keep_two_polymers_apart(tmp_path):
+    # 2026-10-28: both polymers had the key `poly`, and WONT_0005416 passed
+    # from poly(ethylene oxide) to PLGA
+    r = _reg(tmp_path)
+    peo = r.mint("Poly(ethylene Oxide)", set())
+    assert r.lookup("Poly (lactic-Co-Glycolic Acid)") is None
+    assert r.lookup("poly(ethylene oxide)") == peo
+    dfu = r.mint("Diabetic Foot Wound", set())
+    assert r.lookup("Diabetic Foot Wounds (DFU)") == dfu        # an abbreviation still folds away
+
+
+def test_an_entry_keyed_before_the_bracket_fix_is_rekeyed_on_load(tmp_path):
+    iri = NS + "WONT_0005416"
+    (tmp_path / "ids.json").write_text(json.dumps({"entries": {
+        iri: {"label": "Poly(ethylene Oxide)", "keys": ["poly"], "status": "active"}}}))
+    r = _reg(tmp_path)
+    assert r.entries[iri]["keys"] == ["polyethyleneoxide"]       # the shared key is gone, not kept beside
+    assert r.lookup("Poly (lactic-Co-Glycolic Acid)") is None
+    assert r.lookup("Poly(ethylene Oxide)") == iri
+
+
+class _Dict:
+    """The three things former_names_by_key reads from the term dict."""
+    def __init__(self, aliases, data):
+        self._aliases, self.data = aliases, data
+    def aliases(self):
+        return {a: {"to": t} for a, t in self._aliases.items()}
+    def resolve(self, term):
+        while term in self._aliases:
+            term = self._aliases[term]
+        return term
+
+
+def test_a_cluster_rename_hands_over_the_old_id(tmp_path):
+    # 2026-10-28: only spelling aliases were handed over; `Candida albican`,
+    # renamed through its `to`, lost WONT_0001508 to a new id
+    from wound_ontology.owl.extend import former_names_by_key
+    td = _Dict({"polyethylene oxide": "Polyethylene oxide"},
+               {"Candida albican": "Candida albicans", "Candida albicans": "Candida albicans"})
+    former = former_names_by_key(td, IdRegistry.key)
+    assert former[IdRegistry.key("Candida albicans")] == ["Candida albican"]
+    assert former[IdRegistry.key("Polyethylene oxide")] == ["polyethylene oxide"]
+    r = _reg(tmp_path)
+    old = r.mint("Candida Albican", set())
+    assert r.lookup("Candida Albicans", former=former[IdRegistry.key("Candida Albicans")]) == old

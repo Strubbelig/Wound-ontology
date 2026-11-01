@@ -49,13 +49,11 @@ def main(argv):
     backup = ROOT / "data" / "backup" / f"term_mapping_before_review_page_{datetime.now():%Y-%m-%d_%H-%M-%S}.json"
     shutil.copy2(latest, backup); print(f"[page] backed up {latest.name} -> {backup.relative_to(ROOT)}")
     for t, cls, why in plan:
-        gt.judge(t, cls, placement={"verdict": "narrower", "when": when, "by": BY, "why": why},
-                 curator={"verdict": "narrower", "when": when, "by": BY, "reason": why})
+        gt.judge(t, cls, curator={"verdict": "narrower", "when": when, "by": BY, "reason": why})
     gt._dirty(); gt.save()
-    print(f"[page] gate lists re-exported: {Orchestrator().export_gate_lists()}")
     g2 = Orchestrator().term_mapper._term_mapping
     lost = [(t, c) for t, c, _ in plan
-            if (g2.peek(g2.resolve(t), c).get("placement") or {}).get("verdict") != "narrower"]
+            if (g2.peek(g2.resolve(t), c).get("curator") or {}).get("verdict") != "narrower"]
     if lost:
         raise RuntimeError(f"[page] did not land: {lost}")
     print(f"[page] written and read back: {len(plan)} placements")

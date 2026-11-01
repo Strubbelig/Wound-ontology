@@ -18,6 +18,10 @@ ConceptLattice  →  named superclasses  →  ClassHierarchy (merged)
 OWL export (RDF/XML)
 ```
 
+## Maintenance
+
+WONT (`data/ground truth/`, namespace `https://bioportal.bioontology.org/ontologies/WONT/`) is developed by its author, Dr. Moritz Rudolf Franz Valerius Milewski ([ORCID 0009-0006-6251-7592](https://orcid.org/0009-0006-6251-7592)), and, like MILD, reviewed at least once a year.
+
 ## Project Structure
 
 ```

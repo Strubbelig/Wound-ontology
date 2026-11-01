@@ -82,16 +82,17 @@ def test_a_verdict_follows_the_name_it_was_written_against():
     s.reject_entities(["Tumours"], by="curator", note="methodology")
     s.apply_renames({"Tumours": "Tumor"}, by="pass0")
     assert s.verdict("Tumor") is not None
-    assert s.verdict("Tumours") is None
+    assert s.verdict("Tumours") == s.verdict("Tumor"), "one concept, one answer"
+    assert set(s.terms.records["Tumours"]) == {"name"}
 
 
 def test_the_old_spelling_stays_recoverable():
-    """Nothing is deleted — the extractor's spelling is stamped in the store's
-    own `renamed` book with who did it (rule 33)."""
+    """Nothing is deleted — the extractor's spelling is a name judgement in the
+    term dict with who made it (rules 33, 89)."""
     s = _store({"1": {"entities": {"Tumours": {"is_a: Neoplasm": 1.0}}}})
     s.apply_renames({"Tumours": "Tumor"}, by="pass0")
     assert s.decisions()["renamed"]["Tumours"]["to"] == "Tumor"
-    assert s.decisions()["renamed"]["Tumours"]["by"] == "pass0"
+    assert s.decisions()["renamed"]["Tumours"]["by"] == "string-normalisation"
 
 
 def test_a_name_pass0_did_not_name_is_not_touched():
@@ -131,114 +132,90 @@ def test_a_verdict_stays_attached_to_the_pair_it_was_about():
     and the next build pays to ask again — or worse, re-proposes something a
     curator refused."""
     m = _mapping({"lesion": {"to": "Tumours",
-                             "pairs": {"Tumours": {"curator": {"verdict": "y"},
-                                                   "refused": {"by": "moritz"}}}}})
+                             "pairs": {"Tumours": {"pass1": {"verdict": "same_class"},
+                                                   "curator": {"verdict": "different", "by": "moritz"}}}}})
     m.apply_renames({"Tumours": "Tumor"}, by="pass0")
-    assert m.peek("lesion", "Tumor")["curator"] == {"verdict": "y"}
-    assert m.is_refused("lesion", "Tumor") == {"by": "moritz"}
+    assert m.peek("lesion", "Tumor")["pass1"]["verdict"] == "same_class"
+    assert m.is_refused("lesion", "Tumor")["by"] == "author"
 
 
 def test_two_records_landing_on_one_key_merge_and_keep_both_verdicts():
-    m = _mapping({"Tumours": {"to": "Neoplasm", "pairs": {"Neoplasm": {"pass1": {"v": 1}}}},
-                  "tumour": {"to": "Neoplasm", "pairs": {"Neoplasm": {"pass2": {"v": 2}}}}})
+    m = _mapping({"Tumours": {"to": "Neoplasm", "pairs": {"Neoplasm": {"pass1": {"verdict": "same_class"}}}},
+                  "tumour": {"to": "Neoplasm", "pairs": {"Neoplasm": {"pass2": {"verdict": "same_class"}}}}})
     report = m.apply_renames({"Tumours": "Tumor", "tumour": "Tumor"}, by="pass0")
     assert report["records merged"] == 1
-    assert set(m.peek("Tumor", "Neoplasm")) == {"pass1", "pass2"}
+    assert {"pass1", "pass2"} <= set(m.peek("Tumor", "Neoplasm"))
 
 
-def test_two_records_claiming_different_canonicals_are_reported_not_chosen():
+def test_two_records_claiming_different_canonicals_are_reported_not_hidden():
     """Two spellings of one term pointing at DIFFERENT canonicals is a real
-    disagreement, not a spelling question. Both survive in `pairs`; which one
-    is live is said out loud."""
+    disagreement, not a spelling question. Both names stay on record; which
+    one counts is said out loud (rule 89 decides it: the later one)."""
     m = _mapping({"Tumours": {"to": "Neoplasm", "pairs": {}},
                   "tumour": {"to": "Growth", "pairs": {}}})
     report = m.apply_renames({"Tumours": "Tumor", "tumour": "Tumor"}, by="pass0")
-    assert report["target conflicts"] == [("Tumor", "Neoplasm", "Growth")]
+    assert report["target conflicts"] == [("Tumor", ["Growth", "Neoplasm"], m.data["Tumor"])]
+    assert len(m.records["Tumor"]["name"]) == 2
 
 
-def test_an_entry_that_became_its_own_target_is_deleted():
-    """The curator, 2026-09-26: *you can delete the sole spelling mappings —
-    after normalising they are identity mappings.*
-
-    Rule 37 keeps a retired entry because it carries verdicts that cost
-    credits. A verdict about the pair (term, term) is a verdict about the
-    spelling question pass 0 has just settled by rule, so there is nothing
-    left to keep.
-    """
-    m = _mapping({"Tumours": {"to": "Tumor", "pairs": {"Tumor": {"pass1": {"v": 1}}}}})
+def test_an_entry_that_became_its_own_target_keeps_its_name_on_the_old_spelling():
+    """The curator, 2026-09-26: after normalising, the sole spelling mappings
+    are identity mappings. Rule 89 deletes nothing: the old string keeps the
+    name it was given, which is now the spelling, and is no mapping."""
+    m = _mapping({"Tumours": {"to": "Tumor", "pairs": {"Tumor": {"pass1": {"verdict": "same_class"}}}}})
     report = m.apply_renames({"Tumours": "Tumor"}, by="pass0")
-    assert report["identities dropped"] == 1 and report["records deleted"] == 1
-    assert m.data == {} and "Tumor" not in m.records
+    assert report["names kept on the old spelling"] == 1
+    assert m.data == {} and m.resolve("Tumours") == "Tumor"
 
 
-def test_a_record_that_also_carries_a_gate_survives_the_deletion():
+def test_a_record_that_also_carries_a_gate_keeps_it():
     """Whether a term belongs (rule 40) is a different decision that happens
-    to live on the same record. Deleting the spelling mapping must not take a
-    scope verdict with it."""
+    to live on the same record."""
     m = _mapping({"Tumours": {"to": "Tumor", "pairs": {},
                               "gate": {"curator": {"verdict": "in"}}}})
-    report = m.apply_renames({"Tumours": "Tumor"}, by="pass0")
-    assert report["identities dropped"] == 1 and report["records deleted"] == 0
-    assert m.data == {} and m.peek_gate("Tumor") == {"curator": {"verdict": "in"}}
+    m.apply_renames({"Tumours": "Tumor"}, by="pass0")
+    assert m.data == {} and m.gate_verdict("Tumor") == ("in", "author")
 
 
-def test_a_judgement_about_another_canonical_survives_the_deletion():
+def test_a_judgement_about_another_canonical_survives_the_rename():
     m = _mapping({"Tumours": {"to": "Tumor",
-                              "pairs": {"Tumor": {"pass1": {"v": 1}},
-                                        "Growth": {"refused": {"by": "moritz"}}}}})
-    report = m.apply_renames({"Tumours": "Tumor"}, by="pass0")
-    assert report["records deleted"] == 0
-    assert m.is_refused("Tumor", "Growth") == {"by": "moritz"}
-    assert m.peek("Tumor", "Tumor") == {}, "the self-pair decides nothing"
+                              "pairs": {"Tumor": {"pass1": {"verdict": "same_class"}},
+                                        "Growth": {"curator": {"verdict": "different", "by": "moritz"}}}}})
+    m.apply_renames({"Tumours": "Tumor"}, by="pass0")
+    assert m.is_refused("Tumor", "Growth")["by"] == "author"
 
 
 def test_the_gate_travels_with_the_record():
     m = _mapping({"Tumours": {"to": None, "pairs": {},
                               "gate": {"curator": {"verdict": "in"}}}})
     m.apply_renames({"Tumours": "Tumor"}, by="pass0")
-    assert m.peek_gate("Tumor") == {"curator": {"verdict": "in"}}
+    assert m.gate_verdict("Tumor") == ("in", "author")
 
 
-def test_a_merge_keeps_the_gate_verdicts_of_both_spellings():
-    """Whether a term belongs is a verdict on its record (rule 40). A merge
-    that drops one spelling's gate loses a scope decision — and the term comes
-    back into the hierarchy views it had been ruled out of."""
+def test_a_merge_keeps_the_scope_judgements_of_both_spellings():
+    """Whether a term belongs is a judgement on its record (rule 40). A merge
+    that drops one spelling's loses a scope decision."""
     m = _mapping({"Tumours": {"to": None, "pairs": {},
-                              "gate": {"pass1": {"verdict": "out"}}},
+                              "gate": {"pass1": {"verdict": "out", "near": "x", "score": 0.97}}},
                   "tumour": {"to": None, "pairs": {},
-                             "gate": {"pass2": {"verdict": "in"}}}})
+                             "gate": {"pass2": {"verdict": "in", "reason": "r"}}}})
     m.apply_renames({"Tumours": "Tumor", "tumour": "Tumor"}, by="pass0")
-    assert set(m.peek_gate("Tumor")) == {"pass1", "pass2"}
+    assert {j["by"] for j in m.records["Tumor"]["scope"]} == {"sapbert-neighbour", "deepseek-v4-flash"}
 
 
-def test_a_gate_source_that_contradicts_itself_decides_nothing():
-    """Two spellings of one term whose SAME source answers differently.
-
-    First-come used to win and the other side was gone — 10 of them on the
-    2026-09-26 data, `pain score` among them, where pass 2 said `in` of one
-    spelling and `out` of another. Surfacing disagreement is the whole reason
-    the gate holds two passes (rule 40), so a source contradicting ITSELF
-    decides nothing either, and both sides stay where a person can see them.
-    """
+def test_a_merge_whose_spellings_were_judged_differently_surfaces_for_review():
+    """Two spellings of one term judged `in` and `out` (2026-09-26: `pain score`
+    and `pain scores`): both stay on record, the read rule picks one, and the
+    disagreement is in the review queue."""
     m = _mapping({"pain scores": {"to": None, "pairs": {},
-                                  "gate": {"pass2": {"verdict": "in"}}},
+                                  "gate": {"pass2": {"verdict": "in", "reason": "a"}}},
                   "pain score": {"to": None, "pairs": {},
-                                 "gate": {"pass2": {"verdict": "out"}}}})
-    report = m.apply_renames({"pain scores": "pain score"}, by="pass0")
-    assert len(report["gate conflicts"]) == 1
-    assert "pass2" not in m.peek_gate("pain score")
-    contested = m.records["pain score"]["gate_contested"]
-    assert {contested[0]["kept"]["verdict"], contested[0]["dropped"]["verdict"]} == {"in", "out"}
-
-
-def test_the_same_verdict_twice_is_folded_not_reported():
-    m = _mapping({"pain scores": {"to": None, "pairs": {},
-                                  "gate": {"pass2": {"verdict": "in"}}},
-                  "pain score": {"to": None, "pairs": {},
-                                 "gate": {"pass2": {"verdict": "in"}}}})
-    report = m.apply_renames({"pain scores": "pain score"}, by="pass0")
-    assert report["gate conflicts"] == []
-    assert m.peek_gate("pain score")["pass2"]["verdict"] == "in"
+                                 "gate": {"curator": {"verdict": "out", "reason": "b"}}}})
+    m.apply_renames({"pain scores": "pain score"}, by="pass0")
+    assert [j["verdict"] for j in m.records["pain score"]["scope"]] == ["in", "out"] or \
+        sorted(j["verdict"] for j in m.records["pain score"]["scope"]) == ["in", "out"]
+    assert [r["term"] for r in m.gate_disagreements()] == ["pain score"]
+    assert m.gate_verdict("pain score") == ("out", "author")
 
 
 def test_the_chains_the_rename_reveals_are_counted():

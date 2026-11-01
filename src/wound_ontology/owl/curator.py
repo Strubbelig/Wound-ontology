@@ -42,7 +42,6 @@ class OntologyCurator:
     def from_hierarchies(
         self,
         class_hierarchy=None,
-        mereological_hierarchy=None,
         fca_hierarchy=None,
         store=None,
     ) -> None:
@@ -66,8 +65,6 @@ class OntologyCurator:
         cls_reg: dict[str, object] = {}
         if class_hierarchy is not None and not class_hierarchy.df.empty:
             self._export_hierarchy(cls_reg, class_hierarchy, "ClassHierarchy")
-        if mereological_hierarchy is not None and not mereological_hierarchy.df.empty:
-            self._export_mereological(cls_reg, mereological_hierarchy)
         if fca_hierarchy is not None and not fca_hierarchy.df.empty:
             self._export_hierarchy(cls_reg, fca_hierarchy, "FCAHierarchy")
         if store is not None:
@@ -337,18 +334,3 @@ class OntologyCurator:
             detail = ", ".join(f"{k}={v}" for k, v in sorted(skipped.items()))
             print(f"[OntologyCurator] StoreRelations skipped (no IRI): {detail}")
 
-    def _export_mereological(self, cls_reg: dict, mere_hier) -> None:
-        onto = self.ontology.onto
-        with onto:
-            iri, label, transitive = self.RELATION_IRIS["part_of"]
-            part_of = self._get_or_create_prop(iri, label, transitive)
-            for branch in mere_hier.df.index:
-                for root in mere_hier.df.columns:
-                    if mere_hier.df.at[branch, root] != 1.0:
-                        continue
-                    branch_cls  = self._get_or_create_cls(cls_reg, branch)
-                    root_cls    = self._get_or_create_cls(cls_reg, root)
-                    restriction = part_of.some(root_cls)
-                    if restriction not in branch_cls.is_a:
-                        branch_cls.is_a.append(restriction)
-        print(f"[OntologyCurator] MereologicalHierarchy: {len(mere_hier.df.index)} concepts exported.")

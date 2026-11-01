@@ -19,7 +19,7 @@ Measured on a 3,000-term sample of the 90,358 undecided store names:
 
 A margin-only rule decided all of them: 65% out, 25% in, 10% too close --
 ~58,700 store names marked out of scope on coin flips, and under rule 40 one
-pass alone decides, so all 58,700 would have changed what `Blocker` does with
+pass alone decides, so all 58,700 would have changed what the view shows, with
 nothing left for pass 2 to weigh in on. The old cascade was cruder and had the
 thing this lacked: an absolute floor.
 
@@ -84,10 +84,25 @@ def main(argv: list[str]) -> int:
                        key=lambda t: (-freq[t], t.lower()))
     if limit:
         undecided = undecided[:limit]
+    # First the one rule over strings (rule 86, curator 2026-10-25: "(a)"): a
+    # number with a unit is a measurement, and it gets `out` from the `rule`
+    # source, saying so, before any neighbour is looked at.
+    from wound_ontology.mappers.term_mapping_and_gate import noise_rule
+    noise = [t for t in undecided if noise_rule(t)]
+    if noise:
+        undecided = [t for t in undecided if t not in set(noise)]
+        print(f"[pass1] {len(noise):,} undecided name(s) are a number with a unit "
+              f"-> `out` by the noise rule: {noise[:5]}")
+        if apply:
+            for t in noise:
+                gt.gate(t, rule={"verdict": "out", "by": "noise rule: a number with a unit",
+                                 "when": f"{date.today()} noise rule"})
     print(f"[pass1] {len(undecided):,} undecided store names, "
           f"{len(out_terms):,} known out, {len(in_terms):,} known in, "
           f"floor {floor}, margin {margin}")
     if not undecided:
+        if apply and noise:
+            gt.save()
         return 0
 
     emb = p._ensure_embedder()
