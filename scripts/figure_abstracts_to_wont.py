@@ -4,8 +4,11 @@
     python scripts/figure_abstracts_to_wont.py --from FILE   # redraw from a measurement
 
 Every number in the figure is measured here, from the evidence store, the
-terminology decision register, the class hierarchy and the exported files
-(rule 15). Each exclusion is checked to add up: a box that says 7,576 -> 3,114
+term dict (TermMappingAndGate), the class hierarchy and the exported files
+(rule 15). The relations lane reads only the term dict's judgements and the
+core build's account of the author's axioms; until 2026-10-30 it read the
+typing check's and the reading's files, which no longer exist beside the
+term dict (curator: "das machst du ganz sicher nicht"). Each exclusion is checked to add up: a box that says 7,576 -> 3,114
 with 4,462 excluded is asserted, and every term that does not reach the
 addition is put into a named reason or the script stops (no silent failure).
 
@@ -28,10 +31,9 @@ from html import escape
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "src")); sys.path.insert(0, str(ROOT / "scripts"))
 
 FIG_DIR = ROOT.parent / "Thesis" / "figures"
-WONT = ROOT / "data" / "ground truth" / "ground_truth_final.owl"
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 ALT_TERM = "http://purl.obolibrary.org/obo/IAO_0000118"
 
@@ -68,6 +70,10 @@ def measure() -> dict:
     ge2 = {t for t, c in seen.items() if c >= PLACEMENT_MIN_ABSTRACTS}
     N["terms in >= 2 abstracts"] = len(ge2)
     kept = [(t, c) for t, c in reg_terms.placements() if seen.get(t, 0) >= PLACEMENT_MIN_ABSTRACTS]
+    # the author's links between two terms are placements too (rule 89), both
+    # ends past the evidence cut, as the hierarchy takes them (`Orchestrator`)
+    kept += [(t, c) for t, c in reg_terms.term_links()
+             if min(seen.get(t, 0), seen.get(c, 0)) >= PLACEMENT_MIN_ABSTRACTS]
     placed_terms = {K(t): t for t, _ in kept}
     N["terms with an adjudicated placement"] = len(placed_terms)
     N["terms without an adjudicated placement"] = len(ge2) - len(placed_terms)
@@ -75,15 +81,36 @@ def measure() -> dict:
     core = rdflib.Graph().parse(ROOT / "output" / "owl" / "wont_extended_core.ttl")
     ext = rdflib.Graph().parse(ROOT / "output" / "owl" / "wont_extended.ttl")
     ids = json.loads((ROOT / "data" / "registry" / "wont_ids.json").read_text(encoding="utf-8"))["entries"]
-    core_new = {K(core.value(s, RDFS.label)) for s in core.subjects(RDF.type, OWL.Class) if str(s) in ids}
+    # new = what the pipeline added, as the build counts it (the provenance it
+    # writes); a WONT id alone is not new: Injury and Traumatic injury were
+    # issued by the pipeline and have been WONT's own since 2026-10-20
+    from build_wont_core import PROV
+    from config.settings import GROUND_TRUTH_TTL
+    new_iris = {str(s) for s in core.subjects(URIRef(PROV), None) if isinstance(s, URIRef)}
+    core_new = {K(core.value(URIRef(s), RDFS.label)) for s in new_iris}
     rep = json.loads((ROOT / "output" / "owl" / "core_build_report.json").read_text(encoding="utf-8"))
+    # the way each core class came in, as the build recorded it: a checked
+    # placement or a link of the author's, or an edge of the concept lattice the
+    # head-word rule licensed (rule 79); the rest are values of the author's axioms
+    entered = rep["core classes, the way they came in"]
+    via_place = {K(l) for l, h in entered.items() if h == "placement"}
+    via_rule = {K(l) for l, h in entered.items() if h == "head-word rule"}
+    fillers = core_new - via_place - via_rule
+    stray = via_place - set(placed_terms)
+    if stray or len(via_place) + len(via_rule) != rep["core"] \
+            or len(fillers) != rep["classes brought in as curator-axiom fillers"]:
+        raise RuntimeError(f"[figure] core classes do not match the core report: {len(via_place)} by placement + "
+                           f"{len(via_rule)} by the head-word rule vs {rep['core']}, {len(fillers)} fillers vs "
+                           f"{rep['classes brought in as curator-axiom fillers']}; by placement but no placed term: "
+                           f"{sorted(stray)[:20]}")
     from_placements = core_new & set(placed_terms)
-    fillers = core_new - set(placed_terms)
-    if len(from_placements) != rep["core"] or len(fillers) != rep["classes brought in as curator-axiom fillers"]:
-        raise RuntimeError(f"[figure] core classes do not match the core report: {len(from_placements)} from "
-                           f"placements vs {rep['core']}, {len(fillers)} fillers vs "
-                           f"{rep['classes brought in as curator-axiom fillers']}")
-    N["new classes from placements"] = len(from_placements)
+    rule_besides = via_rule - set(placed_terms)
+    N["new classes from the placed terms"] = len(from_placements)
+    N["new classes by the head-word rule besides"] = len(rule_besides)
+    thin = sorted(l for l, h in entered.items() if h == "head-word rule" and K(l) in rule_besides
+                  and max((c for t, c in seen.items() if K(t) == K(l)), default=0) < PLACEMENT_MIN_ABSTRACTS)
+    N["of them in fewer than 2 abstracts"] = len(thin)
+    N["of them in fewer than 2 abstracts (list)"] = thin
     N["new classes as curator-axiom values"] = len(fillers)
     N["new classes in the addition"] = len(core_new)
 
@@ -96,7 +123,7 @@ def measure() -> dict:
     q = json.load(open(max(glob.glob(str(ROOT / "output" / "quarantine" / "edges_*.json")),
                            key=os.path.getmtime)))
     quarantined = {(K(a), K(b)) for a, b in q["edges"]}
-    gt = rdflib.Graph().parse(WONT, format="turtle")
+    gt = rdflib.Graph().parse(str(GROUND_TRUTH_TTL), format="turtle")
     wont_labels = {K(o) for o in gt.objects(None, RDFS.label)}
     lexicon = lexicon_index(default_lexicon())
     alt_terms = {K(o) for o in ext.objects(None, URIRef(ALT_TERM))}
@@ -129,42 +156,8 @@ def measure() -> dict:
     if sum(why.values()) != len(placed_terms) - len(from_placements):
         raise RuntimeError("[figure] placed-term exclusions do not add up")
 
-    # relations lane
-    tc = json.loads((ROOT / "data" / "review" / "relation_typing_check_2026-10-02.json").read_text(encoding="utf-8"))
-    v2 = tc["verdicts_at_2_abstracts"]
-    N["relation assertions"] = tc["triples"]
-    N["relations in >= 2 abstracts"] = sum(v2.values())
-    N["relations typed consistently"] = v2["ok"]
-    N["relations violating domain or range"] = v2["violates"]
-    N["relations with undetermined category"] = v2["undetermined"]
-    u = json.loads((ROOT / "data" / "review" / "relation_universality_2026-10-02" / "result.json").read_text(encoding="utf-8"))
-    if u["rows"] != v2["ok"]:
-        raise RuntimeError(f"[figure] the reading covers {u['rows']} rows, the typing check passed {v2['ok']}")
-    N["relations true of every instance"] = u["verdicts"]["all"]
-    N["relations true of some instances"] = u["verdicts"]["some"]
-    N["relations not true"] = u["verdicts"]["no"]
-    resolve = p.store.resolver(mapped=True)
-    rels = {(resolve(a["subject"])[1], a["predicate"], resolve(a["value"])[1]) for a in u["axioms"]}
-    live = {k for e in ids.values() if e.get("status") != "obsolete" for k in e["keys"]}
-    on_new = sum(1 for s, _, _ in rels if normalise(s).key in live)
-    N["relations distinct after naming rulings"] = len(rels)
-    N["relations on a new class"] = on_new
-    N["relations on an existing class"] = len(rels) - on_new
-    left = {"subject not in the addition": rep["relations left out (subject is a candidate)"],
-            "value not in the addition": rep["relations left out (filler not in core)"],
-            "inconsistent (reasoner)": rep.get("relations left out (ELK: unsatisfiable with them)", 0)}
-    waiting = rep.get("relations held for the curator", 0)
-    if rep.get("relations kept", 0) + waiting + sum(left.values()) != on_new:
-        raise RuntimeError(f"[figure] relations on new classes: {on_new} measured, report accounts for "
-                           f"{rep.get('relations kept', 0) + waiting + sum(left.values())}")
-    N["relations in the addition"] = rep.get("relations kept", 0)
-    N["relations waiting for the curator"] = waiting
-    N["relations left out"] = left
-    w = json.loads((ROOT / "data" / "review" / "withheld_relations_2026-10-03.json").read_text(encoding="utf-8"))
-    N["relations on existing classes at curator review"] = len(w["rows"])
-    N["curator axioms"] = rep["curator axioms"] + rep["curator axioms already stated"]
-    N["curator axioms added"] = rep["curator axioms"]
-    N["curator axioms already stated"] = rep["curator axioms already stated"]
+    # relations lane: the term dict's judgements (rules 66, 89), read where they count
+    N.update(measure_relations(p, rep, core, gt, new_iris))
 
     # the addition
     N["subclass axioms from placements"] = rep["placed edges"]
@@ -175,20 +168,170 @@ def measure() -> dict:
     return N
 
 
+#: a rule that moves a relation to another predicate (rule 68): not a check
+RENAMES = {"tendency-not-disposition"}
+
+
+def measure_relations(p, rep: dict, core, gt, new_iris: set[str]) -> dict:
+    """The relations lane, every number from the term dict and the core files.
+
+    The lane starts from what the store view keeps plus what a judgement in
+    the term dict leaves out of it (the view reports those itself, with the
+    cells it read them on): the relations as the abstracts state them, after
+    names, scope and the schema. Each relation in 2 or more abstracts lands
+    where the machine judgement that counts on it now puts it (the author's
+    aside: his word is the next box), so nothing is counted twice and a check
+    that ran later counts over an earlier one, as in the pipeline. The
+    author's axioms are followed into the core by the build's own account."""
+    from collections import defaultdict
+    from rdflib import OWL, RDFS, BNode
+    from wound_ontology.mappers.judgements import AUTHOR, RELATION_READER, current, rank
+    from relation_typing_check import AGENT as TYPING, EVIDENCE_CUT
+    tdict = p.term_mapper._term_mapping
+    if p.store.terms is not tdict:
+        raise RuntimeError("[figure] the store reads another term dict than the term mapper")
+
+    def cell(s, k):
+        return ((tdict.records.get(s) or {}).get("relations") or {}).get(k) or []
+
+    # one pass of the store view: what it keeps, and what a judgement leaves
+    # out, with the cells that judgement is read on (under the names the
+    # abstracts wrote as well as today's)
+    kept, refused, owners_of = defaultdict(set), {}, defaultdict(set)
+    def note(key, s, pred, t, owners, targets, value):  # noqa: E306
+        if value == 1.0 and pred != "is_a":
+            refused.setdefault((s, f"{pred}: {t}"), [set(), owners, targets, pred])[0].add(key)
+
+    def note_kept(key, s, pred, t, owners, targets, value):
+        if value == 1.0 and pred != "is_a":
+            owners_of[(s, f"{pred}: {t}")].update(owners)
+    for key, ents in p.store.view(on_refused=note, on_kept=note_kept):
+        for s, attrs in ents.items():
+            for t, v in attrs.items():
+                pr, _, tg = t.partition(":")
+                if v == 1.0 and tg.strip() and pr.strip() != "is_a":
+                    kept[(s, f"{pr.strip()}: {tg.strip()}")].add(key)
+    support = {r: set(ks) for r, ks in kept.items()}
+    for r, (ks, *_) in refused.items():
+        support.setdefault(r, set()).update(ks)
+    N: dict = {"relation assertions": len(support)}
+    strong = [r for r, ks in support.items() if len(ks) >= EVIDENCE_CUT]
+    N["relations in >= 2 abstracts"] = len(strong)
+
+    def deciding_cell(r):
+        """(record, key) whose judgements decide relation `r`: its own cell when the
+        view keeps it, else the cell whose `no` leaves it out -- followed through a
+        change of predicate (rule 68) to the cell of the new predicate."""
+        if r in kept:
+            return r
+        _, owners, targets, pred = refused[r]
+        for o in owners:
+            for t in targets:
+                cj = tdict.cell(o, f"{pred}: {t}")
+                if cj and cj["verdict"] == "no":
+                    if cj["by"] in RENAMES and "predicate changed to " in cj["why"]:
+                        return o, f"{cj['why'].rsplit('predicate changed to ', 1)[1].strip()}: {t}"
+                    return o, f"{pred}: {t}"
+        raise RuntimeError(f"[figure] {r}: left out of the view and no cell says no")
+
+    where = {r: deciding_cell(r) for r in strong}
+
+    def fate(r):
+        """A machine `no` that counts leaves the relation out; otherwise the
+        reading's answer decides -- a `yes` of the typing check or of ELK only
+        says it has no objection, however late it came."""
+        js = cell(*where[r])
+        mc = current([j for j in js if rank(j) != AUTHOR])
+        if mc and mc["verdict"] == "no" and mc["by"] != RELATION_READER:
+            return {"elk": "contradiction (reasoner)", TYPING: "wrong kind of term"}.get(
+                mc["by"], "same as a relation the author refused")
+        # a kept relation is read wherever any of its cells carries the reading
+        # (a spelling of either end), as the axioms count it
+        pred_, _, t_ = r[1].partition(":")
+        over = sorted((j for c in tdict.relation_cells(owners_of[r] | {r[0]}, pred_.strip(), t_.strip())
+                       for j in cell(*c)), key=lambda j: j.get("when") or "") if r in kept else js
+        read = current([j for j in over if j["by"] == RELATION_READER])
+        if read:
+            return f"read: {read['verdict']}"
+        typed = [j for j in js if j["by"] == TYPING]
+        if any(rank(j) == AUTHOR for j in js):
+            return "decided by the author alone"      # never read: his word decides it
+        if not typed:
+            raise RuntimeError(f"[figure] {r} ({where[r]}): in the store view and never checked by {TYPING}")
+        return {"undecided": "kind of term unclear", "yes": "passed, not read yet"}[typed[-1]["verdict"]]
+
+    fates = {r: fate(r) for r in strong}
+    N["relations by the judgement that counts"] = dict(Counter(fates.values()))
+    read_yes = {r for r, f in fates.items() if f == "read: yes"}
+    N["relations read"] = sum(1 for f in fates.values() if f.startswith("read"))
+    N["relations true of every instance"] = len(read_yes)
+    N["relations not true of every instance"] = N["relations read"] - len(read_yes)
+
+    def author_said(c):
+        a = current([j for j in cell(*c) if rank(j) == AUTHOR])
+        return a and a["verdict"]
+    said = {where[r]: author_said(where[r]) for r in read_yes}
+    if len(said) != len(read_yes):
+        raise RuntimeError("[figure] two relations read as true are decided on one cell")
+    N["read true, confirmed by the author"] = sum(v == "yes" for v in said.values())
+    N["read true, left out by the author"] = sum(v == "no" for v in said.values())
+    N["read true, awaiting the author"] = sum(v is None for v in said.values())
+    author_yes = {(subj, f"{pr}: {t}") for subj, pr, t, j in tdict.author_relations() if j["verdict"] == "yes"}
+    N["author axioms"] = len(author_yes)
+    N["author axioms beyond the reading"] = len(author_yes - {c for c, v in said.items() if v == "yes"})
+
+    account = rep["author axioms (account)"]
+    rel_acc = [a for a in account if a["property_iri"]]
+    if len(rel_acc) != len(author_yes):
+        raise RuntimeError(f"[figure] the build accounts for {len(rel_acc)} relation axioms of the author, "
+                           f"the term dict holds {len(author_yes)}")
+    out = Counter(a["outcome"] for a in rel_acc)
+    N["author axioms by outcome"] = dict(out)
+    links = Counter(a["outcome"] for a in account if not a["property_iri"])
+    N["author links between terms by outcome"] = dict(links)
+
+    def canon(g, n):                     # a class expression compared by content, not by blank node
+        return str(n) if not isinstance(n, BNode) else tuple(sorted((str(q), canon(g, o)) for q, o in g.predicate_objects(n)))
+
+    def restrictions(g):
+        return {(str(c), str(g.value(b, OWL.onProperty)), canon(g, g.value(b, OWL.someValuesFrom)))
+                for c, b in g.subject_objects(RDFS.subClassOf)
+                if isinstance(b, BNode) and g.value(b, OWL.someValuesFrom) is not None}
+    beyond = restrictions(core) - restrictions(gt)
+    on_new = sum(1 for c, _, _ in beyond if c in new_iris)
+    N["relations added"] = len(beyond)
+    N["relations added on a new class"] = on_new
+    N["relations added on a WONT class"] = len(beyond) - on_new
+    if len(beyond) != out["added"] + out["already built"]:
+        raise RuntimeError(f"[figure] the core states {len(beyond)} relations beyond WONT, the build's account "
+                           f"{out['added']} added + {out['already built']} already built")
+    if out["already built"] != rep.get("relations kept", 0):
+        raise RuntimeError(f"[figure] {out['already built']} of the author's axioms were already built, the "
+                           f"build kept {rep.get('relations kept', 0)} relations from the extension")
+    N["links added"] = links["added"]
+    N["relations held for the author"] = rep.get("relations held for the curator", 0)
+    return N
+
+
 def check(N: dict) -> None:
     """The arithmetic the figure shows. A box that does not add up is not drawn."""
     eq = [
         (N["terms in >= 2 abstracts"], N["terms with an adjudicated placement"] + N["terms without an adjudicated placement"]),
-        (N["terms with an adjudicated placement"], N["new classes from placements"] + sum(N["placed terms not in the addition"].values())),
-        (N["new classes in the addition"], N["new classes from placements"] + N["new classes as curator-axiom values"]),
-        (N["relations in >= 2 abstracts"], N["relations typed consistently"] + N["relations violating domain or range"]
-         + N["relations with undetermined category"]),
-        (N["relations typed consistently"], N["relations true of every instance"] + N["relations true of some instances"]
-         + N["relations not true"]),
-        (N["relations distinct after naming rulings"], N["relations on a new class"] + N["relations on an existing class"]),
-        (N["relations on a new class"], N["relations in the addition"] + N.get("relations waiting for the curator", 0)
-         + sum(N["relations left out"].values())),
-        (N["curator axioms"], N["curator axioms added"] + N["curator axioms already stated"]),
+        (N["terms with an adjudicated placement"], N["new classes from the placed terms"]
+         + sum(N["placed terms not in the addition"].values())),
+        (N["new classes in the addition"], N["new classes from the placed terms"]
+         + N["new classes by the head-word rule besides"] + N["new classes as curator-axiom values"]),
+        # the head-word rule's edges clear the evidence cut too (rule 79, curator 2026-10-30: "ja")
+        (N["of them in fewer than 2 abstracts"], 0),
+        (N["relations in >= 2 abstracts"], sum(N["relations by the judgement that counts"].values())),
+        (N["relations read"], N["relations true of every instance"] + N["relations not true of every instance"]),
+        (N["relations true of every instance"], N["read true, confirmed by the author"]
+         + N["read true, left out by the author"] + N["read true, awaiting the author"]),
+        (N["author axioms"], N["read true, confirmed by the author"] + N["author axioms beyond the reading"]),
+        (N["author axioms"], sum(N["author axioms by outcome"].values())),
+        (N["relations added"], N["author axioms by outcome"].get("added", 0)
+         + N["author axioms by outcome"].get("already built", 0)),
+        (N["relations added"], N["relations added on a new class"] + N["relations added on a WONT class"]),
         (N["identifiers issued"], N["new classes in the addition"] + N["candidate classes kept apart"]),
     ]
     bad = [(a, b) for a, b in eq if a != b]
@@ -324,13 +467,31 @@ def draw(N: dict) -> str:
           (f"{f(why.get('parent class not placed itself', 0))} parent not added either", "s"),
           (f"{f(why.get('already an existing class', 0))} already in an ontology", "s"),
           (f"{f(why.get('placement inconsistent (reasoner)', 0))} contradiction (reasoner)", "s")]
-    yl = b + gap_for(ex); down(lc, b, yl, ex, "left", LX)
+    hgt_ = lambda ls: 2 * PAD + sum(LH_SMALL if st in "si" else LH for _, st in ls) - 0.5  # noqa: E731
+    besides = N["new classes by the head-word rule besides"] + N["new classes as curator-axiom values"]
+    inn = [("Came in besides", "r"), (f"n = {f(besides)}", "n"),
+           (f"{f(N['new classes by the head-word rule besides'])} by the head-word rule,", "s"),
+           (f"{f(N['new classes as curator-axiom values'])} values of the author's axioms", "s")]
+    top_ex = b + 2
+    top_in = top_ex + hgt_(ex) + 2.5
+    yl = top_in + hgt_(inn) + 2
+    F.arrow([(lc, b), (lc, yl)])
+    t0, t1 = F.box(*LX, top_ex, ex, "excl")
+    F.arrow([(lc, (t0 + t1) / 2), (LX[1], (t0 + t1) / 2)])
+    F.box(*LX, top_in, inn, "curator")
+    F.arrow([(LX[1], top_in + hgt_(inn) / 2), (lc - 0.4, top_in + hgt_(inn) / 2)])
     b_cls = F.box(*LM, yl, [("New classes", "b"), (f"n = {f(N['new classes in the addition'])}", "n"),
-                            (f"{f(N['new classes from placements'])} under a checked parent", "s"),
-                            (f"{f(N['new classes as curator-axiom values'])} needed by hand-written axioms", "s"),
+                            (f"{f(N['new classes from the placed terms'])} from the placed terms", "s"),
+                            (f"{f(besides)} came in besides", "s"),
                             ("each also gets its BFO type", "i")])[1]
 
     # ---- relations lane
+    def excl_box(y0, lines):
+        """An exclusion box hanging right of the lane, its top at y0; returns its bottom."""
+        top, bot = F.box(*RX, y0, lines, "excl")
+        F.arrow([(rc, (top + bot) / 2), (RX[0], (top + bot) / 2)])
+        return bot
+
     yr = y_lane
     b = F.box(*RM, yr, [("Relations between terms", "b"), (f"n = {f(N['relation assertions'])}", "n"),
                         ("picked out by a language model", "i")])[1]
@@ -339,60 +500,57 @@ def draw(N: dict) -> str:
     yr = b + gap_for(ex); down(rc, b, yr, ex, "right", RX)
     b = F.box(*RM, yr, [("Found in 2 or more abstracts", "b"),
                         (f"n = {f(N['relations in >= 2 abstracts'])}", "n")])[1]
-    ex = [("Does not fit its terms", "r"),
-          (f"n = {f(N['relations violating domain or range'] + N['relations with undetermined category'])}", "n"),
-          (f"{f(N['relations violating domain or range'])} wrong kind of term", "s"),
-          (f"{f(N['relations with undetermined category'])} kind of term unclear", "s")]
+    fate = N["relations by the judgement that counts"]
+    why_not = [("wrong kind of term", "wrong kind of term"), ("kind of term unclear", "kind of term unclear"),
+               ("contradiction (reasoner)", "contradiction (reasoner)"),
+               ("same as a relation the author refused", "like one the author refused"),
+               ("passed, not read yet", "not read yet"),
+               ("decided by the author alone", "decided by the author")]
+    ex = [("Not read", "r"), (f"n = {f(N['relations in >= 2 abstracts'] - N['relations read'])}", "n")] + \
+         [(f"{f(fate[k])} {text}", "s") for k, text in why_not if fate.get(k)]
     yr = b + gap_for(ex); down(rc, b, yr, ex, "right", RX)
-    b = F.box(*RM, yr, [("Relation fits both terms", "b"), (f"n = {f(N['relations typed consistently'])}", "n"),
-                        ("checked against BFO and RO", "i")])[1]
-    ex = [("Not true in every case", "r"),
-          (f"n = {f(N['relations true of some instances'] + N['relations not true'])}", "n"),
-          (f"{f(N['relations true of some instances'])} true only sometimes", "s"),
-          (f"{f(N['relations not true'])} false", "s")]
+    b = F.box(*RM, yr, [("Read by Claude", "b"), (f"n = {f(N['relations read'])}", "n"),
+                        ("is it true of every instance?", "i")])[1]
+    ex = [("Not true of every instance", "r"), (f"n = {f(N['relations not true of every instance'])}", "n")]
     yr = b + gap_for(ex); down(rc, b, yr, ex, "right", RX)
-    b = F.box(*RM, yr, [("True in every case", "b"), (f"n = {f(N['relations true of every instance'])}", "n"),
-                        (f"{f(N['relations distinct after naming rulings'])} left after merging synonyms", "s"),
-                        ("each one read by Claude", "i")])[1]
-    # branch: relations on existing classes go to the curator
-    cur = [("On an existing WONT class", "r"), (f"n = {f(N['relations on an existing class'])}", "n"),
-           ("checked by hand (curator):", "s"),
-           (f"{f(N['curator axioms'])} axioms, {f(N['curator axioms added'])} of them new,", "s"),
-           (f"{f(N['curator axioms already stated'])} were already in WONT", "s")]
-    hc = 2 * PAD + sum(LH_SMALL if st in "si" else LH for _, st in cur) - 0.5
-    yr2 = b + hc + 4
-    mid = b + 2 + hc / 2
-    F.arrow([(rc, b), (rc, yr2)])
-    cy0, cy1 = F.box(*RX, b + 2, cur, "curator")
-    F.arrow([(rc, mid), (RX[0], mid)])
-    b = F.box(*RM, yr2, [("On a new class", "b"), (f"n = {f(N['relations on a new class'])}", "n")])[1]
-    lo = N["relations left out"]
-    yr = b + 5
+    b = F.box(*RM, yr, [("True of every instance", "b"), (f"n = {f(N['relations true of every instance'])}", "n")])[1]
+    # the author: he leaves some out, has not decided others, and adds axioms of his own
+    ex = [("Not taken up", "r"),
+          (f"n = {f(N['read true, left out by the author'] + N['read true, awaiting the author'])}", "n"),
+          (f"{f(N['read true, left out by the author'])} left out by the author", "s"),
+          (f"{f(N['read true, awaiting the author'])} await the author", "s")]
+    cur = [("Added by the author alone", "r"), (f"n = {f(N['author axioms beyond the reading'])}", "n"),
+           ("his own axioms, and relations", "s"), ("the reading did not pass", "s")]
+    hgt = lambda ls: 2 * PAD + sum(LH_SMALL if st in "si" else LH for _, st in ls) - 0.5  # noqa: E731
+    top_ex = b + 2
+    top_cur = top_ex + hgt(ex) + 2.5
+    yr = top_cur + hgt(cur) + 2
     F.arrow([(rc, b), (rc, yr)])
-    wait = N.get("relations waiting for the curator", 0)
-    lines = ([("Added", "b"), (f"n = {f(N['relations in the addition'])}", "n")] if N["relations in the addition"]
-             else [("Waiting for curator review", "b"), (f"n = {f(wait)}", "n"), ("not added until decided", "s")])
-    if N["relations in the addition"] and wait:
-        lines.append((f"{f(wait)} wait for curator review", "s"))
-    lines += [(f"left out: {lo['subject not in the addition']} their class not added,", "s"),
-              (f"{lo['value not in the addition']} the related class not added", "s")]
-    if lo["inconsistent (reasoner)"]:
-        lines.append((f"{lo['inconsistent (reasoner)']} contradiction (reasoner)", "s"))
-    b_rel = F.box(*RM, yr, lines, "main" if N["relations in the addition"] else "curator")[1]
+    excl_box(top_ex, ex)
+    F.box(*RX, top_cur, cur, "curator")
+    F.arrow([(RX[0], top_cur + hgt(cur) / 2), (rc + 0.4, top_cur + hgt(cur) / 2)])
+    b = F.box(*RM, yr, [("Axioms the author decided", "b"), (f"n = {f(N['author axioms'])}", "n"),
+                        (f"{f(N['read true, confirmed by the author'])} confirmed from the reading", "s"),
+                        (f"{f(N['author axioms beyond the reading'])} added by him alone", "s")])[1]
+    out = N["author axioms by outcome"]
+    ex = [("Not added", "r"), (f"n = {f(out.get('already in WONT', 0) + out.get('not built', 0))}", "n"),
+          (f"{f(out.get('already in WONT', 0))} already in WONT", "s"),
+          (f"{f(out.get('not built', 0))} no class to carry them", "s")]
+    yr = b + gap_for(ex); down(rc, b, yr, ex, "right", RX)
+    b_rel = F.box(*RM, yr, [("Added", "b"), (f"n = {f(N['relations added'])}", "n"),
+                            (f"{f(N['relations added on a new class'])} on new classes", "s"),
+                            (f"{f(N['relations added on a WONT class'])} on WONT classes", "s")])[1]
 
     # ---- the addition
-    yres = max(b_cls, b_rel, cy1) + 7
+    yres = max(b_cls, b_rel) + 7
     F.arrow([(lc, b_cls), (lc, yres)])
-    if N["relations in the addition"]:
-        F.arrow([(rc, b_rel), (rc, yres)])
-    xc = (RX[0] + RX[1]) / 2
-    F.arrow([(xc, cy1), (xc, yres)])
+    F.arrow([(rc, b_rel), (rc, yres)])
+    links = N["links added"]
     F.box(0, W, yres, [("Added to WONT", "b"),
                        (f"{f(N['new classes in the addition'])} new classes  ·  {f(N['subclass axioms from placements'])} "
                         f"links to a parent class  ·  {f(N['BFO category axioms'])} BFO types", "r"),
-                       (f"{f(N['relations in the addition'])} relations from the abstracts  ·  "
-                        if N['relations in the addition'] else "no relations from the abstracts yet  ·  "
-                        f"{f(N['curator axioms added'])} hand-checked axioms on existing WONT classes  ·  "
+                       (f"{f(N['relations added'])} relations  ·  "
+                        + (f"{f(links)} link{'s' if links != 1 else ''} between two terms by the author  ·  " if links else "")
                         + ("no contradictory classes (ELK reasoner)" if not N['unsatisfiable classes (ELK)'] else
                            f"{f(N['unsatisfiable classes (ELK)'])} contradictory classes (ELK reasoner)"), "r")], "result")
     return F.svg()

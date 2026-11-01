@@ -1,0 +1,4666 @@
+{
+ "root": "Wound",
+ "predicates": [
+  "has_quality",
+  "part_of",
+  "has_participant",
+  "has_disposition",
+  "inheres_in"
+ ],
+ "min_support": 2,
+ "modes": {
+  "all": {
+   "objects": 313,
+   "measured_attributes": 78,
+   "inherited_cells": 16137,
+   "inherited_corroborated": 164,
+   "hierarchy_edges": 401,
+   "order_violations": 0,
+   "concepts": 67,
+   "new_groupings": 6,
+   "new_groupings_every_member_states_one_intent_attribute": 0,
+   "mean_own_share": 0.004353362737663869,
+   "class_level_tests": null,
+   "groupings": [
+    {
+     "extent": [
+      "Active Diabetic Foot Ulcer",
+      "Chronic Diabetic Foot Ulcer",
+      "Chronic Diabetic Neuropathic Foot Wound",
+      "Chronic Non-Healing Diabetic Foot Ulcer",
+      "Chronic Pressure Ulcer",
+      "Complex Diabetic Foot Ulcer",
+      "Deep Tissue Pressure Ulcer",
+      "Device-Related Pressure Ulcer",
+      "Diabetic Foot Ulcer",
+      "Existing Pressure Ulcer",
+      "Extremity-Threatening Diabetic Foot Ulcer",
+      "Facial Pressure Ulcer",
+      "Healed Diabetic Foot Ulcer",
+      "Health Care-Acquired Pressure Ulcer",
+      "Heel Pressure Ulcer",
+      "Hospital-Acquired Pressure Ulcer",
+      "Immobility-Related Pressure Ulcer",
+      "Infected Diabetic Foot Ulcer",
+      "Intraoperative Pressure Ulcer",
+      "Intraoperatively Acquired Pressure Ulcer",
+      "Ischemic Diabetic Foot Ulcer",
+      "Ischial Pressure Ulcer",
+      "Kennedy Terminal Ulcer",
+      "Mucosal Membrane Pressure Ulcer",
+      "Nasal Bridge Pressure Ulcer",
+      "Neuro-Ischemic Diabetic Foot Ulcer",
+      "Neuropathic Diabetic Foot Ulcer",
+      "Non-Healing Diabetic Foot Ulcer",
+      "Non-Infected Diabetic Foot Ulcer",
+      "Open Diabetic Foot Ulcer",
+      "Oral Mucosal Membrane Pressure Ulcer",
+      "Perioperative Pressure Ulcer",
+      "Persistent Diabetic Foot Ulcer",
+      "Plantar Diabetic Foot Ulcer",
+      "Postoperative Pressure Ulcer",
+      "Pressure Ulcer",
+      "Recurrent Pressure Ulcer",
+      "Sacral Pressure Ulcer",
+      "Sacral Wound",
+      "Stage 1 Pressure Ulcer",
+      "Stage 2 Pressure Ulcer",
+      "Stage 3 Pressure Ulcer",
+      "Stage 4 Pressure Ulcer",
+      "Stage II Pressure Ulcer",
+      "Stage III And IV Pressure Ulcer",
+      "Stage IV Pressure Ulcer",
+      "Terminal Wound",
+      "Type 2 Diabetic Foot Ulcer",
+      "Ulcus Cruris Mixtum",
+      "Unstageable Pressure Ulcer",
+      "Urinary Catheter-Related Meatal Pressure Ulcer",
+      "Wagner Grade 4 Diabetic Foot Ulcer",
+      "Wagner's Grade 3 Or 4 Wound"
+     ],
+     "maximal": [
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer",
+      "Ulcus Cruris Mixtum"
+     ],
+     "intent": [
+      "has_quality: acute",
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: baseline wound size",
+      "has_quality: chronic",
+      "has_quality: colonized",
+      "has_quality: contaminated",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: epithelialized",
+      "has_quality: exudate type",
+      "has_quality: exudative",
+      "has_quality: ii degree",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: macerated",
+      "has_quality: malodorous",
+      "has_quality: malodour",
+      "has_quality: moist",
+      "has_quality: nonhealing",
+      "has_quality: odor",
+      "has_quality: pain",
+      "has_quality: painful condition",
+      "has_quality: quality of healing",
+      "has_quality: redness",
+      "has_quality: severity of the wound",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound condition",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound morphology",
+      "has_quality: wound odor",
+      "has_quality: wound pain",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: burn wound",
+      "part_of: chronic wound",
+      "part_of: diabetic foot ulcer",
+      "part_of: extremity",
+      "part_of: foot",
+      "part_of: lower extremity",
+      "part_of: pressure ulcer",
+      "part_of: skin",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.009988901220865706,
+     "all_members_state_one": false
+    },
+    {
+     "extent": [
+      "Acute Burn Wound",
+      "Acute Partial Thickness Burn",
+      "Burn Wound",
+      "Chronic Heel Wound",
+      "Chronic Lower Extremity And Foot Wound",
+      "Chronic Lower Extremity Wound",
+      "Chronic Neuropathic Wound",
+      "Chronic Non-Healing Wound",
+      "Chronic Skin Wound",
+      "Chronic Wound",
+      "Chronic, Noninfected Wound",
+      "Colonized Chronic Wound",
+      "Complex Chronic Wound",
+      "Complex Hard-To-Heal Wound",
+      "Deep Burn Wound",
+      "Deep Dermal Burn",
+      "Deep II Degree Burn Wound",
+      "Deep Partial-Thickness And Complete-Thickness Thermal Burn",
+      "Deep Partial-Thickness Burn Wound",
+      "Facial Burn",
+      "First-Degree Burn Wound",
+      "Flame Burn",
+      "Fourth-Degree Burn Wound",
+      "Hard-To-Heal Wound",
+      "Infected Chronic Wound",
+      "Lower-Extremity Hard-To-Heal Wound",
+      "Maintenance Wound",
+      "Non-Healing Chronic Lower Extremity Wound",
+      "Non-Healing Lesion",
+      "Non-Healing Surgical Wound",
+      "Non-Healing Wound",
+      "Pediatric Burn Wound",
+      "Recalcitrant Wound",
+      "Refractory Chronic Wound",
+      "Refractory Skin Wound",
+      "Refractory Wound",
+      "Scald Burn",
+      "Second And Third-Degree Burn",
+      "Second-Degree Burn Wound",
+      "Skin Burn Wound",
+      "Small-Area Deep Second-Degree Burn",
+      "Sunburn",
+      "Superficial And Deep Second-Degree Burn",
+      "Superficial Burn",
+      "Superficial Partial-Thickness Burn Wound",
+      "Superficial Second-Degree Burn Wound",
+      "Third-Degree Burn Wound"
+     ],
+     "maximal": [
+      "Burn Wound",
+      "Chronic Wound"
+     ],
+     "intent": [
+      "has_disposition: wound infecting tendency",
+      "has_quality: acute",
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: baseline wound size",
+      "has_quality: chronic",
+      "has_quality: colonized",
+      "has_quality: contaminated",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: epithelialized",
+      "has_quality: exudate type",
+      "has_quality: exudative",
+      "has_quality: ii degree",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: macerated",
+      "has_quality: malodorous",
+      "has_quality: malodour",
+      "has_quality: moist",
+      "has_quality: nonhealing",
+      "has_quality: odor",
+      "has_quality: pain",
+      "has_quality: painful condition",
+      "has_quality: quality of healing",
+      "has_quality: redness",
+      "has_quality: severity of the wound",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound condition",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound morphology",
+      "has_quality: wound odor",
+      "has_quality: wound pain",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: burn wound",
+      "part_of: diabetic foot ulcer",
+      "part_of: extremity",
+      "part_of: foot",
+      "part_of: lower extremity",
+      "part_of: pressure ulcer",
+      "part_of: skin",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.009595327492699207,
+     "all_members_state_one": false
+    },
+    {
+     "extent": [
+      "Acute Burn Wound",
+      "Acute Partial Thickness Burn",
+      "Burn Wound",
+      "Burns Of The Ocular Surface",
+      "Deep Burn Wound",
+      "Deep Dermal Burn",
+      "Deep II Degree Burn Wound",
+      "Deep Partial-Thickness And Complete-Thickness Thermal Burn",
+      "Deep Partial-Thickness Burn Wound",
+      "Facial Burn",
+      "First-Degree Burn Wound",
+      "Flame Burn",
+      "Fourth-Degree Burn Wound",
+      "Pediatric Burn Injury",
+      "Pediatric Burn Wound",
+      "Post-Burn Injury",
+      "Scald Burn",
+      "Second And Third-Degree Burn",
+      "Second-Degree Burn Wound",
+      "Skin Burn Wound",
+      "Small-Area Deep Second-Degree Burn",
+      "Sunburn",
+      "Superficial And Deep Second-Degree Burn",
+      "Superficial Burn",
+      "Superficial Partial-Thickness Burn Wound",
+      "Superficial Second-Degree Burn Wound",
+      "Third-Degree Burn Wound"
+     ],
+     "maximal": [
+      "Burn Wound",
+      "Burns Of The Ocular Surface",
+      "Pediatric Burn Injury",
+      "Post-Burn Injury"
+     ],
+     "intent": [
+      "has_quality: acute",
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: baseline wound size",
+      "has_quality: chronic",
+      "has_quality: colonized",
+      "has_quality: contaminated",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: epithelialized",
+      "has_quality: exudate type",
+      "has_quality: exudative",
+      "has_quality: ii degree",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: macerated",
+      "has_quality: malodorous",
+      "has_quality: malodour",
+      "has_quality: moist",
+      "has_quality: nonhealing",
+      "has_quality: odor",
+      "has_quality: pain",
+      "has_quality: painful condition",
+      "has_quality: quality of healing",
+      "has_quality: redness",
+      "has_quality: severity of the wound",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound condition",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound morphology",
+      "has_quality: wound odor",
+      "has_quality: wound pain",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: acute wound",
+      "part_of: burn wound",
+      "part_of: diabetic foot ulcer",
+      "part_of: extremity",
+      "part_of: foot",
+      "part_of: lower extremity",
+      "part_of: pressure ulcer",
+      "part_of: skin",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: burn injury",
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: thermal wound",
+      "is_a: traumatic injury",
+      "is_a: traumatic wound",
+      "is_a: wound"
+     ],
+     "own_share": 0.006535947712418301,
+     "all_members_state_one": false
+    },
+    {
+     "extent": [
+      "Burn Wound Surface",
+      "Corneal Abrasion",
+      "Scratch Wound"
+     ],
+     "maximal": [
+      "Burn Wound Surface",
+      "Scratch Wound"
+     ],
+     "intent": [
+      "has_quality: acute",
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: baseline wound size",
+      "has_quality: chronic",
+      "has_quality: colonized",
+      "has_quality: contaminated",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: epithelialized",
+      "has_quality: exudate type",
+      "has_quality: exudative",
+      "has_quality: ii degree",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: macerated",
+      "has_quality: malodorous",
+      "has_quality: malodour",
+      "has_quality: moist",
+      "has_quality: nonhealing",
+      "has_quality: odor",
+      "has_quality: pain",
+      "has_quality: painful condition",
+      "has_quality: quality of healing",
+      "has_quality: redness",
+      "has_quality: severity of the wound",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound condition",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound morphology",
+      "has_quality: wound odor",
+      "has_quality: wound pain",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: acute wound",
+      "part_of: burn wound",
+      "part_of: diabetic foot ulcer",
+      "part_of: extremity",
+      "part_of: foot",
+      "part_of: lower extremity",
+      "part_of: pressure ulcer",
+      "part_of: skin",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: immaterial entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: traumatic injury",
+      "is_a: traumatic wound",
+      "is_a: wound"
+     ],
+     "own_share": 0.0,
+     "all_members_state_one": false
+    },
+    {
+     "extent": [
+      "Infected Chronic Wound",
+      "Infected Skin Wound"
+     ],
+     "maximal": [
+      "Infected Chronic Wound",
+      "Infected Skin Wound"
+     ],
+     "intent": [
+      "has_quality: acute",
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: baseline wound size",
+      "has_quality: chronic",
+      "has_quality: colonized",
+      "has_quality: contaminated",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: epithelialized",
+      "has_quality: exudate type",
+      "has_quality: exudative",
+      "has_quality: ii degree",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: macerated",
+      "has_quality: malodorous",
+      "has_quality: malodour",
+      "has_quality: moist",
+      "has_quality: nonhealing",
+      "has_quality: odor",
+      "has_quality: pain",
+      "has_quality: painful condition",
+      "has_quality: quality of healing",
+      "has_quality: redness",
+      "has_quality: severity of the wound",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound condition",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound morphology",
+      "has_quality: wound odor",
+      "has_quality: wound pain",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: burn wound",
+      "part_of: diabetic foot ulcer",
+      "part_of: extremity",
+      "part_of: foot",
+      "part_of: lower extremity",
+      "part_of: pressure ulcer",
+      "part_of: skin",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: infected wound",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.0,
+     "all_members_state_one": false
+    },
+    {
+     "extent": [
+      "Wounds Classified According To Gustilo And Anderson",
+      "Wounds Classified According To Tscherne And Oestern"
+     ],
+     "maximal": [
+      "Wounds Classified According To Gustilo And Anderson",
+      "Wounds Classified According To Tscherne And Oestern"
+     ],
+     "intent": [
+      "has_quality: acute",
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: baseline wound size",
+      "has_quality: chronic",
+      "has_quality: colonized",
+      "has_quality: contaminated",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: epithelialized",
+      "has_quality: exudate type",
+      "has_quality: exudative",
+      "has_quality: ii degree",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: macerated",
+      "has_quality: malodorous",
+      "has_quality: malodour",
+      "has_quality: moist",
+      "has_quality: nonhealing",
+      "has_quality: odor",
+      "has_quality: pain",
+      "has_quality: painful condition",
+      "has_quality: quality of healing",
+      "has_quality: redness",
+      "has_quality: severity of the wound",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound condition",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound morphology",
+      "has_quality: wound odor",
+      "has_quality: wound pain",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: acute wound",
+      "part_of: burn wound",
+      "part_of: diabetic foot ulcer",
+      "part_of: extremity",
+      "part_of: foot",
+      "part_of: lower extremity",
+      "part_of: pressure ulcer",
+      "part_of: skin",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: skin wound",
+      "is_a: traumatic injury",
+      "is_a: traumatic wound",
+      "is_a: wound",
+      "is_a: wound with accompanying fracture"
+     ],
+     "own_share": 0.0,
+     "all_members_state_one": false
+    }
+   ]
+  },
+  "class_level": {
+   "objects": 313,
+   "measured_attributes": 78,
+   "inherited_cells": 9154,
+   "inherited_corroborated": 152,
+   "hierarchy_edges": 401,
+   "order_violations": 207,
+   "concepts": 73,
+   "new_groupings": 6,
+   "new_groupings_every_member_states_one_intent_attribute": 1,
+   "mean_own_share": 0.045471264367816094,
+   "class_level_tests": [
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Lower extremity",
+     "k": 7,
+     "n": 147,
+     "k_outside": 28,
+     "n_outside": 5183,
+     "p": 3.700603746740019e-05,
+     "q": 0.00015695664167207667,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound duration",
+     "k": 4,
+     "n": 147,
+     "k_outside": 1,
+     "n_outside": 5183,
+     "p": 2.7196984909357345e-06,
+     "q": 1.760646917816291e-05,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: size",
+     "k": 3,
+     "n": 147,
+     "k_outside": 15,
+     "n_outside": 5183,
+     "p": 0.01237516339095445,
+     "q": 0.02984598229583132,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Age",
+     "k": 1,
+     "n": 147,
+     "k_outside": 8,
+     "n_outside": 5183,
+     "p": 0.22267485991835928,
+     "q": 0.37519188725970126,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: chronic",
+     "k": 5,
+     "n": 147,
+     "k_outside": 5,
+     "n_outside": 5183,
+     "p": 3.361752108175742e-06,
+     "q": 2.0674775465280814e-05,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Length",
+     "k": 1,
+     "n": 147,
+     "k_outside": 1,
+     "n_outside": 5183,
+     "p": 0.054403865429592135,
+     "q": 0.10294885304368974,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound morphology",
+     "k": 0,
+     "n": 147,
+     "k_outside": 0,
+     "n_outside": 5183,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Painful condition",
+     "k": 5,
+     "n": 147,
+     "k_outside": 3,
+     "n_outside": 5183,
+     "p": 7.813376450977977e-07,
+     "q": 5.653207667472301e-06,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Area",
+     "k": 4,
+     "n": 147,
+     "k_outside": 0,
+     "n_outside": 5183,
+     "p": 5.558797360781227e-07,
+     "q": 4.273325471100568e-06,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Volume",
+     "k": 2,
+     "n": 147,
+     "k_outside": 4,
+     "n_outside": 5183,
+     "p": 0.010536249409800308,
+     "q": 0.026448136273580364,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Severity of the wound",
+     "k": 5,
+     "n": 147,
+     "k_outside": 1,
+     "n_outside": 5183,
+     "p": 8.756027786715605e-08,
+     "q": 8.974928481383495e-07,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Bacterial burden",
+     "k": 1,
+     "n": 147,
+     "k_outside": 3,
+     "n_outside": 5183,
+     "p": 0.10586699277097329,
+     "q": 0.1860234301547102,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: colonized",
+     "k": 1,
+     "n": 147,
+     "k_outside": 0,
+     "n_outside": 5183,
+     "p": 0.0275797373358349,
+     "q": 0.059514170040485835,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Redness",
+     "k": 0,
+     "n": 147,
+     "k_outside": 12,
+     "n_outside": 5183,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Diabetic foot ulcer",
+     "k": 5,
+     "n": 147,
+     "k_outside": 20,
+     "n_outside": 5183,
+     "p": 0.0005070086274246253,
+     "q": 0.0017322794770341363,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound depth",
+     "k": 3,
+     "n": 147,
+     "k_outside": 1,
+     "n_outside": 5183,
+     "p": 8.058712062754786e-05,
+     "q": 0.0003197488979738189,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound pain",
+     "k": 2,
+     "n": 147,
+     "k_outside": 0,
+     "n_outside": 5183,
+     "p": 0.0007556092420776685,
+     "q": 0.002383075301937262,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Odor",
+     "k": 4,
+     "n": 147,
+     "k_outside": 4,
+     "n_outside": 5183,
+     "p": 3.567813447591247e-05,
+     "q": 0.00015672894787632978,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound surface area",
+     "k": 6,
+     "n": 147,
+     "k_outside": 1,
+     "n_outside": 5183,
+     "p": 2.7227652145324407e-09,
+     "q": 3.349001213874902e-08,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Malodour",
+     "k": 3,
+     "n": 147,
+     "k_outside": 4,
+     "n_outside": 5183,
+     "p": 0.0006632146302633748,
+     "q": 0.0021467210400630287,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Exudate type",
+     "k": 0,
+     "n": 147,
+     "k_outside": 1,
+     "n_outside": 5183,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Nonhealing",
+     "k": 2,
+     "n": 147,
+     "k_outside": 1,
+     "n_outside": 5183,
+     "p": 0.0022257003463151148,
+     "q": 0.006518122442779979,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Pressure ulcer",
+     "k": 16,
+     "n": 147,
+     "k_outside": 23,
+     "n_outside": 5183,
+     "p": 1.079644333810297e-15,
+     "q": 2.213270884311109e-14,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Burn wound",
+     "k": 8,
+     "n": 147,
+     "k_outside": 19,
+     "n_outside": 5183,
+     "p": 3.9410990468083057e-07,
+     "q": 3.2317012183828105e-06,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Malodorous",
+     "k": 2,
+     "n": 147,
+     "k_outside": 1,
+     "n_outside": 5183,
+     "p": 0.0022257003463151148,
+     "q": 0.00636653819992463,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Moist",
+     "k": 0,
+     "n": 147,
+     "k_outside": 0,
+     "n_outside": 5183,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Quality of healing",
+     "k": 1,
+     "n": 147,
+     "k_outside": 3,
+     "n_outside": 5183,
+     "p": 0.10586699277097329,
+     "q": 0.18340338184267205,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: depth",
+     "k": 8,
+     "n": 147,
+     "k_outside": 6,
+     "n_outside": 5183,
+     "p": 7.231090652614734e-10,
+     "q": 9.882490558573471e-09,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: II degree",
+     "k": 2,
+     "n": 147,
+     "k_outside": 0,
+     "n_outside": 5183,
+     "p": 0.0007556092420776685,
+     "q": 0.0023234984193888308,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Wound",
+     "k": 29,
+     "n": 147,
+     "k_outside": 64,
+     "n_outside": 5183,
+     "p": 8.51864950987974e-24,
+     "q": 1.0477938897152081e-21,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Pain",
+     "k": 19,
+     "n": 147,
+     "k_outside": 34,
+     "n_outside": 5183,
+     "p": 3.893141655123756e-17,
+     "q": 1.1971410589505548e-15,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Exudative",
+     "k": 0,
+     "n": 147,
+     "k_outside": 2,
+     "n_outside": 5183,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: epithelialized",
+     "k": 0,
+     "n": 147,
+     "k_outside": 1,
+     "n_outside": 5183,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound size",
+     "k": 17,
+     "n": 147,
+     "k_outside": 16,
+     "n_outside": 5183,
+     "p": 9.722968121370367e-19,
+     "q": 3.9864169297618505e-17,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Foot",
+     "k": 4,
+     "n": 147,
+     "k_outside": 14,
+     "n_outside": 5183,
+     "p": 0.0012570623805984145,
+     "q": 0.003771187141795243,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound condition",
+     "k": 1,
+     "n": 147,
+     "k_outside": 2,
+     "n_outside": 5183,
+     "p": 0.08049294797123066,
+     "q": 0.14777063582778166,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Initial size",
+     "k": 0,
+     "n": 147,
+     "k_outside": 0,
+     "n_outside": 5183,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: acute",
+     "k": 1,
+     "n": 147,
+     "k_outside": 0,
+     "n_outside": 5183,
+     "p": 0.0275797373358349,
+     "q": 0.05848806366047746,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound area",
+     "k": 13,
+     "n": 147,
+     "k_outside": 8,
+     "n_outside": 5183,
+     "p": 5.284704801181929e-16,
+     "q": 1.3000373810907545e-14,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Skin",
+     "k": 2,
+     "n": 147,
+     "k_outside": 8,
+     "n_outside": 5183,
+     "p": 0.029402700488174977,
+     "q": 0.0602755360007587,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound odor",
+     "k": 1,
+     "n": 147,
+     "k_outside": 2,
+     "n_outside": 5183,
+     "p": 0.08049294797123066,
+     "q": 0.145597538242079,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: contaminated",
+     "k": 0,
+     "n": 147,
+     "k_outside": 2,
+     "n_outside": 5183,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: macerated",
+     "k": 0,
+     "n": 147,
+     "k_outside": 1,
+     "n_outside": 5183,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Surface area",
+     "k": 7,
+     "n": 147,
+     "k_outside": 8,
+     "n_outside": 5183,
+     "p": 5.630974913025318e-08,
+     "q": 6.296453766382856e-07,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound length",
+     "k": 1,
+     "n": 147,
+     "k_outside": 0,
+     "n_outside": 5183,
+     "p": 0.0275797373358349,
+     "q": 0.057496740547588014,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound volume",
+     "k": 3,
+     "n": 147,
+     "k_outside": 3,
+     "n_outside": 5183,
+     "p": 0.00038679253274785923,
+     "q": 0.0013992788684701967,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Baseline wound size",
+     "k": 0,
+     "n": 147,
+     "k_outside": 0,
+     "n_outside": 5183,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: degree of microbial burden",
+     "k": 1,
+     "n": 147,
+     "k_outside": 3,
+     "n_outside": 5183,
+     "p": 0.10586699277097329,
+     "q": 0.1808561126504127,
+     "class_level": false
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Bacterial load",
+     "k": 5,
+     "n": 147,
+     "k_outside": 3,
+     "n_outside": 5183,
+     "p": 7.813376450977977e-07,
+     "q": 5.33914057483495e-06,
+     "class_level": true
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Extremity",
+     "k": 7,
+     "n": 147,
+     "k_outside": 11,
+     "n_outside": 5183,
+     "p": 2.5972575940530604e-07,
+     "q": 2.2818763147751884e-06,
+     "class_level": true
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: chronic",
+     "k": 0,
+     "n": 7,
+     "k_outside": 10,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: infected",
+     "k": 0,
+     "n": 7,
+     "k_outside": 7,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Area",
+     "k": 0,
+     "n": 7,
+     "k_outside": 4,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Severity of the wound",
+     "k": 0,
+     "n": 7,
+     "k_outside": 6,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: Diabetic foot ulcer",
+     "k": 2,
+     "n": 7,
+     "k_outside": 23,
+     "n_outside": 5323,
+     "p": 0.000437262404793454,
+     "q": 0.0015366650225598529,
+     "class_level": true
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Diabetic foot ulcer duration",
+     "k": 0,
+     "n": 7,
+     "k_outside": 0,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Hard-to-heal",
+     "k": 0,
+     "n": 7,
+     "k_outside": 2,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: Chronic wound",
+     "k": 1,
+     "n": 7,
+     "k_outside": 26,
+     "n_outside": 5323,
+     "p": 0.03494468368226612,
+     "q": 0.07046223103145464,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Wound surface area",
+     "k": 1,
+     "n": 7,
+     "k_outside": 6,
+     "n_outside": 5323,
+     "p": 0.009162241875545792,
+     "q": 0.023478244806086093,
+     "class_level": true
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: Diabetic foot",
+     "k": 0,
+     "n": 7,
+     "k_outside": 9,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: depth",
+     "k": 0,
+     "n": 7,
+     "k_outside": 14,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Diabetic foot ulcers size",
+     "k": 0,
+     "n": 7,
+     "k_outside": 0,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: Foot wound",
+     "k": 0,
+     "n": 7,
+     "k_outside": 4,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: Wound",
+     "k": 0,
+     "n": 7,
+     "k_outside": 93,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Pain",
+     "k": 0,
+     "n": 7,
+     "k_outside": 53,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Neuropathic",
+     "k": 1,
+     "n": 7,
+     "k_outside": 2,
+     "n_outside": 5323,
+     "p": 0.003935527802118341,
+     "q": 0.011001589083194452,
+     "class_level": true
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: Diabetic wound",
+     "k": 0,
+     "n": 7,
+     "k_outside": 1,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Wound size",
+     "k": 1,
+     "n": 7,
+     "k_outside": 32,
+     "n_outside": 5323,
+     "p": 0.04256636887293184,
+     "q": 0.08310576779953359,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: Foot",
+     "k": 0,
+     "n": 7,
+     "k_outside": 18,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: diabetes mellitus",
+     "k": 0,
+     "n": 7,
+     "k_outside": 3,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Wound area",
+     "k": 0,
+     "n": 7,
+     "k_outside": 21,
+     "n_outside": 5323,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "part_of: Chronic wound",
+     "k": 0,
+     "n": 16,
+     "k_outside": 27,
+     "n_outside": 5314,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "has_quality: Wound surface area",
+     "k": 0,
+     "n": 16,
+     "k_outside": 7,
+     "n_outside": 5314,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "has_quality: Surface area",
+     "k": 1,
+     "n": 16,
+     "k_outside": 14,
+     "n_outside": 5314,
+     "p": 0.04415095872079116,
+     "q": 0.0848526237915205,
+     "class_level": false
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "part_of: Pressure ulcer",
+     "k": 11,
+     "n": 16,
+     "k_outside": 28,
+     "n_outside": 5314,
+     "p": 2.9221689308959425e-21,
+     "q": 1.7971338925010045e-19,
+     "class_level": true
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "has_quality: Wound size",
+     "k": 1,
+     "n": 16,
+     "k_outside": 32,
+     "n_outside": 5314,
+     "p": 0.09471945112345957,
+     "q": 0.1688477172200801,
+     "class_level": false
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "has_quality: depth",
+     "k": 0,
+     "n": 16,
+     "k_outside": 14,
+     "n_outside": 5314,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "has_quality: disease classification stage",
+     "k": 2,
+     "n": 16,
+     "k_outside": 2,
+     "n_outside": 5314,
+     "p": 5.05203948631842e-05,
+     "q": 0.00020713361893905522,
+     "class_level": true
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "has_quality: Severity of the wound",
+     "k": 0,
+     "n": 16,
+     "k_outside": 6,
+     "n_outside": 5314,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "part_of: Skin",
+     "k": 0,
+     "n": 16,
+     "k_outside": 10,
+     "n_outside": 5314,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "part_of: Wound",
+     "k": 0,
+     "n": 16,
+     "k_outside": 93,
+     "n_outside": 5314,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Pain",
+     "k": 0,
+     "n": 14,
+     "k_outside": 53,
+     "n_outside": 5316,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_disposition: wound infecting tendency",
+     "k": 1,
+     "n": 14,
+     "k_outside": 5,
+     "n_outside": 5316,
+     "p": 0.015664023413643636,
+     "q": 0.03705143999765706,
+     "class_level": true
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Burn severity",
+     "k": 0,
+     "n": 14,
+     "k_outside": 1,
+     "n_outside": 5316,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Complete-thickness burn area",
+     "k": 0,
+     "n": 14,
+     "k_outside": 0,
+     "n_outside": 5316,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Total body surface area",
+     "k": 2,
+     "n": 14,
+     "k_outside": 9,
+     "n_outside": 5316,
+     "p": 0.0003476874484037415,
+     "q": 0.0013364236298018814,
+     "class_level": true
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "part_of: Burn wound",
+     "k": 7,
+     "n": 14,
+     "k_outside": 20,
+     "n_outside": 5316,
+     "p": 1.233139794070094e-13,
+     "q": 2.1668027810088795e-12,
+     "class_level": true
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Burn size",
+     "k": 1,
+     "n": 14,
+     "k_outside": 2,
+     "n_outside": 5316,
+     "p": 0.007860716449020666,
+     "q": 0.020571662196373235,
+     "class_level": true
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Burn surface area",
+     "k": 0,
+     "n": 14,
+     "k_outside": 0,
+     "n_outside": 5316,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: depth",
+     "k": 1,
+     "n": 14,
+     "k_outside": 13,
+     "n_outside": 5316,
+     "p": 0.03619511079382216,
+     "q": 0.07180642947806655,
+     "class_level": false
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: II degree",
+     "k": 0,
+     "n": 14,
+     "k_outside": 2,
+     "n_outside": 5316,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "part_of: Burn injury",
+     "k": 5,
+     "n": 14,
+     "k_outside": 8,
+     "n_outside": 5316,
+     "p": 7.120391677340433e-11,
+     "q": 1.0947602203910916e-09,
+     "class_level": true
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Burn depth",
+     "k": 3,
+     "n": 14,
+     "k_outside": 2,
+     "n_outside": 5316,
+     "p": 1.4386966038359728e-07,
+     "q": 1.361228325167882e-06,
+     "class_level": true
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Total burn area",
+     "k": 0,
+     "n": 14,
+     "k_outside": 2,
+     "n_outside": 5316,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "part_of: Wound",
+     "k": 0,
+     "n": 14,
+     "k_outside": 93,
+     "n_outside": 5316,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "part_of: Lower extremity",
+     "k": 1,
+     "n": 10,
+     "k_outside": 34,
+     "n_outside": 5320,
+     "p": 0.06381152884063103,
+     "q": 0.11892148556663056,
+     "class_level": false
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: chronic",
+     "k": 1,
+     "n": 10,
+     "k_outside": 9,
+     "n_outside": 5320,
+     "p": 0.018619707979513997,
+     "q": 0.04321177512226833,
+     "class_level": true
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_disposition: wound infecting tendency",
+     "k": 0,
+     "n": 10,
+     "k_outside": 6,
+     "n_outside": 5320,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: Pain",
+     "k": 2,
+     "n": 10,
+     "k_outside": 51,
+     "n_outside": 5320,
+     "p": 0.0041488576833296105,
+     "q": 0.011340211001100935,
+     "class_level": true
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: inflamed",
+     "k": 0,
+     "n": 10,
+     "k_outside": 4,
+     "n_outside": 5320,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: Nonhealing",
+     "k": 0,
+     "n": 10,
+     "k_outside": 3,
+     "n_outside": 5320,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: Wound size",
+     "k": 3,
+     "n": 10,
+     "k_outside": 30,
+     "n_outside": 5320,
+     "p": 2.5200385013104503e-05,
+     "q": 0.00011480175394858718,
+     "class_level": true
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: Volume",
+     "k": 0,
+     "n": 10,
+     "k_outside": 6,
+     "n_outside": 5320,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: depth",
+     "k": 0,
+     "n": 10,
+     "k_outside": 14,
+     "n_outside": 5320,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: Bacterial load",
+     "k": 0,
+     "n": 10,
+     "k_outside": 8,
+     "n_outside": 5320,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: Wound area",
+     "k": 3,
+     "n": 10,
+     "k_outside": 18,
+     "n_outside": 5320,
+     "p": 6.216320002677485e-06,
+     "q": 3.324379827518829e-05,
+     "class_level": true
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "part_of: Wound",
+     "k": 3,
+     "n": 10,
+     "k_outside": 90,
+     "n_outside": 5320,
+     "p": 0.0005647702807260461,
+     "q": 0.0018774795818730721,
+     "class_level": true
+    },
+    {
+     "ancestor": "Hard-To-Heal Wound",
+     "attribute": "part_of: Wound",
+     "k": 0,
+     "n": 1,
+     "k_outside": 93,
+     "n_outside": 5329,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Venous Insufficiency Wound",
+     "attribute": "part_of: Lower extremity",
+     "k": 1,
+     "n": 4,
+     "k_outside": 34,
+     "n_outside": 5326,
+     "p": 0.02601607606742504,
+     "q": 0.057496740547588014,
+     "class_level": false
+    },
+    {
+     "ancestor": "Foot Wound",
+     "attribute": "part_of: Foot",
+     "k": 1,
+     "n": 8,
+     "k_outside": 17,
+     "n_outside": 5322,
+     "p": 0.026717038693116233,
+     "q": 0.057496740547588014,
+     "class_level": false
+    },
+    {
+     "ancestor": "Foot Wound",
+     "attribute": "part_of: Diabetic foot ulcer",
+     "k": 3,
+     "n": 8,
+     "k_outside": 22,
+     "n_outside": 5322,
+     "p": 5.027989054926958e-06,
+     "q": 2.811102971618254e-05,
+     "class_level": true
+    },
+    {
+     "ancestor": "Second-Degree Burn Wound",
+     "attribute": "has_quality: Total body surface area",
+     "k": 1,
+     "n": 6,
+     "k_outside": 10,
+     "n_outside": 5324,
+     "p": 0.012324778611727415,
+     "q": 0.02984598229583132,
+     "class_level": true
+    },
+    {
+     "ancestor": "Second-Degree Burn Wound",
+     "attribute": "has_quality: Burn depth",
+     "k": 1,
+     "n": 6,
+     "k_outside": 4,
+     "n_outside": 5324,
+     "p": 0.0056179636982889875,
+     "q": 0.015021946410642292,
+     "class_level": true
+    },
+    {
+     "ancestor": "Second-Degree Burn Wound",
+     "attribute": "part_of: Burn wound",
+     "k": 2,
+     "n": 6,
+     "k_outside": 25,
+     "n_outside": 5324,
+     "p": 0.00036611276392696084,
+     "q": 0.0013646021200913994,
+     "class_level": true
+    },
+    {
+     "ancestor": "Second-Degree Burn Wound",
+     "attribute": "has_quality: depth",
+     "k": 0,
+     "n": 6,
+     "k_outside": 14,
+     "n_outside": 5324,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Traumatic Wound",
+     "attribute": "part_of: Acute wound",
+     "k": 0,
+     "n": 39,
+     "k_outside": 5,
+     "n_outside": 5291,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Diabetic Wound",
+     "attribute": "has_quality: chronic",
+     "k": 1,
+     "n": 11,
+     "k_outside": 9,
+     "n_outside": 5319,
+     "p": 0.020464407776544985,
+     "q": 0.04661337326879691,
+     "class_level": true
+    },
+    {
+     "ancestor": "Malignant Wound",
+     "attribute": "has_quality: Pain",
+     "k": 3,
+     "n": 4,
+     "k_outside": 50,
+     "n_outside": 5326,
+     "p": 3.6889618159504593e-06,
+     "q": 2.1606776350566976e-05,
+     "class_level": true
+    },
+    {
+     "ancestor": "Malignant Wound",
+     "attribute": "has_quality: Odor",
+     "k": 2,
+     "n": 4,
+     "k_outside": 6,
+     "n_outside": 5326,
+     "p": 1.1811743139022018e-05,
+     "q": 5.5878631003834934e-05,
+     "class_level": true
+    },
+    {
+     "ancestor": "Malignant Wound",
+     "attribute": "has_quality: Malodour",
+     "k": 2,
+     "n": 4,
+     "k_outside": 5,
+     "n_outside": 5326,
+     "p": 8.861026042590871e-06,
+     "q": 4.541275846827822e-05,
+     "class_level": true
+    },
+    {
+     "ancestor": "Malignant Wound",
+     "attribute": "has_quality: Malodor",
+     "k": 2,
+     "n": 4,
+     "k_outside": 5,
+     "n_outside": 5326,
+     "p": 8.861026042590871e-06,
+     "q": 4.359624812954709e-05,
+     "class_level": true
+    },
+    {
+     "ancestor": "Malignant Wound",
+     "attribute": "part_of: Wound",
+     "k": 0,
+     "n": 4,
+     "k_outside": 93,
+     "n_outside": 5326,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    },
+    {
+     "ancestor": "Arterial Insufficiency Wound",
+     "attribute": "part_of: Lower extremity",
+     "k": 0,
+     "n": 3,
+     "k_outside": 35,
+     "n_outside": 5327,
+     "p": 1.0,
+     "q": 1.0,
+     "class_level": false
+    }
+   ],
+   "groupings": [
+    {
+     "extent": [
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer",
+      "Ulcus Cruris Mixtum"
+     ],
+     "maximal": [
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer",
+      "Ulcus Cruris Mixtum"
+     ],
+     "intent": [
+      "has_quality: area",
+      "has_quality: bacterial load",
+      "has_quality: chronic",
+      "has_quality: depth",
+      "has_quality: ii degree",
+      "has_quality: malodorous",
+      "has_quality: malodour",
+      "has_quality: nonhealing",
+      "has_quality: odor",
+      "has_quality: pain",
+      "has_quality: painful condition",
+      "has_quality: severity of the wound",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound pain",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: burn wound",
+      "part_of: chronic wound",
+      "part_of: diabetic foot ulcer",
+      "part_of: extremity",
+      "part_of: foot",
+      "part_of: lower extremity",
+      "part_of: pressure ulcer",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.23333333333333334,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Acute Burn Wound",
+      "Acute Partial Thickness Burn",
+      "Burn Wound",
+      "Chronic Wound",
+      "Deep Burn Wound",
+      "Deep Dermal Burn",
+      "Deep II Degree Burn Wound",
+      "Deep Partial-Thickness And Complete-Thickness Thermal Burn",
+      "Deep Partial-Thickness Burn Wound",
+      "Facial Burn",
+      "First-Degree Burn Wound",
+      "Flame Burn",
+      "Fourth-Degree Burn Wound",
+      "Pediatric Burn Wound",
+      "Scald Burn",
+      "Second And Third-Degree Burn",
+      "Second-Degree Burn Wound",
+      "Skin Burn Wound",
+      "Small-Area Deep Second-Degree Burn",
+      "Sunburn",
+      "Superficial And Deep Second-Degree Burn",
+      "Superficial Burn",
+      "Superficial Partial-Thickness Burn Wound",
+      "Superficial Second-Degree Burn Wound",
+      "Third-Degree Burn Wound"
+     ],
+     "maximal": [
+      "Burn Wound",
+      "Chronic Wound"
+     ],
+     "intent": [
+      "has_disposition: wound infecting tendency",
+      "has_quality: area",
+      "has_quality: bacterial load",
+      "has_quality: chronic",
+      "has_quality: depth",
+      "has_quality: ii degree",
+      "has_quality: malodorous",
+      "has_quality: malodour",
+      "has_quality: nonhealing",
+      "has_quality: odor",
+      "has_quality: pain",
+      "has_quality: painful condition",
+      "has_quality: severity of the wound",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound pain",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: burn wound",
+      "part_of: diabetic foot ulcer",
+      "part_of: extremity",
+      "part_of: foot",
+      "part_of: lower extremity",
+      "part_of: pressure ulcer",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.028,
+     "all_members_state_one": false
+    },
+    {
+     "extent": [
+      "Acute Burn Wound",
+      "Acute Partial Thickness Burn",
+      "Burn Wound",
+      "Burns Of The Ocular Surface",
+      "Deep Burn Wound",
+      "Deep Dermal Burn",
+      "Deep II Degree Burn Wound",
+      "Deep Partial-Thickness And Complete-Thickness Thermal Burn",
+      "Deep Partial-Thickness Burn Wound",
+      "Facial Burn",
+      "First-Degree Burn Wound",
+      "Flame Burn",
+      "Fourth-Degree Burn Wound",
+      "Pediatric Burn Injury",
+      "Pediatric Burn Wound",
+      "Post-Burn Injury",
+      "Scald Burn",
+      "Second And Third-Degree Burn",
+      "Second-Degree Burn Wound",
+      "Skin Burn Wound",
+      "Small-Area Deep Second-Degree Burn",
+      "Sunburn",
+      "Superficial And Deep Second-Degree Burn",
+      "Superficial Burn",
+      "Superficial Partial-Thickness Burn Wound",
+      "Superficial Second-Degree Burn Wound",
+      "Third-Degree Burn Wound"
+     ],
+     "maximal": [
+      "Burn Wound",
+      "Burns Of The Ocular Surface",
+      "Pediatric Burn Injury",
+      "Post-Burn Injury"
+     ],
+     "intent": [
+      "has_quality: area",
+      "has_quality: bacterial load",
+      "has_quality: chronic",
+      "has_quality: depth",
+      "has_quality: ii degree",
+      "has_quality: malodorous",
+      "has_quality: malodour",
+      "has_quality: nonhealing",
+      "has_quality: odor",
+      "has_quality: pain",
+      "has_quality: painful condition",
+      "has_quality: severity of the wound",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound pain",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: burn wound",
+      "part_of: diabetic foot ulcer",
+      "part_of: extremity",
+      "part_of: foot",
+      "part_of: lower extremity",
+      "part_of: pressure ulcer",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: burn injury",
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: thermal wound",
+      "is_a: traumatic injury",
+      "is_a: traumatic wound",
+      "is_a: wound"
+     ],
+     "own_share": 0.011494252873563218,
+     "all_members_state_one": false
+    },
+    {
+     "extent": [
+      "Burn Wound Surface",
+      "Corneal Abrasion",
+      "Scratch Wound"
+     ],
+     "maximal": [
+      "Burn Wound Surface",
+      "Scratch Wound"
+     ],
+     "intent": [
+      "has_quality: area",
+      "has_quality: bacterial load",
+      "has_quality: chronic",
+      "has_quality: depth",
+      "has_quality: ii degree",
+      "has_quality: malodorous",
+      "has_quality: malodour",
+      "has_quality: nonhealing",
+      "has_quality: odor",
+      "has_quality: pain",
+      "has_quality: painful condition",
+      "has_quality: severity of the wound",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound pain",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: burn wound",
+      "part_of: diabetic foot ulcer",
+      "part_of: extremity",
+      "part_of: foot",
+      "part_of: lower extremity",
+      "part_of: pressure ulcer",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: immaterial entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: traumatic injury",
+      "is_a: traumatic wound",
+      "is_a: wound"
+     ],
+     "own_share": 0.0,
+     "all_members_state_one": false
+    },
+    {
+     "extent": [
+      "Infected Chronic Wound",
+      "Infected Skin Wound"
+     ],
+     "maximal": [
+      "Infected Chronic Wound",
+      "Infected Skin Wound"
+     ],
+     "intent": [
+      "has_quality: area",
+      "has_quality: bacterial load",
+      "has_quality: chronic",
+      "has_quality: depth",
+      "has_quality: ii degree",
+      "has_quality: malodorous",
+      "has_quality: malodour",
+      "has_quality: nonhealing",
+      "has_quality: odor",
+      "has_quality: pain",
+      "has_quality: painful condition",
+      "has_quality: severity of the wound",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound pain",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: burn wound",
+      "part_of: diabetic foot ulcer",
+      "part_of: extremity",
+      "part_of: foot",
+      "part_of: lower extremity",
+      "part_of: pressure ulcer",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: infected wound",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.0,
+     "all_members_state_one": false
+    },
+    {
+     "extent": [
+      "Wounds Classified According To Gustilo And Anderson",
+      "Wounds Classified According To Tscherne And Oestern"
+     ],
+     "maximal": [
+      "Wounds Classified According To Gustilo And Anderson",
+      "Wounds Classified According To Tscherne And Oestern"
+     ],
+     "intent": [
+      "has_quality: area",
+      "has_quality: bacterial load",
+      "has_quality: chronic",
+      "has_quality: depth",
+      "has_quality: ii degree",
+      "has_quality: malodorous",
+      "has_quality: malodour",
+      "has_quality: nonhealing",
+      "has_quality: odor",
+      "has_quality: pain",
+      "has_quality: painful condition",
+      "has_quality: severity of the wound",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound pain",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: burn wound",
+      "part_of: diabetic foot ulcer",
+      "part_of: extremity",
+      "part_of: foot",
+      "part_of: lower extremity",
+      "part_of: pressure ulcer",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: skin wound",
+      "is_a: traumatic injury",
+      "is_a: traumatic wound",
+      "is_a: wound",
+      "is_a: wound with accompanying fracture"
+     ],
+     "own_share": 0.0,
+     "all_members_state_one": false
+    }
+   ]
+  },
+  "universal": {
+   "objects": 313,
+   "measured_attributes": 78,
+   "inherited_cells": 5770,
+   "inherited_corroborated": 65,
+   "hierarchy_edges": 401,
+   "order_violations": 256,
+   "concepts": 122,
+   "new_groupings": 19,
+   "new_groupings_every_member_states_one_intent_attribute": 14,
+   "mean_own_share": 0.14543519132747257,
+   "class_level_tests": [
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound area",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 uf99a0539"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 u88d916aa"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound surface area",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u501c1c75"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound duration",
+     "universality": "all",
+     "source": "relation_universality_2026-10-27 v6079ff24"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound size",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u6eb8314b"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Diabetic foot ulcer",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 ude5fc96c"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Severity of the wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 v9c0a80e6"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: size",
+     "universality": "all",
+     "source": "curator axiom"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Baseline wound size",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 v8946d7d7"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Nonhealing",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u808c259a"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Pressure ulcer",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 u6353a108"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound pain",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 u43772dac"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Area",
+     "universality": "all",
+     "source": "curator axiom"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Foot",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u397d5aab"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound length",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u7fa5dd52"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Pain",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u03b763d3"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Burn wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 vb019113f"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Lower extremity",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u0f8b6541"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Malodour",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 ud7e38fe5"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: depth",
+     "universality": "all",
+     "source": "curator axiom"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: epithelialized",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u020f41f7"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Exudate type",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u84315235"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Volume",
+     "universality": "all",
+     "source": "curator axiom"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Age",
+     "universality": "all",
+     "source": "curator axiom"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: chronic",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u06cfbf45"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Malodorous",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 ubadf479c"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound odor",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u00757925"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Length",
+     "universality": "all",
+     "source": "curator axiom"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound volume",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u6866fc99"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Surface area",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 uf9445abf"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound depth",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u0a62f3db"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Bacterial load",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u21d1cdc6"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: degree of microbial burden",
+     "universality": "all",
+     "source": "curator axiom"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: colonized",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u9e14e311"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Odor",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u109f1b57"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Bacterial burden",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u13cac47c"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: contaminated",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 ubb3e76f7"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Redness",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u680d482f"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Painful condition",
+     "universality": "some",
+     "source": "relation_universality_2026-10-27 v8a8d4a56"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound morphology",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 v3ac56d82"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Wound condition",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 v9531dfc6"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: macerated",
+     "universality": "some",
+     "source": "relation_universality_2026-10-27 v1db3f098"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Moist",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u580699ab"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: acute",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 ua24d54c5"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Extremity",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u9e18e307"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Initial size",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 ud7e14913"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Exudative",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 uacb8f868"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: Quality of healing",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 u7fbe0ee6"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "has_quality: II degree",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u8e18ef39"
+    },
+    {
+     "ancestor": "Wound",
+     "attribute": "part_of: Skin",
+     "universality": "some",
+     "source": "relation_universality_2026-10-27 vca3ce618"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: Diabetic foot",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 v2a655a85"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: diabetes mellitus",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 v20dbc3fb"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Wound area",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u212763a7"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: depth",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u3384ad43"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: Diabetic foot ulcer",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 u1dbddd4d"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: infected",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u3bead4be"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Wound size",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u88d1f0af"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: Wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 ud79f5cb7"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Severity of the wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 vd608d135"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: Chronic wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 u7e6f0f3b"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Area",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 uf40539de"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: Diabetic wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 ud55f9e2a"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: chronic",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 ub77383f9"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Pain",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 uf64fdab6"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Neuropathic",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 ua8a436f9"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Wound surface area",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u3c8a3432"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: Foot wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 u07402743"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Diabetic foot ulcers size",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u8bbb8427"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "part_of: Foot",
+     "universality": "all",
+     "source": "curator axiom"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Diabetic foot ulcer duration",
+     "universality": "no",
+     "source": "curator left out w019"
+    },
+    {
+     "ancestor": "Diabetic Foot Ulcer",
+     "attribute": "has_quality: Hard-to-heal",
+     "universality": "some",
+     "source": "relation_universality_2026-10-27 v2fdfd5eb"
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "part_of: Pressure ulcer",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 uf2b67f51"
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "has_quality: disease classification stage",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 vfe9efae5"
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "part_of: Wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 uafffae3a"
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "part_of: Chronic wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 u20b64f43"
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "has_quality: Severity of the wound",
+     "universality": "no",
+     "source": "curator left out w041"
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "has_quality: Surface area",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 uc6f037a0"
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "has_quality: Wound size",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u38ff9a67"
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "has_quality: depth",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u205b8982"
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "has_quality: Wound surface area",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 ud54f469f"
+    },
+    {
+     "ancestor": "Pressure Ulcer",
+     "attribute": "part_of: Skin",
+     "universality": "some",
+     "source": "relation_universality_2026-10-27 vf4140fd9"
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Total body surface area",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 vab5e86cd"
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Pain",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 vce551075"
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "part_of: Burn injury",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 ud1f1546e"
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "part_of: Burn wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 v2e2f9c18"
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Burn size",
+     "universality": "all",
+     "source": "relation_universality_2026-10-27 v1bfcf592"
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Burn severity",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 v0d89a61f"
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Total burn area",
+     "universality": "all",
+     "source": "curator axiom"
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Complete-thickness burn area",
+     "universality": "some",
+     "source": "relation_universality_2026-10-27 vd13e3a5c"
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Burn surface area",
+     "universality": "all",
+     "source": "relation_universality_2026-10-27 vde07ac92"
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: depth",
+     "universality": "all",
+     "source": "relation_universality_2026-10-27 v0d9f2347"
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_disposition: wound infecting tendency",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 v349ca9a3"
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "part_of: Wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 v35f6a57d"
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: Burn depth",
+     "universality": "all",
+     "source": "relation_universality_2026-10-27 vae2acae1"
+    },
+    {
+     "ancestor": "Burn Wound",
+     "attribute": "has_quality: II degree",
+     "universality": "some",
+     "source": "relation_universality_2026-10-27 v0c48c1b2"
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: chronic",
+     "universality": "all",
+     "source": "curator axiom"
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: inflamed",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 uc862e658"
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "part_of: Wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 u530fd9c0"
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_disposition: wound infecting tendency",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 ve05e6384"
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: Pain",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 uf20852fc"
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "part_of: Lower extremity",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u832fbd85"
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: depth",
+     "universality": "all",
+     "source": "relation_universality_2026-10-27 va023078c"
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: Bacterial load",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u5503631f"
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: Wound size",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u4d9ae549"
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: Wound area",
+     "universality": "all",
+     "source": "relation_universality_2026-10-27 v750d4d0b"
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: Volume",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 u084a31b9"
+    },
+    {
+     "ancestor": "Chronic Wound",
+     "attribute": "has_quality: Nonhealing",
+     "universality": "all",
+     "source": "curator axiom"
+    },
+    {
+     "ancestor": "Hard-To-Heal Wound",
+     "attribute": "part_of: Wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 u17ce9d61"
+    },
+    {
+     "ancestor": "Venous Insufficiency Wound",
+     "attribute": "part_of: Lower extremity",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u6043357c"
+    },
+    {
+     "ancestor": "Foot Wound",
+     "attribute": "part_of: Diabetic foot ulcer",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 vdb9dabb1"
+    },
+    {
+     "ancestor": "Foot Wound",
+     "attribute": "part_of: Foot",
+     "universality": "all",
+     "source": "relation_universality_2026-10-27 vefb9ab3e"
+    },
+    {
+     "ancestor": "Second-Degree Burn Wound",
+     "attribute": "has_quality: Total body surface area",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 u46f81a93"
+    },
+    {
+     "ancestor": "Second-Degree Burn Wound",
+     "attribute": "has_quality: Burn depth",
+     "universality": "all",
+     "source": "relation_universality_2026-10-27 v0f294d83"
+    },
+    {
+     "ancestor": "Second-Degree Burn Wound",
+     "attribute": "part_of: Burn wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-27 v22ff3670"
+    },
+    {
+     "ancestor": "Second-Degree Burn Wound",
+     "attribute": "has_quality: depth",
+     "universality": "all",
+     "source": "relation_universality_2026-10-02 uec669e21"
+    },
+    {
+     "ancestor": "Acute Wound",
+     "attribute": "part_of: Wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 ucc79b73c"
+    },
+    {
+     "ancestor": "Traumatic Wound",
+     "attribute": "part_of: Acute wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 ube95c324"
+    },
+    {
+     "ancestor": "Diabetic Wound",
+     "attribute": "has_quality: chronic",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u62a52afb"
+    },
+    {
+     "ancestor": "Malignant Wound",
+     "attribute": "has_quality: Malodour",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 uac72fd04"
+    },
+    {
+     "ancestor": "Malignant Wound",
+     "attribute": "part_of: Wound",
+     "universality": "no",
+     "source": "relation_universality_2026-10-02 ud66adbe9"
+    },
+    {
+     "ancestor": "Malignant Wound",
+     "attribute": "has_quality: Odor",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 uf1f74e1e"
+    },
+    {
+     "ancestor": "Malignant Wound",
+     "attribute": "has_quality: Malodor",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u58dd1104"
+    },
+    {
+     "ancestor": "Malignant Wound",
+     "attribute": "has_quality: Pain",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 u669b206e"
+    },
+    {
+     "ancestor": "Arterial Insufficiency Wound",
+     "attribute": "part_of: Lower extremity",
+     "universality": "some",
+     "source": "relation_universality_2026-10-02 uc147dd7d"
+    }
+   ],
+   "groupings": [
+    {
+     "extent": [
+      "Chronic Wound",
+      "Diabetic Foot Ulcer"
+     ],
+     "maximal": [
+      "Chronic Wound",
+      "Diabetic Foot Ulcer"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: chronic",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: pain",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.38095238095238093,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer"
+     ],
+     "maximal": [
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: severity of the wound",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: chronic wound",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.35714285714285715,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Burn Wound",
+      "Chronic Wound"
+     ],
+     "maximal": [
+      "Burn Wound",
+      "Chronic Wound"
+     ],
+     "intent": [
+      "has_disposition: wound infecting tendency",
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: pain",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.2857142857142857,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Diabetic Foot Ulcer",
+      "Lower Extremity Wound",
+      "Pressure Ulcer"
+     ],
+     "maximal": [
+      "Diabetic Foot Ulcer",
+      "Lower Extremity Wound",
+      "Pressure Ulcer"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: severity of the wound",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.2833333333333333,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Hard-To-Heal Wound"
+     ],
+     "maximal": [
+      "Chronic Wound",
+      "Diabetic Foot Ulcer"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: chronic",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.25,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Malignant Wound"
+     ],
+     "maximal": [
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Malignant Wound"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: pain",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.2375,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer",
+      "Ulcus Cruris Mixtum"
+     ],
+     "maximal": [
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer",
+      "Ulcus Cruris Mixtum"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: chronic wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.21052631578947367,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Acute Wound",
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Hard-To-Heal Wound",
+      "Lower Extremity Wound",
+      "Malignant Wound",
+      "Pressure Ulcer",
+      "Ulcus Cruris Venosum"
+     ],
+     "maximal": [
+      "Acute Wound",
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Lower Extremity Wound",
+      "Malignant Wound",
+      "Pressure Ulcer",
+      "Ulcus Cruris Venosum"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.15204678362573099,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Fungating Wound",
+      "Malignant Fungating Wound",
+      "Malignant Wound"
+     ],
+     "maximal": [
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Malignant Wound"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: pain",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.14912280701754385,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Arterial Insufficiency Wound",
+      "Chronic Wound",
+      "Venous Insufficiency Wound"
+     ],
+     "maximal": [
+      "Arterial Insufficiency Wound",
+      "Chronic Wound",
+      "Venous Insufficiency Wound"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: lower extremity"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.14035087719298245,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Lower Extremity Wound",
+      "Ulcus Cruris Venosum"
+     ],
+     "maximal": [
+      "Lower Extremity Wound",
+      "Ulcus Cruris Venosum"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: skin wound",
+      "is_a: wound"
+     ],
+     "own_share": 0.10526315789473684,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Deep II Degree Burn Wound",
+      "Second-Degree Burn Wound",
+      "Third-Degree Burn Wound"
+     ],
+     "maximal": [
+      "Second-Degree Burn Wound",
+      "Third-Degree Burn Wound"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: burn depth",
+      "has_quality: burn size",
+      "has_quality: burn surface area",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: total burn area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: burn wound"
+     ],
+     "is_a": [
+      "is_a: burn injury",
+      "is_a: burn wound",
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: large wound",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: thermal wound",
+      "is_a: traumatic injury",
+      "is_a: traumatic wound",
+      "is_a: wound"
+     ],
+     "own_share": 0.07246376811594203,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Heel Pressure Ulcer",
+      "Hospital-Acquired Pressure Ulcer",
+      "Sacral Pressure Ulcer",
+      "Stage IV Pressure Ulcer"
+     ],
+     "maximal": [
+      "Heel Pressure Ulcer",
+      "Hospital-Acquired Pressure Ulcer",
+      "Sacral Pressure Ulcer",
+      "Stage IV Pressure Ulcer"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume",
+      "part_of: pressure ulcer"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: pressure ulcer",
+      "is_a: wound"
+     ],
+     "own_share": 0.05263157894736842,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Fungating Wound",
+      "Malignant Fungating Wound"
+     ],
+     "maximal": [
+      "Fungating Wound",
+      "Malignant Fungating Wound"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: pain",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: malignant wound",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.05263157894736842,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Chronic Heel Wound",
+      "Chronic Lower Extremity And Foot Wound",
+      "Chronic Lower Extremity Wound",
+      "Chronic Neuropathic Wound",
+      "Chronic Non-Healing Wound",
+      "Chronic Skin Wound",
+      "Chronic Wound",
+      "Chronic, Noninfected Wound",
+      "Colonized Chronic Wound",
+      "Complex Chronic Wound",
+      "Complex Hard-To-Heal Wound",
+      "Diabetic Foot Ulcer",
+      "Diabetic Wound",
+      "Hard-To-Heal Wound",
+      "Infected Chronic Wound",
+      "Lower-Extremity Hard-To-Heal Wound",
+      "Maintenance Wound",
+      "Non-Healing Chronic Lower Extremity Wound",
+      "Non-Healing Lesion",
+      "Non-Healing Surgical Wound",
+      "Non-Healing Wound",
+      "Recalcitrant Wound",
+      "Refractory Chronic Wound",
+      "Refractory Skin Wound",
+      "Refractory Wound"
+     ],
+     "maximal": [
+      "Chronic Wound",
+      "Diabetic Wound"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: chronic",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.029473684210526315,
+     "all_members_state_one": false
+    },
+    {
+     "extent": [
+      "Acute Burn Wound",
+      "Acute Partial Thickness Burn",
+      "Burn Wound",
+      "Burns Of The Ocular Surface",
+      "Deep Burn Wound",
+      "Deep Dermal Burn",
+      "Deep II Degree Burn Wound",
+      "Deep Partial-Thickness And Complete-Thickness Thermal Burn",
+      "Deep Partial-Thickness Burn Wound",
+      "Facial Burn",
+      "First-Degree Burn Wound",
+      "Flame Burn",
+      "Fourth-Degree Burn Wound",
+      "Pediatric Burn Injury",
+      "Pediatric Burn Wound",
+      "Post-Burn Injury",
+      "Scald Burn",
+      "Second And Third-Degree Burn",
+      "Second-Degree Burn Wound",
+      "Skin Burn Wound",
+      "Small-Area Deep Second-Degree Burn",
+      "Sunburn",
+      "Superficial And Deep Second-Degree Burn",
+      "Superficial Burn",
+      "Superficial Partial-Thickness Burn Wound",
+      "Superficial Second-Degree Burn Wound",
+      "Third-Degree Burn Wound"
+     ],
+     "maximal": [
+      "Burn Wound",
+      "Burns Of The Ocular Surface",
+      "Pediatric Burn Injury",
+      "Post-Burn Injury"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume"
+     ],
+     "is_a": [
+      "is_a: burn injury",
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: thermal wound",
+      "is_a: traumatic injury",
+      "is_a: traumatic wound",
+      "is_a: wound"
+     ],
+     "own_share": 0.00411522633744856,
+     "all_members_state_one": false
+    },
+    {
+     "extent": [
+      "Burn Wound Surface",
+      "Corneal Abrasion",
+      "Scratch Wound"
+     ],
+     "maximal": [
+      "Burn Wound Surface",
+      "Scratch Wound"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: immaterial entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: traumatic injury",
+      "is_a: traumatic wound",
+      "is_a: wound"
+     ],
+     "own_share": 0.0,
+     "all_members_state_one": false
+    },
+    {
+     "extent": [
+      "Infected Chronic Wound",
+      "Infected Skin Wound"
+     ],
+     "maximal": [
+      "Infected Chronic Wound",
+      "Infected Skin Wound"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: infected wound",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 0.0,
+     "all_members_state_one": false
+    },
+    {
+     "extent": [
+      "Wounds Classified According To Gustilo And Anderson",
+      "Wounds Classified According To Tscherne And Oestern"
+     ],
+     "maximal": [
+      "Wounds Classified According To Gustilo And Anderson",
+      "Wounds Classified According To Tscherne And Oestern"
+     ],
+     "intent": [
+      "has_quality: age",
+      "has_quality: area",
+      "has_quality: bacterial burden",
+      "has_quality: bacterial load",
+      "has_quality: degree of microbial burden",
+      "has_quality: depth",
+      "has_quality: initial size",
+      "has_quality: length",
+      "has_quality: size",
+      "has_quality: surface area",
+      "has_quality: volume",
+      "has_quality: wound area",
+      "has_quality: wound depth",
+      "has_quality: wound duration",
+      "has_quality: wound length",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "has_quality: wound volume"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: skin wound",
+      "is_a: traumatic injury",
+      "is_a: traumatic wound",
+      "is_a: wound",
+      "is_a: wound with accompanying fracture"
+     ],
+     "own_share": 0.0,
+     "all_members_state_one": false
+    }
+   ]
+  },
+  "none": {
+   "objects": 313,
+   "measured_attributes": 78,
+   "inherited_cells": 0,
+   "inherited_corroborated": 0,
+   "hierarchy_edges": 401,
+   "order_violations": 256,
+   "concepts": 135,
+   "new_groupings": 22,
+   "new_groupings_every_member_states_one_intent_attribute": 22,
+   "mean_own_share": 1.0,
+   "class_level_tests": null,
+   "groupings": [
+    {
+     "extent": [
+      "Acute Wound",
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Hard-To-Heal Wound",
+      "Lower Extremity Wound",
+      "Malignant Wound",
+      "Pressure Ulcer",
+      "Ulcus Cruris Venosum"
+     ],
+     "maximal": [
+      "Acute Wound",
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Lower Extremity Wound",
+      "Malignant Wound",
+      "Pressure Ulcer",
+      "Ulcus Cruris Venosum"
+     ],
+     "intent": [
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Fungating Wound",
+      "Malignant Fungating Wound",
+      "Malignant Wound"
+     ],
+     "maximal": [
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Malignant Wound"
+     ],
+     "intent": [
+      "has_quality: pain"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer",
+      "Second-Degree Burn Wound"
+     ],
+     "maximal": [
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer"
+     ],
+     "intent": [
+      "has_quality: depth"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Malignant Wound"
+     ],
+     "maximal": [
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Malignant Wound"
+     ],
+     "intent": [
+      "has_quality: pain",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer"
+     ],
+     "maximal": [
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer"
+     ],
+     "intent": [
+      "has_quality: depth",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Chronic Lower Extremity Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Lower Extremity Wound"
+     ],
+     "maximal": [
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Lower Extremity Wound"
+     ],
+     "intent": [
+      "has_quality: wound area"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Lower Extremity Wound",
+      "Pressure Ulcer"
+     ],
+     "maximal": [
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Lower Extremity Wound",
+      "Pressure Ulcer"
+     ],
+     "intent": [
+      "has_quality: wound size",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Heel Pressure Ulcer",
+      "Hospital-Acquired Pressure Ulcer",
+      "Sacral Pressure Ulcer",
+      "Stage IV Pressure Ulcer"
+     ],
+     "maximal": [
+      "Heel Pressure Ulcer",
+      "Hospital-Acquired Pressure Ulcer",
+      "Sacral Pressure Ulcer",
+      "Stage IV Pressure Ulcer"
+     ],
+     "intent": [
+      "part_of: pressure ulcer"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: pressure ulcer",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Arterial Insufficiency Wound",
+      "Chronic Wound",
+      "Venous Insufficiency Wound"
+     ],
+     "maximal": [
+      "Arterial Insufficiency Wound",
+      "Chronic Wound",
+      "Venous Insufficiency Wound"
+     ],
+     "intent": [
+      "part_of: lower extremity"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer"
+     ],
+     "maximal": [
+      "Burn Wound",
+      "Chronic Wound",
+      "Diabetic Foot Ulcer"
+     ],
+     "intent": [
+      "has_quality: depth",
+      "has_quality: pain",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Diabetic Wound"
+     ],
+     "maximal": [
+      "Chronic Wound",
+      "Diabetic Wound"
+     ],
+     "intent": [
+      "has_quality: chronic"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Lower Extremity Wound"
+     ],
+     "maximal": [
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Lower Extremity Wound"
+     ],
+     "intent": [
+      "has_quality: wound area",
+      "has_quality: wound size",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer"
+     ],
+     "maximal": [
+      "Chronic Wound",
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer"
+     ],
+     "intent": [
+      "has_quality: depth",
+      "has_quality: wound size",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Deep II Degree Burn Wound",
+      "Second-Degree Burn Wound",
+      "Third-Degree Burn Wound"
+     ],
+     "maximal": [
+      "Second-Degree Burn Wound",
+      "Third-Degree Burn Wound"
+     ],
+     "intent": [
+      "part_of: burn wound"
+     ],
+     "is_a": [
+      "is_a: burn injury",
+      "is_a: burn wound",
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: large wound",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: thermal wound",
+      "is_a: traumatic injury",
+      "is_a: traumatic wound",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Diabetic Foot Ulcer",
+      "Lower Extremity Wound",
+      "Pressure Ulcer"
+     ],
+     "maximal": [
+      "Diabetic Foot Ulcer",
+      "Lower Extremity Wound",
+      "Pressure Ulcer"
+     ],
+     "intent": [
+      "has_quality: severity of the wound",
+      "has_quality: wound size",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer",
+      "Ulcus Cruris Mixtum"
+     ],
+     "maximal": [
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer",
+      "Ulcus Cruris Mixtum"
+     ],
+     "intent": [
+      "part_of: chronic wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Burn Wound",
+      "Chronic Wound"
+     ],
+     "maximal": [
+      "Burn Wound",
+      "Chronic Wound"
+     ],
+     "intent": [
+      "has_disposition: wound infecting tendency",
+      "has_quality: depth",
+      "has_quality: pain",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Chronic Wound",
+      "Diabetic Foot Ulcer"
+     ],
+     "maximal": [
+      "Chronic Wound",
+      "Diabetic Foot Ulcer"
+     ],
+     "intent": [
+      "has_quality: chronic",
+      "has_quality: depth",
+      "has_quality: pain",
+      "has_quality: wound area",
+      "has_quality: wound size",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Diabetic Foot Ulcer",
+      "Lower Extremity Wound"
+     ],
+     "maximal": [
+      "Diabetic Foot Ulcer",
+      "Lower Extremity Wound"
+     ],
+     "intent": [
+      "has_quality: severity of the wound",
+      "has_quality: wound area",
+      "has_quality: wound size",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer"
+     ],
+     "maximal": [
+      "Diabetic Foot Ulcer",
+      "Pressure Ulcer"
+     ],
+     "intent": [
+      "has_quality: depth",
+      "has_quality: severity of the wound",
+      "has_quality: wound size",
+      "has_quality: wound surface area",
+      "part_of: chronic wound",
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Fungating Wound",
+      "Malignant Fungating Wound"
+     ],
+     "maximal": [
+      "Fungating Wound",
+      "Malignant Fungating Wound"
+     ],
+     "intent": [
+      "has_quality: pain"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: malignant wound",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    },
+    {
+     "extent": [
+      "Lower Extremity Wound",
+      "Ulcus Cruris Venosum"
+     ],
+     "maximal": [
+      "Lower Extremity Wound",
+      "Ulcus Cruris Venosum"
+     ],
+     "intent": [
+      "part_of: wound"
+     ],
+     "is_a": [
+      "is_a: continuant",
+      "is_a: entity",
+      "is_a: independent continuant",
+      "is_a: injury",
+      "is_a: material entity",
+      "is_a: pathological disorder",
+      "is_a: skin wound",
+      "is_a: wound"
+     ],
+     "own_share": 1.0,
+     "all_members_state_one": true
+    }
+   ]
+  }
+ }
+}

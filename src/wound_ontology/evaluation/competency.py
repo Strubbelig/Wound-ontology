@@ -81,12 +81,12 @@ PREDICATE_MAP: dict[str, tuple[str, str] | None] = {
     # RO_0002353 output of (not OBI_0000312 is_specified_output_of: a wound
     # development process is not a planned process). WONT defines its
     # aetiological wound classes this way (Traumatic wound = Wound and
-    # output_of some Wound causing trauma process), so a CQ may ask which
+    # output_of some Trauma process in wound development), so a CQ may ask which
     # process a wound class is the output of.
     "output_of": ("restriction", OBO + "RO_0002353"),
     # The relation MILD licenses in place of aetiology (commitment 4, as amended
     # 2026-09-17). "X complication_of Y" asks whether X is the output of a
-    # development process that has, as a part, a wound causing process of Y's
+    # development process that has, as a part, a wound development subprocess of Y's
     # disease course -- MILD_120053's pattern -- rather than whether Y caused X,
     # which stays refused. Evaluated natively by complication_holds(). This is
     # the target form for every CQ originally written with caused_by; it
@@ -289,13 +289,25 @@ def _process_of(graph: rdflib.Graph, proc, object_iri) -> bool:
     carries `has_participant some X` with X subsumed by the object -- the two
     ways WONT names a disease process (Angiopathic disease process is a
     subclass; Venous insufficiency disease process has the disorder as
-    participant)."""
+    participant). When the object is a diagnosis, X may instead be subsumed by
+    what the diagnosis `is about`: a diagnosis takes part in no process, the
+    material disease entity it is about does (curator, 2026-10-31: "die
+    vaskulitis ist die diagnose, nicht die krankheit"; Venous insufficiency
+    disorder is about an Insufficient limb vein, the participant of its
+    disease process). Only the diagnosis's own `is about` counts: inherited
+    from MILD_120024 it is `is about some material disease entity`, which every
+    disease process's participant is."""
     has_participant = rdflib.URIRef(OBO + "RO_0000057")
+    is_about = rdflib.URIRef(OBO + "IAO_0000136")
+    about = {graph.value(r, OWL.someValuesFrom)
+             for r in graph.objects(object_iri, RDFS.subClassOf)
+             if graph.value(r, OWL.onProperty) == is_about} - {None}
+    targets = {object_iri} | about
     named = [proc] if isinstance(proc, rdflib.URIRef) else [
         m for m in _list_members(graph, proc) if isinstance(m, rdflib.URIRef)]
     # Ancestors through rdfs:subClassOf AND through the named members of an
-    # equivalentClass intersection: `Wound causing trauma process = Trauma
-    # process and Wound causing process` makes Trauma process a superclass
+    # equivalentClass intersection: `Trauma process in wound development = Trauma
+    # process and Wound development subprocess` makes Trauma process a superclass
     # without any rdfs:subClassOf saying so.
     seen: set = set()
     stack = list(named)
@@ -315,7 +327,7 @@ def _process_of(graph: rdflib.Graph, proc, object_iri) -> bool:
             for expr in graph.objects(cls, side):
                 for r in [expr] + _list_members(graph, expr):
                     if (graph.value(r, OWL.onProperty) == has_participant
-                            and object_iri in _ancestors(graph, graph.value(r, OWL.someValuesFrom) or r)):
+                            and targets & _ancestors(graph, graph.value(r, OWL.someValuesFrom) or r)):
                         return True
     return False
 
@@ -329,11 +341,11 @@ def complication_holds(graph: rdflib.Graph, subject_iri, object_iri) -> bool:
         subject = Wound and output_of some (Wound development process
                                              and has_part some P)
 
-    with P a wound causing process of the object's disease course (P is the
+    with P a wound development subprocess of the object's disease course (P is the
     object, a subclass of it, or a process that has the object as
     participant). A direct `output_of some P` with P of the object's course
-    counts too (Traumatic wound = Wound and output_of some Wound causing
-    trauma process). This is MILD_120053's pattern: a disorder put out by a
+    counts too (Traumatic wound = Wound and output_of some Trauma process in
+    wound development). This is MILD_120053's pattern: a disorder put out by a
     process in another disease's course. It is emphatically not a causal
     claim between the two disorders (MILD commitment 4).
     """

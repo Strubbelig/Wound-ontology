@@ -33,6 +33,13 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT)); sys.path.insert(0, str(ROOT / "src"))
 
 
+def asked(gt, term: str) -> bool:
+    """Has the scope model judged `term`'s concept already (rule 89: its
+    judgements are `deepseek-v4-flash` in the concept's scope list)?"""
+    rec = gt.records.get(gt.concept(gt.resolve(term))) or {}
+    return any(j["by"] == "deepseek-v4-flash" for j in rec.get("scope") or [])
+
+
 def _opt(argv: list[str], name: str, default: str) -> str:
     return argv[argv.index(name) + 1] if name in argv else default
 
@@ -85,7 +92,7 @@ def main(argv: list[str]) -> int:
             # 2026-09-28, the model called `process` and `material entity`
             # "generic, out", which the view read as removing every typing.
             return False
-        if (gt.peek_gate(term).get("pass2") or {}):
+        if asked(gt, term):
             return False                      # already answered; --readjudicate is not this
         verdict, source = gt.gate_verdict(term)
         if only == "blocked":
@@ -115,7 +122,7 @@ def main(argv: list[str]) -> int:
         queue = sorted(
             (c for c, m in by_concept.items()
              if gt.effective_gate_verdict(c) == ("out", "rule")
-             and not (gt.peek_gate(c).get("pass2") or {})
+             and not asked(gt, c)
              and m >= min_mentions),
             key=lambda c: (-by_concept[c], c.lower()))
         for c in queue:
@@ -187,7 +194,7 @@ def main(argv: list[str]) -> int:
     from wound_ontology.data_manager.data_manager import DataManager
     from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
     check = TermMappingAndGate(DataManager(), file_name="term_mapping")
-    landed = sum(1 for t in answered if (check.peek_gate(t).get("pass2") or {}))
+    landed = sum(1 for t in answered if asked(check, t))
     if landed != len(answered):
         raise RuntimeError(f"[pass2] wrote {len(answered):,} verdicts but {landed:,} "
                            f"read back from disk")

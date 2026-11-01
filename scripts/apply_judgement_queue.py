@@ -7,7 +7,8 @@ with ArtifactData and resolved to classes in
 data/review/judgement_queue_decisions_2026-10-07.json; every parent the curator
 typed is kept there beside the class it was read as, and the readings that were
 not an exact label were confirmed in chat (rule 39). The relations section is
-not handled here: build_wont_core.py reads new_class_relation_decisions.json.
+not handled here: its decisions are the author's judgements on the relations in
+the term dict (until 2026-10-30 in new_class_relation_decisions.json).
 
 * parents, fillers, conflicts with a parent -> the pair gets
   `placement: {verdict: "narrower"}` and a curator mark. For a conflict, every

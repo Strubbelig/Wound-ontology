@@ -10,6 +10,7 @@ import copy
 
 import pytest
 
+from wound_ontology.mappers.judgements import current
 from wound_ontology.store.concept_store import ConceptStore
 
 
@@ -45,9 +46,8 @@ def _entities(s, **kw):
 def test_a_decided_category_is_written_as_its_is_a_cell():
     s = _store()
     s.terms.set_category("Biopsy", "process", source="term ruling", note="n")
-    rel = s.terms.records["Biopsy"]["relations"]
-    assert rel["is_a: process"]["status"] == "decided"
-    assert rel["is_a: process"]["source"] == "term ruling"
+    j = current(s.terms.records["Biopsy"]["is_a"]["process"])
+    assert (j["verdict"], j["by"]) == ("yes", "author") and "term ruling" in j["why"]
     assert "category" not in s.terms.records["Biopsy"]
     assert s.terms.categories()["Biopsy"]["verdict"] == "process"
 
@@ -56,9 +56,10 @@ def test_a_new_ruling_replaces_the_decided_cell_and_keeps_history():
     s = _store()
     s.terms.set_category("Biopsy", "process", source="head rule: biopsy")
     s.terms.set_category("Biopsy", "material entity", source="term ruling")
-    rel = s.terms.records["Biopsy"]["relations"]
-    assert "is_a: process" not in rel
-    assert rel["is_a: material entity"]["history"][0]["verdict"] == "process"
+    isa = s.terms.records["Biopsy"]["is_a"]
+    assert [(j["verdict"], j["by"]) for j in isa["process"]] == \
+        [("yes", "end-word-category"), ("no", "author")], "nothing is deleted"
+    assert s.terms.categories()["Biopsy"]["verdict"] == "material entity"
 
 
 def test_a_decided_cell_is_not_a_rejection():
@@ -72,16 +73,17 @@ def test_a_decided_cell_is_not_a_rejection():
 def test_a_reasoner_verdict_does_not_overwrite_a_decided_category():
     s = _store()
     s.terms.set_category("Biopsy", "process", source="term ruling")
-    n = s.reject_cells([("Biopsy", "is_a: process")], by="reasoner_gate")
+    n = s.reject_cells([("Biopsy", "is_a: process")], by="elk")
     assert n == 0
-    assert s.terms.records["Biopsy"]["relations"]["is_a: process"]["status"] == "decided"
+    assert [j["by"] for j in s.terms.records["Biopsy"]["is_a"]["process"]] == ["author"]
 
 
-def test_lifting_a_sources_verdicts_leaves_its_category_decisions():
+def test_setting_elks_verdicts_aside_leaves_the_authors_category():
     s = _store()
     s.terms.set_category("Biopsy", "process", source="term ruling", by="curator")
-    lifted = s.lift_decisions("curator")
-    assert not lifted["cell_verdicts"]
+    s.reopen = ("elk", "is_a")
+    assert _entities(s)[("2", "Biopsy")]["is_a: process"] == 1.0
+    s.reopen = None
     assert s.terms.categories()["Biopsy"]["verdict"] == "process"
 
 
@@ -93,8 +95,8 @@ def test_an_old_category_section_is_moved_on_load():
         "history": [{"verdict": "material entity", "source": "term ruling"}]}}})
     rec = gt.records["Infection"]
     assert "category" not in rec
-    assert rec["relations"]["is_a: process"]["status"] == "decided"
-    assert gt.categories()["Infection"]["history"][0]["verdict"] == "material entity"
+    assert gt.categories()["Infection"]["verdict"] == "process"
+    assert "material entity" in rec["is_a"], "the earlier ruling stays on record"
 
 
 # ── the split `to` ──────────────────────────────────────────────────────────
@@ -103,7 +105,8 @@ def test_a_split_term_points_at_one_name_per_category_and_each_has_a_record():
     s = _store()
     _split(s)
     rec = s.terms.records["Biopsy"]
-    assert rec["to"] == {"process": "Biopsy procedure", "material entity": "Biopsy material"}
+    assert current(rec["name"])["verdict"] == {"process": "Biopsy procedure",
+                                               "material entity": "Biopsy material"}
     assert "senses" not in rec
     assert "Biopsy procedure" in s.terms.records and "Biopsy material" in s.terms.records
 
@@ -141,7 +144,7 @@ def test_the_scope_of_a_sense_decides_its_mentions():
 def test_the_scope_of_a_sense_pools_what_was_said_of_the_split_term():
     s = _store()
     _split(s)
-    s.terms.gate("Biopsy", rule={"verdict": "in", "by": "test", "when": "now"})
+    s.terms.gate("Biopsy", rule={"verdict": "in", "by": "WHITELIST"})
     assert s.terms.effective_gate_verdict("Biopsy procedure")[0] == "in"
 
 
@@ -174,7 +177,7 @@ def test_an_old_senses_section_becomes_the_split_to_on_load():
     from conftest import memory_mapping
     gt = memory_mapping({"Biopsy": {"to": None, "pairs": {}, "senses": {
         "process": "Biopsy procedure", "material entity": "Biopsy material"}}})
-    assert gt.records["Biopsy"]["to"]["material entity"] == "Biopsy material"
+    assert current(gt.records["Biopsy"]["name"])["verdict"]["material entity"] == "Biopsy material"
     assert "senses" not in gt.records["Biopsy"]
 
 
@@ -196,4 +199,4 @@ def test_a_cluster_name_change_reaches_a_sense_name():
     s = _store()
     _split(s)
     s.terms.decide_name("Biopsy specimen", "Biopsy material")
-    assert s.terms.records["Biopsy"]["to"]["material entity"] == "Biopsy specimen"
+    assert s.terms.splits()["Biopsy"]["material entity"] == "Biopsy specimen"

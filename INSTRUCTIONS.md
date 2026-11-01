@@ -3254,7 +3254,7 @@ data driven choice").**
   `Wound` is named in 1,013 abstracts and carried 207 attributes, 145 of them
   from one abstract each (`skin itching`).
 * **Class-level inheritance** (`inherit="class_level"`, the `run_fca`
-  default). An ancestor's attribute passes to its subclasses only when its own
+  default until 2026-10-27; **superseded by rule 88**). An ancestor's attribute passes to its subclasses only when its own
   descendants state it significantly more often than everything outside its
   subtree does: one-sided Fisher exact test over every store entity with
   measured attributes, Benjamini-Hochberg at FDR 0.05
@@ -3472,6 +3472,35 @@ hierarchy"; on the export and the domain/range axioms: "do it").**
 * **Why the old extraction made them:** the schema licensed `has disposition`
   for material entity -> tendency, learned from exactly the three WONT axioms
   this rule corrected.
+* **MILD now states tendency a subclass of disposition, and the checks follow
+  MILD** (2026-10-30). Since the MILD of 2026-10-16 (the merged MILD of
+  2026-10-03 had realizable entity), MILD_120005 is `rdfs:subClassOf`
+  BFO_0000016 disposition, while its own comment calls it "a sibling of
+  disposition, function, and role under realizable entity, not as a subtype
+  of disposition" and nothing states them disjoint any more. The merge of
+  conflicting typings reads MILD, so a term typed tendency in 48 abstracts
+  and disposition in 3 (`Pressure ulcer risk`) came out disposition; the
+  typing check kept its own tree with tendency beside disposition, so every
+  tendency had two disjoint ancestors and 211 relations with a tendency at
+  one end could not be decided. Asked whether MILD or the check gives way,
+  the curator: "MILD bleibt, Prüfung folgt". The check's tree follows MILD
+  and stops if it ever differs from the hierarchy's curated top
+  (`relation_typing_check.same_tree`); 190 relations passed anew, 4 of them
+  in 2 or more abstracts, which were read. The consequence he accepted: a
+  `has disposition` with a tendency as its value passes the check (Chronic
+  wound / Burn wound `has disposition` wound infecting tendency).
+* **Four values are tendencies by the author** (2026-10-30, on six
+  `has tendency` relations the check refused because their value was typed
+  disposition: "dann mach sie wieder zu tendencies"): Bacterial
+  susceptibility, Susceptibility to infection, Pressure ulcer risk,
+  Recurrence risk (`scripts/apply_tendencies_and_boundary_2026_10_30.py`).
+* **The change of predicate stands while its own agent stands by it**
+  (`TermMappingAndGate.cell_predicate`, 2026-10-30). It had to be the last
+  word of all on the `has_tendency` cell: when the typing check passed
+  `Pressure ulcer has_tendency Pressure ulcer risk`, the change vanished, the
+  old `has_disposition` cell's `no` counted, and 48 relations left the store
+  view, 2 of them in 2 or more abstracts. Another agent's word judges the
+  relation under its new predicate; only the changing agent undoes it.
 
 ## 69. Relations on existing WONT classes: the curator decides, and a wound-wide quality goes on Wound once
 
@@ -3615,6 +3644,30 @@ suggested FCA edges are only that. basically non expressive nonsense").**
   Pro-Angiogenesis, Retro-Rectus) got the corrected key added, the old one
   kept. All 7,212 ids answer to both spellings of their label
   (`tests/test_hyphen_title_case.py`).
+* 2026-10-28, two holes found after the run of that day (curator: "mach den
+  rest"):
+  * **A cluster name is a rename too.** Only the term dict's spelling aliases
+    were handed over as former names, but since rule 85 most renames are a
+    `to`: `Candida albican` -> `Candida albicans`, `Keloid` -> `Keloid
+    tissue`, `Diabetes mellitus type-2` -> `Type 2 diabetes mellitus`. 15
+    renamed classes got a new id and their old one went unused, not even
+    marked obsolete. `extend.former_names_by_key` now hands over both; a split
+    term (`to` per category, rule 87) names no ONE class and is in neither.
+  * **Words in brackets count.** `Normalised.key` drops every parenthetical
+    (right for `Ulcers (DFU)`), so `Poly(ethylene Oxide)` and `Poly
+    (lactic-Co-Glycolic Acid)` both had the key `poly`, and WONT_0005416
+    passed from the one polymer to the other. `IdRegistry.key` keeps a
+    bracket's words when it holds a space; an abbreviation in brackets still
+    folds away. On load, an entry keyed the old way gets its new key in place
+    of the old one (the old key is the very key two classes shared), and says
+    so.
+  * The registry was set back to its state before that export
+    (`data/backup/registry/wont_ids_2026-10-28_13-00-15.json`; the export
+    with the lost ids is kept beside it as
+    `wont_ids_2026-10-28_export_with_lost_ids.json`) and the export run again
+    with `p4_derive.py --export-only`. Nothing had been published, so the 40
+    ids issued that afternoon were not yet anyone's. Tests in
+    `tests/test_id_registry.py`.
 * Open: once ids are published, an obsolete id should appear in the release as
   a deprecated class with `term replaced by` (IAO_0100001); nothing has been
   published yet, so none is emitted.
@@ -3990,6 +4043,25 @@ wound is a blast injury is an injury.").**
   `tests/test_head_rule.py`. `Wound ⊑ Injury` itself is the curator's axiom
   in `data/review/curator_axioms_2026-10-03.json` (a plain subclass axiom,
   read by `scripts/build_wont_core.py`), not a change to WONT.
+* **The rule's edges clear the evidence cut, on both ends** (curator,
+  2026-10-30, asked whether the cut of two abstracts should hold for them
+  too: "ja"). Until then a name of the concept analysis became a class on the
+  rule alone: of the 12 classes it alone brought into the core, 7 were in
+  fewer than 2 abstracts -- Dermal injury and Open fracture wound in one;
+  Autoimmune disorder related wound, Deep second-degree burn, Fracture wound,
+  Ischemic diabetic wound and Partial-thickness burn in none, names of the
+  accepted slice of 2026-10-28 that no term of today's abstracts carries.
+  As with the author's links, both ends count, or a parent the abstracts
+  barely name would become a class on one edge. A name is counted by the key
+  the export mints one class by (`IdRegistry.key`), not as spelled: the
+  slice's `Deep Burn` is the class of the term `Deep burn wound` (19
+  abstracts; rule 80); spelled out, 17 names were in none. A WONT or MILD
+  class needs no abstracts, but only as the hierarchy's own node:
+  `Autoimmune Disorder Related Wound` shares its key with WONT's
+  `Autoimmune disease related wound` (WONT_0000033), yet the export minted it
+  a class of its own under Injury -- a duplicate the cut now leaves out. 38
+  of the 499 edges of the slice fall below the cut; the slice on disk is not
+  edited (`Orchestrator.refresh_class_hierarchy`, `fca_edges_below_cut`).
 
 ## 80. Complication is an epistemic label, not a class; ulcer is wound inside names; burn is burn wound
 
@@ -4034,6 +4106,12 @@ wound is a blast injury is an injury.").**
   through `config/settings.GROUND_TRUTH_TTL`, as does `scripts/thesis_figures.py`;
   `ground_truth_final.owl` is the state of 2026-10-18 and stays as it is.
   Older one-off scripts still name the old file in their own constants.
+  Since 2026-10-29 the pipeline reads `ground_truth_final_2026-10-29.owl`,
+  written by Claude with the curator's one-time leave ("change WONT yourself
+  please. i allow it once"), exactly two changes against 2026-10-20:
+  WONT_120020 labelled "Necrotic material" (was "Necrosis"), and the exact
+  synonym "Aseptic conditions" removed from WONT_0000029 (the curator: the
+  conditions themselves are another class, which has the quality aseptic).
 * MILD's complication classes are gone too (curator, 2026-10-20: "die können
   alle weg"): `material complication disease entity` (MILD_120051),
   `complication disease process` (MILD_120092), `disease complication
@@ -4319,6 +4397,1192 @@ Why: a `category` section beside `relations` decided an `is_a` under another
 name, and a `senses` section beside `to` said where the term points in a
 second place. Two places for one decision is how the term dict and the store
 drifted before rule 51.
+
+## 88. FCA passes down only what holds for every instance (replaces rule 65's class-level test)
+
+**Decided 2026-10-27 (curator, on the Fisher test of rule 65: "mir ist das
+mit fisher exact test zu larifari"; asked "streng oder fisher?", chose strict;
+"erledige 1-3").**
+
+* **An ancestor's attribute passes to its subclasses only when it is read as
+  true of every instance of the ancestor** (`all`, rule 66). `some`, `no` and
+  unread do not pass; every unread pair is named in the log
+  (`ContextMatrix._universal_attributes`, `inherit="universal"`, the `run_fca`
+  default). This is what a subclass means: `C SubClassOf R some T` holds of
+  every subclass of C, and a statement true of some wounds holds of none of
+  them by virtue of the hierarchy (`Wound SubClassOf 'has quality' some
+  chronic` would make every wound chronic). No threshold, no test.
+* **Why the Fisher test went:** it measured how often a subtree states an
+  attribute, not whether it is true. On 2026-10-27, with every pair read, it
+  passed down 17 relations read as `no` and 18 read as `some`, and held back
+  25 of the 44 read as `all`. Its advantage of 2026-10-02 (22% of a
+  grouping's cells the members' own) had shrunk to 4.5% on the current store.
+* **Readings** (`wound_ontology/fca/universality.py`, every name through the
+  store's resolver, as the export does): `relation_universality_2026-10-02`
+  (rule 66) and `relation_universality_2026-10-27`, the 34 pairs the
+  inheritance needed that nobody had read -- mostly relations that reached two
+  abstracts only through the renames since (9 all, 7 some, 18 no; same
+  criteria, plus rules 68 and 77). **The curator's decisions come first:**
+  `curator_axioms_2026-10-03.json` (axioms -> all, `left_out` -> no) and
+  `new_class_relation_decisions.json` (add -> all, leave out -> no); 114
+  decisions, 15 overriding a reading (`Diabetic foot ulcer has_quality
+  diabetic foot ulcer duration` and `Pressure ulcer has_quality severity of
+  the wound` were read `all` and left out). Two readings landing on one
+  relation with different verdicts: the weaker counts (6, listed by the
+  loader). The 2026-10-27 readings are used by the FCA only, not by the export
+  or the judgement page (rule 72: a reading is evidence for the curator).
+* **Measured** (`scripts/fca_inheritance_compare.py`,
+  `data/review/fca_inheritance_comparison_2026-10-27.json`; Wound subtree,
+  313 objects x 78 measured attributes, closed world, `min_support=2`):
+
+  | inherit | inherited cells | concepts | new groupings | every member states one | members' own cells |
+  |---|---|---|---|---|---|
+  | all | 16,137 | 67 | 6 | 0 | 0.4% |
+  | class_level (Fisher) | 9,154 | 73 | 6 | 1 | 4.5% |
+  | universal | 5,770 | 122 | 19 | 14 | 14.5% |
+  | none | 0 | 135 | 22 | 22 | 100% |
+
+  44 pairs pass down, e.g. `Chronic Wound` -> nonhealing, chronic;
+  `Diabetic Foot Ulcer` -> part_of Foot; `Burn Wound` -> burn depth, burn
+  size; `Wound` -> area, depth, volume, age (`Wound`'s pass to every object
+  alike and so group nothing; among them `initial size`, read `all` on
+  2026-10-02, while 2026-10-27 read `baseline wound size` as study-local).
+* **The evidence cut of rule 65 now applies in the pipeline.** `run_fca`
+  defaulted to `min_support=1` and `scripts/p4_derive.py` passed nothing, so
+  every pipeline run analysed the uncut context (2026-10-18: 310 objects x 501
+  attributes, the numbers in the thesis results); the cut of two abstracts
+  lived only in the comparison scripts. Found 2026-10-28 when the first
+  pipeline run under this rule named 385 unread pairs, all below the cut. The
+  default is now 2. `p4_derive.py --from-fca` starts at the concept analysis
+  when the two reasoner checks before it already ran on the same state (the
+  store check took 8 h that night).
+* **A measuring run changes nothing.** `run_fca(name=False)` no longer runs the
+  head-word rule: before, it re-judged the accepted slice and wrote a new
+  version of it (2026-10-27, 17 edges under `Venous Wound` withdrawn by a run
+  meant only to measure; the files were moved aside). `run_fca` also kept
+  the `name` switch in a variable the concept loop overwrote; it is now read
+  once at the start (`naming`).
+* **Limit, unchanged (rule 65):** the abstracts state few properties per wound
+  class, so the analysis adds little to the hierarchy. Measured on the view of
+  2026-10-27: of its 484 edges, 326 were already implied by the other sources,
+  most of the rest are decided by the head-word rule from the names, and it
+  made 5 new intermediate names (4 in the core). The thesis reports this as
+  the result.
+
+## 89. One record, five questions, one form for every judgement; the author's last word counts
+
+**Decided 2026-10-28, by the curator** ("pass 1 und pass 2 halte ich für wenig
+aussagekräftig ... wir müssen das termmapping abermals umstrukturieren";
+"jede entscheidung braucht dieselben metadaten, who when why"; "es braucht
+auch kein retired, sondern bei zwei entscheidungen zur selben sache
+entscheidet die letzte"; "ich will weiterhin, dass alles nachverfolgbar
+ist"; "sei genauer mit by"; "nur ein späterer autor-eintrag sticht den
+älteren"; "eine regel ist eine regel und nicht vom autor"). The proposal
+the curator approved: claude.ai/artifact/XmGkCpAtttSQWX6nF2HYAK.
+
+* **Five questions per term**, each a key of the record:
+  `name` (under which name is the string kept?), `pairs` (how does it stand
+  to a similar term: `same_class`, `different`, `narrower`, `broader`),
+  `scope` (`in` / `out`), `is_a` (target -> `yes` / `no`: a BFO category, an
+  ontology class with `iri`, or another term), `relations` (`predicate:
+  target` -> `yes` / `no`). A term whose name points elsewhere carries only
+  `name` and `pairs`; scope, is_a and relations live on the name (the
+  concept), which replaces the pooling of rule 28 and `gate_contested`.
+* **Spelling and synonym are one question** (curator, 2026-10-28, on the
+  overlap: "ja, leg sie zusammen"). The same change sat in `spelling` or in
+  `to` depending on the tool: the normaliser wrote 126 spelling variants as
+  synonyms before rule 51, the curator corrected spellings through `to`
+  (`Candida albican`), rule 58 wrote an abbreviation inside a name as a
+  spelling and a standalone one as a name. No test on the strings draws that
+  line cleanly (the normalised key misreads Latin final s and abbreviations).
+  Whether a name is a spelling or a synonym is now told by its agent: the
+  deterministic steps (programs and rules) against the judged ones (SapBERT,
+  the models, the author). The thesis counts the two steps that way.
+* **Every judgement has exactly `verdict`, `by`, `why`, `when`** (plus `iri`
+  on an is_a to an ontology class). `when` is an ISO timestamp, never free
+  text. Each answer is a LIST of judgements in time order; nothing is ever
+  removed. `retired`, `curator_history`, `lock_history`, `rule_history`,
+  `spelling_reversed`, `gate_withdrawn`, `gate_contested`, `method`,
+  `confidence` and the slots `pass1`, `pass2`, `check`, `curator` go; what
+  they held becomes judgements in the lists (the run in `why`, e.g. "1.
+  Urteil", "2. Urteil mit BFO-Kategorien", "Kontrollfrage").
+* **`by` names the agent exactly**, by an id from a table kept once in the
+  file (`agents`): `author` (the only author-rank agent), the rules
+  (`abbreviation-full-form` = rule 58, `tendency-not-disposition` = rule 68,
+  the spelling rules `no-trauma-to-injury`, `hyphen-modifier-not-grade`,
+  `latin-keeps-final-s`, `proper-names-kept`, `action-potential-kept`,
+  `lock-means-different`), the programs (`string-normalisation`,
+  `chain-resolution`, `ontology-label-match`, `number-unit-rule`), the lists
+  (`methodology-blocklist`, `whitelist`, `keyword-blocklist`,
+  `keyword-whitelist`), `sapbert-clustering`, `sapbert-neighbour`
+  (cambridgeltl/SapBERT-from-PubMedBERT-fulltext), DeepSeek V4 Flash
+  (deepseek/deepseek-v4-flash-20260423, OpenRouter, temperature 0) with one
+  id per run (curator, 2026-10-28, in the thesis): `deepseek-v4-flash` (scope
+  classification), `deepseek-v4-flash_bulk20` and `deepseek-v4-flash_bfo_type`
+  (the two synonym judgements), `deepseek-v4-flash_control` (restatement
+  check), `deepseek-v4-flash_top_15` (placement proposal) and
+  `deepseek-v4-flash_single` (yes/no question); `end-word-category` (a term's
+  category from the author's ruling on its end word),
+  `claude-opus-5-5` (Claude Code readings), `elk` (ROBOT 1.9.8). A rule is a
+  machine even when the author made it.
+* **Which judgement counts:** the author's last judgement; without one, the
+  last judgement of any agent. A machine judging after the author is kept
+  but does not count. This replaces the read-time precedence curator > pass2 >
+  pass1 > rule; among machines time now decides.
+* **Decided with it:** the 501 terms whose scope `sapbert-neighbour` decides
+  are judged again by `deepseek-v4-flash`; the author's 44 `narrower` /
+  `broader` between two terms are also written as `is_a` `yes` (by author),
+  so they act in the hierarchy; the 27 synonym pairs whose two DeepSeek
+  judgements disagree and that have no author judgement go on the author's
+  list.
+* **The reasoner's edge verdicts live in the term dict too** (curator,
+  2026-10-28: "ClassHierarchy ist ein view. Mehr nicht. Der Reasoner sollte,
+  wenn er läuft, das Urteil elk neu in den termmapping dict schreiben").
+  `run_gate_hierarchy_edges` writes `is_a` of the edge's child, `by: elk`,
+  with the reason for THAT edge (until then one explanation was copied onto
+  all 1,126 rejected edges); the hierarchy view reads them there. ELK writes
+  only when its verdict on an edge changes (`no` when it drops one, `yes`
+  when a dropped edge passes again). The 1,126 verdicts of 2026-10-28 are
+  not imported: they were reached while the author's decided categories
+  entered the hierarchy at rank `text`; the first run after the switch
+  writes them afresh.
+* **At most five judgements per agent and question** (curator: "maximal 5
+  Urteile von einem Beurteiler, damit nicht 20 elk-Einträge das termmapping
+  verstopfen"): a sixth by the same agent on the same question (the same
+  candidate, target or relation) drops that agent's oldest. The only
+  deletion rule 89 allows.
+* **A category the author decided ranks as the author's decision** in the
+  class hierarchy, not as `text` (on 2026-10-28 the edge check had dropped
+  47 of them, because a conflict drops the lowest rank first). The edge
+  check never drops an edge the author confirmed; two of the author's edges
+  that contradict each other stop the run and are named, as the author's
+  axioms already do.
+* **Check:** the restructure alone must leave the export unchanged (3,042
+  placement edges, 6,976 classes, 2,972 core, 46/46 competency questions);
+  every term where the new read rule answers differently from the old one is
+  counted and shown to the curator before anything is switched. The two
+  decided changes are measured separately afterwards.
+
+**Switched 2026-10-28, 22:56** (`scripts/migrate_rule89.py --write`; the old
+file is in `data/backup/term_mapping_before_rule89_2026-10-28_22-56-19.json`).
+115 differences of the dry run were confirmed "wie heute" by the author
+(`data/review/rule89_dryrun_2026-10-28/unterschiede*.csv`); read back by the
+new class, placements, categories, names and scope equal the old reading. What
+the implementation had to decide, each found by a test or the comparison:
+
+* **The file marks its form** (`"format": "rule 89"`), never by the keys
+  `terms` and `agents`: the abstracts wrote both words, and the old file holds
+  a record for each.
+* **Spelling or mapping is told by the agent** (`SPELLING_AGENTS`): a name by
+  string normalisation, the spelling rules or abbreviation → full form only
+  rewrites the string (`resolve`, `aliases`); any other name -- the models,
+  the author, chain resolution, the ontology label, the mapping build's
+  pre-merge (`cluster-premerge`, which takes the cluster's name and is not a
+  respelling) -- is a mapping (`data`). The final name is the same either way.
+* **A judgement made now goes last** (`_put`); only one dated by its caller is
+  sorted in. Sorting a new judgement would have put it before the translated
+  entries that carry the switch day as a date only.
+* **A string named after another concept hands it its scope, is_a and
+  relations** (`_carry_to_concept`), joined in time order; before rule 89 the
+  reader pooled the members' answers.
+* **A placement's refusal is no verdict on the edge** (`edge_judgements`): a
+  `no` with an ontology IRI refused putting the term directly under that
+  class; it is not "is not one". Read as one, it took 14 typings (`Antibiotic
+  efficacy` a quality) out of the hierarchy. The judgements on the spellings
+  of one edge (`Drug product`, `drug product`) are read together.
+* **A rename keeps every name judgement**: those naming the new spelling stay
+  on the old string as its history, a reversed spelling stays in its list,
+  and a name a merge brings onto a pair the author keeps apart is answered by
+  the string's own name (`apply_renames`, "locked targets").
+* **The reasoner hears its own verdicts again by setting them aside**
+  (`ConceptStore.reopen`), not by lifting them: nothing is taken out of the
+  term dict, so a check that cannot run leaves every verdict standing. ELK
+  writes when its verdict or its reason changes, so a rerun replaces the
+  run-wide note the 1,125 relation verdicts of 2026-10-28 carry.
+* **A refused cell takes off that cell, never the mention** (decided
+  2026-10-29 by the curator: "Keep the mention"). Whether an abstract affirms
+  a term is read from what it asserted, before any verdict
+  (`ConceptStore.view`); a term leaves the cleaned store only by its scope.
+  Since rule 89 an `is_a` verdict on a category edge is also the verdict on
+  the abstracts' typing cell (rule 87), so ELK's first edge run under it
+  (2026-10-29) refused `Allergy is_a disposition` -- rightly, the author put
+  Allergy under `material disease entity` -- and with its only cell gone,
+  Allergy vanished from all 4 of its abstracts. 353 terms went that way; 328
+  of them had the author's placement, which fell below the evidence cut, and
+  the core lost 261 classes against the build before the switch. Test:
+  `test_a_refused_typing_takes_off_the_typing_not_the_mention`.
+* **Setting ELK aside reaches the decided categories too**
+  (`TermMappingAndGate.categories(reopen=)`, read by `ConceptStore.view`).
+  A category the end-word rule decided and ELK refused was hidden by the
+  refusal itself while ELK re-heard the edges, so it could never be heard
+  again: 98 such terms on 2026-10-29 (`Chronic wound`, `Diabetic foot
+  ulcer` a material entity), and with their decided category gone their
+  mixed typings from the abstracts showed as irreconcilable (38 -> 136). Test:
+  `test_reopening_also_rehears_a_decided_category_elk_refused`.
+* **No category `no` on a term split by category** (rule 87): the view judges
+  a split mention by the split term's verdicts as well as the sense's, so a
+  `no` there refuses the very typing that sends the mention to its sense. The
+  author's process category stays on `Pressure ulcer therapy` and speaks for
+  its process sense (`scripts/apply_conflict_decisions_2026_10_29.py`; the
+  first try, which withdrew it, is in `data/backup/`).
+* **The author's links between two terms enter as `placed`**
+  (`TermMappingAndGate.term_links()`, written 2026-10-29 by
+  `scripts/apply_author_subsumptions_2026_10_29.py`): the 44 answers are 40
+  links (four pairs answered from both sides), each on the concept that
+  answers is_a for the child now, under the name its parent carries now
+  (`why` keeps the answer as given). Only an author `yes` makes a link --
+  ELK's `yes` between two terms says consistent, not true -- and both ends
+  must be terms in scope. The parent is a term, not an ontology class, so the
+  evidence cut applies to BOTH ends: a parent the abstracts barely name would
+  otherwise become a class on the strength of one link. A parent renamed
+  after the link was written is named loudly and left out until the link is
+  rewritten. A link counts toward the core like a placement: a new class
+  hung under a core class joins the core.
+* **A process ending in "infection" carries "process" in its name**
+  (curator, 2026-10-29, on the pair page and after: "it's the acute infection
+  process and the acute infection material entity", "I would add the end word
+  to infection", for all of them). Infection itself keeps IDO's material sense
+  and its process is Infection process (the conflict page of the same
+  morning); every term ending in "infection" whose category is process is
+  renamed "<term> process" the same way: 78 on 2026-10-29
+  (`scripts/apply_pair_followups_2026_10_29.py`, `apply_renames(by="author")`;
+  the plain name points to the new one and its decisions moved with it). A
+  term that is an ontology class's label keeps its name and the ontology's
+  sense: Methicillin-resistant Staphylococcus aureus infection (HP), Viral
+  infection (DOID). The end-word rule for "infection" still decides only the
+  category (`config/category_head_rules.py`); the naming is the same file's
+  `HEAD_NAME_SUFFIX`, applied by `TermMappingAndGate.end_word_renames`:
+  `scripts/apply_category_rulings.py` renames by the rule (agent
+  `end-word-category`) after it writes categories, and `scripts/rule89_elk.py`
+  names loudly any term the rule covers that is not named by it.
+* **The copied scopes judged again: 331, not 501** (2026-10-29,
+  `scripts/rescope_neighbour_scopes_2026_10_29.py`). "501" was counted under
+  the precedence before the switch; under "the last word counts" 331 concepts
+  still had a scope copied from the most similar term (of the 513 with one in
+  their history, the author had decided 97 since, DeepSeek 82, the rules 3).
+  With the five terms the pair page took apart, 329 were asked (seven are
+  ontology classes): 35 out -> in, 14 in -> out, 5 got a first scope.
+* **The edge gate judges root causes first** (`ReasonerGate.check_edges`,
+  2026-10-29): an empty class whose kept parent is empty too is empty by
+  inheritance, and blaming its own weakest edge refused correct typings below
+  every empty class (`Aggressive surgical debridement is_a process`,
+  `Debridement method is_a information entity`). The empty classes whose kept
+  parents are all satisfiable are judged first; their descendants are heard
+  again on the next pass (a loop of empty classes falls back to judging all).
+  Up to 30 passes; a gate that stops with classes still empty says so. Test:
+  `test_a_class_empty_only_through_its_parent_keeps_its_own_typing`.
+* **One name per BFO class** (`curated_seed.bfo_label`, 2026-10-29): some
+  modules label BFO_0000142/146/147 both by BFO's older names (`fiat line`,
+  `fiat surface`, `fiat point`) and by BFO 2020's; the BFO tree and the
+  reasoner's skeleton took whichever label came first, so the hash seed chose
+  the name and the class hierarchy changed between runs (seen 2026-10-28).
+  The extraction's category name wins, else the first label in sorted order.
+* **The one-off scripts of before the switch stay as they were**: 27 dated or
+  single-purpose scripts in `scripts/` (the `apply_*_2026_*` series,
+  `migrate_pair_schema.py`, `rule89_dryrun.py`, the review-sheet and queue
+  builders) still call the old record form (`peek_gate`, `pass1`/`pass2`
+  slots, `annotate`). They are records of runs already applied; adapted, they
+  could only apply old decisions a second time. They fail loudly if run. The
+  two that are tools, not records, were adapted on 2026-10-29:
+  `scripts/apply_category_rulings.py` and `scripts/p4_gate_pass2.py`.
+* **A relation refused in the term dict is not exported** (2026-10-29, the
+  curator: "ja"): the WONT addition takes the relations read as true of every
+  instance (rule 66) and, until then, never looked at the term dict, so a
+  later refusal -- by ELK or anyone -- would have been exported silently. The
+  export now asks `TermMappingAndGate.relation_judgement` for each (ends and
+  predicate followed to their current spelling), leaves out every one whose
+  judgement is `no`, and names them; on 2026-10-29 none of the 203 was
+  refused (202 without a judgement, one `yes` by ELK). Test:
+  `test_a_refused_relation_is_found_under_any_spelling_of_its_ends`.
+* **Claude reads inside the pipeline, not in sessions** (curator, 2026-10-29:
+  the Claude Code session readings "waren nur schnell und einfach, aber nicht
+  richtig" -- "dann bau die pipeline so, dass sie das macht (Claude Opus
+  aufrufen)"; all of them again, through OpenRouter like DeepSeek). The rows
+  had carried labels only, and a row not listed stood as answered. Now each
+  reading is a script with its prompt in code (Anhang D prints it,
+  `scripts/appendix_d_prompts.py`) and one explicit answer per row in a JSON
+  schema the model must keep (`output_config.format`):
+  `scripts/claude_read_placements.py` (every placement proposal, with the
+  definitions, categories and parents of the offered classes),
+  `scripts/claude_read_universality.py` (the rows of both instance readings,
+  with the relation's definition), `scripts/claude_read_small.py` (the
+  restatement rows; the author's clash decisions carried to statements of the
+  same type). Transport `wound_ontology/llm/claude_batch.py`: OpenRouter's
+  batch endpoint with Anthropic's Messages body (adaptive thinking, effort
+  high, no temperature -- Claude Opus 5.5 takes none), model snapshot
+  `anthropic/claude-opus-5.5-20260921`, every answer stored as it came back
+  under `data/llm_runs/`. A refused request is sent again in smaller ones;
+  rows refused even then are named and left unread. One agent id per reading
+  (`claude-opus-5-5_placement`, `_universality`, `_restatement`, `_same_type`);
+  the session readings stay in the history as `claude-opus-5-5`, and the
+  session instance readings move to `data/review/_superseded_sessions/`
+  (`load_verdicts` reads every `relation_universality_*` folder and lets the
+  weaker answer win). The author's word still counts over every reading.
+  Run of 2026-10-29 ($55.8 in all): every one of the 17,328 placement rows
+  read and written; the core grew from 2,972 to 3,365 classes (2,322
+  placements now stand on the new reading, 12,874 on the author's); the
+  instance reading keeps 164 of 1,007 rows as axioms (the session kept 203),
+  37 relations in the core; ELK still 46/46 competency questions. An answer's
+  fields can contradict each other (`stands` with a slipped class number,
+  `change` naming no class, rows left out): `judge_row` reads what the answer
+  settles and writes nothing it does not; unsettled rows are asked again
+  (`--finish`, matched through the stored rows). A chosen class is written
+  under the key the record already has for that IRI (`key_for`): written
+  under the ontology's label, it stood beside the author's withdrawn key and
+  undid the withdrawal (Burn wound surface; folded back by
+  `scripts/merge_duplicate_class_keys_2026_10_29.py`).
+  A reading of a pair answers with the term dict's four pair verdicts
+  (`PAIR_VERDICTS`: same, narrower, broader, different) like every other
+  agent, never with answers of its own. The first restatement reading answered
+  `same`, `narrower` or `neither` -- no `broader`, so "vascular disorder"
+  under "Angiopathy" could only be called neither -- and the author refused
+  it on 2026-10-30 ("halt dich einfach an die regeln, man. claude antwortet
+  mit same, broader, narrower oder different wie alle"). It was asked again
+  (`data/llm_runs/claude_restatement_2026-10-30`); each answer is written as
+  that pair verdict, and the placement holds only for `narrower`. Test:
+  `test_the_restatement_reading_answers_with_the_four_pair_verdicts`.
+  **Translate before asking again** (2026-10-30). Where an answer already
+  says one of the question's answers in other words, it is mapped, not asked
+  again (the curator, on a proposed re-run of the placement reading: "Warum
+  neu fragen, kannst du nicht einfach die Antworten mappen"). The placement
+  reading's stands / change / none had been mapped from the start (is_a
+  yes/no, pairs same_class/different, yes on the class chosen instead); the
+  one mistranslation, "same as X" answered "a kind of X" written `different`
+  instead of `narrower` (23), was corrected in place, and 149 old DeepSeek
+  judgements from the rule 89 migration were put in their question's answers:
+  the proposal "same class" moved from the is_a cell to the pair (117), the
+  yes/no statement's `no` on a pair became `different`, its nearest answer,
+  with the question named in the reason (32)
+  (`scripts/map_off_set_verdicts_2026_10_30.py`; nothing the core is built
+  from changed, the author had the last word on all 149). Asking again is
+  for answers that cannot be mapped one to one, as `neither` above. The term
+  dict now refuses an answer outside its question's set when it is written
+  and when it is loaded (`ANSWERS` in `term_mapping_and_gate.py`). Test:
+  `test_every_answer_stays_in_its_question_s_answers`.
+* **The instance reading is in the term dict, never beside it** (2026-10-30).
+  Until then the readings of rule 66 lived in `result.json` files under
+  `data/review/relation_universality_*`, which the export and the concept
+  lattice read; the curator, on the sentence "Diese Lesung liegt in eigenen
+  Ergebnisdateien neben TermMappingAndGate": "das machst du ganz sicher
+  nicht". The reading now answers the relations question in its own verdicts,
+  `yes` (true of every instance) or `no` (some instances only, false, or not
+  sound) -- not `all` / `some` / `no` -- and `scripts/claude_read_universality.py
+  --write` puts each answer on the subject concept's relation
+  (`<predicate>: <target>`, the key the record already has where it has one).
+  `TermMappingAndGate.read_relations(RELATION_READER)` gives every relation
+  the reading or the author judged and whether it is an axiom: the author's
+  last word, else the reading's `yes` with nothing counting `no` after it.
+  ELK's `yes` (it no longer objects) and a renaming rule's `yes` (the
+  relation has the right form) never make an axiom. The export
+  (`run_extend_ground_truth`) and `fca.universality.load_verdicts` read it
+  there; the result folders went to
+  `data/backup/relation_universality_files_2026-10-30/`. Test:
+  `test_the_instance_reading_lives_in_the_term_dict_and_only_its_yes_makes_an_axiom`.
+  A reading writes the class the record already names, never one found again
+  by its label: a label can name two classes. The second restatement reading
+  (2026-10-30) looked "Pressure ulcer" up by label and wrote HP's class
+  (HP_0012399, a phenotype) on "Terminal wound is_a Pressure ulcer"; the
+  latest IRI decides the parent, so WONT's Pressure ulcer took HP's ancestry
+  (Abnormal skin morphology, a quality) and ELK stopped on three of the
+  author's edges. The two term dicts were set aside
+  (`data/backup/term_mapping_restatement_wrong_iri_*`), the readings written
+  again from their stored answers. Where a label must be looked up
+  (`claude_read_placements._ontology_index`), WONT's class wins, then MILD's,
+  then the modules' -- until then the first in set order won. Audit of the
+  placement reading: its 125 other-module picks are equivalents the addition
+  writes as one class (disease DOID/OGMS, quality PATO/BFO, planned process
+  OBI/COB); none shadows a WONT class.
+  Still in files, and to be moved the same way: the curator's relation
+  decisions of the review pages (`curator_axioms_2026-10-03.json`,
+  `withheld_relations_2026-10-03.json`, `new_class_relation_decisions.json`)
+  and the typing check of both ends (`relation_typing_check_2026-10-02.json`).
+* **The author's relation decisions are in the term dict** (2026-10-30; the
+  curator, asked whether to move them: "Ja"). The axiom review page of
+  2026-10-03 with three later axioms (rule 69) and the judgement queue of
+  2026-10-07/08 with eleven chat decisions of 2026-10-20 (rule 72) are his
+  judgements now: 103 relation `yes`, 12 `no` (the rows he left out, the
+  queue's "leave out"), 2 is_a `yes` (Wound is an Injury; Injury under
+  pathological disorder), each with its day, page and item in the reason
+  (`scripts/move_relation_decisions_2026_10_30.py`; the two files in
+  `data/backup/relation_decision_files_2026-10-30/`;
+  `withheld_relations_2026-10-03.json` stays as that page's rows). The names
+  were the build's labels; each was found by its normalised spelling.
+  `author_relations()` gives his last word on every relation; the concept
+  lattice (`fca/universality.load_verdicts`) and the core build read it there
+  and nowhere else. In the core every relation he said `yes` to is stated in
+  every round and never dropped (ELK refusing one stops the build), and his
+  link between two terms on a class the addition does not mint as well
+  (`add_curator`); a relation on a new class with no word of his waits, as
+  before. A class is found by IRI where it is stable, then by its labels,
+  then through the lexicon as the export finds it, then under every name the
+  term dict gives the concept ("wound healing process" is GO's "wound
+  healing"); several classes on one name stop the build; one that cannot be
+  built (an end out of scope, not in the build, a candidate subject) is named
+  in the report (`author axioms not built`). Moving them showed what the
+  files had hidden: 15 of his `add`s were never built, because the reading
+  had said no or never read them (no silent failure), and 4 relations he had
+  left out were axioms. Counted in the core files (relations the core states
+  beyond WONT): 78 before the move (run n), 94 after it (run o; 59 on new
+  classes, 35 on WONT's classes), CQs 46/46, ELK clean. (A first recount
+  said 83 and 99: it compared WONT's restrictions by blank node, and the 5
+  of WONT's own whose value is an anonymous class expression counted as
+  new. Restrictions are compared by content, the expression read as a
+  tree.) The report's counters overlap (`relations kept` counts what is
+  copied from the extension, `curator axioms` what his word adds besides,
+  links between terms included, `already stated` what was there before)
+  and are not added up; since 2026-10-30 the report gives one entry per
+  axiom of his (`author axioms (account)`: added, already built from the
+  extension, already in WONT, not built), and those add up.
+  Test:
+  `test_the_author_s_relation_decisions_live_in_the_term_dict_and_count_over_the_reading`.
+  The typing check was not moved: as judgements its 2,082 `violates` would
+  have refused 1,184 relations of the store view on the categories of
+  2026-10-02. Asked whether to write that state or to run the check again
+  on the categories decided since, the curator (2026-10-30): "neu laufen
+  lassen". `scripts/relation_typing_check.py` now writes into the term dict
+  (`relation-typing-check`: both ends ok `yes` -- no objection, never an
+  axiom --, an end disjoint `no`, cannot tell `undecided`), hears its own
+  refusals anew on a rerun (`ConceptStore.reopen`, also through the change
+  of predicate of rule 68: `cell_predicate(reopen=)`), and writes only
+  where its answer or the categories behind it change. Run 2026-10-30:
+  22,177 relations, 18,341 ok, 964 violate, 2,872 undetermined (in 2 or
+  more abstracts: 410; 233 / 37 / 140); 964 left the store view, none of
+  them an axiom (222 before and after); its `yes` never lands after a
+  reading's `no`, because the view the check reads no longer holds what the
+  reading refused. 93 relations passed that the instance reading had never
+  read; they were read (`claude_read_universality.py --unread`). The
+  2026-10-02 file is in `data/backup/relation_decision_files_2026-10-30/`
+  as that run's record.
+* **A relation is read once, under whichever spelling** (2026-10-30). After
+  the check followed MILD's tree (rule 68), 4 relations passed that seemed
+  unread; 2 of them -- Burn wound and Chronic wound `has disposition` wound
+  infecting tendency -- had been read `no` that morning under the spelling
+  `Risk of infection` ("the term is vague"), and the search for unread
+  relations asked only the cell of today's spelling. Read again under
+  `Infection risk` they came back `yes`, filed on the morning's cell. As for
+  any relation read twice, the weaker answer counts: the reading's `no` was
+  written again, last, naming both answers. Since then a relation's cells are
+  all cells of its records whose value names the same concept
+  (`TermMappingAndGate.relation_cells`); the store view tells which records it
+  read a kept relation under (`ConceptStore.view(on_kept=)`, beside
+  `on_refused`); the search for unread relations and the figure ask all of
+  them; a reading is filed on the cell the store view names first; and a
+  later reading gets a run folder of its own (`--run NAME`): a run folder
+  skips the ids it has sent and would hand back the first run's answers.
+* **The figure from the abstracts to WONT reads the term dict** (curator,
+  2026-10-30, asked whether to rebuild its relations lane: "ja";
+  `scripts/figure_abstracts_to_wont.py`, `measure_relations`). The lane
+  starts from what the store view keeps plus what a judgement leaves out of
+  it -- the view reports those itself (`ConceptStore.view(on_refused=)`),
+  with the cells it read them on, because a refusal can sit on the name the
+  abstract wrote rather than today's. Each relation in 2 or more abstracts
+  lands where the judgement that counts puts it: a machine `no` (ELK, the
+  typing check, a carried-over clash) leaves it out; otherwise the instance
+  reading's answer decides -- a later `yes` of the typing check or of ELK
+  only says it has no objection and must not hide the reading. The author's
+  axioms are followed into the core by the build's own account (`author
+  axioms (account)`), and the core's relations beyond WONT are counted by
+  content. Run q (2026-10-30): 24,166 relations; 1,245 in 2 or more
+  abstracts; 1,000 read (164 true of every instance, 836 not); 245 not read
+  (115 kind of term unclear, 82 contradiction, 37 wrong kind of term, 9
+  decided by the author, 2 like one he refused); of the 164, 57 confirmed by
+  him, 1 left out, 106 await him; his 130 axioms: 58 already built from the
+  extension, 49 added, 6 already in WONT, 17 not built; 107 relations added
+  (72 on new classes, 35 on WONT's). The classes lane had been stale since
+  rule 79 and the author's links: the build now records how each core class
+  came in (`core classes, the way they came in`: a placement or link of his,
+  else the head-word rule's edge), and the figure reads WONT from
+  `GROUND_TRUTH_TTL`, not the June file (Injury and Traumatic injury are
+  WONT's own since 2026-10-20). Of the 12 classes the head-word rule alone
+  brought in, 7 are in fewer than 2 abstracts under their name: Dermal
+  injury and Open fracture wound in one; Autoimmune disorder related wound,
+  Deep second-degree burn, Fracture wound, Ischemic diabetic wound and
+  Partial-thickness burn in none -- names of the accepted lattice slice of
+  2026-10-28 that no term of today's abstracts carries. The evidence cut
+  does not apply to rule 79's edges (put to the curator).
+* **A rename leaves the old string's spelling history behind**
+  (`apply_renames`): how a spelling rule once wrote the old string stays with
+  the old string. Moved with the decisions, `bacterial infection` ->
+  `Bacterial infection` came back pointing from the new name to the old
+  spelling, which points to the new name: the first run of the rename above
+  left 82 strings in a loop and was set aside
+  (`data/backup/term_mapping_followups_first_try_2026-10-29_17-06.json`). A
+  name by any other agent still goes with the decisions (`Tumours` ->
+  `Neoplasm`). Test: `test_a_rename_leaves_the_old_strings_spelling_history_behind`.
+* **"Cannot tell" takes back the same agent's earlier word** (curator,
+  2026-10-30, asked whether it should: "Ja, nur das eigene";
+  `judgements.current`). An abstention still never counts as a verdict, but
+  an agent whose last word is `undecided` no longer stands by what it said
+  before; another agent's word, and the author's, are untouched. Found by
+  the thesis session: the typing check had answered `undecided` for 29
+  relations it had judged before, and its old `no` kept 2 of them out of the
+  store view (`wound healing process has_as_process_boundary_at_end
+  Complete wound healing`, 4 abstracts; `Fibroblast proliferation
+  immediately_causally_downstream_of Dermal injury`); nothing else in the
+  term dict changed (measured over every record and question). Test:
+  `test_an_abstention_takes_back_its_own_agents_earlier_word`.
+
+## 90. Anatomy is FMA's: no new class for a body region or a site (2026-10-30)
+
+A term that names a body region, a body part that subdivides a cardinal body
+part (hand, forearm, nose, scrotum), a side or an aspect (right side, dorsal
+aspect), or a site named by what happened there (donor site, incision site,
+lesion location) is out of scope. FMA's Subdivision of cardinal body part
+(FMA_67504) and its parts already hold every region; the addition does not
+mint one. The curator, 2026-10-30, on the 35 rows of the dispute page placed
+under "immaterial anatomical entity": "du kannst diese ganzen anatomischen
+regionen und sites löschen ... die gehören alle unter fma67504 und da sind
+alle regionen schon. ich brauche keinen neuen erfinden."
+
+Failure: the addition carried 143 such classes (Sacral Region, Right Side,
+Dorsum Of The Foot, Incision Site ...), most of them under "immaterial
+anatomical entity", where a body side with mass does not belong, and each a
+new class beside the FMA class it duplicates. Claude's reading of 2026-10-29
+disputed 35 of these placements, which is how they surfaced.
+
+Enforced as the author's scope `out` on each concept
+(`scripts/apply_anatomical_regions_out_2026_10_30.py`; the four groups in
+`data/review/anatomical_regions_2026-10-30/groups.json`). Every minted class
+below an anatomical entity was read by name; the run stops on a class in no
+group or a name that is no term. The author's earlier `in` on five of them
+(Buttock, Extremity, Lower extremity, Sacral region, Trochanteric region; the
+contradiction queue of 28 Sep) is superseded. Asked the same day about the
+two groups the sentence did not cover, the author answered: the 21 parts of
+the wound itself (tunnel, undermining, wound boundary, pocket, dead space --
+FMA has none of these) stay ("Bleiben"); the 202 classes of anatomy that are
+not regions -- 74 cells, 50 tissues, 72 organs, bones, vessels and joints, 6
+organisms -- go too ("Alle raus"): FMA, UBERON, the Cell Ontology and
+NCBITaxon hold them, and the addition mints no anatomical class of its own.
+His earlier `in` on 18 of those (Fibroblast, Neutrophil, Bone ...) is
+superseded. In all 345 terms out, 21 kept.
+Open: nothing yet keeps a NEW anatomical term out; the scope reading does not
+know this rule, so one that reaches the addition in a later run must be put
+out the same way.
+
+## 91. A recurrence is an event: the boundary at which a course of disease starts again (2026-10-30)
+
+A recurrence (relapse, reinfection, "recurred") is placed under BFO `process
+boundary` (BFO_0000035), typed so, with `is process boundary at start of`
+some `course of the disease process` (MILD_120083, MILD_120028) -- never as
+a process. The curator: "diese recurrences sind der zeitpunkt, an dem der
+krankheitsprozess startet einer krankheit, deren krankheitsprozess schon mal
+bestanden hat. demnach ist die recurrence ein event und kein prozess". A
+process that recurs ("Recurrent infection process", "Recurrent drainage") is
+that process, not the event.
+
+Why: MILD's `disease perpetuation process` (MILD_120035) held 53 placements,
+recurrences among persistence and progression, and the curator found it "eine
+ziemlich miese klasse. lösch sie einfach". It is deleted from MILD:
+`mild_2026-10-30.ttl` is `mild_2026-10-29.ttl` without its twelve triples
+(checked by graph comparison; `config/settings.py` MILD_TTL points to it;
+`perpetuation tendency`, MILD_120034, stays). Every placement under it has
+the author's `no`; the 28 recurrences go under process boundary, and their
+6 process placements or categories go too (process and process boundary are
+disjoint in BFO); the 25 processes lose the parent and wait among the
+candidates (his choice). `scripts/apply_recurrence_events_2026_10_30.py`.
+Run p (2026-10-30): 13 recurrences in the core under process boundary, each
+with the axiom; the other 15 never had a class of their own (named in the
+report as not built); 7 processes left the core for the candidates; core
+3,017 new classes (3,015 placed, 2 brought in as values of his axioms),
+107 relations beyond WONT (72 on new classes, 35 on WONT's), CQs 46/46,
+ELK clean. The core build finds a predicate the
+extraction never writes by its label among WONT's and MILD's object
+properties; the full extension (`owl/extend.py`) does not yet and counts the
+28 as `skipped (no IRI)` in its log.
+
+**The end of healing is a boundary too** (2026-10-30). `Complete wound
+healing` was a process by the curator's ruling of 2026-09-29 and placed under
+GO wound healing; the abstracts use it as the point at which healing is
+complete (`wound healing process has as process boundary at end Complete
+wound healing`, 4 abstracts). Asked whether it is, like a recurrence, a
+point in time: "grenze bitte". It is placed under process boundary and typed
+so; its process category and its placement under GO wound healing have the
+author's `no` (`scripts/apply_tendencies_and_boundary_2026_10_30.py`). No
+axiom is added for it: its relations go through the typing check and the
+reading like any other.
+
+## 92. MILD asserts no causality and requires no threshold crossing (2026-10-30)
+
+A disorder development process has a pathological disorder as output, and a
+course of the disease process has a material disease entity as participant;
+neither is said to be causally downstream of anything, and neither needs a
+threshold crossing event as its boundary. The curator, reviewing the thesis:
+"causally downstream wenn ich kausalität immer abgelehnt habe finde ich
+schwierig. und einen threshold überschreitung zu verlangen finde ich geht
+auch nicht. es mag solche krankheiten geben die dadurch epistemisch definiert
+sind, aber es sind bei weitem nicht alle".
+
+* `mild_2026-10-30b.ttl` is `mild_2026-10-30.ttl` without the three
+  restrictions (`has as process boundary at end` some threshold crossing
+  event on MILD_120021; `immediately causally downstream of` some disorder
+  development process and `has as process boundary at start` some threshold
+  crossing event on MILD_120028) and without the declaration of RO_0002405,
+  which nothing else in MILD used; both definitions say what is left. 13
+  triples fewer, checked by comparing the graphs
+  (`scripts/mild_without_threshold_and_causality_2026_10_30.py`);
+  `config/settings.py` MILD_TTL points to it. `threshold crossing event`
+  (MILD_120031) stays as a class, required by nothing.
+* **One class, material disease entity, with pathological disorder as its
+  exact synonym** (same day). The curator first answered here that both
+  should stay ("soll bitte so bleiben, das soll nur in der thesis einheitlich
+  sein"), then chose in the thesis session, twice, "Eine Klasse + Synonym",
+  and asked again here: "Eine Klasse + Synonym". `mild_2026-10-30c.ttl`:
+  MILD_120020 is equivalent to material entity and `has quality` some
+  pathological (pathological disorder's axiom), a subclass of material
+  entity, `part of` some Homo sapiens and `has part` some material disease
+  entity, disjoint from disease predisposition, disease diagnostic result and
+  disease stage classification result, with `hasExactSynonym` "pathological
+  disorder", one definition from the two and pathological disorder's
+  comments. MILD_120022 is obsolete (deprecated, "obsolete pathological
+  disorder", term replaced by MILD_120020, reason terms merged, no logical
+  axiom). Every other use names MILD_120020 (`has input` some (pathological
+  disorder and `part of` some material disease entity) became `has input`
+  some material disease entity), and the definitions say material disease
+  entity. MILD's own abstract ("separating material pathological disorder,
+  material disease individuation, ...") is his prose and was left; its
+  MODEL COMMITMENT (2 of 4) ended "See MILD_120022." and now points to
+  MILD_120020 (found by the thesis session the same evening; fixed in the
+  written file, one literal, backup `data/backup/mild_2026-10-30c_before_pointer_fix.ttl`).
+  `ground_truth_final_2026-10-30.owl` (written with his leave, as part of
+  that choice): the 24 subclass axioms under MILD_120022 name MILD_120020;
+  22 texts say material disease entity ("A material disease entity that is
+  the output of a wound development process"); the note "Reparented ... to
+  MILD_120022 pathological disorder" keeps its words and says where the
+  class went. The 154 placements under pathological disorder in the term
+  dict moved (his `no` on the old parent, his `yes` on the new, naming who
+  placed them: 123 he, 31 Claude's placement reading).
+  `scripts/one_disease_entity_2026_10_30.py`; MILD written through ROBOT
+  with the import catalog, the default prefix set back to `.../MILD/`, and
+  the file compared with the graph meant (620 triples, identical).
+* The extraction schema leaves obsolete classes out
+  (`schema_builder.collect`), and `has as process boundary at end/start` are
+  required patterns: their one use in MILD went with the threshold, and the
+  regenerated schema had dropped them silently.
+* Found on the way: both import catalogs (`data/ground truth/` and
+  `output/owl/catalog-v001.xml`) still named `mild_2026-10-29.ttl` after
+  `mild_2026-10-30.ttl` (rule 91) was made; the ELK checks of the core build
+  in runs p to s reasoned over WONT with the MILD of 10-29 (the competency
+  questions read MILD_TTL and had the right one). Both catalogs and
+  `build_disease_proposal.sh` now name `mild_2026-10-30c.ttl`; a new dated
+  MILD must change all three and `config/settings.py`.
+* **The quality `pathological` is MILD_120102, with a definition**
+  (`mild_2026-10-30d.ttl`; the thesis noted that it still carried MILD_000600,
+  outside the range, and no definition; curator: "ändere das"). The next
+  number after MILD_120101; a deleted number is never given again. MILD is
+  not released and nothing else named MILD_000600 (WONT, the term dict, the
+  id registry), so the identifier was changed, not deprecated; the extraction
+  schema was made again (two lines differ). Definition, after the thesis: "A
+  quality that a material entity has because medicine classifies it as
+  pathological. Pathologicity is asserted, never inferred: MILD lays down no
+  criteria, rules or inferences for it, because what is pathological can
+  depend on context." `scripts/mild_pathological_id_2026_10_30.py` (graphs
+  compared: 621 triples). Competency questions 46/46 against it; ELK
+  coherent. MILD's own MODEL COMMITMENT (2 of 4) still said MILD "adopts
+  Hucklenbroich's criteria", and material disease entity carried the comment
+  "Pathologicity is asserted ... by primitives ... as mentioned by
+  Hucklenbroich et al." -- both against the thesis and this definition. Put
+  to him, he answered (through the thesis session): "ja bitte".
+  `mild_2026-10-30g.ttl` (from f) says in both what the definition says:
+  pathological because medicine classifies it so, asserted, never inferred,
+  no criteria, rules or inferences, because it can depend on context; the
+  commitment no longer sets MILD apart from normativism, to which the thesis
+  says it is close. Two literals, 615 triples, graphs compared
+  (`scripts/mild_pathologicity_comments_2026_10_30.py`). The class names
+  with "disorder" stay (his answer: "nein" to renaming them).
+* **`realized disease predisposition` is deleted** (`mild_2026-10-30e.ttl`;
+  curator, on `SubClassOf: 'disease predisposition', 'has realization' some
+  'disorder development process'`: "ich glaub das axiom stimmt so nicht";
+  asked whether to delete it and its counterpart: "lösch nur realized
+  predisposition"). The axiom said a disease came about by realizing the
+  predisposition -- an aetiological claim MILD refuses, and of a tendency,
+  which may be realized to varying degrees or not at all, unobservable.
+  `predisposition realizing disorder development process` (MILD_120012)
+  stays. 8 triples fewer (613), graphs compared
+  (`scripts/mild_delete_realized_predisposition_2026_10_30.py`); nothing
+  else named MILD_120014. `has realization` lost its one use in MILD and is
+  a required pattern of the extraction schema (tendency -> process); the
+  relation list was compared with the schema of 2026-10-24: only participates
+  in changed (RO_0000056, 2026-10-29). Competency questions 46/46, ELK
+  coherent.
+* **MILD imports the whole of RO and BFO; the extraction schema offers every
+  allowed relation** (2026-10-30; after the third relation the schema had
+  dropped unseen, the curator: "das geht mir langsam auf die nüsse, jetzt
+  importier gesamt RO und fertig", and "mild soll auch komplett BFO
+  importieren"). MILD had imported neither, only declared the relations it
+  used. `mild_2026-10-30f.ttl` imports RO 2025-12-17 and BFO 2020 core by
+  the version IRIs of the files at hand (`Import ontologies/ro.owl`,
+  `Import ontologies/bfo-core2020.owl`; no download), 2 triples more, graphs
+  compared (`scripts/mild_import_ro_bfo_2026_10_30.py`). Both import catalogs
+  had BFO twice (once to a file that does not exist) and RO 2025-12-17 to
+  the web: now one entry each, to the local files. Import closure 3.85 MB,
+  758 object properties (691 of RO), 36 BFO classes; ELK coherent. RO calls
+  BFO_0000054 "realized in", BFO "has realization": the closure has both
+  labels. The schema (`schema_builder.collect`) no longer depends on what
+  WONT and MILD happen to use: every allowed predicate (`ALLOWED_PREDICATES`
+  but `is_a` and `LEGACY_PREDICATES`) must come out as a RelationType; one
+  no axiom uses takes its domain and range from RO and BFO
+  (`config.settings.RO_OWL`, `BFO_OWL`) under the pipeline's own name, and
+  one with neither stops the build. Today every allowed relation is covered
+  (the schema did not change). Tests: `test_every_allowed_relation_is_offered`,
+  `test_a_relation_no_axiom_uses_comes_from_ro_and_bfo_under_the_pipelines_name`,
+  `test_an_allowed_relation_nothing_can_offer_stops_the_build`.
+* Open (put to the curator): MILD does not say how OGMS `disorder`, a
+  curated class under material entity with 22 placed terms, stands to
+  material disease entity. Since WONT's wounds sit under material disease
+  entity, a term placed under both (`Defect`: under disorder and under Large
+  wound) has two sibling categories, and the typing check calls 28 relations
+  undecidable (27 of them passed before). Run t (2026-10-30, after the
+  merge): competency questions 46/46, ELK 0 unsatisfiable, core 3,010 new
+  classes, 107 relations added; the typing check rewrote 2,698 judgements,
+  2,629 of them only because the category behind them is now material
+  disease entity instead of material entity; axioms 241 before and after.
+* The relations the abstracts state with `immediately causally downstream
+  of` stay (asked, "Bleiben, wie sie sind"): only MILD gives up causality.
+  The extraction schema is derived from what WONT and MILD use, so the
+  relation is now a required pattern (`schema_builder.REQUIRED_PATTERNS`,
+  process -> process), as `has disposition` became in rule 68; without it
+  the next schema would drop it silently.
+
+## 93. A wound is an injury of which a part is skin; every injury has a place in FMA (2026-10-30)
+
+**Decided 2026-10-30 (curator, on the thesis's description of Wound: "da
+fehlt noch dass eine wunde auf jeden fall eine hautschädigung betrifft die in
+continuitatem auch eine schädigung von faszie muskle knochen etc. sein kann.
+aber ohne einen hautschaden ist eine wunde keine wunde. nekrotisches gewebe
+der haut ist auch schon eine wunde auch wenn es noch anhänglich ist ...
+deswegen gibt es brandwunden die immer brandverletzungen sind und
+brandverletzungen der inneren atemwege die wiederum keine wunden sind";
+asked whether skin damage is enough: "wenn injury AND ein teil der injury ist
+haut ist es sicher eine Wunde"; and: "es müssen noch die aussagen rein, dass
+jede wunde und jede injury einen ort hat mit verweist auf die FMA ...
+subdivision of cardinal body part").**
+
+    Class: Wound
+        EquivalentTo: Injury and ('has part' some ('part of' some Skin))
+    Class: Injury
+        SubClassOf: 'located in' some 'Subdivision of cardinal body part'
+
+* Wound (WONT_0000380) is a defined class: necessary (no wound without skin
+  damage) and sufficient (an injury of which a part is skin is a wound, so a
+  burn of the skin is a wound, one of the inner airways only an injury). Its
+  other axioms stay; its definition: "An injury that has as part a portion
+  of the skin, alone or in continuity with damaged deeper tissue such as
+  fascia, muscle or bone, and that is the output of a wound development
+  process. Damaged skin tissue is a wound even while it is still attached,
+  such as necrotic skin; an injury that involves no skin, such as a burn of
+  the inner airways, is no wound." Wound was already a subclass of Injury.
+* Injury (WONT_0007817) is `located in` (RO_0001025, as WONT's Skin wound and
+  Foot wound) some Subdivision of cardinal body part (FMA_67504); Wound
+  inherits it. `located in` means entirely within: an injury spread over
+  several subdivisions is within none (said to the curator; `overlaps` would
+  be the weaker reading).
+* ELK over WONT, MILD, the whole RO and BFO: coherent; no class newly
+  classified as a wound (Contaminated and Infected wound were wounds before,
+  through their equivalence). Skin wound (≡ Wound and `located in` some Skin)
+  now differs little from Wound: put to the curator, unchanged.
+* `ground_truth_final_2026-10-30b.owl` (Wound), `..._2026-10-30c.owl`
+  (Injury's place): `scripts/wont_wound_involves_skin_2026_10_30.py`,
+  `scripts/wont_injury_location_2026_10_30.py`, graphs compared.
+
+## 94. WONT's definitions drafted by Claude, for the curator's review (2026-10-30)
+
+The thesis (MIRO) named the missing definitions "der größte offene Punkt";
+the curator: "dann mach es". 299 of WONT's 439 classes had none (3 without a
+named parent were left). Claude (Opus 5.5, OpenRouter batch, $0.86) wrote one
+sentence per class in genus-differentia form, the genus the parent's label
+("A wound dressing that ..."), from the class's label, synonyms, comments,
+axioms, its parent's definition and up to three siblings' definitions, true of
+every instance, no brand names, no measurements but those a class is named by;
+`cannot` where no sound one could be written. 275 written into
+`ground_truth_final_2026-10-30d.owl` (IAO_0000115, each with IAO_0000119
+saying it was drafted by Claude for the curator's review); 21 held, each a
+finding about WONT: likely mistranslations (Aseptic cuticle = aseptische
+Kautelen, fabric adhesive = Gewebekleber, staple plastering =
+Klammerpflaster), duplicates (Thread size 1-0 = 0, Redness = reddened), a
+parent that does not fit (Immunosuppression is no material disease entity,
+Wound pocket a cavity, Planimetry measures area under a depth measurement),
+brand names (Bepanthen, Voltaren), unknown names (URGE scale, Wagner and
+Anderson). Review list: `data/llm_runs/claude_definitions_2026-10-30/review.md`;
+`scripts/claude_write_definitions.py`.
+
+## 95. WONT loads together with OFL and adds no unsatisfiable class (2026-10-31)
+
+The curator: "übrigens haben wir bisher nie den import von ofl in wont
+getestet. müssen wir auf jeden fall machen". `scripts/test_wont_with_ofl.py`
+loads a test ontology importing WONT (`ground_truth_final_2026-10-30d.owl`,
+with MILD, the whole RO and BFO) and OFL 2.0.0 (`Flap ontology/OFL
+Versionen/ofl_2.0.0.owl`, which imports the OBO FMA 2020-04-13, OBI, PATO and
+RO), every import from a local file, and reasons with ELK.
+
+* OFL and MILD import RO under two release IRIs, and there is one RO file at
+  hand; OWLAPI refuses to load one ontology twice ("Ontology already
+  exists"). Combined, the two must use one RO: the test loads a copy of OFL
+  whose RO import names MILD's release. OFL is not changed.
+* First try wrong: `Import ontologies/fma.owl` is the BioPortal FMA 5.0.0
+  (purl.org/sig/ont/fma/), not the OBO FMA OFL imports; its 69,100 classes
+  were all unsatisfiable. `fma_obo.owl` is the OBO release 2020-04-13 OFL
+  names.
+* Result (86 MB merged): consistent; 93 unsatisfiable classes (GO 56, CL 18,
+  UBERON 11, CHEBI 6, OBI 2), none of OFL, WONT or MILD -- and OFL alone has
+  the same 93. WONT adds none. The cause (ROBOT explain, acetylcholine): the
+  local OBI (release 2026-05-08) states `hormone` (CHEBI_24621, a role in
+  ChEBI) a subclass of `molecule` (COB_0000013); `acetylcholine has role some
+  hormone` then needs a material entity to be a specifically dependent
+  continuant. OFL names OBI 2025-03-06, which is not at hand; whether that
+  release has the error is open (download put to the curator).
+* One label both carry: `skin graft` -- OFL's OFLID106021 (under Grafts
+  classified by tissue composition, no definition) and WONT's WONT_0000285
+  (under material entity). Once WONT imports OFL, WONT should use OFL's
+  class (put to the curator).
+* Output: `output/wont_with_ofl_2026-10-31/` (report.json, ELK logs, the
+  explanation); the run with the wrong FMA in `..._wrong_fma/`.
+
+## 96. No "causing" in WONT's class names (2026-10-31)
+
+The curator, on the thesis's pattern for the wound development classes: "hier
+auch wieder causing … gefällt mir gar nicht"; offered options, he chose "Nur
+umbenennen" and "Wound dehiscence with suture insufficiency" (relayed by the
+thesis session). A name that says a process causes the wound claims what the
+ontology does not assert (rule 92: MILD gives up causality); the classes stay
+what they were, only their names and definition texts change. IRIs and axioms
+are untouched.
+
+* WONT_0000418 Wound causing process is **Wound development subprocess**;
+  every Wound causing X process is **X process in wound development** (12
+  classes: acidity impact, angiopathic disease, autoimmune disease, diabetes
+  mellitus disease, foreign body, heat impact, malignant, neuropathic disease,
+  peripheral arterial occlusive disease, pressure impact, trauma, venous
+  insufficiency disease); WONT_0000379 is **Wound dehiscence with suture
+  insufficiency**, defined by sutures that fail, not by a failure that causes.
+* 21 definitions of WONT's own say it: "an X process that is a wound
+  development subprocess"; where the wound development process that has the
+  part is already named, the part is named plainly ("has as part a process of
+  the course of a diabetic metabolic disorder", "has as part a pressure impact
+  process"). Imported definitions are not touched; the history note on
+  WONT_0000384 keeps the earlier label it quotes; degree of wound pain stays
+  `causally influenced by` a wound (an axiom, not a name, not this decision).
+* `ground_truth_final_2026-10-31.owl`, from `..._2026-10-30d.owl`; every
+  changed triple is checked to be one of these labels or definitions.
+* The term dict keys placements, pairs and names on class names: 127 is_a
+  keys, 2 pair keys, the store term `Wound causing process` (the abstracts'
+  own wording) and the name of `Wounding` moved with `apply_renames` (by the
+  author, his words in the reason); each old label stays as a name pointing
+  to the new one. Checked: all 14,621 placements on the same class (IRI) as
+  before, categories and the author's links unchanged. Without the move, the
+  hierarchy would have minted a second class under the old name.
+* `apply_renames` saves the term dict itself: the first dry run of the script
+  wrote one (`data/backup/term_mapping_2026-10-31_11-16_saved_by_a_dry_run.json`,
+  set aside; the rotation dropped the oldest copy, 2026-10-30 15:24). A
+  script that calls it holds the save back until its checks pass
+  (`scripts/wont_drop_causing_2026_10_31.py`).
+* The extraction schema is regenerated from the new file
+  (`scripts/build_extraction_schema.py`).
+* The same day, the curator: "vermeide einfach notorisch kausalität"
+  (relayed by the thesis session). `ground_truth_final_2026-10-31b.owl`:
+  Injury is structural damage "however it came about" (was "whatever its
+  cause"); eleven definitions Claude drafted (rule 94) that named a cause
+  ("owing to", "resulting from ... caused by", "microorganisms that cause",
+  "arise as", "producing", "results in") say what is there, where, or what a
+  process has as output (`scripts/wont_no_causal_wording_2026_10_31.py`).
+  Left for the curator: Neoplasm "arising from", Erysipelas "caused by"
+  (imported), MRSA infection "causal agent", and the five "No claim is made
+  that the disorder caused the wound". Physical wording (a drain's bulb
+  produces suction, fluid from the wound) is no causal claim and stays.
+* Run y (2026-10-31, `rule89_elk.py edges`, core build, figures, on
+  10-31b): competency questions 46/46, ELK 0 unsatisfiable, core file 3,010
+  new classes (3,008 placed under a curated or core class, plus Deposition of
+  collagen and Extremity as fillers of the author's axioms), 2,986 category edges, 3,494 placed edges, 58 relations kept; the
+  core differs from run w (on 10-31) in the 12 definitions only, the figure
+  of abstracts to WONT from run v not at all. The term dict counts grow by
+  the 14 old labels kept as names (records 214,418, mappings 4,565).
+* Found on the way, not fixed (put to the curator):
+  - `p4_derive.py --export-only` built 4 category edges the edge check
+    refuses (Iatrogenic factor, Pathogenic potential, Virulence potential
+    under tendency; Metabolic disorder under continuant; run x). ELK's
+    refusal of 2026-10-29 is filed under the edge's former parent
+    `disposition`; since tendency is the category again (rule 79 addendum,
+    2026-10-30) the edge reads `Tendency`, and a view built without the edge
+    check in the same process does not find the refusal. Until fixed, run the
+    export after the edge check (`rule89_elk.py edges`), not alone.
+  - Module classes with two labels (GO_0003674 `molecular_function` and
+    `gene product or complex activity`, GO_0008150, GO_0110165, 18 in all)
+    take whichever label `module_ancestry` reads last: the hierarchy node
+    flips between runs (`resolved imported` 371 in v and y, 370 in w).
+
+## 97. WONT carries a version IRI; a drafted definition becomes WONT's only by the curator's word (2026-10-31)
+
+The thesis (relayed by the thesis session, the curator's "schick der
+pipeline-sitzung die wont-aufgaben") states WONT's version IRI, that every
+class has a textual definition, and that the curator reviewed Claude's 275
+drafts (rule 94).
+
+* **Version IRI.** `owl:versionIRI
+  <https://bioportal.bioontology.org/ontologies/WONT/0.1.0>`, the pattern of
+  MILD's header; nothing else of the header changed
+  (`ground_truth_final_2026-10-31c.owl`, `scripts/wont_version_iri_2026_10_31.py`,
+  graph difference checked to be that one triple; ELK on the import closure:
+  0 unsatisfiable). rdflib writes it as the prefixed name `wont:0.1.0`, valid
+  Turtle 1.1; ROBOT (OWLAPI) reads it back as the full IRI (checked).
+* **The review.** One page for the 275 drafts and the 24 classes without a
+  definition (21 Claude held, each with its reason; 3 with only a logical
+  definition): <https://claude.ai/artifact/1aMQiQYbwCdv21sbSJCE5n>, built by
+  `scripts/definition_review_page.py` (template `definition_review_page.html`,
+  data `data/review/definition_review_2026-10-31/`). A draft is accepted or
+  replaced by the curator's own text; the 24 he writes. Each answer stores its
+  question (rule 47): collections `drafts` and `missing`, document id = the
+  WONT id, with the IRI, label and the draft text shown. Rows are grouped by
+  parent so siblings are read together; a word naming a cause is flagged in
+  his text (rule 96 addendum).
+* **Applying it** writes a new dated WONT file with his texts and removes
+  IAO_0000119 from every reviewed class. A draft with no answer keeps its
+  marker: nothing is accepted by default, because the thesis sentence "der
+  Autor hat sie durchgesehen" depends on each one. Then check: 439 of 439
+  own classes with an IAO_0000115, competency questions 46/46, ELK 0.
+* **Yearly review.** The curator confirmed it (relayed: "ja, jährliche
+  überprüfung bestätige ich"). MILD had no form for it, so each header carries
+  one rdfs:comment beside MILD's model commitments: WONT "WONT is developed by
+  its author and, like MILD, reviewed at least once a year."
+  (`ground_truth_final_2026-10-31d.owl`), MILD "MILD is reviewed at least
+  once a year." (`mild_2026-10-31.ttl`, inserted as text so the Protégé
+  layout stays); `scripts/yearly_review_2026_10_31.py`, each graph difference
+  that one triple. Config, both catalogs and `build_disease_proposal.sh` point
+  at the new files; README "Maintenance" (pushed to main as 5f7d7ee by the
+  thesis session on his request, "README-Änderung von Wound-ontology auf
+  GitHub hochladen"; this checkout's branch still holds it uncommitted). Checked: ELK
+  0 unsatisfiable over WONT's whole import closure, MILD's six competency
+  questions PASS. A header annotation changes no entailment, so the HermiT run
+  on `mild_2026-10-30g` holds for `mild_2026-10-31` too.
+* **Header fields.** WONT's header named no creator, dates or preferred
+  prefix, which MILD's has; put to the curator, who said yes (relayed: "ja,
+  trag die vier angaben in wont ein"). `ground_truth_final_2026-10-31e.owl`
+  carries MILD's properties in MILD's form: dcterms:creator (ORCID IRI and
+  name, read from MILD's header), dcterms:created 2026-06-15, dcterms:modified
+  2026-10-31, vann:preferredNamespacePrefix "WONT" and
+  vann:preferredNamespaceUri; `scripts/wont_header_fields_2026_10_31.py`, the
+  graph difference those six triples. The created date is the earliest record
+  of a WONT file, never a guess: `ground_truth.properties`, Protégé's companion
+  file of `ground_truth.owl`, was created 2026-06-15 14:15; the companion of
+  `ground_truth_2606171253.ttl` was created a minute after the time in that
+  file's name, so these creation times hold. `Ground_truth.csv` (2026-06-13)
+  is the table of curated edges, not an ontology. Every later WONT file keeps
+  dcterms:created and sets dcterms:modified to its own date. Checked: ELK 0
+  over the import closure, MILD's six competency questions PASS, the
+  pipeline's competency questions 46/46; the extension core differs from the
+  one before (12:09, built on 10-31b) by exactly the eight header triples
+  (version IRI, yearly-review comment, these six). The run did show one
+  name changing: GO_0003674 carries two rdfs:labels in the OBI and DRON
+  modules ("gene product or complex activity"@en, "molecular_function"), and
+  the rebuilt skeleton read the other one, so "Molecular_function" left the
+  class hierarchy view (32,088 -> 32,087 concepts, 371 -> 370 resolved to
+  imported IRIs). Same IRI, so the output is unchanged; the double label is
+  the open module bug, now seen to make the view depend on read order.
+* **Review applied (2026-10-31).** He accepted all 275 drafts ("i have
+  accepted all definitions"; read back from the page: 275 documents, each
+  "accept" with no text of his own and showing the draft WONT holds; `missing`
+  empty). `ground_truth_final_2026-10-31f.owl`
+  (`scripts/apply_definition_review_2026_10_31.py`, answers kept in
+  `data/review/definition_review_2026-10-31/answers/`): the draft marker is off
+  all 275, none is left. His superclass decisions in the same file: named
+  parents for Acidity/Heat/Pressure impact process in wound development beside
+  their equivalences; Aseptic cuticle plan specification (a mistranslation of
+  "aseptische Kautelen") merged into Aseptic conditions plan specification,
+  its three children moved, itself obsolete in MILD's form (label "obsolete
+  …", owl:deprecated, reason "terms merged", term replaced by, comment; no
+  axiom, no synonym); Bismuth III bromide under Antiseptic metal ion;
+  Immunosuppression a disease predisposition with the definition he chose.
+  Wearing sterile gloves plan specification's accepted definition named the
+  obsolete class as its genus; it now names the class merged into, the rest
+  word for word -- a change that follows from his merge, reported to him.
+  Counts: 439 WONT classes, 438 not obsolete, 416 defined, 22 without.
+  `mild_2026-10-31b.ttl` sets MILD's dcterms:modified to 2026-10-31 ("yes set
+  MILD's modified date"); config, both catalogs and `build_disease_proposal.sh`
+  point at it. Checked: ELK 0 over WONT's import closure, MILD's six
+  competency questions PASS, the pipeline's 46/46, the rebuilt extension
+  differs from the one before by exactly these changes. The first pipeline
+  run stopped, rightly (rule 79): the term dict still held his 2026-10-18
+  ruling "Immunosuppression is_a material entity: yes", which a disease
+  predisposition cannot be. His newer decision is written as his `no` on that
+  edge (`scripts/immunosuppression_not_material_2026_10_31.py`, backup
+  `data/backup/term_mapping_before_immunosuppression_2026-10-31_16-35.json`).
+  A WONT reparenting must be checked against the term dict's author verdicts
+  on that term before the run. A class for the immune disorder itself (option
+  B) needs a new WONT class: neither the closure nor DOID 2026-05-30 has
+  immunodeficiency in general (DOID_612 is primary only; DOID_2914 immune
+  system disease also covers allergic and autoimmune disease). The extension
+  already minted WONT_0003586 "Immunodeficiency Disorder" (his name for the
+  term "Immunodeficiency", under HP_0002715); the new class can take that IRI.
+* **Every class defined (2026-10-31, `ground_truth_final_2026-10-31g.owl`,
+  `scripts/apply_curator_definitions_2026_10_31.py`).** His words, relayed:
+  "all ok, merge 18 and 19"; "21/22 ok, 20 obsolete, rename all four"; "yes to
+  redness synonym, URGE ok". 20 definitions written word for word;
+  WONT_0003586 "Immunodeficiency disorder" a material disease entity, its IRI
+  taken over from the pipeline's minted class (the extension finds it by label
+  before it asks the id registry); Redness merged into reddened and Thread size
+  1-0 into Thread size 0, wound signaling function obsolete without
+  replacement (no IAO reason fits "meaning unclear", the comment says so);
+  Bepanthen ointment -> Dexpanthenol ointment and Voltaren gel -> Diclofenac
+  gel (brand kept as oboInOwl:hasRelatedSynonym, which the extension does not
+  match on), Wound fabric adhesive / Wound staple plastering plan specification
+  -> Wound tissue adhesive / Wound closure strip plan specification (their
+  synonyms carried the same mistranslation and went too), URGE scale -> Wound
+  assessment scheme of surroundings, edge, base and exudate ("URGE scheme" a
+  synonym). Counts: 440 WONT classes, 436 in use, 436 defined.
+  **An obsolete WONT class leaves the extension only if the term dict and the
+  synonyms follow.** The extension matches labels and IAO_0000118 synonyms; it
+  does not follow "term replaced by". Merging Redness would have minted a new
+  "Redness" for the 16 terms he had placed under it, hence the synonym on
+  reddened; obsoleting wound signaling function would have minted it anew for
+  his three placements under it, hence his `no` on those
+  (`scripts/author_edges_after_wont_10_31g_2026_10_31.py`, which also writes his
+  `no` on Immunodeficiency disorder is_a HP_0002715, a quality). Before any
+  merge, obsoletion or rename: list the term dict's current `yes` placements on
+  the old name. The core build matched a placed parent on labels only, so the
+  three redness classes the export had put under reddened fell to the
+  candidates; it now looks a parent up as the export does, WONT's labels and
+  synonyms first (`scripts/build_wont_core.py`). Checked: ELK 0 over the import
+  closure, MILD's six competency questions PASS, the pipeline's 46/46, ELK 0 in
+  the core build. Beyond WONT's own changes the core lost only the minted copy
+  of Immunodeficiency Disorder (the curated WONT_0003586 is it now) and
+  Pro-Angiogenic Effect (placed only under wound signaling function, now a
+  candidate), and its three redness classes moved from Redness to reddened; no
+  output holds a minted copy of a merged, renamed or obsolete class.
+
+## 98. A disease name names a diagnosis; what one can point at stays material (2026-10-31)
+
+The curator: "wir müssen alle krankheitsnamen unter diagnose schieben. die
+vaskulitis ist die diagnose, nicht die krankheit." It is MILD's own rule, in
+the editor note on MILD_120020: a disease name stands for a material disease
+entity only when it names one pathological thing in the patient. A name that
+groups findings by diagnostic criteria -- vasculitis, erysipelas, osteomyelitis,
+sepsis, diabetes, a "... disorder" -- is a MILD_120024 disease diagnostic
+result, an information content entity that is about material disease entities.
+What one can point at stays material: wounds, necrotic material, hematoma,
+abscess, seroma, lymphocele, fistulas, blisters, hypergranulation, dehiscence,
+a neoplasm or malignancy (one mass of tissue), a lesion, an aneurysm, a
+calcification, a scar.
+
+- **WONT 10-31h** (`scripts/diseases_are_diagnoses_2026_10_31.py`; his choices
+  "Nur die 22 Krankheitsnamen", "Beide bleiben materiell", "Namen bleiben",
+  "Je ein Ding neu anlegen"; drafts "alles ok, schreib die neue datei"): 22
+  classes moved, labels kept; 17 definitions keep the accepted text after a new
+  start ("A disease diagnostic result that is about a material disease entity
+  ..."), five are new. Mucous membrane pemphigoid is an Autoimmune tissue
+  disorder about some Mucosal blister (was: has part some (Autoimmune tissue
+  disorder and Mucosal blister), which the move makes unsatisfiable); MRSA
+  infection is about some (material disease entity and has part some
+  Staphylococcus aureus). Narrowed limb artery (WONT_120085) and Insufficient
+  limb vein (WONT_120086), material, carry the texts Peripheral arterial
+  occlusive disease and Venous insufficiency disorder had; the diagnoses are
+  about them and they replace the diagnoses as participants of the two disease
+  processes -- a diagnosis takes part in no process. 442 classes, 438 in use,
+  438 defined; ELK 0 over the import closure; MILD CQ1-6 PASS.
+- **Complication check** (`evaluation.competency._process_of`): when the object
+  of `complication_of` is a diagnosis, a disease process whose participant is
+  what the diagnosis is *itself* about counts. Only its own `is about`: the one
+  inherited from MILD_120024 is about any material disease entity, which every
+  disease process's participant is, and would make every wound a complication
+  of every diagnosis. CQ032 and CQ033 hold; the control (Ischemic wound
+  complication_of Venous insufficiency disorder) does not.
+- **Term dict** (`scripts/diseases_are_diagnoses_term_dict_2026_10_31.py`): of
+  the 152 extension terms under a moved class or straight under material disease
+  entity, Claude read 128 as diagnoses -- category information entity, the
+  author's `no` on every material placement (material entity, material disease
+  entity, OGMS disorder, MILD's retired compound pathological disorder), and
+  `disease diagnostic result` for the ones straight under material disease
+  entity -- 12 as things under a diagnosis, moved under material disease entity
+  (Aneurysm, the calcifications, the arterial lesions, Chronic total occlusion,
+  Telangiectasia, Pathological scar, Wound contracture; Nonresponsive wound
+  keeps only Wound), and 12 as things already there (the lesions, Skin reaction,
+  Pathological fracture, Stricture, Structural abnormality). 15 of the 22 WONT
+  names have records; they are typed information entity too. His earlier `yes`
+  gives way to his newer rule; every `no` quotes it. A decided category replaces
+  the category the abstracts gave (`concept_store._apply_categories`), so the
+  extension types no diagnosis as material.
+
+## 99. How deep a wound reaches is said in FMA's layers, from the FMA OFL uses, through one part relation (2026-10-31)
+
+The curator, on the thesis's outlook ("ich will das vor submission erledigt
+haben, nicht offen lassen"): depth defined by FMA classes, from the same FMA as
+OFL, with a bridge binding FMA's part relations to OFL's. His choices: six
+layers (epidermis, dermis, subcutis, fascia, muscle, bone), the bridge "FMA ->
+OFL -> BFO", the classes side by side, the burn degrees bound to them, the
+definitions as drafted ("Alle ok").
+
+- **WONT's FMA module** (`data/ground truth/modules/wont_fma_module.owl`, IRI
+  `.../WONT/modules/fma_module.owl`): a BOT module of the OBO FMA release
+  2020-04-13 (`Import ontologies/fma_obo.owl`, the release OFL 2.0.0 imports;
+  MILD's FMA module is a MIREOT of the same file) for Epidermis (FMA_70596),
+  Dermis (FMA_70323), Superficial fascia (FMA_9630, FMA's subcutis, exact
+  synonym "Subcutaneous tissue"), Investing fascia (FMA_27935, the deep fascia),
+  Muscle organ (FMA_5022), Bone organ (FMA_5018) and Skin: 35 classes. MIREOT
+  would drop what depth needs: the part axioms (Epidermis and Dermis
+  constitutional_part_of some Skin) and fma#part_of's transitivity.
+- **The bridge** (`data/ground truth/modules/fma_ofl_bfo_part_bridge.owl`, IRI
+  `.../WONT/bridges/fma_ofl_bfo_part.owl`): fma#part_of (and with it
+  constitutional_, regional_, systemic_part_of) under OFL "Ofl part of"
+  (OFLID13297), that under BFO "part of"; OFL "Ofl part" (OFLID13296) under BFO
+  "has part". OFL binds only the BioPortal FMA's purl.org/sig/ont/fma/part_of,
+  but imports the OBO FMA (obo/fma#part_of), so its own binding never applied.
+  OFL is not changed. Both files are catalogued in both catalogs and imported by
+  WONT; the extension inherits the imports.
+- **WONT 10-31i** (`scripts/wound_depth_2026_10_31.py`): Wound reaching the
+  epidermis / dermis / subcutis / fascia / muscle / bone (WONT_120087-120092),
+  each = Wound and has part some (part of some <layer>), the pattern of Wound's
+  own skin axiom. Not nested: a wound to the bone need not cross a fascia (over
+  the anterior border of the tibia); the deepest class a wound falls under is
+  its depth. First-degree burn wound reaches the epidermis, Second- and
+  Third-degree the dermis, Fourth-degree the subcutis -- "at least"; "only so
+  deep" needs negation, which EL lacks. 448 classes, 444 in use, 444 defined.
+- **Checked** (`scripts/test_wound_depth.py`, all PASS): an injury with a part
+  in the epidermis or dermis is a wound and reaches that layer (FMA's
+  partonomy, through the bridge, meets Wound's skin axiom); one in the subcutis
+  alone is no wound (FMA's superficial fascia is part of the integument, not of
+  the skin); a part linked to the epidermis only by fma#regional_part_of
+  reaches it (the whole chain); each burn degree reaches its layer. ELK 0 over
+  WONT's closure; MILD CQ1-6 PASS. With OFL and the whole FMA
+  (`scripts/test_wont_with_ofl.py --tag wound_depth`): the same 93 unsatisfiable
+  classes as OFL alone (GO, CL, UBERON, CHEBI, OBI from the local OBI release),
+  none new, none of WONT, MILD or OFL.
+
+## 100. A class names the scheme it really is; a stage a scheme lacks is no class of it (2026-11-01)
+
+From the thesis read-through, decided by the curator (`scripts/review_points_2026_11_01.py`,
+WONT `ground_truth_final_2026-11-01.owl`):
+
+- **"University of Texas"**: WONT_0000375, with its 16 grades 1A-4D, was
+  labelled "Wagner and Anderson wound classification". Wagner has six grades
+  (0-5), Wagner-Armstrong 24 cells (0-5 x A-D); a depth grade x stage A-D
+  matrix with 16 cells is the University of Texas classification (0-III x
+  A-D). Renamed, IRIs kept: University of Texas wound classification, its
+  grade class, grades 0A-3D; no synonym keeps the old name, which named no
+  scheme. Claude's placement reading had put 16 Wagner grade terms under the
+  grade class and the curator had confirmed them on 2026-10-02 under the old
+  name; his newer decision gives way to them as `no`
+  (`scripts/wagner_grades_not_texas_2026_11_01.py`): a Wagner grade is no Texas
+  grade. WONT has no Wagner classification now.
+- **"Veraltet ohne Ersatz"**: Clean wound according to IWII is obsolete; the
+  IWII wound infection continuum has no clean stage. Its parent lists only
+  contaminated, colonized, infected, in definition and axiom.
+- **"Grad 3 bis Subkutis"**: Third-degree burn wound reaches the subcutis
+  (definition and axiom), as well as the dermis.
+- 448 classes, 5 obsolete, 443 in use, 443 defined. Before the rename the term
+  dict was searched for `yes` placements on the old names (rule 97); before the
+  obsoletion for placements under its synonyms (none).
+- **The term dict followed** (`scripts/texas_names_2026_11_01.py`): the rebuild
+  showed what a rename leaves behind beyond placements. "University of Texas
+  wound classification" was named "... system" (bulk acceptance 2026-09-25, when
+  WONT had no such class); an ontology label is canonical (rule 36), so it keeps
+  its own name and four variants the build had minted beside it ("... system",
+  "University of Texas classification", "Texas classification", "... diabetic
+  wound classification system") are named as it. The records under the old
+  Wagner names held his relations (is_about Diabetic foot ulcer, is_about Wound
+  on the grade class); named as the renamed classes, they follow and are built
+  again. Relations making a Wagner grade part of the Texas class: his `no`.
+  CQ041 ("Clean wound according to IWII has_quality Sterile") retired, its
+  premise gone: in scope 45, all PASS. Core 2,996 classes (the six Wagner grades
+  and the four Texas duplicates gone), ELK 0; 18 author axioms not built, as
+  before. Lesson: before a rename, list the old name's term-dict records -- its
+  name verdicts and its relations, not only the placements under it.
 
 ## Adding to this file
 

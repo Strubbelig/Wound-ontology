@@ -4,6 +4,12 @@
     python -u scripts/p4_derive.py --skip-fca ...   # no concept naming: the last run's
         proposals are judged again by the current head-word rule (rule 79), before
         the hierarchy is built, so the edge check reasons over what it licenses
+    python -u scripts/p4_derive.py --from-fca ...   # start at the concept analysis: the
+        two reasoner checks before it ran in an earlier run on the same state and their
+        verdicts are on disk (2026-10-28: the store check alone took 8 h)
+    python -u scripts/p4_derive.py --export-only ...  # only the extension of WONT and the
+        competency questions, on the verdicts and FCA slice already on disk (2026-10-28:
+        to re-issue ids after the registry fix without naming the concepts again)
 
 Runs after the mapping build and the reviews. Each step is timed and logged;
 any exception stops the run (no silent continuation, rule 1).
@@ -66,21 +72,37 @@ def main() -> int:
     p = Orchestrator(entrez_email=ENTREZ_EMAIL, allowed_predicates=ALLOWED_PREDICATES,
                      base_path=BASE_PATH)
     skip_fca = "--skip-fca" in sys.argv
+    from_fca = "--from-fca" in sys.argv
+    export_only = "--export-only" in sys.argv
+    if skip_fca + from_fca + export_only > 1:
+        raise SystemExit("--skip-fca, --from-fca and --export-only exclude each other")
+    out = ROOT / "output" / "owl" / "wont_extended.ttl"
+    if export_only:
+        log("SKIP  reasoner checks and concept analysis (--export-only: their verdicts and the "
+            "accepted FCA slice on disk are used)")
+        step("extend WONT", lambda: p.run_extend_ground_truth(output_file=str(out), include_fca=True))
+        step("competency questions", lambda: p.run_competency_check(ontology_file=str(out)))
+        log("ALL DONE")
+        return 0
     step("reasoner skeleton", p.build_reasoner_skeleton)
-    step("reasoner check of store relations (ELK)", lambda: p.run_gate_store_relations(apply=True))
+    if from_fca:
+        log("SKIP  reasoner check of store relations and of is_a edges before the concept analysis "
+            "(--from-fca: their verdicts from the earlier run are used)")
+    else:
+        step("reasoner check of store relations (ELK)", lambda: p.run_gate_store_relations(apply=True))
     if skip_fca:
         step("head-word rule on the last run's proposals (no concept naming)", lambda: rejudge_last_proposals(p))
     # 2026-10-21: no hierarchy build step any more. The class hierarchy is a view of
     # WONT + MILD, the store read through the register, the placements and the
     # accepted FCA slices; the edge gate derives it fresh and hears every edge.
-    step("reasoner check of is_a edges on the class hierarchy view (ELK)", p.run_gate_hierarchy_edges)
+    if not from_fca:
+        step("reasoner check of is_a edges on the class hierarchy view (ELK)", p.run_gate_hierarchy_edges)
     if not skip_fca:
         step("formal concept analysis (wound subtree)", lambda: p.run_fca(
             subtree_root="Wound",
             predicates=["has_quality", "part_of", "has_participant", "has_disposition", "inheres_in"]))
         # rule 79: the edges the head-word rule promoted are checked like every other is_a edge
         step("reasoner check of is_a edges after the concept analysis (ELK)", p.run_gate_hierarchy_edges)
-    out = ROOT / "output" / "owl" / "wont_extended.ttl"
     # rule 79: the FCA edges in the hierarchy are the ones the head-word rule licensed
     step("extend WONT", lambda: p.run_extend_ground_truth(output_file=str(out), include_fca=True))
     step("competency questions", lambda: p.run_competency_check(ontology_file=str(out)))

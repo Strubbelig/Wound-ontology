@@ -274,12 +274,16 @@
    "issued": "2026-10-04T19:44:38"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000625": {
-   "label": "Abdominal Wall Infection",
+   "label": "Abdominal Wall Infection Process",
    "keys": [
-    "abdominalwallinfection"
+    "abdominalwallinfection",
+    "abdominalwallinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:38"
+   "issued": "2026-10-04T19:44:38",
+   "former_labels": [
+    "Abdominal Wall Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000626": {
    "label": "Abdominal Wall Reconstruction",
@@ -406,13 +410,17 @@
    "keys": [
     "absorbentdressing"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:38"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:38",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000642",
+   "obsoleted": "2026-10-28T13:39:31",
+   "why": "merged into 'Absorbent Wound Dressing' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000642": {
    "label": "Absorbent Wound Dressing",
    "keys": [
-    "absorbentwounddressing"
+    "absorbentwounddressing",
+    "absorbentdressing"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:38"
@@ -746,12 +754,16 @@
    "issued": "2026-10-04T19:44:38"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000684": {
-   "label": "Active Infection",
+   "label": "Active Infection Process",
    "keys": [
-    "activeinfection"
+    "activeinfection",
+    "activeinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:38"
+   "issued": "2026-10-04T19:44:38",
+   "former_labels": [
+    "Active Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000685": {
    "label": "Active Inflammatory Phase",
@@ -906,12 +918,16 @@
    "issued": "2026-10-04T19:44:38"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000704": {
-   "label": "Acute Infection",
+   "label": "Acute Infection Process",
    "keys": [
-    "acuteinfection"
+    "acuteinfection",
+    "acuteinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:38"
+   "issued": "2026-10-04T19:44:38",
+   "former_labels": [
+    "Acute Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000705": {
    "label": "Acute Inflammation",
@@ -1026,12 +1042,16 @@
    "issued": "2026-10-04T19:44:38"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000719": {
-   "label": "Acute Postoperative Infection",
+   "label": "Acute Postoperative Infection Process",
    "keys": [
-    "acutepostoperativeinfection"
+    "acutepostoperativeinfection",
+    "acutepostoperativeinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:38"
+   "issued": "2026-10-04T19:44:38",
+   "former_labels": [
+    "Acute Postoperative Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000720": {
    "label": "Acute Rejection",
@@ -1370,12 +1390,16 @@
    "issued": "2026-10-04T19:44:38"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000762": {
-   "label": "Aeromona",
+   "label": "Aeromonas",
    "keys": [
-    "aeromona"
+    "aeromona",
+    "aeromonas"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:38"
+   "issued": "2026-10-04T19:44:38",
+   "former_labels": [
+    "Aeromona"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000763": {
    "label": "Aeromonas Hydrophila",
@@ -1932,7 +1956,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000832": {
    "label": "Amputation",
    "keys": [
-    "amputation"
+    "amputation",
+    "amputationsurgery"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:39"
@@ -1966,8 +1991,11 @@
    "keys": [
     "amputationsurgery"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:39",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000832",
+   "obsoleted": "2026-10-28T13:39:35",
+   "why": "merged into 'Amputation' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000837": {
    "label": "Amputation/Death",
@@ -2010,12 +2038,16 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000842": {
-   "label": "Anaerobic Bacterial Infection",
+   "label": "Anaerobic Bacterial Infection Process",
    "keys": [
-    "anaerobicbacterialinfection"
+    "anaerobicbacterialinfection",
+    "anaerobicbacterialinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Anaerobic Bacterial Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000843": {
    "label": "Anaerobic Bacterium",
@@ -2490,12 +2522,16 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000902": {
-   "label": "Anti-Infection",
+   "label": "Anti-Infection Process",
    "keys": [
-    "antiinfection"
+    "antiinfection",
+    "antiinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Anti-Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000903": {
    "label": "Anti-Infection Treatment",
@@ -2978,12 +3014,16 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000963": {
-   "label": "Antimicrobial Property",
+   "label": "Antimicrobial Characteristic",
    "keys": [
-    "antimicrobialproperty"
+    "antimicrobialproperty",
+    "antimicrobialcharacteristic"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Antimicrobial Property"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0000964": {
    "label": "Antimicrobial Prophylaxis",
@@ -3282,12 +3322,16 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001001": {
-   "label": "Apophysomyces Infection",
+   "label": "Apophysomyces Infection Process",
    "keys": [
-    "apophysomycesinfection"
+    "apophysomycesinfection",
+    "apophysomycesinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Apophysomyces Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001002": {
    "label": "Apoptosis-Related Protein",
@@ -4258,12 +4302,16 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001123": {
-   "label": "Bacterial Infection",
+   "label": "Bacterial Infection Process",
    "keys": [
-    "bacterialinfection"
+    "bacterialinfection",
+    "bacterialinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Bacterial Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001124": {
    "label": "Bacterial Isolate",
@@ -4434,12 +4482,16 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001145": {
-   "label": "Bacteroide",
+   "label": "Bacteroides",
    "keys": [
-    "bacteroide"
+    "bacteroide",
+    "bacteroides"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Bacteroide"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001146": {
    "label": "Bacteroides Fragilis",
@@ -5182,8 +5234,11 @@
    "keys": [
     "biofilminfection"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:39",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001246",
+   "obsoleted": "2026-10-28T13:39:44",
+   "why": "merged into 'Biofilm-Associated Infection' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001239": {
    "label": "Biofilm Inhibition",
@@ -5242,12 +5297,17 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001246": {
-   "label": "Biofilm-Associated Infection",
+   "label": "Biofilm-Associated Infection Process",
    "keys": [
-    "biofilmassociatedinfection"
+    "biofilmassociatedinfection",
+    "biofilminfection",
+    "biofilmassociatedinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Biofilm-Associated Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001247": {
    "label": "Biofilm-Disruptive Property",
@@ -5538,12 +5598,16 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001283": {
-   "label": "Biopsy Sample",
+   "label": "Biopsy Material",
    "keys": [
-    "biopsysample"
+    "biopsysample",
+    "biopsymaterial"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Biopsy Sample"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001284": {
    "label": "Biopsy Site",
@@ -5764,7 +5828,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001311": {
    "label": "Blood Vessel",
    "keys": [
-    "bloodvessel"
+    "bloodvessel",
+    "vessel"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:39"
@@ -5778,12 +5843,16 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001313": {
-   "label": "Bloodstream Infection",
+   "label": "Bloodstream Infection Process",
    "keys": [
-    "bloodstreaminfection"
+    "bloodstreaminfection",
+    "bloodstreaminfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Bloodstream Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001314": {
    "label": "Blue Light Treatment",
@@ -5890,12 +5959,16 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001327": {
-   "label": "Bone And Joint Infection",
+   "label": "Bone And Joint Infection Process",
    "keys": [
-    "boneandjointinfection"
+    "boneandjointinfection",
+    "boneandjointinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Bone And Joint Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001328": {
    "label": "Bone And Soft-Tissue Reconstruction",
@@ -7338,12 +7411,16 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001508": {
-   "label": "Candida Albican",
+   "label": "Candida Albicans",
    "keys": [
-    "candidaalbican"
+    "candidaalbican",
+    "candidaalbicans"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Candida Albican"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001509": {
    "label": "Candida Parapsilosis",
@@ -7682,12 +7759,16 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001551": {
-   "label": "Catheter-Associated Urinary Tract Infection",
+   "label": "Catheter-Associated Urinary Tract Infection Process",
    "keys": [
-    "catheterassociatedurinarytractinfection"
+    "catheterassociatedurinarytractinfection",
+    "catheterassociatedurinarytractinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Catheter-Associated Urinary Tract Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001552": {
    "label": "Cathodal Direct Current",
@@ -8850,12 +8931,16 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001697": {
-   "label": "Chronic Wound Infection",
+   "label": "Chronic Wound Infection Process",
    "keys": [
-    "chronicwoundinfection"
+    "chronicwoundinfection",
+    "chronicwoundinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Chronic Wound Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001698": {
    "label": "Chronic Wound Microenvironment",
@@ -9154,12 +9239,16 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001735": {
-   "label": "Clinical Infection",
+   "label": "Clinical Infection Process",
    "keys": [
-    "clinicalinfection"
+    "clinicalinfection",
+    "clinicalinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Clinical Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001736": {
    "label": "Clinical Isolate",
@@ -9330,12 +9419,16 @@
    "issued": "2026-10-04T19:44:39"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001757": {
-   "label": "Clostridioides Difficile Infection",
+   "label": "Clostridioides Difficile Infection Process",
    "keys": [
-    "clostridioidesdifficileinfection"
+    "clostridioidesdifficileinfection",
+    "clostridioidesdifficileinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:39"
+   "issued": "2026-10-04T19:44:39",
+   "former_labels": [
+    "Clostridioides Difficile Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001758": {
    "label": "Clostridium Perfringe",
@@ -11574,12 +11667,16 @@
    "issued": "2026-10-04T19:44:40"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002037": {
-   "label": "Cutibacterium Acne",
+   "label": "Cutibacterium Acnes",
    "keys": [
-    "cutibacteriumacne"
+    "cutibacteriumacne",
+    "cutibacteriumacnes"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:40"
+   "issued": "2026-10-04T19:44:40",
+   "former_labels": [
+    "Cutibacterium Acne"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002038": {
    "label": "Cutometer",
@@ -11864,7 +11961,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002073": {
    "label": "Debridement Method",
    "keys": [
-    "debridementmethod"
+    "debridementmethod",
+    "debridementmodality"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:40"
@@ -11874,8 +11972,11 @@
    "keys": [
     "debridementmodality"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:40"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:40",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002073",
+   "obsoleted": "2026-10-28T13:40:03",
+   "why": "merged into 'Debridement Method' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002075": {
    "label": "Debridement Of Necrotic Tissue",
@@ -12038,12 +12139,16 @@
    "issued": "2026-10-04T19:44:40"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002095": {
-   "label": "Deep Infection",
+   "label": "Deep Infection Process",
    "keys": [
-    "deepinfection"
+    "deepinfection",
+    "deepinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:40"
+   "issued": "2026-10-04T19:44:40",
+   "former_labels": [
+    "Deep Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002096": {
    "label": "Deep Injury",
@@ -12090,8 +12195,11 @@
    "keys": [
     "deepseconddegreeburn"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:40"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:40",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007838",
+   "obsoleted": "2026-10-30T19:42:30",
+   "why": "merged into 'Deep II Degree Burn Wound' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002102": {
    "label": "Deep Soft Tissue",
@@ -12110,12 +12218,16 @@
    "issued": "2026-10-04T19:44:40"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002104": {
-   "label": "Deep Sternal Wound Infection",
+   "label": "Deep Sternal Wound Infection Process",
    "keys": [
-    "deepsternalwoundinfection"
+    "deepsternalwoundinfection",
+    "deepsternalwoundinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:40"
+   "issued": "2026-10-04T19:44:40",
+   "former_labels": [
+    "Deep Sternal Wound Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002105": {
    "label": "Deep Sternal Wound Infection Management",
@@ -12126,12 +12238,16 @@
    "issued": "2026-10-04T19:44:40"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002106": {
-   "label": "Deep Surgical Site Infection",
+   "label": "Deep Surgical Site Infection Process",
    "keys": [
-    "deepsurgicalsiteinfection"
+    "deepsurgicalsiteinfection",
+    "deepsurgicalsiteinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:40"
+   "issued": "2026-10-04T19:44:40",
+   "former_labels": [
+    "Deep Surgical Site Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002107": {
    "label": "Deep Thermal Burn",
@@ -12254,12 +12370,16 @@
    "issued": "2026-10-04T19:44:40"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002122": {
-   "label": "Deep-Tissue Infection",
+   "label": "Deep-Tissue Infection Process",
    "keys": [
-    "deeptissueinfection"
+    "deeptissueinfection",
+    "deeptissueinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:40"
+   "issued": "2026-10-04T19:44:40",
+   "former_labels": [
+    "Deep-Tissue Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002123": {
    "label": "Deeper Tissue",
@@ -13014,12 +13134,16 @@
    "issued": "2026-10-04T19:44:40"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002217": {
-   "label": "Diabetes Mellitus Type-2",
+   "label": "Type 2 Diabetes Mellitus",
    "keys": [
-    "diabetesmellitustype2"
+    "diabetesmellitustype2",
+    "type2diabetesmellitus"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:40"
+   "issued": "2026-10-04T19:44:40",
+   "former_labels": [
+    "Diabetes Mellitus Type-2"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002218": {
    "label": "Diabetes-Related Complication",
@@ -13422,12 +13546,16 @@
    "issued": "2026-10-04T19:44:40"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002268": {
-   "label": "Diabetic Foot-Related Infection",
+   "label": "Diabetic Foot-Related Infection Process",
    "keys": [
-    "diabeticfootrelatedinfection"
+    "diabeticfootrelatedinfection",
+    "diabeticfootrelatedinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:40"
+   "issued": "2026-10-04T19:44:40",
+   "former_labels": [
+    "Diabetic Foot-Related Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002269": {
    "label": "Diabetic Insole",
@@ -13542,12 +13670,16 @@
    "issued": "2026-10-04T19:44:40"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002283": {
-   "label": "Diabetic Wound Infection",
+   "label": "Diabetic Wound Infection Process",
    "keys": [
-    "diabeticwoundinfection"
+    "diabeticwoundinfection",
+    "diabeticwoundinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:40"
+   "issued": "2026-10-04T19:44:40",
+   "former_labels": [
+    "Diabetic Wound Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002284": {
    "label": "Diabetic Wound Microenvironment",
@@ -13576,7 +13708,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002287": {
    "label": "Diabetic Wound Treatment",
    "keys": [
-    "diabeticwoundtreatment"
+    "diabeticwoundtreatment",
+    "treatmentofdiabeticwound"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:40"
@@ -14542,12 +14675,16 @@
    "issued": "2026-10-04T19:44:40"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002408": {
-   "label": "Driveline Infection",
+   "label": "Driveline Infection Process",
    "keys": [
-    "drivelineinfection"
+    "drivelineinfection",
+    "drivelineinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:40"
+   "issued": "2026-10-04T19:44:40",
+   "former_labels": [
+    "Driveline Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002409": {
    "label": "Drug Delivery System",
@@ -14582,12 +14719,16 @@
    "issued": "2026-10-04T19:44:40"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002413": {
-   "label": "Drug-Resistant Bacterial Infection",
+   "label": "Drug-Resistant Bacterial Infection Process",
    "keys": [
-    "drugresistantbacterialinfection"
+    "drugresistantbacterialinfection",
+    "drugresistantbacterialinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:40"
+   "issued": "2026-10-04T19:44:40",
+   "former_labels": [
+    "Drug-Resistant Bacterial Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002414": {
    "label": "Drug-Resistant Bacterium",
@@ -14598,12 +14739,16 @@
    "issued": "2026-10-04T19:44:40"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002415": {
-   "label": "Drug-Resistant Wound Infection",
+   "label": "Drug-Resistant Wound Infection Process",
    "keys": [
-    "drugresistantwoundinfection"
+    "drugresistantwoundinfection",
+    "drugresistantwoundinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:40"
+   "issued": "2026-10-04T19:44:40",
+   "former_labels": [
+    "Drug-Resistant Wound Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002416": {
    "label": "Dry",
@@ -15014,12 +15159,16 @@
    "issued": "2026-10-04T19:44:40"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002467": {
-   "label": "Early Infection",
+   "label": "Early Infection Process",
    "keys": [
-    "earlyinfection"
+    "earlyinfection",
+    "earlyinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:40"
+   "issued": "2026-10-04T19:44:40",
+   "former_labels": [
+    "Early Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002468": {
    "label": "Early Postoperative Complication",
@@ -18754,12 +18903,16 @@
    "issued": "2026-10-04T19:44:41"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002934": {
-   "label": "Flood-Related Soft Tissue Infection",
+   "label": "Flood-Related Soft Tissue Infection Process",
    "keys": [
-    "floodrelatedsofttissueinfection"
+    "floodrelatedsofttissueinfection",
+    "floodrelatedsofttissueinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:41"
+   "issued": "2026-10-04T19:44:41",
+   "former_labels": [
+    "Flood-Related Soft Tissue Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002935": {
    "label": "Flow",
@@ -19026,12 +19179,16 @@
    "issued": "2026-10-04T19:44:41"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002968": {
-   "label": "Foot Infection",
+   "label": "Foot Infection Process",
    "keys": [
-    "footinfection"
+    "footinfection",
+    "footinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:41"
+   "issued": "2026-10-04T19:44:41",
+   "former_labels": [
+    "Foot Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002969": {
    "label": "Foot Infection Grade",
@@ -19426,12 +19583,16 @@
    "issued": "2026-10-04T19:44:42"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003018": {
-   "label": "Fracture-Related Infection",
+   "label": "Fracture-Related Infection Process",
    "keys": [
-    "fracturerelatedinfection"
+    "fracturerelatedinfection",
+    "fracturerelatedinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:42"
+   "issued": "2026-10-04T19:44:42",
+   "former_labels": [
+    "Fracture-Related Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003019": {
    "label": "Fragile Skin",
@@ -19762,12 +19923,16 @@
    "issued": "2026-10-04T19:44:42"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003060": {
-   "label": "Fungal Infection",
+   "label": "Fungal Infection Process",
    "keys": [
-    "fungalinfection"
+    "fungalinfection",
+    "fungalinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:42"
+   "issued": "2026-10-04T19:44:42",
+   "former_labels": [
+    "Fungal Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003061": {
    "label": "Fungal Keratitis",
@@ -20738,12 +20903,16 @@
    "issued": "2026-10-04T19:44:42"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003182": {
-   "label": "Graft Infection",
+   "label": "Graft Infection Process",
    "keys": [
-    "graftinfection"
+    "graftinfection",
+    "graftinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:42"
+   "issued": "2026-10-04T19:44:42",
+   "former_labels": [
+    "Graft Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003183": {
    "label": "Graft Integration",
@@ -21770,12 +21939,16 @@
    "issued": "2026-10-04T19:44:42"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003311": {
-   "label": "Healthcare-Associated Infection",
+   "label": "Healthcare-Associated Infection Process",
    "keys": [
-    "healthcareassociatedinfection"
+    "healthcareassociatedinfection",
+    "healthcareassociatedinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:42"
+   "issued": "2026-10-04T19:44:42",
+   "former_labels": [
+    "Healthcare-Associated Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003312": {
    "label": "Healthy Granulation Tissue",
@@ -22570,12 +22743,16 @@
    "issued": "2026-10-04T19:44:42"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003411": {
-   "label": "Hospital-Acquired Infection",
+   "label": "Hospital-Acquired Infection Process",
    "keys": [
-    "hospitalacquiredinfection"
+    "hospitalacquiredinfection",
+    "hospitalacquiredinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:42"
+   "issued": "2026-10-04T19:44:42",
+   "former_labels": [
+    "Hospital-Acquired Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003412": {
    "label": "Hospital-Acquired Pressure Ulcer",
@@ -23970,12 +24147,16 @@
    "issued": "2026-10-04T19:44:43"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003586": {
-   "label": "Immunodeficiency",
+   "label": "Immunodeficiency Disorder",
    "keys": [
-    "immunodeficiency"
+    "immunodeficiency",
+    "immunodeficiencydisorder"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:43"
+   "issued": "2026-10-04T19:44:43",
+   "former_labels": [
+    "Immunodeficiency"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003587": {
    "label": "Immunofluorescence Method",
@@ -24062,8 +24243,11 @@
    "keys": [
     "immunosuppressiveagent"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:43"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:43",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003599",
+   "obsoleted": "2026-10-28T13:40:36",
+   "why": "merged into 'Immunosuppressive Drug' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003598": {
    "label": "Immunosuppressive Cell",
@@ -24076,7 +24260,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003599": {
    "label": "Immunosuppressive Drug",
    "keys": [
-    "immunosuppressivedrug"
+    "immunosuppressivedrug",
+    "immunosuppressiveagent"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:43"
@@ -24290,12 +24475,16 @@
    "issued": "2026-10-04T19:44:43"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003626": {
-   "label": "Implant-Associated Infection",
+   "label": "Implant-Associated Infection Process",
    "keys": [
-    "implantassociatedinfection"
+    "implantassociatedinfection",
+    "implantassociatedinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:43"
+   "issued": "2026-10-04T19:44:43",
+   "former_labels": [
+    "Implant-Associated Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003627": {
    "label": "Implant-Based Breast Reconstruction",
@@ -24466,12 +24655,16 @@
    "issued": "2026-10-04T19:44:43"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003648": {
-   "label": "Incisional Surgical Site Infection",
+   "label": "Incisional Surgical Site Infection Process",
    "keys": [
-    "incisionalsurgicalsiteinfection"
+    "incisionalsurgicalsiteinfection",
+    "incisionalsurgicalsiteinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:43"
+   "issued": "2026-10-04T19:44:43",
+   "former_labels": [
+    "Incisional Surgical Site Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003649": {
    "label": "Income",
@@ -24546,12 +24739,16 @@
    "issued": "2026-10-04T19:44:43"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003658": {
-   "label": "Index Infection",
+   "label": "Index Infection Process",
    "keys": [
-    "indexinfection"
+    "indexinfection",
+    "indexinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:43"
+   "issued": "2026-10-04T19:44:43",
+   "former_labels": [
+    "Index Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003659": {
    "label": "Index Ulcer",
@@ -24894,8 +25091,11 @@
    "keys": [
     "infectionsign"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:43"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:43",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006353",
+   "obsoleted": "2026-10-28T13:41:34",
+   "why": "merged into 'Signs Of Infection' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003702": {
    "label": "Infection Status",
@@ -24970,12 +25170,16 @@
    "issued": "2026-10-04T19:44:43"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003711": {
-   "label": "Inflammation/Infection",
+   "label": "Inflammation/Infection Process",
    "keys": [
-    "inflammationinfection"
+    "inflammationinfection",
+    "inflammationinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:43"
+   "issued": "2026-10-04T19:44:43",
+   "former_labels": [
+    "Inflammation/Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003712": {
    "label": "Inflammatory And Oxidative-Stress Pathway",
@@ -25038,8 +25242,11 @@
    "keys": [
     "inflammatorycytokine"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:43"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:43",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005664",
+   "obsoleted": "2026-10-28T13:41:21",
+   "why": "merged into 'Pro-Inflammatory Cytokine' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003720": {
    "label": "Inflammatory Cytokine Level",
@@ -26394,12 +26601,16 @@
    "issued": "2026-10-04T19:44:44"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003889": {
-   "label": "Invasive Infection",
+   "label": "Invasive Infection Process",
    "keys": [
-    "invasiveinfection"
+    "invasiveinfection",
+    "invasiveinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:44"
+   "issued": "2026-10-04T19:44:44",
+   "former_labels": [
+    "Invasive Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003890": {
    "label": "Invasive Mucormycosis",
@@ -26882,12 +27093,16 @@
    "issued": "2026-10-04T19:44:44"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003950": {
-   "label": "Keloid",
+   "label": "Keloid Tissue",
    "keys": [
-    "keloid"
+    "keloid",
+    "keloidtissue"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:44"
+   "issued": "2026-10-04T19:44:44",
+   "former_labels": [
+    "Keloid"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003951": {
    "label": "Keloid Fibroblast",
@@ -27076,7 +27291,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003974": {
    "label": "Klebsiella",
    "keys": [
-    "klebsiella"
+    "klebsiella",
+    "klebsiellaspp"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:44"
@@ -27094,8 +27310,11 @@
    "keys": [
     "klebsiellaspp"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:44"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:44",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003974",
+   "obsoleted": "2026-10-28T13:40:43",
+   "why": "merged into 'Klebsiella' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0003977": {
    "label": "Knee",
@@ -27834,12 +28053,16 @@
    "issued": "2026-10-04T19:44:44"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004069": {
-   "label": "Light Chain 3",
+   "label": "Light Chain 3 Gene",
    "keys": [
-    "lightchain3"
+    "lightchain3",
+    "lightchain3gene"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:44"
+   "issued": "2026-10-04T19:44:44",
+   "former_labels": [
+    "Light Chain 3"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004070": {
    "label": "Light Irradiation",
@@ -28234,12 +28457,16 @@
    "issued": "2026-10-04T19:44:44"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004119": {
-   "label": "Local Infection",
+   "label": "Local Infection Process",
    "keys": [
-    "localinfection"
+    "localinfection",
+    "localinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:44"
+   "issued": "2026-10-04T19:44:44",
+   "former_labels": [
+    "Local Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004120": {
    "label": "Local Infection Control",
@@ -28834,12 +29061,16 @@
    "issued": "2026-10-04T19:44:44"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004194": {
-   "label": "Lower Albumin",
+   "label": "Lower Albumin Level",
    "keys": [
-    "loweralbumin"
+    "loweralbumin",
+    "loweralbuminlevel"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:44"
+   "issued": "2026-10-04T19:44:44",
+   "former_labels": [
+    "Lower Albumin"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004195": {
    "label": "Lower Extremity",
@@ -28986,12 +29217,16 @@
    "issued": "2026-10-04T19:44:45"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004213": {
-   "label": "Lower Extremity-Region Infection",
+   "label": "Lower Extremity-Region Infection Process",
    "keys": [
-    "lowerextremityregioninfection"
+    "lowerextremityregioninfection",
+    "lowerextremityregioninfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:45"
+   "issued": "2026-10-04T19:44:45",
+   "former_labels": [
+    "Lower Extremity-Region Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004214": {
    "label": "Lower Serum Albumin",
@@ -29234,12 +29469,16 @@
    "issued": "2026-10-04T19:44:45"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004244": {
-   "label": "MRI",
+   "label": "Magnetic Resonance Imaging",
    "keys": [
-    "mri"
+    "mri",
+    "magneticresonanceimaging"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:45"
+   "issued": "2026-10-04T19:44:45",
+   "former_labels": [
+    "MRI"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004245": {
    "label": "MRSA Strain",
@@ -31450,12 +31689,16 @@
    "issued": "2026-10-04T19:44:45"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004521": {
-   "label": "Moderate/Severe Infection",
+   "label": "Moderate/Severe Infection Process",
    "keys": [
-    "moderatesevereinfection"
+    "moderatesevereinfection",
+    "moderatesevereinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:45"
+   "issued": "2026-10-04T19:44:45",
+   "former_labels": [
+    "Moderate/Severe Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004522": {
    "label": "Modifiable Risk Factor",
@@ -31754,12 +31997,16 @@
    "issued": "2026-10-04T19:44:46"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004559": {
-   "label": "Monomicrobial Infection",
+   "label": "Monomicrobial Infection Process",
    "keys": [
-    "monomicrobialinfection"
+    "monomicrobialinfection",
+    "monomicrobialinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:46"
+   "issued": "2026-10-04T19:44:46",
+   "former_labels": [
+    "Monomicrobial Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004560": {
    "label": "Monounsaturated Fatty Acid",
@@ -32042,12 +32289,16 @@
    "issued": "2026-10-04T19:44:46"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004595": {
-   "label": "Multidrug-Resistant Bacterial Infection",
+   "label": "Multidrug-Resistant Bacterial Infection Process",
    "keys": [
-    "multidrugresistantbacterialinfection"
+    "multidrugresistantbacterialinfection",
+    "multidrugresistantbacterialinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:46"
+   "issued": "2026-10-04T19:44:46",
+   "former_labels": [
+    "Multidrug-Resistant Bacterial Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004596": {
    "label": "Multidrug-Resistant Clinical Isolate",
@@ -32082,12 +32333,16 @@
    "issued": "2026-10-04T19:44:46"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004600": {
-   "label": "Multidrug-Resistant Organisms Infection",
+   "label": "Multidrug-Resistant Organisms Infection Process",
    "keys": [
-    "multidrugresistantorganismsinfection"
+    "multidrugresistantorganismsinfection",
+    "multidrugresistantorganismsinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:46"
+   "issued": "2026-10-04T19:44:46",
+   "former_labels": [
+    "Multidrug-Resistant Organisms Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004601": {
    "label": "Multidrug-Resistant P. Aeruginosa",
@@ -32284,7 +32539,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004625": {
    "label": "Muscle",
    "keys": [
-    "muscle"
+    "muscle",
+    "muscletissue"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:46"
@@ -32342,8 +32598,11 @@
    "keys": [
     "muscletissue"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:46"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:46",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004625",
+   "obsoleted": "2026-10-28T13:40:58",
+   "why": "merged into 'Muscle' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004633": {
    "label": "Musculocutaneous Perforator",
@@ -32378,12 +32637,16 @@
    "issued": "2026-10-04T19:44:46"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004637": {
-   "label": "Musculoskeletal Soft Tissue Infection",
+   "label": "Musculoskeletal Soft Tissue Infection Process",
    "keys": [
-    "musculoskeletalsofttissueinfection"
+    "musculoskeletalsofttissueinfection",
+    "musculoskeletalsofttissueinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:46"
+   "issued": "2026-10-04T19:44:46",
+   "former_labels": [
+    "Musculoskeletal Soft Tissue Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004638": {
    "label": "Music-Based Therapy",
@@ -32706,12 +32969,16 @@
    "issued": "2026-10-04T19:44:46"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004678": {
-   "label": "Nanoparticles Of Silver",
+   "label": "Silver Nanoparticle",
    "keys": [
-    "nanoparticlesofsilver"
+    "nanoparticlesofsilver",
+    "silvernanoparticle"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:46"
+   "issued": "2026-10-04T19:44:46",
+   "former_labels": [
+    "Nanoparticles Of Silver"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004679": {
    "label": "Nanoplatform",
@@ -33026,20 +33293,28 @@
    "issued": "2026-10-04T19:44:46"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004718": {
-   "label": "Necrotizing Infection",
+   "label": "Necrotizing Infection Process",
    "keys": [
-    "necrotizinginfection"
+    "necrotizinginfection",
+    "necrotizinginfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:46"
+   "issued": "2026-10-04T19:44:46",
+   "former_labels": [
+    "Necrotizing Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004719": {
-   "label": "Necrotizing Soft Tissue Infection",
+   "label": "Necrotizing Soft Tissue Infection Process",
    "keys": [
-    "necrotizingsofttissueinfection"
+    "necrotizingsofttissueinfection",
+    "necrotizingsofttissueinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:46"
+   "issued": "2026-10-04T19:44:46",
+   "former_labels": [
+    "Necrotizing Soft Tissue Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004720": {
    "label": "Necrotizing Sweet Syndrome",
@@ -33102,8 +33377,11 @@
    "keys": [
     "negativepressuredressing"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:46"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:46",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004731",
+   "obsoleted": "2026-10-28T13:41:00",
+   "why": "merged into 'Negative Pressure Wound Therapy Dressing' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004728": {
    "label": "Negative Pressure Material",
@@ -33132,7 +33410,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004731": {
    "label": "Negative Pressure Wound Therapy Dressing",
    "keys": [
-    "negativepressurewoundtherapydressing"
+    "negativepressurewoundtherapydressing",
+    "negativepressuredressing"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:46"
@@ -34318,12 +34597,16 @@
    "issued": "2026-10-04T19:44:47"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004879": {
-   "label": "Nosocomial Infection",
+   "label": "Nosocomial Infection Process",
    "keys": [
-    "nosocomialinfection"
+    "nosocomialinfection",
+    "nosocomialinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:47"
+   "issued": "2026-10-04T19:44:47",
+   "former_labels": [
+    "Nosocomial Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004880": {
    "label": "Nosocomial Pathogen",
@@ -34730,13 +35013,17 @@
    "keys": [
     "offloadingmodality"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:47"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:47",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004931",
+   "obsoleted": "2026-10-28T13:41:04",
+   "why": "merged into 'Offloading Therapy' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004931": {
    "label": "Offloading Therapy",
    "keys": [
-    "offloadingtherapy"
+    "offloadingtherapy",
+    "offloadingmodality"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:47"
@@ -35118,12 +35405,16 @@
    "issued": "2026-10-04T19:44:47"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004979": {
-   "label": "Opportunistic Infection",
+   "label": "Opportunistic Infection Process",
    "keys": [
-    "opportunisticinfection"
+    "opportunisticinfection",
+    "opportunisticinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:47"
+   "issued": "2026-10-04T19:44:47",
+   "former_labels": [
+    "Opportunistic Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004980": {
    "label": "Opportunistic Pathogen",
@@ -35198,12 +35489,16 @@
    "issued": "2026-10-04T19:44:47"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004989": {
-   "label": "Oral Mucosal Ulcer",
+   "label": "Oral Ulcer",
    "keys": [
-    "oralmucosalwound"
+    "oralmucosalwound",
+    "oralwound"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:47"
+   "issued": "2026-10-04T19:44:47",
+   "former_labels": [
+    "Oral Mucosal Ulcer"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0004990": {
    "label": "Oral Mucositis",
@@ -35302,12 +35597,16 @@
    "issued": "2026-10-04T19:44:47"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005002": {
-   "label": "Organ Space Infection",
+   "label": "Organ Space Infection Process",
    "keys": [
-    "organspaceinfection"
+    "organspaceinfection",
+    "organspaceinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:47"
+   "issued": "2026-10-04T19:44:47",
+   "former_labels": [
+    "Organ Space Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005003": {
    "label": "Original Lesion",
@@ -35526,12 +35825,16 @@
    "issued": "2026-10-04T19:44:47"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005030": {
-   "label": "Overall Infection",
+   "label": "Overall Infection Process",
    "keys": [
-    "overallinfection"
+    "overallinfection",
+    "overallinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:47"
+   "issued": "2026-10-04T19:44:47",
+   "former_labels": [
+    "Overall Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005031": {
    "label": "Overall Wound Healing",
@@ -36302,12 +36605,16 @@
    "issued": "2026-10-04T19:44:47"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005127": {
-   "label": "Pathogen Infection",
+   "label": "Pathogen Infection Process",
    "keys": [
-    "pathogeninfection"
+    "pathogeninfection",
+    "pathogeninfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:47"
+   "issued": "2026-10-04T19:44:47",
+   "former_labels": [
+    "Pathogen Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005128": {
    "label": "Pathogenesis",
@@ -37230,12 +37537,16 @@
    "issued": "2026-10-04T19:44:48"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005243": {
-   "label": "Perineal Wound Infection",
+   "label": "Perineal Wound Infection Process",
    "keys": [
-    "perinealwoundinfection"
+    "perinealwoundinfection",
+    "perinealwoundinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:48"
+   "issued": "2026-10-04T19:44:48",
+   "former_labels": [
+    "Perineal Wound Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005244": {
    "label": "Periocular Reconstruction",
@@ -37470,12 +37781,16 @@
    "issued": "2026-10-04T19:44:48"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005273": {
-   "label": "Periprosthetic Joint Infection",
+   "label": "Periprosthetic Joint Infection Process",
    "keys": [
-    "periprostheticjointinfection"
+    "periprostheticjointinfection",
+    "periprostheticjointinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:48"
+   "issued": "2026-10-04T19:44:48",
+   "former_labels": [
+    "Periprosthetic Joint Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005274": {
    "label": "Peristomal Pyoderma Gangrenosum",
@@ -37646,12 +37961,16 @@
    "issued": "2026-10-04T19:44:48"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005295": {
-   "label": "Persistent Infection",
+   "label": "Persistent Infection Process",
    "keys": [
-    "persistentinfection"
+    "persistentinfection",
+    "persistentinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:48"
+   "issued": "2026-10-04T19:44:48",
+   "former_labels": [
+    "Persistent Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005296": {
    "label": "Persistent Pain",
@@ -37856,7 +38175,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005321": {
    "label": "Pharmacological Therapy",
    "keys": [
-    "pharmacologicaltherapy"
+    "pharmacologicaltherapy",
+    "pharmacologicaltreatment"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:48"
@@ -37866,8 +38186,11 @@
    "keys": [
     "pharmacologicaltreatment"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:48"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:48",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005321",
+   "obsoleted": "2026-10-28T13:41:13",
+   "why": "merged into 'Pharmacological Therapy' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005323": {
    "label": "Pharyngocutaneous Fistula",
@@ -38182,12 +38505,16 @@
    "issued": "2026-10-04T19:44:48"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005362": {
-   "label": "Pin-Site Infection",
+   "label": "Pin-Site Infection Process",
    "keys": [
-    "pinsiteinfection"
+    "pinsiteinfection",
+    "pinsiteinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:48"
+   "issued": "2026-10-04T19:44:48",
+   "former_labels": [
+    "Pin-Site Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005363": {
    "label": "Pinpoint Bleeding",
@@ -38616,7 +38943,7 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005416": {
    "label": "Poly(ethylene Oxide)",
    "keys": [
-    "poly"
+    "polyethyleneoxide"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:48"
@@ -38822,20 +39149,28 @@
    "issued": "2026-10-04T19:44:49"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005442": {
-   "label": "Polymicrobial Infection",
+   "label": "Polymicrobial Infection Process",
    "keys": [
-    "polymicrobialinfection"
+    "polymicrobialinfection",
+    "polymicrobialinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:49"
+   "issued": "2026-10-04T19:44:49",
+   "former_labels": [
+    "Polymicrobial Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005443": {
-   "label": "Polymicrobial Wound Infection",
+   "label": "Polymicrobial Wound Infection Process",
    "keys": [
-    "polymicrobialwoundinfection"
+    "polymicrobialwoundinfection",
+    "polymicrobialwoundinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:49"
+   "issued": "2026-10-04T19:44:49",
+   "former_labels": [
+    "Polymicrobial Wound Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005444": {
    "label": "Polymorphonuclear Leukocyte",
@@ -39322,8 +39657,11 @@
    "keys": [
     "postoperativehealing"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:49"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:49",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005532",
+   "obsoleted": "2026-10-28T13:41:18",
+   "why": "merged into 'Postoperative Wound Healing Process' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005505": {
    "label": "Postoperative Health-Care-Associated Infection",
@@ -39350,12 +39688,16 @@
    "issued": "2026-10-04T19:44:49"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005508": {
-   "label": "Postoperative Infection",
+   "label": "Postoperative Infection Process",
    "keys": [
-    "postoperativeinfection"
+    "postoperativeinfection",
+    "postoperativeinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:49"
+   "issued": "2026-10-04T19:44:49",
+   "former_labels": [
+    "Postoperative Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005509": {
    "label": "Postoperative Infection Complication",
@@ -39486,12 +39828,16 @@
    "issued": "2026-10-04T19:44:49"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005525": {
-   "label": "Postoperative Surgical Site Infection",
+   "label": "Postoperative Surgical Site Infection Process",
    "keys": [
-    "postoperativesurgicalsiteinfection"
+    "postoperativesurgicalsiteinfection",
+    "postoperativesurgicalsiteinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:49"
+   "issued": "2026-10-04T19:44:49",
+   "former_labels": [
+    "Postoperative Surgical Site Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005526": {
    "label": "Postoperative Surgical Wound Dehiscence",
@@ -39544,18 +39890,23 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005532": {
    "label": "Postoperative Wound Healing Process",
    "keys": [
-    "postoperativewoundhealingprocess"
+    "postoperativewoundhealingprocess",
+    "postoperativehealing"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:49"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005533": {
-   "label": "Postoperative Wound Infection",
+   "label": "Postoperative Wound Infection Process",
    "keys": [
-    "postoperativewoundinfection"
+    "postoperativewoundinfection",
+    "postoperativewoundinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:49"
+   "issued": "2026-10-04T19:44:49",
+   "former_labels": [
+    "Postoperative Wound Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005534": {
    "label": "Postpartum Bleeding",
@@ -40604,7 +40955,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005664": {
    "label": "Pro-Inflammatory Cytokine",
    "keys": [
-    "proinflammatorycytokine"
+    "proinflammatorycytokine",
+    "inflammatorycytokine"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:49"
@@ -40850,12 +41202,16 @@
    "issued": "2026-10-04T19:44:50"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005695": {
-   "label": "Progressive Infection",
+   "label": "Progressive Infection Process",
    "keys": [
-    "progressiveinfection"
+    "progressiveinfection",
+    "progressiveinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:50"
+   "issued": "2026-10-04T19:44:50",
+   "former_labels": [
+    "Progressive Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005696": {
    "label": "Progressive Necrosis",
@@ -41210,12 +41566,16 @@
    "issued": "2026-10-04T19:44:50"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005740": {
-   "label": "Prosthetic Joint Infection",
+   "label": "Prosthetic Joint Infection Process",
    "keys": [
-    "prostheticjointinfection"
+    "prostheticjointinfection",
+    "prostheticjointinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:50"
+   "issued": "2026-10-04T19:44:50",
+   "former_labels": [
+    "Prosthetic Joint Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005741": {
    "label": "Prosthetic Material",
@@ -41276,7 +41636,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005748": {
    "label": "Protective Device",
    "keys": [
-    "protectivedevice"
+    "protectivedevice",
+    "protectiveequipment"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:50"
@@ -41286,8 +41647,11 @@
    "keys": [
     "protectiveequipment"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:50"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:50",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005748",
+   "obsoleted": "2026-10-28T13:41:22",
+   "why": "merged into 'Protective Device' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005750": {
    "label": "Protein Expression",
@@ -42202,12 +42566,16 @@
    "issued": "2026-10-04T19:44:50"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005864": {
-   "label": "Re-Infection",
+   "label": "Re-Infection Process",
    "keys": [
-    "reinfection"
+    "reinfection",
+    "reinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:50"
+   "issued": "2026-10-04T19:44:50",
+   "former_labels": [
+    "Re-Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005865": {
    "label": "Re-Pigmentation",
@@ -42778,12 +43146,16 @@
    "issued": "2026-10-04T19:44:50"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005936": {
-   "label": "Recurrent Infection",
+   "label": "Recurrent Infection Process",
    "keys": [
-    "recurrentinfection"
+    "recurrentinfection",
+    "recurrentinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:50"
+   "issued": "2026-10-04T19:44:50",
+   "former_labels": [
+    "Recurrent Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005937": {
    "label": "Recurrent Oral Ulcer",
@@ -42982,16 +43354,22 @@
    "keys": [
     "reductioninwoundsize"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:51"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:51",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007717",
+   "obsoleted": "2026-10-28T13:42:01",
+   "why": "merged into 'Wound Size Reduction' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005962": {
    "label": "Reduction In Wound Area",
    "keys": [
     "reductioninwoundarea"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:51"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:51",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007562",
+   "obsoleted": "2026-10-28T13:41:58",
+   "why": "merged into 'Wound Area Reduction' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005963": {
    "label": "Reduction In Wound Depth",
@@ -43058,12 +43436,16 @@
    "issued": "2026-10-04T19:44:51"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005971": {
-   "label": "Refractory Infection",
+   "label": "Refractory Infection Process",
    "keys": [
-    "refractoryinfection"
+    "refractoryinfection",
+    "refractoryinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:51"
+   "issued": "2026-10-04T19:44:51",
+   "former_labels": [
+    "Refractory Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005972": {
    "label": "Refractory Skin Ulcer",
@@ -43212,7 +43594,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005990": {
    "label": "Regenerative Method",
    "keys": [
-    "regenerativemethod"
+    "regenerativemethod",
+    "regenerativeprocedure"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:51"
@@ -43246,8 +43629,11 @@
    "keys": [
     "regenerativeprocedure"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:51"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:51",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005990",
+   "obsoleted": "2026-10-28T13:41:27",
+   "why": "merged into 'Regenerative Method' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0005995": {
    "label": "Regenerative Process",
@@ -45742,12 +46128,16 @@
    "issued": "2026-10-04T19:44:52"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006306": {
-   "label": "Serious Infection",
+   "label": "Serious Infection Process",
    "keys": [
-    "seriousinfection"
+    "seriousinfection",
+    "seriousinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:52"
+   "issued": "2026-10-04T19:44:52",
+   "former_labels": [
+    "Serious Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006307": {
    "label": "Serious Injury",
@@ -46120,7 +46510,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006353": {
    "label": "Signs Of Infection",
    "keys": [
-    "signsofinfection"
+    "signsofinfection",
+    "infectionsign"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:53"
@@ -46242,8 +46633,11 @@
    "keys": [
     "silverhydrofibredressing"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:53"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:53",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006382",
+   "obsoleted": "2026-10-28T13:41:35",
+   "why": "merged into 'Silver-Impregnated Hydrofiber Dressing' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006369": {
    "label": "Silver Hydrogel",
@@ -46322,13 +46716,17 @@
    "keys": [
     "silverbasedproduct"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:53"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:53",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006379",
+   "obsoleted": "2026-10-28T13:41:35",
+   "why": "merged into 'Silver-Containing Product' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006379": {
    "label": "Silver-Containing Product",
    "keys": [
-    "silvercontainingproduct"
+    "silvercontainingproduct",
+    "silverbasedproduct"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:53"
@@ -46352,7 +46750,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006382": {
    "label": "Silver-Impregnated Hydrofiber Dressing",
    "keys": [
-    "silverimpregnatedhydrofiberdressing"
+    "silverimpregnatedhydrofiberdressing",
+    "silverhydrofibredressing"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:53"
@@ -46534,12 +46933,16 @@
    "issued": "2026-10-04T19:44:53"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006405": {
-   "label": "Skin And Soft Tissue Infection",
+   "label": "Skin And Soft Tissue Infection Process",
    "keys": [
-    "skinandsofttissueinfection"
+    "skinandsofttissueinfection",
+    "skinandsofttissueinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:53"
+   "issued": "2026-10-04T19:44:53",
+   "former_labels": [
+    "Skin And Soft Tissue Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006406": {
    "label": "Skin Angiosarcoma",
@@ -46902,12 +47305,16 @@
    "issued": "2026-10-04T19:44:53"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006451": {
-   "label": "Skin Infection",
+   "label": "Skin Infection Process",
    "keys": [
-    "skininfection"
+    "skininfection",
+    "skininfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:53"
+   "issued": "2026-10-04T19:44:53",
+   "former_labels": [
+    "Skin Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006452": {
    "label": "Skin Inspection",
@@ -47390,12 +47797,16 @@
    "issued": "2026-10-04T19:44:53"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006512": {
-   "label": "Skin Wound Infection",
+   "label": "Skin Wound Infection Process",
    "keys": [
-    "skinwoundinfection"
+    "skinwoundinfection",
+    "skinwoundinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:53"
+   "issued": "2026-10-04T19:44:53",
+   "former_labels": [
+    "Skin Wound Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006513": {
    "label": "Skin Wound Repair",
@@ -47862,12 +48273,16 @@
    "issued": "2026-10-04T19:44:53"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006571": {
-   "label": "Soft Tissue Infection",
+   "label": "Soft Tissue Infection Process",
    "keys": [
-    "softtissueinfection"
+    "softtissueinfection",
+    "softtissueinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:54"
+   "issued": "2026-10-04T19:44:54",
+   "former_labels": [
+    "Soft Tissue Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006572": {
    "label": "Soft Tissue Integrity",
@@ -48528,7 +48943,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006654": {
    "label": "Staphylococcus",
    "keys": [
-    "staphylococcus"
+    "staphylococcus",
+    "staphylococcusspp"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:54"
@@ -48562,8 +48978,11 @@
    "keys": [
     "staphylococcusspp"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:54"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:54",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006654",
+   "obsoleted": "2026-10-28T13:41:40",
+   "why": "merged into 'Staphylococcus' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006659": {
    "label": "Staple",
@@ -48608,7 +49027,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006664": {
    "label": "Stem Cell Therapy",
    "keys": [
-    "stemcelltherapy"
+    "stemcelltherapy",
+    "stemcellbasedtherapy"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:54"
@@ -48626,8 +49046,11 @@
    "keys": [
     "stemcellbasedtherapy"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:54"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:54",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006664",
+   "obsoleted": "2026-10-28T13:41:40",
+   "why": "merged into 'Stem Cell Therapy' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006667": {
    "label": "Stenotic Artery",
@@ -49470,12 +49893,16 @@
    "issued": "2026-10-04T19:44:55"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006772": {
-   "label": "Superficial Infection",
+   "label": "Superficial Infection Process",
    "keys": [
-    "superficialinfection"
+    "superficialinfection",
+    "superficialinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:55"
+   "issued": "2026-10-04T19:44:55",
+   "former_labels": [
+    "Superficial Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006773": {
    "label": "Superficial Partial Thickness Burn",
@@ -49494,20 +49921,28 @@
    "issued": "2026-10-04T19:44:55"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006775": {
-   "label": "Superficial Sternal Wound Infection",
+   "label": "Superficial Sternal Wound Infection Process",
    "keys": [
-    "superficialsternalwoundinfection"
+    "superficialsternalwoundinfection",
+    "superficialsternalwoundinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:55"
+   "issued": "2026-10-04T19:44:55",
+   "former_labels": [
+    "Superficial Sternal Wound Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006776": {
-   "label": "Superficial Surgical Site Infection",
+   "label": "Superficial Surgical Site Infection Process",
    "keys": [
-    "superficialsurgicalsiteinfection"
+    "superficialsurgicalsiteinfection",
+    "superficialsurgicalsiteinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:55"
+   "issued": "2026-10-04T19:44:55",
+   "former_labels": [
+    "Superficial Surgical Site Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006777": {
    "label": "Superficial Tissue",
@@ -49566,12 +50001,16 @@
    "issued": "2026-10-04T19:44:55"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006784": {
-   "label": "Superinfection",
+   "label": "Superinfection Process",
    "keys": [
-    "superinfection"
+    "superinfection",
+    "superinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:55"
+   "issued": "2026-10-04T19:44:55",
+   "former_labels": [
+    "Superinfection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006785": {
    "label": "Superoxide Anion",
@@ -50042,8 +50481,11 @@
    "keys": [
     "surgicalsuture"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:55"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:55",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006869",
+   "obsoleted": "2026-10-28T13:41:44",
+   "why": "merged into 'Suture' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006844": {
    "label": "Surgical Trauma",
@@ -50134,12 +50576,16 @@
    "issued": "2026-10-04T19:44:55"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006855": {
-   "label": "Surgical Wound Infection",
+   "label": "Surgical Wound Infection Process",
    "keys": [
-    "surgicalwoundinfection"
+    "surgicalwoundinfection",
+    "surgicalwoundinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:55"
+   "issued": "2026-10-04T19:44:55",
+   "former_labels": [
+    "Surgical Wound Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006856": {
    "label": "Surgical Wound Outcome",
@@ -50248,7 +50694,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006869": {
    "label": "Suture",
    "keys": [
-    "suture"
+    "suture",
+    "surgicalsuture"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:55"
@@ -50550,12 +50997,16 @@
    "issued": "2026-10-04T19:44:55"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006907": {
-   "label": "Systemic Infection",
+   "label": "Systemic Infection Process",
    "keys": [
-    "systemicinfection"
+    "systemicinfection",
+    "systemicinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:55"
+   "issued": "2026-10-04T19:44:55",
+   "former_labels": [
+    "Systemic Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0006908": {
    "label": "Systemic Inflammatory Burden",
@@ -51290,8 +51741,11 @@
    "keys": [
     "therapy"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:56"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:56",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007243",
+   "obsoleted": "2026-10-28T13:41:51",
+   "why": "merged into 'Treatment' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007000": {
    "label": "Thermal",
@@ -53240,7 +53694,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007243": {
    "label": "Treatment",
    "keys": [
-    "treatment"
+    "treatment",
+    "therapy"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:57"
@@ -53282,8 +53737,11 @@
    "keys": [
     "treatmentofdiabeticwound"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:57"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:57",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0002287",
+   "obsoleted": "2026-10-28T13:40:08",
+   "why": "merged into 'Diabetic Wound Treatment' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007249": {
    "label": "Treatment Of Infection",
@@ -53790,12 +54248,16 @@
    "issued": "2026-10-04T19:44:57"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007312": {
-   "label": "Ulcer Risk",
+   "label": "Risk Of Wound",
    "keys": [
-    "woundrisk"
+    "woundrisk",
+    "riskofwound"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:57"
+   "issued": "2026-10-04T19:44:57",
+   "former_labels": [
+    "Ulcer Risk"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007313": {
    "label": "Ulcer Wound",
@@ -55082,8 +55544,11 @@
    "keys": [
     "vessel"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:58"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:58",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0001311",
+   "obsoleted": "2026-10-28T13:39:46",
+   "why": "merged into 'Blood Vessel' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007474": {
    "label": "Vessel Integrity",
@@ -55792,7 +56257,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007562": {
    "label": "Wound Area Reduction",
    "keys": [
-    "woundareareduction"
+    "woundareareduction",
+    "reductioninwoundarea"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:58"
@@ -55950,12 +56416,16 @@
    "issued": "2026-10-04T19:44:58"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007582": {
-   "label": "Wound Care Method",
+   "label": "Wound Care Approach",
    "keys": [
-    "woundcaremethod"
+    "woundcaremethod",
+    "woundcareapproach"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:44:58"
+   "issued": "2026-10-04T19:44:58",
+   "former_labels": [
+    "Wound Care Method"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007583": {
    "label": "Wound Care Modality",
@@ -57032,7 +57502,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007717": {
    "label": "Wound Size Reduction",
    "keys": [
-    "woundsizereduction"
+    "woundsizereduction",
+    "reductioninwoundsize"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:59"
@@ -57120,7 +57591,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007728": {
    "label": "Wound Symptom",
    "keys": [
-    "woundsymptom"
+    "woundsymptom",
+    "woundrelatedsymptom"
    ],
    "status": "active",
    "issued": "2026-10-04T19:44:59"
@@ -57370,8 +57842,11 @@
    "keys": [
     "woundrelatedsymptom"
    ],
-   "status": "active",
-   "issued": "2026-10-04T19:44:59"
+   "status": "obsolete",
+   "issued": "2026-10-04T19:44:59",
+   "replaced_by": "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007728",
+   "obsoleted": "2026-10-28T13:42:01",
+   "why": "merged into 'Wound Symptom' by a rename"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007760": {
    "label": "Wounds At Risk Of Infection",
@@ -57710,12 +58185,16 @@
    "issued": "2026-10-04T19:45:00"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007802": {
-   "label": "wound healing rate",
+   "label": "Rate of wound healing",
    "keys": [
-    "woundhealingrate"
+    "woundhealingrate",
+    "rateofwoundhealing"
    ],
    "status": "active",
-   "issued": "2026-10-04T19:45:00"
+   "issued": "2026-10-04T19:45:00",
+   "former_labels": [
+    "wound healing rate"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007803": {
    "label": "Pressure Ulcer Therapy",
@@ -57950,12 +58429,16 @@
    "issued": "2026-10-18T23:07:11"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007832": {
-   "label": "Burn Wound Infection",
+   "label": "Burn Wound Infection Process",
    "keys": [
-    "burninfection"
+    "burninfection",
+    "burninfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-18T23:07:11"
+   "issued": "2026-10-18T23:07:11",
+   "former_labels": [
+    "Burn Wound Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007833": {
    "label": "Burn Wound Progression",
@@ -58000,7 +58483,8 @@
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007838": {
    "label": "Deep II Degree Burn Wound",
    "keys": [
-    "deepiidegreeburn"
+    "deepiidegreeburn",
+    "deepseconddegreeburn"
    ],
    "status": "active",
    "issued": "2026-10-18T23:07:12"
@@ -58102,20 +58586,28 @@
    "issued": "2026-10-18T23:07:15"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007851": {
-   "label": "Invasive Fungal Infection",
+   "label": "Invasive Fungal Infection Process",
    "keys": [
-    "invasivefungalinfection"
+    "invasivefungalinfection",
+    "invasivefungalinfectionprocess"
    ],
    "status": "active",
-   "issued": "2026-10-18T23:07:15"
+   "issued": "2026-10-18T23:07:15",
+   "former_labels": [
+    "Invasive Fungal Infection"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007852": {
-   "label": "Low-Level Laser Therapy",
+   "label": "Low-Level Laser Therapy Treatment",
    "keys": [
-    "lowlevellasertherapy"
+    "lowlevellasertherapy",
+    "lowlevellasertherapytreatment"
    ],
    "status": "active",
-   "issued": "2026-10-18T23:07:15"
+   "issued": "2026-10-18T23:07:15",
+   "former_labels": [
+    "Low-Level Laser Therapy"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007853": {
    "label": "Lower Extremity Deep Vein Thrombosis",
@@ -58150,12 +58642,16 @@
    "issued": "2026-10-18T23:07:16"
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007857": {
-   "label": "Neurologic Disorder",
+   "label": "Neurological Disorder",
    "keys": [
-    "neurologicdisorder"
+    "neurologicdisorder",
+    "neurologicaldisorder"
    ],
    "status": "active",
-   "issued": "2026-10-18T23:07:16"
+   "issued": "2026-10-18T23:07:16",
+   "former_labels": [
+    "Neurologic Disorder"
+   ]
   },
   "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007858": {
    "label": "Nurses' Perception",
@@ -58268,6 +58764,310 @@
    ],
    "status": "active",
    "issued": "2026-10-18T23:07:22"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007872": {
+   "label": "Acute Postoperative Complication",
+   "keys": [
+    "acutepostoperativecomplication"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:39:32"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007873": {
+   "label": "Adiposity",
+   "keys": [
+    "adiposity"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:39:33"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007874": {
+   "label": "Advanced-Stage Pressure Ulcer",
+   "keys": [
+    "advancedstagepressurewound"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:39:33"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007875": {
+   "label": "Angiogenic Capacity",
+   "keys": [
+    "angiogeniccapacity"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:39:36"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007876": {
+   "label": "Anthracycline-Associated Cardiotoxicity",
+   "keys": [
+    "anthracyclineassociatedcardiotoxicity"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:39:36"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007877": {
+   "label": "Biopsy Procedure",
+   "keys": [
+    "biopsyprocedure"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:39:45"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007878": {
+   "label": "Deposition Of Collagen",
+   "keys": [
+    "depositionofcollagen"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:40:05"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007879": {
+   "label": "Diabetic Refractory Skin Wound",
+   "keys": [
+    "diabeticrefractoryskinwound"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:40:07"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007880": {
+   "label": "Empirical Antibiotic Treatment",
+   "keys": [
+    "empiricalantibiotictreatment"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:40:13"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007881": {
+   "label": "Gram-Negative Bacillus",
+   "keys": [
+    "gramnegativebacillus"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:40:28"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007882": {
+   "label": "Gustilo-Anderson IIIB Or IIIC",
+   "keys": [
+    "gustiloandersoniiiboriiic"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:40:28"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007883": {
+   "label": "Harmful Bacterium",
+   "keys": [
+    "harmfulbacterium"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:40:29"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007884": {
+   "label": "Healing Therapy",
+   "keys": [
+    "healingtherapy"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:40:30"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007885": {
+   "label": "Higher Closure Rate",
+   "keys": [
+    "higherclosurerate"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:40:32"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007886": {
+   "label": "Immune Marker",
+   "keys": [
+    "immunemarker"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:40:35"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007887": {
+   "label": "Open Fracture Wound",
+   "keys": [
+    "openfracturewound"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:41:05"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007888": {
+   "label": "P. Aeruginosa Strain",
+   "keys": [
+    "paeruginosastrain"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:41:07"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007889": {
+   "label": "PANoptosome Complex",
+   "keys": [
+    "panoptosomecomplex"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:41:07"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007890": {
+   "label": "PEGDA",
+   "keys": [
+    "pegda"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:41:07"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007891": {
+   "label": "Poly (lactic-Co-Glycolic Acid)",
+   "keys": [
+    "polylacticcoglycolicacid"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:41:15"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007892": {
+   "label": "Protein Translation",
+   "keys": [
+    "proteintranslation"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:41:22"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007893": {
+   "label": "Saline-Soaked Gauze",
+   "keys": [
+    "salinesoakedgauze"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:41:31"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007894": {
+   "label": "Scar Scale Score",
+   "keys": [
+    "scarscalescore"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:41:32"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007895": {
+   "label": "Scar-Free Wound Repair",
+   "keys": [
+    "scarfreewoundrepair"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:41:32"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007896": {
+   "label": "Suction Device",
+   "keys": [
+    "suctiondevice"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:41:42"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007897": {
+   "label": "Wound, Ischemia, And Foot Infection Grades/Clinical Stage",
+   "keys": [
+    "woundischemiaandfootinfectiongradesclinicalstage"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T13:42:02"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007898": {
+   "label": "Burn Wound Surface",
+   "keys": [
+    "burnsurface"
+   ],
+   "status": "active",
+   "issued": "2026-10-28T23:03:45"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007899": {
+   "label": "Broad-Spectrum Antibacterial Activity",
+   "keys": [
+    "broadspectrumantibacterialactivity"
+   ],
+   "status": "active",
+   "issued": "2026-10-29T16:52:04"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007900": {
+   "label": "Critically Ill",
+   "keys": [
+    "criticallyill"
+   ],
+   "status": "active",
+   "issued": "2026-10-29T17:55:00"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007901": {
+   "label": "Extracellular Matrix Protein",
+   "keys": [
+    "extracellularmatrixprotein"
+   ],
+   "status": "active",
+   "issued": "2026-10-29T17:55:01"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007902": {
+   "label": "Helicobacter Pylori",
+   "keys": [
+    "helicobacterpylori"
+   ],
+   "status": "active",
+   "issued": "2026-10-29T17:55:02"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007903": {
+   "label": "Hematologic Disorder",
+   "keys": [
+    "hematologicdisorder"
+   ],
+   "status": "active",
+   "issued": "2026-10-29T17:55:02"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007904": {
+   "label": "Infection Prevention And Control",
+   "keys": [
+    "infectionpreventionandcontrol"
+   ],
+   "status": "active",
+   "issued": "2026-10-29T17:55:03"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007905": {
+   "label": "Malignant Melanoma",
+   "keys": [
+    "malignantmelanoma"
+   ],
+   "status": "active",
+   "issued": "2026-10-29T17:55:04"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007906": {
+   "label": "Minimally Invasive Surgery",
+   "keys": [
+    "minimallyinvasivesurgery"
+   ],
+   "status": "active",
+   "issued": "2026-10-29T17:55:05"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007907": {
+   "label": "Aseptic conditions",
+   "keys": [
+    "asepticcondition"
+   ],
+   "status": "active",
+   "issued": "2026-10-30T10:32:51"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007908": {
+   "label": "Wagner And Anderson Wound Classification",
+   "keys": [
+    "wagnerandandersonwoundclassification"
+   ],
+   "status": "active",
+   "issued": "2026-11-01T10:58:47"
+  },
+  "https://bioportal.bioontology.org/ontologies/WONT/WONT_0007909": {
+   "label": "Wagner And Anderson Wound Classification Grade",
+   "keys": [
+    "wagnerandandersonwoundclassificationgrade"
+   ],
+   "status": "active",
+   "issued": "2026-11-01T10:58:47"
   }
  }
 }

@@ -185,6 +185,6 @@ def test_a_rename_reaches_the_sense_labels_of_a_two_senses_ruling():
     gt = memory_mapping({"biopsy": {"to": {"process": "biopsy procedure",
                                            "material entity": "biopsy specimen"},
                                     "pairs": {}}})
-    rep = gt.apply_renames({"biopsy specimen": "biopsy sample"}, by="test")
-    assert gt.records["biopsy"]["to"]["material entity"] == "biopsy sample"
+    rep = gt.apply_renames({"biopsy specimen": "biopsy sample"}, by="pass0")
+    assert gt.splits()["biopsy"]["material entity"] == "biopsy sample"
     assert rep["sense labels renamed"] == 1

@@ -115,10 +115,24 @@ class MemoryDataManager:
 
 def memory_mapping(data: dict | None = None):
     """A real `TermMappingAndGate` whose file is a dict. Accepts the flat
-    `term -> canonical` shape, which `_load` migrates exactly as it does on
-    disk, or full records."""
+    `term -> canonical` shape and the records before rule 89, which `_load`
+    translates in memory exactly as it would on disk, or a file of rule 89
+    (`rule89_file`)."""
     from wound_ontology.mappers.term_mapping_and_gate import TermMappingAndGate
     return TermMappingAndGate(MemoryDataManager(dict(data or {})))
+
+
+def rule89_file(terms: dict) -> dict:
+    """A term dict file in the form of rule 89 holding `terms`."""
+    from wound_ontology.mappers.judgements import AGENTS
+    from wound_ontology.mappers.term_mapping_and_gate import FORMAT
+    return {"format": FORMAT, "agents": AGENTS, "terms": terms}
+
+
+def J(verdict, by="author", why="test", when="2026-10-01T12:00:00", iri=None):
+    """One judgement (rule 89), for seeding a record."""
+    from wound_ontology.mappers.judgements import make
+    return make(verdict, by, why, when, iri)
 
 
 def memory_mapper(data: dict | None = None, name: str = "test"):

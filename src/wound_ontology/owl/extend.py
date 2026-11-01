@@ -524,6 +524,26 @@ def other_names(tdict):
     return names
 
 
+def former_names_by_key(tdict, key) -> dict[str, list[str]]:
+    """key(name) -> the names it was known by before, for the id registry (rule 71).
+
+    A spelling alias (`polyethylene oxide` -> `Polyethylene oxide`) and a term
+    whose `to` is now another name (`Candida albican` -> `Candida albicans`,
+    rule 85) are both renames. Until 2026-10-28 only the aliases were handed
+    over, and 15 renamed classes got a new id while their old one went unused.
+    A split term (`to` per category) is in neither: it names no ONE class.
+    """
+    former: dict[str, list[str]] = {}
+    for old in tdict.aliases():
+        now = tdict.resolve(old)
+        if now != old:
+            former.setdefault(key(now), []).append(old)
+    for term, name in tdict.data.items():
+        if name and name != term:
+            former.setdefault(key(name), []).append(term)
+    return former
+
+
 def find_imported(idx: LabelIndex, term: str, names, skip=IMPORT_SKIP):
     """The one imported class `term`'s other names lead to, or None (rule 74)."""
     found = {}
@@ -532,6 +552,19 @@ def find_imported(idx: LabelIndex, term: str, names, skip=IMPORT_SKIP):
         if h is not None and not str(h).startswith(skip):
             found.setdefault(str(h), other)
     return next(iter(found.items())) if len(found) == 1 else (None if not found else "ambiguous")
+
+
+def ontology_label_test(ground_truth=None, lexicon=None):
+    """`test(term) -> bool`: does `term` name a class of WONT or of one of its
+    imports, the way the export resolves it (labels and exact synonyms)? Such a
+    term is the ontology's and keeps its name (2026-10-29: `Viral infection` is
+    DOID's, `Methicillin-resistant Staphylococcus aureus infection` HP's)."""
+    if ground_truth is None:
+        from config.settings import GROUND_TRUTH_TTL as ground_truth
+    g = rdflib.Graph()
+    g.parse(str(ground_truth), format="turtle")
+    idx, imp = label_index(g), lexicon_index(default_lexicon() if lexicon is None else lexicon)
+    return lambda term: idx.get(term.strip().lower())[0] is not None or imp.get(term.strip().lower())[0] is not None
 
 
 def lexicon_index(lexicon) -> LabelIndex:

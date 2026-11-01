@@ -22,7 +22,7 @@ def test_the_old_curator_words_are_refused(old):
 
 def test_there_is_no_lock_beside_the_verdict():
     gt = memory_mapping({})
-    with pytest.raises(ValueError, match="no lock"):
+    with pytest.raises(ValueError, match="'refused' is not one of"):
         gt.judge("wounds", "Wound", refused={"reason": "no", "by": "curator"})
     with pytest.raises(ValueError, match="a refusal is one of"):
         gt.refuse("wounds", "Wound", reason="no", verdict="same_class")
@@ -53,9 +53,7 @@ def test_an_old_lock_is_history_and_reads_as_the_verdict_it_meant():
         "Diabetic foot": {"refused": {"cause": "rule 58", "reason": "ambiguous", "by": "x"}},
         "Burn injury": {"curator": {"verdict": "narrower"},
                         "refused": {"cause": "curator", "reason": "rule 79"}}}}})
-    df = gt.peek("DF", "Diabetic foot")
-    assert "refused" not in df and df["curator"]["verdict"] == "different"
-    assert df["lock_history"][0]["cause"] == "rule 58"
+    assert gt.is_refused("DF", "Diabetic foot")["verdict"] == "different"
     assert gt.peek("DF", "Burn injury")["curator"]["verdict"] == "narrower", "a verdict stands"
 
 
@@ -66,7 +64,8 @@ def test_a_refusal_with_a_relation_records_it_and_keeps_the_old_answer():
               verdict="narrower")
     j = gt.peek("burn wound", "Burn injury")
     assert j["curator"]["verdict"] == "narrower"
-    assert j["curator_history"][0]["verdict"] == "same_class"
+    assert [x["verdict"] for x in gt.records["burn wound"]["pairs"]["Burn injury"]] == \
+        ["same_class", "narrower"], "the earlier answer stays on record"
 
 
 def test_a_refusal_moves_a_standing_same_class_to_history():
@@ -75,7 +74,7 @@ def test_a_refusal_moves_a_standing_same_class_to_history():
     gt.refuse("a", "b", reason="not after all")
     j = gt.peek("a", "b")
     assert j["curator"]["verdict"] == "different"
-    assert j["curator_history"][0]["verdict"] == "same_class"
+    assert [x["verdict"] for x in gt.records["a"]["pairs"]["b"]] == ["same_class", "different"]
     assert gt.data.get("a") is None
 
 
@@ -156,9 +155,7 @@ def test_an_old_name_section_loads_as_the_curators_same_class():
         "snakebite envenomation": {"to": None, "pairs": {}, "name": {
             "by": "curator", "instead_of": ["Snake Envenomation"], "reason": "review",
             "when": "2026-09-25", "history": [{"by": "curator", "instead_of": ["x"]}]}}})
-    assert "name" not in gt.records.get("snakebite envenomation", {})
-    assert gt.peek("Snake Envenomation", "snakebite envenomation")["curator"]["reason"] == "review"
-    assert gt.records["snakebite envenomation"]["name_history"][0]["instead_of"] == ["x"]
+    assert gt.peek("Snake Envenomation", "snakebite envenomation")["curator"]["verdict"] == "same_class"
     assert gt.named() == {"snakebite envenomation"}
 
 

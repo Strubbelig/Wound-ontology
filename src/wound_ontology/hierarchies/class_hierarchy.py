@@ -39,11 +39,11 @@ class ClassHierarchyView(ClassHierarchy):
     * the FCA review queue (``class_hierarchy_candidates``). It is not part of
       the hierarchy but the list of lattice proposals awaiting the head-word
       rule, and it must survive a session;
-    * the edge gate's verdicts (``class_hierarchy_edge_verdicts``), written by
-      ``Orchestrator.run_gate_hierarchy_edges`` and taken off every freshly built
-      view, so a consumer in a later process (``scripts/build_wont_core.py``)
-      sees the same gated view the extension was built from. Every gate run
-      re-hears all of them;
+    * nothing of the edge gate's: its verdicts are is_a judgements by ``elk``
+      in the term dict (rule 89), written by ``Orchestrator.run_gate_hierarchy_edges``
+      and taken off every freshly built view with every other is_a ``no``, so a
+      consumer in a later process (``scripts/build_wont_core.py``) sees the same
+      gated view the extension was built from. Every gate run re-hears ELK's own;
     * a provenance snapshot (``class_hierarchy_provenance``) for the inspection
       pages (``scripts/hierarchy_explorer_page.py``). Written, never read back.
     """

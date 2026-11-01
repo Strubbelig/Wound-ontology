@@ -165,10 +165,6 @@ class TermMapper:
         """
         self._term_mapping.refuse(term, canonical, reason=reason, by=by, verdict=verdict)
 
-    def annotate(self, term: str, **fields) -> None:
-        """Attach term-level evidence — a note, a method — to a term's record."""
-        self._term_mapping.annotate(term, **fields)
-
     def judge(self, term: str, canonical: str, **fields) -> None:
         """Attach evidence to one PAIR — a pass verdict, a curator's mark.
 
@@ -671,7 +667,6 @@ class TermMapper:
         data = self._term_mapping.data
 
         # ── rule 4: a label mapped onto a store spelling is turned round ────
-        recs = self._term_mapping.records
         restored: dict[str, str] = {}            # label -> the store spelling it pointed at
         held: list[tuple[str, str]] = []
         unmapped: list[tuple[str, str]] = []
@@ -680,7 +675,7 @@ class TermMapper:
                 continue
             if labels.get(normalize_term(canonical)) is not None:
                 continue                         # folds to a label: rule 1's case
-            if (recs.get(term, {}).get("method") == "curator"
+            if (self._term_mapping.named_by(term) == "author"
                     or (self._term_mapping.peek(term, canonical).get("curator") or {})
                     .get("verdict") == "same_class"):
                 held.append((term, canonical))

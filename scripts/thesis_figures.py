@@ -64,44 +64,85 @@ def corpus(p) -> dict:
 
 
 def register(terms) -> dict:
+    """The term dict by its five questions (rule 89): for each, the judgement
+    that counts -- its verdict and its agent -- and how many judgements each
+    agent made in all."""
+    from wound_ontology.mappers.judgements import ABSTAIN, current
+    from wound_ontology.mappers.term_mapping_and_gate import SPELLING_AGENTS, edge_judgements, split_of
     recs = terms.records
-    aliases = {t: r for t, r in recs.items() if r.get("spelling")}
-    alias_by = Counter(r["spelling"].get("by") for r in aliases.values())
-    live = terms.data
-    methods = Counter(r.get("method") for t, r in recs.items() if t in live)
-    retired = sum(1 for r in recs.values() if r.get("retired"))
-    pv = {k: Counter() for k in ("pass1", "pass2", "curator")}
-    agree = Counter()
-    n_pairs = 0
+    by_agent: Counter = Counter()
     for r in recs.values():
-        for pair in (r.get("pairs") or {}).values():
+        for q, v in r.items():
+            for js in ([v] if isinstance(v, list) else v.values()):
+                by_agent.update(j["by"] for j in js)
+
+    kind, name_by = Counter(), Counter()
+    for t, r in recs.items():
+        j = current(r.get("name"))
+        if split_of(r):
+            kind["split by category"] += 1
+        elif j and isinstance(j["verdict"], str) and j["verdict"] != t:
+            kind["under another name"] += 1
+            name_by[j["by"]] += 1
+        else:
+            kind["its own name"] += 1
+
+    n_pairs, pair_v, pair_by = 0, Counter(), Counter()
+    for r in recs.values():
+        for js in (r.get("pairs") or {}).values():
             n_pairs += 1
-            for k in pv:
-                if isinstance(pair.get(k), dict):
-                    pv[k][pair[k].get("verdict")] += 1
-            a, b = (pair.get("pass1") or {}).get("verdict"), (pair.get("pass2") or {}).get("verdict")
-            if a and b:
-                agree["agree" if a == b else "disagree"] += 1
-    scope = Counter()
+            if (j := current(js)):
+                pair_v[j["verdict"]] += 1
+                pair_by[j["by"]] += 1
+
+    scope_v, scope_by, abstained = Counter(), Counter(), 0
     for r in recs.values():
-        for src, v in (r.get("gate") or {}).items():
-            if isinstance(v, dict):
-                scope[f"{src}: {v.get('verdict')}"] += 1
+        js = r.get("scope") or []
+        if (j := current(js)):
+            scope_v[j["verdict"]] += 1
+            scope_by[f"{j['by']}: {j['verdict']}"] += 1
+        elif js and all(x["verdict"] == ABSTAIN for x in js):
+            abstained += 1
+
+    placed, placed_by, refused, edge_no = 0, Counter(), Counter(), Counter()
+    for r in recs.values():
+        for tgt, js in (r.get("is_a") or {}).items():
+            j = current(js)
+            if j and j["verdict"] == "yes" and any(x.get("iri") for x in js):
+                placed += 1
+                placed_by[j["by"]] += 1
+            elif j and j["verdict"] == "no" and j.get("iri"):
+                refused[j["by"]] += 1
+            if (e := current(edge_judgements(js))) and e["verdict"] == "no" and not e.get("iri"):
+                edge_no[e["by"]] += 1
+
+    cats = terms.categories()          # the class's own reading of a decided category
+    categories, cat_by = len(cats), Counter(c["by"] for c in cats.values())
+    rel_v = Counter()
+    for r in recs.values():
+        for js in (r.get("relations") or {}).values():
+            if (j := current(js)):
+                rel_v[f"{j['by']}: {j['verdict']}"] += 1
     return {
         "records": len(recs),
-        "spelling aliases": len(aliases),
-        "spelling aliases by author": dict(alias_by.most_common()),
-        "live synonym mappings": len(live),
-        "distinct preferred terms mapped onto": len(set(live.values())),
-        "live mappings by method": dict(methods.most_common()),
-        "retired mappings (kept on record)": retired,
-        "adjudicated term pairs": n_pairs,
-        "pair verdicts, first adjudication": dict(pv["pass1"].most_common()),
-        "pair verdicts, second adjudication": dict(pv["pass2"].most_common()),
-        "pair verdicts, curator": dict(pv["curator"].most_common()),
-        "first vs second adjudication": dict(agree),
-        "scope verdicts by source": dict(sorted(scope.items())),
-        "contested scope records": sum(1 for r in recs.values() if r.get("gate_contested")),
+        "judgements by agent": dict(by_agent.most_common()),
+        "name: strings": dict(kind),
+        "name: the name that counts, by agent": dict(name_by.most_common()),
+        "name: spellings (string rewritten)": sum(n for a, n in name_by.items() if a in SPELLING_AGENTS),
+        "name: mappings (another concept's name)": sum(n for a, n in name_by.items() if a not in SPELLING_AGENTS),
+        "pairs": n_pairs,
+        "pairs: verdict that counts": dict(pair_v.most_common()),
+        "pairs: by agent": dict(pair_by.most_common()),
+        "scope: verdict that counts": dict(scope_v.most_common()),
+        "scope: by agent and verdict": dict(scope_by.most_common()),
+        "scope: only abstentions": abstained,
+        "is_a: placements under an ontology class": placed,
+        "is_a: placements by agent": dict(placed_by.most_common()),
+        "is_a: placements refused, by agent": dict(refused.most_common()),
+        "is_a: categories decided": categories,
+        "is_a: categories by agent": dict(cat_by.most_common()),
+        "is_a: edges refused, by agent": dict(edge_no.most_common()),
+        "relations: by agent and verdict": dict(rel_v.most_common()),
     }
 
 

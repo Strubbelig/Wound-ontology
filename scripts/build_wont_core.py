@@ -41,11 +41,11 @@ EXT = OUT / "wont_extended.ttl"
 CORE = OUT / "wont_extended_core.ttl"
 CAND = OUT / "wont_candidates.ttl"
 REPORT = OUT / "core_build_report.json"
-CURATOR = ROOT / "data" / "review" / "curator_axioms_2026-10-03.json"
-# Relations from the abstracts on NEW classes wait for the curator (rule 72,
-# 2026-10-05: "have i ever reviewed these?" -- no: they were read only by
-# Claude). Only a relation marked "add" in this file goes into the addition.
-REL_REVIEW = ROOT / "data" / "review" / "new_class_relation_decisions.json"
+# The curator's word on relations is in the term dict (rules 69, 72; until
+# 2026-10-30 in curator_axioms_2026-10-03.json and
+# new_class_relation_decisions.json): relations from the abstracts on NEW
+# classes wait for it (2026-10-05: "have i ever reviewed these?" -- no: they
+# were read only by Claude), and only his `yes` goes into the addition.
 WONT_NS = "https://bioportal.bioontology.org/ontologies/WONT/"
 PROV = "http://www.geneontology.org/formats/oboInOwl#source"
 CORE_IRI = "https://bioportal.bioontology.org/ontologies/WONT/extended-core"
@@ -138,6 +138,7 @@ def main(argv: list[str]) -> int:
     # full extension and `Burn Injury` (under `Injury`) never reached the core.
     ruled = {(smart_title(c), smart_title(par)) for c, par in p.class_hier.edges_by_source("fca")}
     print(f"[core] {len(placed):,} placed edge(s) + {len(ruled):,} edge(s) licensed by the head-word rule (rule 79)")
+    placed_only = set(placed)                       # which way a class came in, for the report
     placed |= ruled
     # labels of imported parents (not in ext): from the lexicon the export used
     from wound_ontology.owl.extend import default_lexicon
@@ -162,17 +163,27 @@ def main(argv: list[str]) -> int:
     # "specimen from organism") is found under its other names, exactly as the
     # export found it (rule 74, `other_names`); without this its 4 children stayed
     # out although the export had resolved their parent (found 2026-10-08).
-    from wound_ontology.owl.extend import IMPORT_SKIP, find_imported, lexicon_index, other_names
+    # A placed parent WONT has merged away is found as the export found it: by
+    # WONT's own labels and synonyms first. Redness, merged into reddened with
+    # "Redness" kept as its synonym (curator, 2026-10-31), is reddened in the
+    # export; matched on labels alone its three placed children fell out of the
+    # core (found 2026-10-31).
+    from wound_ontology.owl.extend import IMPORT_SKIP, find_imported, label_index, lexicon_index, other_names
+    gt_idx = label_index(gt)
     lex = lexicon_index(default_lexicon())
     names = other_names(p.term_mapper._term_mapping)
-    placed_iri = set()
+    placed_iri, placed_iri_only = set(), set()
     for c_, par_ in placed:
-        hit = lex.get(par_)[0]
+        hit = gt_idx.get(par_)[0]
+        if hit is None:
+            hit = lex.get(par_)[0]
         if hit is None:
             found = find_imported(lex, par_, names, IMPORT_SKIP)
             hit = rdflib.URIRef(found[0]) if isinstance(found, tuple) else None
         if hit is not None:
             placed_iri.add((c_, hit))
+            if (c_, par_) in placed_only:
+                placed_iri_only.add((c_, hit))
 
     def is_placed(c, par):
         return (smart_title(lab(c)), smart_title(lab(par))) in placed or (smart_title(lab(c)), par) in placed_iri
@@ -197,13 +208,28 @@ def main(argv: list[str]) -> int:
             "(rules 59-66): placed edges and BFO category typing only; relations only where read "
             "as true of every instance.", lang="en")))
     allowed = lambda x: x in cats or x not in minted or x in core
-    approved = {}
-    if REL_REVIEW.exists():
-        approved = {k: d.get("v") for k, d in json.loads(REL_REVIEW.read_text(encoding="utf-8"))["decisions"].items()}
+    tdict = p.term_mapper._term_mapping
+    from wound_ontology.llm.extraction_models import RELATION_IRI
+    from wound_ontology.utils.string_utils import normalize_term as N
+    authored = tdict.author_relations()
+    # a predicate the extraction never writes is found by its label among the
+    # object properties of WONT and MILD ("is process boundary at start of",
+    # MILD_120083: a recurrence starts a course of the disease, curator 2026-10-30)
+    from config.settings import MILD_TTL
+    prop_label = {}
+    for g_ in (gt, rdflib.Graph().parse(str(MILD_TTL), format="turtle")):
+        for s_ in g_.subjects(RDF.type, OWL.ObjectProperty):
+            for o_ in g_.objects(s_, RDFS.label):
+                prop_label.setdefault(str(o_).lower(), str(s_))
+    RELATION_IRI = {**{k.lower(): v for k, v in prop_label.items()}, **RELATION_IRI}
+    unknown = sorted({pr for _, pr, _, _ in authored if pr.replace("_", " ") not in RELATION_IRI})
+    if unknown:
+        raise RuntimeError(f"[core] the author judged relations with predicates that have no IRI: {unknown}")
+    approved: dict = {}       # (subject class, property, filler class) -> add | leave out; filled below
     held: dict = {}
 
     def rel_key(c, prop, f):
-        return f"{lab(c).lower()}|{prop}|{lab(f).lower()}"
+        return (c, str(prop), f)
 
     def copy_class(c, g, *, typing_only: bool, keep_relations: bool = True):
         for pr, o in ext.predicate_objects(c):
@@ -223,7 +249,7 @@ def main(argv: list[str]) -> int:
                         rep["relations left out (ELK: unsatisfiable with them)"] += 1
                     elif f is not None and allowed(f) and approved.get(rel_key(c, ext.value(o, OWL.onProperty), f)) != "add":
                         k = rel_key(c, ext.value(o, OWL.onProperty), f)
-                        held[k] = {"subject": lab(c), "subject_iri": str(c),
+                        held["|".join(map(str, k))] = {"subject": lab(c), "subject_iri": str(c),
                                    "property_iri": str(ext.value(o, OWL.onProperty)),
                                    "value": lab(f), "value_iri": str(f), "decision": approved.get(k)}
                         rep["relations held for the curator" if approved.get(k) is None
@@ -244,10 +270,13 @@ def main(argv: list[str]) -> int:
     # checked placement disagree and it goes to the candidates. A class that is
     # unsatisfiable only because its curated parent is (WONT's own conflicts)
     # stays, and is reported.
-    # The curator's axioms on existing classes (rule 69): read from the review,
-    # added every round, and never dropped by the ELK loop -- if ELK rejects
-    # one, the build stops and names it.
-    curator = json.loads(CURATOR.read_text(encoding="utf-8"))["axioms"] if CURATOR.exists() else []
+    # The curator's axioms (rule 69): every relation he said `yes` to, and his
+    # links between two terms on a class the addition does not mint (Wound is
+    # an Injury); added every round and never dropped by the ELK loop -- if ELK
+    # rejects one, the build stops and names it. Read from the term dict.
+    curator = [{"subject_iri": None, "subject_label": s_, "property_iri": RELATION_IRI[pr.replace("_", " ")],
+                "filler_iri": j.get("iri"), "filler_label": t_, "why": j["why"]}
+               for s_, pr, t_, j in authored if j["verdict"] == "yes"]
     by_label = {}
     for s_, o_ in ext.subject_objects(RDFS.label):
         if s_ in minted:
@@ -264,7 +293,20 @@ def main(argv: list[str]) -> int:
     all_by_label = {}
     for s_, o_ in ext.subject_objects(RDFS.label):
         all_by_label.setdefault(str(o_).lower(), s_)
-    tdict = p.term_mapper._term_mapping
+    known_as: dict = {}
+    for t_ in tdict.records:
+        try:
+            known_as.setdefault(tdict.concept(tdict.resolve(t_)), set()).add(t_)
+        except RuntimeError:
+            pass
+    by_norm: dict = {}
+    for s_, o_ in ext.subject_objects(RDFS.label):
+        by_norm.setdefault(N(str(o_)), set()).add(s_)
+    for t_, par_ in tdict.term_links():
+        hits = by_norm.get(N(t_), set())
+        if hits and not hits & minted:
+            curator.append({"subject_iri": None, "subject_label": t_, "property_iri": None,
+                            "filler_iri": None, "filler_label": par_, "why": "the author's link between two terms"})
 
     def stable_or_by_name(iri, name, role):
         if iri and (not iri.startswith(WONT_NS) or rdflib.URIRef(iri) in gt_classes):
@@ -275,12 +317,75 @@ def main(argv: list[str]) -> int:
             hit = all_by_label.get(str(n).lower())
             if hit is not None:
                 return hit
-        raise RuntimeError(f"[core] curator axiom {role} {name!r} is not a class in this build (tried {tried})")
+        # the term dict's names are not the build's labels ("Burn depth", "Burn Wound Depth")
+        hits = sorted(by_norm.get(N(cur), set()) | by_norm.get(N(name), set()))
+        if not hits:
+            # an imported class, found through the lexicon as the export finds it
+            # ("wound healing", GO_0042060), under the concept's other names too:
+            # one the author made the same as it ("wound healing process")
+            for n in [cur, name, *sorted(known_as.get(tdict.concept(cur), ()))]:
+                hit = lex.get(n)[0]
+                if hit is None:
+                    found = find_imported(lex, n, names, IMPORT_SKIP)
+                    hit = found[0] if isinstance(found, tuple) else None
+                if hit is not None:
+                    hits = [rdflib.URIRef(hit)]
+                    break
+        if not hits:
+            hits = sorted({h for n in known_as.get(tdict.concept(cur), ()) for h in
+                           ({all_by_label.get(n.lower())} - {None}) | by_norm.get(N(n), set())})
+        if len(hits) == 1:
+            return hits[0]
+        if len(hits) > 1:
+            raise RuntimeError(f"[core] curator axiom {role} {name!r}: {len(hits)} classes share its spelling: "
+                               f"{[lab(h) or str(h) for h in hits]}")
+        # not built, and said so in the report (`author axioms not built`)
+        return "out of scope" if tdict.gate_verdict(tdict.concept(cur))[0] == "out" else "not a class in this build"
+
+    # the author's word on each relation, found on the classes the build names
+    # them by, with the same lookup as his axioms ("Early wound healing process
+    # part_of wound healing process" is GO's "wound healing" here)
+    for s_, pr, t_, j in authored:
+        try:
+            sc = stable_or_by_name(None, s_, "subject")
+            fc = stable_or_by_name(j.get("iri"), t_, "filler")
+        except RuntimeError:
+            if j["verdict"] == "yes":
+                raise
+            continue                  # a `no` on a name several classes share: nothing of it is built either
+        if isinstance(sc, rdflib.URIRef) and isinstance(fc, rdflib.URIRef):
+            approved[rel_key(sc, RELATION_IRI[pr.replace("_", " ")], fc)] = {"yes": "add", "no": "leave out"}[j["verdict"]]
+
+    unbuilt: list = []
+    # what became of each of the author's axioms, one entry each, so that they
+    # add up (the counters above overlap: a relation kept from the export is
+    # "already stated" when his axiom on it comes round)
+    account: list = []
+
+    def stated(g, subj, prop, fill):
+        return any(isinstance(b, rdflib.BNode) and g.value(b, OWL.onProperty) == prop
+                   and g.value(b, OWL.someValuesFrom) == fill for b in g.objects(subj, RDFS.subClassOf))
+
+    def tell(a, outcome, subj=None):
+        account.append({"subject": a["subject_label"], "property_iri": a["property_iri"],
+                        "filler": a["filler_label"], "outcome": outcome,
+                        "on a new class": isinstance(subj, rdflib.URIRef) and subj in minted})
 
     def add_curator(g):
+        unbuilt.clear(); account.clear()
         for a in curator:
             subj = stable_or_by_name(a["subject_iri"], a["subject_label"], "subject")
             fill = stable_or_by_name(a["filler_iri"], a["filler_label"], "filler")
+            if not isinstance(subj, rdflib.URIRef) or not isinstance(fill, rdflib.URIRef):
+                unbuilt.append((a["subject_label"], a["property_iri"], a["filler_label"],
+                                "; ".join(f"{role} {w}" for role, w in (("subject", subj), ("filler", fill))
+                                          if not isinstance(w, rdflib.URIRef))))
+                tell(a, "not built", subj)
+                continue
+            if subj in minted and subj not in core:
+                unbuilt.append((a["subject_label"], a["property_iri"], a["filler_label"], "the subject is a candidate"))
+                tell(a, "not built", subj)
+                continue
             if fill in minted and fill not in core:
                 pulled.add(fill)
                 copy_class(fill, g, typing_only=True)
@@ -288,14 +393,16 @@ def main(argv: list[str]) -> int:
                 # a plain subclass axiom (curator 2026-10-18: "Wound is an injury")
                 if (subj, RDFS.subClassOf, fill) in g:
                     rep["curator axioms already stated"] += 1
+                    tell(a, "already in WONT" if (subj, RDFS.subClassOf, fill) in gt else "already built", subj)
                 else:
                     g.add((subj, RDFS.subClassOf, fill))
                     rep["curator axioms"] += 1
+                    tell(a, "added", subj)
                 continue
             prop = rdflib.URIRef(a["property_iri"])
-            if any(isinstance(b, rdflib.BNode) and g.value(b, OWL.onProperty) == prop
-                   and g.value(b, OWL.someValuesFrom) == fill for b in g.objects(subj, RDFS.subClassOf)):
+            if stated(g, subj, prop, fill):
                 rep["curator axioms already stated"] += 1
+                tell(a, "already in WONT" if stated(gt, subj, prop, fill) else "already built", subj)
                 continue
             node = rdflib.BNode()
             g.add((node, RDF.type, OWL.Restriction))
@@ -303,6 +410,7 @@ def main(argv: list[str]) -> int:
             g.add((node, OWL.someValuesFrom, fill))
             g.add((subj, RDFS.subClassOf, node))
             rep["curator axioms"] += 1
+            tell(a, "added", subj)
 
     gt_unsat = elk_unsat(gt, label="ground truth")
     no_relations: set = set()
@@ -343,6 +451,16 @@ def main(argv: list[str]) -> int:
     else:
         raise RuntimeError("[core] ELK did not settle in 7 rounds")
     cand = minted - core - pulled
+
+    def came_in_by(c):
+        """A checked placement or a link of the author's, else the head-word rule's edge (rule 79)."""
+        for par in named_parents(c):
+            if is_placed(c, par) and (par not in minted or par in core) and (
+                    (smart_title(lab(c)), smart_title(lab(par))) in placed_only
+                    or (smart_title(lab(c)), par) in placed_iri_only):
+                return "placement"
+        return "head-word rule"
+    entered = {lab(c): came_in_by(c) for c in core}
     rep["elk_left_unsatisfiable_below_curated"] = len(below_gt)
     rep["classes brought in as curator-axiom fillers"] = len(pulled)
     cand_g = rdflib.Graph()
@@ -354,14 +472,24 @@ def main(argv: list[str]) -> int:
     for c in cand:
         copy_class(c, cand_g, typing_only=True)
 
+    if unbuilt:
+        print(f"[core] *** {len(unbuilt)} of the author's axiom(s) not built: ***")
+        for u in unbuilt:
+            print(f"[core]     {u[0]} | {u[1]} | {u[2]}: {u[3]}")
     summary = {"minted": len(minted), "core": len(core), "candidates": len(cand), **dict(rep),
+               "author axioms not built": [list(u) for u in unbuilt],
+               "author axioms (account)": account,
+               "core classes, the way they came in": entered,
+               "classes brought in as curator-axiom fillers (list)": sorted(lab(c) or str(c) for c in pulled),
                "elk_moves": elk_moves,
                "relations held for the curator (list)": sorted(held.values(), key=lambda h: h["subject"].lower()),
                "unsatisfiable_below_curated": sorted(lab(u) for u in below_gt),
                "ground_truth_unsatisfiable": sorted(str(u) for u in gt_unsat),
                "core_examples": sorted(f"{lab(c)} < {', '.join(lab(o) for o in named_parents(c) if is_placed(c, o))}"
                                        for c in core)[:40]}
-    print(f"[core] {json.dumps({k: v for k, v in summary.items() if k not in ('core_examples', 'elk_moves')})}")
+    print(f"[core] {json.dumps({k: v for k, v in summary.items() if k not in ('core_examples', 'elk_moves', 'author axioms (account)', 'core classes, the way they came in')})}")
+    print(f"[core] the author's axioms: {dict(Counter((x['outcome'], x['on a new class']) for x in account))}")
+    print(f"[core] core classes by the way they came in: {dict(Counter(entered.values()))}")
     print(f"[core] ELK moves: {elk_moves}")
     if "--write" not in argv:
         print("[core] dry run; --write to write")

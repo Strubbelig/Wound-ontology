@@ -39,6 +39,9 @@ from wound_ontology.llm.extraction_models import CATEGORY_IRI, RELATION_IRI
 BATCH_NS = "urn:wont:batch#"
 _UNSAT_RE = re.compile(r"unsatisfiable:\s*(\S+)")
 _MAX_PASSES = 12  # a pass per provenance tier, plus explanation-guided passes (2026-10-03)
+#: The edge gate judges the empty classes whose kept parents are satisfiable
+#: first (2026-10-29), so a chain of empty classes takes a pass per level.
+_MAX_EDGE_PASSES = 30
 
 
 @dataclass
@@ -54,6 +57,8 @@ class EdgeGateResult:
     quarantined_sources: dict = field(default_factory=dict)
     #: edges kept because a lower-ranked edge on the same child was dropped instead.
     spared: list = field(default_factory=list)
+    #: (child, parent) -> why THIS edge was refused (rule 89: one reason per verdict).
+    why: dict = field(default_factory=dict)
 
     @property
     def clean(self) -> bool:
@@ -87,6 +92,9 @@ class GateResult:
     #: one entry per cause found (`ReasonerGate._causes`): what kind of clash,
     #: and the statements on each side -- what the curator decides between.
     causes: list[dict] = field(default_factory=list)
+    #: (subject, predicate, object) -> why THIS relation was held back (rule 89:
+    #: one reason per verdict, not the run's one explanation on every item).
+    why: dict = field(default_factory=dict)
 
     @property
     def clean(self) -> bool:
@@ -463,8 +471,11 @@ class ReasonerGate:
         ents, rels = list(entities), list(relations)
         self.individual_notes = []
         self.cause_notes = []
+        self.cause_why: dict = {}
         q_ents: list = []
         q_rels: list = []
+        why: dict = {}
+        key = lambda r: (r.subject, r.predicate.value, r.object)   # noqa: E731
         unsat_seen: set[str] = set()
         explanation = ""
 
@@ -485,6 +496,9 @@ class ReasonerGate:
                   f"BFO/MILD category class held back, e.g. "
                   f"{[(r.subject, r.predicate.value, r.object) for r in on_category[:3]]}")
             q_rels += on_category
+            for r in on_category:
+                why[key(r)] = (f"its subject {r.subject!r} is the BFO/MILD category itself; a sentence "
+                               f"about the bare word is no axiom about the category")
             held = {id(r) for r in on_category}
             rels = [r for r in rels if id(r) not in held]
 
@@ -494,6 +508,9 @@ class ReasonerGate:
                   f"their own and are held back before the batch is reasoned, e.g. "
                   f"{[(r.subject, r.predicate.value, r.object) for r in local[:3]]}")
             q_rels += local
+            for r in local:
+                why[key(r)] = (f"contradicts the ontology on its own: {r.subject!r} typed as it is "
+                               f"cannot {r.predicate.value} {r.object!r} typed as it is")
             held = {id(r) for r in local}
             rels = [r for r in rels if id(r) not in held]
 
@@ -529,6 +546,8 @@ class ReasonerGate:
                       f"{[(r.subject, r.predicate.value, r.object) for r in causes[:3]]}",
                       flush=True)
                 q_rels += causes
+                for r in causes:
+                    why[key(r)] = self.cause_why.get(id(r)) or f"empties a class by itself ({how})"
                 held = {id(r) for r in causes}
                 rels = [r for r in rels if id(r) not in held]
                 continue
@@ -562,6 +581,11 @@ class ReasonerGate:
                 break                       # cannot attribute further; stop
             q_ents += drop_ents
             q_rels += drop_rels
+            for r in drop_rels:
+                hit = sorted({r.subject, r.object} & (bad_labels | touched))
+                why[key(r)] = (f"touches the empty class {', '.join(map(repr, hit))}; no relation was "
+                               f"found that empties it by itself, so every relation touching it is "
+                               f"held back")
             ents, rels = keep_ents, keep_rels
         else:
             unsat = self._unsatisfiable(self.build_batch_graph(ents, rels))
@@ -581,6 +605,7 @@ class ReasonerGate:
             without_individuals=list(self.individual_notes),
             still_empty=sorted(unsat),
             causes=list(self.cause_notes),
+            why=why,
         )
 
     def _causes(self, ents, rels, unsat: set[str], by_label: dict) -> tuple[list, str]:
@@ -719,6 +744,17 @@ class ReasonerGate:
         # on each side. For a clash with the target, one more run asks which
         # of the target's own relation types make it the wrong kind.
         blame = self._target_blame(g, kind, some, single_bad, preds_of) if single_bad else {}
+        self.cause_why = {}
+        for r in single_bad:
+            b = blame.get(id(r), [])
+            self.cause_why[id(r)] = (f"clashes with what its target {r.object!r} is"
+                                     + (f" (made so by the target's own {', '.join(map(str, b))})" if b else ""))
+        for subj, sets in clashing.items():
+            kinds = "; ".join(" and ".join(s) for s in sets)
+            for r in pair_bad:
+                if r.subject == subj:
+                    self.cause_why[id(r)] = (f"{subj!r} is asked to be two kinds of thing at once "
+                                             f"by its relations {kinds}")
         for r in single_bad:
             self.cause_notes.append({
                 "kind": "target", "subject": r.subject, "predicate": r.predicate.value,
@@ -838,8 +874,10 @@ class ReasonerGate:
         kept = list(edges)
         dropped: list = []
         spared: list = []
+        why: dict = {}
         unsat_seen: set[str] = set()
         explanation = ""
+        src = lambda e: (sources or {}).get(tuple(e)) or "unstamped"   # noqa: E731
 
         def resolve(label: str) -> str:
             hit = idx.get(str(label).strip().lower())
@@ -860,7 +898,7 @@ class ReasonerGate:
                 return 0
             return gate_rank.get(sources.get(tuple(edge)), 0)
 
-        for _ in range(_MAX_PASSES):
+        for _ in range(_MAX_EDGE_PASSES):
             g = self.build_edge_graph(kept, label_index=idx)
             unsat = self._unsatisfiable(g)
             if not unsat:
@@ -874,6 +912,15 @@ class ReasonerGate:
             culprits = [e for e in kept if resolve(e[0]) in unsat]
             if not culprits:
                 break                       # cannot attribute further
+            # A class empty only because a parent it keeps is empty is not where
+            # the clash is: blaming its own weakest edge refused correct typings
+            # under every empty class (2026-10-29: `Aggressive surgical
+            # debridement is_a process`, `Debridement method is_a information
+            # entity`). The empty classes whose kept parents are all satisfiable
+            # are judged first; their descendants are heard again next pass. A
+            # loop of empty classes has no such class: all are judged, as before.
+            under_empty = {resolve(c) for c, p in kept if resolve(p) in unsat}
+            culprits = [e for e in culprits if resolve(e[0]) not in under_empty] or culprits
 
             # Drop the weakest evidence FIRST, and globally rather than per
             # child. Per-child was not enough: `Dry Necrosis is_a Necrosis` is
@@ -896,6 +943,10 @@ class ReasonerGate:
                 weaker = [e for e in kept if rank(e) < lowest
                           and (resolve(e[0]), resolve(e[1])) in pairs]
                 if weaker:
+                    for e in weaker:
+                        why[tuple(e)] = (f"the reasoner's explanation of an empty class names it; "
+                                         f"a {src(e)} edge gives way before a {src(culprits[0])} one "
+                                         f"(rule 79)")
                     dropped += weaker
                     bad = {tuple(e) for e in weaker}
                     kept = [e for e in kept if tuple(e) not in bad]
@@ -905,9 +956,17 @@ class ReasonerGate:
             if not now_bad:
                 break
 
+            for e in now_bad:
+                why[tuple(e)] = (f"{e[0]!r} is unsatisfiable with it; of the edges on empty classes "
+                                 f"the weakest evidence ({src(e)}) gives way first (rule 79)")
             dropped += now_bad
             bad = {tuple(e) for e in now_bad}
             kept = [e for e in kept if tuple(e) not in bad]
+        else:
+            left = self._unsatisfiable(self.build_edge_graph(kept, label_index=idx))
+            if left:
+                print(f"[ReasonerGate] *** the edge gate stopped after {_MAX_EDGE_PASSES} passes with "
+                      f"{len(left)} class(es) still empty: {sorted(left)[:5]} ***")
 
         # Anything "spared" that survived to the end really was spared; anything
         # dropped on a later pass was not.
@@ -921,6 +980,7 @@ class ReasonerGate:
             explanation=explanation,
             quarantined_sources={tuple(e): (sources or {}).get(tuple(e)) for e in dropped},
             spared=spared,
+            why={e: why[e] for e in dropped_set},
         )
 
     # ── persistence ────────────────────────────────────────────────────────

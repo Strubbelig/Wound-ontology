@@ -158,7 +158,8 @@ def test_default_lexicon_points_at_what_the_output_imports():
     names = {p.name for p in default_lexicon()}
     if not names:
         pytest.skip("MILD / modules not present in this checkout")
-    assert "mild.ttl" in names
+    from config.settings import MILD_TTL
+    assert MILD_TTL.name in names          # the dated MILD file (mild_2026-10-29.ttl since 2026-10-29)
     assert any(n.endswith("_module.owl") for n in names)
 
 

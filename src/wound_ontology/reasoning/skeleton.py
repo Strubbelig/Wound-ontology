@@ -91,9 +91,11 @@ def add_bfo_and_relation_axioms(g: rdflib.Graph, modules) -> dict:
     for c, p in m.subject_objects(RDFS.subClassOf):
         if bfo(c) and bfo(p):
             g.add((c, RDF.type, OWL.Class)); g.add((c, RDFS.subClassOf, p)); rep["bfo_subclass"] += 1
-            for lab in m.objects(c, RDFS.label):
-                if not any(True for _ in g.objects(c, RDFS.label)):
-                    g.add((c, RDFS.label, lab))
+            labs = {str(x): x for x in m.objects(c, RDFS.label)}
+            if labs and not any(True for _ in g.objects(c, RDFS.label)):
+                # one name, the same every run (curated_seed.bfo_label)
+                from wound_ontology.hierarchies.curated_seed import bfo_label
+                g.add((c, RDFS.label, labs[bfo_label(c, set(labs))]))
     for a, b in m.subject_objects(OWL.disjointWith):
         if bfo(a) and bfo(b):
             g.add((a, OWL.disjointWith, b)); rep["bfo_disjoint"] += 1

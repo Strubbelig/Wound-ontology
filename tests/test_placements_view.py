@@ -48,7 +48,9 @@ def test_an_excluded_term_has_no_edge():
 def test_a_mapped_term_is_its_class_not_beneath_it():
     gt = make()
     gt.judge("venous leg ulcer", "Ulcus cruris venosum", curator=PLACED)
-    gt.record("venous leg ulcer")["to"] = "Ulcus cruris venosum"
+    from conftest import J
+    gt.records["venous leg ulcer"]["name"] = [J("Ulcus cruris venosum", "sapbert-clustering")]
+    gt._dirty()
     assert gt.placements() == []
 
 
@@ -69,3 +71,68 @@ def test_a_narrower_without_the_class_iri_is_a_note_not_a_place():
 def test_the_placement_source_is_gone():
     with pytest.raises(ValueError, match="curator"):
         make().judge("a", "b", placement={"verdict": "narrower"})
+
+
+# ── The author's links between two terms (rule 89, 2026-10-28) ─────────────
+
+def _term_link(gt, child, parent, by="author", verdict="yes"):
+    from conftest import J
+    for t in (child, parent):
+        gt.records.setdefault(t, {})
+    gt.records[child].setdefault("is_a", {}).setdefault(parent, []).append(J(verdict, by))
+    gt._dirty()
+
+
+def test_the_authors_link_between_two_terms_is_an_edge():
+    gt = make()
+    _term_link(gt, "Burn wound", "Burn injury")
+    assert gt.term_links() == [("Burn wound", "Burn injury")]
+    assert gt.placements() == []
+
+
+def test_elks_yes_between_two_terms_is_no_link():
+    """ELK keeping an edge says it is consistent, not that it holds."""
+    gt = make()
+    _term_link(gt, "Burn wound", "Burn injury", by="elk")
+    assert gt.term_links() == []
+
+
+def test_a_link_elk_refuses_after_the_author_still_stands():
+    gt = make()
+    _term_link(gt, "Burn wound", "Burn injury")
+    _term_link(gt, "Burn wound", "Burn injury", by="elk", verdict="no")
+    assert gt.term_links() == [("Burn wound", "Burn injury")]
+
+
+def test_a_category_or_a_class_is_no_term_link():
+    from conftest import J
+    gt = make()
+    _term_link(gt, "Burn wound", "material entity")
+    gt.records["Burn wound"]["is_a"]["Thermal wound"] = [J("yes", iri=IRI)]
+    gt._dirty()
+    assert gt.term_links() == []
+
+
+def test_a_parent_that_is_no_term_is_no_link():
+    gt = make()
+    _term_link(gt, "Giant-sized", "Sized")
+    del gt.records["Sized"]
+    assert gt.term_links() == []
+
+
+def test_a_link_with_an_end_out_of_scope_is_no_edge():
+    gt = make()
+    _term_link(gt, "Antibiotic", "Drug")
+    gt.gate("Drug", curator={"verdict": "out"})
+    assert gt.term_links() == []
+
+
+def test_a_parent_renamed_since_is_named_and_left_out(capsys):
+    from conftest import J
+    gt = make()
+    _term_link(gt, "Hydrocolloid gel dressing", "Hydrocolloid dressing")
+    gt.records["Hydrocolloid dressing"]["name"] = [J("Ordinary hydrocolloid dressing")]
+    gt.records["Ordinary hydrocolloid dressing"] = {}
+    gt._dirty()
+    assert gt.term_links() == []
+    assert "now 'Ordinary hydrocolloid dressing'" in capsys.readouterr().out

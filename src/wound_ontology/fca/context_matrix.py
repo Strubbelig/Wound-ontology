@@ -275,6 +275,11 @@ class ContextMatrix:
                      of A's abstracts state it: the top attribute of `Wound`
                      (`wound area`) is in 32 of 1,013 abstracts, 3.2%, so any
                      guessed share would decide the outcome on its own.
+                     "universal" (rule 88, replacing "class_level" as the
+                     run_fca default): only those read as true of every
+                     instance of the ancestor (`all`, rule 66; the curator's
+                     decisions first, wound_ontology.fca.universality). An
+                     attribute with no reading is not inherited, and is listed.
                      None (default) keeps the old switch: `inherit_attributes`
                      True -> "all", False -> "none".
         inherit_fdr
@@ -282,8 +287,8 @@ class ContextMatrix:
         """
         if inherit is None:
             inherit = "all" if inherit_attributes else "none"
-        if inherit not in ("all", "none", "class_level"):
-            raise ValueError(f"inherit must be 'all', 'none' or 'class_level', got {inherit!r}")
+        if inherit not in ("all", "none", "class_level", "universal"):
+            raise ValueError(f"inherit must be 'all', 'none', 'class_level' or 'universal', got {inherit!r}")
         inherit_attributes = inherit != "none"
         self.inheritance_tests: list[dict] = []
         flat_map: dict[str, dict] = {}
@@ -410,7 +415,10 @@ class ContextMatrix:
                 for attr, value in attrs.items():
                     dest[attr] = max(dest.get(attr, 0.0), value)
             passes = (self._class_level_attributes(original, universe, scale_hierarchy, inherit_fdr)
-                      if inherit == "class_level" else None)
+                      if inherit == "class_level" else
+                      self._universal_attributes(original, scale_hierarchy, store,
+                                                 {smart_title(e) for e in flat_map})
+                      if inherit == "universal" else None)
             membership = inherited = scaled_objects = 0
             scaled_keys: set[str] = set()
             for entity in list(flat_map):
@@ -542,6 +550,46 @@ class ContextMatrix:
         print(f"[ContextMatrix] class-level test: {m} (ancestor, attribute) pair(s) tested, "
               f"{len(passes)} pass at FDR {fdr}; {m - len(passes)} not inherited; "
               f"{untestable} untestable (no descendant has measured attributes), not inherited.")
+        return passes
+
+    def _universal_attributes(self, original, hier, store, objects) -> set[tuple[str, str]]:
+        """(ancestor, attribute) pairs read as true of every instance (rule 88).
+
+        Every attribute an ancestor with descendants in this view carries is
+        looked up in the readings (wound_ontology.fca.universality): `all`
+        passes down; `some` and `no` do not; an attribute nobody read does not
+        either, and is named, so a gap in the readings is never mistaken for a
+        `some`. Every lookup is kept in `self.inheritance_tests`.
+        """
+        from collections import Counter
+        from wound_ontology.fca.universality import load_verdicts
+        verdicts, rep = load_verdicts(store)
+        passes: set[tuple[str, str]] = set()
+        rows = []
+        for anc, attrs in original.items():
+            if anc not in hier.concepts:
+                continue
+            if not ({smart_title(d) for d in hier.subtree_of(anc)} - {anc}) & objects:
+                continue
+            for a, v in attrs.items():
+                if v != 1.0 or a.startswith("is_a:"):
+                    continue
+                verdict, source = verdicts.get((anc, a.lower()), ("unread", None))
+                rows.append({"ancestor": anc, "attribute": a, "universality": verdict, "source": source})
+                if verdict == "all":
+                    passes.add((anc, a))
+        self.inheritance_tests = rows
+        tally = Counter(r["universality"] for r in rows)
+        print(f"[ContextMatrix] inheritance by universality: {len(rows)} (ancestor, attribute) pair(s) "
+              f"looked up in {rep['relations']:,} read relation(s) from {', '.join(rep['folders'])} "
+              f"({rep['curator']} curator decision(s), {rep['curator_overrides_reading']} overriding a reading; "
+              f"{len(rep['conflicts'])} relation(s) read twice with different verdicts, the weaker kept): "
+              f"{tally['all']} all -> inherited; {tally['some']} some, {tally['no']} no -> not inherited.")
+        unread = [r for r in rows if r["universality"] == "unread"]
+        if unread:
+            print(f"[ContextMatrix] WARNING: {len(unread)} pair(s) have no reading and are NOT inherited "
+                  f"until they are read (rule 66): "
+                  + "; ".join(f"{r['ancestor']} | {r['attribute']}" for r in unread))
         return passes
 
     def rebuild(self) -> None:

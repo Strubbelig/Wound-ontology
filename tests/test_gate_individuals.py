@@ -190,22 +190,21 @@ def test_without_individuals_leaves_the_input_alone(skeleton):
     assert (A, RDF.type, OWL.Class) in bare
 
 
-# ── a crash puts the lifted verdicts back ──────────────────────────────────
-def test_a_crashed_check_puts_the_lifted_verdicts_back(monkeypatch):
+# ── a crash leaves every earlier verdict standing (rule 89) ────────────────
+def test_a_crashed_check_writes_nothing_and_sets_nothing_aside_for_good(monkeypatch):
+    """Nothing is lifted from the term dict for a re-check, so a check that
+    crashes has nothing to put back (on 2026-10-07 a crash after lifting lost
+    14 rejections); the view sets ELK's verdicts aside only while it reads."""
     import wound_ontology.llm.extraction_adapter as adapter
     from wound_ontology.orchestrator import Orchestrator
 
-    lifted = {"entity_verdicts": {}, "cell_verdicts": {"gel": {"t": {"by": "reasoner_gate"}}}}
-
     class Store:
-        restored = None
+        reopen = None
+        seen = []
 
-        def lift_decisions(self, by):
-            return lifted
-
-        def restore_decisions(self, what):
-            Store.restored = what
-            return 1
+        def assertions(self):
+            Store.seen.append(self.reopen)
+            return []
 
     class Gate:
         least_common_category = staticmethod(lambda cats: None)
@@ -220,9 +219,11 @@ def test_a_crashed_check_puts_the_lifted_verdicts_back(monkeypatch):
     monkeypatch.setattr(adapter, "describe_gate_inputs", lambda e, r, rep: "inputs")
     orch = Orchestrator.__new__(Orchestrator)
     orch._gate = Gate()
+    st = Store()
     with pytest.raises(RuntimeError):
-        orch.run_gate_store_relations(store=Store(), apply=True)
-    assert Store.restored is lifted
+        orch.run_gate_store_relations(store=st, apply=True)
+    assert Store.seen == [("elk", "relations")], "the inputs are read with ELK's verdicts set aside"
+    assert st.reopen is None, "and the view is back to every verdict counting"
 
 
 # ── real ELK on the real skeleton ──────────────────────────────────────────

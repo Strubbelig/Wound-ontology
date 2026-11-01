@@ -1,0 +1,484 @@
+<title>Claudes Einwände</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,650&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+/* Same look as the conflict and pair pages of 29 Oct; compact rows, grouped by the class in question, because there are a thousand of them. */
+:root {
+  --bg: #f4f5f2; --surface: #ffffff; --ink: #1d2422; --muted: #5d6764; --line: #d9dfdb;
+  --mine: #1d6a86; --mine-soft: #e3f0f4; --claude: #8f5a12; --claude-soft: #f6ecdc;
+  --warn: #b02a22; --warn-soft: #f8e4e1; --pick: #2a4f8f; --pick-soft: #e6ecf7; --ok: #2f6b3a; --ok-soft: #e4f1e6;
+  --f-display: "Literata", "Iowan Old Style", Georgia, serif;
+  --f-body: "Public Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141917; --surface: #1c2220; --ink: #e6ebe8; --muted: #9aa5a1; --line: #303a37;
+    --mine: #6fb6d0; --mine-soft: #18303a; --claude: #e0a75a; --claude-soft: #36291a;
+    --warn: #f0857b; --warn-soft: #3a1f1c; --pick: #9db8ec; --pick-soft: #1f2a40; --ok: #7cc68a; --ok-soft: #1c3020;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141917; --surface: #1c2220; --ink: #e6ebe8; --muted: #9aa5a1; --line: #303a37;
+  --mine: #6fb6d0; --mine-soft: #18303a; --claude: #e0a75a; --claude-soft: #36291a;
+  --warn: #f0857b; --warn-soft: #3a1f1c; --pick: #9db8ec; --pick-soft: #1f2a40; --ok: #7cc68a; --ok-soft: #1c3020;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  background: var(--bg); color: var(--ink); font: 15px/1.5 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 64px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 900px; margin: 0 auto; display: grid; gap: 20px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 650; text-wrap: balance; margin: 0; }
+h1 { font-size: 1.85rem; line-height: 1.2; }
+h2 { font-size: 1.15rem; line-height: 1.3; }
+h3 { font-size: 1.02rem; line-height: 1.3; overflow-wrap: anywhere; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 70ch; display: grid; gap: 8px; }
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  padding-block: 10px; border-bottom: 1px solid var(--line); display: grid; gap: 10px;
+}
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tab {
+  font: inherit; font-weight: 600; font-size: 0.92rem; color: var(--muted); background: transparent;
+  border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; cursor: pointer;
+}
+.tab[aria-selected="true"] { color: var(--pick); background: var(--pick-soft); border-color: var(--pick); }
+.tab:focus-visible, .seg button:focus-visible, .bulkbtn:focus-visible, .notebtn:focus-visible { outline: 2px solid var(--pick); outline-offset: 2px; }
+.tab .n { font-variant-numeric: tabular-nums; font-weight: 500; }
+.filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { font: inherit; font-size: 0.84rem; color: var(--muted); background: var(--surface); border: 0; padding: 5px 10px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { color: var(--ink); background: var(--pick-soft); font-weight: 600; }
+input[type="search"] {
+  font: inherit; font-size: 0.88rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line);
+  border-radius: 8px; padding: 5px 10px; min-width: 0; width: 14em; max-width: 100%;
+}
+input[type="search"]:focus-visible { outline: 2px solid var(--pick); outline-offset: 1px; }
+.count { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 0.9rem; }
+.status { color: var(--muted); font-size: 0.84rem; margin-left: auto; }
+.status.warn { color: var(--warn); }
+.panel { display: grid; gap: 26px; }
+.grp { display: grid; gap: 10px; }
+.gh { display: grid; gap: 4px; padding-inline: 2px; }
+.gh .line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.gh .meta, .row .meta { color: var(--muted); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+.gh .def { color: var(--muted); font-size: 0.86rem; max-width: 74ch; }
+.bulk { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 0.84rem; color: var(--muted); }
+.bulkbtn {
+  font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 7px; padding: 3px 9px; cursor: pointer;
+}
+.bulkbtn:hover { border-color: var(--pick); }
+.bulkbtn.yes { color: var(--ok); background: var(--ok-soft); border-color: color-mix(in srgb, var(--ok) 45%, transparent); }
+.bulkbtn:disabled { opacity: 0.5; cursor: default; }
+.rows { display: grid; gap: 8px; }
+.row {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 13px 16px;
+  display: grid; gap: 7px; min-width: 0;
+}
+.row.decided { border-color: color-mix(in srgb, var(--ok) 50%, var(--line)); }
+.rh { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; }
+.done { font-size: 0.78rem; color: var(--ok); font-weight: 600; }
+.who { display: grid; gap: 4px; margin: 0; font-size: 0.92rem; }
+.who div { display: grid; grid-template-columns: 4.6em minmax(0, 1fr); gap: 8px; }
+.who dt { color: var(--muted); font-size: 0.84rem; padding-top: 1px; }
+.who dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.who .m b { color: var(--mine); font-weight: 600; }
+.who .c b { color: var(--claude); font-weight: 600; }
+.why { display: block; color: var(--muted); font-size: 0.86rem; margin-top: 2px; }
+.why::before { content: "„"; } .why::after { content: "“"; }
+.chip { display: inline-block; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.02em; border-radius: 5px; padding: 0 6px; margin-left: 4px; vertical-align: 1px; }
+.chip.in { color: var(--claude); background: var(--claude-soft); }
+.chip.off { color: var(--muted); background: var(--bg); border: 1px solid var(--line); }
+.aside { font-size: 0.86rem; color: var(--muted); }
+.opts { display: flex; flex-wrap: wrap; gap: 6px; border: 0; margin: 0; padding: 0; min-width: 0; }
+.opts legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.opt { position: relative; }
+.opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.opt span {
+  display: inline-block; font-size: 0.86rem; font-weight: 600; border: 1px solid var(--line); border-radius: 999px;
+  padding: 4px 12px; background: var(--surface); color: var(--ink);
+}
+.opt:hover span { border-color: var(--pick); }
+.opt input:checked + span { background: var(--pick-soft); border-color: var(--pick); color: var(--pick); }
+.opt input:focus-visible + span { outline: 2px solid var(--pick); outline-offset: 2px; }
+.opts:disabled .opt span { opacity: 0.7; }
+.foot2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.effect { font-size: 0.86rem; color: var(--muted); flex: 1 1 22em; min-width: 0; }
+.effect b { color: var(--ink); font-weight: 600; }
+.notebtn { font: inherit; font-size: 0.8rem; color: var(--muted); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+.saved { font-size: 0.78rem; color: var(--muted); }
+.saved.err { color: var(--warn); }
+textarea {
+  font: inherit; font-size: 0.9rem; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+  border-radius: 8px; padding: 7px 10px; min-height: 48px; resize: vertical; width: 100%;
+}
+textarea:focus-visible { outline: 2px solid var(--pick); outline-offset: 1px; }
+.empty { color: var(--muted); font-size: 0.92rem; padding: 18px 2px; }
+.foot { color: var(--muted); font-size: 0.88rem; max-width: 72ch; }
+@media (max-width: 640px) {
+  h1 { font-size: 1.5rem; }
+  .who div { grid-template-columns: 1fr; gap: 0; }
+  .row { padding: 12px 13px; }
+  .status { margin-left: 0; }
+  .bar { position: static; }
+}
+</style>
+<div class="wrap">
+  <header style="display:grid;gap:12px">
+    <h1>Wo Claude deinen Einordnungen widerspricht</h1>
+    <div class="lede" id="lede"></div>
+  </header>
+  <div class="bar">
+    <div class="tabs" role="tablist" aria-label="Teil">
+      <button class="tab" role="tab" id="tab-disputes" aria-controls="panel-disputes" aria-selected="true" type="button">Deine Einordnungen, bestritten <span class="n" id="n-disputes"></span></button>
+      <button class="tab" role="tab" id="tab-new" aria-controls="panel-new" aria-selected="false" type="button">Neu, ohne dein Wort <span class="n" id="n-new"></span></button>
+    </div>
+    <div class="filters">
+      <div class="seg" id="f-kind" role="group" aria-label="Claudes Einwand">
+        <button type="button" data-v="all" aria-pressed="true">Alle</button>
+        <button type="button" data-v="none" aria-pressed="false">Keine Klasse passt</button>
+        <button type="button" data-v="other" aria-pressed="false">Andere Klasse</button>
+      </div>
+      <div class="seg" id="f-state" role="group" aria-label="Stand">
+        <button type="button" data-v="open" aria-pressed="false">Offen</button>
+        <button type="button" data-v="done" aria-pressed="false">Entschieden</button>
+        <button type="button" data-v="all" aria-pressed="true">Alle</button>
+      </div>
+      <input type="search" id="q" placeholder="Begriff oder Klasse suchen" aria-label="Begriff oder Klasse suchen">
+      <span class="count" id="count"></span>
+      <span class="status" id="status">Verbinde…</span>
+    </div>
+  </div>
+  <main>
+    <div class="panel" id="panel-disputes" role="tabpanel" aria-labelledby="tab-disputes"></div>
+    <div class="panel" id="panel-new" role="tabpanel" aria-labelledby="tab-new" hidden></div>
+    <p class="empty" id="empty" hidden>Nichts passt zu diesem Filter.</p>
+  </main>
+  <p class="foot">Claude ist hier Claude Opus 5.5, über OpenRouter am 29. Oktober befragt: jede Zeile mit den angebotenen Klassen, ihren Definitionen und ihren Oberklassen, und für jede Zeile eine Antwort mit Begründung. Die Begründungen stehen so, wie Claude sie geschrieben hat. Die Abstracts zählen, in wie vielen Abstracts der Begriff vorkommt.</p>
+</div>
+<script>
+const ITEMS = /*ITEMS*/null;
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+const list = a => a.length <= 1 ? (a[0] || "") : a.slice(0, -1).join(", ") + " und " + a[a.length - 1];
+const date = iso => { try { return new Date(iso + "T12:00:00").toLocaleDateString("de-DE", { day: "numeric", month: "long" }); } catch (e) { return iso; } };
+const fmtTime = iso => { try { return new Date(iso).toLocaleString("de-DE", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { return iso; } };
+
+const D = ITEMS.disputes, NEW = ITEMS.new;
+const nNone = D.filter(x => x.kind === "none").length;
+$("#lede").innerHTML = `
+  <p>Claude hat am 29. Oktober jede Einordnung noch einmal gelesen, diesmal mit den Definitionen der angebotenen Klassen und mit einer Begründung pro Zeile. Hier stehen nur die Fälle, die gerade in der WONT-Erweiterung gebaut sind; was unter der Abstract-Schwelle liegt oder sonst nicht gebaut wird, ändert heute nichts.</p>
+  <p><b>Erster Reiter:</b> ${D.length} Einordnungen, die du am 2. Oktober angenommen hast und denen Claude jetzt widerspricht: ${nNone}-mal passt nach Claude keine der angebotenen Klassen, ${D.length - nNone}-mal eine andere. Dein Wort gilt, bis du hier etwas anderes wählst. <b>Zweiter Reiter:</b> ${NEW.length} Klassen, die erst durch Claudes neue Lesung in die Erweiterung kamen, ohne dass du sie gesehen hast.</p>
+  <p>Die Zeilen sind nach der Klasse gruppiert, um die es geht; jede Gruppe kann ihre offenen Zeilen auf einmal setzen. Eine Wahl wird beim Klicken gespeichert. An der Ontologie ändert sich nichts, bis du mir im Chat sagst, dass du fertig bist.</p>`;
+$("#n-disputes").textContent = `(${D.length})`;
+$("#n-new").textContent = `(${NEW.length})`;
+
+const SEC = {
+  disputes: { coll: "disputes", items: D, groupOf: x => x.mine, bulk: [["keep", "deine bleibt"], ["follow", "Claude folgen"]] },
+  new: { coll: "new_classes", items: NEW, groupOf: x => x.edges[0], bulk: [["ok", "passt"], ["wrong", "falsch"]] },
+};
+
+function fallsOut(keeps, x) {
+  if (keeps.length) return `Bleibt unter <b>${esc(list(keeps))}</b>.`;
+  const kids = x.children ? `; ${plural(x.children, "Klasse darunter verliert", "Klassen darunter verlieren")} diese Oberklasse` : "";
+  return `Hat dann keine Oberklasse mehr und fällt aus der Erweiterung heraus${kids}.`;
+}
+function where(q, label) { return q === "pairs" ? `derselbe Begriff wie <b>${esc(label)}</b>` : `unter <b>${esc(label)}</b>`; }
+
+function optionsOf(sec, x) {
+  if (sec === "new") return [
+    { id: "ok", t: "Passt", e: "Bleibt so, jetzt mit deinem Wort." },
+    { id: "wrong", t: "Falsch", e: x.keeps_without.length ? `Bleibt unter <b>${esc(list(x.keeps_without))}</b>.` : "Fällt aus der Erweiterung heraus; der Begriff bleibt im Verzeichnis und kann anders eingeordnet werden." },
+    { id: "out", t: "Gehört nicht in WONT", e: "Fällt heraus und wird künftig nicht mehr eingeordnet." },
+  ];
+  const mine = x.mine.label, alt = x.alt ? x.alt.label : "";
+  if (x.kind === "none") return [
+    { id: "keep", t: "Bleibt", e: "Nichts ändert sich; dein Wort steht dann ausdrücklich gegen Claudes Einwand." },
+    { id: "follow", t: "Raus", e: x.q === "pairs"
+        ? `Der Begriff gilt nicht mehr als Name von <b>${esc(mine)}</b>. Als eigene Klasse hat er keine Oberklasse und wird nicht gebaut.`
+        : fallsOut(x.keeps_without_mine, x) },
+  ];
+  if (x.kind === "other_own") return [
+    { id: "keep", t: "Beide bleiben", e: "Nichts ändert sich." },
+    { id: "follow", t: `Nur ${x.alt.q === "pairs" ? "als" : "unter"} ${alt}`, e: fallsOut(x.keeps_without_mine, x) },
+  ];
+  return [
+    { id: "keep", t: "Nur meine", e: x.alt.built ? `Claudes <b>${esc(alt)}</b> wird wieder herausgenommen.` : "Nichts ändert sich." },
+    { id: "follow", t: "Nur Claudes", e: `Dann ${where(x.alt.q, alt)} statt ${where(x.q, mine)}.` },
+    { id: "both", t: "Beide", e: x.alt.built ? "Nichts ändert sich; beide sind schon gebaut." : `<b>${esc(alt)}</b> kommt dazu.` },
+    { id: "neither", t: "Keine", e: fallsOut(x.keeps_without_both, x) },
+  ];
+}
+
+function claudeLine(x) {
+  if (x.kind === "none") {
+    const refused = x.alt && x.alt.author ? `<p class="aside">Claudes Vorschlag ${where(x.alt.q, x.alt.label)} hast du am ${date(x.alt.author[1])} abgelehnt.</p>` : "";
+    return [`keine der angebotenen Klassen passt.<span class="why">${esc(x.why)}</span>`, refused];
+  }
+  if (x.kind === "other_own")
+    return [`deine andere Einordnung, ${where(x.alt.q, x.alt.label)}, genügt.<span class="why">${esc(x.why)}</span>`, ""];
+  const chip = x.alt.built ? `<span class="chip in">schon mit gebaut</span>` : `<span class="chip off">nicht gebaut</span>`;
+  return [`stattdessen ${where(x.alt.q, x.alt.label)}${chip}<span class="why">${esc(x.why)}</span>`, ""];
+}
+
+function rowHtml(sec, x) {
+  const meta = [x.cat, plural(x.abstracts, "Abstract", "Abstracts"), x.children ? plural(x.children, "Klasse darunter", "Klassen darunter") : ""].filter(Boolean).join(" · ");
+  let body, aside = "";
+  if (sec === "disputes") {
+    const [c, a] = claudeLine(x);
+    aside = a;
+    const vars = x.records.length > 1 ? ` <span class="meta">(auch als ${esc(x.records.slice(1).map(r => r.term).join(", "))})</span>` : "";
+    body = `<dl class="who"><div><dt>Du</dt><dd class="m">${where(x.q, x.mine.label)}${vars}</dd></div><div><dt>Claude</dt><dd class="c">${c}</dd></div></dl>`;
+  } else {
+    const e = x.edges[0];
+    const before = e.proposed
+      ? (e.session === "no" ? "DeepSeek hatte diese Klasse vorgeschlagen; bei der schnellen Lesung am 1. Oktober wurde sie abgelehnt." : "DeepSeek hatte diese Klasse vorgeschlagen.")
+      : (x.replaced ? `DeepSeek hatte <b>${esc(x.replaced)}</b> vorgeschlagen; Claude hält das für falsch und wählte diese Klasse aus den angebotenen.` : "Claude wählte diese Klasse aus den angebotenen.");
+    body = `<dl class="who"><div><dt>Claude</dt><dd class="c">unter <b>${esc(e.label)}</b><span class="why">${esc(e.why)}</span></dd></div><div><dt>Vorher</dt><dd>${before}</dd></div></dl>`;
+  }
+  const opts = optionsOf(sec, x).map(o => `<label class="opt"><input type="radio" name="p-${x.id}" value="${o.id}"><span>${esc(o.t)}</span></label>`).join("");
+  return `<article class="row" id="${x.id}" data-sec="${sec}">
+    <div class="rh"><h3>${esc(x.concept)}</h3><span class="meta">${esc(meta)}</span><span class="done" hidden>entschieden</span></div>
+    ${body}${aside}
+    <fieldset class="opts"><legend>Was gilt für ${esc(x.concept)}?</legend>${opts}</fieldset>
+    <div class="foot2"><span class="effect"></span><button class="notebtn" type="button">Notiz</button><span class="saved" aria-live="polite"></span></div>
+    <textarea aria-label="Notiz zu ${esc(x.concept)}" rows="2" hidden></textarea>
+  </article>`;
+}
+
+const BY_ID = {}, GROUPS = { disputes: [], new: [] };
+for (const sec of ["disputes", "new"]) {
+  const m = new Map();
+  for (const x of SEC[sec].items) {
+    BY_ID[x.id] = { sec, x };
+    const g = SEC[sec].groupOf(x);
+    const k = g.label + "|" + (sec === "disputes" ? x.q : "");
+    if (!m.has(k)) m.set(k, { key: k, info: g, q: sec === "disputes" ? x.q : "is_a", items: [] });
+    m.get(k).items.push(x);
+  }
+  GROUPS[sec] = [...m.values()].sort((a, b) => b.items.length - a.items.length || a.info.label.localeCompare(b.info.label));
+  $(`#panel-${sec}`).innerHTML = GROUPS[sec].map((g, i) => {
+    g.id = `g-${sec}-${i}`;
+    const what = sec === "disputes" ? (g.q === "pairs" ? "als derselbe Begriff" : "darunter eingeordnet") : "von Claude darunter eingeordnet";
+    const under = g.info.under && g.info.under !== g.info.cat ? `unter ${g.info.under}` : "";
+    const meta = [g.info.cat, under].filter(Boolean).join(" · ");
+    return `<section class="grp" id="${g.id}">
+      <div class="gh">
+        <div class="line"><h2>${esc(g.info.label)}</h2><span class="meta">${esc(meta)}</span></div>
+        ${g.info.def ? `<p class="def">${esc(g.info.def)}</p>` : ""}
+        <div class="bulk"><span class="bulkcount"></span><span class="bulkbtns"></span></div>
+      </div>
+      <div class="rows">${g.items.map(x => rowHtml(sec, x)).join("")}</div>
+    </section>`;
+  }).join("");
+}
+
+// ---- state, filters
+const state = {};
+let db = null, canWrite = true, tab = "disputes";
+const filt = { kind: "all", state: "all", q: "" };
+try { const s = JSON.parse(localStorage.getItem("claude-disputes-view") || "{}"); if (s.tab) tab = s.tab; Object.assign(filt, s.filt || {}); } catch (e) {}
+const remember = () => { try { localStorage.setItem("claude-disputes-view", JSON.stringify({ tab, filt })); } catch (e) {} };
+
+function shown(sec, x) {
+  const s = state[x.id];
+  const done = !!(s && s.choice);
+  if (filt.state === "open" && done) return false;
+  if (filt.state === "done" && !done) return false;
+  if (sec === "disputes" && filt.kind !== "all" && (filt.kind === "none") !== (x.kind === "none")) return false;
+  if (filt.q) {
+    const hay = (sec === "disputes"
+      ? [x.concept, x.mine.label, x.alt && x.alt.label, ...x.records.map(r => r.term)]
+      : [x.concept, x.edges[0].label, x.replaced]).filter(Boolean).join(" ").toLowerCase();
+    if (!hay.includes(filt.q)) return false;
+  }
+  return true;
+}
+
+function paintRow(id) {
+  const { sec, x } = BY_ID[id];
+  const el = document.getElementById(id);
+  const s = state[id];
+  const opts = optionsOf(sec, x);
+  const done = !!(s && s.choice);
+  el.classList.toggle("decided", done);
+  $(".done", el).hidden = !done;
+  if (done) { const r = el.querySelector(`input[value="${s.choice}"]`); if (r && !r.checked) r.checked = true; }
+  const pick = opts.find(o => o.id === (done ? s.choice : null));
+  const hint = sec === "disputes" ? opts.find(o => o.id === "follow") : opts.find(o => o.id === "wrong");
+  $(".effect", el).innerHTML = pick ? pick.e : `<span>${sec === "disputes" ? "Folgst du Claude" : "Falsch"}: </span>${hint.e}`;
+  const ta = $("textarea", el);
+  if (s && s.note && document.activeElement !== ta) { ta.value = s.note; ta.hidden = false; }
+  const sv = $(".saved", el);
+  if (s && s.at && !sv.classList.contains("err") && !sv.dataset.busy) sv.textContent = `gespeichert ${fmtTime(s.at)}`;
+}
+
+function paint() {
+  for (const sec of ["disputes", "new"]) {
+    $(`#panel-${sec}`).hidden = sec !== tab;
+    $(`#tab-${sec}`).setAttribute("aria-selected", String(sec === tab));
+  }
+  $("#f-kind").hidden = tab !== "disputes";
+  for (const [id, v] of [["#f-kind", filt.kind], ["#f-state", filt.state]])
+    $(id).querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === v)));
+  let any = false;
+  for (const g of GROUPS[tab]) {
+    let vis = 0, open = 0;
+    for (const x of g.items) {
+      const on = shown(tab, x);
+      document.getElementById(x.id).hidden = !on;
+      if (on) { vis++; if (!(state[x.id] && state[x.id].choice)) open++; }
+    }
+    const sec = document.getElementById(g.id);
+    sec.hidden = vis === 0;
+    if (vis) any = true;
+    const bulk = $(".bulk", sec);
+    if (!bulk.dataset.confirm) {
+      $(".bulkcount", sec).textContent = `${plural(g.items.length, "Zeile", "Zeilen")}${open && open !== g.items.length ? `, ${open} offen` : ""}${open === 0 ? ", alle entschieden" : ""}`;
+      $(".bulkbtns", sec).innerHTML = open && canWrite && db
+        ? `Alle ${open === 1 ? "offene" : open + " offenen"}${vis < g.items.length ? " sichtbaren" : ""}: ` + SEC[tab].bulk.map(([v, t]) => `<button class="bulkbtn" type="button" data-bulk="${v}">${esc(t)}</button>`).join(" ")
+        : "";
+    }
+  }
+  $("#empty").hidden = any;
+  const items = SEC[tab].items;
+  const n = items.filter(x => state[x.id] && state[x.id].choice).length;
+  $("#count").textContent = `${n} von ${items.length} entschieden`;
+}
+
+// ---- saving
+const queue = {}, noteTimers = {};
+function docOf(sec, x, s) {
+  const base = { section: sec, concept: x.concept, choice: s.choice, choice_text: s.choice_text, note: s.note, bulk: !!s.bulk, at: s.at };
+  if (sec === "disputes") return Object.assign(base, {
+    kind: x.kind, q: x.q, mine: x.mine.label, mine_iri: x.mine.iri, records: x.records,
+    alt: x.alt ? { label: x.alt.label, iri: x.alt.iri, q: x.alt.q, key: x.alt.key } : null });
+  const e = x.edges[0];
+  return Object.assign(base, { iri: x.iri, term: e.term, key: e.key, parent: e.label, parent_iri: e.iri });
+}
+function save(id, choice, { bulk = false } = {}) {
+  const { sec, x } = BY_ID[id];
+  const el = document.getElementById(id);
+  const sv = $(".saved", el);
+  const prev = state[id] || {};
+  const ch = choice !== undefined ? choice : (prev.choice || "");
+  const opt = optionsOf(sec, x).find(o => o.id === ch);
+  const s = { choice: ch, choice_text: opt ? opt.t : "", note: $("textarea", el).value.trim(),
+              bulk: choice !== undefined ? bulk : !!prev.bulk, at: new Date().toISOString() };
+  state[id] = s;
+  paintRow(id);
+  if (!db || !canWrite) {
+    sv.classList.add("err");
+    sv.textContent = db ? "nur lesbar: gespeichert wird nur, was der Besitzer wählt" : "nicht gespeichert: diese Ansicht hat keinen Speicher";
+    return Promise.resolve();
+  }
+  sv.dataset.busy = "1"; sv.classList.remove("err"); sv.textContent = "speichere…";
+  queue[id] = (queue[id] || Promise.resolve()).then(() =>
+    db.collection(SEC[sec].coll).doc(id).set(docOf(sec, x, s))
+      .then(() => { delete sv.dataset.busy; sv.textContent = `gespeichert ${fmtTime(s.at)}`; })
+      .catch(e => {
+        delete sv.dataset.busy; sv.classList.add("err");
+        sv.textContent = `nicht gespeichert (${(e && e.code) || "Fehler"}); bitte noch einmal klicken`;
+      }));
+  return queue[id];
+}
+
+document.querySelector("main").addEventListener("change", ev => {
+  const r = ev.target;
+  if (r.matches(".opt input")) save(r.closest(".row").id, r.value);
+});
+document.querySelector("main").addEventListener("input", ev => {
+  const ta = ev.target;
+  if (!ta.matches("textarea")) return;
+  const id = ta.closest(".row").id;
+  clearTimeout(noteTimers[id]);
+  noteTimers[id] = setTimeout(() => save(id), 900);
+});
+document.querySelector("main").addEventListener("focusout", ev => {
+  const ta = ev.target;
+  if (!ta.matches("textarea")) return;
+  const id = ta.closest(".row").id;
+  if (noteTimers[id]) { clearTimeout(noteTimers[id]); noteTimers[id] = null; }
+  if ((state[id] || {}).note !== ta.value.trim()) save(id);
+});
+document.querySelector("main").addEventListener("click", ev => {
+  const b = ev.target.closest("button");
+  if (!b) return;
+  if (b.matches(".notebtn")) {
+    const ta = $("textarea", b.closest(".row"));
+    ta.hidden = !ta.hidden;
+    if (!ta.hidden) ta.focus();
+    return;
+  }
+  const sec = b.closest(".grp");
+  if (!sec) return;
+  const g = GROUPS[tab].find(g => g.id === sec.id);
+  const bulk = $(".bulk", sec);
+  const targets = () => g.items.filter(x => shown(tab, x) && !(state[x.id] && state[x.id].choice));
+  if (b.dataset.bulk) {
+    const v = b.dataset.bulk, t = SEC[tab].bulk.find(([k]) => k === v)[1];
+    bulk.dataset.confirm = v;
+    $(".bulkcount", sec).textContent = `${plural(targets().length, "offene Zeile", "offene Zeilen")} auf „${t}“ setzen?`;
+    $(".bulkbtns", sec).innerHTML = `<button class="bulkbtn yes" type="button" data-go="1">Ja, setzen</button> <button class="bulkbtn" type="button" data-cancel="1">Abbrechen</button>`;
+    return;
+  }
+  if (b.dataset.cancel) { delete bulk.dataset.confirm; paint(); return; }
+  if (b.dataset.go) {
+    const v = bulk.dataset.confirm;
+    delete bulk.dataset.confirm;
+    (async () => { for (const x of targets()) await save(x.id, v, { bulk: true }); paint(); })();
+    paint();
+  }
+});
+
+for (const sec of ["disputes", "new"]) $(`#tab-${sec}`).addEventListener("click", () => { tab = sec; remember(); paint(); });
+$("#f-kind").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { filt.kind = b.dataset.v; remember(); paint(); } });
+$("#f-state").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { filt.state = b.dataset.v; remember(); paint(); } });
+let qTimer = null;
+$("#q").value = filt.q;
+$("#q").addEventListener("input", () => { clearTimeout(qTimer); qTimer = setTimeout(() => { filt.q = $("#q").value.trim().toLowerCase(); remember(); paint(); }, 160); });
+
+Object.keys(BY_ID).forEach(paintRow);
+paint();
+
+(async () => {
+  const status = $("#status");
+  const use = window.claude && window.claude.use ? n => window.claude.use(n) : async () => null;
+  db = await use("db");
+  if (!db) {
+    status.textContent = "Hier wird nichts gespeichert. Sag mir deine Wahl im Chat.";
+    status.classList.add("warn");
+    paint();
+    return;
+  }
+  const user = await use("user");
+  if (user && typeof user.isOwner === "function" && !user.isOwner()) {
+    canWrite = false;
+    document.querySelectorAll(".opts").forEach(f => { f.disabled = true; });
+    status.textContent = "Nur lesbar: entscheiden kann nur der Besitzer.";
+  } else {
+    status.textContent = "Jede Wahl wird beim Klicken gespeichert.";
+  }
+  for (const sec of ["disputes", "new"]) {
+    db.collection(SEC[sec].coll).limit(1000).onSnapshot(snap => {
+      for (const d of snap.docs) if (BY_ID[d.id] && d.exists) { state[d.id] = d.data(); paintRow(d.id); }
+      paint();
+    }, e => {
+      status.textContent = `Gespeicherte Wahl konnte nicht geladen werden (${(e && e.code) || "Fehler"}).`;
+      status.classList.add("warn");
+    });
+  }
+  paint();
+})();
+</script>

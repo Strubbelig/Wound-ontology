@@ -34,7 +34,7 @@ def test_the_pair_key_is_one_implementation():
 def test_a_flat_file_becomes_records():
     tm = memory_mapping({"wounds": "Wound"})
     assert tm.data == {"wounds": "Wound"}
-    assert tm.records["wounds"]["pairs"] == {}
+    assert [j["verdict"] for j in tm.records["wounds"]["name"]] == ["Wound"]
 
 
 def test_a_verdict_that_sat_on_the_term_moves_onto_the_pair():
@@ -49,14 +49,15 @@ def test_a_verdict_that_sat_on_the_term_moves_onto_the_pair():
 def test_a_v2_refusal_moves_onto_the_pair_it_was_always_about():
     tm = memory_mapping({"materials": {"to": None,
                                        "refused": {"material entity": {"by": "curator"}}}})
-    assert tm.is_refused("materials", "material entity")["by"] == "curator"
+    assert tm.is_refused("materials", "material entity")["by"] == "author"
     assert tm.is_refused("materials", "Wound dressing material") is None
 
 
-def test_migration_is_idempotent():
+def test_a_translated_file_reads_back_unchanged():
+    from conftest import rule89_file
     once = memory_mapping({"wounds": {"to": "Wound", "refused": {},
                                       "pass1": {"verdict": "same_class"}}})
-    twice = memory_mapping(once.records)
+    twice = memory_mapping(rule89_file(once.records))
     assert twice.records == once.records
 
 
@@ -129,7 +130,8 @@ def test_a_retired_entry_leaves_the_mapping_but_not_the_record():
     tm = memory_mapping({"wounds": "Wound"})
     assert tm.retire("wounds", reason="inert spelling") == 1
     assert tm.data == {} and "wounds" in tm.records
-    assert tm.records["wounds"]["retired"]["reason"] == "inert spelling"
+    assert "inert spelling" in tm.records["wounds"]["name"][-1]["why"]
+    assert tm.records["wounds"]["name"][0]["verdict"] == "Wound", "the old name stays on record"
 
 
 def test_retiring_something_already_unmapped_changes_nothing():
@@ -240,35 +242,5 @@ def test_the_live_mapping_excludes_refused_and_retired():
 
 # ── Importing the retired cache files ────────────────────────────────────────
 
-def test_import_pass_folds_a_cache_file_onto_the_records():
-    tm = memory_mapping({"wounds": "Wound"})
-    rep = tm.import_pass("pass1", {
-        pair_key("wounds", "Wound"): {"verdict": "same_class", "reason": "plural"},
-        pair_key("gone", "Gone class"): {"verdict": "different", "reason": "no"},
-    })
-    assert rep["added"] == 2 and rep["new_records"] == 1 and rep["conflicts"] == 0
-    assert tm.judged("pass1") == 2
-    # the judged-but-unmapped term is on record and still not mapped
-    assert "gone" in tm.records and tm.data == {"wounds": "Wound"}
 
 
-def test_import_pass_reports_a_conflict_instead_of_overwriting():
-    tm = memory_mapping()
-    tm.judge("wounds", "Wound", pass1={"verdict": "same_class"})
-    rep = tm.import_pass("pass1", {pair_key("wounds", "Wound"): {"verdict": "different"}})
-    assert rep["conflicts"] == 1 and rep["added"] == 0
-    assert tm.peek("wounds", "Wound")["pass1"]["verdict"] == "same_class"
-    assert rep["clashes"] and "wounds" in rep["clashes"][0]
-
-
-def test_import_pass_counts_what_was_already_there():
-    tm = memory_mapping()
-    tm.judge("wounds", "Wound", pass1={"verdict": "same_class"})
-    rep = tm.import_pass("pass1", {pair_key("wounds", "Wound"): {"verdict": "same_class"}})
-    assert rep["already_on_record"] == 1 and rep["added"] == 0
-
-
-def test_a_cache_key_that_is_not_a_pair_raises():
-    tm = memory_mapping()
-    with pytest.raises(ValueError, match="not a pass1 pair key"):
-        tm.import_pass("pass1", {"wounds": {"verdict": "same_class"}})

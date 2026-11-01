@@ -1,0 +1,493 @@
+<title>WONT-Definitionen</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,650;1,7..72,400&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+/* Same look as the review pages of 29 and 30 Oct. One card per class, grouped by its parent so siblings are read
+   side by side; the definition itself is set like a dictionary entry, in the serif. */
+:root {
+  --bg: #f4f5f2; --surface: #ffffff; --ink: #1d2422; --muted: #5d6764; --line: #d9dfdb;
+  --claude: #8f5a12; --claude-soft: #f6ecdc; --mine: #1d6a86; --mine-soft: #e3f0f4;
+  --warn: #b02a22; --warn-soft: #f8e4e1; --pick: #2a4f8f; --pick-soft: #e6ecf7; --ok: #2f6b3a; --ok-soft: #e4f1e6;
+  --f-display: "Literata", "Iowan Old Style", Georgia, serif;
+  --f-body: "Public Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --f-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141917; --surface: #1c2220; --ink: #e6ebe8; --muted: #9aa5a1; --line: #303a37;
+    --claude: #e0a75a; --claude-soft: #36291a; --mine: #6fb6d0; --mine-soft: #18303a;
+    --warn: #f0857b; --warn-soft: #3a1f1c; --pick: #9db8ec; --pick-soft: #1f2a40; --ok: #7cc68a; --ok-soft: #1c3020;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141917; --surface: #1c2220; --ink: #e6ebe8; --muted: #9aa5a1; --line: #303a37;
+  --claude: #e0a75a; --claude-soft: #36291a; --mine: #6fb6d0; --mine-soft: #18303a;
+  --warn: #f0857b; --warn-soft: #3a1f1c; --pick: #9db8ec; --pick-soft: #1f2a40; --ok: #7cc68a; --ok-soft: #1c3020;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  background: var(--bg); color: var(--ink); font: 15px/1.5 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 64px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 880px; margin: 0 auto; display: grid; gap: 20px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 650; text-wrap: balance; margin: 0; }
+h1 { font-size: 1.85rem; line-height: 1.2; }
+h2 { font-size: 1.12rem; line-height: 1.3; overflow-wrap: anywhere; }
+h3 { font-size: 1.04rem; line-height: 1.3; overflow-wrap: anywhere; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 70ch; display: grid; gap: 8px; }
+.lede b { color: var(--ink); font-weight: 600; }
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  padding-block: 10px; border-bottom: 1px solid var(--line); display: grid; gap: 10px;
+}
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tab {
+  font: inherit; font-weight: 600; font-size: 0.92rem; color: var(--muted); background: transparent;
+  border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; cursor: pointer;
+}
+.tab[aria-selected="true"] { color: var(--pick); background: var(--pick-soft); border-color: var(--pick); }
+.tab .n { font-variant-numeric: tabular-nums; font-weight: 500; }
+.tab:focus-visible, .seg button:focus-visible, .bulkbtn:focus-visible, .notebtn:focus-visible, .linkbtn:focus-visible { outline: 2px solid var(--pick); outline-offset: 2px; }
+.filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { font: inherit; font-size: 0.84rem; color: var(--muted); background: var(--surface); border: 0; padding: 5px 10px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { color: var(--ink); background: var(--pick-soft); font-weight: 600; }
+input[type="search"] {
+  font: inherit; font-size: 0.88rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line);
+  border-radius: 8px; padding: 5px 10px; min-width: 0; width: 15em; max-width: 100%;
+}
+input[type="search"]:focus-visible { outline: 2px solid var(--pick); outline-offset: 1px; }
+.count { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 0.9rem; }
+.status { color: var(--muted); font-size: 0.84rem; margin-left: auto; }
+.status.warn { color: var(--warn); }
+.panel { display: grid; gap: 28px; }
+.grp { display: grid; gap: 10px; }
+.gh { display: grid; gap: 4px; padding-inline: 2px; }
+.gh .line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.gh .eyebrow { color: var(--muted); font-size: 0.74rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+.gh .def { color: var(--muted); font-family: var(--f-display); font-size: 0.92rem; max-width: 72ch; }
+.meta { color: var(--muted); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+.bulk { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; font-size: 0.84rem; color: var(--muted); }
+.bulkbtn {
+  font: inherit; font-size: 0.82rem; font-weight: 600; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 7px; padding: 3px 9px; cursor: pointer;
+}
+.bulkbtn:hover { border-color: var(--pick); }
+.bulkbtn.yes { color: var(--ok); background: var(--ok-soft); border-color: color-mix(in srgb, var(--ok) 45%, transparent); }
+.rows { display: grid; gap: 10px; }
+.row {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px;
+  display: grid; gap: 10px; min-width: 0;
+}
+.row.decided { border-color: color-mix(in srgb, var(--ok) 50%, var(--line)); }
+.rh { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; }
+.id { font-family: var(--f-mono); font-size: 0.78rem; color: var(--muted); user-select: all; }
+.done { font-size: 0.78rem; color: var(--ok); font-weight: 600; }
+.facts { display: grid; gap: 4px; margin: 0; font-size: 0.88rem; }
+.facts div { display: grid; grid-template-columns: 7.2em minmax(0, 1fr); gap: 10px; }
+.facts dt { color: var(--muted); font-size: 0.82rem; padding-top: 1px; }
+.facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.facts .ax { font-family: var(--f-mono); font-size: 0.78rem; line-height: 1.55; display: block; }
+.facts .pdef { display: block; color: var(--muted); font-family: var(--f-display); font-size: 0.86rem; }
+.entry {
+  margin: 0; padding: 10px 14px; border-radius: 8px; background: var(--claude-soft);
+  font-family: var(--f-display); font-size: 1rem; line-height: 1.55; overflow-wrap: anywhere;
+}
+.entry .who { display: block; font-family: var(--f-body); font-size: 0.74rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--claude); margin-bottom: 2px; }
+.held { margin: 0; padding: 10px 14px; border-radius: 8px; background: var(--bg); border: 1px dashed var(--line); font-size: 0.88rem; color: var(--muted); }
+.held b { color: var(--ink); font-weight: 600; }
+.held q { font-style: italic; quotes: "„" "“"; }
+.opts { display: flex; flex-wrap: wrap; gap: 6px; border: 0; margin: 0; padding: 0; min-width: 0; }
+.opts legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.opt { position: relative; }
+.opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.opt span {
+  display: inline-block; font-size: 0.86rem; font-weight: 600; border: 1px solid var(--line); border-radius: 999px;
+  padding: 4px 13px; background: var(--surface); color: var(--ink);
+}
+.opt:hover span { border-color: var(--pick); }
+.opt input:checked + span { background: var(--pick-soft); border-color: var(--pick); color: var(--pick); }
+.opt input:focus-visible + span { outline: 2px solid var(--pick); outline-offset: 2px; }
+.opts:disabled .opt span { opacity: 0.7; }
+.mine { display: grid; gap: 5px; }
+.mine label { font-size: 0.8rem; font-weight: 600; color: var(--mine); letter-spacing: 0.02em; }
+textarea {
+  font: inherit; font-size: 0.92rem; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+  border-radius: 8px; padding: 8px 11px; min-height: 52px; resize: vertical; width: 100%;
+}
+textarea.def { font-family: var(--f-display); font-size: 0.98rem; line-height: 1.5; background: var(--mine-soft); border-color: color-mix(in srgb, var(--mine) 35%, var(--line)); }
+textarea:focus-visible { outline: 2px solid var(--pick); outline-offset: 1px; }
+.hint { font-size: 0.82rem; color: var(--warn); }
+.foot2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.notebtn, .linkbtn { font: inherit; font-size: 0.8rem; color: var(--muted); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+.saved { font-size: 0.78rem; color: var(--muted); margin-left: auto; }
+.saved.err { color: var(--warn); }
+.empty { color: var(--muted); font-size: 0.92rem; padding: 18px 2px; }
+.foot { color: var(--muted); font-size: 0.88rem; max-width: 72ch; }
+@media (max-width: 640px) {
+  h1 { font-size: 1.5rem; }
+  .facts div { grid-template-columns: 1fr; gap: 0; }
+  .row { padding: 12px 13px; }
+  .status { margin-left: 0; }
+  .bar { position: static; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+<div class="wrap">
+  <header style="display:grid;gap:12px">
+    <h1>WONT-Definitionen durchsehen</h1>
+    <div class="lede" id="lede"></div>
+  </header>
+  <div class="bar">
+    <div class="tabs" role="tablist" aria-label="Teil">
+      <button class="tab" role="tab" id="tab-drafts" aria-controls="panel-drafts" aria-selected="true" type="button">Claudes Entwürfe <span class="n" id="n-drafts"></span></button>
+      <button class="tab" role="tab" id="tab-missing" aria-controls="panel-missing" aria-selected="false" type="button">Ohne Definition <span class="n" id="n-missing"></span></button>
+    </div>
+    <div class="filters">
+      <div class="seg" id="f-state" role="group" aria-label="Stand">
+        <button type="button" data-v="open" aria-pressed="false">Offen</button>
+        <button type="button" data-v="done" aria-pressed="false">Erledigt</button>
+        <button type="button" data-v="all" aria-pressed="true">Alle</button>
+      </div>
+      <input type="search" id="q" placeholder="Klasse, ID oder Wort suchen" aria-label="Klasse, ID oder Wort suchen">
+      <span class="count" id="count"></span>
+      <span class="status" id="status">Verbinde…</span>
+    </div>
+  </div>
+  <main>
+    <div class="panel" id="panel-drafts" role="tabpanel" aria-labelledby="tab-drafts"></div>
+    <div class="panel" id="panel-missing" role="tabpanel" aria-labelledby="tab-missing" hidden></div>
+    <p class="empty" id="empty" hidden>Nichts passt zu diesem Filter.</p>
+  </main>
+  <p class="foot">Claude ist hier Claude Opus 5.5. Es bekam am 30. Oktober für jede Klasse ohne Definition den Namen, die Synonyme, die Axiome, die Oberklasse mit ihrer Definition und bis zu drei Definitionen von Geschwisterklassen und sollte einen Satz der Form „A &lt;Oberklasse&gt; that …“ schreiben, nur mit dem, was für jede Instanz gilt. Die Entwürfe stehen so, wie sie heute in WONT stehen, also schon mit den Klassennamen ohne „causing“ und ohne genannte Ursachen. Die Axiome stehen in kurzer Manchester-Schreibweise, mit Namen statt IDs. Claudes Gründe stehen so, wie Claude sie geschrieben hat.</p>
+</div>
+<script>
+const ITEMS = /*ITEMS*/null;
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+const fmtTime = iso => { try { return new Date(iso).toLocaleString("de-DE", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); } catch (e) { return iso; } };
+// his own rule: "vermeide einfach notorisch kausalität"
+const CAUSAL = /\b(caus\w*|due to|owing to|because|result(s|ed|ing)? (from|in)|lead(s|ing)? to|arising from|arises? from)\b/i;
+
+const SECS = ["drafts", "missing"];
+const BY_ID = {}, ITEMS_OF = { drafts: [], missing: [] }, GROUPS = { drafts: [], missing: [] };
+for (const x of ITEMS) {
+  const sec = x.kind === "draft" ? "drafts" : "missing";
+  ITEMS_OF[sec].push(x);
+  BY_ID[x.id] = { sec, x };
+}
+const nHeld = ITEMS_OF.missing.filter(x => x.held).length;
+$("#lede").innerHTML = `
+  <p><b>${ITEMS_OF.drafts.length} Definitionen</b> hat Claude am 30. Oktober entworfen. Sie stehen in WONT mit dem Vermerk, dass du sie noch durchsehen musst. Nimm jeden Entwurf an oder schreib deine Fassung; ein Klick auf „Eigene Fassung“ öffnet den Entwurf zum Bearbeiten.</p>
+  <p><b>${ITEMS_OF.missing.length} Klassen</b> haben keine Definition. Bei ${nHeld} hat Claude bewusst keinen Entwurf geschrieben und sagt, warum; oft ist der Name oder die Oberklasse fraglich. Die übrigen ${ITEMS_OF.missing.length - nHeld} sind nur durch ein Axiom definiert. Diese Definitionen schreibst du selbst. Wenn eine Klasse eher umbenannt, umgehängt oder gestrichen werden sollte, schreib das in die Notiz.</p>
+  <p>Die Klassen sind nach ihrer Oberklasse gruppiert. Jede Eingabe wird gespeichert, sobald du sie machst. An WONT ändert sich nichts, bis du mir im Chat sagst, dass du fertig bist. Dann schreibe ich alles in eine neue WONT-Datei und nehme den Entwurfsvermerk heraus.</p>`;
+$("#n-drafts").textContent = `(${ITEMS_OF.drafts.length})`;
+$("#n-missing").textContent = `(${ITEMS_OF.missing.length})`;
+
+function genus(x) {
+  if (!x.parents.length) return "A … that …";
+  const p = x.parents[0].label;
+  const g = /^[A-Z][a-z]/.test(p) ? p[0].toLowerCase() + p.slice(1) : p;
+  return `${/^[aeiou]/i.test(g) ? "An" : "A"} ${g} that …`;
+}
+
+function factsHtml(x) {
+  const rows = [];
+  const more = x.parents.slice(1);
+  if (more.length) rows.push(["Auch unter", more.map(p => `${esc(p.label)}${p.def ? `<span class="pdef">${esc(p.def)}</span>` : ""}`).join("")]);
+  if (x.axioms.length) rows.push(["Axiome", x.axioms.map(a => `<span class="ax">${esc(a)}</span>`).join("")]);
+  if (x.synonyms.length) rows.push(["Synonyme", esc(x.synonyms.join(" · "))]);
+  if (x.comments.length) rows.push(["Kommentar", x.comments.map(esc).join("<br>")]);
+  if (x.children.length) {
+    const k = x.children.slice(0, 8).map(esc).join(" · ");
+    rows.push(["Unterklassen", `${k}${x.children.length > 8 ? ` <span class="meta">und ${x.children.length - 8} weitere</span>` : ""}`]);
+  }
+  rows.push(["IRI", `<span class="id">${esc(x.iri)}</span>`]);
+  return `<dl class="facts">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>`;
+}
+
+function rowHtml(sec, x) {
+  const head = `<div class="rh"><h3>${esc(x.label)}</h3><span class="id">${esc(x.id)}</span><span class="done" hidden>${sec === "drafts" ? "erledigt" : "geschrieben"}</span></div>`;
+  const note = `<div class="foot2"><button class="notebtn" type="button">Notiz</button><span class="saved" aria-live="polite"></span></div>
+    <textarea class="note" id="note-${x.id}" aria-label="Notiz zu ${esc(x.label)}" rows="2" placeholder="Anmerkung, z. B. Name oder Oberklasse ändern" hidden></textarea>`;
+  if (sec === "drafts") return `<article class="row" id="${x.id}">
+    ${head}
+    <blockquote class="entry"><span class="who">Claudes Entwurf</span>${esc(x.draft)}</blockquote>
+    ${factsHtml(x)}
+    <fieldset class="opts"><legend>Was gilt für ${esc(x.label)}?</legend>
+      <label class="opt"><input type="radio" name="p-${x.id}" value="accept"><span>Annehmen</span></label>
+      <label class="opt"><input type="radio" name="p-${x.id}" value="own"><span>Eigene Fassung</span></label>
+    </fieldset>
+    <div class="mine" hidden><label for="def-${x.id}">Deine Fassung</label>
+      <textarea class="def" id="def-${x.id}" rows="3"></textarea><span class="hint" hidden></span></div>
+    ${note}
+  </article>`;
+  const why = x.held
+    ? `<p class="held"><b>Warum Claude keinen Entwurf schrieb:</b> <q>${esc(x.held)}</q></p>`
+    : `<p class="held"><b>Nur durch ein Axiom definiert.</b> Claude bekam diese Klasse nicht vorgelegt, weil sie keine benannte Oberklasse hat.</p>`;
+  return `<article class="row" id="${x.id}">
+    ${head}
+    ${why}
+    ${factsHtml(x)}
+    <div class="mine"><label for="def-${x.id}">Deine Definition</label>
+      <textarea class="def" id="def-${x.id}" rows="3" placeholder="${esc(genus(x))}"></textarea><span class="hint" hidden></span></div>
+    ${note}
+  </article>`;
+}
+
+for (const sec of SECS) {
+  const m = new Map();
+  for (const x of ITEMS_OF[sec]) {
+    const k = x.group || "";
+    if (!m.has(k)) m.set(k, { key: k, info: x.parents[0] || null, items: [] });
+    m.get(k).items.push(x);
+  }
+  GROUPS[sec] = [...m.values()].sort((a, b) => b.items.length - a.items.length || a.key.localeCompare(b.key));
+  for (const g of GROUPS[sec]) g.items.sort((a, b) => a.label.localeCompare(b.label));
+  $(`#panel-${sec}`).innerHTML = GROUPS[sec].map((g, i) => {
+    g.id = `g-${sec}-${i}`;
+    const title = g.info ? esc(g.info.label) : "Ohne benannte Oberklasse";
+    return `<section class="grp" id="${g.id}">
+      <div class="gh">
+        <span class="eyebrow">Oberklasse</span>
+        <div class="line"><h2>${title}</h2></div>
+        ${g.info && g.info.def ? `<p class="def">${esc(g.info.def)}</p>` : ""}
+        <div class="bulk"><span class="bulkcount"></span><span class="bulkbtns"></span></div>
+      </div>
+      <div class="rows">${g.items.map(x => rowHtml(sec, x)).join("")}</div>
+    </section>`;
+  }).join("");
+}
+
+// ---- state, filters
+const state = {};
+let db = null, canWrite = true, tab = "drafts";
+const filt = { state: "all", q: "" };
+try {
+  const s = JSON.parse(localStorage.getItem("wont-definition-review-view") || "{}");
+  if (SECS.includes(s.tab)) tab = s.tab;
+  Object.assign(filt, s.filt || {});
+} catch (e) {}
+if (SECS.includes(location.hash.slice(1))) tab = location.hash.slice(1);
+const remember = () => { try { localStorage.setItem("wont-definition-review-view", JSON.stringify({ tab, filt })); } catch (e) {} };
+
+const isDone = (sec, s) => !!s && (sec === "drafts" ? (s.choice === "accept" || (s.choice === "own" && !!(s.text || "").trim())) : !!(s.text || "").trim());
+
+function shown(sec, x) {
+  const done = isDone(sec, state[x.id]);
+  if (filt.state === "open" && done) return false;
+  if (filt.state === "done" && !done) return false;
+  if (filt.q) {
+    const s = state[x.id] || {};
+    const hay = [x.label, x.id, x.draft, x.group, ...x.synonyms, s.text, s.note].filter(Boolean).join(" ").toLowerCase();
+    if (!hay.includes(filt.q)) return false;
+  }
+  return true;
+}
+
+function hint(el, text) {
+  const h = $(".hint", el);
+  const m = (text || "").match(CAUSAL);
+  h.hidden = !m;
+  if (m) h.textContent = `„${m[0]}“ nennt eine Ursache; du wolltest Definitionen ohne Kausalität.`;
+}
+
+function paintRow(id) {
+  const { sec, x } = BY_ID[id];
+  const el = document.getElementById(id);
+  const s = state[id] || {};
+  const done = isDone(sec, s);
+  el.classList.toggle("decided", done);
+  $(".done", el).hidden = !done;
+  const def = $("textarea.def", el);
+  if (sec === "drafts") {
+    if (s.choice) { const r = el.querySelector(`input[value="${s.choice}"]`); if (r && !r.checked) r.checked = true; }
+    $(".mine", el).hidden = s.choice !== "own";
+  }
+  if (document.activeElement !== def) {
+    const want = s.text != null && s.text !== "" ? s.text : (sec === "drafts" && s.choice === "own" ? x.draft : "");
+    if (def.value !== want) def.value = want;
+  }
+  hint(el, def.value);
+  const ta = $("textarea.note", el);
+  if (s.note && document.activeElement !== ta) { ta.value = s.note; ta.hidden = false; }
+  const sv = $(".saved", el);
+  if (s.at && !sv.classList.contains("err") && !sv.dataset.busy) sv.textContent = `gespeichert ${fmtTime(s.at)}`;
+}
+
+function paint() {
+  for (const sec of SECS) {
+    $(`#panel-${sec}`).hidden = sec !== tab;
+    $(`#tab-${sec}`).setAttribute("aria-selected", String(sec === tab));
+  }
+  $("#f-state").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === filt.state)));
+  let any = false;
+  for (const g of GROUPS[tab]) {
+    let vis = 0, open = 0;
+    for (const x of g.items) {
+      const on = shown(tab, x);
+      document.getElementById(x.id).hidden = !on;
+      if (on) { vis++; if (!isDone(tab, state[x.id])) open++; }
+    }
+    const sec = document.getElementById(g.id);
+    sec.hidden = vis === 0;
+    if (vis) any = true;
+    const bulk = $(".bulk", sec);
+    if (!bulk.dataset.confirm) {
+      const allOpen = g.items.filter(x => !isDone(tab, state[x.id])).length;
+      $(".bulkcount", sec).textContent = g.items.length > 1 || tab === "drafts"
+        ? `${plural(g.items.length, "Klasse", "Klassen")}${allOpen === 0 ? ", alle erledigt" : allOpen < g.items.length ? `, ${allOpen} offen` : ""}` : "";
+      $(".bulkbtns", sec).innerHTML = tab === "drafts" && open > 1 && canWrite && db
+        ? `<button class="bulkbtn" type="button" data-bulk="accept">Alle ${open}${vis < g.items.length ? " sichtbaren" : ""} offenen annehmen</button>` : "";
+    }
+  }
+  $("#empty").hidden = any;
+  const n = ITEMS_OF[tab].filter(x => isDone(tab, state[x.id])).length;
+  $("#count").textContent = `${n} von ${ITEMS_OF[tab].length} ${tab === "drafts" ? "erledigt" : "geschrieben"}`;
+}
+
+// ---- saving: each answer is stored with the question it answers
+const queue = {}, timers = {};
+function docOf(sec, x, s) {
+  return { section: sec, id: x.id, iri: x.iri, label: x.label, draft: x.draft, held: x.held,
+           parents: x.parents.map(p => p.label), choice: s.choice || "", text: s.text || "", note: s.note || "",
+           bulk: !!s.bulk, at: s.at };
+}
+function save(id, patch = {}) {
+  const { sec, x } = BY_ID[id];
+  const el = document.getElementById(id);
+  const sv = $(".saved", el);
+  const prev = state[id] || {};
+  const s = Object.assign({}, prev, { note: $("textarea.note", el).value.trim(), bulk: false }, patch, { at: new Date().toISOString() });
+  if (sec === "missing") s.choice = (s.text || "").trim() ? "own" : "";
+  state[id] = s;
+  paintRow(id);
+  if (!db || !canWrite) {
+    sv.classList.add("err");
+    sv.textContent = db ? "nur lesbar: gespeichert wird nur, was der Besitzer schreibt" : "nicht gespeichert: diese Ansicht hat keinen Speicher";
+    return Promise.resolve();
+  }
+  sv.dataset.busy = "1"; sv.classList.remove("err"); sv.textContent = "speichere…";
+  queue[id] = (queue[id] || Promise.resolve()).then(() =>
+    db.collection(sec).doc(id).set(docOf(sec, x, s))
+      .then(() => { delete sv.dataset.busy; sv.textContent = `gespeichert ${fmtTime(s.at)}`; })
+      .catch(e => {
+        delete sv.dataset.busy; sv.classList.add("err");
+        sv.textContent = `nicht gespeichert (${(e && e.code) || "Fehler"}); bitte noch einmal eingeben`;
+      }));
+  return queue[id];
+}
+const textOf = id => document.getElementById(id).querySelector("textarea.def").value.trim();
+
+const main = document.querySelector("main");
+main.addEventListener("change", ev => {
+  const r = ev.target;
+  if (!r.matches(".opt input")) return;
+  const id = r.closest(".row").id, { x } = BY_ID[id];
+  if (r.value === "accept") save(id, { choice: "accept", text: "" });
+  else {
+    const prev = (state[id] || {}).text;
+    save(id, { choice: "own", text: prev || x.draft });
+    const ta = document.getElementById(id).querySelector("textarea.def");
+    ta.focus();
+  }
+});
+main.addEventListener("input", ev => {
+  const ta = ev.target;
+  if (!ta.matches("textarea")) return;
+  const row = ta.closest(".row"), id = row.id;
+  if (ta.matches(".def")) hint(row, ta.value);
+  clearTimeout(timers[id]);
+  timers[id] = setTimeout(() => { timers[id] = null; save(id, ta.matches(".def") ? { text: textOf(id) } : {}); }, 900);
+});
+main.addEventListener("focusout", ev => {
+  const ta = ev.target;
+  if (!ta.matches("textarea")) return;
+  const id = ta.closest(".row").id, s = state[id] || {};
+  if (timers[id]) { clearTimeout(timers[id]); timers[id] = null; }
+  if (ta.matches(".def") ? (s.text || "") !== textOf(id) : (s.note || "") !== ta.value.trim())
+    save(id, ta.matches(".def") ? { text: textOf(id) } : {});
+});
+main.addEventListener("click", ev => {
+  const b = ev.target.closest("button");
+  if (!b) return;
+  if (b.matches(".notebtn")) {
+    const ta = $("textarea.note", b.closest(".row"));
+    ta.hidden = !ta.hidden;
+    if (!ta.hidden) ta.focus();
+    return;
+  }
+  const secEl = b.closest(".grp");
+  if (!secEl) return;
+  const g = GROUPS[tab].find(g => g.id === secEl.id);
+  const bulk = $(".bulk", secEl);
+  const targets = () => g.items.filter(x => shown(tab, x) && !isDone(tab, state[x.id]) && !(state[x.id] || {}).choice);
+  if (b.dataset.bulk) {
+    const n = targets().length;
+    bulk.dataset.confirm = "1";
+    $(".bulkcount", secEl).textContent = `${plural(n, "offenen Entwurf", "offene Entwürfe")} unter „${g.key}“ annehmen? Gelesen hast du sie?`;
+    $(".bulkbtns", secEl).innerHTML = `<button class="bulkbtn yes" type="button" data-go="1">Ja, annehmen</button> <button class="bulkbtn" type="button" data-cancel="1">Abbrechen</button>`;
+    return;
+  }
+  if (b.dataset.cancel) { delete bulk.dataset.confirm; paint(); return; }
+  if (b.dataset.go) {
+    delete bulk.dataset.confirm;
+    (async () => { for (const x of targets()) await save(x.id, { choice: "accept", text: "", bulk: true }); paint(); })();
+    paint();
+  }
+});
+
+for (const sec of SECS) $(`#tab-${sec}`).addEventListener("click", () => { tab = sec; remember(); paint(); window.scrollTo({ top: 0 }); });
+$("#f-state").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { filt.state = b.dataset.v; remember(); paint(); } });
+let qTimer = null;
+$("#q").value = filt.q;
+$("#q").addEventListener("input", () => { clearTimeout(qTimer); qTimer = setTimeout(() => { filt.q = $("#q").value.trim().toLowerCase(); remember(); paint(); }, 160); });
+
+Object.keys(BY_ID).forEach(paintRow);
+paint();
+
+(async () => {
+  const status = $("#status");
+  const use = window.claude && window.claude.use ? n => window.claude.use(n) : async () => null;
+  db = await use("db");
+  if (!db) {
+    status.textContent = "Hier wird nichts gespeichert. Öffne die Seite in claude.ai.";
+    status.classList.add("warn");
+    paint();
+    return;
+  }
+  const user = await use("user");
+  if (user && typeof user.isOwner === "function" && !user.isOwner()) {
+    canWrite = false;
+    document.querySelectorAll(".opts").forEach(f => { f.disabled = true; });
+    document.querySelectorAll("textarea").forEach(t => { t.readOnly = true; });
+    status.textContent = "Nur lesbar: schreiben kann nur der Besitzer.";
+  } else {
+    status.textContent = "Jede Eingabe wird sofort gespeichert.";
+  }
+  for (const sec of SECS) {
+    db.collection(sec).limit(1000).onSnapshot(snap => {
+      for (const d of snap.docs) if (BY_ID[d.id] && d.exists) {
+        const v = d.data();
+        state[d.id] = { choice: v.choice, text: v.text, note: v.note, bulk: v.bulk, at: v.at };
+        paintRow(d.id);
+      }
+      paint();
+    }, e => {
+      status.textContent = `Gespeichertes konnte nicht geladen werden (${(e && e.code) || "Fehler"}).`;
+      status.classList.add("warn");
+    });
+  }
+  paint();
+})();
+</script>

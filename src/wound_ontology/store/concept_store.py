@@ -1,6 +1,5 @@
 from __future__ import annotations
 import asyncio
-import datetime as _dt
 import warnings
 import re
 from typing import Iterable, Iterator
@@ -8,6 +7,7 @@ import pandas as pd
 from wound_ontology.data_manager.data_manager import DataManager
 from wound_ontology.utils.string_utils import normalize_term, smart_title
 from wound_ontology.llm.category_vocab import declared_category
+from wound_ontology.mappers.judgements import current
 from wound_ontology.utils.normalise import normalise
 from wound_ontology.utils.label_match import singular_spelling as _singular_spelling
 
@@ -232,6 +232,11 @@ class ConceptStore:
 
     REJECTED = REJECTED
     REPREDICATED = REPREDICATED
+    #: `(agent, "relations" | "is_a")`: whose judgements on which cells the
+    #: view sets aside, so that agent hears them again (the reasoner's re-check,
+    #: rule 89) -- or a frozenset of agents (`term_mapping_and_gate.heard`).
+    #: Nothing is lifted from the term dict, so nothing is put back.
+    reopen: tuple[str | frozenset[str], str] | None = None
 
     @staticmethod
     def clean_entity_str(term: str) -> str:
@@ -388,24 +393,17 @@ class ConceptStore:
         test = self._scope_test()
         return {n for n in names if test(n)}
 
-    def _verdict_on(self, *names: str) -> dict | None:
-        records = self.terms.records
-        for n in names:
-            v = (records.get(n) or {}).get("rejected")
-            if v is not None and v.get("status") == self.REJECTED:
-                return v
-        return None
-
     def _cell_verdict(self, owners: tuple[str, ...], pred: str,
                       targets: tuple[str, ...]) -> dict | None:
-        records = self.terms.records
+        """The `no` that counts on this cell (rule 89), or None."""
+        terms, r = self.terms, getattr(self, "reopen", None)
+        reopen = r[0] if r and (r[1] == "is_a") == (pred == "is_a") else None
         for owner in owners:
-            rel = (records.get(owner) or {}).get("relations")
-            if not rel:
+            if owner not in terms.records:
                 continue
             for t in targets:
-                v = rel.get(f"{pred}: {t}")
-                if v is not None and v.get("status") == self.REJECTED:
+                v = terms.cell_rejected(owner, f"{pred}: {t}", reopen=reopen)
+                if v is not None:
                     return v
         return None
 
@@ -414,18 +412,18 @@ class ConceptStore:
         """The predicate a decision gives this cell instead of the one written
         (rule 68: `has_disposition` with a tendency value reads as
         `has_tendency`), or None."""
-        records = self.terms.records
+        terms, r = self.terms, getattr(self, "reopen", None)
+        reopen = r[0] if r and r[1] == "relations" else None
         for owner in owners:
-            rel = (records.get(owner) or {}).get("relations")
-            if not rel:
+            if owner not in terms.records:
                 continue
             for t in targets:
-                v = rel.get(f"{pred}: {t}")
-                if v is not None and v.get("status") == self.REPREDICATED:
-                    return v["to"]
+                p = terms.cell_predicate(owner, pred, t, reopen=reopen)
+                if p:
+                    return p
         return None
 
-    def view(self, *, mapped: bool = True, include_rejected: bool = False
+    def view(self, *, mapped: bool = True, include_rejected: bool = False, on_refused=None, on_kept=None
              ) -> Iterator[tuple[str, dict[str, dict[str, float]]]]:
         """(key, {name: {triple: value}}) per record: the evidence, resolved.
 
@@ -434,6 +432,16 @@ class ConceptStore:
         `include_rejected=True` keeps what a verdict rejects -- what a pass
         that re-asks about rejected terms wants. Two strings that resolve to
         one name in one abstract merge, the strongest evidence winning.
+        `on_refused(key, name, predicate, target, owners, targets, value)` is
+        told of every relation a judgement in the term dict leaves out, with
+        the names its cells are read under -- what a count of why relations
+        are left out wants (the figure from the abstracts to WONT); it changes
+        nothing the view yields. `on_kept`, with the same arguments, is told of
+        every relation it keeps: a judgement on any of those cells is one on the
+        relation, so whoever asks whether a relation was read asks them all
+        (2026-10-30: a reading filed under the spelling `Risk of infection`
+        counted for the view and was missed by the figure, which read the cell
+        of today's name `wound infecting tendency` alone).
         """
         name = self.resolver(mapped=mapped)
         # Terms split by category (rule 87): each mention takes the name for
@@ -443,7 +451,9 @@ class ConceptStore:
         # Decided categories (rule 57), by the name the view shows and, when the
         # view stops at the spelling, by the name the term maps to as well: a
         # synonym names what its canonical names.
-        cats = {t.lower(): c["verdict"] for t, c in self.terms.categories().items()}
+        r = getattr(self, "reopen", None)
+        cats = {t.lower(): c["verdict"] for t, c in
+                self.terms.categories(reopen=r[0] if r and r[1] == "is_a" else None).items()}
         via_map = self.resolver(mapped=True) if (cats and not mapped) else None
 
         def decided_for(final: str, raw: str) -> str | None:
@@ -457,6 +467,11 @@ class ConceptStore:
         # An entity nothing affirms anywhere is not in the cleaned store -- the
         # whole store counts, so a denial in one abstract stays where the term
         # is asserted in another. Two passes, so the records are held.
+        # Affirmed is what the abstract asserted, before any verdict: a refused
+        # cell takes off that cell, never the mention -- a term leaves the
+        # cleaned store only by its scope (curator, 2026-10-29: ELK's refusal of
+        # `Allergy is_a disposition` had emptied Allergy from all 4 abstracts,
+        # and 328 placed terms fell below the evidence cut with it).
         pending: list[tuple[str, dict, dict]] = []
         affirmed: set[str] = set()
         for key, rec in self.dict.items():
@@ -464,6 +479,8 @@ class ConceptStore:
                 continue
             out: dict[str, dict[str, float]] = {}
             decided: dict[str, str] = {}
+            refused: list[tuple] = []
+            kept_cells: list[tuple] = []
             ents = rec.get("entities", {})
             own, by_key = _senses_here(ents, name, splits) if splits else ({}, {})
             for raw, attrs in ents.items():
@@ -474,10 +491,11 @@ class ConceptStore:
                 if raw in own:
                     final = name(own[raw])[1]
                     owners = tuple(dict.fromkeys(owners + (final,)))
-                if not include_rejected and (self._verdict_on(*owners)
-                                             or any(map(out_of_scope, owners))):
+                if not include_rejected and any(map(out_of_scope, owners)):
                     continue
                 dest = out.setdefault(final, {})
+                if any(float(v) > 0.0 for v in attrs.values()):
+                    affirmed.add(final)
                 if cats and final not in decided:
                     c = decided_for(final, raw)
                     if c:
@@ -493,18 +511,29 @@ class ConceptStore:
                         if sense:
                             t_final = name(sense)[1]
                             targets = tuple(dict.fromkeys(targets + (t_final,)))
-                        if not include_rejected and (
-                                any(map(out_of_scope, targets))
-                                or self._cell_verdict(owners, pred, targets)):
-                            continue
+                        # A cell read under another predicate (rule 68) is
+                        # judged under that one: the written one says `no`.
                         pred = self._cell_predicate(owners, pred, targets) or pred
+                        if not include_rejected and any(map(out_of_scope, targets)):
+                            continue
+                        if not include_rejected and self._cell_verdict(owners, pred, targets):
+                            if on_refused is not None and (allowed is None or pred in allowed):
+                                refused.append((final, pred, t_final, owners, targets, float(value)))
+                            continue
                         if not include_rejected and allowed is not None and pred not in allowed:
                             continue             # a relation the schema does not allow
+                        if on_kept is not None:
+                            kept_cells.append((final, pred, t_final, owners, targets, float(value)))
                         triple = f"{pred}: {t_final}"
                     dest[triple] = max(dest.get(triple, 0.0), float(value))
-            affirmed.update(e for e, a in out.items() if any(v > 0.0 for v in a.values()))
-            pending.append((key, out, decided))
-        for key, out, decided in pending:
+            pending.append((key, out, decided, refused, kept_cells))
+        for key, out, decided, refused, kept_cells in pending:
+            for final, pred, t_final, owners, targets, value in refused:
+                if final in affirmed:
+                    on_refused(key, final, pred, t_final, owners, targets, value)
+            for final, pred, t_final, owners, targets, value in kept_cells:
+                if final in affirmed:
+                    on_kept(key, final, pred, t_final, owners, targets, value)
             if not include_rejected:
                 out = {e: a for e, a in out.items() if e in affirmed}
             if decided:
@@ -581,12 +610,12 @@ class ConceptStore:
                 s = aliases[s]["to"]
             spelled = resolve(raw)[0]
             entry = self.terms.records.get(spelled) or {}
-            to = target_of(entry)
+            to = target_of(entry, spelled)
             out[raw] = {"documents": sorted(keys), "spelling": steps,
-                        "mapped_by": ({"entry": spelled, "to": entry.get("to"),
-                                       "method": entry.get("method"),
-                                       "pair": (entry.get("pairs") or {}).get(to) if to else None}
-                                      if spelled != name and entry.get("to") else None)}
+                        "mapped_by": ({"entry": spelled, "to": to,
+                                       "by": self.terms.named_by(spelled),
+                                       "pair": (entry.get("pairs") or {}).get(to)}
+                                      if spelled != name and to else None)}
         return out
 
     # ── Verdicts: written to the term dict ────────────────────────────────────
@@ -600,38 +629,32 @@ class ConceptStore:
                 "renamed": self.terms.aliases()}
 
     def rejected_entities(self) -> dict[str, dict]:
-        """{entity -> verdict} for every entity rejected as a whole."""
-        return {t: r["rejected"] for t, r in self.terms.records.items()
-                if (r.get("rejected") or {}).get("status") == self.REJECTED}
-
-    def rejected_cells(self) -> dict[str, dict[str, dict]]:
-        """{entity -> {triple -> verdict}} for every single cell rejected."""
-        out: dict[str, dict[str, dict]] = {}
+        """{entity -> verdict} for every entity out of scope: rule 89 keeps a
+        term out by its scope, there is no other verdict on a whole entity."""
+        out = {}
         for t, r in self.terms.records.items():
-            kept = {tr: v for tr, v in (r.get("relations") or {}).items()
-                    if v.get("status") == self.REJECTED}
-            if kept:
-                out[t] = kept
+            j = current(r.get("scope"))
+            if j and j["verdict"] == "out":
+                out[t] = {"status": self.REJECTED, "by": j["by"], "note": j["why"], "when": j["when"]}
         return out
 
+    def rejected_cells(self) -> dict[str, dict[str, dict]]:
+        """{entity -> {triple -> verdict}} for every single cell whose judgement is `no`."""
+        return self.terms.rejected_cells()
+
     def verdict(self, entity: str, triple: str | None = None) -> dict | None:
-        """The verdict that applies to `entity` (or to one of its cells), or None
-        if it stands as asserted. An entity-level verdict covers every cell."""
-        ev = self._verdict_on(entity)
-        if ev is not None or triple is None:
-            return ev
+        """The verdict that applies to `entity` (its scope `out`) or to one of its
+        cells (a `no`), or None if it stands as asserted."""
+        if triple is None:
+            return self.rejected_entities().get(self.terms.concept(self.terms.resolve(entity)))
         pred, _, tgt = triple.partition(":")
         return self._cell_verdict((entity,), pred.strip(), (tgt.strip(),))
 
-    @staticmethod
-    def _stamp(by: str, note: str) -> dict:
-        return {"status": ConceptStore.REJECTED, "by": by, "note": note,
-                "when": _dt.datetime.now().isoformat(timespec="seconds")}
-
     def reject_entities(self, names: Iterable[str], *, by: str, note: str = "") -> int:
-        """Reject every cell of each named entity. Returns how many of the names
-        are actually in the view -- a name that is not is reported, not
-        rejected, because a verdict on nothing is a typo in a list."""
+        """Put each named entity out of scope (rule 89: the scope is the verdict
+        on a whole entity). Returns how many of the names are in the view -- a
+        name that is not is reported, not judged, because a verdict on nothing
+        is a typo in a list."""
         names = set(names)
         present = set(self.entities_raw())
         missing = sorted(names - present)
@@ -640,15 +663,17 @@ class ConceptStore:
                   f"in the store and were skipped: {missing[:5]}")
         n = 0
         for name in sorted(names & present):
-            self.terms.record(name)["rejected"] = self._stamp(by, note)
+            self.terms.gate(name, curator={"verdict": "out", "by": by, "reason": note or "rejected"})
             n += 1
         if n:
-            self.terms._dirty()
             self.terms.save()
         return n
 
-    def reject_cells(self, cells: Iterable[tuple[str, str]], *, by: str, note: str = "") -> int:
-        """Reject single (entity, triple) cells. Returns how many were present."""
+    def reject_cells(self, cells: Iterable[tuple[str, str]], *, by: str, note: str = "",
+                     notes: dict | None = None) -> int:
+        """Judge single (entity, triple) cells `no`, each with its own reason from
+        `notes` (else `note`). Written only where `by`'s own last judgement on the
+        cell differs. Returns how many cells were present."""
         wanted = set(cells)
         present = {(e, t) for _, ents in self.view(include_rejected=True)
                    for e, attrs in ents.items() for t in attrs if (e, t) in wanted}
@@ -658,31 +683,32 @@ class ConceptStore:
                   f"in the store and were skipped: {missing[:5]}")
         present = self._not_decided(present, by)
         for entity, triple in sorted(present):
-            self.terms.record(entity).setdefault("relations", {})[triple] = \
-                self._stamp(by, note)
+            self.terms.judge_cell(entity, triple, "no", by=by,
+                                  why=(notes or {}).get((entity, triple)) or note or "rejected")
         if present:
-            self.terms._dirty()
             self.terms.save()
         return len(present)
 
     def _not_decided(self, cells: set[tuple[str, str]], by: str) -> set[tuple[str, str]]:
-        """`cells` without the ones a person decided (a decided `is_a`, rule 87):
-        a verdict by `by` does not overwrite that decision, and is reported."""
-        from wound_ontology.mappers.term_mapping_and_gate import DECIDED
-        records = self.terms.records
-        held = {(e, t) for e, t in cells
-                if ((records.get(self.terms.resolve(e)) or {}).get("relations") or {})
-                .get(t, {}).get("status") == DECIDED}
+        """`cells` without the ones the author decided: a machine's verdict would
+        not count there (rule 89), and is not written; they are reported."""
+        from wound_ontology.mappers.judgements import AUTHOR, rank
+        held = set()
+        for e, t in cells:
+            cj = self.terms.cell(self.terms.resolve(e), t)
+            if cj and rank(cj) == AUTHOR:
+                held.add((e, t))
         if held:
-            print(f"[ConceptStore] {len(held)} cell(s) NOT marked by {by!r}: a person "
-                  f"decided each as the term's category -- {sorted(held)[:5]}")
+            print(f"[ConceptStore] {len(held)} cell(s) NOT judged by {by!r}: the author "
+                  f"decided each -- {sorted(held)[:5]}")
         return cells - held
 
     def repredicate_cells(self, cells: dict, *, by: str, note: str = "") -> int:
         """Read single (entity, triple) cells under another predicate:
         `cells` maps (entity, "pred: target") -> new predicate. The assertion
-        stays in the store as written; the decision sits beside it in the term
-        dict and the view applies it. Returns how many cells were present."""
+        stays in the store as written; the written predicate gets `no` and the
+        new one `yes` in the term dict, and the view applies them. Returns how
+        many cells were present."""
         present = {(e, t) for _, ents in self.view(include_rejected=True)
                    for e, attrs in ents.items() for t in attrs if (e, t) in cells}
         missing = sorted(set(cells) - present)
@@ -691,50 +717,11 @@ class ConceptStore:
                   f"in the store and were skipped: {missing[:5]}")
         present = self._not_decided(present, by)
         for entity, triple in sorted(present):
-            stamp = self._stamp(by, note)
-            stamp.update({"status": self.REPREDICATED, "to": cells[(entity, triple)]})
-            self.terms.record(entity).setdefault("relations", {})[triple] = stamp
+            self.terms.judge_cell(entity, triple, "no", by=by, why=note or "another predicate",
+                                  new_predicate=cells[(entity, triple)])
         if present:
-            self.terms._dirty()
             self.terms.save()
         return len(present)
-
-    def lift_decisions(self, by: str) -> dict:
-        """Withdraw every verdict `by` wrote, so its author can decide again
-        against the current lists or the current ontology. Returns what was
-        lifted, in a shape `restore_decisions` accepts, so a caller whose
-        re-decision then cannot run puts them back rather than leaving the
-        store un-vetted."""
-        lifted = {"entity_verdicts": {}, "cell_verdicts": {}}
-        for t, r in self.terms.records.items():
-            if (r.get("rejected") or {}).get("by") == by:
-                lifted["entity_verdicts"][t] = r.pop("rejected")
-            rel = r.get("relations") or {}
-            # a decided category is not a verdict on a cell (rule 87)
-            for tr in [tr for tr, v in rel.items()
-                       if v.get("by") == by and v.get("status") != "decided"]:
-                lifted["cell_verdicts"].setdefault(t, {})[tr] = rel.pop(tr)
-            if "relations" in r and not r["relations"]:
-                r.pop("relations")
-        n = len(lifted["entity_verdicts"]) + sum(len(c) for c in lifted["cell_verdicts"].values())
-        if n:
-            self.terms._dirty()
-            self.terms.save()
-            print(f"[ConceptStore] {n} verdict(s) by {by!r} lifted.")
-        return lifted
-
-    def restore_decisions(self, lifted: dict) -> int:
-        n = 0
-        for e, v in lifted.get("entity_verdicts", {}).items():
-            self.terms.record(e)["rejected"] = v
-            n += 1
-        for e, cells in lifted.get("cell_verdicts", {}).items():
-            self.terms.record(e).setdefault("relations", {}).update(cells)
-            n += len(cells)
-        if n:
-            self.terms._dirty()
-            self.terms.save()
-        return n
 
     def record_rename(self, old: str, new: str, *, by: str,
                       evidence: dict | None = None) -> None:
@@ -1226,13 +1213,14 @@ class ConceptStore:
         # (rule 51). Nothing in the evidence is rewritten.
         from wound_ontology.mappers.term_mapping_and_gate import target_of
         for term, senses in list(report["split"].items()):
-            standing = target_of(self.terms.records.get(self.terms.resolve(term)) or {})
+            spelled = self.terms.resolve(term)
+            standing = target_of(self.terms.records.get(spelled) or {}, spelled)
             if standing:
                 # mapped onto another name: that name is what the view shows
                 report.setdefault("mapped", {})[term] = standing
                 del report["split"][term]
                 continue
-            self.terms.split_by_category(term, senses, method="category split")
+            self.terms.split_by_category(term, senses, method="category-split")
         if report.get("mapped"):
             print(f"[ConceptStore] {len(report['mapped'])} irreconcilable term(s) NOT "
                   f"split: each maps onto another name -- "
@@ -1417,7 +1405,7 @@ class ConceptStore:
                     continue
                 settled.add(string)
                 rec = self.terms.records.get(string) or {}
-                if any(rec.get(k) for k in DECISION_SECTIONS):
+                if rec.get("name") or any(rec.get(k) for k in DECISION_SECTIONS):
                     continue
                 clean = self.clean_entity_str(string)
                 if clean != string and self.terms.resolve(clean) != string:

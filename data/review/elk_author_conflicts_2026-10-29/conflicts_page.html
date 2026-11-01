@@ -1,0 +1,463 @@
+<title>WONT Superclass Conflicts</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,650&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; each conflict is a card with two sides facing each other, the BFO clash between them, then the choice. */
+:root {
+  --bg: #f4f5f2;
+  --surface: #ffffff;
+  --ink: #1d2422;
+  --muted: #5d6764;
+  --line: #d9dfdb;
+  --side-a: #1d6a86;
+  --side-a-soft: #e3f0f4;
+  --side-b: #8f5a12;
+  --side-b-soft: #f6ecdc;
+  --clash: #b02a22;
+  --clash-soft: #f8e4e1;
+  --pick: #2a4f8f;
+  --pick-soft: #e6ecf7;
+  --ok: #2f6b3a;
+  --f-display: "Literata", "Iowan Old Style", Georgia, serif;
+  --f-body: "Public Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141917; --surface: #1c2220; --ink: #e6ebe8; --muted: #9aa5a1; --line: #303a37;
+    --side-a: #6fb6d0; --side-a-soft: #18303a; --side-b: #e0a75a; --side-b-soft: #36291a;
+    --clash: #f0857b; --clash-soft: #3a1f1c; --pick: #9db8ec; --pick-soft: #1f2a40; --ok: #7cc68a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141917; --surface: #1c2220; --ink: #e6ebe8; --muted: #9aa5a1; --line: #303a37;
+  --side-a: #6fb6d0; --side-a-soft: #18303a; --side-b: #e0a75a; --side-b-soft: #36291a;
+  --clash: #f0857b; --clash-soft: #3a1f1c; --pick: #9db8ec; --pick-soft: #1f2a40; --ok: #7cc68a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 15px/1.55 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 64px;
+}
+.wrap { max-width: 860px; margin: 0 auto; display: grid; gap: 22px; }
+h1, h2 { font-family: var(--f-display); font-weight: 650; text-wrap: balance; margin: 0; }
+h1 { font-size: 1.85rem; line-height: 1.2; }
+h2 { font-size: 1.45rem; line-height: 1.25; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 66ch; }
+.mono { font-family: var(--f-mono); font-size: 0.82em; }
+
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--bg); padding-block: 10px; border-bottom: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.pips { display: flex; gap: 6px; }
+.pip { width: 26px; height: 8px; border-radius: 4px; background: var(--line); border: 0; padding: 0; cursor: pointer; }
+.pip.done { background: var(--ok); }
+.pip:focus-visible { outline: 2px solid var(--pick); outline-offset: 2px; }
+.count { font-variant-numeric: tabular-nums; font-weight: 600; }
+.status { color: var(--muted); font-size: 0.86rem; margin-left: auto; }
+.status.warn { color: var(--clash); }
+
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 22px; display: grid; gap: 16px; scroll-margin-top: 70px;
+}
+.card.decided { border-color: color-mix(in srgb, var(--ok) 45%, var(--line)); }
+.head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.reach { font-size: 0.8rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.badge-done { font-size: 0.8rem; color: var(--ok); font-weight: 600; }
+.summary { max-width: 70ch; }
+
+.sides { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: stretch; }
+.side { border-radius: 8px; padding: 14px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.side.a { background: var(--side-a-soft); }
+.side.b { background: var(--side-b-soft); }
+.side .what { font-weight: 600; }
+.side.a .what { color: var(--side-a); }
+.side.b .what { color: var(--side-b); }
+.chain { font-family: var(--f-mono); font-size: 0.76rem; line-height: 1.7; color: var(--ink); overflow-wrap: anywhere; }
+.chain .arrow { color: var(--muted); padding-inline: 3px; }
+.chain .root { font-weight: 500; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.side.a .chain .root { text-decoration-color: var(--side-a); }
+.side.b .chain .root { text-decoration-color: var(--side-b); }
+.src { font-size: 0.86rem; color: var(--muted); display: grid; gap: 2px; }
+.versus { display: grid; place-items: center; }
+.versus span {
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--clash);
+}
+.clash {
+  background: var(--clash-soft); color: var(--ink); border-radius: 8px; padding: 9px 12px; font-size: 0.9rem;
+}
+.clash b { color: var(--clash); font-weight: 600; }
+.aside { font-size: 0.9rem; color: var(--muted); max-width: 70ch; }
+
+details.follow { font-size: 0.9rem; }
+details.follow summary { cursor: pointer; color: var(--ink); font-weight: 500; }
+details.follow summary:focus-visible { outline: 2px solid var(--pick); outline-offset: 2px; border-radius: 3px; }
+.names { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+.names span { border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; font-size: 0.82rem; }
+.names span.typed { border-color: var(--side-b); }
+.follow-note { color: var(--muted); margin-top: 6px; }
+
+fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; }
+legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
+.opt {
+  display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; align-items: start;
+  border: 1px solid var(--line); border-radius: 8px; padding: 11px 13px; cursor: pointer;
+}
+.opt:hover { border-color: var(--pick); }
+.opt:has(input:checked) { border-color: var(--pick); background: var(--pick-soft); }
+.opt:has(input:focus-visible) { outline: 2px solid var(--pick); outline-offset: 2px; }
+.opt input { margin: 4px 0 0; accent-color: var(--pick); }
+.opt .t { font-weight: 600; }
+.opt .e { grid-column: 2; color: var(--muted); font-size: 0.9rem; }
+.opt .s { grid-column: 2; font-size: 0.84rem; color: var(--ok); }
+.opt .s b { font-weight: 600; }
+.note-l { display: grid; gap: 6px; font-size: 0.9rem; color: var(--muted); }
+textarea {
+  font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+  border-radius: 8px; padding: 9px 11px; min-height: 64px; resize: vertical; width: 100%;
+}
+textarea:focus-visible { outline: 2px solid var(--pick); outline-offset: 1px; }
+.saved { font-size: 0.82rem; color: var(--muted); min-height: 1.2em; }
+.saved.err { color: var(--clash); }
+fieldset:disabled .opt { cursor: default; opacity: 0.85; }
+
+.foot { color: var(--muted); font-size: 0.9rem; max-width: 70ch; }
+
+@media (max-width: 640px) {
+  .sides { grid-template-columns: 1fr; }
+  .versus span { writing-mode: horizontal-tb; transform: none; }
+  .card { padding: 16px; }
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.25rem; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+</style>
+
+<div class="wrap">
+  <header style="display:grid;gap:10px">
+    <h1>Seven places where your own is-a links contradict each other</h1>
+    <p class="lede">ELK checked only the is-a links you made or confirmed yourself. In seven places two of them cannot both hold: the term would have to be two kinds of thing that BFO keeps apart, so ELK finds it empty and stops. Pick the side that holds in each card. A choice is saved the moment you click it. Nothing in the ontology changes until you tell me in chat that you are done.</p>
+  </header>
+
+  <div class="bar" role="navigation" aria-label="Progress">
+    <span class="count" id="count">0 of 7 decided</span>
+    <div class="pips" id="pips"></div>
+    <span class="status" id="status">Connecting…</span>
+  </div>
+
+  <main id="cards" style="display:grid;gap:22px"></main>
+
+  <p class="foot">Source: <span class="mono">data/review/elk_author_conflicts_2026-10-29/conflicts.csv</span> (ELK over your 44 is-a links in 33 terms, 29 Oct 2026). When you are done, say so in chat. I then enter each choice as your judgement and run the ELK check on the is-a links again.</p>
+</div>
+
+<script>
+const OTHER = { id: "other", title: "Something else", effect: "Write in the note what should happen." };
+
+const CONFLICTS = [
+  {
+    id: "infection", term: "Infection", reach: "26 terms affected",
+    summary: "You made Infection a process. But Infection is the same class as IDO's “infection”, which IDO files as a material entity: the infected part of the body. Nothing can be a process and a material thing at once.",
+    a: { what: "a process", chain: ["Infection", "process", "occurrent"],
+         src: ["Your category: process (29 Sep)", "Your accepted superclass: biological process, GO (2 Oct)"] },
+    b: { what: "a material entity", chain: ["Infection", "material entity", "independent continuant", "continuant"],
+         src: ["IDO's class “infection”, imported", "WONT puts erysipeloid under it"] },
+    clash: "<b>continuant</b> and <b>occurrent</b> are disjoint in BFO.",
+    follow: { label: "25 terms below Infection go empty with it",
+              names: ["Bacteremia","Bacterial Skin Infection","Candidiasis","Cellulitis*","Central Nervous System Infection","Difficult-To-Treat Infection","Endophthalmitis*","Erysipeloid (WONT)","Genital Infection","Intra-Abdominal Infection","Leishmaniasis","Life-Threatening Infection","Localized Infection","Multidrug-Resistant Infection","Musculoskeletal Infection","Odontogenic Infection","Pin Tract Infection","Pneumonia*","Residual Infection","Resistant Infection","Spinal Infection","Subcutaneous Infection","Toe Infection","Trauma-Related Infection","Tuberculosis"],
+              note: "24 you placed under Infection; Erysipeloid sits there in WONT. Marked terms you also typed as material entity." },
+    options: [
+      { id: "material", title: "Infection is the infected part of the body (IDO's sense)",
+        effect: "I withdraw your process category and the superclass biological process. All 25 terms stay under Infection; Cellulitis, Endophthalmitis and Pneumonia already fit.",
+        suggest: "Nothing else has to move, and it matches WONT and your three material-entity categories." },
+      { id: "process", title: "Infection is a process",
+        effect: "Infection gets its own class, apart from IDO's. Your process category and biological process stay. Erysipeloid stays with IDO's infection. Cellulitis, Endophthalmitis and Pneumonia then clash again, so each needs a new category or has to leave Infection." },
+      { id: "split", title: "Both senses, as two classes",
+        effect: "Infection keeps IDO's sense. A new class “Infection process” takes your process category and biological process. I then list the 24 terms you placed under Infection so you can move the ones that mean the process." },
+      OTHER
+    ]
+  },
+  {
+    id: "scarring", term: "Scarring", reach: "2 terms affected",
+    summary: "You made Scarring a process. The term is HP's class “Scarring”, which HP files as a phenotypic abnormality, a quality of the body. A quality is a continuant, a process an occurrent.",
+    a: { what: "a process", chain: ["Scarring", "process", "occurrent"],
+         src: ["Your category: process (18 Oct)"] },
+    b: { what: "a phenotypic abnormality", chain: ["Scarring", "phenotypic abnormality", "phenotype", "quality", "specifically dependent continuant", "continuant"],
+         src: ["HP's class Scarring (HP_0100699), imported"] },
+    clash: "<b>continuant</b> and <b>occurrent</b> are disjoint in BFO.",
+    aside: "WONT already has “Scarring process” (WONT_0000471), linked to HP's Scarring only as a related match, for exactly this reason.",
+    follow: { label: "1 term below Scarring goes empty with it", names: ["Visible Scarring"], note: "You placed it under Scarring." },
+    options: [
+      { id: "process", title: "Scarring means the process",
+        effect: "I point the term at WONT's Scarring process and keep your category. HP's Scarring stays a phenotype. Visible scarring then sits under the process; say in the note if it belongs under HP's phenotype instead.",
+        suggest: "WONT already draws this line itself." },
+      { id: "phenotype", title: "Scarring means HP's phenotype",
+        effect: "I withdraw your process category. Scarring stays HP's phenotypic abnormality, and Visible scarring stays under it." },
+      OTHER
+    ]
+  },
+  {
+    id: "burn-area", term: "Burn area", reach: "1 term",
+    summary: "You accepted two superclasses: Area, a size and so a quality, and Immaterial anatomical entity, a body region with no mass of its own. A quality cannot also be a region.",
+    a: { what: "Area (PATO)", chain: ["Burn area", "Area", "2-D extent", "size", "…", "quality", "specifically dependent continuant"],
+         src: ["Your accepted superclass (2 Oct)"] },
+    b: { what: "Immaterial anatomical entity (UBERON)", chain: ["Burn area", "immaterial anatomical entity", "immaterial entity", "independent continuant"],
+         src: ["Your accepted superclass (2 Oct)"] },
+    clash: "<b>independent continuant</b> and <b>specifically dependent continuant</b> are disjoint in BFO.",
+    options: [
+      { id: "area", title: "Keep Area: the size of the burn",
+        effect: "I withdraw Immaterial anatomical entity. Burn area is then the measured extent, for example in percent of body surface." },
+      { id: "region", title: "Keep Immaterial anatomical entity: the burnt region",
+        effect: "I withdraw Area. Burn area is then the region of the body that is burnt." },
+      OTHER
+    ]
+  },
+  {
+    id: "burn-wound-surface", term: "Burn wound surface", reach: "1 term",
+    summary: "You accepted Thermal wound, which WONT files as an injury and so as a material entity, and Immaterial anatomical entity. Material and immaterial entities are disjoint.",
+    a: { what: "Thermal wound (WONT)", chain: ["Burn wound surface", "Thermal wound", "Traumatic wound", "Wound", "Injury", "pathological disorder", "material entity"],
+         src: ["Your accepted superclass (2 Oct)"] },
+    b: { what: "Immaterial anatomical entity (UBERON)", chain: ["Burn wound surface", "immaterial anatomical entity", "immaterial entity"],
+         src: ["Your accepted superclass (2 Oct)"] },
+    clash: "<b>material entity</b> and <b>immaterial entity</b> are disjoint in BFO.",
+    options: [
+      { id: "wound", title: "Keep Thermal wound",
+        effect: "I withdraw Immaterial anatomical entity. Burn wound surface is then itself a kind of burn wound." },
+      { id: "surface", title: "Keep Immaterial anatomical entity: the surface of a burn wound",
+        effect: "I withdraw Thermal wound.",
+        suggest: "The surface of a burn wound is not itself a burn wound." },
+      OTHER
+    ]
+  },
+  {
+    id: "lower-extremity-injury", term: "Lower extremity injury", reach: "1 term",
+    summary: "On 18 Oct you made it a material entity. On 2 Oct you accepted the superclass Trauma process, which is a process.",
+    a: { what: "a material entity", chain: ["Lower extremity injury", "material entity", "independent continuant", "continuant"],
+         src: ["Your category: material entity (18 Oct)"] },
+    b: { what: "Trauma process (WONT)", chain: ["Lower extremity injury", "Trauma process", "process", "occurrent"],
+         src: ["Your accepted superclass (2 Oct)"] },
+    clash: "<b>continuant</b> and <b>occurrent</b> are disjoint in BFO.",
+    options: [
+      { id: "material", title: "The injury itself: a material entity",
+        effect: "I withdraw Trauma process. It then has no superclass below material entity; say in the note if it should go under WONT's Injury.",
+        suggest: "Your later decision, and WONT files Injury as a material entity too." },
+      { id: "process", title: "The event that injures: a process",
+        effect: "I withdraw your material-entity category and keep Trauma process." },
+      OTHER
+    ]
+  },
+  {
+    id: "pressure-ulcer-therapy", term: "Pressure ulcer therapy", reach: "1 term",
+    summary: "On 7 Oct you chose the superclass Wound treatment plan specification, a plan and so information, over Wound treatment process. On 18 Oct you made it a process.",
+    a: { what: "a process", chain: ["Pressure ulcer therapy", "process", "occurrent"],
+         src: ["Your category: process (18 Oct)"] },
+    b: { what: "Wound treatment plan specification (WONT)", chain: ["Pressure ulcer therapy", "Wound treatment plan specification", "…", "plan specification", "information content entity", "generically dependent continuant", "continuant"],
+         src: ["Your accepted superclass (7 Oct), chosen over Wound treatment process"] },
+    clash: "<b>continuant</b> and <b>occurrent</b> are disjoint in BFO.",
+    options: [
+      { id: "process", title: "The treatment as it is carried out: a process",
+        effect: "I withdraw Wound treatment plan specification. Say in the note whether it should go under Wound treatment process, which you turned down on 7 Oct." },
+      { id: "plan", title: "The treatment plan: a plan specification",
+        effect: "I withdraw your process category and keep Wound treatment plan specification." },
+      OTHER
+    ]
+  },
+  {
+    id: "recurrence-of-wound", term: "Recurrence of wound", reach: "1 term",
+    summary: "On 29 Sep the word “event” in your ruling made it a process boundary, a single instant. On 2 Oct you accepted MILD's disease perpetuation process, which takes time.",
+    a: { what: "disease perpetuation process (MILD)", chain: ["Recurrence of wound", "disease perpetuation process", "process"],
+         src: ["Your accepted superclass (2 Oct)"] },
+    b: { what: "a process boundary", chain: ["Recurrence of wound", "process boundary"],
+         src: ["Your category, “event” read as an instant (29 Sep)"] },
+    clash: "<b>process</b> and <b>process boundary</b> are disjoint in BFO.",
+    options: [
+      { id: "process", title: "A process that takes time",
+        effect: "I withdraw the process-boundary category. It stays under MILD's disease perpetuation process.",
+        suggest: "Your later decision, and it sits in MILD, your own file." },
+      { id: "boundary", title: "The moment the wound comes back",
+        effect: "I withdraw the superclass disease perpetuation process and keep process boundary." },
+      OTHER
+    ]
+  }
+];
+
+const $ = (sel, el = document) => el.querySelector(sel);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function chainHtml(chain) {
+  return chain.map((n, i) => `<span class="${i === chain.length - 1 ? "root" : ""}">${esc(n)}</span>`)
+    .join('<span class="arrow">→</span>');
+}
+
+function cardHtml(c) {
+  const opts = c.options.map(o => `
+    <label class="opt">
+      <input type="radio" name="pick-${c.id}" value="${o.id}" id="pick-${c.id}-${o.id}">
+      <span class="t">${esc(o.title)}</span>
+      <span class="e">${esc(o.effect)}</span>
+      ${o.suggest ? `<span class="s"><b>Suggested:</b> ${esc(o.suggest)}</span>` : ""}
+    </label>`).join("");
+  const follow = c.follow ? `
+    <details class="follow">
+      <summary>${esc(c.follow.label)}</summary>
+      <div class="names">${c.follow.names.map(n => n.endsWith("*")
+        ? `<span class="typed" title="you typed it as material entity">${esc(n.slice(0, -1))} *</span>`
+        : `<span>${esc(n)}</span>`).join("")}</div>
+      <p class="follow-note">${esc(c.follow.note)}</p>
+    </details>` : "";
+  return `
+  <article class="card" id="${c.id}" aria-labelledby="h-${c.id}">
+    <div class="head">
+      <h2 id="h-${c.id}">${esc(c.term)}</h2>
+      <span class="reach">${esc(c.reach)}</span>
+      <span class="badge-done" id="done-${c.id}" hidden>Decided</span>
+    </div>
+    <p class="summary">${esc(c.summary)}</p>
+    <div class="sides">
+      <div class="side a">
+        <span class="what">${esc(c.a.what)}</span>
+        <div class="chain">${chainHtml(c.a.chain)}</div>
+        <div class="src">${c.a.src.map(s => `<span>${esc(s)}</span>`).join("")}</div>
+      </div>
+      <div class="versus" aria-hidden="true"><span>cannot both hold</span></div>
+      <div class="side b">
+        <span class="what">${esc(c.b.what)}</span>
+        <div class="chain">${chainHtml(c.b.chain)}</div>
+        <div class="src">${c.b.src.map(s => `<span>${esc(s)}</span>`).join("")}</div>
+      </div>
+    </div>
+    <p class="clash">${c.clash}</p>
+    ${c.aside ? `<p class="aside">${esc(c.aside)}</p>` : ""}
+    ${follow}
+    <fieldset id="fs-${c.id}">
+      <legend>Which side holds?</legend>
+      ${opts}
+      <label class="note-l" for="note-${c.id}">Note (optional, needed for “Something else”)
+        <textarea id="note-${c.id}" rows="2"></textarea>
+      </label>
+      <span class="saved" id="saved-${c.id}" aria-live="polite"></span>
+    </fieldset>
+  </article>`;
+}
+
+$("#cards").innerHTML = CONFLICTS.map(cardHtml).join("");
+$("#pips").innerHTML = CONFLICTS.map(c =>
+  `<button class="pip" id="pip-${c.id}" title="${esc(c.term)}" aria-label="Go to ${esc(c.term)}"></button>`).join("");
+CONFLICTS.forEach(c => $(`#pip-${c.id}`).addEventListener("click", () =>
+  document.getElementById(c.id).scrollIntoView({ block: "start" })));
+
+const state = {};          // id -> {choice, note, at}
+let db = null;
+let canWrite = true;
+const queue = {};          // id -> promise chain, one write at a time per document
+const noteTimers = {};
+
+function fmtTime(iso) {
+  try { return new Date(iso).toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); }
+  catch (e) { return iso; }
+}
+
+function applyState() {
+  let n = 0;
+  for (const c of CONFLICTS) {
+    const s = state[c.id];
+    const decided = !!(s && s.choice);
+    if (decided) n++;
+    document.getElementById(c.id).classList.toggle("decided", decided);
+    $(`#done-${c.id}`).hidden = !decided;
+    $(`#pip-${c.id}`).classList.toggle("done", decided);
+    if (s && s.choice) {
+      const r = document.getElementById(`pick-${c.id}-${s.choice}`);
+      if (r && !r.checked) r.checked = true;
+    }
+    const ta = $(`#note-${c.id}`);
+    if (s && typeof s.note === "string" && document.activeElement !== ta && ta.value !== s.note) ta.value = s.note;
+    const sv = $(`#saved-${c.id}`);
+    if (s && s.at && !sv.classList.contains("err") && !sv.dataset.busy) sv.textContent = `Saved ${fmtTime(s.at)}`;
+  }
+  $("#count").textContent = `${n} of ${CONFLICTS.length} decided`;
+}
+
+function save(c) {
+  const sv = $(`#saved-${c.id}`);
+  const choice = (document.querySelector(`input[name="pick-${c.id}"]:checked`) || {}).value || "";
+  const note = $(`#note-${c.id}`).value.trim();
+  const opt = c.options.find(o => o.id === choice);
+  const body = { conflict: c.term, choice, choice_text: opt ? opt.title : "", note, at: new Date().toISOString() };
+  state[c.id] = body;
+  applyState();
+  if (!db || !canWrite) {
+    sv.classList.add("err");
+    sv.textContent = db ? "Read-only here: only the owner's choices are saved." : "Not saved: this view has no storage. Tell me your choice in chat.";
+    return;
+  }
+  sv.dataset.busy = "1";
+  sv.classList.remove("err");
+  sv.textContent = "Saving…";
+  queue[c.id] = (queue[c.id] || Promise.resolve()).then(() =>
+    db.collection("decisions").doc(c.id).set(body)
+      .then(() => { delete sv.dataset.busy; sv.textContent = `Saved ${fmtTime(body.at)}`; })
+      .catch(e => {
+        delete sv.dataset.busy;
+        sv.classList.add("err");
+        if (e && e.code === "invalid_argument") { canWrite = false; sv.textContent = "Not saved: this view may not write. Tell me your choice in chat."; }
+        else sv.textContent = `Not saved (${(e && e.code) || "error"}). Click the choice again to retry.`;
+      }));
+}
+
+for (const c of CONFLICTS) {
+  document.querySelectorAll(`input[name="pick-${c.id}"]`).forEach(r => r.addEventListener("change", () => save(c)));
+  $(`#note-${c.id}`).addEventListener("input", () => {
+    clearTimeout(noteTimers[c.id]);
+    noteTimers[c.id] = setTimeout(() => save(c), 900);
+  });
+  $(`#note-${c.id}`).addEventListener("blur", () => {
+    if (noteTimers[c.id]) { clearTimeout(noteTimers[c.id]); noteTimers[c.id] = null; const s = state[c.id]; if (!s || s.note !== $(`#note-${c.id}`).value.trim()) save(c); }
+  });
+}
+
+applyState();
+
+(async () => {
+  const status = $("#status");
+  const use = window.claude && window.claude.use ? n => window.claude.use(n) : async () => null;
+  db = await use("db");
+  if (!db) {
+    status.textContent = "Choices are not saved in this view. Tell me them in chat.";
+    status.classList.add("warn");
+    return;
+  }
+  const user = await use("user");
+  if (user && typeof user.isOwner === "function" && !user.isOwner()) {
+    canWrite = false;
+    CONFLICTS.forEach(c => { $(`#fs-${c.id}`).disabled = true; });
+    status.textContent = "Read-only: only the owner decides here.";
+  } else {
+    status.textContent = "Choices save as you click.";
+  }
+  db.collection("decisions").onSnapshot(snap => {
+    for (const d of snap.docs) {
+      const known = CONFLICTS.some(c => c.id === d.id);
+      if (known && d.exists) state[d.id] = d.data();
+    }
+    applyState();
+  }, e => {
+    status.textContent = `Saved choices could not be loaded (${(e && e.code) || "error"}).`;
+    status.classList.add("warn");
+  });
+})();
+</script>

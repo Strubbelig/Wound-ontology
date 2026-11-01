@@ -21,7 +21,7 @@ the same normalisation happens next time the term appears.
 """
 import pytest
 
-from conftest import memory_mapper
+from conftest import J, memory_mapper, rule89_file
 from wound_ontology.mappers.term_mapper import TermMapper
 
 
@@ -30,10 +30,12 @@ def _mapper(data):
     return memory_mapper(data)
 
 
-def test_identity_entries_are_dropped():
+def test_an_identity_is_no_mapping_at_all():
+    """Rule 89: a name that points at the string itself is its own name, so an
+    identity entry of an old file never reaches the mapping."""
     m = _mapper({"wound": "wound", "wounds": "Wound", "Wound": "Wound"})
     rep = m.prune(live_terms={"Wound"})
-    assert rep["identity"] == 2
+    assert rep["identity"] == 0
     assert m.mapping == {"wounds": "Wound"}
 
 
@@ -77,15 +79,16 @@ def test_a_chain_that_reaches_nothing_is_dropped():
 
 
 def test_a_cycle_does_not_hang_the_prune():
-    m = _mapper({"A": "B", "B": "A"})
+    m = memory_mapper(rule89_file({"A": {"name": [J("B", "sapbert-clustering")]},
+                                   "B": {"name": [J("A", "sapbert-clustering")]}}))
     assert m.prune(live_terms={"Z"})["dead"] == 2
 
 
 def test_dry_run_reports_without_removing():
     m = _mapper({"wound": "wound", "18%": "18"})
     rep = m.prune(live_terms={"Wound"}, dry_run=True)
-    assert rep == {"identity": 1, "dead": 1, "kept": 0}
-    assert len(m.mapping) == 2
+    assert rep == {"identity": 0, "dead": 1, "kept": 0}
+    assert len(m.mapping) == 1
 
 
 def test_the_build_no_longer_writes_identity_entries():
@@ -156,7 +159,7 @@ def test_a_curator_refusal_survives_the_next_build():
     mapper.build_from_embeddings(["wounds", "wound"], _Emb(),
                                  similarity_threshold=0.95, frequencies={"wound": 9})
     assert mapper.mapping == {}, "the curator's refusal was overwritten by a rebuild"
-    assert tm.is_refused("wounds", "wound")["by"] == "curator"
+    assert tm.is_refused("wounds", "wound")["by"] == "author"
 
 
 def test_a_refusal_is_about_the_pair_not_the_term():
@@ -192,6 +195,8 @@ def test_the_old_flat_file_still_loads():
     assert tm.data == {"wounds": "Wound", "ulcers": "Ulcer"}
     tm.judge("wounds", "Wound", pass1={"verdict": "same_class", "reason": "plural"})
     tm.save()
-    assert dm.written["wounds"] == {
-        "to": "Wound",
-        "pairs": {"Wound": {"pass1": {"verdict": "same_class", "reason": "plural"}}}}
+    assert dm.written["format"] == "rule 89", "saved in the form of rule 89"
+    rec = dm.written["terms"]["wounds"]
+    assert rec["name"][-1]["verdict"] == "Wound"
+    assert [(j["verdict"], j["by"], j["why"]) for j in rec["pairs"]["Wound"]] == \
+        [("same_class", "deepseek-v4-flash_bulk20", "plural")]

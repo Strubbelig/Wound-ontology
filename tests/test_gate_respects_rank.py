@@ -140,3 +140,28 @@ def test_a_cause_on_another_class_goes_before_a_placed_edge():
     r = _RemoteCause(lambda p: False).check_edges(edges, sources=sources)
     assert r.quarantined == [("Nutrient", "Material Entity")]
     assert ("Protein", "Biomacromolecule") in r.accepted
+
+
+class _InheritingGate(_Gate):
+    """`Necrosis` is empty while both its parents stand; `Dry Necrosis`, under
+    it, is empty exactly as long as Necrosis is -- by inheritance only."""
+
+    def _unsatisfiable(self, g):
+        self.passes += 1
+        parents = {p for c, p in g if c == "Necrosis"}
+        if not _clash_while_both_present(parents):
+            return set()
+        return {BATCH_NS + _slug("Necrosis"), BATCH_NS + _slug("Dry Necrosis")}
+
+
+def test_a_class_empty_only_through_its_parent_keeps_its_own_typing():
+    """2026-10-29: `Aggressive surgical debridement is_a process` was refused
+    though only its parent was empty -- the child's own text edge was the
+    weakest on an empty class. The parent's clash is resolved first; the child,
+    satisfiable again, keeps its typing."""
+    edges = EDGES + [("Dry Necrosis", "Necrosis"), ("Dry Necrosis", "Material Entity")]
+    sources = {**SOURCES, ("Dry Necrosis", "Necrosis"): SOURCE_CURATED,
+               ("Dry Necrosis", "Material Entity"): SOURCE_TEXT}
+    r = _InheritingGate(_clash_while_both_present).check_edges(edges, sources=sources)
+    assert r.quarantined == [("Necrosis", "Process")]
+    assert ("Dry Necrosis", "Material Entity") in r.accepted

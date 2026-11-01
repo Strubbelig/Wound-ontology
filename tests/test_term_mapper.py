@@ -59,11 +59,12 @@ def mapper(term_mapping):
 # ── Mapping access ────────────────────────────────────────────────────────────
 
 def test_standards_are_unique_and_sorted(mapper):
-    assert mapper.standards == ["granulation", "wound"]
+    # `granulation -> granulation` names the term itself: no mapping (rule 89)
+    assert mapper.standards == ["wound"]
 
 
 def test_originals_are_sorted(mapper):
-    assert mapper.originals == ["acute wound", "chronic wound", "granulation"]
+    assert mapper.originals == ["acute wound", "chronic wound"]
 
 
 def test_map_known_term(mapper):
@@ -553,4 +554,4 @@ def test_a_canonical_nobody_embedded_is_scored_against_the_term_it_came_from(mon
     assert "alpha uno" not in terms, "the canonical has to be MINTED to test anything"
     meta = m._term_mapping.metadata["alpha one"]
     assert meta["confidence"] == pytest.approx(1.0)
-    assert meta["method"] == "sapbert_cluster"
+    assert meta["method"] == "sapbert-clustering"

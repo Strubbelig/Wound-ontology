@@ -41,18 +41,20 @@ class _FakeStore:
         return iter(())
 
 
-class _FakeTermDict:
-    """No placements (rule 64): the `placed` source is tested in test_placements_view."""
-
-    def placements(self):
-        return []
-
-    def peek(self, *a):
-        return {}
-
-
 class _FakeTermMapper:
-    _term_mapping = _FakeTermDict()
+    """The real term dict over an empty in-memory file: no placements (rule 64),
+    the `placed` source is tested in test_placements_view."""
+
+    def __init__(self):
+        from conftest import memory_mapping
+        self._term_mapping = memory_mapping()
+
+
+def _elk_no(pipeline, child, parent):
+    from conftest import J
+    tm = pipeline.term_mapper._term_mapping
+    tm.records.setdefault(child, {}).setdefault("is_a", {})[parent] = [J("no", "elk", "a clash")]
+    tm._dirty()
 
 
 class _FakeDM:
@@ -204,16 +206,10 @@ def test_run_build_hierarchies_is_an_alias_for_the_view(pipeline, onto):
 def test_the_edge_gate_verdicts_are_taken_off_the_view(pipeline, onto):
     """A later process (build_wont_core.py) must see the gated view the
     extension was built from -- but a curated edge is never taken off."""
-    class _DM(_FakeDM):
-        def load_latest_json(self, prefix):
-            if prefix == "class_hierarchy_edge_verdicts":
-                return {"rejected": [{"child": "Chronic Wound", "parent": "Wound"},
-                                     {"child": "Burn", "parent": "Process"}]}
-            return None
-
+    _elk_no(pipeline, "Chronic Wound", "Wound")
+    _elk_no(pipeline, "Burn", "Process")
     fake = pipeline.fake_view
     fake.df = pd.DataFrame(1.0, index=["Chronic Wound", "Burn"], columns=["Wound", "Process"])
-    pipeline.dm = _DM()
     view = pipeline.refresh_class_hierarchy(curated_sources=[onto])
     assert view.df.at["Burn", "Process"] == 0.0, "a text edge the gate rejected stays off"
     assert view.df.at["Chronic Wound", "Wound"] == 1.0, "a curated edge is the curator's to remove"
@@ -221,15 +217,9 @@ def test_the_edge_gate_verdicts_are_taken_off_the_view(pipeline, onto):
 
 
 def test_the_gate_can_ask_for_every_edge_again(pipeline, onto):
-    class _DM(_FakeDM):
-        def load_latest_json(self, prefix):
-            if prefix == "class_hierarchy_edge_verdicts":
-                return {"rejected": [{"child": "Burn", "parent": "Process"}]}
-            return None
-
+    _elk_no(pipeline, "Burn", "Process")
     fake = pipeline.fake_view
     fake.df = pd.DataFrame(1.0, index=["Burn"], columns=["Process"])
-    pipeline.dm = _DM()
     view = pipeline.refresh_class_hierarchy(curated_sources=[onto], include_rejected=True)
     assert view.df.at["Burn", "Process"] == 1.0
     assert not view.verdicts_applied
@@ -249,8 +239,18 @@ def test_accepted_lattice_slices_reach_the_hierarchy(pipeline, onto):
 
     pipeline.dm = _DM()
     pipeline.refresh_class_hierarchy(curated_sources=[onto])
+    # Injury is no class of the ontology and no abstract names it: the edge is
+    # below the evidence cut (rule 79, curator 2026-10-30), kept in the slice
+    assert pipeline.class_hier.fca == [[]]
+    assert pipeline.fca_edges_below_cut == [("Chronic Wound", "Injury")]
 
+    class _Named(_FakeStore):
+        def view(self):
+            return iter([("1", {"Injury": {}}), ("2", {"injury": {}})])
+    pipeline.store = _Named()
+    pipeline.refresh_class_hierarchy(curated_sources=[onto])
     assert pipeline.class_hier.fca == [[("Chronic Wound", "Injury")]]
+    assert pipeline.fca_edges_below_cut == []
 
 
 def test_no_review_means_no_fca_source(pipeline, onto):
